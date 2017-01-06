@@ -47,6 +47,54 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         public int NodeIndex { get; set; }
 
+        /// <summary>
+        /// Some interresting flags. Note each flag must be a power of 2
+        /// for instance: 0x1 << 0; 0x01 << 1; 0x01 << 2 ... 0x01 << 32
+        /// </summary>
+        public enum Flag : int
+        {
+            /// <summary>
+            /// Flag that indicates that the node has been visited for Type Cobol Qualification style detection.
+            /// </summary>
+            HasBeenTypeCobolQualifierVisited = 0x01 << 0,
+        };
+        /// <summary>
+        /// A 32 bits value for flags associated to this Node
+        /// </summary>
+        public uint Flags 
+        { 
+            get; 
+            internal set; 
+        }
+
+        /// <summary>
+        /// Test the value of a flag
+        /// </summary>
+        /// <param name="flag">The flag to test</param>
+        /// <returns>true if the flag is set, false otherwise</returns>
+        public bool IsFlagSet(Flag flag)
+        {
+            return (Flags & (uint)flag) != 0;
+        }
+
+        /// <summary>
+        /// Set the value of a flag.
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="value"></param>
+        /// <param name="bRecurse">True if the setting must be recursive over the Children</param>
+        public void SetFlag(Flag flag, bool value, bool bRecurse = false)
+        {            
+            Flags = value  ? (Flags | (uint)flag) : (Flags & ~(uint)flag);
+            if (bRecurse)
+            {
+                foreach (var child in children)
+                {
+                    child.SetFlag(flag, value);
+                }
+            }
+        }
+
         public virtual string Name {
             get { return ID; }
         }
@@ -122,9 +170,9 @@ namespace TypeCobol.Compiler.Nodes {
         /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value is NULL.
         /// In the consumed tokens span over several lines then the size of the newline sequence is included for each line.
         /// The method also calculate the ending span offset from the beginning of the last line.
-        /// It also get the list of Line numbers occupated by this node.
+        /// It also get the list of Line numbers occupated by this node, and the offset of each line.
         /// </summary>
-        public Tuple<int, int, int, List<int>> FromToPositions
+        public virtual Tuple<int, int, int, List<int>,List<int>> FromToPositions
         {
             get
             {
@@ -139,6 +187,7 @@ namespace TypeCobol.Compiler.Nodes {
                     int delta_ln = 0;
                     int span = 0;
                     List<int> lineNumbers = new List<int>();
+                    List<int> lineOffsets = new List<int>();
                     do
                     {
                         var token = CodeElement.ConsumedTokens[i];
@@ -148,15 +197,23 @@ namespace TypeCobol.Compiler.Nodes {
                             if (lineNumbers.Count > 0)
                             {//Add lines between
                                 int lastLine = lineNumbers[lineNumbers.Count - 1];
-                                while(++lastLine < curLineIndex)
+                                while (++lastLine < curLineIndex)
+                                {
                                     lineNumbers.Add(lastLine);
+                                    lineOffsets.Add(-1);///??? TODO
+                                }
                             }
-                            lineNumbers.Add(curLineIndex);
+                            lineNumbers.Add(curLineIndex);                            
                             to += delta_ln;
+                            lineOffsets.Add(to == 0 ? from : to);
                             span = 0;
-                            while (i < CodeElement.ConsumedTokens.Count && curLineIndex == CodeElement.ConsumedTokens[i].Line)
+                            while ((i < CodeElement.ConsumedTokens.Count) && ((curLineIndex == CodeElement.ConsumedTokens[i].Line) 
+                                || (CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken)))
                             {
-                                span = CodeElement.ConsumedTokens[i].EndColumn;
+                                if (!(CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                                {
+                                    span = CodeElement.ConsumedTokens[i].EndColumn;
+                                }
                                 i++;
                             }
                             to += span;
@@ -168,7 +225,8 @@ namespace TypeCobol.Compiler.Nodes {
                         }
                     } while (i < CodeElement.ConsumedTokens.Count);
                     lineNumbers.TrimExcess();
-                    return new Tuple<int, int, int, List<int>>(from, to, span, lineNumbers);
+                    lineOffsets.TrimExcess();
+                    return new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lineNumbers, lineOffsets);
                 }
                 return null;
             }
