@@ -105,37 +105,6 @@ namespace TypeCobol.Codegen.Actions
                 private set;
             }
 
-            /// <summary>
-            /// Positions calculation
-            /// </summary>
-            public override Tuple<int, int, int, List<int>, List<int>> FromToPositions
-            {
-                get
-                {
-                    Tuple<int, int, int, List<int>, List<int>> MyPositions = base.FromToPositions;
-                    //So Update from to position depending on Source Position Line Offset.
-                    List<int> newLineOffsets = new List<int>();
-                    int from = 0;
-                    int to = 0;
-                    int span = MyPositions.Item3;
-                    for (int i = 0; i < MyPositions.Item4.Count; i++)
-                    {
-                        int index = SourceNodePositions.Item4.IndexOf(MyPositions.Item4[i]);
-                        int offset = SourceNodePositions.Item5[index];
-                        newLineOffsets.Add(offset);
-                        if (i == 0)
-                        {
-                            if (index == 0)
-                                from = MyPositions.Item1;//In the first line same doesn't move
-                            else
-                                from = MyPositions.Item1 + offset;//Mode from the offset of the line
-                        }                        
-                    }
-                    to = from + (MyPositions.Item2 - MyPositions.Item1) ;
-                    return new Tuple<int, int, int, List<int>, List<int>>(from, to, span, MyPositions.Item4, newLineOffsets);
-                }
-            }
-
             public string ReplaceCode
             {
                 get;
