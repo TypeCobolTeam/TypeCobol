@@ -104,6 +104,14 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// The Map which gives for a buffer its associated first line number.
+        /// </summary>
+        public Dictionary<StringSourceText, int> BufferLineMap
+        {
+            get;
+            private set;
+        }
+        /// <summary>
         /// Set the current phase
         /// </summary>
         public Phase CurrentPhase
@@ -217,6 +225,7 @@ namespace TypeCobol.Codegen.Generators
             NodedLines = new BitArray(count);
             LineData = new LineInfo[count];
             FunctionDeclarationNodeIndices = new List<int>();
+            BufferLineMap = new Dictionary<StringSourceText, int>();
         }
 
         /// <summary>
@@ -313,13 +322,20 @@ namespace TypeCobol.Codegen.Generators
                     if (buffer == null)
                     {
                         buffer = new StringSourceText();
+                        BufferLineMap[buffer] = lineIndex;
                     }
-                    lineindex_buffer = lineIndex;
+                    lineindex_buffer = BufferLineMap[buffer];
                 }
                 if (functionBody)
                     LineData[lineIndex].FunctionBodyBuffer = buffer;
                 else
                     LineData[lineIndex].Buffer = buffer;
+                //Propagate Comment from buffer line index to current line.
+                if (bCommented)
+                {
+                    for (int k = lineindex_buffer; k < lineIndex; k++)
+                        CommentedLines[k] = true;
+                }
             }
             //Associate this node to its buffer
             data.Buffer = buffer;
@@ -473,7 +489,7 @@ namespace TypeCobol.Codegen.Generators
             }
             for (int i = 0; i < l1.Count; i++)
             {
-                if (l2[i].Equals(l1[i]))
+                if (l2.Contains(l1[i]))
                     return true;
             }
             return false;

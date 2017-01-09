@@ -219,7 +219,7 @@ namespace TypeCobol.Codegen.Actions
                         stack.Push(item);
                         if (tokenColonColon != null)
                         {
-                            item = new GenerateQualifierToken(new QualifierTokenCodeElement(tokenColonColon), string.Intern("OF"),
+                            item = new GenerateQualifierToken(new QualifierTokenCodeElement(tokenColonColon), string.Intern(" OF "),
                                 sourcePositions);
                             stack.Push(item);
                         }
