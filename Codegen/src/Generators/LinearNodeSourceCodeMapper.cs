@@ -422,7 +422,6 @@ namespace TypeCobol.Codegen.Generators
                     Nodes[i].Buffer.AddPosition(to);//To Pos
                     Nodes[i].From = from;
                     Nodes[i].To = to;
-                    //Now if the node has qualifiers the substitution must take place here
                 }
             }
         }
