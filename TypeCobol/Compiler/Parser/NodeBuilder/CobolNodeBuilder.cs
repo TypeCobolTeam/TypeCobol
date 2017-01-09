@@ -7,6 +7,7 @@ using Antlr4.Runtime.Tree;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.AntlrUtils;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -72,12 +73,46 @@ namespace TypeCobol.Compiler.Parser
             Program.SyntaxTree.Exit();
 		}
 
+        public IList<ParserDiagnostic> GetDiagnostics(ProgramClassParser.CobolCompilationUnitContext context)
+        {
+            IList<ParserDiagnostic> diagnostics = new List<ParserDiagnostic>();
+            AddDiagnosticsAttachedInContext(diagnostics, context);
+            if(diagnostics.Count > 0)
+            {
+                return diagnostics;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
+        private void AddDiagnosticsAttachedInContext(IList<ParserDiagnostic> diagnostics, ParserRuleContext context)
+        {
+            var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
+            if (ruleNodeWithDiagnostics.Diagnostics != null)
+            {
+                foreach (var ruleDiagnostic in ruleNodeWithDiagnostics.Diagnostics)
+                {
+                    diagnostics.Add((ParserDiagnostic)ruleDiagnostic);
+                }
+            }
+            if (context.children != null)
+            {
+                foreach (var childNode in context.children)
+                {
+                    if (childNode is IRuleNode)
+                    {
+                        AddDiagnosticsAttachedInContext(diagnostics, (ParserRuleContext)((IRuleNode)childNode).RuleContext);
+                    }
+                }
+            }
+        }
 
-		/// <summary>
-		/// Initialization code run before parsing each new Program or Class
-		/// </summary>
-		public override void EnterCobolCompilationUnit(ProgramClassParser.CobolCompilationUnitContext context) {
+        /// <summary>
+        /// Initialization code run before parsing each new Program or Class
+        /// </summary>
+        public override void EnterCobolCompilationUnit(ProgramClassParser.CobolCompilationUnitContext context) {
 			TableOfGlobals = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Global);
 			Program = null;
 			Class = null;

@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[14,20]<27,Error,Syntax>Syntax error : no viable alternative at input 'VARYING' (RuleStack=codeElement, OffendingSymbol=[14,20:VARYING]<VARYING> on line 5)
+[14,20]<27,Error,Syntax>Syntax error : mismatched input 'VARYING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>searchStatement>binarySearch>variable1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference, OffendingSymbol=[14,20:VARYING]<VARYING> on line 5)
 [8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal subscripted identifier (RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 7)
 [8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal reference-modified identifier (RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 8)
 [8,18]<27,Error,Syntax>Syntax error : SEARCH: Illegal subscripted identifier (RuleStack=codeElement>searchStatement>serialSearch>variable1>identifier, OffendingSymbol=[8,18:identifier1]<UserDefinedWord> on line 9)
@@ -11,7 +11,7 @@
 
 [[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [18,18:y]<UserDefinedWord>
 
-[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [12,12:x]<UserDefinedWord>
+[[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [22,22:y]<UserDefinedWord>
 
 [[SearchStatement]] [1,6:SEARCH]<SEARCH> --> [24,24:)]<RightParenthesisSeparator>
 

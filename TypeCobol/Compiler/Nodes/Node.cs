@@ -4,7 +4,6 @@ using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
@@ -16,13 +15,13 @@ namespace TypeCobol.Compiler.Nodes {
     ///     - parent/children relations
     ///     - unique identification accross the tree
     /// </summary>
-    public abstract class Node {
+    public abstract class Node : IVisitable{
         protected List<Node> children = new List<Node>();
 
         /// <summary>TODO: Codegen should do its stuff without polluting this class.</summary>
         public bool? Comment = null;
 
-        public Node(CodeElement CodeElement) {
+        protected Node(CodeElement CodeElement) {
             this.CodeElement = CodeElement;
         }
 
@@ -42,6 +41,59 @@ namespace TypeCobol.Compiler.Nodes {
             get { return children.AsReadOnly(); }
         }
 
+        /// <summary>
+        /// This is usefull durring Code generation phase in order to create un Array of Node.
+        /// Each Node will have it Node Index in the Array.
+        /// </summary>
+        public int NodeIndex { get; set; }
+
+        /// <summary>
+        /// Some interresting flags. Note each flag must be a power of 2
+        /// for instance: 0x1 << 0; 0x01 << 1; 0x01 << 2 ... 0x01 << 32
+        /// </summary>
+        public enum Flag : int
+        {
+            /// <summary>
+            /// Flag that indicates that the node has been visited for Type Cobol Qualification style detection.
+            /// </summary>
+            HasBeenTypeCobolQualifierVisited = 0x01 << 0,
+        };
+        /// <summary>
+        /// A 32 bits value for flags associated to this Node
+        /// </summary>
+        public uint Flags 
+        { 
+            get; 
+            internal set; 
+        }
+
+        /// <summary>
+        /// Test the value of a flag
+        /// </summary>
+        /// <param name="flag">The flag to test</param>
+        /// <returns>true if the flag is set, false otherwise</returns>
+        public bool IsFlagSet(Flag flag)
+        {
+            return (Flags & (uint)flag) != 0;
+        }
+
+        /// <summary>
+        /// Set the value of a flag.
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="value"></param>
+        /// <param name="bRecurse">True if the setting must be recursive over the Children</param>
+        public void SetFlag(Flag flag, bool value, bool bRecurse = false)
+        {            
+            Flags = value  ? (Flags | (uint)flag) : (Flags & ~(uint)flag);
+            if (bRecurse)
+            {
+                foreach (var child in children)
+                {
+                    child.SetFlag(flag, value);
+                }
+            }
+        }
 
         public virtual string Name {
             get { return ID; }
@@ -114,16 +166,91 @@ namespace TypeCobol.Compiler.Nodes {
             get { return Attributes.Get(this, attribute); }
         }
 
+        /// <summary>
+        /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value is NULL.
+        /// In the consumed tokens span over several lines then the size of the newline sequence is included for each line.
+        /// The method also calculate the ending span offset from the beginning of the last line.
+        /// It also get the list of Line numbers occupated by this node, and the offset of each line.
+        /// </summary>
+        public virtual Tuple<int, int, int, List<int>,List<int>> FromToPositions
+        {
+            get
+            {
+                if (CodeElement == null || CodeElement.ConsumedTokens == null)
+                    return null;
+                if (CodeElement.ConsumedTokens.Count > 0)
+                {
+                    int ln_size = System.Environment.NewLine.Length;
+                    int from = CodeElement.ConsumedTokens[0].Column;
+                    int to = 0;
+                    int i = 0;
+                    int delta_ln = 0;
+                    int span = 0;
+                    List<int> lineNumbers = new List<int>();
+                    List<int> lineOffsets = new List<int>();
+                    do
+                    {
+                        var token = CodeElement.ConsumedTokens[i];
+                        if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                        {//Don't take in account imported tokens -> This avoid including lines that come from COPYs files.
+                            int curLineIndex = CodeElement.ConsumedTokens[i].Line;                            
+                            if (lineNumbers.Count > 0)
+                            {//Add lines between
+                                int lastLine = lineNumbers[lineNumbers.Count - 1];
+                                while (++lastLine < curLineIndex)
+                                {
+                                    lineNumbers.Add(lastLine);
+                                    lineOffsets.Add(-1);///??? TODO
+                                }
+                            }
+                            lineNumbers.Add(curLineIndex);                            
+                            to += delta_ln;
+                            lineOffsets.Add(to == 0 ? from : to);
+                            span = 0;
+                            while ((i < CodeElement.ConsumedTokens.Count) && ((curLineIndex == CodeElement.ConsumedTokens[i].Line) 
+                                || (CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken)))
+                            {
+                                if (!(CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                                {
+                                    span = CodeElement.ConsumedTokens[i].EndColumn;
+                                }
+                                i++;
+                            }
+                            to += span;
+                            delta_ln = ln_size;
+                        }
+                        else
+                        {
+                            i++;
+                        }
+                    } while (i < CodeElement.ConsumedTokens.Count);
+                    lineNumbers.TrimExcess();
+                    lineOffsets.TrimExcess();
+                    return new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lineNumbers, lineOffsets);
+                }
+                return null;
+            }
+        }
+
         public virtual IEnumerable<ITextLine> Lines {
             get {
                 var lines = new List<ITextLine>();
                 if (CodeElement == null || CodeElement.ConsumedTokens == null) return lines;
-                foreach (var token in CodeElement.ConsumedTokens)
-                    if (!lines.Contains(token.TokensLine))
-                        lines.Add(token.TokensLine);
+                foreach (var token in CodeElement.ConsumedTokens) {//JCM: Don't take in account imported token.
+                    if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken)) {
+                        if (!lines.Contains(token.TokensLine))
+                            lines.Add(token.TokensLine);
+                    }
+                }
                 return lines;
             }
         }
+
+        /// <summary>
+        /// Marker for Code Generation to know if this Node will generate code.
+        /// TODO this method should be in CodeGen project
+        /// </summary>
+        public bool NeedGeneration { get; set; }
 
         public IList<CodeElementHolder<T>> GetChildren<T>() where T : CodeElement {
             var results = new List<CodeElementHolder<T>>();
@@ -184,6 +311,20 @@ namespace TypeCobol.Compiler.Nodes {
             children.Clear();
         }
 
+        /// <summary>
+        /// Get All Childrens.
+        /// </summary>
+        /// <param name="lines">A List to store all children.</param>
+        public void ListChildren(List<Node> list)
+        {
+            if (list == null) return;
+            foreach (var child in children)
+            {
+                list.Add(child);
+                child.ListChildren(list);
+            }
+        }
+
         /// <summary>Get this node or one of its children that has a given URI.</summary>
         /// <param name="uri">Node unique identifier to search for</param>
         /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
@@ -216,7 +357,39 @@ namespace TypeCobol.Compiler.Nodes {
             return str.ToString();
         }
 
-        private void Dump(StringBuilder str, int i) {
+        /// <summary>
+        /// Don't override this method, implement VisitNode on child
+        /// </summary>
+        /// <param name="astVisitor"></param>
+        /// <returns></returns>
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            bool continueVisit = astVisitor.BeginNode(this) && VisitNode(astVisitor);
+
+            if (continueVisit && CodeElement != null)
+            {
+                CodeElement.AcceptASTVisitor(astVisitor);
+            }
+
+            if (continueVisit) {
+                foreach (Node child in Children) {
+                    if (!continueVisit) {
+                        break;
+                    }
+                    if (astVisitor.BeginNode(child)) {
+                        continueVisit = child.AcceptASTVisitor(astVisitor);
+                    }
+                }
+            }
+
+            astVisitor.EndNode(this);
+            return continueVisit;
+        }
+
+        public abstract bool VisitNode(IASTVisitor astVisitor);
+
+
+        private void Dump(StringBuilder str, int i)
+        {
             for (var c = 0; c < i; c++) str.Append("  ");
             if (Comment == true) str.Append('*');
             if (Name != null) str.AppendLine(Name);
@@ -346,6 +519,10 @@ namespace TypeCobol.Compiler.Nodes {
     /// <summary>Root of any Node tree, with null CodeElement.</summary>
     public class Root : Node, CodeElementHolder<CodeElement> {
         public Root() : base(null) {}
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class Program : Node, CodeElementHolder<ProgramIdentification> {
@@ -357,6 +534,11 @@ namespace TypeCobol.Compiler.Nodes {
                 return this.CodeElement().ProgramName.Name;
             }
         }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class LibraryCopy : Node, CodeElementHolder<LibraryCopyCodeElement>, Child<Program> {
@@ -364,6 +546,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ID {
             get { return "copy"; }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
         }
     }
 
@@ -373,6 +560,10 @@ namespace TypeCobol.Compiler.Nodes {
         public override string ID {
             get { return this.CodeElement().ClassName.Name; }
         }
+
+        public override bool VisitNode(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class Factory : Node, CodeElementHolder<FactoryIdentification> {
@@ -380,6 +571,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ID {
             get { return "TODO#248"; }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
         }
     }
 
@@ -389,6 +585,11 @@ namespace TypeCobol.Compiler.Nodes {
         public override string ID {
             get { return this.CodeElement().MethodName.Name; }
         }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class Object : Node, CodeElementHolder<ObjectIdentification> {
@@ -397,6 +598,11 @@ namespace TypeCobol.Compiler.Nodes {
         public override string ID {
             get { return "TODO#248"; }
         }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
 
     public class End : Node, CodeElementHolder<CodeElementEnd> {
@@ -404,6 +610,11 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override string ID {
             get { return "end"; }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
         }
     }
 } // end of namespace TypeCobol.Compiler.Nodes

@@ -71,16 +71,19 @@
         /// <returns>Number of lines written during this method call.</returns>
         private int WriteInputLinesUpTo(ITextLine line)
         {
-            if (!IsInInput(line)) return 0;
+            if (!IsInInput(line)) 
+                return 0;
             int lines = 0;
             while (offset < Input.Count)
             {
                 var l = Input[offset];
                 if (l == line) break;
-                if (ShouldCopy(l)) Write(l, null);
+                if (ShouldCopy(l)) 
+                    Write(l, null);
                 // offset is normally increased by a call to Write,
                 // so don't forget to do it to avoid infinite loop
-                else offset++;
+                else 
+                    offset++;
                 lines++;
             }
             return lines;

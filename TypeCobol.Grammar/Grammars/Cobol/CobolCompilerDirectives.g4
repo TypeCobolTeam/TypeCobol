@@ -6,7 +6,7 @@
 
 grammar CobolCompilerDirectives;
 
-options { superClass=TypeCobol.Compiler.AntlrUtils.LineAwareParser; }
+options { superClass=TypeCobol.Compiler.AntlrUtils.LineAwareParser; contextSuperClass=TypeCobol.Compiler.AntlrUtils.ParserRuleContextWithDiagnostics; }
 
 import CobolWords;
 
@@ -617,13 +617,13 @@ replaceCompilerStatement:
 // The SERVICE LABEL statement can appear only in the PROCEDURE DIVISION, but not in the declaratives section.        
 
 serviceLabelCompilerStatement:
-                                 SERVICE LABEL;
+                                 SERVICE_CD LABEL;
 
 // p545: SERVICE RELOAD statement
 // The SERVICE RELOAD statement is syntax checked, but has no effect on the execution of the program.
 
 serviceReloadCompilerStatement:
-                                  SERVICE RELOAD UserDefinedWord;
+                                  SERVICE_CD RELOAD UserDefinedWord;
 
 // p545: SKIP statements
 // The SKIP1, SKIP2, and SKIP3 statements specify blank lines that the compiler should add when printing the source listing. 

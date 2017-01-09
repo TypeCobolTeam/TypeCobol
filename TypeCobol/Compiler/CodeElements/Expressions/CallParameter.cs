@@ -1,11 +1,12 @@
-﻿using System;
+﻿
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// Represents a call instruction to a program, method or function
     /// </summary>
-    public class CallSite
+    public class CallSite : IVisitable
     {
         /// <summary>
         /// Name of the called program, method, or function
@@ -16,12 +17,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// Parameters shared with the called program, method, or function
         /// </summary>
         public CallSiteParameter[] Parameters { get; set; }
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, CallTarget)
+                && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) Parameters);
+        }
     }
 
     /// <summary>
     /// Parameters shared in a call instruction to program, method, or function
     /// </summary>
-    public class CallSiteParameter
+    public class CallSiteParameter : IVisitable
     {
         /// <summary>
         /// Technique used for sharing the parameter between the caller and the callee
@@ -57,6 +64,11 @@ namespace TypeCobol.Compiler.CodeElements
             if (StorageAreaOrValue != null) str.Append(StorageAreaOrValue);
             else str.Append('?');
             return str.ToString();
+        }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, SharingMode, Omitted, StorageAreaOrValue);
         }
     }
     
@@ -95,7 +107,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Represents an entry point in a program, method or function which can be the target of a call
     /// </summary>
-    public class CallTarget
+    public class CallTarget : IVisitable
     {
         /// <summary>
         /// Name of the entry point.
@@ -108,12 +120,18 @@ namespace TypeCobol.Compiler.CodeElements
         /// Parameters shared with the calling program, method, or function
         /// </summary>
         public CallTargetParameter[] Parameters { get; set; }
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, Name)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) Parameters);
+        }
     }
 
     /// <summary>
     /// Parameters shared with a caller at the entry point of a program, method, or function
     /// </summary>
-    public class CallTargetParameter
+    public class CallTargetParameter : IVisitable
     {
         /// <summary>
         /// Technique used for sharing the parameter between the caller and the callee
@@ -129,6 +147,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// Reference to a storage area shared with the caller
         /// </summary>
         public StorageArea StorageArea { get; set; }
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this) && 
+                   this.ContinueVisitToChildren(astVisitor, SharingMode, PassingDirection, StorageArea);
+        }
     }
 
     /// <summary>

@@ -31,10 +31,10 @@ namespace TypeCobol.Compiler.Source
 
         public enum Flags : byte
         {
-            InclStart = 0x01,
+            InclStart = 0x01,//Shall the start position be include in range
             FixedSize = 0x01 << 1,
             Locked = 0x01 << 2, //The position won't move
-            Default = InclStart,
+            Default = 0,
             Last = 3    //Last shift index
         };
 

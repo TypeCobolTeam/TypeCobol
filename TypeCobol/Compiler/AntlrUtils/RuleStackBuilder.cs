@@ -11,7 +11,11 @@ namespace TypeCobol.Compiler.AntlrUtils
             var parent = context.parent;
             while (parent != null)
             {
-                builder.Insert(0, GetRuleName(parent) + '>');
+                var ruleName = GetRuleName(parent);
+                // Hide the root rule which is useful for error recovery and perf, but does not exist in the pure Cobol grammar
+                if (ruleName == "cobolCodeElements") break;
+
+                builder.Insert(0, ruleName + '>');
                 parent = parent.parent;
             }
             return builder.ToString();

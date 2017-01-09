@@ -37,7 +37,7 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 					str.Append("01 ").Append(name);
 					AlphanumericValue picture = null;
                         //Type exists from Cobol 2002
-					if (this.CodeElement().DataType.CobolLanguageLevel >= CobolLanguageLevel.Cobol2002) {
+					if (this.CodeElement().DataType.CobolLanguageLevel >= TypeCobol.Compiler.CobolLanguageLevel.Cobol2002) {
 						var found = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));
 						if (found.Count > 0) {
 							customtype = (TypeDefinition)found[0];
@@ -74,6 +74,12 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 		}
 	}
 	public bool IsLeaf { get { return true; } }
-}
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            //Generated Node doesn't need to be visited
+            return false;
+        }
+    }
 
 }

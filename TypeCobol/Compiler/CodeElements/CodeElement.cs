@@ -1,7 +1,5 @@
-﻿using Antlr4.Runtime;
-using System;
+using Antlr4.Runtime;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Diagnostics;
@@ -15,13 +13,13 @@ namespace TypeCobol.Compiler.CodeElements
     /// Common properties shared between all code elements.
     /// A CodeElement produced during the first parsing phase is also a token consumed by the second parsing phase. 
     /// </summary>
-    public abstract partial class CodeElement: IToken
+    public abstract partial class CodeElement: IToken, IVisitable
     {
-        public CodeElement(CodeElementType type)
+        protected CodeElement(CodeElementType type)
         {
             Type = type;
+            ConsumedTokens = new List<Token>();
             SymbolInformationForTokens = new Dictionary<Token, SymbolInformation>();
-            Diagnostics = new List<Diagnostic>();
         }
 
         /// <summary>
@@ -29,14 +27,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public CodeElementType Type { get; private set; }
 
-
-
         private IList<Token> _consumedTokens;
         /// <summary>
         /// All significant tokens consumed in the source document to build this code element
         /// </summary>
-        public IList<Token> ConsumedTokens {
-            get { return this._consumedTokens; } 
+        public IList<Token> ConsumedTokens
+        {
+            get { return this._consumedTokens; }
             set {
                 this._consumedTokens = value;
                 ResetLazyProperties();
@@ -84,15 +81,36 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// List of errors found on this CodeElement
         /// </summary>
-        [NotNull]
-        public IList<Diagnostic> Diagnostics { get; private set; }
 
+        public IList<Diagnostic> Diagnostics { get; set; }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            bool continueVisit = astVisitor.BeginCodeElement(this) && VisitCodeElement(astVisitor);
+            astVisitor.EndCodeElement(this);
+            return continueVisit;
+        }
+
+        public virtual bool VisitCodeElement(IASTVisitor astVisitor) {
+            var continueVisit = this.ContinueVisitToChildren(astVisitor, CallTarget, StorageAreaGroupsCorrespondingImpact)
+                                && this.ContinueVisitToChildren(astVisitor, CallSites, ConsumedTokens, StorageAreaReads, StorageAreaWrites);
+            if (continueVisit && StorageAreaDefinitions != null)
+            {
+                continueVisit = this.ContinueVisitToChildren(astVisitor, StorageAreaDefinitions.Keys,
+                                                                            StorageAreaDefinitions.Values);
+            }
+            if (continueVisit && SymbolInformationForTokens != null)
+            {
+                continueVisit = this.ContinueVisitToChildren(astVisitor, SymbolInformationForTokens.Keys,
+                                                                         SymbolInformationForTokens.Values);
+            }
+            return continueVisit;
+        }
 
         /// <summary>
         /// Apply propperties of the current CodeElement to the specified one.
         /// </summary>
         /// <param name="ce"></param>
-        public void ApplyPropertiesToCE(CodeElement ce)
+        public void ApplyPropertiesToCE([NotNull] CodeElement ce)
         {
             ce.ConsumedTokens = this.ConsumedTokens;
             ce.Diagnostics = this.Diagnostics;
@@ -127,7 +145,7 @@ namespace TypeCobol.Compiler.CodeElements
 			return sb.ToString();
 		}
 
-        private bool? _isInsideCopy = null;
+        private bool? _isInsideCopy = null; 
 
         /// <summary>
         /// Return true if this CodeElement is inside a COPY
@@ -312,7 +330,7 @@ namespace TypeCobol.Compiler.CodeElements
 
     public abstract class NamedCodeElement : CodeElement
     {
-        public NamedCodeElement(CodeElementType type) : base(type) { }
+        protected NamedCodeElement(CodeElementType type) : base(type) { }
 
         public abstract string Name { get; }
     }

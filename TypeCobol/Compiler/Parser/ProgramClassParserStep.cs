@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -32,12 +33,12 @@ namespace TypeCobol.Compiler.Parser
             //parser.Interpreter.PredictionMode = PredictionMode.LlExactAmbigDetection; 
 
             // Register all parse errors in a list in memory
-            DiagnosticSyntaxErrorListener errorListener = new DiagnosticSyntaxErrorListener();
+            ParserDiagnosticErrorListener errorListener = new ParserDiagnosticErrorListener();
             cobolParser.RemoveErrorListeners();
             cobolParser.AddErrorListener(errorListener);
 
             // Try to parse a Cobol program or class
-            ProgramClassParser.CobolCompilationUnitContext codeElementParseTree = cobolParser.cobolCompilationUnit();
+            ProgramClassParser.CobolCompilationUnitContext programClassParseTree = cobolParser.cobolCompilationUnit();
 
             // Visit the parse tree to build a first class object representing a Cobol program or class
             ParseTreeWalker walker = new ParseTreeWalker();
@@ -46,16 +47,30 @@ namespace TypeCobol.Compiler.Parser
             programClassBuilder.Dispatcher = new NodeDispatcher();
             programClassBuilder.Dispatcher.CreateListeners();
 
-			try { walker.Walk(programClassBuilder, codeElementParseTree); }
-			catch (Exception ex) {
-				var code = Diagnostics.MessageCode.ImplementationError;
-				errorListener.Diagnostics.Add(new ParserDiagnostic(ex.ToString(), null,null, code));
-			}
-                        
+            ParserDiagnostic programClassBuilderError = null;
+            try { walker.Walk(programClassBuilder, programClassParseTree); }
+            catch (Exception ex)
+            {
+                var code = Diagnostics.MessageCode.ImplementationError;
+                programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code);
+            }
+
+            //Complete some information on Node and run checker that need a full AST
+            if (programClassBuilder.Program != null) {
+                programClassBuilder.Program.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
+            }
+
             // Register compiler results
             newProgram = programClassBuilder.Program;
             newClass = programClassBuilder.Class;
-            diagnostics = errorListener.Diagnostics;
+            diagnostics = programClassBuilder.GetDiagnostics(programClassParseTree);
+            if(programClassBuilderError != null)
+            {
+                if (diagnostics == null) diagnostics = new List<ParserDiagnostic>();
+                diagnostics.Add(programClassBuilderError);
+            }
         }
+
+
     }
 }

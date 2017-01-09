@@ -21,10 +21,10 @@
 
 [[LocalStorageSectionHeader]] [8,20:LOCAL-STORAGE]<LOCAL_STORAGE> --> [29,29+:.]<PeriodSeparator>
 
-[[ParagraphHeader]] [8,18:MyParagraph]<UserDefinedWord> --> [19,19+:.]<PeriodSeparator>
-- ParagraphName = MyParagraph
-
 [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+
+[[ParagraphHeader]] [8,18:MyParagraph]<SectionParagraphName> --> [19,19+:.]<PeriodSeparator>
+- ParagraphName = MyParagraph
 
 [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [61,61+:.]<PeriodSeparator>
 - InputParameters = InParam1
@@ -33,10 +33,10 @@
 [[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [39,39+:.]<PeriodSeparator>
 - InputParameters = InParam1 ByValue:InParam2 ByValue:InParam3 ByReference:InParam4 ByReference:InParam5
 
-[[SectionHeader]] [8,17:MySection1]<UserDefinedWord> --> [26,26+:.]<PeriodSeparator>
+[[SectionHeader]] [8,17:MySection1]<SectionParagraphName> --> [26,26+:.]<PeriodSeparator>
 - SectionName = MySection1
 
-[[SectionHeader]] [8,17:MySection2]<UserDefinedWord> --> [29,29+:.]<PeriodSeparator>
+[[SectionHeader]] [8,17:MySection2]<SectionParagraphName> --> [29,29+:.]<PeriodSeparator>
 - SectionName = MySection2
 - PriorityNumber = 10
 

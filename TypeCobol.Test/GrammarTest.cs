@@ -28,7 +28,7 @@ namespace TypeCobol.Test {
 			string samples = @"Samples";
 			string root = PlatformUtils.GetPathForProjectFile(samples);
 			string[] files = Directory.GetFiles(root, regex, SearchOption.AllDirectories);
-			string[] include = { };
+            string[] include = { };
 			string[] exclude = { };
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
@@ -55,8 +55,8 @@ namespace TypeCobol.Test {
 				string path = Path.Combine(root, filename);
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
-				var document = Parser.Parse(path, format);
-				watch.Stop();
+                var document = Parser.Parse(path, format);
+                watch.Stop();
 				//TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
 				TimeSpan elapsed = watch.Elapsed;
 				parsingSumDuration += elapsed;
@@ -90,7 +90,11 @@ namespace TypeCobol.Test {
 			        var writer = new StringWriter();
                     watch.Reset();
 			        watch.Start();
+#if GENERATOR2
+                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document, writer, null);
+#else
 			        var generator = new TypeCobol.Codegen.Generator(writer, document.Results.TokensLines, null);
+#endif
 			        
 			        var program = document.Results.ProgramClassDocumentSnapshot.Program;
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
@@ -109,12 +113,7 @@ namespace TypeCobol.Test {
 			        var actual = AsLines(writer.ToString());
 
 			        Directory.CreateDirectory(GrammarTestFolder);
-			        File.WriteAllLines(
-			            GrammarTestFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Expected" +
-			            Path.GetExtension(file), expected);
-			        File.WriteAllLines(
-			            GrammarTestFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Actual" +
-			            Path.GetExtension(file), actual);
+			        
 
 			        var linesKO = new List<int>();
 			        for (int i = 0; i < Math.Min(expected.Count, actual.Count); i++) {
@@ -122,7 +121,15 @@ namespace TypeCobol.Test {
 			        }
 			        var errors = new System.Text.StringBuilder();
 			        string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));
-			        if (linesKO.Count > 0 || expected.Count != actual.Count) errors.AppendLine("--- Lines mismatch ---");
+			        if (linesKO.Count > 0 || expected.Count != actual.Count) {
+			            errors.AppendLine("--- Lines mismatch ---");
+                        File.WriteAllLines(
+                        GrammarTestFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Expected" +
+                        Path.GetExtension(file), expected);
+                        File.WriteAllLines(
+                            GrammarTestFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Actual" +
+                            Path.GetExtension(file), actual);
+                    }
 			        int start = -1;
 			        for (int i = 0; i < linesKO.Count; i++) {
 			            int currentline = linesKO[i];

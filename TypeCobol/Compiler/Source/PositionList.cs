@@ -199,5 +199,13 @@ namespace TypeCobol.Compiler.Source
             sb.Append("}");
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Dump the Position List
+        /// </summary>
+        public void Dump()
+        {
+            System.Console.WriteLine(ToString());
+        }
     }
 }

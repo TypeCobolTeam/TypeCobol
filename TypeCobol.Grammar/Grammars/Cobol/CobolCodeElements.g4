@@ -127,7 +127,6 @@ codeElement:
 	exitStatement |
 	gotoStatement |
 	performStatement |
-	performProcedureStatement |
 	performStatementEnd |
 
 	// --- Program or method linkage statements ---
@@ -664,7 +663,7 @@ sourceComputerParagraph:
 
 // p111 : OBJECT-COMPUTER Format
 
-objectComputerParagraph :
+objectComputerParagraph:
     OBJECT_COMPUTER PeriodSeparator
     (computerName=alphanumericValue4 
      memorySizeClause?
@@ -862,7 +861,7 @@ characterInCollatingSequence:
 // Provides a means of specifying one or more symbolic characters.
 
 symbolicCharactersClause:
-    SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetNameReference)?;
+	SYMBOLIC CHARACTERS? symbolicCharactersOrdinalPositions+ (IN alphabetNameReference)?;
 
 symbolicCharactersOrdinalPositions:
     symbolicCharacterDefinition+ (ARE|IS)? ordinalPositionInCollatingSequence+;
@@ -1529,7 +1528,7 @@ rerunClause:
 // p149: The SAME SORT-MERGE AREA clause is equivalent to the SAME SORT AREA clause.
 
 sameAreaClause:
-    SAME (RECORD | SORT_ARG | SORT_MERGE)? AREA? FOR? fileNameReference+;
+    SAME (RECORD | SORT | SORT_MERGE)? AREA? FOR? fileNameReference+;
 
 // p149: The MULTIPLE FILE TAPE clause (format 1) specifies that two or more files share the same physical reel of tape.
 // This clause is syntax checked, but has no effect on the execution of the program. The function is performed by the system through the LABEL parameter of the DD statement.
@@ -2144,7 +2143,7 @@ dataDescriptionEntry:
 	  // dataDescriptionEntry, dataRenamesEntry and dataConditionEntry
 	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 	
 
-	levelNumber (dataNameDefinition | FILLER)? redefinesClause?
+	levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause?
 	( pictureClause
 	| blankWhenZeroClause
 	| externalClause
@@ -2171,7 +2170,7 @@ dataDescriptionEntry:
 // data description entry in that record.
 
 dataRenamesEntry: { CurrentToken.Text == "66" }? 
-	levelNumber dataNameDefinition renamesClause PeriodSeparator;
+	levelNumber=integerValue2 dataNameDefinition renamesClause PeriodSeparator;
 
 // p186: Format 3: condition-name
 // Format 3 describes condition-names.
@@ -2184,7 +2183,7 @@ dataRenamesEntry: { CurrentToken.Text == "66" }?
 // alphanumeric group items.
 
 dataConditionEntry: { CurrentToken.Text == "88" }? 
-	levelNumber conditionNameDefinition valueClauseForCondition PeriodSeparator;
+	levelNumber=integerValue2 conditionNameDefinition valueClauseForCondition PeriodSeparator;
 
 // p186: The level-number specifies the hierarchy of data within a record, and identifies
 // special-purpose data entries. A level-number begins a data description entry, a
@@ -2249,7 +2248,7 @@ dataConditionEntry: { CurrentToken.Text == "88" }?
 // Subordinate data-names that are referenced in the program or method must be either uniquely defined, or made unique through qualification. 
 // Unreferenced data-names need not be uniquely defined. 
 
-levelNumber: integerValue;
+// levelNumber: integerValue2 => LevelNumber token
 
 // p187: data-name-1
 // Explicitly identifies the data being described.
@@ -3059,7 +3058,7 @@ usageClause:
 					(COMP_3 NATIVE?) | (COMPUTATIONAL_3 NATIVE?) |
 					(COMP_4 NATIVE?) | (COMPUTATIONAL_4 NATIVE?) |
 					(COMP_5 NATIVE?) | (COMPUTATIONAL_5 NATIVE?) |
-					(DISPLAY_ARG NATIVE?)   |
+					(DISPLAY NATIVE?)   |
 					(DISPLAY_1 NATIVE?) |
 					INDEX |
 					(NATIONAL NATIVE?) |
@@ -3449,7 +3448,7 @@ useStatement:
 // “Common processing facilities” on page 286.
 
 useStatementForExceptionDeclarative:
-	USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE ON? (fileNameReference+ | (INPUT | OUTPUT | I_O | EXTEND));
+	USE GLOBAL? AFTER STANDARD? (EXCEPTION | ERROR) PROCEDURE ON? (fileNameReference+ | (INPUT | OUTPUT | I_O | EXTEND)) PeriodSeparator;
 
 // p548: ... more rules that appky to declarative procedures until page 549 ...
 
@@ -3505,7 +3504,7 @@ useStatementForExceptionDeclarative:
 // program (except ALTER statements in declarative procedures) 
 
 useStatementForDebuggingDeclarative:
-	USE FOR? DEBUGGING ON? (procedureName+ | (ALL PROCEDURES));
+	USE FOR? DEBUGGING ON? (procedureName+ | (ALL PROCEDURES)) PeriodSeparator;
 
 // p252: Procedures
 // Within the PROCEDURE DIVISION, a procedure consists of a section or a group of
@@ -5589,15 +5588,9 @@ fileNameWithNoRewindOrReversed:
 // executed.
 
 performStatement:
-	PERFORM 
+	PERFORM (procedureName | proceduresRange)?
 	( performTimesPhrase   |
 	  performUntilPhrase   |
-	  performVaryingPhrase )?;
-
-performProcedureStatement:
-	PERFORM (procedureName | proceduresRange) 
-	( performTimesPhrase |
-	  performUntilPhrase |
 	  performVaryingPhrase )?;
 
 performStatementEnd: END_PERFORM;
@@ -6252,7 +6245,7 @@ setStatementForAssignment:
 setSendingField:
 	  integerVariableOrIndex1                       // identifier can also be an index name	//Format 1 + 5
 	| nullPointerValue                              // pointer data item //Format 5 + 6 + 7
-	| ENTRY_ARG programNameOrProgramEntryVariable   // procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
+	| ENTRY programNameOrProgramEntryVariable       // procedure pointer, function pointer or a pointer data item //Format 6 (+NULL | NULLS)
 	| selfObjectIdentifier;                         // object reference id 	//Format 7 (+NULL)
 
 // Format 2: SET for adjusting indexes

@@ -27,13 +27,6 @@
            MOVE FALSE        TO Identifier
            MOVE AnotherOne   TO Identifier
            MOVE Identifier   TO x
-      * KO: a boolean can only receive booleans, TRUE or FALSE
-           MOVE x   TO Identifier
-           MOVE x   TO b OF a IN AGroup
-           MOVE x   TO d      IN AGroup
-      * KO: a boolean subordinates are read-only
-           MOVE x   TO Identifier-value
-           MOVE x   TO Identifier-false OF Identifier-value
       * OK
            MOVE x   TO c OF a IN AGroup
            MOVE Identifier    TO d      IN AGroup

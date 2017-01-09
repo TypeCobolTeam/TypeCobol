@@ -2,6 +2,9 @@
 
 namespace TypeCobol.Codegen.Skeletons {
 
+    /// <summary>
+    /// A Pattern <==> a Template of code generation
+    /// </summary>
 	public class Pattern {
 		/// <summary>Pattern identifier.</summary>
 		public string Name      { get; internal set; }
@@ -41,5 +44,4 @@ namespace TypeCobol.Codegen.Skeletons {
 			return str.ToString();
 		}
 	}
-
 }

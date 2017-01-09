@@ -54,11 +54,11 @@
 
 -- Line 19 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>) ***
-[7,10]<27,Error,Syntax>Syntax error : mismatched input '*CBL' expecting UserDefinedWord
+[7,10]<27,Error,Syntax>Syntax error : mismatched input '*CBL' expecting user defined word
 
 -- Line 20 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL ([7,10:*CBL]<ASTERISK_CBL>) ***
-[7,14]<27,Error,Syntax>Syntax error : mismatched input '*CONTROL' expecting UserDefinedWord
+[7,14]<27,Error,Syntax>Syntax error : mismatched input '*CONTROL' expecting user defined word
 
 -- Line 21 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CONTROL ([7,14:*CONTROL]<ASTERISK_CONTROL>[15,15: ]<SpaceSeparator>[16,20:SOURC]<UserDefinedWord>) ***
@@ -96,7 +96,7 @@
 
 -- Line 31 --
 *** DIRECTIVE INVALID SYNTAX -> ASTERISK_CBL|SOURCE ([7,10:*CBL]<ASTERISK_CBL>[11,12:. ]<PeriodSeparator>[13,18:SOURCE]<UserDefinedWord>) ***
-[11,12]<27,Error,Syntax>Syntax error : extraneous input '. ' expecting UserDefinedWord
+[11,12]<27,Error,Syntax>Syntax error : extraneous input '. ' expecting user defined word
 
 -- Line 32 --
 

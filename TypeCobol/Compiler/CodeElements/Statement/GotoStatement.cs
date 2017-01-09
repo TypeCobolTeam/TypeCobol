@@ -8,7 +8,7 @@
 /// * Altered
 /// </summary>
 public abstract class GotoStatement: StatementElement {
-	public GotoStatement(StatementType statementType) : base(CodeElementType.GotoStatement, statementType) { }
+    protected GotoStatement(StatementType statementType) : base(CodeElementType.GotoStatement, statementType) { }
 }
 
 /// <summary>

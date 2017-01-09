@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-	public class DataType : ICobolLanguageLevel {
+	public class DataType : ICobolLanguageLevel, IVisitable {
 		public string Name { get; private set; }
 		public bool IsStrong { get; internal set; }
 		public CobolLanguageLevel CobolLanguageLevel  { get; private set; }
@@ -18,8 +18,11 @@ namespace TypeCobol.Compiler.CodeElements
 		public override string ToString() { return Name; }
 
 		public override int GetHashCode() { return Name.GetHashCode(); }
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return astVisitor.Visit(this);
+	    }
 
-		public override bool Equals(object obj) {
+	    public override bool Equals(object obj) {
 			var other = obj as DataType;
 			if (other == null) return false;
 			return other == this;
@@ -154,7 +157,7 @@ namespace TypeCobol.Compiler.CodeElements
 			return new Nodes.DataDescription(data);
 		}
 
-		public static readonly DataType[] BuiltInCustomTypes = new DataType[] { DataType.Boolean, DataType.Date, };
+		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, };
 // [/TYPECOBOL]
 
 

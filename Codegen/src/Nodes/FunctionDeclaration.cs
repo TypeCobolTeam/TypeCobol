@@ -11,7 +11,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 	string ProgramName = null;
 	Node Node = null;
 
-	public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {
+	public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {        
 		ProgramName = node.Hash;
 		foreach(var child in node.Children) {
 			if (child is Compiler.Nodes.ProcedureDivision) {

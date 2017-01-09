@@ -1,0 +1,252 @@
+﻿using System;
+using System.Collections.Generic;
+using TypeCobol.Codegen.Nodes;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
+
+namespace TypeCobol.Codegen.Actions
+{
+    /// <summary>
+    /// The Qualifier Action. This action is used to detect if a node is suject
+    /// to Type Cobol Qualifier Style.
+    /// </summary>
+    public class Qualifier : EventArgs, Action
+    {
+        /// <summary>
+        /// Internal visitor class.
+        /// </summary>
+        internal class TypeCobolCobolQualifierVistor : TypeCobol.Compiler.CodeElements.AbstractAstVisitor
+        {
+            /// <summary>
+            /// The Current Node
+            /// </summary>
+            public Node CurrentNode;
+
+            /// <summary>
+            /// Qualifier items
+            /// </summary>
+            public IList<SymbolReference> Items;
+            /// <summary>
+            /// Visitor
+            /// </summary>
+            /// <param name="typeCobolQualifiedSymbolReference"></param>
+            /// <returns></returns>
+            public override bool Visit(TypeCobol.Compiler.CodeElements.TypeCobolQualifiedSymbolReference typeCobolQualifiedSymbolReference)
+            {   //Yes it has TypeCobol qualifier
+                Items = typeCobolQualifiedSymbolReference.AsList();                
+                return true;
+            }
+
+            public override bool BeginNode(Node node)
+            {
+                this.CurrentNode = node;
+                return base.BeginNode(node);
+            }
+
+            public override void EndNode(Node node)
+            {
+                base.EndNode(node);
+                if (HasMatch)
+                {
+                    Qualifier.Perform(node, this);
+                    Items = null;
+                }
+                node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+            }
+
+            /// <summary>
+            /// Have we matched a Type Cobol Qualifier ?
+            /// </summary>
+            public bool HasMatch
+            {
+                get
+                {
+                    return Items != null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The Code Element of a Qualifier Token.
+        /// </summary>
+        internal class QualifierTokenCodeElement : TypeCobol.Compiler.CodeElements.CodeElement
+        {
+            public QualifierTokenCodeElement(TypeCobol.Compiler.Scanner.Token token) : base((CodeElementType)0)
+            {
+                base.ConsumedTokens = new List<TypeCobol.Compiler.Scanner.Token>();
+                base.ConsumedTokens.Add(token);
+            }
+        }
+
+        /// <summary>
+        /// A Node to just generate Qualifier tokens.
+        /// </summary>
+        internal class GenerateQualifierToken : Compiler.Nodes.Node, GeneratedAndReplace
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="codelement">The Code element of this Node</param>
+            /// <param name="code">The replace code</param>
+            /// <param name="sourcePositions">The Positions of the Source Node</param>
+            public GenerateQualifierToken(CodeElement codelement, string code, Tuple<int, int, int, List<int>,List<int>> sourcePositions)
+                : base(codelement)
+            {
+                ReplaceCode = code;
+                SourceNodePositions = sourcePositions;
+            }
+
+            /// <summary>
+            /// Source Node Positions
+            /// </summary>
+            public Tuple<int, int, int, List<int>, List<int>> SourceNodePositions
+            {
+                get;
+                private set;
+            }
+
+            /// <summary>
+            /// Positions calculation
+            /// </summary>
+            public override Tuple<int, int, int, List<int>, List<int>> FromToPositions
+            {
+                get
+                {
+                    Tuple<int, int, int, List<int>, List<int>> MyPositions = base.FromToPositions;
+                    //So Update from to position depending on Source Position Line Offset.
+                    List<int> newLineOffsets = new List<int>();
+                    int from = 0;
+                    int to = 0;
+                    int span = MyPositions.Item3;
+                    for (int i = 0; i < MyPositions.Item4.Count; i++)
+                    {
+                        int index = SourceNodePositions.Item4.IndexOf(MyPositions.Item4[i]);
+                        int offset = SourceNodePositions.Item5[index];
+                        newLineOffsets.Add(offset);
+                        if (i == 0)
+                        {
+                            if (index == 0)
+                                from = MyPositions.Item1;//In the first line same doesn't move
+                            else
+                                from = MyPositions.Item1 + offset;//Mode from the offset of the line
+                        }                        
+                    }
+                    to = from + (MyPositions.Item2 - MyPositions.Item1) ;
+                    return new Tuple<int, int, int, List<int>, List<int>>(from, to, span, MyPositions.Item4, newLineOffsets);
+                }
+            }
+
+            public string ReplaceCode
+            {
+                get;
+                private set;
+            }
+
+
+            public bool IsLeaf
+            {
+                get { return true; }
+            }
+
+            public override bool VisitNode(IASTVisitor astVisitor)
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// The Source of the Qualifation
+        /// </summary>
+        private Node Source;
+
+        /// <summary>
+        /// Node to text for qualificers
+        /// </summary>
+        /// <param name="node">The source node</param>
+        public Qualifier(Node node)
+        {
+            this.Source = node;
+        }
+        public string Group
+        {
+            get 
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Perform the qualification action
+        /// </summary>
+        /// <param name="sourceNode">The source Node on which to perform teh action</param>
+        /// <param name="visitor">The Visitor which as locate teh Source Node</param>
+        internal static void Perform(Node sourceNode, TypeCobolCobolQualifierVistor visitor)
+        {
+            if (sourceNode.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
+                return;
+            //Now this Node Is Visited
+            sourceNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+
+            Tuple<int, int, int, List<int>, List<int>> sourcePositions = sourceNode.FromToPositions;
+            Stack<GenerateQualifierToken> stack = new Stack<GenerateQualifierToken>();
+            IList<TypeCobol.Compiler.Scanner.Token> nodeTokens = sourceNode.CodeElement.ConsumedTokens;
+            int i = 0;
+            for (int j = visitor.Items.Count - 1; j >= 0; j--)
+            {
+                SymbolReference sr = visitor.Items[j];
+                for (; i < nodeTokens.Count; i++)
+                {
+                    if (nodeTokens[i] == sr.NameLiteral.Token)
+                    {
+                        TypeCobol.Compiler.Scanner.Token tokenColonColon = null;
+                        //Look for the corresponding ::
+                        for (++i; i < nodeTokens.Count; i++)
+                        {
+                            if (!(nodeTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                            {
+                                if (nodeTokens[i].Text.Equals(string.Intern("::")))
+                                {
+                                    tokenColonColon = nodeTokens[i];
+                                    i++;
+                                    break;
+                                }
+                            }
+                        }
+                        //We got It ==> Create our Generate Nodes
+                        GenerateQualifierToken item = new GenerateQualifierToken(
+                            new QualifierTokenCodeElement(visitor.Items[visitor.Items.Count - 1 - j].NameLiteral.Token), sr.ToString(),
+                            sourcePositions);
+                        stack.Push(item);
+                        if (tokenColonColon != null)
+                        {
+                            item = new GenerateQualifierToken(new QualifierTokenCodeElement(tokenColonColon), string.Intern("OF"),
+                                sourcePositions);
+                            stack.Push(item);
+                        }
+                        break;//We got it
+                    }
+                }
+            }
+            //Now Insert all new nodes. Has Children of this node
+            while (stack.Count > 0)
+            {
+                GenerateQualifierToken node = stack.Pop();
+                node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                sourceNode.Add(node);
+            }
+            //Now Comment the Source Node
+            sourceNode.Comment = true;
+        }
+
+        /// <summary>
+        /// Execute the Qualification action
+        /// </summary>
+        public void Execute()
+        {
+            if (Source.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
+                return;
+            TypeCobolCobolQualifierVistor visitor = new TypeCobolCobolQualifierVistor();
+            Source.AcceptASTVisitor(visitor);
+        }
+    }
+}

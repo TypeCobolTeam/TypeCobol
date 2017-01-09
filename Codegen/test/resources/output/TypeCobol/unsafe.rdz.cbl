@@ -1,15 +1,10 @@
-﻿      * 11 CodeElements errors
-      * "4"@(27:12>27:65): [30:1] Semantic error: Cannot write SmallGroup to strongly typed variable identifier-1:ToughGroup.
-      * "4"@(28:12>28:51): [30:1] Semantic error: Cannot write SmallGroup to strongly typed variable identifier-1:ToughGroup.
-      * "4"@(29:12>29:51): [30:1] Semantic error: Cannot write Small to strongly typed variable identifier-1:ToughGroup.
-      * "4"@(31:12>31:51): [30:1] Semantic error: Cannot write Numeric to strongly typed variable identifier-1:ToughGroup.
-      * "4"@(32:12>32:51): [30:1] Semantic error: Cannot write Alphanumeric to strongly typed variable identifier-1:ToughGroup.
-      * "1"@(43:12>43:65): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(44:12>44:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(45:12>45:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(46:12>46:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(47:12>47:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(48:12>48:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
+﻿      * 6 CodeElements errors
+      * "1"@(32:12>32:65): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
+      * "1"@(33:12>33:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
+      * "1"@(34:12>34:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
+      * "1"@(35:12>35:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
+      * "1"@(36:12>36:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
+      * "1"@(37:12>37:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
        IDENTIFICATION DIVISION.
        PROGRAM-ID.   Test-UNSAFE.
        
@@ -41,14 +36,6 @@
        
        PROCEDURE DIVISION.
        
-      * KO: receiver is strongly-typed, sender cannot be of 
-      * a different TYPE
-           MOVE        CORRESPONDING identifier-2 TO identifier-1
-           MOVE        identifier-2 TO identifier-1
-           MOVE        identifier-3 TO identifier-1
-      * KO: receiver is strongly-typed, sender cannot have no TYPE
-           MOVE        identifier-4 TO identifier-1
-           MOVE        '1337'       TO identifier-1
       * OK: receiver is strongly-typed, with UNSAFE sender can be of 
       * a different TYPE
       *    MOVE UNSAFE CORRESPONDING identifier-2 TO identifier-1

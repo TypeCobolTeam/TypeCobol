@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public abstract class AcceptStatement : StatementElement
 	{
-		public AcceptStatement(StatementType statementType) : base(CodeElementType.AcceptStatement, statementType) { }
+	    protected AcceptStatement(StatementType statementType) : base(CodeElementType.AcceptStatement, statementType) { }
 
 		/// <summary>
 		/// p294:
@@ -38,7 +38,12 @@ namespace TypeCobol.Compiler.CodeElements
 		/// A national group item is processed an an elementary data item of category national.
 		/// </summary>
 		public ReceivingStorageArea ReceivingStorageArea { get; set; }
-	}
+
+	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
+	        return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, ReceivingStorageArea);
+	    }
+    }
 
 	/// <summary>
 	/// p294:
@@ -72,7 +77,12 @@ namespace TypeCobol.Compiler.CodeElements
 		/// SEQUENTIAL file, results are unpredictable.
 		/// </summary>
 		public ExternalNameOrSymbolReference InputDevice { get; set; }
-	}
+
+	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, InputDevice);
+        }
+    }
 
 	/// <summary>
 	/// pp295-296
@@ -106,7 +116,13 @@ namespace TypeCobol.Compiler.CodeElements
 		/// data is converted to national character representation.
 		/// </summary>
 		public SyntaxProperty<SystemDateFormat> SystemDateFormat { get; set; }
-	}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, SystemDateFormat);
+        }
+    }
 
 	public enum SystemDateFormat
 	{

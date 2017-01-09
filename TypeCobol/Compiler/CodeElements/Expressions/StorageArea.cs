@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
 
@@ -10,9 +10,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// Represents a storage area in memory where the program can read or write data.
     /// Most often represented by the "identifier" rule in the Cobol grammar.
     /// </summary>
-    public abstract class StorageArea
+    public abstract class StorageArea : IVisitable
     {
-        public StorageArea(StorageAreaKind kind)
+        protected StorageArea(StorageAreaKind kind)
         {
             Kind = kind;
             IsReadFrom = true;
@@ -52,13 +52,17 @@ namespace TypeCobol.Compiler.CodeElements
             if (SymbolReference != null) return SymbolReference.ToString();
             return base.ToString();
         }
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SymbolReference,ReferenceModifier);
+        }
     }
 
     /// <summary>
     /// Reference modification defines a data item by specifying a leftmost character and
     /// optional length for the data item.
     /// </summary>
-    public class ReferenceModifier
+    public class ReferenceModifier : IVisitable
     {
         public ReferenceModifier(ArithmeticExpression leftmostCharacterPosition, ArithmeticExpression length)
         {
@@ -69,6 +73,10 @@ namespace TypeCobol.Compiler.CodeElements
         public ArithmeticExpression LeftmostCharacterPosition { get; private set; }
 
         public ArithmeticExpression Length { get; private set; }
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, LeftmostCharacterPosition, Length);
+        }
     }
 
     public enum StorageAreaKind
@@ -113,12 +121,17 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 		private SymbolType alternativeSymbolType;
 
-		public override string ToString() {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, Subscripts);
+        }
+
+	    public override string ToString() {
 			var str = new System.Text.StringBuilder();
 			str.Append(SymbolReference.Name);
 			if (Subscripts != null)
 			foreach(var subscript in Subscripts)
-				str.Append('(').Append(subscript.ToString()).Append(')');
+				str.Append('(').Append(subscript).Append(')');
 			return str.ToString();
 		}
 	}
@@ -148,7 +161,7 @@ namespace TypeCobol.Compiler.CodeElements
         */
 
     /// <summary>Subscript used to reference a specific table element</summary>
-    public class SubscriptExpression {
+    public class SubscriptExpression : IVisitable {
 	    public SubscriptExpression(ArithmeticExpression numericExpression) {
 		    NumericExpression = numericExpression;
 	    }
@@ -160,11 +173,17 @@ namespace TypeCobol.Compiler.CodeElements
 	    public ArithmeticExpression NumericExpression { get; private set; }
 	    public SyntaxProperty<bool> ALL { get; private set; }
 
-	    public override string ToString() {
+
+        public override string ToString() {
 		    if (NumericExpression != null) return NumericExpression.ToString();
 		    if (ALL != null) return "ALL";
 		    return base.ToString();
 	    }
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, ALL, NumericExpression);
+        }
     }
 
 	/// <summary>Storage area for an index</summary>
@@ -172,6 +191,10 @@ namespace TypeCobol.Compiler.CodeElements
 		public IndexStorageArea(SymbolReference indexNameReference): base(StorageAreaKind.Index) {
 			SymbolReference = indexNameReference;
 		}
+
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+	    }
 	}
     
     /* Special registers holding properties of other storage areas or symbols
@@ -210,10 +233,16 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SpecialRegisterDescriptionEntry DataDescriptionEntry { get; private set; }
 
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, SpecialRegisterName, OtherStorageAreaReference, DataDescriptionEntry);
+        }
+
         public override string ToString() {
 			var str = new System.Text.StringBuilder();
 			if (SpecialRegisterName != null) str.Append(SpecialRegisterName.TokenType).Append('(');
-			if (OtherStorageAreaReference != null) str.Append(OtherStorageAreaReference.ToString());
+			if (OtherStorageAreaReference != null) str.Append(OtherStorageAreaReference);
 			if (SpecialRegisterName != null) str.Append(')');
 			if (str.Length > 0) return str.ToString();
 			return base.ToString();
@@ -225,7 +254,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// a property describing another storage area
 	/// </summary>
 	public class FilePropertySpecialRegister : StorageArea {
-		public FilePropertySpecialRegister(Token specialRegisterName, SymbolReference fileNameReference)
+		public FilePropertySpecialRegister(Token specialRegisterName, [NotNull] SymbolReference fileNameReference)
 				: base(StorageAreaKind.FilePropertySpecialRegister) {
 			SpecialRegisterName = specialRegisterName;
 			FileNameReference = fileNameReference;
@@ -233,6 +262,7 @@ namespace TypeCobol.Compiler.CodeElements
             // This is both a storage area definition and a reference to the same storage area
             DataDescriptionEntry = new SpecialRegisterDescriptionEntry(specialRegisterName, fileNameReference.ToString());
             SymbolReference = new SymbolReference(DataDescriptionEntry.DataName);
+
         }
 
 		public Token SpecialRegisterName { get; private set; }
@@ -244,6 +274,12 @@ namespace TypeCobol.Compiler.CodeElements
 		/// and a reference to the same storage area
         /// </summary>
         public SpecialRegisterDescriptionEntry DataDescriptionEntry { get; private set; }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
+                && this.ContinueVisitToChildren(astVisitor, SpecialRegisterName, FileNameReference, DataDescriptionEntry);
+        }
     }
 
 	/// <summary>
@@ -276,72 +312,85 @@ namespace TypeCobol.Compiler.CodeElements
         /// Cobol intrinsic function call OR TypeCobol user defined function call
         /// </summary>
         public FunctionCall FunctionCall { get; private set; }
-	}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
+                && this.ContinueVisitToChildren(astVisitor, FunctionCall, DataDescriptionEntry);
+        }
+    }
 
 
 
-/// <summary>Common properties for noth types of function calls : list of expressions as arguments</summary>
-public abstract class FunctionCall {
-	public FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
-		Type = type;
-		Arguments = arguments;
-	}
+    /// <summary>Common properties for noth types of function calls : list of expressions as arguments</summary>
+    public abstract class FunctionCall : IVisitable {
+        protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
+		    Type = type;
+		    Arguments = arguments;
+	    }
 
-	public FunctionCallType Type { get; private set; }
-	public abstract string FunctionName { get; }
-	public abstract Token FunctionNameToken { get; }
-	public virtual CallSiteParameter[] Arguments { get; private set; }
+	    public FunctionCallType Type { get; private set; }
+	    public abstract string FunctionName { get; }
+	    public abstract Token FunctionNameToken { get; }
+	    public virtual CallSiteParameter[] Arguments { get; private set; }
 
-	public class FunctionCallParameterList: ParameterList {
-		private IList<DataType> inputs = new List<DataType>();
-		public IList<DataType> InputParameters {
-			get { return inputs; }
-			set { inputs = value; }
-		}
-		private IList<DataType> inouts = new List<DataType>();
-		public IList<DataType> InoutParameters {
-			get { return inouts; }
-			set { inouts = value; }
-		}
-		private IList<DataType> outputs = new List<DataType>();
-		public IList<DataType> OutputParameters {
-			get { return outputs; }
-			set { outputs = value; }
-		}
-		private DataType returning = null;
-		public DataType ReturningParameter {
-			get { return returning; }
-			set { returning = value; }
-		}
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this) && FunctionNameToken.AcceptASTVisitor(astVisitor)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) Arguments);
+        }
 
-		internal static IList<DataType> CreateParameters(List<CallSiteParameter> parameters, CodeModel.SymbolTable table) {
-			var results = new List<DataType>();
-			foreach(var parameter in parameters) results.Add(CreateParameter(parameter, table));
-			return results;
-		}
-		internal static DataType CreateParameter(CallSiteParameter p, CodeModel.SymbolTable table) {
-			DataType type = null;
-			var parameter = p.StorageAreaOrValue;
-			if (parameter.IsLiteral) {
-				if (parameter.NumericValue != null)
-				     type = DataType.Numeric;
-				else
-				if (parameter.AlphanumericValue != null)
-				     type = DataType.Alphanumeric;
-				else type = DataType.Unknown;
-			} else {
-				var found = table.GetVariable(new URI(parameter.ToString()));
-				foreach(var item in found) {
-					var data = item as Nodes.DataDescription;
-					if (type == null) type = data.DataType;
-					else if (type != data.DataType) type = DataType.Unknown;
-				}
-				if (type == null) type = DataType.Unknown;
-			}
-			return type;
-		}
-	}
-}
+
+	    public class FunctionCallParameterList: ParameterList {
+		    private IList<DataType> inputs = new List<DataType>();
+		    public IList<DataType> InputParameters {
+			    get { return inputs; }
+			    set { inputs = value; }
+		    }
+		    private IList<DataType> inouts = new List<DataType>();
+		    public IList<DataType> InoutParameters {
+			    get { return inouts; }
+			    set { inouts = value; }
+		    }
+		    private IList<DataType> outputs = new List<DataType>();
+		    public IList<DataType> OutputParameters {
+			    get { return outputs; }
+			    set { outputs = value; }
+		    }
+
+	        public FunctionCallParameterList() {
+	            ReturningParameter = null;
+	        }
+
+	        public DataType ReturningParameter { get; set; }
+
+	        internal static IList<DataType> CreateParameters([NotNull] List<CallSiteParameter> parameters, CodeModel.SymbolTable table) {
+			    var results = new List<DataType>();
+			    foreach(var parameter in parameters) results.Add(CreateParameter(parameter, table));
+			    return results;
+		    }
+		    internal static DataType CreateParameter([NotNull] CallSiteParameter p, CodeModel.SymbolTable table) {
+			    DataType type = null;
+			    var parameter = p.StorageAreaOrValue;
+			    if (parameter.IsLiteral) {
+				    if (parameter.NumericValue != null)
+				         type = DataType.Numeric;
+				    else
+				    if (parameter.AlphanumericValue != null)
+				         type = DataType.Alphanumeric;
+				    else type = DataType.Unknown;
+			    } else {
+				    var found = table.GetVariable(new URI(parameter.ToString()));
+				    foreach(var item in found) {
+					    var data = item as Nodes.DataDescription;
+					    if (type == null) type = data.DataType;
+					    else if (type != data.DataType) type = DataType.Unknown;
+				    }
+				    if (type == null) type = DataType.Unknown;
+			    }
+			    return type;
+		    }
+	    }
+    }
 
 	/// <summary>Call to an intrinsic function</summary>
 	public class IntrinsicFunctionCall: FunctionCall {
@@ -353,7 +402,18 @@ public abstract class FunctionCall {
 		public ExternalName IntrinsicFunctionName { get; private set; }
 		public override string FunctionName { get { return IntrinsicFunctionName.Name; } }
 		public override Token FunctionNameToken { get { return IntrinsicFunctionName.NameLiteral.Token; } }
-	}
+
+        //Don't override property CobolLanguageLevel CobolLanguageLevel here, because in this case,
+        //ExternalName is always a CobolLanguageLevel.Cobol85
+        //public override CobolLanguageLevel CobolLanguageLevel {
+        //get { return base.CobolLanguageLevel; }
+        //}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
+                && this.ContinueVisitToChildren(astVisitor, IntrinsicFunctionName, FunctionNameToken);
+        }
+    }
 
 	/// <summary>Call to a TypeCobol user defined function</summary>
 	public class UserDefinedFunctionCall: FunctionCall {
@@ -365,7 +425,12 @@ public abstract class FunctionCall {
 		public SymbolReference UserDefinedFunctionName { get; private set;  }
 		public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
 		public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
-	}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
+                && this.ContinueVisitToChildren(astVisitor, UserDefinedFunctionName, FunctionNameToken);
+        }
+    }
 
 	public class ProcedureCall: FunctionCall {
 		public ProcedureCall(SymbolReference name, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs)
@@ -404,16 +469,26 @@ public abstract class FunctionCall {
 			profile.ReturningParameter = null;
 			return profile;
 		}
-	}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
+                && this.ContinueVisitToChildren(astVisitor, ProcedureName, FunctionNameToken)
+                && this.ContinueVisitToChildren(astVisitor, InputParameters, InoutParameters, OutputParameters);
+        }
+    }
 
 	public enum FunctionCallType {
 		IntrinsicFunctionCall,
 		UserDefinedFunctionCall
 	}
 
-	public class GroupCorrespondingImpact {
+	public class GroupCorrespondingImpact : IVisitable {
 		public StorageArea SendingGroupItem { get; set; }
 		public StorageArea ReceivingGroupItem { get; set; }
 		public bool ReceivingGroupIsAlsoSending { get; set; }
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SendingGroupItem, ReceivingGroupItem);
+	    }
 	}
 }

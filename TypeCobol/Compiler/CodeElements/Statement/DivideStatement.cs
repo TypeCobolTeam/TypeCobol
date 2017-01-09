@@ -7,7 +7,7 @@
 /// the values of data items equal to the quotient and remainder.
 /// </summary>
 public abstract class DivideStatement: AbstractArithmeticStatement {
-	public DivideStatement(StatementType statementType): base(CodeElementType.DivideStatement, statementType) { }
+    protected DivideStatement(StatementType statementType): base(CodeElementType.DivideStatement, statementType) { }
 	public abstract override Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
 }
 

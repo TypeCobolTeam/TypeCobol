@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -12,6 +13,7 @@ namespace TypeCobol.Compiler.CodeElements
     //         AmbiguousSymbolReference
     //             ExternalNameOrSymbolReference
     //         QualifiedSymbolReference
+    //             TypeCobolQualifiedSymbolReference
     //     SymbolDefinitionOrReference
     //     ExternalName
     //         QualifiedTextName
@@ -19,9 +21,9 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Properties of a symbol Token in the Cobol grammar
     /// </summary>
-    public abstract class SymbolInformation
+    public abstract class SymbolInformation : IVisitable
     {
-        public SymbolInformation(SyntaxValue<string> nameLiteral, SymbolRole role, SymbolType type)
+        protected SymbolInformation(SyntaxValue<string> nameLiteral, SymbolRole role, SymbolType type)
         {
             NameLiteral = nameLiteral;
             Role = role;
@@ -63,9 +65,13 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
 		public override int GetHashCode() { return Type.GetHashCode() * 11 + Name.GetHashCode(); }
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, NameLiteral);
+        }
 
-		public override string ToString() {	return Name; }
-	}
+        public override string ToString() {	return Name; }
+    }
 
     /// <summary>
     /// Role of a symbol Token in the Cobol grammar
@@ -83,7 +89,12 @@ namespace TypeCobol.Compiler.CodeElements
 	public class SymbolDefinition: SymbolInformation {
 		public SymbolDefinition(SyntaxValue<string> nameLiteral, SymbolType type)
 			: base(nameLiteral, SymbolRole.SymbolDefinition, type) { }
-	}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
     /// <summary>
     /// Reference to a previously defined symbol in the Cobol syntax
@@ -122,6 +133,11 @@ namespace TypeCobol.Compiler.CodeElements
                 return "\\." + Name + "$"; 
             }
         }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
     }
 
     /// <summary>
@@ -145,6 +161,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// to the Type property.
         /// </summary>
         public SymbolType[] CandidateTypes { get; set; }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
     }
 
 	/// <summary>
@@ -178,7 +198,7 @@ namespace TypeCobol.Compiler.CodeElements
 			get { return "\\." + Head.Name + "\\..*" + Tail.DefinitionPathPattern; }
 		}
 
-		public override string ToString() { return Head.ToString() + " IN " + Tail.ToString(); }
+		public override string ToString() { return Head + " IN " + Tail; }
 
 		public override string Name { get { return Tail.Name+'.'+Head.Name; } }
 
@@ -202,9 +222,14 @@ namespace TypeCobol.Compiler.CodeElements
 			return refs;
 		}
 
-		// UNIMPLEMENTED BECAUSE OF LAZYNESS
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, Head, Tail);
+	    }
 
-		public int IndexOf(SymbolReference item) {
+	    // UNIMPLEMENTED BECAUSE OF LAZYNESS
+
+        public int IndexOf(SymbolReference item) {
 			throw new NotImplementedException("TODO");
 		}
 
@@ -247,6 +272,10 @@ namespace TypeCobol.Compiler.CodeElements
 	}
 	public class TypeCobolQualifiedSymbolReference: QualifiedSymbolReference {
 		public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head, tail) { }
+
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+	    }
 	}
 
     /// <summary>
@@ -256,7 +285,12 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public SymbolDefinitionOrReference(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.SymbolDefinitionOrReference, type)
-        { }    
+        { }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
     }
 
     /// <summary>
@@ -270,11 +304,16 @@ namespace TypeCobol.Compiler.CodeElements
         public ExternalName(SyntaxValue<string> nameLiteral, SymbolType type) :
             base(nameLiteral, SymbolRole.ExternalName, type)
         { }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
     }
 
 	/// <summary>Unique case of qualified external name: textName (IN | OF) libraryName</summary>
 	public class QualifiedTextName: ExternalName {
-		public QualifiedTextName(ExternalName textName, ExternalName libraryName)
+		public QualifiedTextName([NotNull] ExternalName textName, ExternalName libraryName)
 				: base(textName.NameLiteral, textName.Type) {
 			TextName = textName;
 			LibraryName = libraryName;
@@ -285,11 +324,16 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public override string ToString() {
 			if (LibraryName == null) return base.ToString();
-			return base.ToString() + " IN " + LibraryName.ToString();
+			return base.ToString() + " IN " + LibraryName;
 		}
 
 		public override string Name { get { return LibraryName.Name+'.'+TextName.Name; } }
-	}
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, TextName, LibraryName);
+        }
+    }
 
     /// <summary>
     /// Role ambiguity between :
@@ -302,6 +346,11 @@ namespace TypeCobol.Compiler.CodeElements
             base(nameLiteral, candidateTypes)
         {
             Role = SymbolRole.ExternalNameOrSymbolReference;
+        }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
         }
     }
 }

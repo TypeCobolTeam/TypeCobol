@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -13,7 +9,7 @@ namespace TypeCobol.Compiler.Scanner
     /// COBOL word, a literal, a PICTURE character-string, or a comment-entry. 
     /// A separator is a string of contiguous characters used to delimit character strings.
     /// </summary>
-    public class Token : Antlr4.Runtime.IToken
+    public class Token : Antlr4.Runtime.IToken, IVisitable
     {
         private ITokensLine tokensLine;
         private int startIndex;
@@ -281,6 +277,14 @@ namespace TypeCobol.Compiler.Scanner
             //    because it should be filtered at the parser stage
         }
 
+        internal void DegradePotentialCodeElementStartingKeywordToSyntaxKeyword()
+        {
+            if (TokenFamily == TokenFamily.CodeElementStartingKeyword)
+            {
+                TokenFamily = TokenFamily.SyntaxKeyword;
+            }
+        }
+
         // --- Continuation lines & multiline tokens ---
 
         /// <summary>
@@ -312,6 +316,10 @@ namespace TypeCobol.Compiler.Scanner
                 tokenText += "{" + (LiteralValue == null ? "NULL" : LiteralValue.ToString()) + "}";
             }
             return tokenText;
+        }
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this);
         }
 
         // --- Methods from Antlr IToken, must be set for error handling in Antlr parser ---
@@ -384,6 +392,5 @@ namespace TypeCobol.Compiler.Scanner
                 return true;
             }
         }
-
     }
 }

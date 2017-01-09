@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-[1,27]<27,Error,Syntax>Syntax error : mismatched input '01OutOfPerimeter2TYPEDEF.' expecting {<EOF>, ProgramIdentification, ProgramEnd, SectionHeader, ParagraphHeader, SentenceEnd, AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, FunctionDeclarationHeader, ProcedureStyleCall} (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision, OffendingSymbol=[[DataDescriptionEntry]] [1,2:01]<IntegerLiteral>{1} --> [27,27+:.]<PeriodSeparator>
- on line 17)
+[1,2]<27,Error,Syntax>Syntax error : extraneous input '01' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=, OffendingSymbol=[1,2:01]<IntegerLiteral>{1} on line 17)
+[3,4]<27,Error,Syntax>Syntax error : extraneous input '02' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=, OffendingSymbol=[3,4:02]<IntegerLiteral>{2} on line 18)
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False

@@ -26,9 +26,7 @@
 [1,6:DELETE]<DELETE>
 
 -- Line 10 --
-[1,6:DELETE]<DELETE>
-[7,7: ]<SpaceSeparator>
-[8,13:000001]<IntegerLiteral>{1}
+*** DIRECTIVE DELETE 1->1 ([1,6:DELETE]<DELETE_CD>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}) ***
 [14,14+:,]<CommaSeparator>
 
 -- Line 11 --

@@ -10,6 +10,9 @@ namespace TypeCobol.Codegen.Config {
 	}
 
 	public class Config {
+        /// <summary>
+        /// The Map the association a configuration file extension to its Class parser.
+        /// </summary>
 		private static readonly Dictionary<string,Type> _parsers = new Dictionary<string,Type> {
 			{ ".xml", typeof(XmlParser) },
 		};

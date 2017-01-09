@@ -41,14 +41,14 @@
 -- Line 5 --
 [1,8:DIVISION]<DIVISION>
 [9,9: ]<SpaceSeparator>
-[10,16:DISPLAY]<DISPLAY_ARG>
+[10,16:DISPLAY]<DISPLAY>
 [17,17: ]<SpaceSeparator>
 [18,26:PROCEDURE]<PROCEDURE>
 [27,27: ]<SpaceSeparator>
 [28,34:POINTER]<POINTER>
 
 -- Line 6 --
-[1,7:DISPLAY]<DISPLAY_ARG>
+[1,7:DISPLAY]<DISPLAY>
 [8,8: ]<SpaceSeparator>
 [9,17:PROCEDURE]<PROCEDURE>
 
@@ -62,7 +62,7 @@
 -- Line 8 --
 [1,2:TO]<TO>
 [3,3: ]<SpaceSeparator>
-[4,8:ENTRY]<ENTRY_ARG>
+[4,8:ENTRY]<ENTRY>
 [9,9: ]<SpaceSeparator>
 [10,14:ENTRY]<ENTRY>
 [15,15: ]<SpaceSeparator>
@@ -73,11 +73,11 @@
 [24,25:TO]<TO>
 
 -- Line 9 --
-[1,5:ENTRY]<ENTRY_ARG>
+[1,5:ENTRY]<ENTRY>
 [6,6: ]<SpaceSeparator>
 [7,10:SAME]<SAME>
 [11,11: ]<SpaceSeparator>
-[12,15:SORT]<SORT_ARG>
+[12,15:SORT]<SORT>
 [16,16: ]<SpaceSeparator>
 [17,20:SAME]<SAME>
 [21,21: ]<SpaceSeparator>
@@ -88,7 +88,7 @@
 [32,35:SAME]<SAME>
 
 -- Line 10 --
-[1,4:SORT]<SORT_ARG>
+[1,4:SORT]<SORT>
 [5,5: ]<SpaceSeparator>
 [6,9:TOTO]<UserDefinedWord>
 

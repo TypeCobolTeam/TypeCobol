@@ -1,12 +1,11 @@
-﻿using System;
-using TypeCobol.Compiler.Scanner;
+﻿using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
     /// Property defined by a keyword token in the Cobol syntax
     /// </summary>
-    public class SyntaxProperty<T>
+    public class SyntaxProperty<T> : IVisitable
     {
         public SyntaxProperty(T value, Token token)
         {
@@ -30,6 +29,11 @@ namespace TypeCobol.Compiler.CodeElements
         public override string ToString()
         {
             return Value.ToString();
+        }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, Token);
         }
     }
 }

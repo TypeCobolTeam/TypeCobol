@@ -51,12 +51,16 @@ public class CodeElementDiagnostics {
 
 	public IList<Diagnostic> GetDiagnostics(CodeElement e) {
 		var results = new List<Diagnostic>();
-		foreach(var d in e.Diagnostics) {
-			var diagnostic = AsDiagnostic(d);
-			if (e.ConsumedTokens.Count < 1) diagnostic.Range = Range.Unknown;
-			else diagnostic.Range = GetRange(e.ConsumedTokens, d.ColumnStart, d.ColumnEnd);
-			results.Add(diagnostic);
-		}
+        if (e.Diagnostics != null)
+        {
+            foreach (var d in e.Diagnostics)
+            {
+                var diagnostic = AsDiagnostic(d);
+                if (e.ConsumedTokens.Count < 1) diagnostic.Range = Range.Unknown;
+                else diagnostic.Range = GetRange(e.ConsumedTokens, d.ColumnStart, d.ColumnEnd);
+                results.Add(diagnostic);
+            }
+        }
 		return results;
 	}
 

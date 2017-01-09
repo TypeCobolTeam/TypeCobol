@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-[1,7]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 119)
-[1,7]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 131)
-[1,7]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 137)
+[9,15]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[9,15:DECLARE]<DECLARE> on line 142)
+[9,15]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[9,15:DECLARE]<DECLARE> on line 154)
+[8,14]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[8,14:DECLARE]<DECLARE> on line 160)
 
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False
@@ -17,8 +17,8 @@ PROGRAM: DateFunctions common:False initial:False recursive:False
         in: dateType:Alphanumeric
         in: direction:Alphanumeric
         in: separator:Alphanumeric
-        in: LL:Alphanumeric
-        in: PP:Alphanumeric
+        in: languageCode:Alphanumeric
+        in: countryCode:Alphanumeric
     return: result:Alphanumeric
   currentDateDB2
     return: result:DateDB2

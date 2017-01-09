@@ -1,20 +1,23 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
-	/// <summary>
-	/// Base class for all Cobol expression nodes
-	/// </summary>
-	public abstract class Expression
+    /// <summary>
+    /// Base class for all Cobol expression nodes
+    /// </summary>
+    public abstract class Expression : IVisitable
 	{
-		public Expression(ExpressionNodeType nodeType) {
+        protected Expression(ExpressionNodeType nodeType) {
 			NodeType = nodeType;
 		}
 
 		public ExpressionNodeType NodeType { get; private set; }
-	}
+
+        public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return astVisitor.Visit(this);
+        }
+    }
 
 	public enum ExpressionNodeType
 	{
@@ -35,7 +38,11 @@ namespace TypeCobol.Compiler.CodeElements
 	/// Base class for all conditional expression nodes
 	/// </summary>
 	public abstract class ConditionalExpression : Expression {
-		public ConditionalExpression(ExpressionNodeType nodeType) : base(nodeType) { }
+	    protected ConditionalExpression(ExpressionNodeType nodeType) : base(nodeType) { }
+
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+	    }
 	}
 
 	/// <summary>
@@ -59,7 +66,12 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionalExpression RightOperand  { get; private set; }
 
-		public override string ToString() {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, LeftOperand, Operator, RightOperand);
+        }
+
+        public override string ToString() {
 			// reverse polish notation
 			return new StringBuilder(LeftOperand != null ? LeftOperand.ToString() : "<?>").Append(" ").Append(RightOperand != null ? RightOperand.ToString() : "<?>").Append(" ").Append(Operator).ToString();
 		}
@@ -109,7 +121,12 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
 
-		public override string ToString() {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, DataItem, CharacterClassNameReference, DataItemContentType, InvertResult);
+        }
+
+        public override string ToString() {
 			return new StringBuilder(DataItem.ToString()).Append(InvertResult.Value?" NOT ":" ").Append(CharacterClassNameReference != null ? CharacterClassNameReference.ToString() : DataItemContentType.ToString()).Append(" ?").ToString();
 		}
 	}
@@ -141,8 +158,13 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public DataOrConditionStorageArea ConditionReference { get; private set; }
 
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, ConditionReference);
+        }
 
-		public override string ToString() {
+        public override string ToString() {
 			return ConditionReference.ToString();
 		}
 	}
@@ -167,8 +189,13 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public ConditionOperand RightOperand { get; private set; }
 
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, LeftOperand, Operator, RightOperand);
+        }
 
-		public override string ToString() {
+        public override string ToString() {
 			// reverse polish notation
 			return new StringBuilder(LeftOperand != null ? LeftOperand.ToString() : "<?>").Append(" ").Append(RightOperand != null ? RightOperand.ToString() : "<?>").Append(" ").Append(Operator).ToString();
 		}
@@ -207,10 +234,16 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public SyntaxProperty<bool> InvertResult { get; private set; }
 
-		public override string ToString() {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
+                && this.ContinueVisitToChildren(astVisitor, Operand, SignComparison, InvertResult);
+        }
+
+        public override string ToString() {
 			var sb = new StringBuilder(Operand.ToString()).Append(" IS ");
 			if (InvertResult != null && InvertResult.Value) sb.Append("NOT ");
-			sb.Append(SignComparison.Value.ToString()).Append(" ?");
+			sb.Append(SignComparison.Value).Append(" ?");
 			return sb.ToString();
 		}
 	}
@@ -265,7 +298,12 @@ namespace TypeCobol.Compiler.CodeElements
 
 		public Token SelfObjectIdentifier { get; private set; }
 
-		public override string ToString() {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, ArithmeticExpression, Variable, NullPointerValue, SelfObjectIdentifier);
+        }
+
+        public override string ToString() {
 			if (ArithmeticExpression != null)
 				return ArithmeticExpression.ToString();
 			if(Variable != null)
@@ -280,8 +318,13 @@ namespace TypeCobol.Compiler.CodeElements
 	/// Base class for all arithmetic expression nodes
 	/// </summary>
 	public abstract class ArithmeticExpression: Expression {
-		public ArithmeticExpression(ExpressionNodeType nodeType): base(nodeType) { }
-	}
+	    protected ArithmeticExpression(ExpressionNodeType nodeType): base(nodeType) { }
+
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
 	/// <summary>
 	/// When parentheses are not used, or parenthesized expressions are at the same level
@@ -321,8 +364,14 @@ namespace TypeCobol.Compiler.CodeElements
 		public SyntaxProperty<ArithmeticOperator> Operator { get; private set; }
 		public ArithmeticExpression RightOperand { get; private set; }
 
-		/// <summary>reverse polish notation</summary>
-		public override string ToString() {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, LeftOperand, Operator, RightOperand);
+        }
+
+        /// <summary>reverse polish notation</summary>
+        public override string ToString() {
 			var str = new StringBuilder();
 			if (LeftOperand == null) str.Append('0');
 			else str.Append(LeftOperand);
@@ -349,7 +398,13 @@ namespace TypeCobol.Compiler.CodeElements
 		public IntegerVariable IntegerVariable { get; private set; }
 		public NumericVariable NumericVariable { get; private set; }
 
-		public override string ToString() {
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, IntegerVariable, NumericVariable);
+        }
+
+        public override string ToString() {
 			if (IntegerVariable != null) return IntegerVariable.ToString();
 			return NumericVariable.ToString();
 		}
@@ -365,3 +420,4 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>TODO</summary>
 	public class FigurativeConstant { }
 }
+
