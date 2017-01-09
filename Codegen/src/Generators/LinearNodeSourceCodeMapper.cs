@@ -12,15 +12,15 @@ using TypeCobol.Compiler.Text;
 namespace TypeCobol.Codegen.Generators
 {
     /// <summary>
-    /// This class create a mapping between Nodes and their target position in the source code
+    /// This class create a mapping between Nodes and their target positions in the source code
     /// for code generation. It built a linear data structure that map each line from the source
     /// document to its corresponding nodes. The Linear structure is built in O(n) where n
     /// is the number of Nodes in the Abstract Tree Nodes.
     /// Each Node is then given an Index in to an Array Of Nodes which is constructed during a
     /// traverse of the Abstract Tree Nodes.
-    /// Generating the code using this structure can be performed performed in the worst case in O(m*n) 
+    /// Generating the code using this structure can be performed in the worst case in O(m*n) 
     /// where m is the number of line in the document and n the number of Nodes.
-    /// In the best case if we consider that One node is associated to a a line the code generation will
+    /// In the best case if we consider that One node is associated to a line, the code generation will
     /// perform in O(m).
     /// </summary>
     public class LinearNodeSourceCodeMapper : NodeVisitor
@@ -268,6 +268,16 @@ namespace TypeCobol.Codegen.Generators
             }
             if (positions.Item4.Count == 0)
             {//This must be a Node in an imported COPY it has no lines associated to it
+                return true;
+            }
+            if (positions.Item1 > positions.Item2)
+            {   //This is a very strange node that I encountered (from > to)
+                //I encountered this situation with tests files like:
+                //CCC1B045.PGM, CCTF0011.PGM, CCTZ015B, CCTZ0300B, etc..
+                //With a DataDescription Node.
+                //I Ignore this kind of Node, it is a work around because it seems that
+                //such nodes are considered as end of file marking nodes without any code
+                //attached to.
                 return true;
             }
             bool isFunctionDecl = node is FunctionDeclaration;//Detect Function Declaration
