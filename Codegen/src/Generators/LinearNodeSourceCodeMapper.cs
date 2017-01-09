@@ -271,7 +271,7 @@ namespace TypeCobol.Codegen.Generators
                 return true;
             }
             if (positions.Item1 > positions.Item2)
-            {   //This is a very strange node that I encountered (from > to)
+            {   //This is a very strange node that I encountered with position (from > to)
                 //I encountered this situation with tests files like:
                 //CCC1B045.PGM, CCTF0011.PGM, CCTZ015B, CCTZ0300B, etc..
                 //With a DataDescription Node.
