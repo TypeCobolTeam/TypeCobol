@@ -15,7 +15,6 @@ bld/
 [Bb]in/
 [Oo]bj/
 target/
-*.jar
 .settings
 
 # Roslyn cache directories
