@@ -61,7 +61,7 @@ namespace TypeCobol.Codegen.Generators
                     //If there was a previous buffer ==> Flush it
                     if (previousBuffer != null)
                     {
-                        if (!bBufferWasInFunctionBody) 
+                        if (!bBufferWasInFunctionBody && !mapper.IsGeneratedEmptyBuffer(previousBuffer) )
                             targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                         previousBuffer = null;
                     }
@@ -81,7 +81,7 @@ namespace TypeCobol.Codegen.Generators
                 //If there was a previous buffer ==> Flush it
                 if (previousBuffer != null && mapper.CommentedLines[i])
                 {
-                    if (!bBufferWasInFunctionBody) 
+                    if (!bBufferWasInFunctionBody && !mapper.IsGeneratedEmptyBuffer(previousBuffer))
                         targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                     previousBuffer = null;
                 }
@@ -115,7 +115,7 @@ namespace TypeCobol.Codegen.Generators
                     StringSourceText curSourceText = mapper.Nodes[node_index].Buffer;
                     if (curSourceText != previousBuffer && previousBuffer != null)
                     {//Flush previous buffer
-                        if (!bBufferWasInFunctionBody) 
+                        if (!bBufferWasInFunctionBody && !mapper.IsGeneratedEmptyBuffer(previousBuffer))
                             targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                         previousBuffer = null;
                     }
@@ -191,7 +191,7 @@ namespace TypeCobol.Codegen.Generators
             //If there was a previous buffer ==> Flush it
             if (previousBuffer != null)
             {
-                if (!bBufferWasInFunctionBody) 
+                if (!bBufferWasInFunctionBody && !mapper.IsGeneratedEmptyBuffer(previousBuffer))
                     targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                 previousBuffer = null;
             }

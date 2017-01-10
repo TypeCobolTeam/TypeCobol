@@ -229,6 +229,41 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Check if at the end the buffer being flushed is generated empty.
+        /// A buffer is generated empty if all its target lines are commented
+        /// and all nodes in the target lines are commented in block and when the buffer
+        /// is Trimmed it is empty.
+        /// Such buffer can be ignored.
+        /// </summary>
+        /// <param name="buffer">The buffer to be tested</param>
+        /// <returns>true if the buffer is generated empty</returns>
+        internal bool IsGeneratedEmptyBuffer(StringSourceText buffer)
+        {
+            if (BufferLineMap.ContainsKey(buffer))
+            {
+                //For each contigüous line having the same buffer
+                for (int i = BufferLineMap[buffer]; i < LineData.Length && LineData[i].Buffer == buffer; i++)
+                {
+                    //Each Node of the line must be commented
+                    foreach (int node_index in LineData[i].LineNodes)
+                    {
+                        if (Nodes[node_index].node.Comment == null ? false : !Nodes[node_index].node.Comment.Value)
+                            return false;
+                    }
+                }
+                //Now the buffer content must contains only whitespace, cariage return or line feed characters.
+                for (int i = 0; i < buffer.Size; i++)
+                {
+                    char c = buffer[i];
+                    if (!Char.IsWhiteSpace(c) && c != '\r' && c != '\n' )
+                        return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// The Function Declaration Processing Phase.
         /// <param name="node">The node that belongs to a Function Body</param>
         /// <returns>True if children of the given node must be visited, false otherwise</returns>
