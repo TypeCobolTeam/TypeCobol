@@ -20,8 +20,12 @@
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE                      
       *      INPUT     x      PIC 9(04)                                       
       *      RETURNING result PIC 9(04)                                       
-      *    .                                                                  
-
+      *    . 
+	  
+      *written in lower-case to make sure code generation doesn't 
+      *change it to upper-case
+      *declare function UseACopy private
+      *         input  x pic X.
 
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
@@ -29,6 +33,7 @@
        END PROGRAM FunDeclare.
       *                                                                       
       *_________________________________________________________________      
+      *DECLARE FUNCTION DoesNothing PRIVATE.   
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. a59b2c49.                                                  
        PROCEDURE DIVISION                                                     
@@ -37,7 +42,8 @@
            .
        END PROGRAM a59b2c49.                                                  
       *                                                                       
-      *_________________________________________________________________      
+      *_________________________________________________________________   
+      *DECLARE FUNCTION ReturnsZero PRIVATE        
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. a866b35c.                                                  
        DATA DIVISION.
@@ -50,7 +56,10 @@
            .
        END PROGRAM a866b35c.                                                  
       *                                                                       
-      *_________________________________________________________________      
+      *_________________________________________________________________   
+      *OK: second function with same name, but profile is different
+      *DECLARE FUNCTION DoesNothing PRIVATE                                   
+      *      INPUT x PIC 9(04).     
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. fe03398a.                                                  
        DATA DIVISION.                                                         
@@ -63,7 +72,11 @@
            .
        END PROGRAM fe03398a.                                                  
       *                                                                       
-      *_________________________________________________________________      
+      *_________________________________________________________________   
+      *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE                      
+      *      INPUT     x      PIC 9(04)                                       
+      *      RETURNING result PIC 9(04)                                       
+      *    .    
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. e3e490ae.                                                  
        DATA DIVISION.
@@ -79,4 +92,27 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM e3e490ae.                                                  
+       END PROGRAM e3e490ae.   
+      *written in lower-case to make sure code generation doesn't 
+      *change it to upper-case
+      *declare function UseACopy private
+      *         input  x pic X.   
+      *                                                                       
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. f6a89a72.                                                  
+       data division.
+       working-storage section.
+       01 yoto pic X.
+       REPLACE ==:MyPrefix:== by ==MyPrefix2==.
+       COPY MyDataCopy.
+       LINKAGE SECTION.                                                       
+       01 x PIC X.                                                            
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE x                                             
+           .                                                                  
+           display "Hello"
+		   COPY MyProcedureCopy.
+       
+           .
+       END PROGRAM f6a89a72.                                             
