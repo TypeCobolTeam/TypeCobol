@@ -54,13 +54,11 @@ namespace TypeCobol.Codegen
                         actions.Add(action);
                 }
             }
-#if GENERATOR2
             if (!node.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
             {//Run the Qualifier action on this node
                 Qualifier qualifier = new Qualifier(node);
                 qualifier.Execute();
             }
-#endif
             return actions;
         }
 

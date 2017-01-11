@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Generators
         {
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
-            //mapper.DebugDump();
+            mapper.DebugDump();
             GapSourceText targetSourceText = LinearGeneration(mapper, Parser.Results.TokensLines);
             // Step 3: Write target document
             targetSourceText.Write(Destination);

@@ -60,10 +60,10 @@ namespace TypeCobol.Codegen.Actions
         public void Execute()
         {
             var typegen = GetGeneratedNode(this.Source.CodeElement.GetType());
-#if GENERATOR2
+
             if (typegen == typeof(Codegen.Nodes.TypeCobolQualifier))
                 return;//Now handle by qualifier Action
-#endif
+
             // retrieve data
             int index;
             if (DestinationURI.EndsWith(".end")) index = this.Destination.Parent.Children.Count - 1;

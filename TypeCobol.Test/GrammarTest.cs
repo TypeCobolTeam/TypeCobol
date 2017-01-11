@@ -90,12 +90,7 @@ namespace TypeCobol.Test {
 			        var writer = new StringWriter();
                     watch.Reset();
 			        watch.Start();
-#if GENERATOR2
-                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document, writer, null);
-#else
-			        var generator = new TypeCobol.Codegen.Generator(writer, document.Results.TokensLines, null);
-#endif
-			        
+                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document, writer, null);			        
 			        var program = document.Results.ProgramClassDocumentSnapshot.Program;
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);

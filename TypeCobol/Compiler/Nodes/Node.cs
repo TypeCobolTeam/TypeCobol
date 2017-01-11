@@ -206,7 +206,7 @@ namespace TypeCobol.Compiler.Nodes {
                             lineNumbers.Add(curLineIndex);                            
                             to += delta_ln;
                             lineOffsets.Add(to == 0 ? from : to);
-                            span = 0;
+                            span = 0;                            
                             while ((i < CodeElement.ConsumedTokens.Count) && ((curLineIndex == CodeElement.ConsumedTokens[i].Line) 
                                 || (CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken)))
                             {
