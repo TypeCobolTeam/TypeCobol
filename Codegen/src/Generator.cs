@@ -13,7 +13,7 @@ namespace TypeCobol.Codegen
     /// The Second Code Generator which can Handle correctly all preprocessor directives
     /// during the Code Generation Phase.
     /// </summary>
-    public abstract class Generator2 : IGenerator, NodeVisitor
+    public abstract class Generator : IGenerator, NodeVisitor
     {
         /// <summary>
         /// The Parser that contains Parser results.
@@ -102,7 +102,7 @@ namespace TypeCobol.Codegen
         /// <param name="parser"> The Parser which contains parse results </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public Generator2(Parser parser, TextWriter destination, List<Skeleton> skeletons)
+        public Generator(Parser parser, TextWriter destination, List<Skeleton> skeletons)
         {
             this.Parser = parser;
             Destination = destination;

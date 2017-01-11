@@ -62,7 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="Generator2.cs" />
+    <Compile Include="Generator.cs" />
     <Compile Include="GeneratorActions.cs" />
     <Compile Include="GeneratorFactory.cs" />
     <Compile Include="GeneratorFactoryManager.cs" />

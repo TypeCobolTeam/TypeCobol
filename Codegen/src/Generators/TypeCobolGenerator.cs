@@ -7,7 +7,7 @@ namespace TypeCobol.Codegen.Generators
     /// <summary>
     /// The TypeCobol Generator
     /// </summary>
-    public class TypeCobolGenerator : Generator2
+    public class TypeCobolGenerator : Generator
     {
         /// <summary>
         /// Constructor

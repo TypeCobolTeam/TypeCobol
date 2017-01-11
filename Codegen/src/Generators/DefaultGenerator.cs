@@ -14,7 +14,7 @@ namespace TypeCobol.Codegen.Generators
     /// <summary>
     /// The Default Generator
     /// </summary>
-    public class DefaultGenerator : Generator2
+    public class DefaultGenerator : Generator
     {
         /// <summary>
         /// Constructor

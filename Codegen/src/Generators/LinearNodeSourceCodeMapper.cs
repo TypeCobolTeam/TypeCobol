@@ -88,7 +88,7 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// The Generator;
         /// </summary>
-        public Generator2 Generator
+        public Generator Generator
         {
             get;
             internal set;
@@ -216,7 +216,7 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="Input">Cobol Text Lines in input</param>
         /// <param name="generator">The Generator</param>
-        public LinearNodeSourceCodeMapper(Generator2 generator)
+        public LinearNodeSourceCodeMapper(Generator generator)
         {
             NodeCount = 0;//Count of Nodes Treated.
             Generator = generator;
