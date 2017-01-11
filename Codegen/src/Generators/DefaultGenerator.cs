@@ -128,7 +128,9 @@ namespace TypeCobol.Codegen.Generators
                             //var sourceLine = TargetDocument[i];
                             Position from = mapper.Nodes[node_index].From;
                             Position to = mapper.Nodes[node_index].To;
-                            curSourceText.Delete(from.Pos, to.Pos);
+                            //Delete <==> Replace with blanks
+                            char[] blanks = GetDeleteString(curSourceText, from.Pos, to.Pos);
+                            curSourceText.Insert(blanks, from.Pos, to.Pos);
                         }
                     }
                     else
@@ -162,7 +164,10 @@ namespace TypeCobol.Codegen.Generators
                                 int f = Math.Min(from.Pos, curSourceText.Size);
                                 int t = Math.Min(to.Pos, curSourceText.Size);
                                 if (f != t)
-                                    curSourceText.Delete(f, t);
+                                {
+                                    char[] replace = GetDeleteString(curSourceText, f, t);
+                                    curSourceText.Insert(replace, f, t);
+                                }
                                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                                 funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
                             }
@@ -173,7 +178,8 @@ namespace TypeCobol.Codegen.Generators
                             from = to;
                             sw.Close();
                         }
-                        if (!bIsGenerateAndReplace)
+                        //Don't pad in case of replacement and not insertion
+                        if (!bIsGenerateAndReplace && !bIsFunctionDecl)
                         {
                             //Pad a splitted segment
                             int span = mapper.Nodes[node_index].Positions.Item3;
@@ -242,6 +248,27 @@ namespace TypeCobol.Codegen.Generators
                 }
             }
             return targetSourceText;
+        }
+
+
+        /// <summary>
+        /// Create a Delete string Corresponding to a segment in a buffer.
+        /// We want to create a replacement string that only contains whitespaces
+        /// and '\r' or \n' characters.
+        /// </summary>
+        /// <param name="curSourceText"></param>
+        /// <param name="from">The start position in the buffer</param>
+        /// <param name="to">The ending position in the buffer</param>
+        /// <returns>The replacement characters</returns>
+        protected char[] GetDeleteString(StringSourceText sourceText, int from, int to)
+        {            
+            char[] result = new char[to - from];
+            for (int i = 0; i < result.Length; i++)
+            {
+                char c = sourceText[from + i];
+                result[i] = (c == '\r' || c == '\n' || Char.IsWhiteSpace(c)) ? c : ' ';
+            }
+            return result;
         }
 
         protected override bool Process(Compiler.Nodes.Node node)

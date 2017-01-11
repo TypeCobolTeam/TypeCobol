@@ -251,13 +251,30 @@ namespace TypeCobol.Codegen.Generators
                             return false;
                     }
                 }
-                //Now the buffer content must contains only whitespace, cariage return or line feed characters.
-                for (int i = 0; i < buffer.Size; i++)
-                {
-                    char c = buffer[i];
-                    if (!Char.IsWhiteSpace(c) && c != '\r' && c != '\n' )
-                        return false;
+                if (Generator.Layout == ColumnsLayout.CobolReferenceFormat)
+                {//Cobol Format
+                    for (int i = 0, j = 0; i < buffer.Size; i++, j++)
+                    {
+                        char c = buffer[i];
+                        if (!Char.IsWhiteSpace(c) && c != '\r' && c != '\n')
+                        {
+                            if (j >= 6 && j < 73)
+                                return false;
+                        }
+                        if (c == '\n')
+                            j = 0;
+                    }
                 }
+                else
+                {
+                    //Now the buffer content must contains only whitespace, carriage return or line feed characters.
+                    for (int i = 0; i < buffer.Size; i++)
+                    {
+                        char c = buffer[i];
+                        if (!Char.IsWhiteSpace(c) && c != '\r' && c != '\n')
+                            return false;
+                    }
+                }                
                 return true;
             }
             return false;
@@ -584,8 +601,9 @@ namespace TypeCobol.Codegen.Generators
                 int from = data.Positions != null ? data.Positions.Item1 : -1;
                 int to = data.Positions != null ? data.Positions.Item2 : -1;
                 int span = data.Positions != null ? data.Positions.Item3 : -1;
-                System.Console.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5}]", i,
-                    i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "");
+                System.Console.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5} {8}]", i,
+                    i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "",
+                    data.node.Comment != null ? (data.node.Comment.Value ? "COMMENTED" : "") : "");
             }
         }
         /// <summary>
@@ -643,8 +661,9 @@ namespace TypeCobol.Codegen.Generators
                 int from = data.Positions != null ? data.Positions.Item1 : -1;
                 int to = data.Positions != null ? data.Positions.Item2 : -1;
                 int span = data.Positions != null ? data.Positions.Item3 : -1;
-                Debug.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5}]", i,
-                    i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "");
+                Debug.WriteLine("Node {0}<{6}> {7}: Index={1}, Positions[from={2}, To={3}, Span={4}, Lines={5} {8}]", i,
+                    i, from, to, span, lines.ToString(), data.node.GetType().FullName, data.Removed ? "?REMOVED?" : "",
+                    data.node.Comment != null ? (data.node.Comment.Value ? "COMMENTED" : "") : "");
             }
         }
 
