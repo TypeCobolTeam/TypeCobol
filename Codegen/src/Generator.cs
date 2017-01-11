@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
@@ -114,6 +115,78 @@ namespace TypeCobol.Codegen
         }
 
         /// <summary>
+        /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value is NULL.
+        /// In the consumed tokens span over several lines then the size of the newline sequence is included for each line.
+        /// The method also calculate the ending span offset from the beginning of the last line.
+        /// It also get the list of Line numbers occupated by this node, and the offset of each line.
+        /// </summary>
+        public Tuple<int, int, int, List<int>, List<int>> FromToPositions(Node node)
+        {
+            if (node.CodeElement == null || node.CodeElement.ConsumedTokens == null)
+                return null;
+            if (node.CodeElement.ConsumedTokens.Count > 0)
+            {
+                int ln_size = System.Environment.NewLine.Length;
+                int from = -1;
+                int to = 0;
+                int i = 0;
+                int span = 0;
+                List<int> lineNumbers = new List<int>();
+                List<int> lineOffsets = new List<int>();
+                SourceDocument.SourceLine srcFirstLine = null;
+                do
+                {
+                    var token = node.CodeElement.ConsumedTokens[i];
+                    if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                    {//Don't take in account imported tokens -> This avoid including lines that come from COPYs files.
+                        int curLineIndex = node.CodeElement.ConsumedTokens[i].Line;
+                        if (curLineIndex == 0)
+                        {   //Very bizarre ??? It happens with some COBOL85 samples like:
+                            //CCC1B045.PGM, CCTF0011.PGM, CCTZ015B, CCTZ0300B, etc..
+                            return null;
+                        }
+                        if (lineNumbers.Count > 0)
+                        {//Add lines between
+                            int lastLine = lineNumbers[lineNumbers.Count - 1];
+                            while (++lastLine < curLineIndex)
+                            {
+                                lineNumbers.Add(lastLine);
+                                SourceDocument.SourceLine srcLine = TargetDocument[lastLine - 1];
+                                lineOffsets.Add(srcLine.From - srcFirstLine.From);
+                            }
+                        }
+                        SourceDocument.SourceLine curLine = TargetDocument[curLineIndex - 1];
+                        if (srcFirstLine == null)
+                            srcFirstLine = curLine;
+                        lineNumbers.Add(curLineIndex);
+                        lineOffsets.Add(curLine.From - srcFirstLine.From);
+                        span = 0;
+                        while ((i < node.CodeElement.ConsumedTokens.Count) && ((curLineIndex == node.CodeElement.ConsumedTokens[i].Line)
+                            || (node.CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken)))
+                        {
+                            if (!(node.CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                            {
+                                if (from == -1)
+                                    from = node.CodeElement.ConsumedTokens[i].Column;
+                                span = node.CodeElement.ConsumedTokens[i].EndColumn;
+                            }
+                            i++;
+                        }
+                        to = (curLine.From + span) - srcFirstLine.From;
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                } while (i < node.CodeElement.ConsumedTokens.Count);
+                lineNumbers.TrimExcess();
+                lineOffsets.TrimExcess();
+                return new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lineNumbers, lineOffsets);
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Handler called after an Action has beeen executed.
         /// </summary>
         /// <param name="sender">The sender</param>
@@ -142,12 +215,16 @@ namespace TypeCobol.Codegen
             // STEP 0: Initialize the global values.
             RootNode = tree;
             SymTable = table;
-            Layout = columns;            
-            // STEP 1: modify tree to adapt it to destination language
-            Actions.Perform(tree);
-            // STEP 2: convert tree to destination language code
+            Layout = columns;
             //Create the Initial target document.
             CreateTargetDocument();
+            // STEP 1: modify tree to adapt it to destination language            
+            // 1.1 Run the Qualifier action on this node
+            Qualifier qualifier = new Qualifier(this, tree);
+            qualifier.Execute();
+            // 1.2 Perform other actions
+            Actions.Perform(tree);
+            // STEP 2: convert tree to destination language code
             TreeToCode();
         }
 

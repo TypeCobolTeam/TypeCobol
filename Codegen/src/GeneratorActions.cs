@@ -54,11 +54,6 @@ namespace TypeCobol.Codegen
                         actions.Add(action);
                 }
             }
-            if (!node.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
-            {//Run the Qualifier action on this node
-                Qualifier qualifier = new Qualifier(node);
-                qualifier.Execute();
-            }
             return actions;
         }
 

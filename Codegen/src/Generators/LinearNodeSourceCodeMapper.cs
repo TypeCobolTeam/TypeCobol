@@ -229,73 +229,6 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
-        /// Get the From and To Positions of this Node based on the consumed Token, if no ConsumedTokens the return value is NULL.
-        /// In the consumed tokens span over several lines then the size of the newline sequence is included for each line.
-        /// The method also calculate the ending span offset from the beginning of the last line.
-        /// It also get the list of Line numbers occupated by this node, and the offset of each line.
-        /// </summary>
-        public Tuple<int, int, int, List<int>, List<int>> FromToPositions(Node node)
-        {
-            if (node.CodeElement == null || node.CodeElement.ConsumedTokens == null)
-                return null;
-            if (node.CodeElement.ConsumedTokens.Count > 0)
-            {
-                int ln_size = System.Environment.NewLine.Length;
-                int from = -1;
-                int to = 0;
-                int i = 0;
-                int span = 0;
-                List<int> lineNumbers = new List<int>();
-                List<int> lineOffsets = new List<int>();
-                SourceDocument.SourceLine srcFirstLine = null;
-                do
-                {
-                    var token = node.CodeElement.ConsumedTokens[i];
-                    if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken))
-                    {//Don't take in account imported tokens -> This avoid including lines that come from COPYs files.
-                        int curLineIndex = node.CodeElement.ConsumedTokens[i].Line;
-                        if (lineNumbers.Count > 0)
-                        {//Add lines between
-                            int lastLine = lineNumbers[lineNumbers.Count - 1];
-                            while (++lastLine < curLineIndex)
-                            {
-                                lineNumbers.Add(lastLine);
-                                SourceDocument.SourceLine srcLine = this.Generator.TargetDocument[lastLine - 1];
-                                lineOffsets.Add(srcLine.From - srcFirstLine.From);
-                            }
-                        } 
-                        SourceDocument.SourceLine curLine = this.Generator.TargetDocument[curLineIndex - 1];
-                        if (srcFirstLine == null)
-                            srcFirstLine = curLine;
-                        lineNumbers.Add(curLineIndex);
-                        lineOffsets.Add(curLine.From - srcFirstLine.From);
-                        span = 0;
-                        while ((i < node.CodeElement.ConsumedTokens.Count) && ((curLineIndex == node.CodeElement.ConsumedTokens[i].Line)
-                            || (node.CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken)))
-                        {
-                            if (!(node.CodeElement.ConsumedTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken))
-                            {
-                                if (from == -1)
-                                    from = node.CodeElement.ConsumedTokens[i].Column;
-                                span = node.CodeElement.ConsumedTokens[i].EndColumn;
-                            }
-                            i++;
-                        }
-                        to = (curLine.From + span) - srcFirstLine.From;
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                } while (i < node.CodeElement.ConsumedTokens.Count);
-                lineNumbers.TrimExcess();
-                lineOffsets.TrimExcess();
-                return new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lineNumbers, lineOffsets);
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Check if at the end the buffer being flushed is generated empty.
         /// A buffer is generated empty if all its target lines are commented
         /// and all nodes in the target lines are commented in block and when the buffer
@@ -371,7 +304,7 @@ namespace TypeCobol.Codegen.Generators
         private bool ProcessLinearization(Node node, bool functionBody = false)
         {
             //During the Linearization Phase, collect data, index of all Nodes.
-            var positions = FromToPositions(node);
+            var positions = this.Generator.FromToPositions(node);
             if (positions == null)
             {
                 node.NodeIndex = -1;
