@@ -68,5 +68,4 @@ internal class GeneratedNode: Compiler.Nodes.Node, Generated {
             return false;
         }
     }
-
 }
