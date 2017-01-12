@@ -13,6 +13,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 
 	public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {        
 		ProgramName = node.Hash;
+        //Add Start Function Node
 		foreach(var child in node.Children) {
 			if (child is Compiler.Nodes.ProcedureDivision) {
 				CreateOrUpdateLinkageSection(node, node.CodeElement().Profile);
@@ -30,6 +31,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 				children.Add(child);
 			}
 		}
+        //Add End Function Node
 		this.Node = new Compiler.Nodes.FunctionDeclaration(node.CodeElement());
 	}
 
@@ -94,7 +96,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
-				_cache.Add(new TextLineSnapshot(-1, "*", null));
+				//_cache.Add(new TextLineSnapshot(-1, "*", null));
                     //TODO add Function signature as comment
 				_cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________", null));
 				_cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));

@@ -169,14 +169,27 @@ namespace TypeCobol.Codegen.Generators
                             string text = sw.ToString();
                             if (bIsFunctionDecl)
                             {
+                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                                 int f = Math.Min(from.Pos, curSourceText.Size);
                                 int t = Math.Min(to.Pos, curSourceText.Size);
                                 if (f != t)
                                 {
+                                    //Create the commented header of the function.
+                                    List<ITextLine> funHeader = CreateCommentedSequence(curSourceText, f, t);
                                     char[] replace = GetDeleteString(curSourceText, f, t);
                                     curSourceText.Insert(replace, f, t);
-                                }
-                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                    string crlf = "";
+                                    foreach (var h in funHeader)
+                                    {//Output commented function header                                        
+                                        foreach (var hl in Indent(h, null))
+                                        {
+                                            funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                            funData.FunctionDeclBuffer.Insert(hl.Text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                            crlf = Environment.NewLine;
+                                        }
+                                    }
+                                    funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                }                                
                                 funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
                             }
                             else
@@ -277,6 +290,43 @@ namespace TypeCobol.Codegen.Generators
                 result[i] = (c == '\r' || c == '\n' || Char.IsWhiteSpace(c)) ? c : ' ';
             }
             return result;
+        }
+
+        /// <summary>
+        /// Create a commented Sequence of a Portion of the text.
+        /// </summary>
+        /// <param name="sourceText"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        protected List<ITextLine> CreateCommentedSequence(StringSourceText sourceText, int from, int to)
+        {
+            List<ITextLine>  sequence = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
+            sequence.Add(new TextLineSnapshot(-1, "*", null));
+            int startPos = from;
+            int i = from;
+            for (i = from; i < to; i++)
+            {
+                char c = sourceText[i];
+                if (c == '\n')
+                {
+                    int endPos = i;
+                    while (sourceText[endPos] == '\n' || sourceText[endPos] == '\r')
+                        endPos--;
+                    string text = sourceText.GetTextAt(startPos, endPos + 1);
+                    ITextLine line = new TextLineSnapshot(-1, "*" + text, null);
+                    sequence.Add(line);
+                    startPos = i + 1;
+                }
+            }
+            if (from != to)
+            {
+                string text = sourceText.GetTextAt(startPos, i);
+                ITextLine line = new TextLineSnapshot(-1, "*" + text, null);
+                sequence.Add(line);
+            }
+
+            return sequence;
         }
 
         protected override bool Process(Compiler.Nodes.Node node)
