@@ -182,7 +182,6 @@ namespace TypeCobol.Codegen.Generators
             /// Node Indices associated to Function Declaration.
             /// </summary>
             public List<int> FunctionDeclNodes;
-
             /// <summary>
             /// Constructor
             /// </summary>
@@ -244,6 +243,8 @@ namespace TypeCobol.Codegen.Generators
                 //For each contigüous line having the same buffer
                 for (int i = BufferLineMap[buffer]; i < LineData.Length && LineData[i].Buffer == buffer; i++)
                 {
+                    if (LineData[i].LineNodes == null)
+                        return false;
                     //Each Node of the line must be commented
                     foreach (int node_index in LineData[i].LineNodes)
                     {
@@ -502,8 +503,12 @@ namespace TypeCobol.Codegen.Generators
                     }
                     if (node.NodeIndex >= 0)
                     {
-                        //But mark this node as removed.
-                        Nodes[node.NodeIndex].Removed = true;
+                        if (Nodes[node.NodeIndex].node == node)
+                        {   //Be sure this the node at the given index, because some remove nodes have not been visited
+                            //and thus have their node index set to zero.
+                            //So mark this node as removed.
+                            Nodes[node.NodeIndex].Removed = true;
+                        }
                     }
                     //Remove node phase don't visit Children
                     doVisitChildren = false;

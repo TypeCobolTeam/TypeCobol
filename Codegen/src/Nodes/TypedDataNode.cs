@@ -25,7 +25,7 @@ internal class TypedDataNode: DataDescription, Generated {
 
 				var data = this.Node.CodeElement();
 				int level = (int)data.LevelNumber.Value;
-				_cache.Add(CreateDataDefinition(data, level, 0, true));
+				_cache.Add(CreateDataDefinition(data, level, 0, true, true));
 
 				var customtype = this.Node.SymbolTable.GetType(new URI(data.DataType.Name));
 				if (customtype.Count > 0) _cache.AddRange(InsertChildren(this.Node.SymbolTable, (TypeDefinition)customtype[0], level+1, 1));
@@ -34,8 +34,8 @@ internal class TypedDataNode: DataDescription, Generated {
 		}
 	}
 
-	internal static ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int indent, bool isCustomType) {
-		var line = GetIndent(level, indent);
+	internal static ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int indent, bool isCustomType, bool isFirst = false) {
+        var line = GetIndent(level, indent, isFirst);
 		line.Append(level.ToString("00"));
 		if (data.Name != null) line.Append(' ').Append(data.Name);
 		if (!isCustomType) line.Append(" PIC ").Append(data.Picture);
@@ -43,10 +43,12 @@ internal class TypedDataNode: DataDescription, Generated {
 		return new TextLineSnapshot(-1, line.ToString(), null);
 	}
 
-	private static System.Text.StringBuilder GetIndent(int level, int indent) {
+    private static System.Text.StringBuilder GetIndent(int level, int indent, bool isFirst)
+    {
 		var str = new System.Text.StringBuilder();
 		if (level == 1 || level == 77) return str;
-		str.Append("    ");
+        if (!isFirst)
+		    str.Append("    ");
 		for(int i=1; i<indent; i++) str.Append("  ");
 		return str;
 	}

@@ -69,8 +69,16 @@ namespace TypeCobol.Codegen.Generators
                     foreach (var line in lines)
                     {
                         string text = line.Text;
-                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        if (mapper.LineData[i].Buffer != null)
+                        {//This line has been assigned a target Buffer
+                            mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        }
+                        else
+                        {
+                            targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        }
                     }
                     continue;
                 }
@@ -178,7 +186,7 @@ namespace TypeCobol.Codegen.Generators
                             from = to;
                             sw.Close();
                         }
-                        //Don't pad in case of replacement and not insertion
+                        //Don't pad in case of replacement or insertion in a function declaration
                         if (!bIsGenerateAndReplace && !bIsFunctionDecl)
                         {
                             //Pad a splitted segment

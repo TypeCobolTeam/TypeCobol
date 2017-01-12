@@ -59,6 +59,10 @@ namespace TypeCobol.Codegen.Actions
         /// </summary>
         public void Execute()
         {
+            //Bug correction: Don't expand commented Nodes
+            if (this.Source.Comment != null ? this.Source.Comment.Value : false)
+                return;
+
             var typegen = GetGeneratedNode(this.Source.CodeElement.GetType());
 
             if (typegen == typeof(Codegen.Nodes.TypeCobolQualifier))

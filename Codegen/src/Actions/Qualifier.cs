@@ -91,12 +91,11 @@ namespace TypeCobol.Codegen.Actions
                 sourceNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
 
                 Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(sourceNode);
-                Stack<GenerateQualifierToken> stack = new Stack<GenerateQualifierToken>();
                 IList<TypeCobol.Compiler.Scanner.Token> nodeTokens = sourceNode.CodeElement.ConsumedTokens;
                 int i = 0;
-                for (int j = Items.Count - 1; j >= 0; j--)
+                for (int j = 0; j < Items.Count; j++)
                 {
-                    SymbolReference sr = Items[j];
+                    SymbolReference sr = Items[Items.Count - j - 1];
                     for (; i < nodeTokens.Count; i++)
                     {
                         if (nodeTokens[i] == sr.NameLiteral.Token)
@@ -117,25 +116,20 @@ namespace TypeCobol.Codegen.Actions
                             }
                             //We got It ==> Create our Generate Nodes
                             GenerateQualifierToken item = new GenerateQualifierToken(
-                                new QualifierTokenCodeElement(Items[Items.Count - 1 - j].NameLiteral.Token), sr.ToString(),
+                                new QualifierTokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
                                 sourcePositions);
-                            stack.Push(item);
+                            item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);                            
+                            sourceNode.Add(item);
                             if (tokenColonColon != null)
                             {
                                 item = new GenerateQualifierToken(new QualifierTokenCodeElement(tokenColonColon), string.Intern(" OF "),
                                     sourcePositions);
-                                stack.Push(item);
+                                item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                                sourceNode.Add(item);
                             }
                             break;//We got it
                         }
                     }
-                }
-                //Now Insert all new nodes. Has Children of this node
-                while (stack.Count > 0)
-                {
-                    GenerateQualifierToken node = stack.Pop();
-                    node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-                    sourceNode.Add(node);
                 }
                 //Now Comment the Source Node
                 sourceNode.Comment = true;
