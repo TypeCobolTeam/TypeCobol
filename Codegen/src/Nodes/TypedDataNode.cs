@@ -1,11 +1,12 @@
 ﻿namespace TypeCobol.Codegen.Nodes {
 
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeModel;
-	using TypeCobol.Compiler.Nodes;
-	using TypeCobol.Compiler.Text;
+    using System.Collections.Generic;
+    using System.Text;
+    using TypeCobol.Compiler.CodeElements;
+    using TypeCobol.Compiler.CodeElements.Expressions;
+    using TypeCobol.Compiler.CodeModel;
+    using TypeCobol.Compiler.Nodes;
+    using TypeCobol.Compiler.Text;
 
 
 
@@ -24,22 +25,48 @@ internal class TypedDataNode: DataDescription, Generated {
 				if (this.Node.IsPartOfATypeDef) return _cache;
 
 				var data = this.Node.CodeElement();
-				int level = (int)data.LevelNumber.Value;
-				_cache.Add(CreateDataDefinition(data, level, 0, true, true));
-
+				int level = (int)data.LevelNumber.Value;				
 				var customtype = this.Node.SymbolTable.GetType(new URI(data.DataType.Name));
+                _cache.Add(CreateDataDefinition(data, level, 0, true, true, (TypeDefinition)customtype[0]));
 				if (customtype.Count > 0) _cache.AddRange(InsertChildren(this.Node.SymbolTable, (TypeDefinition)customtype[0], level+1, 1));
 			}
 			return _cache;
 		}
 	}
 
-	internal static ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int indent, bool isCustomType, bool isFirst = false) {
+    /// <summary>
+    /// Tries to detect a TYPEDEF construction for a scalar type.
+    /// </summary>
+    /// <param name="customtype">The TypeDef definition node</param>
+    /// <returns>The string representing the TYPEDEF type</returns>
+    internal static string ExtractAnyCobolScalarTypeDef(TypeDefinition customtype)
+    {                
+        StringBuilder sb = new StringBuilder();
+        if (customtype.CodeElement != null)
+        {
+            AlphanumericValue picture = customtype.CodeElement().Picture;
+            if (picture != null)
+            {
+                sb.Append(" PIC ").Append(picture);
+            }
+        }
+        return sb.ToString();
+    }
+
+	internal static ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null) {        
         var line = GetIndent(level, indent, isFirst);
 		line.Append(level.ToString("00"));
-		if (data.Name != null) line.Append(' ').Append(data.Name);
-		if (!isCustomType) line.Append(" PIC ").Append(data.Picture);
-		line.Append('.');
+		if (data.Name != null) 
+            line.Append(' ').Append(data.Name);
+		if (!isCustomType) 
+            line.Append(" PIC ").Append(data.Picture);
+        else if (customtype.Children.Count == 0)
+        {   //This variable will have no subtypes as children at all
+            //So Auto detect a type based on scalar COBOL typedef.
+            string text = ExtractAnyCobolScalarTypeDef(customtype);
+            line.Append(text);            
+        }
+        line.Append('.');
 		return new TextLineSnapshot(-1, line.ToString(), null);
 	}
 
@@ -60,7 +87,7 @@ internal class TypedDataNode: DataDescription, Generated {
 			var typed = (ITypedNode)child;
 			var types = table.GetType(new URI(typed.DataType.Name));
 			bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
-			lines.Add(CreateDataDefinition((DataDescriptionEntry)child.CodeElement, level, indent, isCustomTypeToo));
+            lines.Add(CreateDataDefinition((DataDescriptionEntry)child.CodeElement, level, indent, isCustomTypeToo, false, (TypeDefinition)types[0]));
 			if (isCustomTypeToo) lines.AddRange(InsertChildren(table, (TypeDefinition)types[0], level+1, indent+1));
 		}
 		return lines;
