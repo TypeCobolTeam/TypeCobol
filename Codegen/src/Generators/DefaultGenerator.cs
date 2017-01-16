@@ -35,7 +35,7 @@ namespace TypeCobol.Codegen.Generators
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
             //mapper.DebugDump();
-            GapSourceText targetSourceText = LinearGeneration(mapper, Parser.Results.TokensLines);
+            SourceText targetSourceText = LinearGeneration(mapper, Parser.Results.TokensLines);
             // Step 3: Write target document
             targetSourceText.Write(Destination);
             Destination.Flush();
@@ -43,10 +43,15 @@ namespace TypeCobol.Codegen.Generators
 
         /// <summary>
         /// Perform a linear Generation
+        /// //1) A Non commented line with no Associated nodes is generated without any change.
+        /// //2) If the line is commented then first comment all following lines that have the same intersection with the corresponding target Nodes.
+        /// //3) For each node related to a line, and not already generated the corresponding code.
+        /// //4) Flush of Function declations.
         /// </summary>
-        private GapSourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
+        private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
         {            
-            GapSourceText targetSourceText = new GapSourceText();
+            SourceText targetSourceText = new GapSourceText();
+
             //Bit Array of Generated Nodes.
             BitArray generated_node = new BitArray(mapper.NodeCount);
             //The previous line generation buffer 
@@ -119,7 +124,7 @@ namespace TypeCobol.Codegen.Generators
                     }
                     if (generated_node[node_index])
                         continue;//Already Generated.
-                    bool bFunctionBodyNode = mapper.Nodes[node_index].FunctionBodyNode != null;
+                    bool bFunctionBodyNode = mapper.Nodes[node_index].FunctionBodyNode != null;//Is this node in a function body ?
                     StringSourceText curSourceText = mapper.Nodes[node_index].Buffer;
                     if (curSourceText != previousBuffer && previousBuffer != null)
                     {//Flush previous buffer
@@ -168,19 +173,24 @@ namespace TypeCobol.Codegen.Generators
                             sw.Flush();
                             string text = sw.ToString();
                             if (bIsFunctionDecl)
-                            {
+                            {   //This the Function Header output.
                                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                                 int f = Math.Min(from.Pos, curSourceText.Size);
                                 int t = Math.Min(to.Pos, curSourceText.Size);
                                 if (f != t)
                                 {
+                                    //--------------------------------------------------
                                     //Create the commented header of the function.
+                                    //--------------------------------------------------
                                     List<ITextLine> funHeader = CreateCommentedSequence(curSourceText, f, t);
+                                    //Create a the erase string to erase in the original source code
+                                    //The Function header.
                                     char[] replace = GetDeleteString(curSourceText, f, t);
+                                    //Erase in the original source code the Function header?
                                     curSourceText.Insert(replace, f, t);
                                     string crlf = "";
                                     foreach (var h in funHeader)
-                                    {//Output commented function header                                        
+                                    {//Output commented function header in t he Function Declaration buffer                                       
                                         foreach (var hl in Indent(h, null))
                                         {
                                             funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
@@ -188,8 +198,10 @@ namespace TypeCobol.Codegen.Generators
                                             crlf = Environment.NewLine;
                                         }
                                     }
+                                    //Insert NewLine characters.
                                     funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
                                 }                                
+                                //Insert the sequen
                                 funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
                             }
                             else
@@ -270,7 +282,6 @@ namespace TypeCobol.Codegen.Generators
             }
             return targetSourceText;
         }
-
 
         /// <summary>
         /// Create a Delete string Corresponding to a segment in a buffer.

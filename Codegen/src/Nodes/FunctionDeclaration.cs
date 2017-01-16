@@ -13,7 +13,6 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 
 	public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {        
 		ProgramName = node.Hash;
-        //Add Start Function Node
 		foreach(var child in node.Children) {
 			if (child is Compiler.Nodes.ProcedureDivision) {
 				CreateOrUpdateLinkageSection(node, node.CodeElement().Profile);
@@ -29,9 +28,8 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 				// TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
 				// TCRFUN_CODEGEN_DATA_SECTION_AS_IS
 				children.Add(child);
-			}
+			}            
 		}
-        //Add End Function Node
 		this.Node = new Compiler.Nodes.FunctionDeclaration(node.CodeElement());
 	}
 

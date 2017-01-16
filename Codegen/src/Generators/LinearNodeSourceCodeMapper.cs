@@ -45,6 +45,11 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Inteernal position 0
+        /// </summary>
+        private static Position Pos0 = new Position(0);
+
+        /// <summary>
         /// The Bit Array of line that must be commented
         /// </summary>
         public BitArray CommentedLines
@@ -130,6 +135,26 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// A Linear Generated Dummy Node
+        /// </summary>
+        internal class LinearGeneratedNode : Compiler.Nodes.Node
+        {
+            /// <summary>
+            /// Empty constructor.
+            /// </summary>
+            public LinearGeneratedNode() : base(null)
+            {
+            }
+
+
+            public override bool VisitNode(TypeCobol.Compiler.CodeElements.IASTVisitor astVisitor)
+            {
+                //throw new NotImplementedException();
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Structure that holds Data associated to Nodes
         /// </summary>
         public class NodeData
@@ -182,6 +207,14 @@ namespace TypeCobol.Codegen.Generators
             /// Node Indices associated to Function Declaration.
             /// </summary>
             public List<int> FunctionDeclNodes;
+            /// <summary>
+            /// The first 1-Based line index of the function body
+            /// </summary>
+            public int BodyFistLineIndex;
+            /// <summary>
+            /// The last 1-Based line index of the function body
+            /// </summary>
+            public int BodyLastLineIndex;
             /// <summary>
             /// Constructor
             /// </summary>
@@ -304,12 +337,23 @@ namespace TypeCobol.Codegen.Generators
             else
             {//If The Node has positions then linearize it
                 ProcessLinearization(node, true);
-                data = Nodes[node.NodeIndex];
+                if (node.NodeIndex >= 0)
+                {
+                    data = Nodes[node.NodeIndex];
+                    if (funData.BodyFistLineIndex == 0)
+                    {
+                        funData.BodyFistLineIndex = data.Positions.Item4[0];
+                    }
+                    funData.BodyLastLineIndex = data.Positions.Item4[0];
+                }
             }
-            //Associate the Function Node
-            data.FunctionBodyNode = CurrentFunctionDeclNode;
-            //Add the node to the Function Decl nodes list
-            funData.FunctionDeclNodes.Add(node.NodeIndex);
+            if (node.NodeIndex >= 0)
+            {
+                //Associate the Function Node
+                data.FunctionBodyNode = CurrentFunctionDeclNode;
+                //Add the node to the Function Decl nodes list
+                funData.FunctionDeclNodes.Add(node.NodeIndex);
+            }
             return true;
         }
 
@@ -330,6 +374,7 @@ namespace TypeCobol.Codegen.Generators
             }
             if (positions.Item4.Count == 0)
             {//This must be a Node in an imported COPY it has no lines associated to it
+                node.NodeIndex = -1;
                 return true;
             }
             if (positions.Item1 > positions.Item2)
@@ -429,6 +474,94 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Collect all lines that have not been associated to a Node durring Function Declaration
+        /// processing phase. The line are then associated to Dummy nodes, that have a buffer containing
+        /// the source code of the line.
+        /// </summary>
+        /// <param name="funData"></param>
+        private void CollectFunctionBodyUnNodedLines(NodeFunctionData funData)
+        {            
+            var Input = Generator.Parser.Results.TokensLines;
+            int j = 0;
+            for (int i = funData.BodyFistLineIndex + 1; i < funData.BodyLastLineIndex; i++)
+            {                
+                if (LineData[i - 1].LineNodes == null)
+                {//No Nodes associated.
+                    int insert_index = j;
+                    for (; j < funData.FunctionDeclNodes.Count; j++)
+                    {
+                        NodeData node_data = Nodes[funData.FunctionDeclNodes[j]];
+                        Tuple<int, int, int, List<int>, List<int>> positions = null;
+                        if (node_data.Buffer == null)
+                        {//Check if we can have a line position
+                            positions = GetFirstAvailablePosition(node_data.node);
+                            //backtrack to a non generated node with no position
+                            int k = j - 1;
+                            while(k >= 0 && Nodes[funData.FunctionDeclNodes[k]].node.IsFlagSet(Node.Flag.NoPosGeneratedNodeMark))
+                                k -= 1;
+                            if (k >= 0)
+                                insert_index = k + 1;
+                        }
+                        else
+                        {
+                            positions = node_data.Positions;
+                        }
+                        if (positions != null)
+                        {
+                            if (i < positions.Item4[0])
+                            {//Insert before.
+                                LinearGeneratedNode dummy_node = new LinearGeneratedNode();
+                                dummy_node.NodeIndex = NodeCount++;
+                                NodeData data = new NodeData();
+                                data.node = dummy_node;
+                                data.From = Pos0;
+                                data.To = Pos0;
+                                data.FunctionBodyNode = funData.node;
+                                data.Buffer = new StringSourceText();
+                                //Read the line of the text in the buffer
+                                TypeCobol.Compiler.Scanner.ITokensLine line = Input[i - 1];
+                                data.Buffer.Insert(line.Text, data.Buffer.Size, data.Buffer.Size);
+                                data.Buffer.Insert(Environment.NewLine, data.Buffer.Size, data.Buffer.Size);
+                                Nodes.Add(data);
+                                LineData[i - 1].LineNodes = new List<int>();
+                                LineData[i - 1].LineNodes.Add(dummy_node.NodeIndex);
+                                LineData[i - 1].FunctionBodyBuffer = LineData[i - 1].Buffer = data.Buffer;
+                                funData.FunctionDeclNodes.Insert(insert_index, dummy_node.NodeIndex);
+                                j++;//Has there was an insertion.
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            node_data.node.SetFlag(Node.Flag.NoPosGeneratedNodeMark, true);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the first available position for a node
+        /// </summary>
+        /// <param name="node">The node to scan for a position</param>
+        /// <returns>The position if any, null otherwise.</returns>
+        Tuple<int, int, int, List<int>, List<int>> GetFirstAvailablePosition(Node node)
+        {
+            if (node == null)
+                return null;
+            Tuple<int, int, int, List<int>, List<int>> position = this.Generator.FromToPositions(node);
+            if (position != null)
+                return position;
+            foreach (var child in node.Children)
+            {
+                position = GetFirstAvailablePosition(child);
+                if (position != null)
+                    return position;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Accept this Node to be visited.
         /// </summary>
         /// <param name="node">The Node to be visited</param>
@@ -476,6 +609,13 @@ namespace TypeCobol.Codegen.Generators
                     Nodes[i].From = from;
                     Nodes[i].To = to;
                 }
+            }
+            //Now Complete Function Declaration Lines dispatching
+            //By Dealing with all lines that are not attached to a node.
+            foreach (int fun_index in FunctionDeclarationNodeIndices)
+            {
+                NodeFunctionData funData = (NodeFunctionData)Nodes[fun_index];
+                CollectFunctionBodyUnNodedLines(funData);
             }
         }
 

@@ -57,6 +57,11 @@ namespace TypeCobol.Compiler.Nodes {
             /// Flag that indicates that the node has been visited for Type Cobol Qualification style detection.
             /// </summary>
             HasBeenTypeCobolQualifierVisited = 0x01 << 0,
+
+            /// <summary>
+            /// This flag is used during code generation to mark generated nodes with no position.
+            /// </summary>
+            NoPosGeneratedNodeMark = 0x01 << 1,
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node
