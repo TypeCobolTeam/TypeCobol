@@ -487,7 +487,7 @@ namespace TypeCobol.Codegen.Generators
             {                
                 if (LineData[i - 1].LineNodes == null)
                 {//No Nodes associated.
-                    int insert_index = j;
+                    int insert_index = -1;
                     for (; j < funData.FunctionDeclNodes.Count; j++)
                     {
                         NodeData node_data = Nodes[funData.FunctionDeclNodes[j]];
@@ -510,6 +510,8 @@ namespace TypeCobol.Codegen.Generators
                         {
                             if (i < positions.Item4[0])
                             {//Insert before.
+                                if (insert_index == -1)
+                                    insert_index = j;
                                 LinearGeneratedNode dummy_node = new LinearGeneratedNode();
                                 dummy_node.NodeIndex = NodeCount++;
                                 NodeData data = new NodeData();
@@ -527,6 +529,7 @@ namespace TypeCobol.Codegen.Generators
                                 LineData[i - 1].LineNodes.Add(dummy_node.NodeIndex);
                                 LineData[i - 1].FunctionBodyBuffer = LineData[i - 1].Buffer = data.Buffer;
                                 funData.FunctionDeclNodes.Insert(insert_index, dummy_node.NodeIndex);
+                                insert_index = -1;
                                 j++;//Has there was an insertion.
                                 break;
                             }
