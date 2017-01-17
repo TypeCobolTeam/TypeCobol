@@ -11,6 +11,10 @@
 001530         ==:TRAC:==  by ==CCTFAL-LOG-LVL-T or TRC-T==.            000000
 000060 COPY YFIRSTCOPY.                                                 000060
 000070 01  MyKey    TYPEDEF PIC X(04).                                  000070
+000071 01  MyKey2    TYPEDEF.
+           05 partA pic X(04).
+           05 partB pic 9(04).
+           05 partC pic X(05).
 000080 01  b TYPE Bool.                                                 000080
 000090 01  mykey  PIC X(04). COPY YSECONDCOPY SUPPRESS.                 000090
 002440 77 myconstant PIC X(10) value 'SHIBBOLEET'.                      002440
@@ -20,6 +24,7 @@
 000150                                                                  000150
 000161 DECLARE FUNCTION GetValue PRIVATE                                000161
                         INPUT     ikey   TYPE MyKey
+                                  ikey2  TYPE MyKey2
 000163                  RETURNING result PIC 9(32).                     000163
 000170 PROCEDURE DIVISION.                                              000170
 000180     CONTINUE.                                                    000180
@@ -32,7 +37,7 @@
 000221     MOVE 'TOTO'                                                  000221
 000222             TO                                                   000222
 000223               mykey                                              000223
-000230    MOVE GetValue(mykey) TO result.                               000230
+000230*   MOVE GetValue(mykey) TO result.                               000230
 000240    GOBACK.                                                       000240
 00024E    EJECT                                                         00024E
 000250 
