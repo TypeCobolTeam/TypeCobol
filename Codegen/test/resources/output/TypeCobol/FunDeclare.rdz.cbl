@@ -1,13 +1,7 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
-       
-       DATA DIVISION.
-       FILE SECTION.
-       LOCAL-STORAGE SECTION.
-
        PROCEDURE DIVISION.
-           .
-       
+
       *DECLARE FUNCTION DoesNothing PRIVATE.                                  
 
       *DECLARE FUNCTION ReturnsZero PRIVATE                                   
@@ -20,20 +14,21 @@
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE                      
       *      INPUT     x      PIC 9(04)                                       
       *      RETURNING result PIC 9(04)                                       
-      *    . 
-	  
+      *    .                                                                  
+
       *written in lower-case to make sure code generation doesn't 
       *change it to upper-case
-      *declare function UseACopy private
-      *         input  x pic X.
+      *declare function UseACopy private                                      
+      *         input  x pic X.                                               
+
 
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
            CONTINUE.
        
        END PROGRAM FunDeclare.
       *                                                                       
+      *DECLARE FUNCTION DoesNothing PRIVATE.                                  
       *_________________________________________________________________      
-      *DECLARE FUNCTION DoesNothing PRIVATE.   
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. a59b2c49.                                                  
        PROCEDURE DIVISION                                                     
@@ -42,8 +37,9 @@
            .
        END PROGRAM a59b2c49.                                                  
       *                                                                       
-      *_________________________________________________________________   
-      *DECLARE FUNCTION ReturnsZero PRIVATE        
+      *DECLARE FUNCTION ReturnsZero PRIVATE                                   
+      *             RETURNING result PIC 9(04).                               
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. a866b35c.                                                  
        DATA DIVISION.
@@ -56,10 +52,9 @@
            .
        END PROGRAM a866b35c.                                                  
       *                                                                       
-      *_________________________________________________________________   
-      *OK: second function with same name, but profile is different
       *DECLARE FUNCTION DoesNothing PRIVATE                                   
-      *      INPUT x PIC 9(04).     
+      *             INPUT x PIC 9(04).                                        
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. fe03398a.                                                  
        DATA DIVISION.                                                         
@@ -72,11 +67,11 @@
            .
        END PROGRAM fe03398a.                                                  
       *                                                                       
-      *_________________________________________________________________   
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE                      
-      *      INPUT     x      PIC 9(04)                                       
-      *      RETURNING result PIC 9(04)                                       
-      *    .    
+      *             INPUT     x      PIC 9(04)                                
+      *             RETURNING result PIC 9(04)                                
+      *           .                                                           
+      *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. e3e490ae.                                                  
        DATA DIVISION.
@@ -92,12 +87,10 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM e3e490ae.   
-      *written in lower-case to make sure code generation doesn't 
-      *change it to upper-case
-      *declare function UseACopy private
-      *         input  x pic X.   
+       END PROGRAM e3e490ae.                                                  
       *                                                                       
+      *declare function UseACopy private                                      
+      *                input  x pic X.                                        
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. f6a89a72.                                                  
@@ -112,7 +105,6 @@
              USING BY REFERENCE x                                             
            .                                                                  
            display "Hello"
-		   COPY MyProcedureCopy.
-       
+           COPY MyProcedureCopy.
            .
-       END PROGRAM f6a89a72.                                             
+       END PROGRAM f6a89a72.                                                  
