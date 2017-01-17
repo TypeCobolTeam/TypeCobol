@@ -95,5 +95,4 @@ internal class TypedDataNode: DataDescription, Generated {
 
 	public bool IsLeaf { get { return true; } }
 }
-
 }
