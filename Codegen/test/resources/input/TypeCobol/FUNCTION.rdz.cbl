@@ -21,7 +21,8 @@
        END-DECLARE.
 
        TRAITEMENT.
-           MOVE FUNCTION POW (x y)    TO x
+      *    function are not fully implemented
+      *    MOVE FUNCTION POW (x y)    TO x
            .
 
        END PROGRAM Functions.
