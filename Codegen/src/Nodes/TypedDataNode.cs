@@ -38,16 +38,27 @@ internal class TypedDataNode: DataDescription, Generated {
     /// Tries to detect a TYPEDEF construction for a scalar type.
     /// </summary>
     /// <param name="customtype">The TypeDef definition node</param>
+    /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
     /// <returns>The string representing the TYPEDEF type</returns>
-    internal static string ExtractAnyCobolScalarTypeDef(TypeDefinition customtype)
-    {                
+    internal static string ExtractAnyCobolScalarTypeDef(TypeDefinition customtype, out bool bHasPeriod)
+    {
+        bHasPeriod = false;
         StringBuilder sb = new StringBuilder();
         if (customtype.CodeElement != null)
         {
-            AlphanumericValue picture = customtype.CodeElement().Picture;
-            if (picture != null)
+            if (customtype.CodeElement.ConsumedTokens != null)
             {
-                sb.Append(" PIC ").Append(picture);
+                int i = 0;
+                while (i < customtype.CodeElement.ConsumedTokens.Count  && customtype.CodeElement.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPEDEF)
+                    i++;
+
+                while (++i < customtype.CodeElement.ConsumedTokens.Count)
+                {
+                    sb.Append(string.Intern(" "));
+                    sb.Append(customtype.CodeElement.ConsumedTokens[i].Text);
+                    if (i == customtype.CodeElement.ConsumedTokens.Count - 1)
+                        bHasPeriod = customtype.CodeElement.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
+                }
             }
         }
         return sb.ToString();
@@ -63,10 +74,16 @@ internal class TypedDataNode: DataDescription, Generated {
         else if (customtype != null && customtype.Children.Count == 0)
         {   //This variable will have no subtypes as children at all
             //So Auto detect a type based on scalar COBOL typedef.
-            string text = ExtractAnyCobolScalarTypeDef(customtype);
-            line.Append(text);            
+            bool bHasPeriod = false;
+            string text = ExtractAnyCobolScalarTypeDef(customtype, out bHasPeriod);
+            line.Append(text);
+            if (!bHasPeriod)
+                line.Append('.');
         }
-        line.Append('.');
+        else
+        {
+            line.Append('.');
+        }
 		return new TextLineSnapshot(-1, line.ToString(), null);
 	}
 
