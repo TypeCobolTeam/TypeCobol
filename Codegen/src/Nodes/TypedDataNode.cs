@@ -60,7 +60,7 @@ internal class TypedDataNode: DataDescription, Generated {
             line.Append(' ').Append(data.Name);
 		if (!isCustomType) 
             line.Append(" PIC ").Append(data.Picture);
-        else if (customtype.Children.Count == 0)
+        else if (customtype != null && customtype.Children.Count == 0)
         {   //This variable will have no subtypes as children at all
             //So Auto detect a type based on scalar COBOL typedef.
             string text = ExtractAnyCobolScalarTypeDef(customtype);
@@ -87,7 +87,7 @@ internal class TypedDataNode: DataDescription, Generated {
 			var typed = (ITypedNode)child;
 			var types = table.GetType(new URI(typed.DataType.Name));
 			bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
-            lines.Add(CreateDataDefinition((DataDescriptionEntry)child.CodeElement, level, indent, isCustomTypeToo, false, (TypeDefinition)types[0]));
+            lines.Add(CreateDataDefinition((DataDescriptionEntry)child.CodeElement, level, indent, isCustomTypeToo, false, isCustomTypeToo ? (TypeDefinition)types[0] : null));
 			if (isCustomTypeToo) lines.AddRange(InsertChildren(table, (TypeDefinition)types[0], level+1, indent+1));
 		}
 		return lines;
