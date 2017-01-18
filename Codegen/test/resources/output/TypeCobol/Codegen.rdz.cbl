@@ -12,11 +12,10 @@
 000060 COPY YFIRSTCOPY.                                                 000060
       *01  MyKey    TYPEDEF PIC X(04).                                        
 000070                                                                  000070
-      *01  MyKey2    TYPEDEF.
-      *    05 partA pic X(04).
-      *    05 partB pic 9(04).
-      *    05 partC pic X(05).
-000071
+      *01  MyKey2    TYPEDEF.                                                 
+      *    05 partA pic X(04).                                                
+      *    05 partB pic 9(04).                                                
+      *    05 partC pic X(05).                                                
       *01  b TYPE Bool.                                                       
 000080 01  b-value PIC X VALUE LOW-VALUE.
            88  b       VALUE 'T'.                                             
@@ -30,6 +29,7 @@
 000150                                                                  000150
       *DECLARE FUNCTION GetValue PRIVATE                                      
       *                 INPUT     ikey   TYPE MyKey                           
+      *                           ikey2  TYPE MyKey2                          
       *                 RETURNING result PIC 9(32).                           
 000170                                                                  000170
 000180                                                                  000180
@@ -53,23 +53,23 @@
       *DECLARE FUNCTION GetValue PRIVATE                                      
       *000161                                                                 
       *                        INPUT     ikey   TYPE MyKey                    
-      *                                  ikey2  TYPE MyKey2
+      *                                  ikey2  TYPE MyKey2                   
       *000163                  RETURNING result PIC 9(32).                    
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. f79c1034.                                                  
+       PROGRAM-ID. b008705d.                                                  
        DATA DIVISION.                                                         
        LINKAGE SECTION.                                                       
        01 ikey PIC X(04).                                                     
-       01 ikey2.
-           05 partA pic X(04).
-           05 partB pic 9(04).
-           05 partC pic X(05).
+       01 ikey2.                                                              
+           02 partA PIC X(04).                                                
+           02 partB PIC 9(04).                                                
+           02 partC PIC X(05).                                                
        01 result PIC 9(32).                                                   
        PROCEDURE DIVISION                                                     
              USING BY REFERENCE ikey                                          
-                   BY REFERENCE ikey2 
+                   BY REFERENCE ikey2                                         
                    BY REFERENCE result                                        
            .                                                                  
 000180     CONTINUE.                                                    000180
-       END PROGRAM f79c1034.                                                  
+       END PROGRAM b008705d.                                                  
