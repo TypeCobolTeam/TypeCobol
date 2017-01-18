@@ -480,88 +480,80 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="funData"></param>
         private void CollectFunctionBodyUnNodedLines(NodeFunctionData funData)
-        {            
+        {
+            Tuple<int[], int[]> insertLines = ComputeFunctionBodyInsertionLines(funData);
             var Input = Generator.Parser.Results.TokensLines;
-            int j = 0;
+            int offset = 0;
             for (int i = funData.BodyFistLineIndex + 1; i < funData.BodyLastLineIndex; i++)
             {                
                 if (LineData[i - 1].LineNodes == null)
-                {//No Nodes associated.
-                    int insert_index = -1;
-                    for (; j < funData.FunctionDeclNodes.Count; j++)
+                {//No Nodes associated.                    
+                    int j = Array.BinarySearch(insertLines.Item1, i);
+                    if (j < 0)
+                        continue;///???
+                    int insert_index = insertLines.Item2[j];                    
+                    if (insert_index < 0)
                     {
-                        NodeData node_data = Nodes[funData.FunctionDeclNodes[j]];
-                        Tuple<int, int, int, List<int>, List<int>> positions = null;
-                        if (node_data.Buffer == null)
-                        {//Check if we can have a line position
-                            positions = GetFirstAvailablePosition(node_data.node);
-                            //backtrack to a non generated node with no position
-                            int k = j - 1;
-                            while(k >= 0 && Nodes[funData.FunctionDeclNodes[k]].node.IsFlagSet(Node.Flag.NoPosGeneratedNodeMark))
-                                k -= 1;
-                            if (k >= 0)
-                                insert_index = k + 1;
-                        }
-                        else
-                        {
-                            positions = node_data.Positions;
-                        }
-                        if (positions != null)
-                        {
-                            if (i < positions.Item4[0])
-                            {//Insert before.
-                                if (insert_index == -1)
-                                    insert_index = j;
-                                LinearGeneratedNode dummy_node = new LinearGeneratedNode();
-                                dummy_node.NodeIndex = NodeCount++;
-                                NodeData data = new NodeData();
-                                data.node = dummy_node;
-                                data.From = Pos0;
-                                data.To = Pos0;
-                                data.FunctionBodyNode = funData.node;
-                                data.Buffer = new StringSourceText();
-                                //Read the line of the text in the buffer
-                                TypeCobol.Compiler.Scanner.ITokensLine line = Input[i - 1];
-                                data.Buffer.Insert(line.Text, data.Buffer.Size, data.Buffer.Size);
-                                data.Buffer.Insert(Environment.NewLine, data.Buffer.Size, data.Buffer.Size);
-                                Nodes.Add(data);
-                                LineData[i - 1].LineNodes = new List<int>();
-                                LineData[i - 1].LineNodes.Add(dummy_node.NodeIndex);
-                                LineData[i - 1].FunctionBodyBuffer = LineData[i - 1].Buffer = data.Buffer;
-                                funData.FunctionDeclNodes.Insert(insert_index, dummy_node.NodeIndex);
-                                insert_index = -1;
-                                j++;//Has there was an insertion.
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            node_data.node.SetFlag(Node.Flag.NoPosGeneratedNodeMark, true);
-                        }
+                        insertLines.Item2[j] = -insert_index;                        
                     }
+                    insert_index = insertLines.Item2[j] + offset;
+                    LinearGeneratedNode dummy_node = new LinearGeneratedNode();
+                    dummy_node.NodeIndex = NodeCount++;
+                    NodeData data = new NodeData();
+                    data.node = dummy_node;
+                    data.From = Pos0;
+                    data.To = Pos0;
+                    data.FunctionBodyNode = funData.node;
+                    data.Buffer = new StringSourceText();
+                    //Read the line of the text in the buffer
+                    TypeCobol.Compiler.Scanner.ITokensLine line = Input[i - 1];
+                    data.Buffer.Insert(line.Text, data.Buffer.Size, data.Buffer.Size);
+                    data.Buffer.Insert(Environment.NewLine, data.Buffer.Size, data.Buffer.Size);
+                    Nodes.Add(data);
+                    LineData[i - 1].LineNodes = new List<int>();
+                    LineData[i - 1].LineNodes.Add(dummy_node.NodeIndex);
+                    LineData[i - 1].FunctionBodyBuffer = LineData[i - 1].Buffer = data.Buffer;
+                    funData.FunctionDeclNodes.Insert(insert_index, dummy_node.NodeIndex);
+                    offset++;
                 }
             }
         }
 
         /// <summary>
-        /// Get the first available position for a node
+        /// Compute Insertion lines of a Function declaration Body, that is to say line numbers
+        /// that begin an instruction.
         /// </summary>
-        /// <param name="node">The node to scan for a position</param>
-        /// <returns>The position if any, null otherwise.</returns>
-        Tuple<int, int, int, List<int>, List<int>> GetFirstAvailablePosition(Node node)
+        /// <param name="funData">The Dunction data</param>
+        /// <returns>A List of Tuple(LineNumber, Insertion Position)</returns>
+        private Tuple<int[], int[]> ComputeFunctionBodyInsertionLines(NodeFunctionData funData)
         {
-            if (node == null)
-                return null;
-            Tuple<int, int, int, List<int>, List<int>> position = this.Generator.FromToPositions(node);
-            if (position != null)
-                return position;
-            foreach (var child in node.Children)
+            List<int> lineNumbers = new List<int>();
+            List<int> insertPoints = new List<int>();            
+            for (int j = 0; j < funData.FunctionDeclNodes.Count; j++)
             {
-                position = GetFirstAvailablePosition(child);
-                if (position != null)
-                    return position;
+                NodeData node_data = Nodes[funData.FunctionDeclNodes[j]];
+                Tuple<int, int, int, List<int>, List<int>> positions = this.Generator.FromToPositions(node_data.node);
+                if (positions != null)
+                {
+                    if (!lineNumbers.Contains(positions.Item4[0]))
+                    {
+                        //Insert interval to the previous
+                        if (lineNumbers.Count > 0)
+                        {
+                            int prevPoint = insertPoints[insertPoints.Count - 1];
+                            for (int i = lineNumbers[lineNumbers.Count - 1] + 1; i < positions.Item4[0]; i++)
+                            {
+                                lineNumbers.Add(i);
+                                insertPoints.Add(-(prevPoint + 1));                        
+                            }
+                        }
+                        lineNumbers.Add(positions.Item4[0]);
+                        insertPoints.Add(j);                        
+                    }
+                }
             }
-            return null;
+            Tuple<int[], int[]> insertLines = new Tuple<int[], int[]>(lineNumbers.ToArray(), insertPoints.ToArray());
+            return insertLines;
         }
 
         /// <summary>
