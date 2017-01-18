@@ -35,6 +35,7 @@ namespace TypeCobol.Compiler.File
         /// <param name="encoding">Character encoding used to read and write all the files contained in this library (use IBMCodePages.GetDotNetEncodingFromIBMCCSID if necessary)</param>
         /// <param name="endOfLineDelimiter">Type of line delimiter which is used in the files of this library</param>
         /// <param name="fixedLineLength">If the files of this library all have a fixed line length : number of chars found on each line (for example : 80)</param>
+        /// <exception cref="ArgumentException"></exception>
         public LocalDirectoryLibrary(string libraryName, string rootPath, bool includeSubdirectories, string[] fileExtensions, Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength)
         {
             Name = libraryName;
@@ -46,6 +47,13 @@ namespace TypeCobol.Compiler.File
                 throw new ArgumentException(String.Format("Root path for local directory libray is invalid : {0}", rootPath));
             }
             this.includeSubdirectories = includeSubdirectories;
+            if (fileExtensions != null) {
+                foreach (var fileExtension in fileExtensions) {
+                    if (fileExtension[0] != '.') {
+                        throw new ArgumentException(string.Format("File extension must start with a '.' : {0}", fileExtension));
+                    }
+                }
+            }
             this.fileExtensions = fileExtensions;
 
             this.encoding = encoding;

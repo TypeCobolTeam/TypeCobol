@@ -21,7 +21,8 @@ namespace TypeCobol
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
 		public TypeCobol.Compiler.CodeModel.SymbolTable CustomSymbols = null;
 
-		public string[] Extensions = new string[] { "*.cbl", "*.cpy" };
+		public string[] Extensions = { ".cbl", ".cpy" };
+		public string[] CopyExtensions = { ".cpy" };
 
 		public Parser() {
 			Observer = new Observer();
@@ -46,7 +47,7 @@ namespace TypeCobol
 			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
 			copies = copies ?? new List<string>();
 			foreach (var folder in copies) {
-				sourceFileProvider.AddLocalDirectoryLibrary(folder, true, Extensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
+				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, CopyExtensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
 			}
 			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false);
 			Compilers.Add(path, compiler);

@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler
             Name = projectName;
             RootDirectory = rootDirectory;
             SourceFileProvider = new SourceFileProvider();
-            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, true, fileExtensions, encoding, endOfLineDelimiter, fixedLineLength);
+            rootDirectoryLibrary = SourceFileProvider.AddLocalDirectoryLibrary(rootDirectory, false, fileExtensions, encoding, endOfLineDelimiter, fixedLineLength);
 
             Encoding = encoding;
             EndOfLineDelimiter = endOfLineDelimiter;
