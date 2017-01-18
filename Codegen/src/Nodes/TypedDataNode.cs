@@ -64,7 +64,8 @@ internal class TypedDataNode: DataDescription, Generated {
         return sb.ToString();
     }
 
-	internal static ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null) {        
+	internal static ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null) {
+        bool bHasPeriod = false;
         var line = GetIndent(level, indent, isFirst);
 		line.Append(level.ToString("00"));
 		if (data.Name != null) 
@@ -73,14 +74,11 @@ internal class TypedDataNode: DataDescription, Generated {
             line.Append(" PIC ").Append(data.Picture);
         else if (customtype != null && customtype.Children.Count == 0)
         {   //This variable will have no subtypes as children at all
-            //So Auto detect a type based on scalar COBOL typedef.
-            bool bHasPeriod = false;
+            //So Auto detect a type based on scalar COBOL typedef.            
             string text = ExtractAnyCobolScalarTypeDef(customtype, out bHasPeriod);
             line.Append(text);
-            if (!bHasPeriod)
-                line.Append('.');
         }
-        else
+        if (!bHasPeriod)
         {
             line.Append('.');
         }
