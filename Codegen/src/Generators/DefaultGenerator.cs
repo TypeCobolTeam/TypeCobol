@@ -49,14 +49,16 @@ namespace TypeCobol.Codegen.Generators
         /// //4) Flush of Function declations.
         /// </summary>
         private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
-        {            
+        {
             SourceText targetSourceText = new GapSourceText();
-
+            //Stack Used to save current generation buffer when switching in a function declaration generation.
+            //Beacuse a function declartion has its own buffer.
+            Stack<SourceText> stackOuterBuffer = new Stack<SourceText>();
+            Stack<SourceText> stackLocalBuffer = new Stack<SourceText>();
             //Bit Array of Generated Nodes.
             BitArray generated_node = new BitArray(mapper.NodeCount);
             //The previous line generation buffer 
             StringSourceText previousBuffer = null;
-            bool bBufferWasInFunctionBody = false;
             for (int i = 0; i < mapper.LineData.Length; i++)
             {
                 //--------------------------------------------------------------------------------------------------------------
@@ -66,7 +68,7 @@ namespace TypeCobol.Codegen.Generators
                     //If there was a previous buffer ==> Flush it
                     if (previousBuffer != null)
                     {
-                        if (!bBufferWasInFunctionBody && !mapper.IsGeneratedEmptyBuffer(previousBuffer) )
+                        if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
                             targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                         previousBuffer = null;
                     }
@@ -94,7 +96,7 @@ namespace TypeCobol.Codegen.Generators
                 //If there was a previous buffer ==> Flush it
                 if (previousBuffer != null && mapper.CommentedLines[i])
                 {
-                    if (!bBufferWasInFunctionBody && !mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                    if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
                         targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                     previousBuffer = null;
                 }
@@ -116,7 +118,7 @@ namespace TypeCobol.Codegen.Generators
                 //--------------------------------------------------------------------------------------------------------------
                 //3)For each node related to this line, and not already generated.
                 line_nodes = mapper.LineData[i].LineNodes;
-                foreach(int node_index in line_nodes)
+                foreach (int node_index in line_nodes)
                 {
                     if (node_index == -1)
                     {//bad Node
@@ -128,7 +130,7 @@ namespace TypeCobol.Codegen.Generators
                     StringSourceText curSourceText = mapper.Nodes[node_index].Buffer;
                     if (curSourceText != previousBuffer && previousBuffer != null)
                     {//Flush previous buffer
-                        if (!bBufferWasInFunctionBody && !mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                        if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
                             targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                         previousBuffer = null;
                     }
@@ -142,8 +144,7 @@ namespace TypeCobol.Codegen.Generators
                             Position from = mapper.Nodes[node_index].From;
                             Position to = mapper.Nodes[node_index].To;
                             //Delete <==> Replace with blanks
-                            char[] blanks = GetDeleteString(curSourceText, from.Pos, to.Pos);
-                            curSourceText.Insert(blanks, from.Pos, to.Pos);
+                            ReplaceByBlanks(curSourceText, from.Pos, to.Pos);
                         }
                     }
                     else
@@ -159,78 +160,106 @@ namespace TypeCobol.Codegen.Generators
                             curSourceText.Insert(code, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
                         }
                         else foreach (var line in node.Lines)
-                        {
-                            StringWriter sw = new StringWriter();
-                            if (bFirst && !bIsFunctionDecl)
-                            {//The first element don't ident it just insert it a the right position
-                                sw.WriteLine(line.Text);
-                                bFirst = false;
-                            }
-                            else foreach (var l in Indent(line, null))
                             {
-                                sw.WriteLine(l.Text);
-                            }
-                            sw.Flush();
-                            string text = sw.ToString();
-                            if (bIsFunctionDecl)
-                            {   //This the Function Header output.
-                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                                int f = Math.Min(from.Pos, curSourceText.Size);
-                                int t = Math.Min(to.Pos, curSourceText.Size);
-                                if (f != t)
+                                StringWriter sw = new StringWriter();
+                                if (bFirst && !bIsFunctionDecl && curSourceText != null)
+                                {//The first element don't ident it just insert it a the right position
+                                    sw.WriteLine(line.Text);
+                                    bFirst = false;
+                                }
+                                else foreach (var l in Indent(line, null))
                                 {
-                                    //--------------------------------------------------
-                                    //Create the commented header of the function.
-                                    //--------------------------------------------------
-                                    List<ITextLine> funHeader = CreateCommentedSequence(curSourceText, f, t);
-                                    //Create a the erase string to erase in the original source code
-                                    //The Function header.
-                                    char[] replace = GetDeleteString(curSourceText, f, t);
-                                    //Erase in the original source code the Function header?
-                                    curSourceText.Insert(replace, f, t);
-                                    string crlf = "";
-                                    foreach (var h in funHeader)
-                                    {//Output commented function header in t he Function Declaration buffer                                       
-                                        foreach (var hl in Indent(h, null))
-                                        {
-                                            funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
-                                            funData.FunctionDeclBuffer.Insert(hl.Text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
-                                            crlf = Environment.NewLine;
+                                    sw.WriteLine(l.Text);
+                                }
+                                sw.Flush();
+                                string text = sw.ToString();
+                                if (bIsFunctionDecl)
+                                {   //This the Function Header output.
+                                    LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                    int f = Math.Min(from.Pos, curSourceText.Size);
+                                    int t = Math.Min(to.Pos, curSourceText.Size);
+                                    if (f != t)
+                                    {
+                                        //--------------------------------------------------
+                                        //Create the commented header of the function.
+                                        //--------------------------------------------------
+                                        List<ITextLine> funHeader = CreateCommentedSequence(curSourceText, f, t);
+                                        //Create a the erase string to erase in the original source code
+                                        //The Function header.
+                                        //Erase in the original source code the Function header?
+                                        ReplaceByBlanks(curSourceText, f, t);
+                                        string crlf = "";
+                                        foreach (var h in funHeader)
+                                        {//Output commented function header in t he Function Declaration buffer                                       
+                                            foreach (var hl in Indent(h, null))
+                                            {
+                                                funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                                funData.FunctionDeclBuffer.Insert(hl.Text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                                crlf = Environment.NewLine;
+                                            }
                                         }
+                                        //Insert NewLine characters.
+                                        funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
                                     }
-                                    //Insert NewLine characters.
-                                    funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
-                                }                                
-                                //Insert the sequen
-                                funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                    //Insert the sequence
+                                    funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                }
+                                else
+                                {
+                                    if (curSourceText == null)
+                                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                                    else
+                                        curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                                }
+                                from = to;
+                                sw.Close();
                             }
-                            else
-                            {
-                                curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
-                            }
-                            from = to;
-                            sw.Close();
-                        }
                         //Don't pad in case of replacement or insertion in a function declaration
                         if (!bIsGenerateAndReplace && !bIsFunctionDecl)
                         {
                             //Pad a splitted segment
-                            int span = mapper.Nodes[node_index].Positions.Item3;
-                            string pad = new string(' ', span);
-                            curSourceText.Insert(pad, to.Pos, to.Pos);
+                            if (mapper.Nodes[node_index].Positions != null)
+                            {
+                                int span = mapper.Nodes[node_index].Positions.Item3;
+                                string pad = new string(' ', span);
+                                curSourceText.Insert(pad, to.Pos, to.Pos);
+                            }
+                        }
+                        if (bIsFunctionDecl)
+                        {   //Switch in function declaration -> push the current buffers
+                            LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                            stackLocalBuffer.Push(curSourceText);
+                            stackOuterBuffer.Push(targetSourceText);
+                            //Now Generate in Function Declaration Buffer.
+                            targetSourceText = funData.FunctionDeclBuffer;
+                            curSourceText = null;
                         }
                     }
                     //This node is now generated.
-                    generated_node[node_index] = true;
-                    previousBuffer = curSourceText;
-                    bBufferWasInFunctionBody = bFunctionBodyNode;
+                    generated_node[node_index] = true;                    
+                    if (mapper.Nodes[node_index].node.IsFlagSet(Node.Flag.EndFunctionDeclarationNode))
+                    {   //Leaving function declaration --> Pop saved buffers.
+                        if (previousBuffer != null)
+                        {
+                            if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                                targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                            previousBuffer = null;
+                        }
+                        targetSourceText = stackOuterBuffer.Pop();
+                        curSourceText = (StringSourceText)stackLocalBuffer.Pop();
+                        previousBuffer = curSourceText;
+                    }
+                    else
+                    {
+                        previousBuffer = curSourceText;
+                    }
                 }
                 //--------------------------------------------------------------------------------------------------------------
             }
             //If there was a previous buffer ==> Flush it
             if (previousBuffer != null)
             {
-                if (!bBufferWasInFunctionBody && !mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
                     targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                 previousBuffer = null;
             }
@@ -238,47 +267,8 @@ namespace TypeCobol.Codegen.Generators
             //4)//Flush of Function declation body
             foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
             {
-                StringSourceText prevBuffer = null;
                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                 targetSourceText.Insert(funData.FunctionDeclBuffer, targetSourceText.Size, targetSourceText.Size);
-                foreach (int node_index in funData.FunctionDeclNodes)
-                {
-                    if (node_index == -1)
-                        continue;
-                    Node node = mapper.Nodes[node_index].node;
-                    if (mapper.Nodes[node_index].Buffer != null)
-                    {
-                        if (prevBuffer != null && prevBuffer != mapper.Nodes[node_index].Buffer)
-                        {
-                            targetSourceText.Insert(prevBuffer, targetSourceText.Size, targetSourceText.Size);                            
-                        }
-                        prevBuffer = mapper.Nodes[node_index].Buffer;
-                    }
-                    else
-                    {//Generate the code
-                        if (prevBuffer != null)
-                        {
-                            targetSourceText.Insert(prevBuffer, targetSourceText.Size, targetSourceText.Size);
-                            prevBuffer = null;
-                        }
-                        StringWriter sw = new StringWriter();
-                        foreach (var line in node.Lines)
-                        {
-                            foreach (var l in Indent(line, null))
-                            {
-                                sw.WriteLine(l.Text);
-                            }
-                        }
-                        sw.Flush();
-                        string text = sw.ToString();
-                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                    }
-                }
-                if (prevBuffer != null)
-                {
-                    targetSourceText.Insert(prevBuffer, targetSourceText.Size, targetSourceText.Size);
-                    prevBuffer = null;
-                }
             }
             return targetSourceText;
         }
@@ -301,6 +291,23 @@ namespace TypeCobol.Codegen.Generators
                 result[i] = (c == '\r' || c == '\n' || Char.IsWhiteSpace(c)) ? c : ' ';
             }
             return result;
+        }
+
+        /// <summary>
+        /// Directly replace the the corresponding Segment by Blanks, preserving '\r' and '\n'
+        /// characters.
+        /// </summary>
+        /// <param name="curSourceText"></param>
+        /// <param name="from">The start position in the buffer</param>
+        /// <param name="to">The ending position in the buffer</param>
+        private void ReplaceByBlanks(StringSourceText sourceText, int from, int to)
+        {
+            int length = to - from;
+            for (int i = from; i < to; i++)
+            {
+                char c = sourceText[i];
+                sourceText[i] = (c == '\r' || c == '\n' || Char.IsWhiteSpace(c)) ? c : ' ';
+            }
         }
 
         /// <summary>

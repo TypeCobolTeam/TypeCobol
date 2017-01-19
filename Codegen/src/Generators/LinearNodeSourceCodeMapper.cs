@@ -146,6 +146,14 @@ namespace TypeCobol.Codegen.Generators
             {
             }
 
+            /// <summary>
+            /// Prepaculated positions
+            /// </summary>
+            public Tuple<int, int, int, List<int>, List<int>> Positions
+            {
+                get;
+                set;
+            }
 
             public override bool VisitNode(TypeCobol.Compiler.CodeElements.IASTVisitor astVisitor)
             {
@@ -480,7 +488,7 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="funData"></param>
         private void CollectFunctionBodyUnNodedLines(NodeFunctionData funData)
-        {
+        {            
             Tuple<int[], int[]> insertLines = ComputeFunctionBodyInsertionLines(funData);
             var Input = Generator.Parser.Results.TokensLines;
             int offset = 0;
@@ -498,6 +506,7 @@ namespace TypeCobol.Codegen.Generators
                     }
                     insert_index = insertLines.Item2[j] + offset;
                     LinearGeneratedNode dummy_node = new LinearGeneratedNode();
+                    dummy_node.SetFlag(Node.Flag.ExtraGeneratedLinearNode, true);
                     dummy_node.NodeIndex = NodeCount++;
                     NodeData data = new NodeData();
                     data.node = dummy_node;
@@ -515,13 +524,57 @@ namespace TypeCobol.Codegen.Generators
                     LineData[i - 1].FunctionBodyBuffer = LineData[i - 1].Buffer = data.Buffer;
                     funData.FunctionDeclNodes.Insert(insert_index, dummy_node.NodeIndex);
                     offset++;
+                    int from = 0;
+                    int to = data.Buffer.Size;
+                    int span = 0;
+                    List<int> lines = new List<int>(){i};
+                    List<int> offsets = new List<int>(){0};
+                    Tuple<int, int, int, List<int>, List<int>> pos = new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lines, offsets);
+                    dummy_node.Positions = pos; 
+                }
+            }
+        }
+
+        /// <summary>
+        /// Relocate all Function declaration nodes that don't have positions.
+        /// Nodes without positions are relocated in the last valid buffer.
+        /// </summary>
+        /// <param name="funData">The Function Declaration Data</param>
+        private void RelocateFunctionBodyNoPositionNodes(NodeFunctionData funData)
+        {
+            //The last line of the function declaration
+            int lastBufferLineNumber = funData.Positions.Item4.Count > 0 ? funData.Positions.Item4[funData.Positions.Item4.Count - 1] :-1;
+            for (int j = 0; j < funData.FunctionDeclNodes.Count; j++)
+            {
+                NodeData node_data = Nodes[funData.FunctionDeclNodes[j]];
+                Tuple<int, int, int, List<int>, List<int>> positions = 
+                    node_data.node.IsFlagSet(Node.Flag.ExtraGeneratedLinearNode) ?
+                    ((LinearGeneratedNode)node_data.node).Positions : this.Generator.FromToPositions(node_data.node);
+                if (positions != null && node_data.Buffer != null)
+                {
+                    lastBufferLineNumber = positions.Item4[0];
+                }
+                else if (positions == null && lastBufferLineNumber > 0)
+                {//Put this buffer in the same line then the last know buffer
+                    if (LineData[lastBufferLineNumber - 1].LineNodes == null)
+                        LineData[lastBufferLineNumber - 1].LineNodes = new List<int>();
+                    LineData[lastBufferLineNumber - 1].LineNodes.Add(funData.FunctionDeclNodes[j]);
+                    node_data.node.SetFlag(Node.Flag.NoPosGeneratedNode, true);
+                }
+                else if (positions == null && lastBufferLineNumber < 0)
+                {//Ok in this case we must put it in the line of the Function declaration
+                    Debug.Assert(lastBufferLineNumber > 0);
+                }
+                if (j == funData.FunctionDeclNodes.Count - 1)
+                {//Mark End Function declaration Node.
+                    node_data.node.SetFlag(Node.Flag.EndFunctionDeclarationNode, true);
                 }
             }
         }
 
         /// <summary>
         /// Compute Insertion lines of a Function declaration Body, that is to say line numbers
-        /// that begin an instruction.
+        /// that begin an instruction : a node.
         /// </summary>
         /// <param name="funData">The Dunction data</param>
         /// <returns>A List of Tuple(LineNumber, Insertion Position)</returns>
@@ -537,7 +590,7 @@ namespace TypeCobol.Codegen.Generators
                 {
                     if (!lineNumbers.Contains(positions.Item4[0]))
                     {
-                        //Insert interval to the previous
+                        //Insert interval to the previous insertion point.
                         if (lineNumbers.Count > 0)
                         {
                             int prevPoint = insertPoints[insertPoints.Count - 1];
@@ -607,10 +660,12 @@ namespace TypeCobol.Codegen.Generators
             }
             //Now Complete Function Declaration Lines dispatching
             //By Dealing with all lines that are not attached to a node.
+            //And relocation nodes without positions
             foreach (int fun_index in FunctionDeclarationNodeIndices)
             {
                 NodeFunctionData funData = (NodeFunctionData)Nodes[fun_index];
                 CollectFunctionBodyUnNodedLines(funData);
+                RelocateFunctionBodyNoPositionNodes(funData);
             }
         }
 

@@ -59,9 +59,18 @@ namespace TypeCobol.Compiler.Nodes {
             HasBeenTypeCobolQualifierVisited = 0x01 << 0,
 
             /// <summary>
-            /// This flag is used during code generation to mark generated nodes with no position.
+            /// This flag is used during code generation to mark extra nodes added during linearization phase.
             /// </summary>
-            NoPosGeneratedNodeMark = 0x01 << 1,
+            ExtraGeneratedLinearNode = 0x01 << 1,
+            /// <summary>
+            /// This flag is used during code generation to mark node having no position
+            /// thus they will be generated at this end of the current buffer.
+            /// </summary>
+            NoPosGeneratedNode = 0x01 << 2,
+            /// <summary>
+            /// The Node for the End of function Declaration
+            /// </summary>
+            EndFunctionDeclarationNode = 0x01 << 3,
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node
