@@ -71,6 +71,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// The Node for the End of function Declaration
             /// </summary>
             EndFunctionDeclarationNode = 0x01 << 3,
+            /// <summary>
+            /// Mark this node as persistent that is to say it cannot be removed.
+            /// </summary>
+            PersistentNode = 0x01 << 4,
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node

@@ -623,7 +623,8 @@ namespace TypeCobol.Codegen.Generators
             CurrentPhase = Phase.RemovedNodes;
             foreach (Node erased_node in this.Generator.ErasedNodes)
             {
-                Visit(erased_node);
+                if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
+                    Visit(erased_node);//Only Erase non persistent node
             }
             Nodes.TrimExcess();
             //Create All SourceTextBuffer Content associated to Nodes

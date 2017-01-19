@@ -6,6 +6,8 @@
 internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 	private Compiler.Nodes.ProcedureStyleCall Node;
 	private CallStatement call;
+    //Does this call has a CALL-END ?
+    private bool HasCallEnd;
 
 	public ProcedureStyleCall(Compiler.Nodes.ProcedureStyleCall node)
 		: base(null) {
@@ -15,6 +17,15 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		call.ProgramOrProgramEntryOrProcedureOrFunction = new SymbolReferenceVariable(StorageDataType.ProgramName, statement.ProcedureCall.ProcedureName);
 		call.InputParameters = new List<CallSiteParameter>(statement.ProcedureCall.Arguments);
 		call.OutputParameter = null;
+        //Add any optional CALL-END statement
+        foreach (var child in node.Children)
+        {
+            this.Add(child);            
+            if (child.CodeElement != null && child.CodeElement.Type == TypeCobol.Compiler.CodeElements.CodeElementType.CallStatementEnd)
+            {
+                HasCallEnd = true;
+            }
+        }
 	}
 
 	public override CodeElement CodeElement { get { return this.Node.CodeElement; } }
@@ -27,13 +38,18 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 				var statement = (ProcedureStyleCallStatement)Node.CodeElement;
 
 				var hash = GetHash(statement.ProcedureCall);
-				var callTextLine = new TextLineSnapshot(-1, "    CALL '" + hash + "' USING ", null);
+				var callTextLine = new TextLineSnapshot(-1, "CALL '" + hash + "' USING ", null);
 				_cache.Add(callTextLine);
 				var indent = new string(' ', callTextLine.Length + 1);
 				foreach (var parameter in call.InputParameters) {
 					var name = ToString(parameter.StorageAreaOrValue, Node.SymbolTable);
 					_cache.Add(new TextLineSnapshot(-1, indent + name, null));
 				}
+                if (!HasCallEnd)
+                {
+                    var call_end = new TextLineSnapshot(-1, "end-call ", null);
+                    _cache.Add(call_end);
+                }
 			}
 			return _cache;
 		}
