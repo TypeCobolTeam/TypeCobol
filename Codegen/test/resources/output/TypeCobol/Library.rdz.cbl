@@ -17,23 +17,23 @@
        01  W-IfrPgm.
            05 C-PgmNme               PIC X(08) Value 'LIBDATE'.
 
-      *01  dateJulian    TYPEDEF STRONG.
-      *    10 YYYY                   PIC 9(04).
-      *    10 DDD                    PIC 9(03).
+      *01  dateJulian    TYPEDEF STRONG.                                      
+      *    10 YYYY                   PIC 9(04).                               
+      *    10 DDD                    PIC 9(03).                               
 
-      *01  dateDB2       TYPEDEF STRONG.
-      *    10 YYYY                   PIC 9(04).
-      *    10                        PIC X(01).
-      *    10 MM                     PIC 9(02).
-      *    10                        PIC X(01).
-      *    10 DD                     PIC 9(02).
+      *01  dateDB2       TYPEDEF STRONG.                                      
+      *    10 YYYY                   PIC 9(04).                               
+      *    10                        PIC X(01).                               
+      *    10 MM                     PIC 9(02).                               
+      *    10                        PIC X(01).                               
+      *    10 DD                     PIC 9(02).                               
 
-      *01  dateString    TYPEDEF     PIC 9(08).
+      *01  dateString    TYPEDEF     PIC 9(08).                               
 
-      *01 culture        TYPEDEF STRONG.
-      *    10 lng                    PIC X(02).
-      *    10 cty                    PIC X(02).
-       01  LibFctList-Loaded PIC X(01) VALUE SPACE.
+      *01 culture        TYPEDEF STRONG.                                      
+      *    10 lng                    PIC X(02).                               
+      *    10 cty                    PIC X(02).       
+	         01  LibFctList-Loaded PIC X(01) VALUE SPACE.
            88 LibFctList-IsLoaded      VALUE '1'.
 
        01  LibFctList-VALUES.
@@ -66,50 +66,43 @@
              10 FctPointer PROCEDURE-POINTER VALUE NULL.
        01  CallData.
            05  DescriptionId PIC X(08).
-             88 CallIsCopy VALUE 'CALL FROM COBOL NOT SUPPORTED'.
+             88 CallIsCopy VALUE 'CALL FROM COBOL NOT SUPPORTED'.                        
 
       *=================================================================
-      *PROCEDURE DIVISION. 
+      *PROCEDURE DIVISION.                                                    
        PROCEDURE DIVISION USING CallData.
-           IF CallIsCopy
+	              IF CallIsCopy
              PERFORM Copy-Process-Mode
            ELSE
              PERFORM FctList-Process-Mode
            END-IF
  
            GOBACK 
-           .
+           .        
       *=================================================================
-      *DECLARE FUNCTION currentDate PUBLIC
-      *    RETURNING Result TYPE date.
+      *DECLARE FUNCTION currentDate PUBLIC                                    
+      *    RETURNING Result TYPE date.                                        
       *_________________________________________________________________
-      *DECLARE FUNCTION currentDateDB2 PUBLIC
-      *    RETURNING Result Type dateDB2.
-
-
-           
+      *DECLARE FUNCTION currentDateDB2 PUBLIC                                 
+      *    RETURNING Result Type dateDB2.                                     
       *_________________________________________________________________
-      *DECLARE FUNCTION currentDateJulian PUBLIC
-	  * my comment
-      *    RETURNING Result Type dateJulian.
-
-
+      *DECLARE FUNCTION currentDateJulian PUBLIC                              
+      * my comment                                                               
+      *    RETURNING Result Type dateJulian.                                  
       *_________________________________________________________________
-      *DECLARE FUNCTION currentDateFreeFormat PUBLIC
-      *                   INPUT dateType   PIC X(01)
-      *                         direction  PIC X(01)
-      *                         separator  PIC X(01)
-      *                         culture    TYPE culture
-      *                         returnCode PIC 9(04)
-      *                   RETURNING Result PIC X(40).
-
-
+      *DECLARE FUNCTION currentDateFreeFormat PUBLIC                          
+      *                   INPUT dateType   PIC X(01)                          
+      *                         direction  PIC X(01)                          
+      *                         separator  PIC X(01)                          
+      *                         culture    TYPE culture                       
+      *                         returnCode PIC 9(04)                          
+      *                   RETURNING Result PIC X(40).                         
       *_________________________________________________________________
 	  *Keep spaces at end of line, because there were 
-	  * presents in source file       
-      *DECLARE FUNCTION currentDateString PUBLIC     
-      *    RETURNING Result TYPE dateString.          
-
+	  * presents in source file                      
+      *DECLARE FUNCTION currentDateString PUBLIC                              
+      *    RETURNING Result TYPE dateString.     
+	                               
        Copy-Process-Mode. 
            SET ADDRESS OF FCT TO ADDRESS OF CallData
  
@@ -143,130 +136,143 @@
 
            END-PERFORM
            .
-
        END PROGRAM DVZZDAT.
-      * 
-      *_________________________________________________________________
-      *DECLARE FUNCTION currentDate PUBLIC
-      *    RETURNING Result TYPE date.
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. e5f209fa.
-       DATA DIVISION.
-       LINKAGE SECTION.
-       01 Result.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       PROCEDURE DIVISION
-             USING BY REFERENCE Result
-           .
+      *                                                                       
+      *DECLARE FUNCTION currentDate PUBLIC                                    
+      *    RETURNING Result TYPE date.                                        
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. e5f209fa.                                                  
+       DATA DIVISION.                                                         
+       LINKAGE SECTION.                                                       
+       01 Result.                                                             
+           02 YYYY PIC 9(4).                                                  
+           02 MM PIC 9(2).                                                    
+           02 DD PIC 9(2).                                                    
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE Result                                        
+           .                                                                  
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM e5f209fa.
-      *
-      *_________________________________________________________________
-      *DECLARE FUNCTION currentDateDB2 PUBLIC
-      *    RETURNING Result Type dateDB2.
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. b8ac0397.
+       END PROGRAM e5f209fa.                                                  
+      *                                                                       
+      *DECLARE FUNCTION currentDateDB2 PUBLIC                                 
+      *    RETURNING Result Type dateDB2.                                     
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. b8ac0397.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      *01  W-Dat       TYPE date.
+      *01  W-Dat       TYPE date.                                             
        01 W-Dat.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       LINKAGE SECTION.
-       01 Result.
-           02 YYYY PIC 9(04).
-           02 PIC X(01).
-           02 MM PIC 9(02).
-           02 PIC X(01).
-           02 DD PIC 9(02).
-       PROCEDURE DIVISION
-             USING BY REFERENCE Result
-           .
+           02 YYYY PIC 9(4).                                                  
+           02 MM PIC 9(2).                                                    
+           02 DD PIC 9(2).                                                    
+                                 
+       LINKAGE SECTION.                                                       
+       01 Result.                                                             
+           02 YYYY PIC 9(04).                                                 
+           02 PIC X(01).                                                      
+           02 MM PIC 9(02).                                                   
+           02 PIC X(01).                                                      
+           02 DD PIC 9(02).                                                   
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE Result                                        
+           .                                                                  
+
+
            ACCEPT W-Dat             FROM DATE YYYYMMDD
+		   move W-Dat:YYYY          to Result::YYYY
+		   move W-Dat:MM            to Result::MM
+		   move W-Dat:DD            to Result::DD 
+		   move '-'                 to Result(5:1)
+		   move '-'                 to Result(8:1)
+           
            .
-       END PROGRAM b8ac0397.
-      *
-      *_________________________________________________________________
-      *DECLARE FUNCTION currentDateJulian PUBLIC
-	  * my comment
-      *    RETURNING Result Type dateJulian.
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. c4e76b45.
+       END PROGRAM b8ac0397.                                                  
+      *                                                                       
+      *DECLARE FUNCTION currentDateJulian PUBLIC                              
+      * my comment                                                               
+      *    RETURNING Result Type dateJulian.                                  
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. c4e76b45.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      *01  W-Dat       TYPE date.
+      *01  W-Dat       TYPE date.                                             
        01 W-Dat.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       LINKAGE SECTION.
-       01 Result.       
-           02 YYYY PIC 9(04).
-           02 DDD PIC 9(03).
-       PROCEDURE DIVISION
-             USING BY REFERENCE Result
-           .
+           02 YYYY PIC 9(4).                                                  
+           02 MM PIC 9(2).                                                    
+           02 DD PIC 9(2).                                                    
+                                 
+       LINKAGE SECTION.                                                       
+       01 Result.                                                             
+           02 YYYY PIC 9(04).                                                 
+           02 DDD PIC 9(03).                                                  
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE Result                                        
+           .                                                                  
+
+
            ACCEPT W-Dat             FROM DATE YYYYMMDD
-      *    move unsafe W-Dat to Result
+      *    move unsafe W-Dat to Result                                        
            move        W-Dat to Result
+                                      
            .
-       END PROGRAM c4e76b45.
-      *
-      *_________________________________________________________________
-      *DECLARE FUNCTION currentDateFreeFormat PUBLIC
-      *                   INPUT dateType   PIC X(01)
-      *                         direction  PIC X(01)
-      *                         separator  PIC X(01)
-      *                         culture    TYPE culture
-      *                         returnCode PIC 9(04)
-      *                   RETURNING Result PIC X(40).
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. d55b3ea7.
+       END PROGRAM c4e76b45.                                                  
+      *                                                                       
+      *DECLARE FUNCTION currentDateFreeFormat PUBLIC                          
+      *                   INPUT dateType   PIC X(01)                          
+      *                         direction  PIC X(01)                          
+      *                         separator  PIC X(01)                          
+      *                         culture    TYPE culture                       
+      *                         returnCode PIC 9(04)                          
+      *                   RETURNING Result PIC X(40).                         
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. d55b3ea7.                                                  
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      *01  W-Dat       TYPE date.
+      *01  W-Dat       TYPE date.                                             
        01 W-Dat.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
-       LINKAGE SECTION.
-       01 dateType PIC X(01).
-       01 direction PIC X(01).
-       01 separator PIC X(01).
-       01 culture.
-         02 lng PIC X(02).
-         02 cty PIC X(02).
-       01 returnCode PIC 9(04).
-       01 Result PIC X(40).
-       PROCEDURE DIVISION
-             USING BY REFERENCE dateType
-                   BY REFERENCE direction
-                   BY REFERENCE separator
-                   BY REFERENCE culture
-                   BY REFERENCE returnCode
-                   BY REFERENCE Result
-           .
+           02 YYYY PIC 9(4).                                                  
+           02 MM PIC 9(2).                                                    
+           02 DD PIC 9(2).                                                    
+                                 
+       LINKAGE SECTION.                                                       
+       01 dateType PIC X(01).                                                 
+       01 direction PIC X(01).                                                
+       01 separator PIC X(01).                                                
+       01 culture.                                                            
+           02 lng PIC X(02).                                                  
+           02 cty PIC X(02).                                                  
+       01 returnCode PIC 9(04).                                               
+       01 Result PIC X(40).                                                   
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE dateType                                      
+                   BY REFERENCE direction                                     
+                   BY REFERENCE separator                                     
+                   BY REFERENCE culture                                       
+                   BY REFERENCE returnCode                                    
+                   BY REFERENCE Result                                        
+           .                                                                  
+
+
            continue
            .
-       END PROGRAM d55b3ea7.
-      *
-      *_________________________________________________________________
-	  *Keep spaces at end of line, because there were 
-	  * presents in source file                      
-      *DECLARE FUNCTION currentDateString PUBLIC     
-      *    RETURNING Result TYPE dateString.         
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. bfb0fa9b.
-       DATA DIVISION.
-       LINKAGE SECTION.
-       01 Result PIC 9(08).
-       PROCEDURE DIVISION 
-             USING BY REFERENCE Result
-           .
+       END PROGRAM d55b3ea7.                                                  
+      *                                                                       
+      *DECLARE FUNCTION currentDateString PUBLIC                              
+      *    RETURNING Result TYPE dateString.                                  
+      *_________________________________________________________________      
+       IDENTIFICATION DIVISION.                                               
+       PROGRAM-ID. bfb0fa9b.                                                  
+       DATA DIVISION.                                                         
+       LINKAGE SECTION.                                                       
+       01 Result PIC 9(08).                                                   
+       PROCEDURE DIVISION                                                     
+             USING BY REFERENCE Result                                        
+           .                                                                  
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM bfb0fa9b.
+       END PROGRAM bfb0fa9b.                                                  
