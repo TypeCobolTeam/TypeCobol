@@ -38,7 +38,7 @@
        END PROGRAM a59b2c49.                                                  
       *                                                                       
       *DECLARE FUNCTION ReturnsZero PRIVATE                                   
-      *             RETURNING result PIC 9(04).                               
+      *      RETURNING result PIC 9(04).                                      
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. a866b35c.                                                  
@@ -53,7 +53,7 @@
        END PROGRAM a866b35c.                                                  
       *                                                                       
       *DECLARE FUNCTION DoesNothing PRIVATE                                   
-      *             INPUT x PIC 9(04).                                        
+      *      INPUT x PIC 9(04).                                               
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. fe03398a.                                                  
@@ -68,9 +68,9 @@
        END PROGRAM fe03398a.                                                  
       *                                                                       
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE                      
-      *             INPUT     x      PIC 9(04)                                
-      *             RETURNING result PIC 9(04)                                
-      *           .                                                           
+      *      INPUT     x      PIC 9(04)                                       
+      *      RETURNING result PIC 9(04)                                       
+      *    .                                                                  
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. e3e490ae.                                                  
@@ -90,7 +90,7 @@
        END PROGRAM e3e490ae.                                                  
       *                                                                       
       *declare function UseACopy private                                      
-      *                input  x pic X.                                        
+      *         input  x pic X.                                               
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. f6a89a72.                                                  

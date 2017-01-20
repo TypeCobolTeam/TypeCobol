@@ -27,6 +27,7 @@
                                   ikey2  TYPE MyKey2
 000163                  RETURNING result PIC 9(32).                     000163
 000170 PROCEDURE DIVISION.                                              000170
+000180     display "test codegen"
 000180     CONTINUE.                                                    000180
        END-DECLARE.                                                     000190
                                                                         000200

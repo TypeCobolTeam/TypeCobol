@@ -80,7 +80,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 
                 if (!HasCallEnd)
                 {
-                    var call_end = new TextLineSnapshot(-1, "end-call ", null);
+                    var call_end = new TextLineSnapshot(-1, "    end-call ", null);
                     _cache.Add(call_end);
                 }
 			}

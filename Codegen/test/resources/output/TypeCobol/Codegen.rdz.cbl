@@ -31,8 +31,6 @@
       *                 INPUT     ikey   TYPE MyKey                           
       *                           ikey2  TYPE MyKey2                          
       *                 RETURNING result PIC 9(32).                           
-000170                                                                  000170
-000180                                                                  000180
                                                                         000190
                                                                         000200
 004010     if :TRAC:                                                    000000
@@ -51,10 +49,9 @@
 000260 END PROGRAM Codegen.                                             000260
       *                                                                       
       *DECLARE FUNCTION GetValue PRIVATE                                      
-      *000161                                                                 
-      *                        INPUT     ikey   TYPE MyKey                    
-      *                                  ikey2  TYPE MyKey2                   
-      *000163                  RETURNING result PIC 9(32).                    
+      *                 INPUT     ikey   TYPE MyKey                           
+      *                           ikey2  TYPE MyKey2                          
+      *                 RETURNING result PIC 9(32).                           
       *_________________________________________________________________      
        IDENTIFICATION DIVISION.                                               
        PROGRAM-ID. b008705d.                                                  
@@ -71,5 +68,8 @@
                    BY REFERENCE ikey2                                         
                    BY REFERENCE result                                        
            .                                                                  
+000170                                                                  000170
+000180     display "test codegen"
 000180     CONTINUE.                                                    000180
+000180                                                                  000180
        END PROGRAM b008705d.                                                  

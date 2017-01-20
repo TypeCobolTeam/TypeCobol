@@ -131,7 +131,6 @@ namespace TypeCobol.Codegen {
 		public void ParseProcedureCall() {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","ProcedureCall")+".rdz.cbl", skeletons);
-			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","ProcedureCall-WithOK")+".rdz.cbl", skeletons);
 		}
 
 		[TestMethod]
