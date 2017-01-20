@@ -111,6 +111,7 @@ namespace TypeCobol.Codegen.Generators
                         string text = line.Text;
                         targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
                         targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        CheckFunctionDeclCommentedheader(mapper, current_nodes, text);
                     }
                     mapper.CommentedLines[j] = false;//This commented line has been generated now
                     line_nodes = current_nodes;
@@ -180,26 +181,12 @@ namespace TypeCobol.Codegen.Generators
                                     int t = Math.Min(to.Pos, curSourceText.Size);
                                     if (f != t)
                                     {
-                                        //--------------------------------------------------
-                                        //Create the commented header of the function.
-                                        //--------------------------------------------------
-                                        List<ITextLine> funHeader = CreateCommentedSequence(curSourceText, f, t);
                                         //Create a the erase string to erase in the original source code
                                         //The Function header.
                                         //Erase in the original source code the Function header?
-                                        ReplaceByBlanks(curSourceText, f, t);
-                                        string crlf = "";
-                                        foreach (var h in funHeader)
-                                        {//Output commented function header in t he Function Declaration buffer                                       
-                                            foreach (var hl in Indent(h, null))
-                                            {
-                                                funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
-                                                funData.FunctionDeclBuffer.Insert(hl.Text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
-                                                crlf = Environment.NewLine;
-                                            }
-                                        }
-                                        //Insert NewLine characters.
-                                        funData.FunctionDeclBuffer.Insert(crlf, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                        ReplaceByBlanks(curSourceText, f, t);                
+                                        //Output the pre-stored comment header
+                                        funData.FunctionDeclBuffer.Insert(funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
                                     }
                                     //Insert the sequence
                                     funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
@@ -274,6 +261,43 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Check if the given commented text is one of a Function declaration Header, if so the text is added to the
+        /// Function Data commented header string buffer.
+        /// </summary>
+        /// <param name="nodes">The nodes indices that can correspond to afUnction Declaration node</param>
+        /// <param name="text">The Commented Text</param>
+        private void CheckFunctionDeclCommentedheader(LinearNodeSourceCodeMapper mapper, List<int> nodes, string text)
+        {
+            if (nodes == null)
+                return;
+            if (text == null)
+                return;
+            if (text.Length == 0)
+                return;
+            foreach (int node in nodes)
+            {
+                if (node >= 0 && mapper.Nodes[node] is LinearNodeSourceCodeMapper.NodeFunctionData)
+                {
+                    LinearNodeSourceCodeMapper.NodeFunctionData fundata = (LinearNodeSourceCodeMapper.NodeFunctionData)mapper.Nodes[node];
+                    if (fundata.CommentedHeader.Length == 0)
+                    {//Add a first empty comment line
+                        TextLineSnapshot h = new TextLineSnapshot(-1, "*", null);
+                        string crlf = "";
+                        foreach (var hl in Indent(h, null))
+                        {
+                            fundata.CommentedHeader.Append(crlf);
+                            fundata.CommentedHeader.Append(hl.Text);
+                            crlf = Environment.NewLine;
+                        }
+                        fundata.CommentedHeader.Append(crlf);
+                    }
+                    fundata.CommentedHeader.Append(text);
+                    fundata.CommentedHeader.Append(Environment.NewLine);
+                }
+            }
+        }
+
+        /// <summary>
         /// Create a Delete string Corresponding to a segment in a buffer.
         /// We want to create a replacement string that only contains whitespaces
         /// and '\r' or \n' characters.
@@ -308,43 +332,6 @@ namespace TypeCobol.Codegen.Generators
                 char c = sourceText[i];
                 sourceText[i] = (c == '\r' || c == '\n' || Char.IsWhiteSpace(c)) ? c : ' ';
             }
-        }
-
-        /// <summary>
-        /// Create a commented Sequence of a Portion of the text.
-        /// </summary>
-        /// <param name="sourceText"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <returns></returns>
-        protected List<ITextLine> CreateCommentedSequence(StringSourceText sourceText, int from, int to)
-        {
-            List<ITextLine>  sequence = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
-            sequence.Add(new TextLineSnapshot(-1, "*", null));
-            int startPos = from;
-            int i = from;
-            for (i = from; i < to; i++)
-            {
-                char c = sourceText[i];
-                if (c == '\n')
-                {
-                    int endPos = i;
-                    while (sourceText[endPos] == '\n' || sourceText[endPos] == '\r')
-                        endPos--;
-                    string text = sourceText.GetTextAt(startPos, endPos + 1);
-                    ITextLine line = new TextLineSnapshot(-1, "*" + text, null);
-                    sequence.Add(line);
-                    startPos = i + 1;
-                }
-            }
-            if (from != to)
-            {
-                string text = sourceText.GetTextAt(startPos, i);
-                ITextLine line = new TextLineSnapshot(-1, "*" + text, null);
-                sequence.Add(line);
-            }
-
-            return sequence;
         }
 
         protected override bool Process(Compiler.Nodes.Node node)

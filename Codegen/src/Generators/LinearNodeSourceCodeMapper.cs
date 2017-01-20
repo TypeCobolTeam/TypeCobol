@@ -224,12 +224,17 @@ namespace TypeCobol.Codegen.Generators
             /// </summary>
             public int BodyLastLineIndex;
             /// <summary>
+            /// The commented Header of a Function declaration
+            /// </summary>
+            public StringBuilder CommentedHeader;
+            /// <summary>
             /// Constructor
             /// </summary>
             public NodeFunctionData()
             {
                 FunctionDeclBuffer = new StringSourceText();
                 FunctionDeclNodes = new List<int>();
+                CommentedHeader = new StringBuilder();
             }
         }
 
