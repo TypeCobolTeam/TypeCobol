@@ -21,7 +21,6 @@ namespace TypeCobol.Codegen
             get;
             private set;
         }
-
         /// <summary>
         /// Event Before executing an Action.
         /// </summary>

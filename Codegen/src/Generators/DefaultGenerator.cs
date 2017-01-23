@@ -161,46 +161,46 @@ namespace TypeCobol.Codegen.Generators
                             curSourceText.Insert(code, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
                         }
                         else foreach (var line in node.Lines)
-                            {
-                                StringWriter sw = new StringWriter();
-                                if (bFirst && !bIsFunctionDecl && curSourceText != null)
-                                {//The first element don't ident it just insert it a the right position
-                                    sw.WriteLine(line.Text);
-                                    bFirst = false;
-                                }
-                                else foreach (var l in Indent(line, null))
-                                {
-                                    sw.WriteLine(l.Text);
-                                }
-                                sw.Flush();
-                                string text = sw.ToString();
-                                if (bIsFunctionDecl)
-                                {   //This the Function Header output.
-                                    LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                                    int f = Math.Min(from.Pos, curSourceText.Size);
-                                    int t = Math.Min(to.Pos, curSourceText.Size);
-                                    if (f != t)
-                                    {
-                                        //Create a the erase string to erase in the original source code
-                                        //The Function header.
-                                        //Erase in the original source code the Function header?
-                                        ReplaceByBlanks(curSourceText, f, t);                
-                                        //Output the pre-stored comment header
-                                        funData.FunctionDeclBuffer.Insert(funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
-                                    }
-                                    //Insert the sequence
-                                    funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
-                                }
-                                else
-                                {
-                                    if (curSourceText == null)
-                                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                                    else
-                                        curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
-                                }
-                                from = to;
-                                sw.Close();
+                        {
+                            StringWriter sw = new StringWriter();
+                            if (bFirst && !bIsFunctionDecl && curSourceText != null)
+                            {//The first element don't ident it just insert it a the right position
+                                sw.WriteLine(line.Text);
+                                bFirst = false;
                             }
+                            else foreach (var l in Indent(line, null))
+                            {
+                                sw.WriteLine(l.Text);
+                            }
+                            sw.Flush();
+                            string text = sw.ToString();
+                            if (bIsFunctionDecl)
+                            {   //This the Function Header output.
+                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                int f = Math.Min(from.Pos, curSourceText.Size);
+                                int t = Math.Min(to.Pos, curSourceText.Size);
+                                if (f != t)
+                                {
+                                    //Create a the erase string to erase in the original source code
+                                    //The Function header.
+                                    //Erase in the original source code the Function header?
+                                    ReplaceByBlanks(curSourceText, f, t);                
+                                    //Output the pre-stored comment header
+                                    funData.FunctionDeclBuffer.Insert(funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                }
+                                //Insert the sequence
+                                funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                            }
+                            else
+                            {
+                                if (curSourceText == null)
+                                    targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                                else
+                                    curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                            }
+                            from = to;
+                            sw.Close();
+                        }
                         //Don't pad in case of replacement or insertion in a function declaration
                         if (!bIsGenerateAndReplace && !bIsFunctionDecl)
                         {

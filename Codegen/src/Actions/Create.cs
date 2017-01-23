@@ -38,7 +38,6 @@ namespace TypeCobol.Codegen.Actions
             this.Child.SetFlag(Node.Flag.FactoryGeneratedNode, true);
             this.position = position;
         }
-
         /// <summary>
         /// Perform the creation action, the new GeneratedNode is added as child in the Parent node.
         /// </summary>

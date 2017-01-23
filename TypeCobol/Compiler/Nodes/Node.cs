@@ -80,7 +80,7 @@ namespace TypeCobol.Compiler.Nodes {
             /// </summary>
             NoPosGeneratedNode = 0x01 << 2,
             /// <summary>
-            /// The Node for the End of function Declaration
+            /// The Node for the End of function Declaration.
             /// </summary>
             EndFunctionDeclarationNode = 0x01 << 3,
             /// <summary>

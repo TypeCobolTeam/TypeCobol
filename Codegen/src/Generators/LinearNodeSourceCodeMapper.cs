@@ -1004,6 +1004,5 @@ namespace TypeCobol.Codegen.Generators
                     data.node.Comment != null ? (data.node.Comment.Value ? "COMMENTED" : "") : "");
             }
         }
-
     }
 }
