@@ -757,6 +757,8 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="node">The node to visit</param>
         public void Visit(Node node)
         {
+            if (node == null)
+                return;
             bool doVisitChildren = false;
             switch (CurrentPhase)
             {

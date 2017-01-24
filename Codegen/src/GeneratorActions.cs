@@ -74,6 +74,8 @@ namespace TypeCobol.Codegen
         /// </summary>
         public void Perform(Root tree)
         {
+            if (tree == null)
+                return;
             tree.Accept(this);
             var groups = new List<string>();
             foreach (var action in this)

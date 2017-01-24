@@ -256,7 +256,8 @@ namespace TypeCobol.Codegen
         /// </summary>
         protected virtual void TreeToCode()
         {
-            RootNode.Accept(this);
+            if (RootNode != null)
+                RootNode.Accept(this);
         }
     
         /// <summary>

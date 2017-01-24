@@ -63,6 +63,12 @@
   <ItemGroup>
     <Compile Include="*.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="resources\input\SourcePositions\MixedLinesWithDirectives.cbl" />
+    <None Include="resources\input\SourcePositions\SplitDirective.cbl" />
+    <None Include="resources\input\SourcePositions\SingleLineDirective.cbl" />
+    <None Include="resources\output\SourcePositions\MixedLinesWithDirectives.cbl" />
+    <None Include="resources\output\SourcePositions\SingleLineDirective.cbl" />
+    <None Include="resources\output\SourcePositions\SplitDirective.cbl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\config\**">
@@ -71,7 +77,12 @@
     <None Include="resources\input\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-
+    <None Include="resources\input\SourcePositions\BlankLine.cbl" />
+    <None Include="resources\input\SourcePositions\BlankMultiLines.cbl" />
+    <None Include="resources\input\SourcePositions\CommentLine.cbl" />
+    <None Include="resources\input\SourcePositions\CommentMultiLines.cbl" />
+    <None Include="resources\input\SourcePositions\DebugLine.cbl" />
+    <None Include="resources\input\SourcePositions\DebugMultiLines.cbl" />
     <None Include="resources\output\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -79,6 +90,12 @@
       <Link>resources\config\TypeCobol\skeletons.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="resources\output\SourcePositions\BlankLine.cbl" />
+    <None Include="resources\output\SourcePositions\BlankMultiLines.cbl" />
+    <None Include="resources\output\SourcePositions\CommentLine.cbl" />
+    <None Include="resources\output\SourcePositions\CommentMultiLines.cbl" />
+    <None Include="resources\output\SourcePositions\DebugLine.cbl" />
+    <None Include="resources\output\SourcePositions\DebugMultiLines.cbl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TypeCobol.Test\TypeCobol.Test.csproj">
@@ -100,6 +117,7 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

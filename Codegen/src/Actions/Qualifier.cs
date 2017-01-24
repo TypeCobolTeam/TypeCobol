@@ -226,6 +226,8 @@ namespace TypeCobol.Codegen.Actions
         /// </summary>
         public void Execute()
         {
+            if (Source == null)
+                return;
             if (Source.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
                 return;
             TypeCobolCobolQualifierVistor visitor = new TypeCobolCobolQualifierVistor(Generator);

@@ -1,0 +1,6 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. BlankMultiLines.
+000000
+000001
+000002
+       END PROGRAM BlankMultiLines.

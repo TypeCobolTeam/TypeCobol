@@ -38,7 +38,7 @@ namespace TypeCobol.Codegen {
             var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(document, writer, skeletons);
             var program = document.Results.ProgramClassDocumentSnapshot.Program;
 
-            codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
+            codegen.Generate(program == null ? null : program.SyntaxTree.Root, program == null ? null : program.SymbolTable, columns);
             // flush
             writer.Close();
 
