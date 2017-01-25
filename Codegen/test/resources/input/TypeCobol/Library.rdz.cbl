@@ -38,6 +38,7 @@
        PROCEDURE DIVISION.
       *=================================================================
        DECLARE FUNCTION currentDate PUBLIC
+      *Description of currentDate
            RETURNING Result TYPE date.
        PROCEDURE DIVISION.
            ACCEPT Result FROM DATE YYYYMMDD
@@ -53,17 +54,17 @@
        PROCEDURE DIVISION.
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
-		   move W-Dat:YYYY          to Result::YYYY
-		   move W-Dat:MM            to Result::MM
-		   move W-Dat:DD            to Result::DD 
-		   move '-'                 to Result(5:1)
-		   move '-'                 to Result(8:1)
+           move W-Dat :: YYYY       to Result :: YYYY
+           move W-Dat :: MM         to Result :: MM
+           move W-Dat :: DD         to Result :: DD 
+      *    move '-'                 to Result(5:1)
+      *    move '-'                 to Result(8:1)
            
            .
        END-DECLARE.
       *_________________________________________________________________
        DECLARE FUNCTION currentDateJulian PUBLIC
-	  * my comment
+      * my comment
            RETURNING Result Type dateJulian.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
@@ -93,8 +94,8 @@
            .
        END-DECLARE.
       *_________________________________________________________________
-	  *Keep spaces at end of line, because there were 
-	  * presents in source file                      
+      *Keep spaces at end of line, because there were 
+      * presents in source file                      
        DECLARE FUNCTION currentDateString PUBLIC     
            RETURNING Result TYPE dateString.         
        PROCEDURE DIVISION.

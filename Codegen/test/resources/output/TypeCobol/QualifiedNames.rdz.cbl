@@ -54,6 +54,11 @@
            MOVE   1   TO x OF Location OF p
       *    MOVE 1 TO p :: Location ::    y z OF Location IN p                 
            MOVE 1 TO y  OF  Location  OF     p z OF Location IN p
+
+      *    MOVE p :: Location :: y TO p :: location :: y                      
+           MOVE y  OF  Location  OF  p TO y  OF  location  OF  p
+      *    move p::location::y to p::location::y                              
+           move y OF location OF p to y OF location OF p
            .
        
        END PROGRAM Test-Name-Qualification.
