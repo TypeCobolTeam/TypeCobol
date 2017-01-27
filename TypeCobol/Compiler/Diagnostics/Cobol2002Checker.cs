@@ -11,7 +11,6 @@
 	using TypeCobol.Compiler.Nodes;
 
 class TypeDefinitionEntryChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() { return new List<Type> { typeof(DataTypeDescriptionEntry), typeof(DataRedefinesEntry), }; }
 
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var context = c as CodeElementsParser.DataDescriptionEntryContext;
@@ -49,10 +48,12 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 	}
 }
 class TypeDefinitionChecker: NodeListener {
-	public IList<Type> GetNodes() { return new List<Type>() { typeof(TypeDefinition), }; }
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		var typedef = (TypeDefinition)node;
+		var typedef = node as TypeDefinition;
+	    if (typedef == null) {
+	        return;//not my job
+	    }
 		if (typedef.CodeElement().Picture == null && typedef.Children.Count < 1) {
 			string message = "TYPEDEF \'"+typedef.Name+"\' has no description.";
 			DiagnosticUtils.AddError(typedef.CodeElement, message, MessageCode.SemanticTCErrorInParser);
@@ -69,7 +70,6 @@ class TypeDefinitionChecker: NodeListener {
 	}
 }
     class RedefinesChecker: NodeListener {
-	    public IList<Type> GetNodes() { return new List<Type>() { typeof(DataRedefines), }; }
 
 	    private class Error: Dictionary<Error.Status,int> {
 		    public enum Status { TYPEStrong, TYPEDEFPart, TYPEDEFStrong, }
@@ -92,13 +92,17 @@ class TypeDefinitionChecker: NodeListener {
 	    }
 
 	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		    if (node.IsPartOfATypeDef) {
+	        var redefinesNode = node as DataRedefines;
+	        if (redefinesNode == null) {
+	            return; //not my job
+	        }
+		    if (redefinesNode.IsPartOfATypeDef) {
 			    DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES as part of a TYPEDEF", MessageCode.SemanticTCErrorInParser);
 			    return;
 		    }
 
 
-		    var redefines = new URI(((DataRedefines)node).CodeElement().RedefinesDataName.Name);
+		    var redefines = new URI(redefinesNode.CodeElement().RedefinesDataName.Name);
 		    var errors = new Error();
 		    var redefinedVariables  = node.SymbolTable.GetVariable(redefines);
 		    foreach(var redefinedVariable in redefinedVariables) {
@@ -160,9 +164,11 @@ class TypeDefinitionChecker: NodeListener {
     }
 
 class RenamesChecker: NodeListener {
-	public IList<Type> GetNodes() { return new List<Type>() { typeof(DataRenames), }; }
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		var renames = (DataRenames)node;
+		var renames = node as DataRenames;
+	    if (renames == null) {
+	        return; //not my job
+	    }
 		Check(new URI(renames.CodeElement().RenamesFromDataName.Name), node);
 		Check(new URI(renames.CodeElement().RenamesToDataName.Name), node);
 	}
@@ -189,7 +195,11 @@ class TypedDeclarationChecker: NodeListener {
 	public IList<Type> GetNodes() { return new List<Type>() { typeof(ITypedNode), }; }
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		if (node is TypeDefinition) return; //not our job
+	    var typedNode = node as ITypedNode;
+        if(typedNode == null || node is TypeDefinition) {
+            return; //not my job
+        }
+
 		var data = node.CodeElement as DataDescriptionEntry;
 		if (data != null && data.UserDefinedDataType != null && data.Picture != null) {
 			string message = "PICTURE clause incompatible with TYPE clause";

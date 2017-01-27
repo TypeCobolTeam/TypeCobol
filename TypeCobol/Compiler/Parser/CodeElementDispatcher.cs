@@ -9,15 +9,6 @@ namespace TypeCobol.Compiler.Parser
 {
     public interface CodeElementListener {
         /// <summary>
-        /// Returns the type(s) of CodeElement the listener is interested in.
-        /// The listener will be notified about the creation of a CodeElement
-        /// only if the CodeElement type matches at least one of the Types
-        /// returned by this method.
-        /// </summary>
-        /// <returns>IList of CodeElement Types</returns>
-        IList<System.Type> GetCodeElements();
-
-        /// <summary>
         /// Called when a CodeElement is created during CodeElementParserStep,
         /// if the CodeElement type equals one of those returned by GetCodeElements.
         /// </summary>
@@ -32,13 +23,7 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
         public void OnCodeElement(CodeElement e, ParserRuleContext context) {
             foreach(var listener in _listeners) {
-                var types = listener.GetCodeElements();
-                foreach (var expected in types) {
-                    if (Reflection.IsTypeOf(e.GetType(), expected)) {
-                        listener.OnCodeElement(e, context);
-                        break; // only notify each listener once for a given CodeElement
-                    }
-                }
+                listener.OnCodeElement(e, context);
             }
         }
 
@@ -65,14 +50,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 	public interface NodeListener {
-		/// <summary>
-		/// Returns the type(s) of Node the listener is interested in.
-		/// The listener will be notified about the creation of a Node
-		/// only if the Node's CodeElement member type matches at least
-		/// one of the Types returned by this method.
-		/// </summary>
-		/// <returns>IList of CodeElement Types</returns>
-		IList<System.Type> GetNodes();
+
 
 		/// <summary>
 		/// Called when a CodeElement is created during ProgramClassParserStep,
@@ -90,13 +68,7 @@ namespace TypeCobol.Compiler.Parser
 		/// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
 		public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 			foreach(var listener in _listeners) {
-				var types = listener.GetNodes();
-				foreach (var expected in types) {
-					if (TypeCobol.Tools.Reflection.IsTypeOf(node!=null? node.GetType():null, expected)) {
-						listener.OnNode(node, context, program);
-						break; // only notify each listener once for a given CodeElement
-					}
-				}
+                listener.OnNode(node, context, program);
 			}
 		}
 

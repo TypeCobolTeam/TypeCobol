@@ -17,16 +17,19 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
 	private static string[] READONLY_DATATYPES = { "DATE", };
 
-	public IList<Type> GetNodes() { return new List<Type> { typeof(VariableWriter), }; }
 	public void OnNode([NotNull] Node node, ParserRuleContext context, [NotNull] CodeModel.Program program) {
-		var element = node.CodeElement as VariableWriter;
+        VariableWriter variableWriter = node as VariableWriter;
+        if (variableWriter == null) {
+            return; //not our job
+        }
+        var element = node.CodeElement as VariableWriter;
 		var table = program.SymbolTable;
 		foreach (var pair in element.VariablesWritten) {
 			if (pair.Key == null) continue; // no receiving item
 			var lr = table.GetVariable(pair.Key);
 			if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 			var receiving = lr[0];
-			checkReadOnly(node.CodeElement, receiving as Node);
+			checkReadOnly(node.CodeElement, receiving);
 		}
 	}
 	private void checkReadOnly(CodeElement ce, [NotNull] Node receiving) {
@@ -42,9 +45,6 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
 class FunctionCallChecker: NodeListener {
 
-	public IList<Type> GetNodes() {
-		return new List<Type> { typeof(FunctionCaller), };
-	}
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		var statement = node as FunctionCaller;
 
@@ -98,11 +98,12 @@ class FunctionCallChecker: NodeListener {
 
 
 class FunctionDeclarationTypeChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() {
-		return new List<Type> { typeof(FunctionDeclarationHeader), };
-	}
+
 	public void OnCodeElement(CodeElement ce, ParserRuleContext context) {
-		var function = (FunctionDeclarationHeader)ce;
+		var function = ce as FunctionDeclarationHeader;
+	    if (function == null) {
+                return;//not my job
+	    }
 		if (function.ActualType == FunctionType.Undefined) {
 			DiagnosticUtils.AddError(ce, "Incompatible parameter clauses for "+ToString(function.UserDefinedType)+" \""+function.Name+"\"", context);
 		} else
@@ -251,12 +252,14 @@ class FunctionDeclarationChecker: NodeListener {
 /// * TCRFUN_LIBRARY_COPY
 /// </summary>
 class LibraryChecker: NodeListener {
-	public IList<Type> GetNodes() {
-		return new List<Type> { typeof(ProcedureDivision), };
-	}
+
 	public void OnNode([NotNull] Node node, ParserRuleContext context, CodeModel.Program program) {
-		var pdiv = node.CodeElement as ProcedureDivisionHeader;
-		bool isPublicLibrary = false;
+        ProcedureDivision procedureDivision = node as ProcedureDivision;
+        if (procedureDivision == null) {
+            return; //not our job
+        }
+        var pdiv = (ProcedureDivisionHeader) procedureDivision.CodeElement;
+        bool isPublicLibrary = false;
 		var elementsInError = new List<CodeElement>();
 		var errorMessages = new List<string>();
 		foreach(var child in node.Children) {

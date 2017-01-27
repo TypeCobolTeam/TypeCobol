@@ -37,11 +37,12 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 
     class DataDescriptionChecker: CodeElementListener {
-		public IList<Type> GetCodeElements() {
-			return new List<Type> { typeof(DataDescriptionEntry) };
-		}
+
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var data = e as DataDescriptionEntry;
+		    if (data == null) {
+		        return; //not our job
+		    }
 			var context = c as CodeElementsParser.DataDescriptionEntryContext;
 			var external  = GetContext(data, context.externalClause());
 			var global    = GetContext(data, context.globalClause());
@@ -77,12 +78,13 @@ namespace TypeCobol.Compiler.Diagnostics {
 	}
 
 	class DataConditionChecker: CodeElementListener {
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(DataConditionEntry), };
-		}
+
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var data = e as DataConditionEntry;
-			var context = c as CodeElementsParser.DataConditionEntryContext;
+            if (data == null) {
+                return; //not our job
+            }
+            var context = c as CodeElementsParser.DataConditionEntryContext;
 			if (data.LevelNumber.Value != 88)
 				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber);
 			if (data.DataName == null)
@@ -91,12 +93,13 @@ namespace TypeCobol.Compiler.Diagnostics {
 	}
 
 	class DataRenamesChecker: CodeElementListener {
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(DataRenamesEntry), };
-		}
+
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var data = e as DataRenamesEntry;
-			var context = c as CodeElementsParser.DataConditionEntryContext;
+            if (data == null) {
+                return; //not our job
+            }
+            var context = c as CodeElementsParser.DataConditionEntryContext;
 			if (data.LevelNumber.Value != 66)
 				//(source page 379 of ISO Cobol 2014)
 				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber);
@@ -109,26 +112,25 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 	}
 
-	class AddStatementChecker: CodeElementListener
-	{
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(AddGivingStatement), };
-		}
+	class AddStatementChecker: CodeElementListener {
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var statement = e as AddGivingStatement;
-			var context = c as CodeElementsParser.AddStatementContext;
+            if (statement == null) {
+                return; //not our job
+            }
+            var context = c as CodeElementsParser.AddStatementContext;
 			if (statement.Operand == null)
 				DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context.addGiving());
 		}
 	}
 
     class CallStatementChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() {
-		return new List<Type>() { typeof(CallStatement), };
-	}
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as CallStatement;
-		var context = c as CodeElementsParser.CobolCallStatementContext;
+        if (statement == null) {
+            return; //not our job
+        }
+        var context = c as CodeElementsParser.CobolCallStatementContext;
 
 		foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 
@@ -172,11 +174,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 	class CancelStatementChecker: CodeElementListener
 	{
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(CancelStatement), };
-		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext ctxt) {
 			var statement = e as CancelStatement;
+            if (statement == null) {
+                return; //not our job
+            }
 			var context = ctxt as CodeElementsParser.CancelStatementContext;
 
 			foreach (var item in statement.Programs) {
@@ -193,9 +195,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 	}
 
     class InspectConvertingChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(InspectConvertingStatement), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as InspectConvertingStatement;
+        if (statement == null) {
+            return; //not our job
+        }
 		var context = c as CodeElementsParser.InspectStatementContext;
 		var seen = new Dictionary<InspectStatement.StartCharacterPosition,bool>();
 		foreach(var value in Enum.GetValues(typeof(InspectTallyingStatement.StartCharacterPosition))) {
@@ -214,9 +218,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 
     class MergeUsingChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(MergeStatement), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as MergeStatement;
+        if (statement == null) {
+            return; //not our job
+        }
 		var context = c as CodeElementsParser.MergeStatementContext;
 		if (statement.InputFiles.Length == 1)
 			DiagnosticUtils.AddError(statement, "MERGE: USING needs 2 filenames or more", context.usingFilenames());
@@ -224,9 +230,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 }
 
     class MoveSimpleChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(MoveSimpleStatement), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as MoveSimpleStatement;
+        if (statement == null) {
+            return; //not our job
+        }
 		var context = c as CodeElementsParser.MoveSimpleContext;
 		for(int i=0; i<statement.ReceivingStorageAreas.Length; i++) {
 			var receiver = statement.ReceivingStorageAreas[i].StorageArea;
@@ -237,9 +245,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 }
 
     class SearchStatementChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SearchStatement), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var statement = e as SearchStatement;
+        if (statement == null) {
+            return; //not our job
+        }
 		if (statement.TableToSearch == null) return; // syntax error
 		if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea && ((DataOrConditionStorageArea)statement.TableToSearch.StorageArea).Subscripts.Count > 0)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(c));
@@ -255,9 +265,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 }
 
     class SetStatementForAssignmentChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SetStatementForAssignment), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var set = e as SetStatementForAssignment;
+        if (set == null) {
+            return; //not our job
+        }
 		var context = c as CodeElementsParser.SetStatementForAssignmentContext;
 		for (int i = 0; i < context.dataOrIndexStorageArea().Length; i++) {
 			if (i >= set.ReceivingStorageAreas.Length) {
@@ -271,9 +283,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 }
 
     class SetStatementForIndexesChecker: CodeElementListener {
-	public IList<Type> GetCodeElements() { return new List<Type>() { typeof(SetStatementForIndexes), }; }
 	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 		var set = e as SetStatementForIndexes;
+        if (set == null) {
+            return; //not our job
+        }
 		if (set.SendingVariable == null) {
 			var context = c as CodeElementsParser.SetStatementForIndexesContext;
 			DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context.integerVariable1());
@@ -283,26 +297,15 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 	class StartStatementChecker: CodeElementListener
 	{
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(StartStatement), };
-		}
 		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
 			var statement = e as StartStatement;
+            if (statement == null) {
+                return; //not our job
+            }
 			var context = c as CodeElementsParser.StartStatementContext;
 			if (context.relationalOperator() != null)
 				if (statement.RelationalOperator.Value != RelationalOperator.EqualTo && statement.RelationalOperator.Value != RelationalOperator.GreaterThan && statement.RelationalOperator.Value != RelationalOperator.GreaterThanOrEqualTo)
 					DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.RelationalOperator.Value, context.relationalOperator());
-		}
-	}
-
-	class StopStatementChecker: CodeElementListener
-	{
-		public IList<Type> GetCodeElements() {
-			return new List<Type>() { typeof(StopStatement), };
-		}
-		public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-			var statement = e as StopStatement;
-			var context = c as CodeElementsParser.StopStatementContext;
 		}
 	}
 
@@ -367,12 +370,13 @@ namespace TypeCobol.Compiler.Diagnostics {
     }
 
     class VariableUsageChecker: NodeListener {
-	    public IList<Type> GetNodes() {
-		    return new List<Type> { typeof(VariableUser), };
-	    }
 
 	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		    foreach(var variable in ((VariableUser)node).Variables.Keys) CheckVariable(node, variable);
+            VariableUser variableUser = node as VariableUser;
+            if (variableUser == null) {
+                return; //not our job
+            }
+            foreach (var variable in variableUser.Variables.Keys) CheckVariable(node, variable);
 
             //Subscript checker are desactived because it doesn't works.
             /*
@@ -439,12 +443,13 @@ namespace TypeCobol.Compiler.Diagnostics {
     }
 
     class WriteTypeConsistencyChecker: NodeListener {
-	public IList<Type> GetNodes() {
-		return new List<Type>() { typeof(VariableWriter), };
-	}
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		var variables = ((VariableWriter)node).VariablesWritten;
+	    var variableWriter = node as VariableWriter;
+        if (variableWriter == null) {
+            return; //not our job
+        }
+		var variables = variableWriter.VariablesWritten;
 		foreach(var variable in variables) CheckVariable(node, variable.Key, variable.Value);
 	}
 	/// <param name="wname">Receiving item; must be found and its type known</param>
