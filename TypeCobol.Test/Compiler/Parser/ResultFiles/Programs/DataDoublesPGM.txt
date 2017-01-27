@@ -15,18 +15,18 @@ PROGRAM: Doubles common:False initial:False recursive:False
   I-DOUBLE:Alphanumeric
   X:Alphanumeric
   BIGZONE:Alphanumeric
-  GROUP-DOUBLE
-  GROUP-DOUBLE
-  VARIANT-1A:?
+  GROUP-DOUBLE:Alphanumeric
+  GROUP-DOUBLE:Alphanumeric
+  VARIANT-1A:Alphanumeric
   V1A1:Alphanumeric
   V1A2:Alphanumeric
   VARIANT-1B:Alphanumeric
   VARIANT-1B:Alphanumeric
   VARIANT-2:Alphanumeric
-  VARIANT-2:?
+  VARIANT-2:Alphanumeric
   EXTRA:Alphanumeric
   V2:Alphanumeric
-  ANOTHER-GROUP:?
+  ANOTHER-GROUP:Alphanumeric
 -- PARAGRAPHS --
   PROC1
 --- Intrinsic:Global

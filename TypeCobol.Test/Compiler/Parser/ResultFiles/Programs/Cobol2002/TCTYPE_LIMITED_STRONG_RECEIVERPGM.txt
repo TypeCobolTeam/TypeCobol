@@ -11,7 +11,7 @@ PROGRAM: StrongReceivers common:False initial:False recursive:False
 --- Intrinsic:Global:Program
 -- DATA --------
   FIC-APPEL:Alphanumeric
-  WorkRec:?
+  WorkRec:Alphanumeric
   Temp:Alphanumeric
   myStrongInt:IntegerStrong
   myInt:Integer

@@ -8,9 +8,9 @@ PROGRAM: TESTPGM1 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Global:Program
 -- DATA --------
-  W-TAB-LCC-NONCLOSES:?
-  W-TAB-LCC-X:?
-  W-TAB-LCC-CLE:?
+  W-TAB-LCC-NONCLOSES:Alphanumeric
+  W-TAB-LCC-X:Array
+  W-TAB-LCC-CLE:Alphanumeric
   W-TAB-LCC-CLE-RIB:rib
   W-TAB-LCC-CLE-DEV:Alphanumeric
   W-TAB-LCC-CLE-TYP:Alphanumeric

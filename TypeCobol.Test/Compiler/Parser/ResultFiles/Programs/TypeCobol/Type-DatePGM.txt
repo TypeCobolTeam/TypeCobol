@@ -12,7 +12,7 @@ PROGRAM: TEST-DATE common:False initial:False recursive:False
   olddate:Alphanumeric
   today:DATE
   tomorrow:DATE
-  groupe:?
+  groupe:Alphanumeric
   date1:DATE
 -- PARAGRAPHS --
   TEST-DATE

@@ -124,6 +124,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType AlphanumericEdited = new DataType("AlphanumericEdited");
 		public static readonly DataType DBCS               = new DataType("DBCS");
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
+		public static readonly DataType Occurs             = new DataType("Array");
         // [TYPECOBOL]
         //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
         public static readonly DataType Boolean            = new DataType("BOOL", true, CobolLanguageLevel.TypeCobol);
