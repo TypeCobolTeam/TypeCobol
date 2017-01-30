@@ -184,11 +184,11 @@
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
       *    move W-Dat :: YYYY       to Result :: YYYY                         
-           move W-Dat :: YYYY       to YYYY  OF  Result
+           move YYYY  OF  W-Dat       to YYYY  OF  Result
       *    move W-Dat :: MM         to Result :: MM                           
-           move W-Dat :: MM         to MM  OF  Result
+           move MM  OF  W-Dat         to MM  OF  Result
       *    move W-Dat :: DD         to Result :: DD                           
-           move W-Dat :: DD         to DD  OF  Result 
+           move DD  OF  W-Dat         to DD  OF  Result 
       *    move '-'                 to Result(5:1)
       *    move '-'                 to Result(8:1)
            
