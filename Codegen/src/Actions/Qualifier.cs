@@ -29,7 +29,7 @@ namespace TypeCobol.Codegen.Actions
             /// Qualifier items
             /// </summary>
             public IList<SymbolReference> Items;
-
+            public IList< IList<SymbolReference> > AllItemsList;
             /// <summary>
             /// Constructor
             /// </summary>
@@ -37,6 +37,7 @@ namespace TypeCobol.Codegen.Actions
             internal TypeCobolCobolQualifierVistor(Generator generator)
             {
                 this.Generator = generator;
+                this.AllItemsList = new List<IList<SymbolReference>>();
             }
 
             /// <summary>
@@ -46,8 +47,65 @@ namespace TypeCobol.Codegen.Actions
             /// <returns></returns>
             public override bool Visit(TypeCobol.Compiler.CodeElements.TypeCobolQualifiedSymbolReference typeCobolQualifiedSymbolReference)
             {   //Yes it has TypeCobol qualifier
-                Items = typeCobolQualifiedSymbolReference.AsList();                
+                IList<SymbolReference> items = typeCobolQualifiedSymbolReference.AsList();
+                if (Items == null)
+                {
+                    Items = items;
+                }
+                else
+                {                    
+                    //Check if the first element is already in
+                    SymbolReference first = items[0];
+                    if (Containss(first))
+                        return true;
+                    if (Contains(first))
+                    {
+                        foreach (SymbolReference sr in items)
+                        {
+                            if (!Contains(sr))
+                                Items.Add(sr);
+                        }
+                    }
+                    else
+                    {
+                        AllItemsList.Add(Items);
+                        Items = items;
+                    }
+                }
                 return true;
+            }
+
+            /// <summary>
+            /// Checks if the current symbol reference is contained in the aready collected Items list.
+            /// </summary>
+            /// <param name="sr">The Symbol Reference to Check</param>
+            /// <returns>True if it is aready in, false otherwise</returns>
+            private bool Contains(SymbolReference sr)
+            {
+                if (Items == null)
+                    return false;
+                foreach (SymbolReference r in Items)
+                    if (sr == r)
+                        return true;
+                return false;
+            }
+
+            /// <summary>
+            /// Checks if the current symbol reference is contained in the aready collected Items list.
+            /// </summary>
+            /// <param name="sr">The Symbol Reference to Check</param>
+            /// <returns>True if it is aready in, false otherwise</returns>
+            private bool Containss(SymbolReference sr)
+            {
+                if (AllItemsList == null)
+                    return false;
+                foreach (var l in AllItemsList)
+                {
+                    foreach (SymbolReference r in l)
+                        if (sr == r)
+                            return true;
+                }
+                return false;
             }
 
             public override bool BeginNode(Node node)
@@ -61,8 +119,11 @@ namespace TypeCobol.Codegen.Actions
                 base.EndNode(node);
                 if (HasMatch)
                 {
+                    //Add in the list the last qualified sequence
+                    AllItemsList.Add(Items);
                     Perform(node);
                     Items = null;
+                    AllItemsList.Clear();
                 }
                 node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
             }
@@ -79,6 +140,40 @@ namespace TypeCobol.Codegen.Actions
             }
 
             /// <summary>
+            /// For all Items the indices of their token in the consumed Tokens.
+            /// </summary>
+            /// <returns>The List of boundary tuple.</returns>
+            private List<Tuple<int, int>> ItemsListIndexBoundary(IList<TypeCobol.Compiler.Scanner.Token> nodeTokens)
+            {
+                List<Tuple<int, int>> boundaries = new List<Tuple<int, int>>();
+                foreach (var items in AllItemsList)
+                {
+                    SymbolReference sr1 = items[0];
+                    int index1 = FindSymbolRefererenceTokenIndex(sr1, nodeTokens);
+                    SymbolReference sr2 = items[items.Count - 1];
+                    int index2 = FindSymbolRefererenceTokenIndex(sr2, nodeTokens);
+                    boundaries.Add(new Tuple<int, int>(index2, index1));
+                }
+                return boundaries;
+            }
+
+            /// <summary>
+            /// Get the index of the corresponding SymbolReference token in the given token list.
+            /// </summary>
+            /// <param name="sr">The SymbolReference token</param>
+            /// <param name="nodeTokens">The loken list</param>
+            /// <returns>The index if found, -1 otherwise.</returns>
+            private static int FindSymbolRefererenceTokenIndex(SymbolReference sr, IList<TypeCobol.Compiler.Scanner.Token> nodeTokens)
+            {
+                for (int i = 0; i < nodeTokens.Count; i++)
+                {
+                    if (nodeTokens[i] == sr.NameLiteral.Token)
+                        return i;
+                }
+                return -1;
+            }
+
+            /// <summary>
             /// Perform the qualification action
             /// </summary>
             /// <param name="sourceNode">The source Node on which to perform teh action</param>
@@ -89,45 +184,51 @@ namespace TypeCobol.Codegen.Actions
                     return;
                 //Now this Node Is Visited
                 sourceNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-
                 Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(sourceNode);
                 IList<TypeCobol.Compiler.Scanner.Token> nodeTokens = sourceNode.CodeElement.ConsumedTokens;
-                int i = 0;
-                for (int j = 0; j < Items.Count; j++)
+                List<Tuple<int, int>> boundaries = ItemsListIndexBoundary(nodeTokens);
+                int b = 0;
+                foreach (var items in AllItemsList)
                 {
-                    SymbolReference sr = Items[Items.Count - j - 1];
-                    for (; i < nodeTokens.Count; i++)
+                    Tuple<int, int> range = boundaries[b++];
+                    Items = items;
+                    int i = range.Item1;
+                    for (int j = 0; j < Items.Count; j++)
                     {
-                        if (nodeTokens[i] == sr.NameLiteral.Token)
+                        SymbolReference sr = Items[Items.Count - j - 1];
+                        for (; i <= range.Item2; i++)
                         {
-                            TypeCobol.Compiler.Scanner.Token tokenColonColon = null;
-                            //Look for the corresponding ::
-                            for (++i; i < nodeTokens.Count; i++)
+                            if (nodeTokens[i] == sr.NameLiteral.Token)
                             {
-                                if (!(nodeTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                                TypeCobol.Compiler.Scanner.Token tokenColonColon = null;
+                                //Look for the corresponding ::
+                                for (++i; i <= range.Item2; i++)
                                 {
-                                    if (nodeTokens[i].Text.Equals(string.Intern("::")))
+                                    if (!(nodeTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken))
                                     {
-                                        tokenColonColon = nodeTokens[i];
-                                        i++;
-                                        break;
+                                        if (nodeTokens[i].TokenType == TypeCobol.Compiler.Scanner.TokenType.QualifiedNameSeparator)
+                                        {
+                                            tokenColonColon = nodeTokens[i];
+                                            i++;
+                                            break;
+                                        }                                        
                                     }
                                 }
-                            }
-                            //We got It ==> Create our Generate Nodes
-                            GenerateQualifierToken item = new GenerateQualifierToken(
-                                new QualifierTokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
-                                sourcePositions);
-                            item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);                            
-                            sourceNode.Add(item);
-                            if (tokenColonColon != null)
-                            {
-                                item = new GenerateQualifierToken(new QualifierTokenCodeElement(tokenColonColon), string.Intern(" OF "),
+                                //We got It ==> Create our Generate Nodes
+                                GenerateQualifierToken item = new GenerateQualifierToken(
+                                    new QualifierTokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
                                     sourcePositions);
                                 item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                                 sourceNode.Add(item);
+                                if (tokenColonColon != null)
+                                {
+                                    item = new GenerateQualifierToken(new QualifierTokenCodeElement(tokenColonColon), string.Intern(" OF "),
+                                        sourcePositions);
+                                    item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                                    sourceNode.Add(item);
+                                }
+                                break;//We got it
                             }
-                            break;//We got it
                         }
                     }
                 }

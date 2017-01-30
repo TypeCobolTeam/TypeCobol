@@ -124,7 +124,7 @@ namespace TypeCobol.Compiler.Nodes {
             {
                 foreach (var child in children)
                 {
-                    child.SetFlag(flag, value);
+                    child.SetFlag(flag, value, bRecurse);
                 }
             }
         }
