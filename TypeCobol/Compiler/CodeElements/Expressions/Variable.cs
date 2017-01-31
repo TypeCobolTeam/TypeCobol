@@ -7,6 +7,18 @@ namespace TypeCobol.Compiler.CodeElements {
     /// Compile-time value given by a syntax literal
     ///  OR
     /// Runtime value read in a storage area
+    /// 
+    /// 
+    /// 
+    /// VariableBase
+    ///    Variable
+    ///       VariableOrExpression
+    ///    ReceivingStorageArea
+    ///    SymbolReferenceVariable
+    ///    IntegerVariable
+    ///    NumericVariable
+    ///    CharacterVariable
+    ///    AlphanumericVariable
     /// </summary>
     public abstract class VariableBase : IVisitable {
         protected VariableBase(StorageDataType dataType, [CanBeNull] StorageArea storageArea) {
