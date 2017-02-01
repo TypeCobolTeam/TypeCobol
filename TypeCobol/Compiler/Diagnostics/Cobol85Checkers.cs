@@ -33,6 +33,14 @@ namespace TypeCobol.Compiler.Diagnostics {
             SectionOrParagraphUsageChecker.CheckSection(section);
             return true;
         }
+
+        public override bool Visit(TypeDefinition typeDefinition) {
+            //Cobol 2002 rule
+            //TODO need to clarify if we have 1 visitor per LanguageLevel
+            //For performance reason it seems better to have only one here
+            TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
+            return true;
+        }
     }
 
 
@@ -372,13 +380,13 @@ namespace TypeCobol.Compiler.Diagnostics {
     class VariableUsageChecker: NodeListener {
 
 	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-            VariableUser variableUser = node as VariableUser;
+	        VariableUser variableUser = node as VariableUser;
             if (variableUser == null) {
                 return; //not our job
             }
             foreach (var variable in variableUser.Variables.Keys) CheckVariable(node, variable);
 
-            //Subscript checker are desactived because it doesn't works.
+	        //Subscript checker are desactived because it doesn't works.
             /*
             var move = node.CodeElement as MoveSimpleStatement;
 		    if (move == null) return;
@@ -433,28 +441,30 @@ namespace TypeCobol.Compiler.Diagnostics {
 		    return index;
 	    }
 
-	    private void CheckVariable(Node node, QualifiedName name) {
-		    var found = node.SymbolTable.GetVariable(name);
-		    if (found.Count < 1)
-			    if (node.SymbolTable.GetFunction(name).Count < 1)
-				    DiagnosticUtils.AddError(node.CodeElement, "Symbol "+name+" is not referenced");
-		    if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+name);
-	    }
+        private void CheckVariable(Node node, QualifiedName name)
+        {
+            var found = node.SymbolTable.GetVariable(name);
+            if (found.Count < 1)
+                if (node.SymbolTable.GetFunction(name).Count < 1)
+                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + name + " is not referenced");
+            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + name);
+        }
     }
 
     class WriteTypeConsistencyChecker: NodeListener {
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-	    var variableWriter = node as VariableWriter;
+        var variableWriter = node as VariableWriter;
         if (variableWriter == null) {
             return; //not our job
         }
 		var variables = variableWriter.VariablesWritten;
 		foreach(var variable in variables) CheckVariable(node, variable.Key, variable.Value);
 	}
-	/// <param name="wname">Receiving item; must be found and its type known</param>
-	/// <param name="sent">Sending item; must be found and its type known</param>
-	private void CheckVariable(Node node, QualifiedName wname, object sent) {
+
+        /// <param name="wname">Receiving item; must be found and its type known</param>
+        /// <param name="sent">Sending item; must be found and its type known</param>
+        private void CheckVariable(Node node, QualifiedName wname, object sent) {
 		if (sent == null || wname == null) return;// I need both items
 		var wsymbol = GetSymbol(node.SymbolTable, wname);
 		if (wsymbol == null) return;// receiving symbol name unresolved
@@ -491,13 +501,18 @@ namespace TypeCobol.Compiler.Diagnostics {
 			}
 		}
 	}
-	private Node GetSymbol(SymbolTable table, QualifiedName symbol) {
-		var found = table.GetVariable(symbol);
+	private DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference) {
+		var found = table.GetVariable(symbolReference);
+		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
+		return found[0];
+	}
+    private DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName) {
+		var found = table.GetVariable(qualifiedName);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}
 
-    //TODO move this method to DataDefinition (and ITypedNode implementation ?)
+    //TODO move this method to DataDefinition
 	private DataType GetTypeDefinition(SymbolTable table, Node symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
@@ -511,8 +526,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			} else
 			if (data.CodeElement is DataRedefinesEntry) {
 				var redefines = (DataRedefinesEntry)data.CodeElement;
-				var qname = new URI(redefines.RedefinesDataName.Name);
-			    var node = GetSymbol(table, qname);
+			    var node = GetSymbol(table, redefines.RedefinesDataName);
 			    if (node is DataDescription) {
 			        entry = (DataDescriptionEntry) node.CodeElement;
 			    } else {
@@ -535,8 +549,7 @@ namespace TypeCobol.Compiler.Diagnostics {
         /// <param name="dataRedefinesEntry"></param>
         /// <returns></returns>
         private DataDescriptionEntry GetDataDescriptionEntry(SymbolTable table, DataRedefinesEntry dataRedefinesEntry) {
-            var qname = new URI(dataRedefinesEntry.RedefinesDataName.Name);
-            var node = GetSymbol(table, qname);
+            var node = GetSymbol(table, dataRedefinesEntry.RedefinesDataName);
             if (node is DataDescription) {
                 return (DataDescriptionEntry)node.CodeElement;
             }

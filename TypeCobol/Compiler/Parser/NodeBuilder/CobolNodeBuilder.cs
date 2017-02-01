@@ -43,11 +43,11 @@ namespace TypeCobol.Compiler.Parser
 							TableOfIntrisic.AddVariable(data);
 					foreach(var types in value.Types)
 						foreach(var type in types.Value)
-							TableOfIntrisic.AddType((TypeDefinition)type);
+							TableOfIntrisic.AddType(type);
 					foreach(var functions in value.Functions)
 						foreach(var function in functions.Value)
 							if (((FunctionDeclarationHeader)function.CodeElement).Visibility == AccessModifier.Public)
-								TableOfIntrisic.AddFunction((FunctionDeclaration)function);
+								TableOfIntrisic.AddFunction(function);
 				}
 				// TODO#249: use a COPY for these
 				foreach (var type in DataType.BuiltInCustomTypes)

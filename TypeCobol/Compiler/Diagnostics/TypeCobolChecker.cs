@@ -18,10 +18,10 @@ class ReadOnlyPropertiesChecker: NodeListener {
 	private static string[] READONLY_DATATYPES = { "DATE", };
 
 	public void OnNode([NotNull] Node node, ParserRuleContext context, [NotNull] CodeModel.Program program) {
-        VariableWriter variableWriter = node as VariableWriter;
-        if (variableWriter == null) {
-            return; //not our job
-        }
+	    VariableWriter variableWriter = node as VariableWriter;
+	    if (variableWriter == null) {
+	        return; //not our job
+	    }
         var element = node.CodeElement as VariableWriter;
 		var table = program.SymbolTable;
 		foreach (var pair in element.VariablesWritten) {
@@ -52,12 +52,12 @@ class FunctionCallChecker: NodeListener {
 	        foreach (var fun in statement.FunctionCalls) {
 	            var found = node.SymbolTable.GetFunction(new URI(fun.FunctionName));
 	            if (found.Count != 1) continue; // ambiguity is not our job
-	            var declaration = (FunctionDeclaration) found[0];
+	            var declaration = found[0];
 	            Check(node.CodeElement, node.SymbolTable, fun, declaration);
 	        }
 	    }
 	}
-	private void Check(CodeElement e, SymbolTable table, [NotNull] CodeElements.FunctionCall call,
+	private void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
 	    [NotNull] FunctionDeclaration definition) {
 		var parameters = definition.Profile.Parameters;
         var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
@@ -71,7 +71,7 @@ class FunctionCallChecker: NodeListener {
 				var actual = call.Arguments[c].StorageAreaOrValue;
 				if (actual.IsLiteral) continue;
                 var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
-                var found = table.GetVariable(new URI(callArgName));
+                var found = table.GetVariable(actual);
 				if (found.Count < 1) DiagnosticUtils.AddError(e, "Parameter "+callArgName+" is not referenced");
 				if (found.Count > 1) DiagnosticUtils.AddError(e, "Ambiguous reference to parameter "+callArgName);
 				if (found.Count!= 1) continue;
@@ -141,9 +141,10 @@ class FunctionDeclarationChecker: NodeListener {
 
 		CheckNoPerform(node.SymbolTable.EnclosingScope, node);
 
-		var functions = node.SymbolTable.GetFunction(new URI(header.Name), header.Profile);
+	    var headerNameURI = new URI(header.Name);
+	    var functions = node.SymbolTable.GetFunction(headerNameURI, header.Profile);
 		if (functions.Count > 1)
-			DiagnosticUtils.AddError(header, "A function \""+new URI(header.Name).Head+"\" with the same profile already exists in namespace \""+new URI(header.Name).Tail+"\".", context);
+			DiagnosticUtils.AddError(header, "A function \""+headerNameURI.Head+"\" with the same profile already exists in namespace \""+headerNameURI.Tail+"\".", context);
 //		foreach(var function in functions) {
 //			if (!function.IsProcedure && !function.IsFunction)
 //				DiagnosticUtils.AddError(header, "\""+header.Name.Head+"\" is neither procedure nor function.", context);
@@ -239,8 +240,8 @@ class FunctionDeclarationChecker: NodeListener {
 		var found = table.GetSection(symbol.Name);
 		if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
 		else {
-			found = table.GetParagraph(symbol.Name);
-			if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
+			var paragraphFounds = table.GetParagraph(symbol.Name);
+			if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(ce, message);
 		}
 	}
 }
@@ -255,17 +256,17 @@ class LibraryChecker: NodeListener {
 
 	public void OnNode([NotNull] Node node, ParserRuleContext context, CodeModel.Program program) {
         ProcedureDivision procedureDivision = node as ProcedureDivision;
-        if (procedureDivision == null) {
-            return; //not our job
-        }
-        var pdiv = (ProcedureDivisionHeader) procedureDivision.CodeElement;
-        bool isPublicLibrary = false;
+	    if (procedureDivision == null) {
+	        return; //not our job
+	    }
+        var pdiv = procedureDivision.CodeElement as ProcedureDivisionHeader;
+		bool isPublicLibrary = false;
 		var elementsInError = new List<CodeElement>();
 		var errorMessages = new List<string>();
-		foreach(var child in node.Children) {
+		foreach(var child in procedureDivision.Children) {
 			var ce = child.CodeElement;
 			if (child.CodeElement == null) {
-				elementsInError.Add(node.CodeElement);
+				elementsInError.Add(procedureDivision.CodeElement);
 				errorMessages.Add("Illegal default section in library.");
 			} else {
 				var function = child.CodeElement as FunctionDeclarationHeader;
@@ -277,7 +278,7 @@ class LibraryChecker: NodeListener {
 				}
 			}
 		}
-		var pgm = (Nodes.Program)node.Root.GetChildren<ProgramIdentification>()[0];
+		var pgm = (Nodes.Program)procedureDivision.Root.GetChildren<ProgramIdentification>()[0];
 		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
 		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		if (isPublicLibrary) {

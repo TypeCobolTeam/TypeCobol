@@ -89,12 +89,12 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 	}
 
 	private string GetHash(ProcedureCall call) {
-		var name = new Compiler.CodeElements.Expressions.URI(call.ProcedureName.Name);
-		var found = Node.SymbolTable.GetFunction(name, call.AsProfile(Node.SymbolTable));
+		var found = Node.SymbolTable.GetFunction(call.ProcedureName, call.AsProfile(Node.SymbolTable));
 		if (found.Count < 1) return "?NOT_FOUND?";
 		if (found.Count > 1) return "?AMBIGUOUS?";
-		return ((Compiler.Nodes.FunctionDeclaration)found[0]).Hash;
+		return found[0].Hash;
 	}
+
 	private string ToString(TypeCobol.Compiler.CodeElements.CallSiteParameter parameter, Compiler.CodeModel.SymbolTable table, ArgMode mode,
         ref TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode, ref int previousSpan) {
         Variable variable = parameter.StorageAreaOrValue;
@@ -132,7 +132,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 
 		if (variable.IsLiteral)
             return share_mode + name;
-		var found = table.GetVariable(new Compiler.CodeElements.Expressions.URI(name));
+		var found = table.GetVariable(variable);
 		if (found.Count < 1) return "?NOT_FOUND?";
 //		if (found.Count > 1) return "?AMBIGUOUS?";
 		var data = found[0] as Compiler.Nodes.DataDescription;

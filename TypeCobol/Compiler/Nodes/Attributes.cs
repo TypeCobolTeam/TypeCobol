@@ -151,7 +151,7 @@ internal class FunctionUserAttribute: Attribute {
 			var found = table.GetFunction(new URI(fun.FunctionName));
 			if (found.Count < 1) continue;
 			if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
-			var declaration = (FunctionDeclaration)found[0];
+			var declaration = found[0];
 			functions.Add(Create(fun, declaration));
 		}
 		if (functions.Count == 0) return null;

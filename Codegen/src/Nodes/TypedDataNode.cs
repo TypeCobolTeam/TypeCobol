@@ -26,9 +26,9 @@ internal class TypedDataNode: DataDescription, Generated {
 
 				var data = this.Node.CodeElement();
 				int level = (int)data.LevelNumber.Value;				
-				var customtype = this.Node.SymbolTable.GetType(new URI(data.DataType.Name));
-                _cache.Add(CreateDataDefinition(data, level, 0, true, true, (TypeDefinition)customtype[0]));
-				if (customtype.Count > 0) _cache.AddRange(InsertChildren(this.Node.SymbolTable, (TypeDefinition)customtype[0], level+1, 1));
+				var customtype = this.Node.SymbolTable.GetType(data.DataType);
+                _cache.Add(CreateDataDefinition(data, level, 0, true, true, customtype[0]));
+				if (customtype.Count > 0) _cache.AddRange(InsertChildren(this.Node.SymbolTable, customtype[0], level+1, 1));
 			}
 			return _cache;
 		}
@@ -100,10 +100,10 @@ internal class TypedDataNode: DataDescription, Generated {
 		foreach(var child in type.Children) {
 			if (child is TypedDataNode) continue;
 			var typed = (ITypedNode)child;
-			var types = table.GetType(new URI(typed.DataType.Name));
+			var types = table.GetType(typed.DataType);
 			bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
-            lines.Add(CreateDataDefinition((DataDescriptionEntry)child.CodeElement, level, indent, isCustomTypeToo, false, isCustomTypeToo ? (TypeDefinition)types[0] : null));
-			if (isCustomTypeToo) lines.AddRange(InsertChildren(table, (TypeDefinition)types[0], level+1, indent+1));
+            lines.Add(CreateDataDefinition((DataDescriptionEntry)child.CodeElement, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
+			if (isCustomTypeToo) lines.AddRange(InsertChildren(table, types[0], level+1, indent+1));
 		}
 		return lines;
 	}

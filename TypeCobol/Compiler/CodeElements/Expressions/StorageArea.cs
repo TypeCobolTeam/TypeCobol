@@ -21,6 +21,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public StorageAreaKind Kind { get; protected set;  }
 
+        [CanBeNull]
         public SymbolReference SymbolReference { get; protected set; }
 
         /// <summary>
@@ -379,7 +380,7 @@ namespace TypeCobol.Compiler.CodeElements
 				         type = DataType.Alphanumeric;
 				    else type = DataType.Unknown;
 			    } else {
-				    var found = table.GetVariable(new URI(parameter.ToString()));
+				    var found = table.GetVariable(parameter);
 				    foreach(var item in found) {
 					    var data = item as Nodes.DataDescription;
 					    if (type == null) type = data.DataType;

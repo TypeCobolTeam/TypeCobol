@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -132,6 +133,11 @@ namespace TypeCobol.Compiler.CodeElements
             {
                 return "\\." + Name + "$"; 
             }
+        }
+
+        private URI _uri;
+        public URI URI {
+            get { return _uri ?? (_uri = new URI(Name)); }
         }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
