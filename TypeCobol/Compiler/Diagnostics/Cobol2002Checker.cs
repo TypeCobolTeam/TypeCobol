@@ -111,7 +111,7 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 			    if (redefinesNode.IsPartOfATypeDef) {
 				    errors[Error.Status.TYPEDEFPart]++;
 			    }
-                if (IsStronglyTyped(redefinedVariable))
+                if (redefinedVariable.IsStronglyTyped)
                 {
                     errors[Error.Status.TYPEStrong]++;
                 }
@@ -157,12 +157,6 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 			    }
 		    }
 	    }
-        internal static bool IsStronglyTyped(Node node) {
-            var typed = node as ITypedNode;
-            if (typed == null) return false;
-            if (typed.DataType.IsStrong) return true;
-            return IsStronglyTyped(node.Parent);
-        }
     }
 
 class RenamesChecker: NodeListener {
@@ -185,7 +179,7 @@ class RenamesChecker: NodeListener {
 			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 		}
 		foreach(var v in found) {
-			if (RedefinesChecker.IsStronglyTyped(v)) {
+			if (v.IsStronglyTyped) {
                     string message = "Illegal RENAMES: \'"+renames+"\' is strongly-typed";
 				DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 			}
@@ -219,38 +213,38 @@ class TypedDeclarationChecker: NodeListener {
 		}
 	}
 }
-/*
-class StronglyTypedReceiverChecker: NodeListener {
-	public IList<Type> GetNodes() { return new List<Type> { typeof(VariableWriter) }; }
+    /*
+    class StronglyTypedReceiverChecker: NodeListener {
+        public IList<Type> GetNodes() { return new List<Type> { typeof(VariableWriter) }; }
 
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		if (node is Initialize || node is Move || node is Release || node is Return
-			|| node is Read || node is Write || node is Rewrite
-			// SET is unspecified, but as a level 88 variable cannot be strongly typed we don't need to check this case
-			// + SET myBool TO TRUE (where myBool is of type BOOL) need to works
-			|| node is Set)
-			return;
+        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+            if (node is Initialize || node is Move || node is Release || node is Return
+                || node is Read || node is Write || node is Rewrite
+                // SET is unspecified, but as a level 88 variable cannot be strongly typed we don't need to check this case
+                // + SET myBool TO TRUE (where myBool is of type BOOL) need to works
+                || node is Set)
+                return;
 
-		var variables = ((VariableWriter)node).VariablesWritten;
-		foreach (var v in variables) {
-			var names = node.SymbolTable.GetVariable(v.Key);
-			foreach (var name in names) {
-				if (RedefinesChecker.IsStronglyTyped(name as Node)) {
-					string sending = v.Value.ToString();
-					var enumerable = v.Value as System.Collections.IEnumerable;
-					if (enumerable != null) {
-						var str = new System.Text.StringBuilder();
-						int c = 0;
-						foreach(var item in enumerable) { str.Append(item).Append(','); c++; }
-						if (c > 0) str.Length -= 1;
-						sending = str.ToString();
-					}
-					string message = "Cannot write "+sending+" to strongly typed variable "+name.Name+":"+((Typed)name).DataType.Name;
-					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-				}
-			}
-		}
-	}
-}
-*/
+            var variables = ((VariableWriter)node).VariablesWritten;
+            foreach (var v in variables) {
+                var names = node.SymbolTable.GetVariable(v.Key);
+                foreach (var name in names) {
+                    if (name.IsStronglyTyped) {
+                        string sending = v.Value.ToString();
+                        var enumerable = v.Value as System.Collections.IEnumerable;
+                        if (enumerable != null) {
+                            var str = new System.Text.StringBuilder();
+                            int c = 0;
+                            foreach(var item in enumerable) { str.Append(item).Append(','); c++; }
+                            if (c > 0) str.Length -= 1;
+                            sending = str.ToString();
+                        }
+                        string message = "Cannot write "+sending+" to strongly typed variable "+name.Name+":"+((Typed)name).DataType.Name;
+                        DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                    }
+                }
+            }
+        }
+    }
+    */
 }

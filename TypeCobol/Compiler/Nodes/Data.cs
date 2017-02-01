@@ -149,6 +149,32 @@ namespace TypeCobol.Compiler.Nodes {
                 return 0;
             }
         }
+
+        /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
+        public bool IsPartOfATypeDef
+        {
+            get
+            {
+                var parent = Parent;
+                while (parent != null)
+                {
+                    if (!(parent is DataDefinition)) return false;
+                    if (parent is TypeDefinition) return true;
+                    parent = parent.Parent;
+                }
+                return false;
+            }
+        }
+
+        public bool IsStronglyTyped
+        {
+            get
+            {
+                if (DataType.IsStrong) return true;
+                var parent = Parent as DataDefinition;
+                return parent != null && parent.IsStronglyTyped;
+            }
+        }
     }
 
     public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>{

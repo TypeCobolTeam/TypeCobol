@@ -179,20 +179,6 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        //TODO move this method to DataDefinition
-        /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
-        public bool IsPartOfATypeDef {
-            get {
-                var parent = Parent;
-                while (parent != null) {
-                    if (!(parent is DataDefinition)) return false;
-                    if (parent is TypeDefinition) return true;
-                    parent = parent.Parent;
-                }
-                return false;
-            }
-        }
-
 
         public SymbolTable SymbolTable { get; set; }
 
