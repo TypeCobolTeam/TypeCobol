@@ -31,7 +31,7 @@
 000180     CONTINUE.                                                    000180
        END-DECLARE.                                                     000190
                                                                         000200
-004010     if :TRAC:                                                    000000
+004010     if b                                                         000000
 004020       CONTINUE                                                   000000
 004090     end-if                                                       000000
 000210    SET b TO FALSE                                                000210

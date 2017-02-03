@@ -33,7 +33,7 @@
       *                 RETURNING result PIC 9(32).                           
                                                                         000190
                                                                         000200
-004010     if :TRAC:                                                    000000
+004010     if b                                                         000000
 004020       CONTINUE                                                   000000
 004090     end-if                                                       000000
       *   SET b TO FALSE                                                      
