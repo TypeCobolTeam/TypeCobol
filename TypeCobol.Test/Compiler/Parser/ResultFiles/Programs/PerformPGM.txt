@@ -1,5 +1,7 @@
 ﻿--- Diagnostics ---
 [1,21]<27,Error,Syntax>Syntax error : Symbol procedurename is not referenced ([1>21] on line 14)
+[1,24]<27,Error,Syntax>Syntax error : Symbol condition1 is not referenced ([1>24] on line 17)
+[3,15]<27,Error,Syntax>Syntax error : Symbol condition2 is not referenced ([3>15] on line 18)
 
 --- Program ---
 PROGRAM: perform-program common:False initial:False recursive:False

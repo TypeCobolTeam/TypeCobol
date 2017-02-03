@@ -244,11 +244,13 @@ namespace TypeCobol.Compiler.Diagnostics {
             return; //not our job
         }
 		var context = c as CodeElementsParser.MoveSimpleContext;
-		for(int i=0; i<statement.ReceivingStorageAreas.Length; i++) {
-			var receiver = statement.ReceivingStorageAreas[i].StorageArea;
-			if (receiver is FunctionCallResult)
-				DiagnosticUtils.AddError(statement, "MOVE: illegal <function call> after TO", context.storageArea1()[i]);
-		}
+	    if (statement.StorageAreaWrites != null) {
+	        for (int i = 0; i < statement.StorageAreaWrites.Count; i++) {
+	            var receiver = statement.StorageAreaWrites[i].StorageArea;
+	            if (receiver is FunctionCallResult)
+	                DiagnosticUtils.AddError(statement, "MOVE: illegal <function call> after TO", context.storageArea1()[i]);
+	        }
+	    }
 	}
 }
 
@@ -380,11 +382,17 @@ namespace TypeCobol.Compiler.Diagnostics {
     class VariableUsageChecker: NodeListener {
 
 	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-	        VariableUser variableUser = node as VariableUser;
-            if (variableUser == null) {
-                return; //not our job
-            }
-            foreach (var variable in variableUser.Variables.Keys) CheckVariable(node, variable);
+	        CodeElement ce = node.CodeElement;
+	        if (ce != null && ce.StorageAreaReads != null) {
+	            foreach (var storageAreaRead in ce.StorageAreaReads) {
+	                CheckVariable(node, storageAreaRead);
+	            }
+	        }
+            if (ce != null && ce.StorageAreaWrites != null) {
+	            foreach (var storageAreaWrite in ce.StorageAreaWrites) {
+	                CheckVariable(node, storageAreaWrite);
+	            }
+	        }
 
 	        //Subscript checker are desactived because it doesn't works.
             /*
@@ -415,6 +423,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			        DiagnosticUtils.AddError(e, "Too many subscripts ("+subscripts.Count+" vs expected="+expected+")");
 		    }
 	    }
+
 	    /// <param name="e">Statement to check</param>
 	    /// <param name="link">Explicit nodes used in item qualification</param>
 	    /// <param name="subscripts">Parsed number of subscripts</param>
@@ -441,25 +450,32 @@ namespace TypeCobol.Compiler.Diagnostics {
 		    return index;
 	    }
 
-        private void CheckVariable(Node node, QualifiedName name)
-        {
-            var found = node.SymbolTable.GetVariable(name);
-            if (found.Count < 1)
-                if (node.SymbolTable.GetFunction(name).Count < 1)
-                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + name + " is not referenced");
-            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + name);
-        }
+        private void CheckVariable(Node node, VariableBase variable) {
+            var found = node.SymbolTable.GetVariable(variable);
+		    if (found.Count < 1)
+			    if (node.SymbolTable.GetFunction(variable).Count < 1)
+				    DiagnosticUtils.AddError(node.CodeElement, "Symbol "+ variable + " is not referenced");
+		    if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+ variable);
+	    }
+
+        private void CheckVariable(Node node, StorageArea storageArea) {
+            var found = node.SymbolTable.GetVariable(storageArea);
+		    if (found.Count < 1)
+			    if (node.SymbolTable.GetFunction(storageArea).Count < 1)
+				    DiagnosticUtils.AddError(node.CodeElement, "Symbol "+ storageArea + " is not referenced");
+		    if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+ storageArea);
+	    }
     }
 
     class WriteTypeConsistencyChecker: NodeListener {
 
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
         var variableWriter = node as VariableWriter;
-        if (variableWriter == null) {
-            return; //not our job
+	    if (variableWriter == null) {
+                return; //not our job
         }
-		var variables = variableWriter.VariablesWritten;
-		foreach(var variable in variables) CheckVariable(node, variable.Key, variable.Value);
+	    var variables = variableWriter.VariablesWritten;
+	    foreach(var variable in variables) CheckVariable(node, variable.Key, variable.Value);
 	}
 
         /// <param name="wname">Receiving item; must be found and its type known</param>

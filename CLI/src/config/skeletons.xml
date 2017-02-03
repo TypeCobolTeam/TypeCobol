@@ -195,9 +195,7 @@ PROCEDURE DIVISION USING CallData.
 
   <!-- replace function invocation by a CALL and create utility variables -->
   <skeleton name="FUN.CALL" var=" function  ,receiver ">
-    <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.VariableUser" function="*"/>
-    </conditions>
+    
     <patterns>
       <pattern location="data-division.working-storage" action="create" group="%function.Library-VARS" var="function=$function">
 01 %function.Copy COPY %function.Copy.
@@ -247,9 +245,7 @@ PROCEDURE DIVISION USING CallData.
 
   <!-- replace "::" qualification by "OF" inverse qualification -->
   <skeleton name="QUALIFICATION">
-    <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.VariableUser" variables.typecobol="+"/>
-    </conditions>
+    
     <patterns>
       <pattern action="expand" location="NODE"></pattern>
     </patterns>

@@ -217,7 +217,6 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(FunctionDeclarationEnd functionDeclarationEnd);
         bool Visit(FunctionDeclarationHeader functionDeclarationHeader);
         bool Visit(StatementElement statementElement);
-        bool VisitVariableUser(VariableUser variableUser);
         bool VisitVariableWriter(VariableWriter variableWriter);
         bool VisitFunctionCaller(FunctionCaller functionCaller);
         bool Visit(SetSendingVariable setSendingVariable);
@@ -891,10 +890,6 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public virtual bool VisitVariableUser(VariableUser variableUser) {
-            return true;
-        }
-
         public virtual bool VisitVariableWriter(VariableWriter variableWriter) {
             return true;
         }
@@ -1417,11 +1412,6 @@ namespace TypeCobol.Compiler.CodeElements
             }
             //TODO analyse variables written
             return true;
-        }
-
-        public override bool VisitVariableUser(VariableUser variableUser) {
-            //TODO
-            return base.VisitVariableUser(variableUser);
         }
 
         public override bool Visit(FunctionCall functionCall)

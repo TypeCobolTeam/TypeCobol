@@ -34,7 +34,7 @@ public interface Statement { }
             return astVisitor.Visit(this);
         }
     }
-    public class ProcedureStyleCall: Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller, VariableUser {
+    public class ProcedureStyleCall: Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller {
 	    public ProcedureStyleCall(ProcedureStyleCallStatement statement): base(statement) { }
 
 	    public IList<FunctionCall> FunctionCalls {
@@ -46,18 +46,7 @@ public interface Statement { }
 		    }
 	    }
 
-	    public IDictionary<QualifiedName,object> Variables {
-		    get {
-			    var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
-			    var names = new Dictionary<QualifiedName,object>();
-			    names.Add(new URI(call.FunctionName), null);
-			    foreach(var parameter in call.Arguments) {
-				    if (!parameter.IsOmitted && !parameter.StorageAreaOrValue.IsLiteral)
-					    names.Add(new URI(parameter.StorageAreaOrValue.ToString()), null);
-			    }
-			    return names;
-		    }
-	    }
+	    
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -162,7 +151,6 @@ public interface Statement { }
 
     public class Inspect: Node, CodeElementHolder<InspectStatement>, Statement, VariableWriter {
 	    public Inspect(InspectStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -190,7 +178,7 @@ public interface Statement { }
     public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableWriter,FunctionCaller {
 	    public Move(MoveStatement statement): base(statement) { }
 	    public IList<FunctionCall> FunctionCalls { get { return this.CodeElement().FunctionCalls; } }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
+	   
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 
@@ -218,7 +206,6 @@ public interface Statement { }
 
     public class Set: Node, CodeElementHolder<SetStatement>, Statement, VariableWriter {
 	    public Set(SetStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -253,7 +240,6 @@ public interface Statement { }
 
     public class String: Node, CodeElementHolder<StringStatement>, Statement, VariableWriter {
 	    public String(StringStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -264,7 +250,6 @@ public interface Statement { }
 
     public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement, VariableWriter {
 	    public Unstring(UnstringStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -295,7 +280,6 @@ public interface Statement { }
 
     public class Add: Node, CodeElementHolder<AddStatement>, Statement, VariableWriter {
 	    public Add(AddStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -306,7 +290,6 @@ public interface Statement { }
 
     public class Subtract: Node, CodeElementHolder<SubtractStatement>, Statement, VariableWriter {
 	    public Subtract(SubtractStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -317,7 +300,6 @@ public interface Statement { }
 
     public class Multiply: Node, CodeElementHolder<MultiplyStatement>, Statement, VariableWriter {
 	    public Multiply(MultiplyStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -328,7 +310,6 @@ public interface Statement { }
 
     public class Divide: Node, CodeElementHolder<DivideStatement>, Statement, VariableWriter {
 	    public Divide(DivideStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -339,7 +320,6 @@ public interface Statement { }
 
     public class Compute: Node, CodeElementHolder<ComputeStatement>, Statement, VariableWriter {
 	    public Compute(ComputeStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> Variables { get { return this.CodeElement().Variables; } }
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)

@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Nodes {
+﻿using Castle.Core.Internal;
+
+namespace TypeCobol.Compiler.Nodes {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
@@ -28,14 +30,18 @@ public static class Attributes {
 		attributes = new Dictionary<string,Attribute>();
 		attributes["name"]  = new NameAttribute();
 		attributes["level"] = new LevelAttribute();
+            //not used?
 		attributes["type"]  = new TypeAttribute();
+            //not used?
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
+            //not used?
 		attributes["unsafe"] = new UnsafeAttribute();
 		attributes["function"] = new FunctionUserAttribute();
 		attributes["definitions"] = new DefinitionsAttribute();
-		attributes["variables"] = new VariablesAttribute();
+            //not used?
 		attributes["typecobol"] = new TypeCobolAttribute();
+            //not used
 		attributes["visibility"] = new VisibilityAttribute();
 		attributes["copyname"] = new LibraryCopyAttribute();
 	}
@@ -86,15 +92,6 @@ internal class LevelAttribute: Attribute {
 	}
 }
 
-internal class VariablesAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var node = o as Node;
-		var statement = node.CodeElement as MoveSimpleStatement;
-		if (statement == null) return null;
-		var map = statement.Vars;
-		return map;
-	}
-}
 
 internal class TypeCobolAttribute: Attribute {
 	internal string Key { get; set; }
@@ -115,13 +112,13 @@ internal class SenderAttribute: Attribute {
 		var set = ce as SetStatementForConditions;
 		if (set != null) return new URI(set.SendingValue.Value.ToString());
 
-		var statement = ce as VariableUser;
-		if (statement == null) return null;
-		var items = new List<QualifiedName>();
-		foreach(var v in statement.Variables) if (v.Value == null) items.Add(v.Key);
-		if (items.Count == 0) return null;
-		if (items.Count == 1) return items[0];
-		throw new System.ArgumentOutOfRangeException("Too many sending items ("+items.Count+")");
+	    if (ce.StorageAreaReads == null || ce.StorageAreaReads.Count == 0) {
+	        return null;
+	    }
+	    if (ce.StorageAreaReads.Count > 1) {
+	        throw new System.ArgumentOutOfRangeException("Too many sending items (" + ce.StorageAreaReads.Count + ")");
+	    }
+	    return ce.StorageAreaReads[0].ToString();
 	}
 }
 internal class ReceiverAttribute: Attribute {

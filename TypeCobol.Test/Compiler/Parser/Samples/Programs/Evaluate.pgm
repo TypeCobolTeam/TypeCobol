@@ -21,11 +21,11 @@ END-EVALUATE
 EVALUATE VALUE2
   WHEN A
     DISPLAY 'something'
-	CALL 'something'
+    CALL 'something'
   WHEN B
   WHEN C
     DISPLAY 'anything'
-	CALL 'anything'
+    CALL 'anything'
   WHEN OTHER
     DISPLAY 'ERROR'
     CALL 'ABENDS'

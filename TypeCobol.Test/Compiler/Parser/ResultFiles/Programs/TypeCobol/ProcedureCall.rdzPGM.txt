@@ -1,5 +1,4 @@
 ﻿--- Diagnostics ---
-[12,50]<27,Error,Syntax>Syntax error : Symbol ValidateDatFormatt is not referenced ([12>50] on line 37)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>50] on line 48)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>50] on line 48)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric ([12>50] on line 48)

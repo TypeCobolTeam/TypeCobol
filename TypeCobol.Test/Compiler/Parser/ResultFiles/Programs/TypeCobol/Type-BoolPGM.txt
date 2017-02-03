@@ -1,5 +1,6 @@
 ﻿--- Diagnostics ---
 [1,27]<27,Error,Syntax>Syntax error : Symbol check-value is not referenced ([1>27] on line 15)
+[1,14]<27,Error,Syntax>Syntax error : Symbol check-false is not referenced ([1>14] on line 18)
 
 --- Program ---
 PROGRAM: TEST-BOOL common:False initial:False recursive:False
