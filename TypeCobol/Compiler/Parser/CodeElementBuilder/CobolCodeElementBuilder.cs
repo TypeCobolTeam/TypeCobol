@@ -17,17 +17,10 @@ namespace TypeCobol.Compiler.Parser
 	/// <summary>Builds a CodeElement object while visiting its parse tree.</summary>
 	internal partial class CodeElementBuilder: CodeElementsBaseListener {
 
-		private CodeElement _ce;
 		private ParserRuleContext Context;
 
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
-		public CodeElement CodeElement {
-			get { return _ce; }
-			private set {
-				_ce = value;
-				if (value != null) Dispatcher.OnCodeElement(value, Context);
-			}
-		}
+		public CodeElement CodeElement { get; set; }
 		public CodeElementDispatcher Dispatcher { get; internal set; }
 
 
@@ -48,14 +41,7 @@ namespace TypeCobol.Compiler.Parser
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
 			if(CodeElement != null)
             {
-                // Attach all tokens consumed by the parser for this code element
-                // Collect all error messages encoutered while parsing this code element
-                IList<Diagnostic> diagnostics = CodeElement.Diagnostics == null ? new List<Diagnostic>() : CodeElement.Diagnostics;
-                AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement.ConsumedTokens, diagnostics, Context);
-                if(diagnostics.Count > 0)
-                {
-                    CodeElement.Diagnostics = diagnostics;
-                }
+               
 
                 if (CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
                     CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
@@ -77,6 +63,17 @@ namespace TypeCobol.Compiler.Parser
                 }
                 if (CobolExpressionsBuilder.callSites.Count > 0) {
                     CodeElement.CallSites = CobolExpressionsBuilder.callSites;
+                }
+
+                Dispatcher.OnCodeElement(CodeElement, Context);
+
+                // Attach all tokens consumed by the parser for this code element
+                // Collect all error messages encoutered while parsing this code element
+                IList<Diagnostic> diagnostics = CodeElement.Diagnostics ?? new List<Diagnostic>();
+                AddTokensConsumedAndDiagnosticsAttachedInContext(CodeElement.ConsumedTokens, diagnostics, Context);
+                if (diagnostics.Count > 0)
+                {
+                    CodeElement.Diagnostics = diagnostics;
                 }
             }
             // If the errors can't be attached to a CodeElement object, attach it to the parent codeElements rule context
