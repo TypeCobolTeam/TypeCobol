@@ -1,0 +1,36 @@
+﻿--- Diagnostics ---
+[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>50] on line 48)
+[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>50] on line 48)
+[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric ([12>50] on line 48)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 1 of type DATE (actual: Alphanumeric) ([12>46] on line 54)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 1 of max length 1 (actual: 8) ([12>46] on line 54)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 2 of type Alphanumeric (actual: DATE) ([12>46] on line 54)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>46] on line 54)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>46] on line 54)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 4 of type Alphanumeric (actual: BOOL) ([12>46] on line 54)
+[12,46]<27,Error,Syntax>Syntax error : Function MyProc1 only takes 5 parameters ([12>46] on line 76)
+[12,46]<27,Error,Syntax>Syntax error : Parameter INOUT is not referenced ([12>46] on line 76)
+[12,46]<27,Error,Syntax>Syntax error : Function MyProc1 expected parameter 4 of type BOOL (actual: DATE) ([12>46] on line 76)
+[12,46]<27,Error,Syntax>Syntax error : Function MyProc1 expected parameter 5 of type Alphanumeric (actual: BOOL) ([12>46] on line 76)
+
+--- Program ---
+PROGRAM: ProcedureCall common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Global:Program
+-- DATA --------
+  somedate:DATE
+  someformat:Alphanumeric
+  flag:BOOL
+  realformat:Alphanumeric
+-- PARAGRAPHS --
+  TRAITEMENT
+-- FUNCTIONS ---
+  ValidateDateFormat
+        in: mydate:DATE
+        in: format:Alphanumeric
+       out: okay:BOOL
+       out: actual-format:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE
