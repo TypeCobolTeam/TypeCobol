@@ -85,7 +85,7 @@ functionDeclarationHeader:
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  parameterDescription+;
-inoutPhrase:  INOUT  parameterDescription+;
+inoutPhrase:  IN_OUT  parameterDescription+;
 outputPhrase: OUTPUT parameterDescription+;
 functionReturningPhrase: RETURNING parameterDescription;
 
@@ -124,7 +124,7 @@ cobolCallStatement:
 tcCallStatement:
 	CALL functionNameReference
 		(INPUT  callInputParameter+)?
-		(INOUT  callInoutParameter+)?
+		(IN_OUT  callInoutParameter+)?
 		(OUTPUT callOutputParameter+)?
 	;
 

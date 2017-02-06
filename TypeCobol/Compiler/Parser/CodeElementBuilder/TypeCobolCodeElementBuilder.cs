@@ -50,7 +50,7 @@ internal partial class CodeElementBuilder: CodeElementsBaseListener {
 	}
 	public override void EnterInoutPhrase(CodeElementsParser.InoutPhraseContext context) {
 		var ce = (FunctionDeclarationHeader)CodeElement;
-		ce.Inout = new SyntaxProperty<ParameterPassingDirection>(ParameterPassingDirection.InOut, ParseTreeUtils.GetTokenFromTerminalNode(context.INOUT()));
+		ce.Inout = new SyntaxProperty<ParameterPassingDirection>(ParameterPassingDirection.InOut, ParseTreeUtils.GetTokenFromTerminalNode(context.IN_OUT()));
 		ce.Profile.InoutParameters = CreateParameters(context.parameterDescription());
 	}
 	public override void EnterFunctionReturningPhrase(CodeElementsParser.FunctionReturningPhraseContext context) {
