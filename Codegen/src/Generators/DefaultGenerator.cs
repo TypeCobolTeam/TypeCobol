@@ -19,11 +19,11 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="parser"> The Parser which contains parse results </param>
+        /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public DefaultGenerator(Parser parser, TextWriter destination, List<Skeleton> skeletons)
-            : base(parser, destination, skeletons)
+        public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons)
+            : base(document, destination, skeletons)
         {
         }
 
@@ -35,7 +35,7 @@ namespace TypeCobol.Codegen.Generators
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
             //mapper.DebugDump();
-            SourceText targetSourceText = LinearGeneration(mapper, Parser.Results.TokensLines);
+            SourceText targetSourceText = LinearGeneration(mapper, CompilationResults.TokensLines);
             // Step 3: Write target document
             targetSourceText.Write(Destination);
             Destination.Flush();

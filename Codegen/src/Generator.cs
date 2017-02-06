@@ -17,9 +17,9 @@ namespace TypeCobol.Codegen
     public abstract class Generator : IGenerator, NodeVisitor
     {
         /// <summary>
-        /// The Parser that contains Parser results.
+        /// The Compilation Document.
         /// </summary>
-        public Parser Parser
+        public TypeCobol.Compiler.CompilationDocument CompilationResults
         {
             get;
             private set;
@@ -100,12 +100,12 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="parser"> The Parser which contains parse results </param>
+        /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public Generator(Parser parser, TextWriter destination, List<Skeleton> skeletons)
+        public Generator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons)
         {
-            this.Parser = parser;
+            this.CompilationResults = document;
             Destination = destination;
             Actions = new GeneratorActions(skeletons);
             //To Store Erased Nodes by the Erase Action.
@@ -236,15 +236,15 @@ namespace TypeCobol.Codegen
             TargetDocument = new Compiler.Source.SourceDocument(/*new StringSourceText()*/);
             //Insert all input lines
             StringWriter sw = new StringWriter();
-            foreach (TypeCobol.Compiler.Scanner.ITokensLine line in this.Parser.Results.TokensLines)
+            foreach (TypeCobol.Compiler.Scanner.ITokensLine line in this.CompilationResults.TokensLines)
             {
                 sw.WriteLine(line.Text);
             }
             //Load the Original source code
             TargetDocument.LoadSourceText(sw.ToString());
             //TargetDocument.Dump();
-            SourceLineMap = new Dictionary<TypeCobol.Compiler.Scanner.ITokensLine, SourceDocument.SourceLine>();            
-            var iter = this.Parser.Results.TokensLines.GetEnumerator();
+            SourceLineMap = new Dictionary<TypeCobol.Compiler.Scanner.ITokensLine, SourceDocument.SourceLine>();
+            var iter = this.CompilationResults.TokensLines.GetEnumerator();
             for (int i = 0; i < TargetDocument.LineCount && iter.MoveNext(); i++)
             {
                 SourceLineMap[iter.Current] = TargetDocument[i];

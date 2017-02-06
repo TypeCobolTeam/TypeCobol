@@ -300,7 +300,7 @@ namespace TypeCobol.Codegen.Generators
         {
             NodeCount = 0;//Count of Nodes Treated.
             Generator = generator;
-            int count = generator.Parser.Results.TokensLines.Count;
+            int count = generator.CompilationResults.TokensLines.Count;
             CommentedLines = new BitArray(count);
             NodedLines = new BitArray(count);
             LineData = new LineInfo[count];
@@ -565,7 +565,7 @@ namespace TypeCobol.Codegen.Generators
         private void CollectFunctionBodyUnNodedLines(NodeFunctionData funData)
         {            
             Tuple<int[], int[]> insertLines = ComputeFunctionBodyInsertionLines(funData);
-            var Input = Generator.Parser.Results.TokensLines;
+            var Input = Generator.CompilationResults.TokensLines;
             int offset = 0;
             for (int i = funData.BodyFistLineIndex + 1; i < funData.BodyLastLineIndex; i++)
             {                
@@ -703,7 +703,7 @@ namespace TypeCobol.Codegen.Generators
             }
             Nodes.TrimExcess();
             //Create All SourceTextBuffer Content associated to Nodes
-            var Input = Generator.Parser.Results.TokensLines;
+            var Input = Generator.CompilationResults.TokensLines;
             StringWriter sw = new StringWriter();
             for (int i = 0; i < LineData.Length; i++)
             {
