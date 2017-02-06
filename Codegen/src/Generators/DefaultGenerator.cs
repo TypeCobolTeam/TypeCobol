@@ -35,9 +35,10 @@ namespace TypeCobol.Codegen.Generators
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
             //mapper.DebugDump();
-            SourceText targetSourceText = LinearGeneration(mapper, CompilationResults.TokensLines);
+            SourceDocument generatedDocument = LinearGeneration(mapper, CompilationResults.TokensLines);
             // Step 3: Write target document
-            targetSourceText.Write(Destination);
+            //TCCODEGEN_NO_TRAILING_SPACES
+            generatedDocument.Write(Destination, true);
             Destination.Flush();
         }
 
@@ -47,10 +48,14 @@ namespace TypeCobol.Codegen.Generators
         /// //2) If the line is commented then first comment all following lines that have the same intersection with the corresponding target Nodes.
         /// //3) For each node related to a line, and not already generated the corresponding code.
         /// //4) Flush of Function declations.
+        /// <param name="mapper">The linearization representation</param>
+        /// <param name="Input">Input source lines</param>
+        /// <returns>The Generated Source Document</returns>
         /// </summary>
-        private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
+        private SourceDocument LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
         {
             SourceText targetSourceText = new GapSourceText();
+            SourceDocument generatedDocument = new SourceDocument(targetSourceText);
             //Stack Used to save current generation buffer when switching in a function declaration generation.
             //Beacuse a function declartion has its own buffer.
             Stack<SourceText> stackOuterBuffer = new Stack<SourceText>();
@@ -257,7 +262,7 @@ namespace TypeCobol.Codegen.Generators
                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                 targetSourceText.Insert(funData.FunctionDeclBuffer, targetSourceText.Size, targetSourceText.Size);
             }
-            return targetSourceText;
+            return generatedDocument;
         }
 
         /// <summary>
