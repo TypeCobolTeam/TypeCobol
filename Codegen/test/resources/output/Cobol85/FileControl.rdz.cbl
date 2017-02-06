@@ -2,7 +2,7 @@
 000000 PROGRAM-ID.   FileControl.
 000000 ENVIRONMENT DIVISION.                      
 000000 CONFIGURATION SECTION.                      
-000000 SOURCE-COMPUTER. IBM-370                    
+000000 SOURCE-COMPUTER. IBM-370
 000000      .                                      
 000000 OBJECT-COMPUTER. IBM-370.                   
 000000 SPECIAL-NAMES. DECIMAL-POINT IS COMMA.      
@@ -12,8 +12,8 @@
 000000                                                            
 000000 DATA DIVISION.                                             
 000000 FILE SECTION.                                              
-000000 FD  FAPPEL BLOCK 0 RECORDS                                 
-000000            LABEL RECORD STANDARD                           
+000000 FD  FAPPEL BLOCK 0 RECORDS
+000000            LABEL RECORD STANDARD
 000000            RECORDING MODE F.                               
 000000 01  FIC-APPEL PIC X(128).                                  
 000000 

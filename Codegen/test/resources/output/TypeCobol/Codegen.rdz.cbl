@@ -18,8 +18,8 @@
       *    05 partC pic X(05).                                                
       *01  b TYPE Bool.                                                       
 000080 01  b-value PIC X VALUE LOW-VALUE.
-           88  b       VALUE 'T'.                                             
-           88  b-false VALUE 'F'.                                             
+           88  b       VALUE 'T'.
+           88  b-false VALUE 'F'.
                                                                         000080
 000090 01  mykey  PIC X(04). COPY YSECONDCOPY SUPPRESS.                 000090
 002440 77 myconstant PIC X(10) value 'SHIBBOLEET'.                      002440
@@ -47,28 +47,28 @@
 00024E    EJECT                                                         00024E
 000250 
 000260 END PROGRAM Codegen.                                             000260
-      *                                                                       
-      *DECLARE FUNCTION GetValue PRIVATE                                      
-      *                 INPUT     ikey   TYPE MyKey                           
-      *                           ikey2  TYPE MyKey2                          
-      *                 RETURNING result PIC 9(32).                           
-      *_________________________________________________________________      
-       IDENTIFICATION DIVISION.                                               
-       PROGRAM-ID. b008705d.                                                  
-       DATA DIVISION.                                                         
-       LINKAGE SECTION.                                                       
-       01 ikey PIC X(04).                                                     
-       01 ikey2.                                                              
-           02 partA PIC X(04).                                                
-           02 partB PIC 9(04).                                                
-           02 partC PIC X(05).                                                
-       01 result PIC 9(32).                                                   
-       PROCEDURE DIVISION                                                     
-             USING BY REFERENCE ikey                                          
-                   BY REFERENCE ikey2                                         
-                   BY REFERENCE result                                        
-           .                                                                  
+      *
+      *DECLARE FUNCTION GetValue PRIVATE
+      *                 INPUT     ikey   TYPE MyKey
+      *                           ikey2  TYPE MyKey2
+      *                 RETURNING result PIC 9(32).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. b008705d.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 ikey PIC X(04).
+       01 ikey2.
+           02 partA PIC X(04).
+           02 partB PIC 9(04).
+           02 partC PIC X(05).
+       01 result PIC 9(32).
+       PROCEDURE DIVISION
+             USING BY REFERENCE ikey
+                   BY REFERENCE ikey2
+                   BY REFERENCE result
+           .
 000170                                                                  000170
 000180     display "test codegen"
 000180     CONTINUE.                                                    000180
-       END PROGRAM b008705d.                                                  
+       END PROGRAM b008705d.
