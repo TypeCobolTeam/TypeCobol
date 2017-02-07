@@ -70,7 +70,7 @@
        END-DECLARE.
        
        DECLARE PROCEDURE SwapParameters PRIVATE
-             INOUT x PIC 9(04)
+             IN-OUT x PIC 9(04)
                    y PIC 9(04)
          .
        DATA DIVISION.
@@ -83,7 +83,7 @@
            .
        END-DECLARE.
 
-      * ERROR because x and y should be INOUT
+      * ERROR because x and y should be IN-OUT
       * ERROR because y INPUT vs OUTPUT types differ
        DECLARE PROCEDURE SwapParametersWrong PRIVATE
              INPUT  x PIC 9(04)

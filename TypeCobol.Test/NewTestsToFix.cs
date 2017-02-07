@@ -55,7 +55,7 @@ namespace TypeCobol.Test {
         [TestMethod]
         [TestCategory("NewTestsToFix-Parsing")]
         [TestProperty("Time", "fast")]
-		//[Ignore]
+		[Ignore]
         public void NewTcblTestsToFix()
         {
             int nbOfTests = 0;
