@@ -84,7 +84,7 @@
        DECLARE PROCEDURE MyProc2 PRIVATE
           INPUT  mydate        TYPE Date
                  format        PIC X(08)
-          IN-OUT  var1          type Date
+          INOUT  var1          type Date
           OUTPUT okay          TYPE Bool
                  actual-format PIC X(08).
          .

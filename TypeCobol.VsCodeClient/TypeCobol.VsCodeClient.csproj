@@ -14,9 +14,8 @@
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode>true</IISExpressUseClassicPipelineMode>
-    <UseGlobalApplicationHostFile>true</UseGlobalApplicationHostFile>
-    <DoNotCopyLocalIfInGac>true</DoNotCopyLocalIfInGac>
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
@@ -73,14 +72,15 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>49556</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost-ni.cm-cic.fr:8081/TypeCobol.VsCodeClient</IISUrl>
+          <IISUrl>http://localhost:49556/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl></CustomServerUrl>
+          <CustomServerUrl>
+          </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
-        <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl><IISAppRootUrl>http://localhost-ni.cm-cic.fr:8081/TypeCobol.VsCodeClient</IISAppRootUrl></WebProjectProperties>
+        </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
