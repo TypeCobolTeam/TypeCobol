@@ -1,4 +1,5 @@
 ﻿--- Diagnostics ---
+[18,21]<27,Error,Syntax>Syntax error : no viable alternative at input 'var1' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter, OffendingSymbol=[18,21:var1]<UserDefinedWord> on line 69)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>50] on line 48)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>50] on line 48)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric ([12>50] on line 48)
@@ -8,10 +9,7 @@
 [12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>46] on line 54)
 [12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>46] on line 54)
 [12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 4 of type Alphanumeric (actual: BOOL) ([12>46] on line 54)
-[12,46]<27,Error,Syntax>Syntax error : Function MyProc1 only takes 5 parameters ([12>46] on line 76)
 [12,46]<27,Error,Syntax>Syntax error : Parameter INOUT is not referenced ([12>46] on line 76)
-[12,46]<27,Error,Syntax>Syntax error : Function MyProc1 expected parameter 4 of type BOOL (actual: DATE) ([12>46] on line 76)
-[12,46]<27,Error,Syntax>Syntax error : Function MyProc1 expected parameter 5 of type Alphanumeric (actual: BOOL) ([12>46] on line 76)
 
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
@@ -30,6 +28,19 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
         in: format:Alphanumeric
        out: okay:BOOL
        out: actual-format:Alphanumeric
+  MyProc1
+        in: mydate:DATE
+        in: format:Alphanumeric
+        in: INOUT:?
+        in: var1:DATE
+       out: okay:BOOL
+       out: actual-format:Alphanumeric
+  MyProc2
+        in: mydate:DATE
+        in: format:Alphanumeric
+       out: okay:BOOL
+       out: actual-format:Alphanumeric
+     inout: var1:DATE
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL
