@@ -90,7 +90,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 
         private string GetHash(ProcedureCall call)
         {
-            var funcDeclarations = call.FunctionDeclarations;
+            var funcDeclarations = call.FilteredFunctionDeclarations;
             if (funcDeclarations != null && funcDeclarations.Count < 1) return "?NOT_FOUND?";
             if (funcDeclarations.Count > 1) return "?AMBIGUOUS?";
             return funcDeclarations[0].Hash;

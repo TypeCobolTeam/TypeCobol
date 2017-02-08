@@ -48,13 +48,23 @@ class FunctionCallChecker: NodeListener {
 	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
 		var statement = node as FunctionCaller;
 
-	    if (statement != null) {
-	        foreach (var fun in statement.FunctionCalls) {
-	            if (fun.FunctionDeclarations != null && fun.FunctionDeclarations.Count != 1) continue; // ambiguity is not our job
-	            var declaration = fun.FunctionDeclarations[0];
-	            Check(node.CodeElement, node.SymbolTable, fun, declaration);
-	        }
-	    }
+            if (statement != null)
+            {
+                foreach (var fun in statement.FunctionCalls)
+                {
+                    if (fun.FunctionDeclarations != null && fun.FunctionDeclarations.Count != 1)
+                        if (fun.FunctionDeclarations.Count == 0) //If Cout is null seems that the function dos not exist
+                        {
+                            var m = string.Format("Function {0} does not exists", fun.FunctionName);
+                            DiagnosticUtils.AddError(node.CodeElement, m);
+                            continue;
+                        }
+                        else
+                            continue; // ambiguity is not our job
+                    var declaration = fun.FunctionDeclarations[0];
+                    Check(node.CodeElement, node.SymbolTable, fun, declaration);
+                }
+            }
 	}
 	private void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
 	    [NotNull] FunctionDeclaration definition) {

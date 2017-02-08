@@ -330,6 +330,7 @@ namespace TypeCobol.Compiler.CodeElements
 		    Type = type;
 		    Arguments = arguments;
             FunctionDeclarations = new List<FunctionDeclaration>();
+            FilteredFunctionDeclarations = new List<FunctionDeclaration>();
         }
 
 	    public FunctionCallType Type { get; private set; }
@@ -337,6 +338,7 @@ namespace TypeCobol.Compiler.CodeElements
 	    public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
         public List<FunctionDeclaration> FunctionDeclarations { get; set; }
+        public List<FunctionDeclaration> FilteredFunctionDeclarations { get; set; }
 
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {

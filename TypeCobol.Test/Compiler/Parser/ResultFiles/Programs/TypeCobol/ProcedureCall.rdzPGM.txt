@@ -1,5 +1,6 @@
 ﻿--- Diagnostics ---
 [18,21]<27,Error,Syntax>Syntax error : no viable alternative at input 'var1' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter, OffendingSymbol=[18,21:var1]<UserDefinedWord> on line 69)
+[12,50]<27,Error,Syntax>Syntax error : Function ValidateDatFormatt does not exists ([12>50] on line 37)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>50] on line 48)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>50] on line 48)
 [12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric ([12>50] on line 48)
