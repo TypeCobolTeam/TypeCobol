@@ -3,6 +3,7 @@ using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -328,12 +329,15 @@ namespace TypeCobol.Compiler.CodeElements
         protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
 		    Type = type;
 		    Arguments = arguments;
-	    }
+            FunctionDeclarations = new List<FunctionDeclaration>();
+        }
 
 	    public FunctionCallType Type { get; private set; }
 	    public abstract string FunctionName { get; }
 	    public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
+        public List<FunctionDeclaration> FunctionDeclarations { get; set; }
+
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this) && FunctionNameToken.AcceptASTVisitor(astVisitor)
@@ -445,8 +449,9 @@ namespace TypeCobol.Compiler.CodeElements
 		public SymbolReference ProcedureName { get; private set; }
 		public override string FunctionName { get { return ProcedureName.Name; } }
 		public override Token FunctionNameToken { get { return ProcedureName.NameLiteral.Token; } }
+        
 
-		public List<CallSiteParameter> InputParameters  { get; private set; }
+        public List<CallSiteParameter> InputParameters  { get; private set; }
 		public List<CallSiteParameter> InoutParameters  { get; private set; }
 		public List<CallSiteParameter> OutputParameters { get; private set; }
 		private List<CallSiteParameter> _cache;

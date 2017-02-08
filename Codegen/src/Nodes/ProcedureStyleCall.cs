@@ -88,12 +88,13 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		}
 	}
 
-	private string GetHash(ProcedureCall call) {
-		var found = Node.SymbolTable.GetFunction(call.ProcedureName, call.AsProfile(Node.SymbolTable));
-		if (found.Count < 1) return "?NOT_FOUND?";
-		if (found.Count > 1) return "?AMBIGUOUS?";
-		return found[0].Hash;
-	}
+        private string GetHash(ProcedureCall call)
+        {
+            var funcDeclarations = call.FunctionDeclarations;
+            if (funcDeclarations != null && funcDeclarations.Count < 1) return "?NOT_FOUND?";
+            if (funcDeclarations.Count > 1) return "?AMBIGUOUS?";
+            return funcDeclarations[0].Hash;
+        }
 
 	private string ToString(TypeCobol.Compiler.CodeElements.CallSiteParameter parameter, Compiler.CodeModel.SymbolTable table, ArgMode mode,
         ref TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode, ref int previousSpan) {

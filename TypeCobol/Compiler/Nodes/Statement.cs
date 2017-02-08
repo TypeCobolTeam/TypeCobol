@@ -40,7 +40,8 @@ public interface Statement { }
 	    public IList<FunctionCall> FunctionCalls {
 		    get {
 			    var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
-			    var calls =  new List<FunctionCall>();
+                call.FunctionDeclarations = this.SymbolTable.GetFunction(call.ProcedureName, call.AsProfile(this.SymbolTable));
+                var calls =  new List<FunctionCall>();
 			    calls.Add(call);
 			    return calls;
 		    }

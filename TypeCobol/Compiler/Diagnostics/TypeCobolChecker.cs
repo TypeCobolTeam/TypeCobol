@@ -50,9 +50,8 @@ class FunctionCallChecker: NodeListener {
 
 	    if (statement != null) {
 	        foreach (var fun in statement.FunctionCalls) {
-	            var found = node.SymbolTable.GetFunction(new URI(fun.FunctionName));
-	            if (found.Count != 1) continue; // ambiguity is not our job
-	            var declaration = found[0];
+	            if (fun.FunctionDeclarations != null && fun.FunctionDeclarations.Count != 1) continue; // ambiguity is not our job
+	            var declaration = fun.FunctionDeclarations[0];
 	            Check(node.CodeElement, node.SymbolTable, fun, declaration);
 	        }
 	    }
