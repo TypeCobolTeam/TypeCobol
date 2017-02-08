@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Generators
         {
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
-            //mapper.DebugDump();
+            mapper.DebugDump();
             SourceDocument generatedDocument = LinearGeneration(mapper, CompilationResults.TokensLines);
             // Step 3: Write target document
             //TCCODEGEN_NO_TRAILING_SPACES

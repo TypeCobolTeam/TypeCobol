@@ -157,7 +157,7 @@ namespace TypeCobol.Codegen.Generators
             }
 
             /// <summary>
-            /// Prepaculated positions
+            /// Precalculated positions
             /// </summary>
             public Tuple<int, int, int, List<int>, List<int>> Positions
             {
@@ -167,7 +167,6 @@ namespace TypeCobol.Codegen.Generators
 
             public override bool VisitNode(TypeCobol.Compiler.CodeElements.IASTVisitor astVisitor)
             {
-                //throw new NotImplementedException();
                 return false;
             }
         }
@@ -557,8 +556,8 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
-        /// Collect all lines that have not been associated to a Node durring Function Declaration
-        /// processing phase. The line are then associated to Dummy nodes, that have a buffer containing
+        /// Collect all lines that have not been associated to a Node during Function Declaration
+        /// processing phase. The lines are then associated to Dummy nodes, that have a buffer containing
         /// the source code of the line.
         /// </summary>
         /// <param name="funData"></param>
