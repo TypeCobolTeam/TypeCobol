@@ -684,24 +684,12 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
-        /// Accept this Node to be visited.
+        /// Create All SourceTextBuffer Content associated to Nodes and Create
+        /// Node's positions inside the associated buffer.
+        /// 
         /// </summary>
-        /// <param name="node">The Node to be visited</param>
-        public void Accept(Node node)
+        private void CreateNodeSourceTextBufferContents()
         {
-            Nodes = new List<NodeData>();
-            //First Phase Linearization
-            CurrentPhase = Phase.Linearization;            
-            Visit(node);
-            //Second Phase Removed Nodes
-            CurrentPhase = Phase.RemovedNodes;
-            foreach (Node erased_node in this.Generator.ErasedNodes)
-            {
-                if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
-                    Visit(erased_node);//Only Erase non persistent node
-            }
-            Nodes.TrimExcess();
-            //Create All SourceTextBuffer Content associated to Nodes
             var Input = Generator.CompilationResults.TokensLines;
             StringWriter sw = new StringWriter();
             for (int i = 0; i < LineData.Length; i++)
@@ -733,15 +721,50 @@ namespace TypeCobol.Codegen.Generators
                     Nodes[i].To = to;
                 }
             }
-            //Now Complete Function Declaration Lines dispatching
-            //By Dealing with all lines that are not attached to a node.
-            //And relocation nodes without positions
+        }
+
+        /// <summary>
+        /// For all Function declarations, this method relocates all lines within the function declaration body
+        /// that have not been relocated when the function declaration body has been relocated.
+        /// This by Dealing with all lines that are not attached to a node.
+        /// And relocates nodes without positions
+        /// 
+        /// </summary>
+        private void CompleteFunctionDeclarationLinesRelocation()
+        {
             foreach (int fun_index in FunctionDeclarationNodeIndices)
             {
                 NodeFunctionData funData = (NodeFunctionData)Nodes[fun_index];
                 CollectFunctionBodyUnNodedLines(funData);
                 RelocateFunctionBodyNoPositionNodes(funData);
             }
+        }
+
+        /// <summary>
+        /// Accept this Node to be visited.
+        /// </summary>
+        /// <param name="node">The Node to be visited</param>
+        public void Accept(Node node)
+        {
+            Nodes = new List<NodeData>();
+            //First Phase Linearization
+            CurrentPhase = Phase.Linearization;            
+            Visit(node);
+            //Second Phase Removed Nodes
+            CurrentPhase = Phase.RemovedNodes;
+            foreach (Node erased_node in this.Generator.ErasedNodes)
+            {
+                if (!erased_node.IsFlagSet(Node.Flag.PersistentNode))
+                    Visit(erased_node);//Only Erase non persistent node
+            }
+            Nodes.TrimExcess();
+
+            //Create All SourceTextBuffer Content associated to Nodes
+            CreateNodeSourceTextBufferContents();
+
+            //Now Complete Function Declaration Lines relocation.
+            CompleteFunctionDeclarationLinesRelocation();
+
             //Now deal with Factory Generated Nodes
             if (NeedProcessFactoryGeneratedNodeAttachment)
             {

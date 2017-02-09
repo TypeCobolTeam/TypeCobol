@@ -87,7 +87,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Documentation\*" />
-    <None Include="LinearStruct.cd" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
