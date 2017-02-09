@@ -34,20 +34,19 @@ public interface Statement { }
             return astVisitor.Visit(this);
         }
     }
-    public class ProcedureStyleCall: Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller {
-	    public ProcedureStyleCall(ProcedureStyleCallStatement statement): base(statement) { }
+    public class ProcedureStyleCall : Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller {
+        public ProcedureStyleCall(ProcedureStyleCallStatement statement) : base(statement) { }
 
-	    public IList<FunctionCall> FunctionCalls {
-		    get {
-			    var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
-                call.FunctionDeclarations = this.SymbolTable.GetFunction(new URI(call.FunctionName));
-                call.FilteredFunctionDeclarations = this.SymbolTable.GetFunction(call.ProcedureName, call.AsProfile(this.SymbolTable));
-                var calls =  new List<FunctionCall>();
-			    calls.Add(call);
-			    return calls;
-		    }
-	    }
+        public IList<FunctionCall> FunctionCalls {
+            get {
+                var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
+                var calls = new List<FunctionCall>();
+                calls.Add(call);
+                return calls;
+            }
+        }
 
+        public FunctionDeclaration FunctionDeclaration {get; set;}
 	    
         public override bool VisitNode(IASTVisitor astVisitor)
         {

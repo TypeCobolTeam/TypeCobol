@@ -1,9 +1,8 @@
-﻿                                        using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -351,7 +350,7 @@ namespace TypeCobol.Compiler.CodeElements
 	        get { return FunctionCall.NeedDeclaration; }
 	    }
 
-	    public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, FunctionCall, DataDescriptionEntry);
@@ -365,16 +364,12 @@ namespace TypeCobol.Compiler.CodeElements
         protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
 		    Type = type;
 		    Arguments = arguments;
-            FunctionDeclarations = new List<FunctionDeclaration>();
-            FilteredFunctionDeclarations = new List<FunctionDeclaration>();
         }
 
 	    public FunctionCallType Type { get; private set; }
 	    public abstract string FunctionName { get; }
 	    public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
-        public List<FunctionDeclaration> FunctionDeclarations { get; set; }
-        public List<FunctionDeclaration> FilteredFunctionDeclarations { get; set; }
 
         public virtual bool NeedDeclaration {
             get { return true; }

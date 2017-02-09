@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
+using System.Linq;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
@@ -41,32 +42,58 @@ class ReadOnlyPropertiesChecker: NodeListener {
 }
 
 
-class FunctionCallChecker: NodeListener {
+    class FunctionCallChecker : NodeListener {
 
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		var statement = node as FunctionCaller;
+        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program)
+        {
+            var procedureStyleCall = node as ProcedureStyleCall;
+            if (procedureStyleCall == null)
+                return;
 
-            if (statement != null)
+            List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
+
+            if (procedureStyleCall.FunctionDeclaration == null)
             {
-                foreach (var fun in statement.FunctionCalls)
+                var procedureCall = ((ProcedureStyleCallStatement)node.CodeElement).ProcedureCall;
+
+                //Get Funtion just by name and profile (matches on precise parameters)
+                functionDeclarations = node.SymbolTable.GetFunction(new URI(procedureCall.FunctionName), (procedureCall as ProcedureCall).AsProfile(node.SymbolTable));
+                //Check if there is more than one FunctionDeclaration
+                if (CheckFunctionAmbiguity(functionDeclarations, node).Count > 1)
+                    return; //Do not continue, the fonction is ambigous
+
+
+                //Get function just by name (no matches on parameters)
+                functionDeclarations = node.SymbolTable.GetFunction(new URI(procedureCall.FunctionName));
+
+                //Check if there is more than one FunctionDeclaration
+                if (CheckFunctionAmbiguity(functionDeclarations, node).Count > 1)
+                    return; //Do not continue, the fonction is ambigous
+
+                if (functionDeclarations.Count == 0)
                 {
-                    if (!fun.NeedDeclaration || fun.FunctionDeclarations == null) {
-                        continue;
-                    }
-                    if (fun.FunctionDeclarations != null && fun.FunctionDeclarations.Count != 1) {
-                        if (fun.FunctionDeclarations.Count == 0) //If Cout is null seems that the function does not exist
-                        {
-                            var m = string.Format("Function {0} does not exists", fun.FunctionName);
+                    var m = string.Format("Function {0} does not exists", procedureCall.FunctionName);
                             DiagnosticUtils.AddError(node.CodeElement, m);
-                            continue;
-                        }
-                        continue; // ambiguity is not our job
-                    }
-                    var declaration = fun.FunctionDeclarations[0];
-                    Check(node.CodeElement, node.SymbolTable, fun, declaration);
+                    return;
                 }
+
+                procedureStyleCall.FunctionDeclaration = functionDeclarations.FirstOrDefault();
+                //If function is not ambigous and exists, lets check the parameters
+                Check(node.CodeElement, node.SymbolTable, procedureCall, procedureStyleCall.FunctionDeclaration);
+                        }
+                }
+
+        private List<FunctionDeclaration> CheckFunctionAmbiguity(List<FunctionDeclaration> functionDeclarations, Node node)
+        {
+            if (functionDeclarations.Count > 1)
+            {
+                var m = string.Format("Function {0} is ambigous", ((ProcedureStyleCallStatement)node.CodeElement).ProcedureCall.FunctionName);
+                DiagnosticUtils.AddError(node.CodeElement, m);
             }
+
+            return functionDeclarations;
 	}
+
 	private void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
 	    [NotNull] FunctionDeclaration definition) {
 		var parameters = definition.Profile.Parameters;
@@ -82,24 +109,24 @@ class FunctionCallChecker: NodeListener {
 				if (actual.IsLiteral) continue;
                 var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
                 var found = table.GetVariable(actual);
-				if (found.Count < 1) DiagnosticUtils.AddError(e, "Parameter "+callArgName+" is not referenced");
-				if (found.Count > 1) DiagnosticUtils.AddError(e, "Ambiguous reference to parameter "+callArgName);
-				if (found.Count!= 1) continue;
+                    if (found.Count < 1) DiagnosticUtils.AddError(e, "Parameter " + callArgName + " is not referenced");
+                    if (found.Count > 1) DiagnosticUtils.AddError(e, "Ambiguous reference to parameter " + callArgName);
+                    if (found.Count != 1) continue;
 				var type = found[0] as ITypedNode;
 				// type check. please note:
 				// 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
 				// 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
 				//    and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
 				if (type == null || type.DataType != expected.DataType) {
-					var m = string.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", definition.Name, c+1, expected.DataType, type.DataType);
+                        var m = string.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", definition.Name, c + 1, expected.DataType, type.DataType);
 					DiagnosticUtils.AddError(e, m);
 				}
 				if (type.Length > expected.Length) {
-					var m = string.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", definition.Name, c+1, expected.Length, type.Length);
+                        var m = string.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", definition.Name, c + 1, expected.Length, type.Length);
 					DiagnosticUtils.AddError(e, m);
 				}
 			} else {
-				var m = string.Format("Function {0} is missing parameter {1} of type {2}", definition.Name, c+1, expected.DataType);
+                    var m = string.Format("Function {0} is missing parameter {1} of type {2}", definition.Name, c + 1, expected.DataType);
 				DiagnosticUtils.AddError(e, m);
 			}
 		}

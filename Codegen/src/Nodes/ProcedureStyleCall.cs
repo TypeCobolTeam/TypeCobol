@@ -61,7 +61,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-				var hash = GetHash(Statement.ProcedureCall);
+				var hash = GetHash(Node);
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
 				var callTextLine = new TextLineSnapshot(-1, "CALL '" + hash + "' USING ", null);
 				_cache.Add(callTextLine);
@@ -111,12 +111,9 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		}
 	}
 
-        private string GetHash(ProcedureCall call)
+        private string GetHash(Compiler.Nodes.ProcedureStyleCall call)
         {
-            var funcDeclarations = call.FilteredFunctionDeclarations;
-            if (funcDeclarations != null && funcDeclarations.Count < 1) return "?NOT_FOUND?";
-            if (funcDeclarations.Count > 1) return "?AMBIGUOUS?";
-            return funcDeclarations[0].Hash;
+            return call.FunctionDeclaration.Hash;
         }
 
     /// <summary>
