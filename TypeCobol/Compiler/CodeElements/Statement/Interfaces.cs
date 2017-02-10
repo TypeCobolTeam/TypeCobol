@@ -17,7 +17,7 @@ public interface VariableWriter {
 
 /// <summary>For statements calling functions.</summary>
 public interface FunctionCaller {
-	IList<FunctionCall> FunctionCalls { get; }
+	FunctionCall FunctionCall { get; }
     FunctionDeclaration FunctionDeclaration { get; set; }
     }
 

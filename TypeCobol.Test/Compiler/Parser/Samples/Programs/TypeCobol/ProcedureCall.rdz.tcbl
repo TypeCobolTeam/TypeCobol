@@ -30,7 +30,7 @@
            CONTINUE.
        END-DECLARE.
 
-       DECLARE FUNCTION DoesNothing PRIVATE.
+       DECLARE FUNCTION DoesNothingFunc PRIVATE.
        PROCEDURE DIVISION.
            DISPLAY 'I DO NOTHING'
        .
@@ -48,6 +48,11 @@
            END-IF.
        END-DECLARE.
 
+       DECLARE PROCEDURE varB PRIVATE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE varC PRIVATE.
+       END-DECLARE.
 
 
        TRAITEMENT.
@@ -131,7 +136,7 @@
            CALL EmptyProc
 
       * KO : procedure invocation with INPUT, IN-OUT, OUTPUT (TCRFUN_EMPTY_CALL) 
-      * Recognize an empty call to an no empty procedure
+      * Recognize an empty call to an non empty procedure
            CALL ValidateDateFormat
   
       * OK : function ivocation witout INPUT or RETURNING (TCRFUN_EMPTY_CALL) 
@@ -142,12 +147,6 @@
       * Recognize an empty call to non empty function
            CALL StrangelyReturnsItsInput
 
-       DECLARE PROCEDURE varB Private.
-       END-DECLARE.
-
-       DECLARE PROCEDURE varC Private.
-       END-DECLARE.
-
       * OK : varA is a variale (TCRFUN_EMPTY_CALL) 
            CALL varA
 
@@ -156,5 +155,5 @@
 
       * KO : varC is ambiguous (var C is a variable or procedure)
            CALL varC
-
+       .
        END PROGRAM ProcedureCall.

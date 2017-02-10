@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.CodeElements {
     // [/TYPECOBOL]
 
 	    protected IDictionary<QualifiedName,object> variables;
-	    protected List<FunctionCall> _functions = null;
+	    protected FunctionCall _functions = null;
 
         public abstract IDictionary<QualifiedName,object> Variables { get; }
 	    public virtual  IDictionary<QualifiedName,object> VariablesWritten {
@@ -27,8 +27,8 @@ namespace TypeCobol.Compiler.CodeElements {
 		    }
 	    }
 
-        public abstract IList<FunctionCall> FunctionCalls { get; }
-
+        public abstract FunctionCall FunctionCall { get; }
+        
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && astVisitor.VisitVariableWriter(this)
@@ -112,15 +112,14 @@ namespace TypeCobol.Compiler.CodeElements {
 		    }
 	    }
 
-	    public override IList<FunctionCall> FunctionCalls {
+	    public override FunctionCall FunctionCall {
 		    [NotNull]
 		    get {
 			    if (_functions != null) return _functions;
 
-			    _functions = new List<FunctionCall>();
 			    FunctionCallResult sending = null;
 			    if (SendingVariable != null) sending = SendingVariable.StorageArea as FunctionCallResult;
-			    if (sending != null) _functions.Add(sending.FunctionCall);
+		        if (sending != null) return sending.FunctionCall;
 			    return _functions;
 		    }
 	    }
@@ -173,12 +172,10 @@ namespace TypeCobol.Compiler.CodeElements {
 		    }
 	    }
 
-	    public override IList<FunctionCall> FunctionCalls {
+	    public override FunctionCall FunctionCall {
 		    [NotNull]
 		    get {
-			    if (_functions != null) return _functions;
-
-                return _functions = new List<FunctionCall>();
+                return _functions;
 		    }
 	    }
     }
