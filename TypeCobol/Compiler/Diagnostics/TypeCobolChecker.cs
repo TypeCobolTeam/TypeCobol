@@ -54,12 +54,15 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
             List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
 
+            string message;
+
             if (procedureStyleCall.FunctionDeclaration == null)
             {
                 var procedureCall = ((ProcedureStyleCallStatement)node.CodeElement).ProcedureCall;
 
                 //Get Funtion just by name and profile (matches on precise parameters)
                 functionDeclarations = node.SymbolTable.GetFunction(new URI(procedureCall.FunctionName), (procedureCall as ProcedureCall).AsProfile(node.SymbolTable));
+                var potentialVariables = node.SymbolTable.GetVariable(new URI(procedureCall.FunctionName));
                 //Check if there is more than one FunctionDeclaration
                 if (CheckFunctionAmbiguity(functionDeclarations, node).Count > 1)
                     return; //Do not continue, the fonction is ambigous
@@ -70,12 +73,32 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
                 //Check if there is more than one FunctionDeclaration
                 if (CheckFunctionAmbiguity(functionDeclarations, node).Count > 1)
-                    return; //Do not continue, the fonction is ambigous
+                    return; //Do not continue, the fonction is ambiguous
 
+                //Check Variable and Function Name Ambiguity
+                if (CheckFunctionVariableAmbiguity(potentialVariables, functionDeclarations, node.SymbolTable) > 0)
+                {
+                    message = string.Format("CALL to {0} is ambigous. {0} is denifed as a variable and a procedure/function", ((ProcedureStyleCallStatement)node.CodeElement).ProcedureCall.FunctionName);
+                    DiagnosticUtils.AddError(node.CodeElement, message);
+                    return; //Do not continue, the CALL is ambiguous
+                }
+                    
                 if (functionDeclarations.Count == 0)
                 {
-                    var m = string.Format("Function {0} does not exists", procedureCall.FunctionName);
-                    DiagnosticUtils.AddError(node.CodeElement, m);
+                    //Last check to see if it's not a cobol variable CALL
+                    if (potentialVariables.Count > 0)
+                    {
+                        if (potentialVariables.Count > 1)
+                        {
+                            message = string.Format("CALL to {0} is ambigous", ((ProcedureStyleCallStatement)node.CodeElement).ProcedureCall.FunctionName);
+                            DiagnosticUtils.AddError(node.CodeElement, message);
+                            return;
+                        }
+                        return; //Because it's a COBOL CALL we don't have to check the Function parameters.
+                    }
+                    
+                    message = string.Format("Function {0} does not exists", procedureCall.FunctionName);
+                    DiagnosticUtils.AddError(node.CodeElement, message);
                     return;
                 }
 
@@ -83,6 +106,11 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 //If function is not ambigous and exists, lets check the parameters
                 Check(node.CodeElement, node.SymbolTable, procedureCall, procedureStyleCall.FunctionDeclaration);
             }
+        }
+
+        private int CheckFunctionVariableAmbiguity(List<DataDefinition> potentialVariables, List<FunctionDeclaration> functionDeclarations, SymbolTable symbolTable)
+        {
+            return functionDeclarations.Where(f => potentialVariables.FindAll(v => v.Name == f.Name).Count == 1).Count();
         }
 
         private List<FunctionDeclaration> CheckFunctionAmbiguity(List<FunctionDeclaration> functionDeclarations, Node node)

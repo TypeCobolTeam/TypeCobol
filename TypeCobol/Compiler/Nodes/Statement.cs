@@ -1,12 +1,12 @@
 ﻿namespace TypeCobol.Compiler.Nodes {
+    using System;
+    using System.Collections.Generic;
+    using TypeCobol.Compiler.CodeElements;
+    using TypeCobol.Compiler.CodeElements.Expressions;
 
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.CodeElements.Expressions;
 
 
-
-public interface Statement { }
+    public interface Statement { }
 
 
 
@@ -182,6 +182,8 @@ public interface Statement { }
 	   
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
+
+        public FunctionDeclaration FunctionDeclaration { get; set; }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
