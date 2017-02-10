@@ -144,13 +144,13 @@ internal class FunctionUserAttribute: Attribute {
 		var statement = ((Node)o).CodeElement as FunctionCaller;
 		if (statement == null) return null;
 		var functions = new List<FunctionCallInfo>();
-		foreach(var fun in statement.FunctionCalls) {
-			var found = table.GetFunction(new URI(fun.FunctionName));
-			if (found.Count < 1) continue;
-			if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
-			var declaration = found[0];
-			functions.Add(Create(fun, declaration));
-		}
+		
+		var found = table.GetFunction(new URI(statement.FunctionCall.FunctionName));
+			
+		if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
+		var declaration = found[0];
+		functions.Add(Create(statement.FunctionCall, declaration));
+		
 		if (functions.Count == 0) return null;
 		if (functions.Count == 1) return functions[0];
 		return functions;

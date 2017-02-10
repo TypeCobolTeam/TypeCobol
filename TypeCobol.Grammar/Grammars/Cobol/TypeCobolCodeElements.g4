@@ -122,7 +122,7 @@ cobolCallStatement:
 
 // TCRFUN_CALL_PARAMETER_ORDER
 tcCallStatement:
-	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable | functionNameReference 
+	CALL (programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable | functionNameReference)
 		(INPUT  callInputParameter+)?
 		(IN_OUT  callInoutParameter+)?
 		(OUTPUT callOutputParameter+)?

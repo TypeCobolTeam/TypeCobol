@@ -1,16 +1,27 @@
 ﻿--- Diagnostics ---
-[18,21]<27,Error,Syntax>Syntax error : no viable alternative at input 'var1' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter, OffendingSymbol=[18,21:var1]<UserDefinedWord> on line 69)
-[12,50]<27,Error,Syntax>Syntax error : Function ValidateDatFormatt does not exists ([12>50] on line 37)
-[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>50] on line 48)
-[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>50] on line 48)
-[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric ([12>50] on line 48)
-[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 1 of type DATE (actual: Alphanumeric) ([12>46] on line 54)
-[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 1 of max length 1 (actual: 8) ([12>46] on line 54)
-[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 2 of type Alphanumeric (actual: DATE) ([12>46] on line 54)
-[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>46] on line 54)
-[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>46] on line 54)
-[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 4 of type Alphanumeric (actual: BOOL) ([12>46] on line 54)
-[12,46]<27,Error,Syntax>Syntax error : Parameter INOUT is not referenced ([12>46] on line 76)
+[18,21]<27,Error,Syntax>Syntax error : no viable alternative at input 'var1' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter, OffendingSymbol=[18,21:var1]<UserDefinedWord> on line 103)
+[12,50]<27,Error,Syntax>Syntax error : Symbol ValidateDatFormatt is not referenced ([12>50] on line 71)
+[12,50]<27,Error,Syntax>Syntax error : Function ValidateDatFormatt does not exists ([12>50] on line 71)
+[12,34]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 1 of type DATE ([12>34] on line 79)
+[12,34]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 2 of type Alphanumeric ([12>34] on line 79)
+[12,34]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 3 of type BOOL ([12>34] on line 79)
+[12,34]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric ([12>34] on line 79)
+[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>50] on line 82)
+[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>50] on line 82)
+[12,50]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric ([12>50] on line 82)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 1 of type DATE (actual: Alphanumeric) ([12>46] on line 88)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 1 of max length 1 (actual: 8) ([12>46] on line 88)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 2 of type Alphanumeric (actual: DATE) ([12>46] on line 88)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of type BOOL (actual: Alphanumeric) ([12>46] on line 88)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 3 of max length 1 (actual: 8) ([12>46] on line 88)
+[12,46]<27,Error,Syntax>Syntax error : Function ValidateDateFormat expected parameter 4 of type Alphanumeric (actual: BOOL) ([12>46] on line 88)
+[12,46]<27,Error,Syntax>Syntax error : Parameter INOUT is not referenced ([12>46] on line 110)
+[12,34]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 1 of type DATE ([12>34] on line 140)
+[12,34]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 2 of type Alphanumeric ([12>34] on line 140)
+[12,34]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 3 of type BOOL ([12>34] on line 140)
+[12,34]<27,Error,Syntax>Syntax error : Function ValidateDateFormat is missing parameter 4 of type Alphanumeric ([12>34] on line 140)
+[12,40]<27,Error,Syntax>Syntax error : Function StrangelyReturnsItsInput is missing parameter 1 of type Numeric ([12>40] on line 148)
+[12,20]<27,Error,Syntax>Syntax error : CALL to varC is ambigous. varC is denifed as a variable and a procedure/function ([12>20] on line 157)
 
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
@@ -21,6 +32,8 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
   someformat:Alphanumeric
   flag:BOOL
   realformat:Alphanumeric
+  varA:Alphanumeric
+  varC:Alphanumeric
 -- PARAGRAPHS --
   TRAITEMENT
 -- FUNCTIONS ---
@@ -29,6 +42,13 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
         in: format:Alphanumeric
        out: okay:BOOL
        out: actual-format:Alphanumeric
+  EmptyProc
+  DoesNothingFunc
+  StrangelyReturnsItsInput
+        in: x:Numeric
+    return: result:Numeric
+  varB
+  varC
   MyProc1
         in: mydate:DATE
         in: format:Alphanumeric
@@ -46,3 +66,4 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
 -- TYPES -------
       BOOL:BOOL
       DATE:DATE
+

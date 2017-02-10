@@ -37,13 +37,9 @@
     public class ProcedureStyleCall : Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller {
         public ProcedureStyleCall(ProcedureStyleCallStatement statement) : base(statement) { }
 
-        public IList<FunctionCall> FunctionCalls {
-            get {
-                var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
-                var calls = new List<FunctionCall>();
-                calls.Add(call);
-                return calls;
-            }
+        public FunctionCall FunctionCall
+        {
+            get { return ((ProcedureStyleCallStatement) CodeElement).ProcedureCall; }
         }
 
         public FunctionDeclaration FunctionDeclaration {get; set;}
@@ -178,7 +174,7 @@
 
     public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableWriter,FunctionCaller {
 	    public Move(MoveStatement statement): base(statement) { }
-	    public IList<FunctionCall> FunctionCalls { get { return this.CodeElement().FunctionCalls; } }
+	    public FunctionCall FunctionCall { get { return this.CodeElement().FunctionCall; } }
 	   
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
