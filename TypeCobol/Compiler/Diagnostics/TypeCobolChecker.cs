@@ -52,12 +52,15 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
             List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
 
+            string message;
+
             if (procedureStyleCall.FunctionDeclaration == null)
             {
                 var procedureCall = ((ProcedureStyleCallStatement)node.CodeElement).ProcedureCall;
 
                 //Get Funtion just by name and profile (matches on precise parameters)
                 functionDeclarations = node.SymbolTable.GetFunction(new URI(procedureCall.FunctionName), (procedureCall as ProcedureCall).AsProfile(node.SymbolTable));
+                var potentialVariables = node.SymbolTable.GetVariable(new URI(procedureCall.FunctionName));
                 //Check if there is more than one FunctionDeclaration
                 if (CheckFunctionAmbiguity(functionDeclarations, node).Count > 1)
                     return; //Do not continue, the fonction is ambigous
@@ -68,20 +71,45 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
                 //Check if there is more than one FunctionDeclaration
                 if (CheckFunctionAmbiguity(functionDeclarations, node).Count > 1)
-                    return; //Do not continue, the fonction is ambigous
+                    return; //Do not continue, the fonction is ambiguous
+
+                //Check Variable and Function Name Ambiguity
+                if (CheckFunctionVariableAmbiguity(potentialVariables, functionDeclarations, node.SymbolTable) > 0)
+                {
+                    message = string.Format("CALL to {0} is ambigous. {0} is denifed as a variable and a procedure/function", ((ProcedureStyleCallStatement)node.CodeElement).ProcedureCall.FunctionName);
+                    DiagnosticUtils.AddError(node.CodeElement, message);
+                    return; //Do not continue, the CALL is ambiguous
+                }
 
                 if (functionDeclarations.Count == 0)
                 {
-                    var m = string.Format("Function {0} does not exists", procedureCall.FunctionName);
-                            DiagnosticUtils.AddError(node.CodeElement, m);
+                    //Last check to see if it's not a cobol variable CALL
+                    if (potentialVariables.Count > 0)
+                    {
+                        if (potentialVariables.Count > 1)
+                        {
+                            message = string.Format("CALL to {0} is ambigous", ((ProcedureStyleCallStatement)node.CodeElement).ProcedureCall.FunctionName);
+                            DiagnosticUtils.AddError(node.CodeElement, message);
+                            return;
+                        }
+                        return; //Because it's a COBOL CALL we don't have to check the Function parameters.
+                    }
+                    
+                    message = string.Format("Function {0} does not exists", procedureCall.FunctionName);
+                    DiagnosticUtils.AddError(node.CodeElement, message);
                     return;
                 }
 
                 procedureStyleCall.FunctionDeclaration = functionDeclarations.FirstOrDefault();
                 //If function is not ambigous and exists, lets check the parameters
                 Check(node.CodeElement, node.SymbolTable, procedureCall, procedureStyleCall.FunctionDeclaration);
-                        }
-                }
+            }
+        }
+
+        private int CheckFunctionVariableAmbiguity(List<DataDefinition> potentialVariables, List<FunctionDeclaration> functionDeclarations, SymbolTable symbolTable)
+        {
+            return functionDeclarations.Where(f => potentialVariables.FindAll(v => v.Name == f.Name).Count == 1).Count();
+        }
 
         private List<FunctionDeclaration> CheckFunctionAmbiguity(List<FunctionDeclaration> functionDeclarations, Node node)
         {
@@ -92,46 +120,46 @@ class ReadOnlyPropertiesChecker: NodeListener {
             }
 
             return functionDeclarations;
-	}
+        }
 
-	private void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
-	    [NotNull] FunctionDeclaration definition) {
-		var parameters = definition.Profile.Parameters;
-        var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
-        if (callArgsCount > parameters.Count) {
-			var m = string.Format("Function {0} only takes {1} parameters", definition.Name, parameters.Count);
-			DiagnosticUtils.AddError(e, m);
-		}
-		for (int c = 0; c < parameters.Count; c++) {
-			var expected = parameters[c];
-			if (c < callArgsCount) {
-				var actual = call.Arguments[c].StorageAreaOrValue;
-				if (actual.IsLiteral) continue;
-                var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
-                var found = table.GetVariable(actual);
+        private void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
+            [NotNull] FunctionDeclaration definition) {
+            var parameters = definition.Profile.Parameters;
+            var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
+            if (callArgsCount > parameters.Count) {
+                var m = string.Format("Function {0} only takes {1} parameters", definition.Name, parameters.Count);
+                DiagnosticUtils.AddError(e, m);
+            }
+            for (int c = 0; c < parameters.Count; c++) {
+                var expected = parameters[c];
+                if (c < callArgsCount) {
+                    var actual = call.Arguments[c].StorageAreaOrValue;
+                    if (actual.IsLiteral) continue;
+                    var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
+                    var found = table.GetVariable(actual);
                     if (found.Count < 1) DiagnosticUtils.AddError(e, "Parameter " + callArgName + " is not referenced");
                     if (found.Count > 1) DiagnosticUtils.AddError(e, "Ambiguous reference to parameter " + callArgName);
                     if (found.Count != 1) continue;
-				var type = found[0] as ITypedNode;
-				// type check. please note:
-				// 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
-				// 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
-				//    and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
-				if (type == null || type.DataType != expected.DataType) {
+                    var type = found[0] as ITypedNode;
+                    // type check. please note:
+                    // 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
+                    // 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
+                    //    and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
+                    if (type == null || type.DataType != expected.DataType) {
                         var m = string.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", definition.Name, c + 1, expected.DataType, type.DataType);
-					DiagnosticUtils.AddError(e, m);
-				}
-				if (type.Length > expected.Length) {
+                        DiagnosticUtils.AddError(e, m);
+                    }
+                    if (type.Length > expected.Length) {
                         var m = string.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", definition.Name, c + 1, expected.Length, type.Length);
-					DiagnosticUtils.AddError(e, m);
-				}
-			} else {
+                        DiagnosticUtils.AddError(e, m);
+                    }
+                } else {
                     var m = string.Format("Function {0} is missing parameter {1} of type {2}", definition.Name, c + 1, expected.DataType);
-				DiagnosticUtils.AddError(e, m);
-			}
-		}
-	}
-}
+                    DiagnosticUtils.AddError(e, m);
+                }
+            }
+        }
+    }
 
 
 class FunctionDeclarationTypeChecker: CodeElementListener {

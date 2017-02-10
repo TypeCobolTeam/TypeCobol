@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	using System.Collections.Generic;
 
     /// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
-    public abstract class MoveStatement : StatementElement, VariableWriter,FunctionCaller
+    public abstract class MoveStatement : StatementElement, VariableWriter
     {
         protected MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
     // [TYPECOBOL]
@@ -33,7 +33,6 @@ namespace TypeCobol.Compiler.CodeElements {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && astVisitor.VisitVariableWriter(this)
                    && this.ContinueVisitToChildren(astVisitor, Unsafe) //Order is important here, as unsafe is part of VariableWriter interface
-                   && astVisitor.VisitFunctionCaller(this)
                    && this.ContinueVisitToChildren(astVisitor, FunctionCalls); //Order is important here, as FunctionsCall is part of VariableWriter interface
         }
     }
