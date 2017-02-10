@@ -131,6 +131,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// that include the RETURNING phrase.
         /// </summary>
         public CallSiteParameter OutputParameter { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, ProgramOrProgramEntryOrProcedureOrFunction, OutputParameter)
+                   && this.ContinueVisitToChildren(astVisitor, InputParameters);
+        }
     }
 
 
@@ -143,6 +150,12 @@ public class ProcedureStyleCallStatement: StatementElement {
 	{
 		this.ProcedureCall = call;
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, ProcedureCall);
+        }
+    }
 
 }

@@ -39,5 +39,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// by procedure-name-2.
         /// </summary>
         public SymbolReference ThroughProcedure { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, Procedure, ThroughProcedure);
+        }
     }
 }

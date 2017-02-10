@@ -109,9 +109,14 @@ public class StringStatement: StatementElement, VariableWriter {
 	}
 	public bool IsUnsafe { get { return false; }  }
 
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, ReceivingField, CharacterPositionInReceivingField)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) StringContentsToConcatenate);
+        }
 
-
-	public class ContentToConcatenate {
+        public class ContentToConcatenate : IVisitable {
 		/// <summary>
 		/// identifier-1, literal-1
 		/// Represents the sending fields.
@@ -146,6 +151,10 @@ public class StringStatement: StatementElement, VariableWriter {
 			return str.ToString();
 		}
 
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return this.ContinueVisitToChildren(astVisitor, IsDelimitedbySize, DelimiterCharacters) 
+                    && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) SendingFields);
+	    }
 	}
 
 }

@@ -108,9 +108,16 @@ public class UnstringStatement: StatementElement, VariableWriter {
 	}
 	public bool IsUnsafe { get { return false; }  }
 
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, SendingField, CharacterPositionsExaminedInSendingField,
+                   NumberOfDelimitedFieldsProcessed)
+                   && this.ContinueVisitToChildren(astVisitor, Delimiters, ReceivingFields);
+        }
 
 
-	public class Delimiter {
+        public class Delimiter : IVisitable {
 		/// <summary>
 		/// ALL
 		/// Multiple contiguous occurrences of any delimiters are treated as if there
@@ -140,9 +147,13 @@ public class UnstringStatement: StatementElement, VariableWriter {
 		public override string ToString() {
 			return (All != null && All.Value ? "ALL " : "") + (DelimiterCharacters != null ? DelimiterCharacters.ToString() : "?");
 		}
+
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return this.ContinueVisitToChildren(astVisitor, All, DelimiterCharacters);
+	    }
 	}
 
-	public class Receiving {
+	public class Receiving : IVisitable {
 		/// <summary>
 		/// This phrase specifies the fields where the data is to be moved.
 		/// identifier-4 represents the data receiving fields.
@@ -178,6 +189,10 @@ public class UnstringStatement: StatementElement, VariableWriter {
 			if (CharTransferredCount != null) str.Append(" COUNT IN ").Append(CharTransferredCount);
 			return str.ToString();
 		}
+
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return this.ContinueVisitToChildren(astVisitor, ReceivingField, DelimiterReceivingField, CharTransferredCount);
+	    }
 	}
 
 }

@@ -17,7 +17,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// than one file is specified, the files need not have the same organization or
         /// access mode.
         /// </summary>
-        public IList<OpenFileInstruction> OpenFileInstructions { get; set; }        
+        public IList<OpenFileInstruction> OpenFileInstructions { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, OpenFileInstructions);
+        }
     }
 
     /// <summary>
@@ -26,7 +32,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// than one file is specified, the files need not have the same organization or
     /// access mode.
     /// </summary>
-    public class OpenFileInstruction
+    public class OpenFileInstruction : IVisitable
     {
         /// <summary>
         /// The phrases INPUT, OUTPUT, I-O, and EXTEND specify the mode to be used for
@@ -57,6 +63,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// Valid only for sequential single-reel files. It is not valid for VSAM files.
         /// </summary>
         public SyntaxProperty<bool> IsReversed { get; set; }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, OpenMode, FileName, IsWithNoRewind, IsReversed);
+        }
     }
 
     /// <summary>

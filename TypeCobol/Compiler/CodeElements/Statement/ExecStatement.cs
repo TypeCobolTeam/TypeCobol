@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -24,5 +25,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// Source code to be analyzed by the secondary compiler
         /// </summary>
         public AlphanumericValue[] CodeLines { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) CodeLines)
+                   && this.ContinueVisitToChildren(astVisitor, ExecTranslatorName);
+        }
     }
 }

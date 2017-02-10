@@ -238,6 +238,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolReference OutputProcedure { get; set; }
         public SymbolReference ThroughOutputProcedure { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   &&
+                   this.ContinueVisitToChildren(astVisitor, FileName, CollatingSequence, OutputProcedure,
+                       ThroughOutputProcedure)
+                   && this.ContinueVisitToChildren(astVisitor, SortingKeys, InputFiles, OutputFiles);
+        }
     }
 
     /// <summary>
@@ -300,7 +308,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// all other key data items, the comparisons are performed according to the rules
     /// for comparison of operands in a relation condition.
     /// </summary>
-    public class SortingKey
+    public class SortingKey : IVisitable
     {
         /// <summary>
         /// pp423-424:
@@ -319,6 +327,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// file-name-1.
         /// </summary>
         public SymbolReference DataItem { get; set; }
+
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, Direction, DataItem);
+        }
     }
 
     /// <summary>
