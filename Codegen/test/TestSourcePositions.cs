@@ -83,12 +83,21 @@ namespace TypeCobol.Codegen.Test
             CodegenTestUtils.ParseGenerateCompare(file + ".cbl");
         }
 
-                [TestMethod]
+        [TestMethod]
         [TestCategory("Codegen.SourcePositions")]
         [TestProperty("Time", "fast")]
         public void MixedLinesWithDirectives()
         {
             string file = Path.Combine("SourcePositions", "MixedLinesWithDirectives");
+            CodegenTestUtils.ParseGenerateCompare(file + ".cbl");
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen.SourcePositions")]
+        [TestProperty("Time", "fast")]
+        public void IfQualifiedNameStmt()
+        {
+            string file = Path.Combine("SourcePositions", "IfQualifiedNameStmt");
             CodegenTestUtils.ParseGenerateCompare(file + ".cbl");
         }
     }
