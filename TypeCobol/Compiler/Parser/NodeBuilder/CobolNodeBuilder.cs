@@ -347,7 +347,7 @@ namespace TypeCobol.Compiler.Parser
                     if (node.CodeElement().IsGlobal)
                         while (table.CurrentScope != SymbolTable.Scope.Global)
                             table = table.EnclosingScope;
-                    table.AddVariable(data.Indexes.First().Name, node);
+                    table.AddVariable(index.Name, node);
                 }
             }
 

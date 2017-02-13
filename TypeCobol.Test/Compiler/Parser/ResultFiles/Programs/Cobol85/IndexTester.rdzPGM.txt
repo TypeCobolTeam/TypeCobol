@@ -7,6 +7,11 @@ PROGRAM: IndexTester common:False initial:False recursive:False
   TB-1:Alphanumeric
   EL-1:Alphanumeric
   EL-1:Alphanumeric
+  ZONEBIS:Alphanumeric
+  TB-2:Alphanumeric
+  EL-2:Alphanumeric
+  EL-2:Alphanumeric
+  EL-2:Alphanumeric
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL
