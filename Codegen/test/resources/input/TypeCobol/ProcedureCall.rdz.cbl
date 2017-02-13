@@ -14,7 +14,10 @@
        01  realformat   PIC X(08).
 
        PROCEDURE DIVISION.
-       
+
+       DECLARE PROCEDURE ValidateDateFormat PRIVATE.
+       END-DECLARE.
+
        DECLARE PROCEDURE ValidateDateFormat PRIVATE
            INPUT mydate        TYPE Date
                  format        PIC X(08)

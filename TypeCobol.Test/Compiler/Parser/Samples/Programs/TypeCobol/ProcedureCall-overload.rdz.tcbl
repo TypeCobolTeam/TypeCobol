@@ -1,5 +1,5 @@
 ﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. ProcedureCall.
+       PROGRAM-ID. ProcedureCallOverload.
 
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
@@ -84,7 +84,7 @@
            CALL ValidateDateFormat
                     INPUT      somedate
                     OUTPUT     flag    
-           END-CALL
+           END-CALL.
       * ______
 
-       END PROGRAM ProcedureCall.
+       END PROGRAM ProcedureCallOverload.

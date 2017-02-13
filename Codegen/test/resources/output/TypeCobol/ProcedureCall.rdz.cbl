@@ -38,7 +38,9 @@
        01  realformat   PIC X(08).
 
        PROCEDURE DIVISION.
-       
+
+      *DECLARE PROCEDURE ValidateDateFormat PRIVATE.                          
+
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE                           
       *    INPUT mydate        TYPE Date                                      
       *          format        PIC X(08)                                      
@@ -84,7 +86,9 @@
       * OK : parameter number for a procedure
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
-           CALL ValidateDateFormat END-CALL
+      *    CALL ValidateDateFormat END-CALL                                   
+           CALL 'd5130bbc' USING
+                                   END-CALL
       * __________________________________________________
       * OK with INPUT on the same line as call
       *    CALL ValidateDateFormat INPUT      somedate                        
@@ -150,6 +154,12 @@
            .
 
        END PROGRAM ProcedureCall.
+      *
+      *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d5130bbc.
+       END PROGRAM d5130bbc.                                                  
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
