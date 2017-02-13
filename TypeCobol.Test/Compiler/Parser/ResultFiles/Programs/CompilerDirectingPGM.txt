@@ -1,4 +1,9 @@
-﻿--- Program ---
+﻿--- Diagnostics ---
+[3,11]<28,Error,Directives>Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named x in 
+[3,9]<27,Error,Syntax>Syntax error : mismatched input 'PERFORM' expecting '.' (RuleStack=compilerDirectingStatement>copyCompilerStatement, OffendingSymbol=[3,9:PERFORM]<PERFORM> on line 100)
+[3,10]<28,Error,Directives>Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named x in 
+
+--- Program ---
 PROGRAM: compiler-directing common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 -- PARAGRAPHS --
