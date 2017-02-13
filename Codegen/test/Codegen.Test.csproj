@@ -71,7 +71,6 @@
     <None Include="resources\input\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\input\SourcePositions\IfQualifiedNameStmt.cbl" />
     <None Include="resources\output\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -79,7 +78,6 @@
       <Link>resources\config\TypeCobol\skeletons.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="resources\output\SourcePositions\IfQualifiedNameStmt.cbl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TypeCobol.Test\TypeCobol.Test.csproj">
