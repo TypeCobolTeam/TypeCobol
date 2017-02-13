@@ -76,20 +76,16 @@ namespace TypeCobol.Codegen.Generators
                             targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                         previousBuffer = null;
                     }
-                    IEnumerable<ITextLine> lines = Indent(Input[i], null);
-                    foreach (var line in lines)
+                    string text = Input[i].Text;
+                    if (mapper.LineData[i].Buffer != null)
+                    {//This line has been assigned a target Buffer
+                        mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                        mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                    }
+                    else
                     {
-                        string text = line.Text.TrimEnd();
-                        if (mapper.LineData[i].Buffer != null)
-                        {//This line has been assigned a target Buffer
-                            mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                            mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                        }
-                        else
-                        {
-                            targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                            targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                        }
+                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
                     }
                     continue;
                 }
