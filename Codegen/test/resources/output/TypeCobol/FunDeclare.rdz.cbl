@@ -2,24 +2,24 @@
        PROGRAM-ID. FunDeclare.
        PROCEDURE DIVISION.
 
-      *DECLARE FUNCTION DoesNothing PRIVATE.                                  
+      *DECLARE FUNCTION DoesNothing PRIVATE.
 
-      *DECLARE FUNCTION ReturnsZero PRIVATE                                   
-      *      RETURNING result PIC 9(04).                                      
+      *DECLARE FUNCTION ReturnsZero PRIVATE
+      *      RETURNING result PIC 9(04).
 
       *OK: second function with same name, but profile is different
-      *DECLARE FUNCTION DoesNothing PRIVATE                                   
-      *      INPUT x PIC 9(04).                                               
+      *DECLARE FUNCTION DoesNothing PRIVATE
+      *      INPUT x PIC 9(04).
 
-      *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE                      
-      *      INPUT     x      PIC 9(04)                                       
-      *      RETURNING result PIC 9(04)                                       
-      *    .                                                                  
+      *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
+      *      INPUT     x      PIC 9(04)
+      *      RETURNING result PIC 9(04)
+      *    .
 
       *written in lower-case to make sure code generation doesn't 
       *change it to upper-case
-      *declare function UseACopy private                                      
-      *         input  x pic X.                                               
+      *declare function UseACopy private
+      *         input  x pic X.
 
 
        ILLEGAL-NON-FUNCTION-PARAGRAPH.
@@ -35,7 +35,7 @@
            .
            DISPLAY 'I DO NOTHING'
            .
-       END PROGRAM a59b2c49.                                                  
+       END PROGRAM a59b2c49.
       *
       *DECLARE FUNCTION ReturnsZero PRIVATE
       *      RETURNING result PIC 9(04).
@@ -50,7 +50,7 @@
            .
            MOVE 0 TO result.
            .
-       END PROGRAM a866b35c.                                                  
+       END PROGRAM a866b35c.
       *
       *DECLARE FUNCTION DoesNothing PRIVATE
       *      INPUT x PIC 9(04).
@@ -65,7 +65,7 @@
            .
            DISPLAY 'I DO NOTHING WITH ' x
            .
-       END PROGRAM fe03398a.                                                  
+       END PROGRAM fe03398a.
       *
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
       *      INPUT     x      PIC 9(04)
@@ -87,7 +87,7 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM e3e490ae.                                                  
+       END PROGRAM e3e490ae.
       *
       *declare function UseACopy private
       *         input  x pic X.

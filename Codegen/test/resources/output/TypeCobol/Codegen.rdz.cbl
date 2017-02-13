@@ -10,13 +10,13 @@
 001520         ==:INFO:==  by ==CCTFAL-LOG-LVL-I or TRC-I==             000000
 001530         ==:TRAC:==  by ==CCTFAL-LOG-LVL-T or TRC-T==.            000000
 000060 COPY Codegen-FirstCopy.                                          000060
-      *01  MyKey    TYPEDEF PIC X(04).                                        
+      *01  MyKey    TYPEDEF PIC X(04).
 000070                                                                  000070
-      *01  MyKey2    TYPEDEF.                                                 
-      *    05 partA pic X(04).                                                
-      *    05 partB pic 9(04).                                                
-      *    05 partC pic X(05).                                                
-      *01  b TYPE Bool.                                                       
+      *01  MyKey2    TYPEDEF.
+      *    05 partA pic X(04).
+      *    05 partB pic 9(04).
+      *    05 partC pic X(05).
+      *01  b TYPE Bool.
 000080 01  b-value PIC X VALUE LOW-VALUE.
            88  b       VALUE 'T'.
            88  b-false VALUE 'F'.
@@ -27,16 +27,16 @@
 
 000140 PROCEDURE DIVISION.                                              000140
 000150                                                                  000150
-      *DECLARE FUNCTION GetValue PRIVATE                                      
-      *                 INPUT     ikey   TYPE MyKey                           
-      *                           ikey2  TYPE MyKey2                          
-      *                 RETURNING result PIC 9(32).                           
+      *DECLARE FUNCTION GetValue PRIVATE
+      *                 INPUT     ikey   TYPE MyKey
+      *                           ikey2  TYPE MyKey2
+      *                 RETURNING result PIC 9(32).
                                                                         000190
                                                                         000200
 004010     if b                                                         000000
 004020       CONTINUE                                                   000000
 004090     end-if                                                       000000
-      *   SET b TO FALSE                                                      
+      *   SET b TO FALSE
 000210    SET b-false TO TRUE
                                                                         000210
 000221     MOVE 'TOTO'                                                  000221

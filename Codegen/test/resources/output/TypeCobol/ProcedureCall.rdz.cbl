@@ -4,25 +4,25 @@
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
 
-      *01  somedate     TYPE Date.                                            
+      *01  somedate     TYPE Date.
        01 somedate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                   
-      *01 myDate2       type Date.                                            
+      *01 myDate2       type Date.
        01 myDate2.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                   
-      *01 myDate3       type Date.                                            
+      *01 myDate3       type Date.
        01 myDate3.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                   
-      *01 myDate4       type Date.                                            
+      *01 myDate4       type Date.
        01 myDate4.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -30,7 +30,7 @@
                                   
 
        01  someformat   PIC X(08).
-      *01  flag         TYPE Bool.                                            
+      *01  flag         TYPE Bool.
        01  flag-value PIC X VALUE LOW-VALUE.
            88  flag       VALUE 'T'.
            88  flag-false VALUE 'F'.
@@ -39,30 +39,30 @@
 
        PROCEDURE DIVISION.
        
-      *DECLARE PROCEDURE ValidateDateFormat PRIVATE                           
-      *    INPUT mydate        TYPE Date                                      
-      *          format        PIC X(08)                                      
-      *   OUTPUT okay          TYPE Bool                                      
-      *          actual-format PIC X(08).                                     
-      *  .                                                                    
+      *DECLARE PROCEDURE ValidateDateFormat PRIVATE
+      *    INPUT mydate        TYPE Date
+      *          format        PIC X(08)
+      *   OUTPUT okay          TYPE Bool
+      *          actual-format PIC X(08).
+      *  .
 
-      *DECLARE PROCEDURE myProc PRIVATE                                       
-      *   INPUT  mydate        TYPE Date                                      
-      *          format        PIC X(08)                                      
-      *          myDate2       type Date                                      
-      *   IN-OUT myDate3       type Date                                      
-      *          myDate4       type Date                                      
-      *   OUTPUT okay          TYPE Bool                                      
-      *          actual-format PIC X(08).                                     
-      *  .                                                                    
+      *DECLARE PROCEDURE myProc PRIVATE
+      *   INPUT  mydate        TYPE Date
+      *          format        PIC X(08)
+      *          myDate2       type Date
+      *   IN-OUT myDate3       type Date
+      *          myDate4       type Date
+      *   OUTPUT okay          TYPE Bool
+      *          actual-format PIC X(08).
+      *  .
 
        TRAITEMENT.
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
-      *    CALL ValidateDateFormat                                            
-      *             INPUT      somedate someformat                            
-      *             OUTPUT     flag     realformat                            
-           CALL 'c5875eec' USING
+      *    CALL ValidateDateFormat
+      *             INPUT      somedate someformat
+      *             OUTPUT     flag     realformat
+           CALL 'c5875eec' USING 
                                            somedate
                                            someformat
                               by reference flag-value
@@ -70,10 +70,10 @@
            end-call
                                                   
        
-      *    CALL ValidateDateFormat                                            
-      *             INPUT      somedate by content 'YYYYMMDD'                 
-      *             OUTPUT     flag     realformat                            
-           CALL 'c5875eec' USING
+      *    CALL ValidateDateFormat
+      *             INPUT      somedate by content 'YYYYMMDD'
+      *             OUTPUT     flag     realformat
+           CALL 'c5875eec' USING 
                                            somedate
                               by content   'YYYYMMDD'
                               by reference flag-value
@@ -87,10 +87,10 @@
            CALL ValidateDateFormat END-CALL
       * __________________________________________________
       * OK with INPUT on the same line as call
-      *    CALL ValidateDateFormat INPUT      somedate                        
-      *                                       by content 'YYYYMMDD'           
-      *                            OUTPUT     flag     realformat             
-           CALL 'c5875eec' USING
+      *    CALL ValidateDateFormat INPUT      somedate
+      *                                       by content 'YYYYMMDD'
+      *                            OUTPUT     flag     realformat
+           CALL 'c5875eec' USING 
                                            somedate
                               by content   'YYYYMMDD'
                               by reference flag-value
@@ -100,10 +100,10 @@
            .      
       * __________________________________________________
       * OK  by content
-      *    CALL ValidateDateFormat INPUT     by content somedate              
-      *                                        'YYYYMMDD'                     
-      *                            OUTPUT     flag     realformat             
-           CALL 'c5875eec' USING
+      *    CALL ValidateDateFormat INPUT     by content somedate
+      *                                        'YYYYMMDD'
+      *                            OUTPUT     flag     realformat
+           CALL 'c5875eec' USING 
                               by content   somedate
                                            'YYYYMMDD'
                               by reference flag-value
@@ -113,12 +113,12 @@
            .      
       * __________________________________________________
       * OK  
-      *    CALL myProc  INPUT     by content somedate                         
-      *                                        'YYYYMMDD'                     
-      *                                      myDate2                          
-      *                 IN-OUT myDate3 myDate4                                
-      *                            OUTPUT     flag     realformat             
-           CALL 'd5ec4efc' USING
+      *    CALL myProc  INPUT     by content somedate
+      *                                        'YYYYMMDD'
+      *                                      myDate2
+      *                 IN-OUT myDate3 myDate4
+      *                            OUTPUT     flag     realformat
+           CALL 'd5ec4efc' USING 
                               by content   somedate
                                            'YYYYMMDD'
                                            myDate2
@@ -130,14 +130,14 @@
            END-CALL     
       * __________________________________________________
       * OK  
-      *    CALL myProc  INPUT  somedate                                       
-      *                        by content 'YYYYMMDD'                          
-      *                        by reference myDate2                           
-      *                 IN-OUT myDate3                                        
-      *                        myDate4                                        
-      *                 OUTPUT flag                                           
-      *                        realformat                                     
-           CALL 'd5ec4efc' USING
+      *    CALL myProc  INPUT  somedate
+      *                        by content 'YYYYMMDD'
+      *                        by reference myDate2
+      *                 IN-OUT myDate3
+      *                        myDate4
+      *                 OUTPUT flag
+      *                        realformat
+           CALL 'd5ec4efc' USING 
                                            somedate
                               by content   'YYYYMMDD'
                               by reference myDate2
@@ -178,7 +178,7 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM c5875eec.                                                  
+       END PROGRAM c5875eec.
       *
       *DECLARE PROCEDURE myProc PRIVATE
       *   INPUT  mydate        TYPE Date
