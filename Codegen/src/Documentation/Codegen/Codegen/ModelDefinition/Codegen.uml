@@ -125,7 +125,7 @@ columns = ColumnsLayout.CobolReferenceFormat
           </comment>
           <comment
             Id="ed11e0f7-66fc-4977-abbd-c06d81db3394">
-            <body>The Linearization Phase. For each node:compute its positions inside the source document, and associate it to its target line.</body>
+            <body>The Linearization Phase. For each node:compute its positions inside the source document, and associate it to its target line and Source Code Buffer</body>
             <annotatedElements>
               <behaviorExecutionSpecificationMoniker
                 Id="24c13da8-5d06-4fc5-86fe-35b550dd5d28"
