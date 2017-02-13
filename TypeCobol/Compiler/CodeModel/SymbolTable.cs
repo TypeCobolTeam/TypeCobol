@@ -96,7 +96,20 @@ namespace TypeCobol.Compiler.CodeModel {
             Add(DataEntries, symbol);
         }
 
-	    private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node {
+        internal void AddVariable(string name, DataDefinition data)
+        {
+            string key = name;
+            List<DataDefinition> found;
+            bool present = DataEntries.TryGetValue(key, out found);
+            if (!present)
+            {
+                found = new List<DataDefinition>();
+                DataEntries.Add(key, found);
+            }
+            found.Add(data);
+        }
+
+        private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node {
 		    string key = symbol.QualifiedName.Head;
 		    List<T> found;
 		    bool present = table.TryGetValue(key, out found);
@@ -331,15 +344,18 @@ namespace TypeCobol.Compiler.CodeModel {
 		    }
 		    return offset == name2.Count;
 	    }
-	    /// <summary>
-	    /// Filters out of a list of data descriptions entries all elements
-	    /// with parent element named differently than what is expected.
-	    /// </summary>
-	    /// <param name="values">List of entries to filter</param>
-	    /// <param name="pname">Expected parent name</param>
-	    /// <param name="generation">"Generation" of the parent name (1 for TopLevel, 2 for TopLevel.TopLevel and so on)</param>
-	    /// <returns>Filtered list</returns>
-	    private List<T> Filter<T>(IList<T> values, string pname, int generation) where T : Node {
+
+        
+
+        /// <summary>
+        /// Filters out of a list of data descriptions entries all elements
+        /// with parent element named differently than what is expected.
+        /// </summary>
+        /// <param name="values">List of entries to filter</param>
+        /// <param name="pname">Expected parent name</param>
+        /// <param name="generation">"Generation" of the parent name (1 for TopLevel, 2 for TopLevel.TopLevel and so on)</param>
+        /// <returns>Filtered list</returns>
+        private List<T> Filter<T>(IList<T> values, string pname, int generation) where T : Node {
 		    var filtered = new List<T>();
 		    foreach(var symbol in values) {
 			    var parent = GetAncestor(symbol, generation);
@@ -439,32 +455,35 @@ namespace TypeCobol.Compiler.CodeModel {
             return GetFunction(uri, profile);
         }
 
-        public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null) {
+        public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, bool strictMatces = true) {
 		    var found = GetFunction(name.Head);
 		    found = Get(found, name);
 		    if (profile != null) {
 			    var filtered = new List<FunctionDeclaration>();
 			    foreach(var function in found) {
-				    if (Matches(function.Profile, profile))
+				    if (Matches(function.Profile, profile, strictMatces))
 					    filtered.Add(function);
 			    }
 			    found = filtered;
 		    }
 		    return found;
 	    }
-	    private bool Matches(ParameterList p1, ParameterList p2) {
+	    private bool Matches(ParameterList p1, ParameterList p2, bool strictMatces) {
     //		if (p1.ReturningParameter == null && p2.ReturningParameter != null) return false;
     //		if (p1.ReturningParameter != null && p2.ReturningParameter == null) return false;
     //		if (p1.ReturningParameter != p2.ReturningParameter) return false;
 		    if (p1.InputParameters.Count  != p2.InputParameters.Count)  return false;
 		    if (p1.InoutParameters.Count  != p2.InoutParameters.Count)  return false;
 		    if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
-		    for(int c=0; c<p1.InputParameters.Count; c++)
-			    if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
-		    for(int c=0; c<p1.InoutParameters.Count; c++)
-			    if (p1.InoutParameters[c] != p2.InoutParameters[c]) return false;
-		    for(int c=0; c<p1.OutputParameters.Count; c++)
-			    if (p1.OutputParameters[c] != p2.OutputParameters[c]) return false;
+	        if (strictMatces)
+	        {
+                for (int c = 0; c < p1.InputParameters.Count; c++)
+                    if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
+                for (int c = 0; c < p1.InoutParameters.Count; c++)
+                    if (p1.InoutParameters[c] != p2.InoutParameters[c]) return false;
+                for (int c = 0; c < p1.OutputParameters.Count; c++)
+                    if (p1.OutputParameters[c] != p2.OutputParameters[c]) return false;
+            }
 		    return true;
 	    }
 

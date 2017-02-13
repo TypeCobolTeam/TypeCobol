@@ -10,6 +10,7 @@ PROGRAM: TESTPGM1 common:False initial:False recursive:False
 -- DATA --------
   W-TAB-LCC-NONCLOSES:Alphanumeric
   W-TAB-LCC-X:Array
+  W-TAB-LCC-X:Array
   W-TAB-LCC-CLE:Alphanumeric
   W-TAB-LCC-CLE-RIB:rib
   W-TAB-LCC-CLE-DEV:Alphanumeric
