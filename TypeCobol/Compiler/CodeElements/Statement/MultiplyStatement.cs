@@ -8,7 +8,13 @@ public abstract class MultiplyStatement: AbstractArithmeticStatement {
 
 	public NumericVariable Operand { get; set; }
 	public abstract override Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) /*&& astVisitor.Visit(this) abstract and non important class so not useful*/
+                   && this.ContinueVisitToChildren(astVisitor, Operand);
+        }
+    }
 
 /// <summary>
 /// p376: Format 1: MULTIPLY statement
@@ -38,7 +44,13 @@ public class MultiplySimpleStatement: MultiplyStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) SendingAndReceivingStorageAreas);
+        }
+    }
 
 /// <summary>
 /// p377: Format 2: MULTIPLY statement with GIVING phrase
@@ -70,6 +82,12 @@ public class MultiplyGivingStatement: MultiplyStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, ByOperand)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) ReceivingStorageAreas);
+        }
+    }
 
 }

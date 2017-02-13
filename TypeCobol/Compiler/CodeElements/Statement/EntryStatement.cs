@@ -54,5 +54,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// The argument receiving mode can be : BY REFERENCE or BY VALUE
         /// </summary>
         public IList<CallTargetParameter> InputParameters { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, InputParameters)
+                   && this.ContinueVisitToChildren(astVisitor, ProgramEntry);
+        }
     }
 }

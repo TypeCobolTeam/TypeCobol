@@ -36,7 +36,13 @@ public abstract class SearchStatement: StatementElement {
 	/// subscripted or reference-modified.
 	/// </summary>
 	public Variable TableToSearch { get; set; }
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, TableToSearch);
+        }
+    }
 
 /// <summary>
 /// p408: Format 1: SEARCH statement for serial search
@@ -59,7 +65,13 @@ public class SearchSerialStatement: SearchStatement {
 	/// increased, the specified data item is simultaneously increased by 1.
 	/// </summary>
 	public ReceivingStorageArea VaryingSearchIndex { get; set; }
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, VaryingSearchIndex);
+        }
+    }
 
 /// <summary>
 /// p408: Format 2: SEARCH statement for binary search
@@ -68,13 +80,23 @@ public class SearchSerialStatement: SearchStatement {
 /// </summary>
 public class SearchBinaryStatement: SearchStatement {
 	public SearchBinaryStatement(): base(StatementType.SearchBinaryStatement) { }
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
 /// <summary>Conditional expression case for the SEARCH statement.</summary>
 public class WhenSearchCondition: StatementElement {
 	public WhenSearchCondition(): base(CodeElementType.WhenSearchCondition, StatementType.WhenSearchCondition) { }
 
 	public ConditionalExpression Condition { get; set; }
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, Condition);
+        }
+    }
 
 }

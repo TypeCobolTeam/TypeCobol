@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -29,10 +30,16 @@ namespace TypeCobol.Compiler.CodeElements
         /// organization or access. [Each filename] must not be a sort or merge file.
         /// </summary>
         public CloseFileInstruction[] CloseFileInstructions { get; set; }
-        
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) CloseFileInstructions);
+        }
+
     }
 
-    public class CloseFileInstruction
+    public class CloseFileInstruction : IVisitable
     {
         /// <summary>
         /// p313:
@@ -76,5 +83,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// issue #62: LOCK is notified when you don't want the file can be opened again during the execution of program.
         /// </summary>
         public SyntaxProperty<bool> IsWithLock { get; set; }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, FileName, IsReelUnit, IsForRemoval, IsWithNoRewind, IsWithLock);
+        }
     }
 }

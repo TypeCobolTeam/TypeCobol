@@ -33,5 +33,9 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public GobackStatement() : base(CodeElementType.GobackStatement, StatementType.GobackStatement)
         { }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
     }
 }

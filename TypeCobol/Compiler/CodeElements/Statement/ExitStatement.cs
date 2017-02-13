@@ -13,5 +13,9 @@ namespace TypeCobol.Compiler.CodeElements
     public class ExitStatement : StatementElement
     {
         public ExitStatement() : base(CodeElementType.ExitStatement, StatementType.ExitStatement) { }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
     }
 }

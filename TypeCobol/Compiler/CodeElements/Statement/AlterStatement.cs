@@ -42,7 +42,12 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public AlterStatement() : base(CodeElementType.AlterStatement, StatementType.AlterStatement) { }
 
-        public AlterGotoInstruction[] AlterGotoInstructions { get; set; }         
+        public AlterGotoInstruction[] AlterGotoInstructions { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) AlterGotoInstructions);
+        }
     }
 
     /// <summary>
@@ -54,7 +59,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// procedure-name-1, the GO TO statement transfers control to the paragraph specified
     /// in procedure-name-2.
     /// </summary>
-    public class AlterGotoInstruction
+    public class AlterGotoInstruction : IVisitable
     {
         /// <summary>
         /// p301:
@@ -72,5 +77,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// Must name a PROCEDURE DIVISION section or paragraph.
         /// </summary>
         public SymbolReference NewTargetProcedure;
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, AlteredProcedure, NewTargetProcedure);
+        }
     }
 }

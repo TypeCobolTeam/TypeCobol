@@ -31,10 +31,8 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   //TODO VariableUser
                    && astVisitor.VisitVariableWriter(this)
                    && this.ContinueVisitToChildren(astVisitor, Unsafe) //Order is important here, as unsafe is part of VariableWriter interface
-                                                                       //TODO VariablesWritten
                    && astVisitor.VisitFunctionCaller(this)
                    && this.ContinueVisitToChildren(astVisitor, FunctionCalls); //Order is important here, as FunctionsCall is part of VariableWriter interface
         }

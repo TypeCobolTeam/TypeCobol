@@ -9,14 +9,14 @@
 001510         ==:FATAL:==  by ==CCTFAL-LOG-LVL-F or TRC-F==            000000
 001520         ==:INFO:==  by ==CCTFAL-LOG-LVL-I or TRC-I==             000000
 001530         ==:TRAC:==  by ==CCTFAL-LOG-LVL-T or TRC-T==.            000000
-000060 COPY YFIRSTCOPY.                                                 000060
+000060 COPY Codegen-FirstCopy.                                          000060
 000070 01  MyKey    TYPEDEF PIC X(04).                                  000070
 000071 01  MyKey2    TYPEDEF.
            05 partA pic X(04).
            05 partB pic 9(04).
            05 partC pic X(05).
 000080 01  b TYPE Bool.                                                 000080
-000090 01  mykey  PIC X(04). COPY YSECONDCOPY SUPPRESS.                 000090
+000090 01  mykey  PIC X(04). COPY Codegen-SECONDCOPY SUPPRESS.          000090
 002440 77 myconstant PIC X(10) value 'SHIBBOLEET'.                      002440
 000100 01  result PIC 9(32).                                            000100
 

@@ -251,5 +251,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolReference OutputProcedure { get; set; }
         public SymbolReference ThroughOutputProcedure { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, FileName, WithDuplicates, CollatingSequence, 
+                   InputProcedure, ThroughInputProcedure, OutputProcedure, ThroughOutputProcedure)
+                   && this.ContinueVisitToChildren(astVisitor, SortingKeys, InputFiles, OutputFiles);
+        }
     }    
 }

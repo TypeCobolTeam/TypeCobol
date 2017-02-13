@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -260,15 +261,23 @@ namespace TypeCobol.Compiler.CodeElements
 		/// identifier-1 must be large enough to contain the generated XML document
 		/// before any suppression.
 		/// </summary>
-		public XmlSuppressDirective[] XmlSuppressDirectives { get; set; }		
-	}
+		public XmlSuppressDirective[] XmlSuppressDirectives { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, ReceivingField, DataItemToConvertToXml, GeneratedXmlCharsCount,
+                   CodePage, StartWithXMLDeclaration, GenerateElementaryItemsAsAttributes, Namespace, NamespacePrefix)
+                   && this.ContinueVisitToChildren(astVisitor, XmlNameMappings, XmlTypeMappings, XmlSuppressDirectives);
+        }
+    }
 
     /// <summary>
     /// p462:
     /// NAME phrase
     /// Allows you to supply element and attribute names.
     /// </summary>
-    public class XmlNameMapping
+    public class XmlNameMapping : IVisitable
     {
         /// <summary>
         /// p462:
@@ -290,6 +299,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// national or the encoding phrase must specify 1208.
         /// </summary>
         public AlphanumericValue XmlNameToGenerate;
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, DataItemName, XmlNameToGenerate);
+        }
     }
 
     /// <summary>
@@ -297,7 +310,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// TYPE phrase
     /// Allows you to control attribute and element generation.
     /// </summary>
-    public class XmlTypeMapping
+    public class XmlTypeMapping : IVisitable
     {
         /// <summary>
         /// p463:
@@ -348,6 +361,10 @@ namespace TypeCobol.Compiler.CodeElements
             /// </summary>
             CONTENT
         }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, DataItemName, XmlSyntaxTypeToGenerate);
+        }
     }
 
     /// <summary>
@@ -359,7 +376,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// identifier-1 must be large enough to contain the generated XML document
     /// before any suppression.
     /// </summary>
-    public class XmlSuppressDirective
+    public class XmlSuppressDirective : IVisitable
     {
         /// <summary>
         /// p463:
@@ -429,6 +446,11 @@ namespace TypeCobol.Compiler.CodeElements
             NONNUMERIC_ELEMENT,
             ATTRIBUTE,
             ELEMENT,
+        }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, XmlSyntaxTypeToSuppress, DataItemName)
+                && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) ItemValuesToSuppress);
         }
     }
 }
