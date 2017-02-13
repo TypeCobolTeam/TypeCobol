@@ -59,6 +59,23 @@
            MOVE y  OF  Location  OF  p TO y  OF  location  OF  p
       *    move p::location::y to p::location::y                              
            move y OF location OF p to y OF location OF p
+
+      *    if Segment::p = Segment::q                                         
+           if p OF Segment = q OF Segment
+             continue
+           end-if
+
+           evaluate true
+      *       when Segment::p::Location::x = 1                                
+              when x OF Location OF p OF Segment = 1
+                  continue
+      *       when Segment::p::Location::y = 1                                
+              when y OF Location OF p OF Segment = 1
+                  continue
+              when other
+      *           compute Segment::p::Location::y = 9                         
+                  compute y OF Location OF p OF Segment = 9
+           end-evaluate
            .
        
        END PROGRAM Test-Name-Qualification.
