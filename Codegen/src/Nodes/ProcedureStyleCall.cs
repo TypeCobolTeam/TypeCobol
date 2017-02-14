@@ -48,7 +48,8 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
 				var hash = GetHash(Node);
-				var callTextLine = new TextLineSnapshot(-1, "CALL '" + hash + "' USING ", null);
+			    var callString = $"CALL '{hash}' {(Node.FunctionCall.Arguments.Length == 0 ? null : "USING")}";
+				var callTextLine = new TextLineSnapshot(-1, callString, null);
 				_cache.Add(callTextLine);
 				var indent = new string(' ', callTextLine.Length + 1);
                 TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode = (TypeCobol.Compiler.CodeElements.ParameterSharingMode)(-1);
