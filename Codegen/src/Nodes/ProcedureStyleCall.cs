@@ -61,9 +61,9 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-				var hash = GetHash(Node);
+				var hash = Node.FunctionDeclaration.Hash;
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
-                var callString = $"CALL '{hash}' {(Node.FunctionCall.Arguments.Length == 0 ? null : "USING")}";
+			    var callString = $"CALL '{hash}' {(Node.FunctionCall.Arguments.Length == 0 ? null : "USING")}";
 				var callTextLine = new TextLineSnapshot(-1, callString, null);
 				_cache.Add(callTextLine);
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL_PARAMS
@@ -112,10 +112,6 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		}
 	}
 
-        private string GetHash(Compiler.Nodes.ProcedureStyleCall call)
-        {  
-            return call.FunctionDeclaration.Hash;
-        }
 
     /// <summary>
     /// Get the String representation of an parameter with a Sharing Mode.

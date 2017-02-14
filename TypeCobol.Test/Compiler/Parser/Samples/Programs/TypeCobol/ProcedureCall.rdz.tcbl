@@ -54,6 +54,22 @@
        DECLARE PROCEDURE varC PRIVATE.
        END-DECLARE.
 
+       DECLARE PROCEDURE varD PRIVATE
+           INPUT  format        PIC X(08)
+           OUTPUT okay          TYPE Bool
+                  actual-format PIC X(08).
+       END-DECLARE.
+
+       DECLARE PROCEDURE varD PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT okay          TYPE Bool
+                  actual-format PIC X(08).
+       END-DECLARE.
+
+       DECLARE PROCEDURE varD PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT okay          TYPE Bool.
+       END-DECLARE.
 
        TRAITEMENT.
       * __________________________________________________
@@ -155,5 +171,10 @@
 
       * KO : varC is ambiguous (var C is a variable or procedure)
            CALL varC
+
+      * KO : varD is definied multiple times but always with a signature different to call
+           CALL varD
+                    INPUT      somedate
+
        .
        END PROGRAM ProcedureCall.
