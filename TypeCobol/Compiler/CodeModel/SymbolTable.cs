@@ -439,36 +439,36 @@ namespace TypeCobol.Compiler.CodeModel {
             return GetFunction(uri, profile);
         }
 
-        public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, bool strictMatces = true) {
+        public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, bool strictMatches = true) {
 		    var found = GetFunction(name.Head);
 		    found = Get(found, name);
 		    if (profile != null) {
 			    var filtered = new List<FunctionDeclaration>();
 			    foreach(var function in found) {
-				    if (Matches(function.Profile, profile, strictMatces))
+				    if (Matches(function.Profile, profile, strictMatches))
 					    filtered.Add(function);
 			    }
 			    found = filtered;
 		    }
 		    return found;
 	    }
-	    private bool Matches(ParameterList p1, ParameterList p2, bool strictMatces) {
+	    private bool Matches(ParameterList p1, ParameterList p2, bool strictMatches) {
     //		if (p1.ReturningParameter == null && p2.ReturningParameter != null) return false;
     //		if (p1.ReturningParameter != null && p2.ReturningParameter == null) return false;
     //		if (p1.ReturningParameter != p2.ReturningParameter) return false;
 		    if (p1.InputParameters.Count  != p2.InputParameters.Count)  return false;
 		    if (p1.InoutParameters.Count  != p2.InoutParameters.Count)  return false;
 		    if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
-	        if (strictMatces)
-	        {
-                for (int c = 0; c < p1.InputParameters.Count; c++)
-                    if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
-                for (int c = 0; c < p1.InoutParameters.Count; c++)
-                    if (p1.InoutParameters[c] != p2.InoutParameters[c]) return false;
-                for (int c = 0; c < p1.OutputParameters.Count; c++)
-                    if (p1.OutputParameters[c] != p2.OutputParameters[c]) return false;
-            }
-		    return true;
+
+	        if (!strictMatches) return true;
+
+	        for (int c = 0; c < p1.InputParameters.Count; c++)
+	            if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
+	        for (int c = 0; c < p1.InoutParameters.Count; c++)
+	            if (p1.InoutParameters[c] != p2.InoutParameters[c]) return false;
+	        for (int c = 0; c < p1.OutputParameters.Count; c++)
+	            if (p1.OutputParameters[c] != p2.OutputParameters[c]) return false;
+	        return true;
 	    }
 
             [NotNull]

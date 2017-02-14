@@ -47,7 +47,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-				var hash = GetHash(Node);
+				var hash = Node.FunctionDeclaration.Hash;
 			    var callString = $"CALL '{hash}' {(Node.FunctionCall.Arguments.Length == 0 ? null : "USING")}";
 				var callTextLine = new TextLineSnapshot(-1, callString, null);
 				_cache.Add(callTextLine);
@@ -88,11 +88,6 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 			return _cache;
 		}
 	}
-
-        private string GetHash(Compiler.Nodes.ProcedureStyleCall call)
-        {  
-            return call.FunctionDeclaration.Hash;
-        }
 
 	private string ToString(TypeCobol.Compiler.CodeElements.CallSiteParameter parameter, Compiler.CodeModel.SymbolTable table, ArgMode mode,
         ref TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode, ref int previousSpan) {
