@@ -122,6 +122,14 @@ cobolCallStatement:
 
 // TCRFUN_CALL_PARAMETER_ORDER
 tcCallStatement:
+//SMEDILOL: 
+//programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable can lead to "identifier"
+//functionNameReference only leads to "identifier"
+//so functionNameReference can never be filled by Antlr
+//
+//We should create an entry programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionNameReference
+//But as we are thinking to simplify the grammar, for now only the TypeCobolCodeElementBuilder will now that 
+//programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable can be ambiguous an one of its CandidatesType can be TCFunctionName
 	CALL (programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable | functionNameReference)
 		(INPUT  callInputParameter+)?
 		(IN_OUT  callInoutParameter+)?

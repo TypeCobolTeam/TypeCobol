@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Parser
+﻿using System;
+
+namespace TypeCobol.Compiler.Parser
 {
 
     using System.Collections.Generic;
@@ -209,9 +211,12 @@
 
         public override void EnterTcCallStatement(CodeElementsParser.TcCallStatementContext context)
         {
-            SymbolReference name;
-            var TCfuncNameRef = context.functionNameReference();
-            var CBCallProc = context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable();
+            if (context.functionNameReference() != null)
+            {
+                throw new NotImplementedException("should not pass here");
+            }
+
+            var cbCallProc = context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable();
 
             var inputs = new List<CallSiteParameter>();
             var inouts = new List<CallSiteParameter>();
@@ -221,29 +226,33 @@
             CallSite callSite = new CallSite();
             Context = context;
 
-            ProcedureStyleCallStatement statement;
 
-            if (TCfuncNameRef != null)
-            {
-                name = CobolWordsBuilder.CreateFunctionNameReference(TCfuncNameRef);
-                statement = new ProcedureStyleCallStatement(new ProcedureCall(name, inputs, inouts, outputs))
-                {
-                    ProgramOrProgramEntryOrProcedureOrFunction =
-                        new SymbolReferenceVariable(
-                            StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, name)
-                };
-            }
-            else
-            {
-                name = CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(CBCallProc).MainSymbolReference;
-                statement = new ProcedureStyleCallStatement(new ProcedureCall(name, inputs, inouts, outputs))
-                {
-                    ProgramOrProgramEntryOrProcedureOrFunction = CobolExpressionsBuilder
-                        .CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(CBCallProc)
-                };
-            }
-                
-            callSite.CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.MainSymbolReference;
+
+            //Here ambiguousSymbolReference with either CandidatesType:
+            // - ProgramNameOrProgramEntry
+            // - data, condition, UPSISwitch, TCFunctionName
+            var ambiguousSymbolReference =
+                CobolExpressionsBuilder
+                    .CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(cbCallProc);
+            //If (inputs, inouts ou outputs).Count > 0, then it's a procedure call
+                //Check temp.Type or CandidatesTypes to see if a TCFunctionName is possible
+                //If so, create ProcedureStyleCallStatement with a ProcedureCall and fix SymbolReference so it's not ambiguous 
+                var statement = new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference, inputs, inouts, outputs))
+                    {
+                        ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = ambiguousSymbolReference
+                    };
+                //else it's an error
+                    //Create codeElement with all information but tag it as "in error"
+
+            //Else no argument, then check temp.Type or CandidatesTypes
+                //if CandidatesTypes = Program or program Entry
+                    //new ProcedureStyleCallStatement() { ProgramNameOrProgramEntry= temp}
+                //else if CandidatesTypes = data or TCFunctionName
+                //new ProcedureStyleCallStatement() {ProcdurePointerOrTCProcedureFunction = temp}
+                //else error, but store temp in ProgramOrProgramEntry or DataOrTCProcedureFunction ?
+
+
+            callSite.CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction.MainSymbolReference;
            
 
             SyntaxProperty<ParameterSharingMode> mode = null;
@@ -280,51 +289,45 @@
                 });
             }
 
-           
+            int parametersCount = inputs.Count + outputs.Count + inouts.Count;
+            callSite.Parameters = new CallSiteParameter[parametersCount];
+            int i = 0;
 
-            if (CBCallProc != null)
+            //Add inputs to global callsites parameters
+            if (inputs.Count > 0)
             {
-                
-
-                int parametersCount = inputs.Count + outputs.Count + inouts.Count;
-                callSite.Parameters = new CallSiteParameter[parametersCount];
-                int i = 0;
-
-                //Add inputs to global callsites parameters
-                if (inputs.Count > 0)
+                foreach (var param in inputs)
                 {
-                    foreach (var param in inputs)
-                    {
-                        callSite.Parameters[i] = param;
-                        i++;
-                    }
+                    callSite.Parameters[i] = param;
+                    i++;
                 }
-
-                //Add outputs to global callsites parameters
-                if (outputs.Count > 0)
-                {
-                    foreach (var param in outputs)
-                    {
-                        callSite.Parameters[i] = param;
-                        i++;
-                    }
-                }
-
-                //Add inouts to global callsites parameters
-                if (inouts.Count > 0)
-                {
-                    foreach (var param in inouts)
-                    {
-                        callSite.Parameters[i] = param;
-                        i++;
-                    }
-                }
-
-                if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
-                statement.CallSites.Add(callSite);
-
-                CodeElement = statement;
             }
+
+            //Add outputs to global callsites parameters
+            if (outputs.Count > 0)
+            {
+                foreach (var param in outputs)
+                {
+                    callSite.Parameters[i] = param;
+                    i++;
+                }
+            }
+
+            //Add inouts to global callsites parameters
+            if (inouts.Count > 0)
+            {
+                foreach (var param in inouts)
+                {
+                    callSite.Parameters[i] = param;
+                    i++;
+                }
+            }
+
+            if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
+            statement.CallSites.Add(callSite);
+
+            CodeElement = statement;
+            
         }
 
         private void CreateSharingMode(CodeElementsParser.CallInputParameterContext parameter,
