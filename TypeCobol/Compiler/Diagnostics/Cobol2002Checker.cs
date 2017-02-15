@@ -105,7 +105,7 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 		    }
 	        var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
             var errors = new Error();
-		    var redefinedVariable  = node.SymbolTable.GetRedifinedVariable(redefinesNode, redefinesSymbolReference);
+		    var redefinedVariable  = node.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
 
 	        if (redefinedVariable == null)
 	        {

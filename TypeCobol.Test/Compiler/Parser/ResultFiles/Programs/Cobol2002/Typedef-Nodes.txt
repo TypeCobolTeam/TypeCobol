@@ -16,6 +16,7 @@
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
 [1,37]<30,Error,Semantics>Semantic error: TYPE 'NoRedefines1' is not referenced
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+[1,61]<30,Error,Semantics>Semantic error: Illegal REDEFINES: Symbol 'BufferTobeRedefined' is not referenced
 [1,37]<30,Error,Semantics>Semantic error: TYPE 'NoRedefines2' is not referenced
 [17,25]<27,Error,Syntax>Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
 [1,49]<30,Error,Semantics>Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
