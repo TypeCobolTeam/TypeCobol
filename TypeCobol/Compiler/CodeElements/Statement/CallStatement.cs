@@ -144,7 +144,7 @@ namespace TypeCobol.Compiler.CodeElements
 
     public class ProcedureStyleCallStatement : StatementElement
     {
-	public ProcedureCall ProcedureCall { get; private set; }
+        public ProcedureCall ProcedureCall { get; private set; }
 
         /// <summary>
         /// p304:
@@ -188,19 +188,29 @@ namespace TypeCobol.Compiler.CodeElements
         /// deleted by the assembler, any function-pointers that had been set to that
         /// function or program's entry point are no longer valid.
         /// </summary>
-        public SymbolReferenceVariable ProgramOrProgramEntryOrProcedureOrFunction { get; set; }
+        public SymbolReferenceVariable ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction { get; set; }
 
-	public ProcedureStyleCallStatement(ProcedureCall call)
-		: base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
-	{
-		this.ProcedureCall = call;
-	}
 
-        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        //SMEDILOL: idea use 2 SymbolReference split per CandidatesType
+        //Both are ambiguous, but less ambiguous than one
+        //But this can be a bad idea, because code that use CallStatement will now have to deal with 2 variables
+        //So try it, but don't hesitate to remove if it's a bad idea
+
+        //public SymbolReferenceVariable ProgramNameOrProgramEntry { get; set; }
+        //public SymbolReferenceVariable ProcdurePointerOrTCProcedureFunction { get; set; }
+
+        public ProcedureStyleCallStatement(ProcedureCall call)
+        : base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
         {
-            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   && this.ContinueVisitToChildren(astVisitor, ProcedureCall);
+            this.ProcedureCall = call;
         }
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   &&
+                   this.ContinueVisitToChildren(astVisitor,
+                       ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction, ProcedureCall);
+        }
+    }
 
 }

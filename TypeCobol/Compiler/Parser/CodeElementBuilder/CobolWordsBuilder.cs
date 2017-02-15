@@ -631,6 +631,11 @@ namespace TypeCobol.Compiler.Parser
             return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName });
         }
 
+        internal AmbiguousSymbolReference CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrTCFunctionProcedure(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+        {
+            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.FunctionName  });
+        }
+
         internal AmbiguousSymbolReference CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReferenceContext context)
         {
             return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.IndexName });
@@ -785,8 +790,22 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
+        internal SymbolReference CreateQualifiedDataNameOrQualifiedConditionNameOrTCFunctionProcedure(CodeElementsParser.QualifiedDataNameOrQualifiedConditionNameContext context)
+        {
+            if (context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference() != null)
+            {
+                return CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrTCFunctionProcedure(context.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference());
+            }
+            else
+            {
+                return CreateQualifiedDataNameOrQualifiedConditionName1(context.qualifiedDataNameOrQualifiedConditionName1());
+            }
+        }
 
-	private SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.QualifiedDataNameOrQualifiedConditionName1Context context) {
+
+        
+
+    private SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.QualifiedDataNameOrQualifiedConditionName1Context context) {
 		var c = context.cobolQualifiedDataNameOrQualifiedConditionName1();
 		if (c != null) return CreateQualifiedDataNameOrQualifiedConditionName1(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 		var tc = context.tcQualifiedDataNameOrQualifiedConditionName1();
