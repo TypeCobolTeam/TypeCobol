@@ -91,7 +91,7 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 				    return count;
 			    }
 		    }
-		    internal int Validate(List<DataDefinition> candidates) { return candidates.Count-Errors; }
+		   
 	    }
 
 	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
@@ -105,19 +105,23 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 		    }
 	        var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
             var errors = new Error();
-		    var redefinedVariables  = node.SymbolTable.GetVariable(redefinesSymbolReference);
+		    var redefinedVariable  = node.SymbolTable.GetRedifinedVariable(redefinesNode, redefinesSymbolReference);
 
-		    foreach(var redefinedVariable in redefinedVariables) {
-			    if (redefinesNode.IsPartOfATypeDef) {
-				    errors[Error.Status.TYPEDEFPart]++;
-			    }
-                if (redefinedVariable.IsStronglyTyped)
-                {
-                    errors[Error.Status.TYPEStrong]++;
-                }
+	        if (redefinedVariable == null)
+	        {
+                string message = "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced";
+                DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+	            return;
+	        }
+		   
+			if (redefinesNode.IsPartOfATypeDef)
+            {
+				errors[Error.Status.TYPEDEFPart]++;
+			}
+            if (redefinedVariable.IsStronglyTyped)
+            {
+                errors[Error.Status.TYPEStrong]++;
             }
-		    int ValidDataRedefinitions = errors.Validate(redefinedVariables);
-		    if (ValidDataRedefinitions == 1) return; // at least one data item redefinition OK
 
 		    var types = node.SymbolTable.GetType(redefinesSymbolReference);
 		    foreach(var type in types) {
@@ -125,18 +129,7 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 				    errors[Error.Status.TYPEDEFStrong]++;
 			    }
 		    }
-		    int validTypeRedefinitions = errors.Validate(redefinedVariables);
-		    if (validTypeRedefinitions == 1) return; // at least one _weak_ TYPEDEF redefinition OK
 
-		    if (ValidDataRedefinitions > 1) {
-			    string message = "Illegal REDEFINES: Ambiguous reference to symbol \'"+ redefinesSymbolReference+"\'";
-			    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-		    }
-		    if (validTypeRedefinitions > 1) {
-			    string message = "Illegal REDEFINES: Ambiguous reference to TYPEDEF \'"+ redefinesSymbolReference + "\'";
-			    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-		    }
-			
 		    if (errors.Errors > 0) {
 			    if (errors[Error.Status.TYPEStrong] > 0) {
 				    string message = "Illegal REDEFINES: \'"+ redefinesSymbolReference+"\' is strongly-typed";
@@ -150,12 +143,8 @@ class TypeDefinitionEntryChecker: CodeElementListener {
 				    string message = "Illegal REDEFINES: \'"+ redefinesSymbolReference + "\' is a STRONG TYPEDEF";
 				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 			    }
-		    } else {
-			    if (ValidDataRedefinitions+validTypeRedefinitions < 1) {
-				    string message = "Illegal REDEFINES: Symbol \'"+ redefinesSymbolReference + "\' is not referenced";
-				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			    }
 		    }
+		    
 	    }
     }
 

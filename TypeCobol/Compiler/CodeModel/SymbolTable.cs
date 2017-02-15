@@ -6,6 +6,7 @@ using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeModel {
     
@@ -141,6 +142,26 @@ namespace TypeCobol.Compiler.CodeModel {
         {
             return GetVariable(symbolReference.URI);
         }
+
+        public DataDefinition GetRedifinedVariable(DataRedefines redefinesNode, SymbolReference symbolReference)
+        {
+            var childrens = redefinesNode.Parent.Children;
+            int index = childrens.Select((child, position) => new {child, position}).First(c => c.child.CodeElement == redefinesNode.CodeElement).position - 1;
+            bool redefinedVariableFound = false;
+
+            while (!redefinedVariableFound && index > 0)
+            {
+                var child = childrens[index].CodeElement as DataDescriptionEntry;
+                if (child != null && child.DataName.Name == symbolReference.Name)
+                {
+                    return childrens[index] as DataDefinition;
+                }
+                    
+                index--;
+            }
+
+            return null;
+        } 
 
         public List<DataDefinition> GetVariable(QualifiedName name) {
 		    return new List<DataDefinition>(GetVariableExplicit(name).Keys.Cast<DataDefinition>());
