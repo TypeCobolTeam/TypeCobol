@@ -1,5 +1,5 @@
 --- Diagnostics ---
-[8,40]<30,Error,Semantics>Semantic error: Illegal REDEFINES: Symbol 'MyVar1' is not referenced ([8>40] on line 14)
+Line 14[8,40] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'MyVar1' is not referenced
 
 --- Program ---
 PROGRAM: RedefinesTest common:False initial:False recursive:False

@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[24,27]<27,Error,Syntax>Syntax error : mismatched input 'DTCS' expecting {ALPHABETIC, ALPHANUMERIC, ALPHANUMERIC-EDITED, DBCS, EGCS, NATIONAL, NATIONAL-EDITED, NUMERIC, NUMERIC-EDITED} (RuleStack=codeElement>initializeStatement, OffendingSymbol=[24,27:DTCS]<UserDefinedWord> on line 7)
+Line 7[24,27] <27, Error, Syntax> - Syntax error : mismatched input 'DTCS' expecting {ALPHABETIC, ALPHANUMERIC, ALPHANUMERIC-EDITED, DBCS, EGCS, NATIONAL, NATIONAL-EDITED, NUMERIC, NUMERIC-EDITED} RuleStack=codeElement>initializeStatement,  OffendingSymbol=[24,27:DTCS]<UserDefinedWord>
 --- Code Elements ---
 [[InitializeStatement]] [1,10:INITIALIZE]<INITIALIZE> --> [12,12:x]<UserDefinedWord>
 

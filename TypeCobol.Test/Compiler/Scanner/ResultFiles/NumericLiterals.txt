@@ -56,10 +56,10 @@
 [55,63:.55E+9847]<FloatingPointLiteral>{55|2>0.55E9847>Infinity}
 [64,64: ]<SpaceSeparator>
 [65,68:.25e]<InvalidToken>
-[43,47]<16,Error,Tokens>Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
-[49,53]<17,Error,Tokens>Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
-[55,63]<18,Error,Tokens>Invalid floating point numeric literal format : the exponent is represented by an E followed by an optional sign and one or two digits (E+99)
-[65,68]<16,Error,Tokens>Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
+Line -1[43,47] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
+Line -1[49,53] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
+Line -1[55,63] <18, Error, Tokens> - Invalid floating point numeric literal format : the exponent is represented by an E followed by an optional sign and one or two digits (E+99)
+Line -1[65,68] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
 
 -- Line 4 --
 [1,7:1234537]<IntegerLiteral>{1234537}

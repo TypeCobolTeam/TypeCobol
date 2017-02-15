@@ -37,12 +37,12 @@
 -- Line 13 --
 *** DIRECTIVE INVALID SYNTAX -> TITLE "" ([8,12:TITLE]<TITLE>) ***
 [13,13+:.]<PeriodSeparator>
-[13,13]<27,Error,Syntax>Syntax error : no viable alternative at input 'TITLE ... .'
+Line 13[13,13] <27, Error, Syntax> - Syntax error : no viable alternative at input 'TITLE ... .'
 
 -- Line 14 --
 *** DIRECTIVE TITLE "Unfinished title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,30:"Unfinished title]<AlphanumericLiteral>(",Y,N){Unfinished title}) ***
 
 -- Line 15 --
 *** DIRECTIVE INVALID SYNTAX -> TITLE "" ([8,12:TITLE]<TITLE>) ***
-[1,0]<27,Error,Syntax>Syntax error : no viable alternative at input 'TITLE ... '
+Line 0[1,0] <27, Error, Syntax> - Syntax error : no viable alternative at input 'TITLE ... '
 
