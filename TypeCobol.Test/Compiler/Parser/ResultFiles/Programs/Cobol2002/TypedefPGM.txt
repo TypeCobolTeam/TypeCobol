@@ -56,6 +56,7 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   BufferTobeRedefined:Alphanumeric
   NoRedefines1:Alphanumeric
   varNoRedefines1:NoRedefines1
+  BufferTobeRedefined2:Alphanumeric
   NoRedefines2:Alphanumeric
   NoRedefines1Item:Alphanumeric
   NoRedefines1Item:Alphanumeric

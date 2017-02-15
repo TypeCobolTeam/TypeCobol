@@ -1,52 +1,52 @@
 ﻿namespace TypeCobol.Compiler.Diagnostics {
 
-	using System;
-	using System.Collections.Generic;
-	using Antlr4.Runtime;
-	using TypeCobol.Compiler.AntlrUtils;
-	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.Parser;
-	using TypeCobol.Compiler.Parser.Generated;
-	using TypeCobol.Compiler.Nodes;
+    using System;
+    using System.Collections.Generic;
+    using Antlr4.Runtime;
+    using TypeCobol.Compiler.AntlrUtils;
+    using TypeCobol.Compiler.CodeElements;
+    using TypeCobol.Compiler.CodeElements.Expressions;
+    using TypeCobol.Compiler.Parser;
+    using TypeCobol.Compiler.Parser.Generated;
+    using TypeCobol.Compiler.Nodes;
 
-class TypeDefinitionEntryChecker: CodeElementListener {
+    class TypeDefinitionEntryChecker: CodeElementListener {
 
-	public void OnCodeElement(CodeElement e, ParserRuleContext c) {
-		var context = c as CodeElementsParser.DataDescriptionEntryContext;
-		CheckRedefines(e as DataRedefinesEntry, context);
-		CheckTypedef(e as DataTypeDescriptionEntry, context);
-	}
-	private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context) {
-		if (redefines == null) return;
-		if (context.cobol2002TypedefClause() != null) {
-			string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
-			DiagnosticUtils.AddError(redefines, message, context.redefinesClause());
-		}
-	}
-	private void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
-		if (typedef == null) return;
-		if (typedef.LevelNumber.Value != 1) {
-			string message = "TYPEDEF clause can only be specified for level 01 entries";
-			DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
-		}
-		if (typedef.Picture != null && typedef.DataType.IsStrong) {
-			string message = "Elementary TYPEDEF cannot be STRONG";
-			string rulestack = new RuleStackBuilder().GetRuleStack(context.cobol2002TypedefClause());
-			DiagnosticUtils.AddError(typedef, message, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
-		}
-		if (typedef.IsExternal) {
-			string message = "EXTERNAL clause cannot be specified with TYPEDEF clause";
-			foreach (var external in context.externalClause())
-				DiagnosticUtils.AddError(typedef, message, external);
-		}
-		if (typedef.DataType.IsStrong && typedef.InitialValue != null) {
-			string message = "STRONG TYPEDEF cannot contain VALUE clause:";
-			foreach (var valeuClause in context.valueClause())
-				DiagnosticUtils.AddError(typedef, message, valeuClause);
-		}
-	}
-}
+        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+            var context = c as CodeElementsParser.DataDescriptionEntryContext;
+            CheckRedefines(e as DataRedefinesEntry, context);
+            CheckTypedef(e as DataTypeDescriptionEntry, context);
+        }
+        private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context) {
+            if (redefines == null) return;
+            if (context.cobol2002TypedefClause() != null) {
+                string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
+                DiagnosticUtils.AddError(redefines, message, context.redefinesClause());
+            }
+        }
+        private void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
+            if (typedef == null) return;
+            if (typedef.LevelNumber.Value != 1) {
+                string message = "TYPEDEF clause can only be specified for level 01 entries";
+                DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
+            }
+            if (typedef.Picture != null && typedef.DataType.IsStrong) {
+                string message = "Elementary TYPEDEF cannot be STRONG";
+                string rulestack = new RuleStackBuilder().GetRuleStack(context.cobol2002TypedefClause());
+                DiagnosticUtils.AddError(typedef, message, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
+            }
+            if (typedef.IsExternal) {
+                string message = "EXTERNAL clause cannot be specified with TYPEDEF clause";
+                foreach (var external in context.externalClause())
+                    DiagnosticUtils.AddError(typedef, message, external);
+            }
+            if (typedef.DataType.IsStrong && typedef.InitialValue != null) {
+                string message = "STRONG TYPEDEF cannot contain VALUE clause:";
+                foreach (var valeuClause in context.valueClause())
+                    DiagnosticUtils.AddError(typedef, message, valeuClause);
+            }
+        }
+    }
 
     class TypeDefinitionChecker {
 
@@ -62,90 +62,43 @@ class TypeDefinitionEntryChecker: CodeElementListener {
             }
         }
 
-	    private static void CheckForValueClause(Node node, QualifiedName typedef) {
-		    var codeElement = node.CodeElement as DataDescriptionEntry;
-		    if (codeElement != null && codeElement.InitialValue != null) {
-			    string message = "Illegal VALUE clause for subordinate \'"+node.Name+"\' of STRONG TYPEDEF \'"+typedef.Head+"\'";
-			    DiagnosticUtils.AddError(codeElement, message, MessageCode.SemanticTCErrorInParser);
-		    }
-		    foreach(var sub in node.Children) CheckForValueClause(sub, typedef);
-	    }
+        private static void CheckForValueClause(Node node, QualifiedName typedef) {
+            var codeElement = node.CodeElement as DataDescriptionEntry;
+            if (codeElement != null && codeElement.InitialValue != null) {
+                string message = "Illegal VALUE clause for subordinate \'"+node.Name+"\' of STRONG TYPEDEF \'"+typedef.Head+"\'";
+                DiagnosticUtils.AddError(codeElement, message, MessageCode.SemanticTCErrorInParser);
+            }
+            foreach(var sub in node.Children) CheckForValueClause(sub, typedef);
+        }
     }
 
     class RedefinesChecker: NodeListener {
 
-	    private class Error: Dictionary<Error.Status,int> {
-		    public enum Status { TYPEStrong, TYPEDEFPart, TYPEDEFStrong, }
-		    public Error() { foreach(var value in Enum.GetValues(typeof(Status))) this.Add((Status)value,0); }
-		    public override string ToString() {
-			    var str = new System.Text.StringBuilder("{");
-			    foreach(var v in this)
-				    if (v.Value > 0 ) str.Append(' ').Append(v.Key).Append(':').Append(v.Value).Append(',');
-			    if (this.Errors > 0) str.Length -= 1;
-			    return str.Append(" }").ToString();
-		    }
-		    public int Errors {
-			    get {
-				    int count = 0;
-				    foreach(var v in this.Values) count += v;
-				    return count;
-			    }
-		    }
-		   
-	    }
-
-	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-	        var redefinesNode = node as DataRedefines;
-	        if (redefinesNode == null) {
-	            return; //not my job
-	        }
+        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+            var redefinesNode = node as DataRedefines;
+            if (redefinesNode == null) {
+                return; //not my job
+            }
             if (redefinesNode.IsPartOfATypeDef) {
-			    DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES as part of a TYPEDEF", MessageCode.SemanticTCErrorInParser);
-			    return;
-		    }
-	        var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
-            var errors = new Error();
-		    var redefinedVariable  = node.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
+                DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES as part of a TYPEDEF", MessageCode.SemanticTCErrorInParser);
+                return;
+            }
+            var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
+            var redefinedVariable = node.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
 
-	        if (redefinedVariable == null)
-	        {
+            if (redefinedVariable == null)
+            {
                 string message = "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced";
                 DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-	            return;
-	        }
-		   
-			if (redefinesNode.IsPartOfATypeDef)
-            {
-				errors[Error.Status.TYPEDEFPart]++;
-			}
-            if (redefinedVariable.IsStronglyTyped)
-            {
-                errors[Error.Status.TYPEStrong]++;
+                return;
             }
 
-		    var types = node.SymbolTable.GetType(redefinesSymbolReference);
-		    foreach(var type in types) {
-			    if (type.IsStrong) {
-				    errors[Error.Status.TYPEDEFStrong]++;
-			    }
-		    }
-
-		    if (errors.Errors > 0) {
-			    if (errors[Error.Status.TYPEStrong] > 0) {
-				    string message = "Illegal REDEFINES: \'"+ redefinesSymbolReference+"\' is strongly-typed";
-				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			    }
-			    if (errors[Error.Status.TYPEDEFPart] > 0) {
-				    string message = "Illegal REDEFINES: \'"+ redefinesSymbolReference + "\' is part of a TYPEDEF";
-				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			    }
-			    if (errors[Error.Status.TYPEDEFStrong] > 0) {
-				    string message = "Illegal REDEFINES: \'"+ redefinesSymbolReference + "\' is a STRONG TYPEDEF";
-				    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			    }
-		    }
-		    
-	    }
+            if (redefinedVariable.IsStronglyTyped)
+            {
+                string message = "Illegal REDEFINES: \'"+ redefinesSymbolReference + "\' is strongly-typed";
+                DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+            }
+        }
     }
 
 class RenamesChecker: NodeListener {
