@@ -2,8 +2,8 @@
 Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
 Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF>
 Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
-Line 67[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
-Line 72[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
+Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
+Line 73[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
 Line 93[26,33] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL>
 Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL>
 Line 101[27,32] <27, Error, Syntax> - Syntax error : Elementary TYPEDEF cannot be STRONG RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[27,32:STRONG]<STRONG>
@@ -13,10 +13,9 @@ Line 39[1,33] <30, Error, Semantics> - Semantic error: TYPE 'TypeDefinedAfter' i
 Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
 Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
 Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
-Line 67[1,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'BufferTobeRedefined' is not referenced
-Line 69[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
-Line 72[1,49] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
-Line 74[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
+Line 70[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
+Line 73[1,49] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
+Line 75[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
 Line 82[5,57] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
 Line 90[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
 Line 114[5,35] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP'
