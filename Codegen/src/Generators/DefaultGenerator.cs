@@ -334,11 +334,23 @@ namespace TypeCobol.Codegen.Generators
             }
         }
 
+        /// <summary>
+        /// Does nothing
+        /// </summary>
+        /// <param name="node">Target node</param>
+        /// <returns>return false</returns>
         protected override bool Process(Compiler.Nodes.Node node)
         {
             return false;
         }
 
+        /// <summary>
+        /// Produce an indented version of a text line. The indentation depends on the current Layout format
+        /// ColumnsLayout.CobolReferenceFormat or ColumnsLayout.FreeTextFormat.
+        /// </summary>
+        /// <param name="line">The text line to be produced an indented version</param>
+        /// <param name="isComment">if null then this is the identity function, if true a commented line is produced, otherwise an uncommented line is produced.</param>
+        /// <returns>The idented line</returns>
         private IEnumerable<ITextLine> Indent(ITextLine line, bool? isComment)
         {
             var results = new List<ITextLine>();
@@ -377,6 +389,12 @@ namespace TypeCobol.Codegen.Generators
             return results;
         }
 
+        /// <summary>
+        /// Produces a commented or an uncommeneted text line from a text line
+        /// </summary>
+        /// <param name="line">the line</param>
+        /// <param name="isComment">if null then this is the identity function, if true a commented line is produced, otherwise an uncommented line is produced.</param>
+        /// <returns>if isComment is null the same line is return, if true a commneted line is returned otherwise an uncommented line</returns>
         private static ITextLine SetComment(ITextLine line, bool? isComment)
         {
             if (isComment == true)
@@ -387,6 +405,12 @@ namespace TypeCobol.Codegen.Generators
                 else // null
                     return line;
         }
+
+        /// <summary>
+        /// Produces a commented text line of a text line
+        /// </summary>
+        /// <param name="line">The text line to be procuded a commented text line </param>
+        /// <returns>The commente dtext line</returns>
         private static ITextLine Comment(ITextLine line)
         {
             var cobol = line as CobolTextLine;
@@ -403,6 +427,12 @@ namespace TypeCobol.Codegen.Generators
                 return new TextLineSnapshot(line.InitialLineIndex, "*" + line.Text, null);
             }
         }
+
+        /// <summary>
+        /// Produces an uncommented text line from a commented text line
+        /// </summary>
+        /// <param name="line">The text line to produce the uncommented text line.</param>
+        /// <returns>The uncommented text line</returns>
         private static ITextLine Uncomment(ITextLine line)
         {
             var cobol = line as CobolTextLine;
