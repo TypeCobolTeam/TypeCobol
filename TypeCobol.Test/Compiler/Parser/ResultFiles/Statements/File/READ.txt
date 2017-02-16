@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[31,34]<27,Error,Syntax>Syntax error : extraneous input 'INTO' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=, OffendingSymbol=[31,34:INTO]<INTO> on line 12)
+Line 12[31,34] <27, Error, Syntax> - Syntax error : extraneous input 'INTO' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=,  OffendingSymbol=[31,34:INTO]<INTO>
 --- Code Elements ---
 [[ReadStatement]] [1,4:READ]<READ> --> [6,13:filename]<UserDefinedWord>
 

@@ -6,7 +6,6 @@
        WORKING-STORAGE SECTION.
        
        77  MyVariable1                 pic 9 value 0.
-       01  W-InternalRef             PIC X(20).
       * unused variables
        01  W-ELEMENT                 PIC X(20).
        01  W-ATTRIBUTE               PIC X(20).
@@ -47,6 +46,8 @@
            05 Identite               TYPE IDENTITY.
            05 Description            TYPE DESCRIPTION.
        
+       01  W-InternalRef             type INTERNAL-REF.
+
        01  PERSON-1                  TYPE PERSON.
        01  PERSON-2                  TYPE PERSON.
 
@@ -57,6 +58,9 @@
        TRAITEMENT.
            MOVE PERSON-1                  TO PERSON-2
            MOVE Description OF PERSON-1   TO Description OF PERSON-2
+
+           MOVE W-InternalRef            TO InternalRef OF PERSON-2
+           MOVE InternalRef OF PERSON-2  TO InternalRef OF PERSON-1
            .
 
        END PROGRAM Types.

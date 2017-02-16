@@ -1,13 +1,7 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
-       
-       DATA DIVISION.
-       FILE SECTION.
-       LOCAL-STORAGE SECTION.
-
        PROCEDURE DIVISION.
-           .
-       
+
        DECLARE FUNCTION DoesNothing PRIVATE.
          PROCEDURE DIVISION.
            DISPLAY 'I DO NOTHING'
@@ -43,6 +37,21 @@
              MOVE x TO result
            END-IF.
        END-DECLARE.
+
+      *written in lower-case to make sure code generation doesn't 
+      *change it to upper-case
+       declare function UseACopy private
+                input  x pic X.
+       data division.
+       working-storage section.
+       01 yoto pic X.
+       REPLACE ==:MyPrefix:== by ==MyPrefix2==.
+       COPY MyDataCopy.
+       procedure division.
+           display "Hello"
+           COPY MyProcedureCopy.
+           .
+       end-declare.
 
 
        ILLEGAL-NON-FUNCTION-PARAGRAPH.

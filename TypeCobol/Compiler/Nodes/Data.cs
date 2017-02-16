@@ -89,7 +89,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
     public class LinkageSection: DataSection, CodeElementHolder<LinkageSectionHeader>, Parent<DataDefinition>
-        {
+    {
 	    public LinkageSection(LinkageSectionHeader header): base(header) { }
 	    public override string ID { get { return "linkage"; } }
 	    public override bool IsShared { get { return true; } }
@@ -110,53 +110,109 @@ namespace TypeCobol.Compiler.Nodes {
     ///   TypeDefinition
     ///   IndexDefinition (TODO)
     /// </summary>
-    public abstract class DataDefinition: Node, Parent<DataDefinition> {
+    public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
         protected DataDefinition(DataDefinitionEntry entry): base(entry) { }
-	    public override string ID { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
+        public override string ID { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }
+
+        public DataType DataType
+        {
+            get
+            {
+                var dataDefinitionEntry = this.CodeElement as DataDefinitionEntry;
+                if (dataDefinitionEntry != null)
+                {
+                    return dataDefinitionEntry.DataType;
+                }
+                return DataType.Unknown;
+            }
+        }
+
+        /// <summary>
+        /// TODO This method should be split like this:
+        /// - PhysicalLength 
+        /// - PhysicalLengthWithChildren
+        /// - LogicalLength
+        /// - LogicalLengthWithChildren
+        /// </summary>
+        public virtual int Length
+        {
+            get
+            {
+                var dataDefinitionEntry = this.CodeElement as DataDefinitionEntry;
+                if (dataDefinitionEntry != null)
+                {
+                    return dataDefinitionEntry.Length;
+                }
+                return 0;
+            }
+        }
+
+        /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
+        public bool IsPartOfATypeDef
+        {
+            get
+            {
+                var parent = Parent;
+                while (parent != null)
+                {
+                    if (!(parent is DataDefinition)) return false;
+                    if (parent is TypeDefinition) return true;
+                    parent = parent.Parent;
+                }
+                return false;
+            }
+        }
+
+        public bool IsStronglyTyped
+        {
+            get
+            {
+                if (DataType.IsStrong) return true;
+                var parent = Parent as DataDefinition;
+                return parent != null && parent.IsStronglyTyped;
+            }
+        }
     }
-    public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>, ITypedNode {
-	    public DataDescription(DataDescriptionEntry entry): base(entry) { }
-	    public DataType DataType { get { return this.CodeElement().DataType; } }
-	    public int Length { get { return this.CodeElement().Length; } }
+
+    public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>{
+        public DataDescription(DataDescriptionEntry entry): base(entry) { }
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
     }
-    public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry>, ITypedNode
-        {
-	    public DataCondition(DataConditionEntry entry): base(entry) { }
-	    public DataType DataType { get { return this.CodeElement().DataType; } }
-	    public int Length { get { return this.CodeElement().Length; } }
+    public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> 
+    {
+        public DataCondition(DataConditionEntry entry): base(entry) { }
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
     }
     public class DataRedefines: DataDefinition, CodeElementHolder<DataRedefinesEntry> {
-	    public DataRedefines(DataRedefinesEntry entry): base(entry) { }
+        public DataRedefines(DataRedefinesEntry entry): base(entry) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
     }
     public class DataRenames: DataDefinition, CodeElementHolder<DataRenamesEntry> {
-	    public DataRenames(DataRenamesEntry entry): base(entry) { }
+        public DataRenames(DataRenamesEntry entry): base(entry) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
     }
     // [COBOL 2002]
-    public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>, ITypedNode
-        {
-	    public TypeDefinition(DataTypeDescriptionEntry entry): base(entry) { }
-	    public bool IsStrong { get { return this.CodeElement().IsStrong; } }
-	    public DataType DataType { get { return this.CodeElement().DataType; } }
-	    public int Length { get { return this.CodeElement().Length; } }
+    public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>
+    {
+        public TypeDefinition(DataTypeDescriptionEntry entry): base(entry) { }
+        public bool IsStrong { get { return this.CodeElement().IsStrong; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);

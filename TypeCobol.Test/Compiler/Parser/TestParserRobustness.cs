@@ -27,7 +27,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
             // Create a compilation project and a compiler for this document
             var typeCobolOptions = new TypeCobolOptions();
-            var project = new CompilationProject("test project", ".", new[] { "*.cbl", "*.cpy" },
+            var project = new CompilationProject("test project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
                 DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
             var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false);

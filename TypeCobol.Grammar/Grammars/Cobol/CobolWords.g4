@@ -514,7 +514,7 @@ tokens
     UNSAFE,
     PUBLIC,
     PRIVATE,
-    INOUT
+    IN_OUT
 }
 
 
@@ -2031,7 +2031,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     UNSAFE |
     PUBLIC |
     PRIVATE |
-    INOUT
+    IN_OUT
 );
 
 

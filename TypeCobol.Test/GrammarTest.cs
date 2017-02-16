@@ -20,7 +20,7 @@ namespace TypeCobol.Test {
         [TestMethod]
 		[TestCategory("Parsing")]
 		[TestProperty("Time","long")]
-		//[Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
+		[Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
 		public void CheckGrammarCorrectness() {
 
 			int STOP_AFTER_AS_MANY_ERRORS = 1000;
@@ -90,12 +90,7 @@ namespace TypeCobol.Test {
 			        var writer = new StringWriter();
                     watch.Reset();
 			        watch.Start();
-#if GENERATOR2
-                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document, writer, null);
-#else
-			        var generator = new TypeCobol.Codegen.Generator(writer, document.Results.TokensLines, null);
-#endif
-			        
+                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, null);			        
 			        var program = document.Results.ProgramClassDocumentSnapshot.Program;
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);

@@ -20,12 +20,24 @@ internal class TypeCobolQualifier: Compiler.Nodes.Node, Generated {
 		get {
 			if (_cache == null) {
 				var text = CodeElement.SourceText;
-				var statement = CodeElement as MoveSimpleStatement;
-				if (statement != null) {
-					int index = 0;
-					foreach(var var in statement.Vars.Keys)
-						ReplaceIfTypeCobol(ref text, var, statement.ConsumedTokens, ref index);
-				}
+//				var statement = CodeElement as MoveSimpleStatement;
+//				if (statement != null) {
+//					int index = 0;
+//					foreach(var var in statement.Vars.Keys)
+//						ReplaceIfTypeCobol(ref text, var, CodeElement.ConsumedTokens, ref index);
+//				}
+			    if (CodeElement.StorageAreaReads != null) {
+			        foreach (var storageAreaRead in CodeElement.StorageAreaReads) {
+                            int index = 0;
+                                ReplaceIfTypeCobol(ref text, storageAreaRead, CodeElement.ConsumedTokens, ref index);
+                        }
+			    }
+                if (CodeElement.StorageAreaWrites != null) {
+			        foreach (var storageAreWrite in CodeElement.StorageAreaWrites) {
+                            int index = 0;
+                                ReplaceIfTypeCobol(ref text, storageAreWrite.StorageArea, CodeElement.ConsumedTokens, ref index);
+                        }
+			    }
 				_cache = new List<ITextLine>();
 				_cache.Add(new TextLineSnapshot(-1, text, null));
 			}

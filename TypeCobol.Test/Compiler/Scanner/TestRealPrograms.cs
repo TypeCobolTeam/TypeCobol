@@ -13,7 +13,7 @@ namespace TypeCobol.Test.Compiler.Scanner
         public static void CheckAllFilesForExceptions()
         {
             CompilationProject project = new CompilationProject("test", 
-                PlatformUtils.GetPathForProjectFile(@"Compiler\Scanner\Samples"), new string[] { "*.txt" },
+                PlatformUtils.GetPathForProjectFile(@"Compiler\Scanner\Samples"), new string[] { ".txt" },
                 IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), EndOfLineDelimiter.FixedLengthLines, 80, ColumnsLayout.CobolReferenceFormat, new TypeCobolOptions());
 
             //int filesCount = 0;

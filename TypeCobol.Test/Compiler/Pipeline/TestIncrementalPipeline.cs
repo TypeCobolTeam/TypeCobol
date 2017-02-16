@@ -29,7 +29,7 @@ namespace TypeCobol.Test.Compiler.Pipeline {
                 throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));
             }
             CompilationProject project = new CompilationProject("test",
-                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
+                localDirectory.FullName, new string[] { ".cbl", ".cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
             FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false);
             

@@ -28,7 +28,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 				// TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
 				// TCRFUN_CODEGEN_DATA_SECTION_AS_IS
 				children.Add(child);
-			}
+			}            
 		}
 		this.Node = new Compiler.Nodes.FunctionDeclaration(node.CodeElement());
 	}
@@ -94,7 +94,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>(); // TCRFUN_CODEGEN_AS_NESTED_PROGRAM
-				_cache.Add(new TextLineSnapshot(-1, "*", null));
+				//_cache.Add(new TextLineSnapshot(-1, "*", null));
                     //TODO add Function signature as comment
 				_cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________", null));
 				_cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));

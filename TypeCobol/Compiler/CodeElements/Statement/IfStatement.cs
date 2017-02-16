@@ -9,9 +9,14 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class IfStatement : StatementElement {
 		public IfStatement() : base(CodeElementType.IfStatement, StatementType.IfStatement) { }
-
 		public ConditionalExpression Condition { get; set; }
-	}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, Condition);
+        }
+    }
 
 
 	
@@ -24,7 +29,11 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class ElseCondition : StatementElement {
 		public ElseCondition() : base(CodeElementType.ElseCondition, StatementType.ElseCondition) { }
-	}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
 
 
@@ -68,11 +77,19 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class NextSentenceStatement : StatementElement {
 		public NextSentenceStatement() : base(CodeElementType.NextSentenceStatement, StatementType.NextSentenceStatement) { }
-	}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
 
 
 	public class IfStatementEnd: CodeElementEnd {
 		public IfStatementEnd() : base(CodeElementType.IfStatementEnd) { }
-	}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 }

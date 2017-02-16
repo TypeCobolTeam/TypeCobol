@@ -29,7 +29,7 @@
           INPUT  mydate        TYPE Date
                  format        PIC X(08)
                  myDate2       type Date
-          inout  myDate3       type Date
+          IN-OUT myDate3       type Date
                  myDate4       type Date
           OUTPUT okay          TYPE Bool
                  actual-format PIC X(08).
@@ -73,7 +73,7 @@
            CALL myProc  INPUT     by content somedate 
                                                'YYYYMMDD'
                                              myDate2
-                        inout myDate3 myDate4
+                        IN-OUT myDate3 myDate4
                                    OUTPUT     flag     realformat
            END-CALL     
       * __________________________________________________
@@ -81,7 +81,7 @@
            CALL myProc  INPUT  somedate 
                                by content 'YYYYMMDD'
                                by reference myDate2
-                        inout  myDate3
+                        IN-OUT myDate3
                                myDate4
                         OUTPUT flag     
                                realformat

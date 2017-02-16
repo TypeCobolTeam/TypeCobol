@@ -69,6 +69,12 @@ namespace TypeCobol.Compiler.CodeElements
         //    were the sending operand in an implicit MOVE statement to the receiving item.
         /// </summary>
         public InitializeReplacingInstruction[] ReplacingInstructions { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   &&
+                   this.ContinueVisitToChildren(astVisitor, ReceivingStorageAreas, ReplacingInstructions);
+        }
     }
 
     /// <summary>
@@ -91,7 +97,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// EGCS in the REPLACING phrase is synonymous with DBCS.
     /// </summary>
 
-    public class InitializeReplacingInstruction
+    public class InitializeReplacingInstruction : IVisitable
     {
         public SyntaxProperty<InitializeDataCategory> ReplaceDataCategory { get; set; }
 
@@ -112,6 +118,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// statements.
         /// </summary>
         public Variable BySendingVariable { get; set; }
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, ReplaceDataCategory, BySendingVariable);
+        }
     }      
 
     public enum InitializeDataCategory

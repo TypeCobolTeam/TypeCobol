@@ -5,13 +5,13 @@ PROGRAM: Tables common:False initial:False recursive:False
 -- DATA --------
   mysize:Numeric
   X:Alphanumeric
-  T-fixed-1:?
-  T-fixed-2:?
+  T-fixed-1:Array
+  T-fixed-2:Array
   E:Alphanumeric
   E:Alphanumeric
   E:Alphanumeric
-  T-variable:?
-  T-nobounds:?
+  T-variable:Array
+  T-nobounds:Array
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL

@@ -202,7 +202,7 @@ namespace TypeCobol.Compiler.Parser
             }
             else
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException(""+context);
             }
         }
 

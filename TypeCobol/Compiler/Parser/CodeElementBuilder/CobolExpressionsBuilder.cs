@@ -1464,18 +1464,27 @@ namespace TypeCobol.Compiler.Parser
 			if (context == null || context.identifier() == null) return null;
 			var identifier = CreateIdentifier(context.identifier());
 			if (identifier == null) return null;
-			return new ReceivingStorageArea(StorageDataType.Any, identifier);
+		    var receivingStorageArea = new ReceivingStorageArea(StorageDataType.Any, identifier);
+
+            // Collect storage area read/writes at the code element level
+            this.storageAreaWrites.Add(receivingStorageArea);
+
+            return receivingStorageArea;
 		}
 
-		internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea2Context context)
-		{
-			return new ReceivingStorageArea(StorageDataType.Any,
-				new DataOrConditionStorageArea(
-					CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
+		internal ReceivingStorageArea CreateStorageArea(CodeElementsParser.StorageArea2Context context) {
+		    var receivingStorageArea = new ReceivingStorageArea(StorageDataType.Any,
+		        new DataOrConditionStorageArea(
+		            CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
+            
+            // Collect storage area read/writes at the code element level
+            this.storageAreaWrites.Add(receivingStorageArea);
+
+            return receivingStorageArea;
 		}
 
 
-		// --- Storage areas shared with calling or called program ---
+	    // --- Storage areas shared with calling or called program ---
 
 		internal Variable CreateSharedVariable(CodeElementsParser.SharedVariable3Context context) {
 			Variable variable = null;

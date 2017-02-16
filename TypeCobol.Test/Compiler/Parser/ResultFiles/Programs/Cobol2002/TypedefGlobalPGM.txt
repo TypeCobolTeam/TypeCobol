@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-[1,31]<30,Error,Semantics>Semantic error: TYPE 'NewPrivateType' is not referenced ([1>31] on line 22)
-[1,31]<30,Error,Semantics>Semantic error: TYPE 'NewPrivateType' is not referenced ([1>31] on line 39)
+Line 22[1,31] <30, Error, Semantics> - Semantic error: TYPE 'NewPrivateType' is not referenced
+Line 39[1,31] <30, Error, Semantics> - Semantic error: TYPE 'NewPrivateType' is not referenced
 
 --- Program ---
 PROGRAM: TypeGlobal common:False initial:False recursive:False

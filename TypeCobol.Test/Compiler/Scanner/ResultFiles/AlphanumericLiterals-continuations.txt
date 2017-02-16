@@ -12,7 +12,7 @@
 -- Line 4 --
 =>continuation:[2,12:"toto  and titi2"]<AlphanumericLiteral>(",Y,Y){toto  and titi2}
 [13,13+:.]<PeriodSeparator>
-[1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+Line -1[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 5 --
 =>continued:[1,8:"toto  ""and titi3"]<AlphanumericLiteral>(",Y,Y){toto  "and titi3}
@@ -21,7 +21,7 @@
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,16:"toto  ""and titi3"]<AlphanumericLiteral>(",Y,Y){toto  "and titi3}
 [17,17+:.]<PeriodSeparator>
-[5,6]<22,Error,Tokens>Because the alphanumeric literal on the previous line ended with a delimiter " in the last column,  this continuation line must start with two delimiters ""
+Line -1[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previous line ended with a delimiter " in the last column,  this continuation line must start with two delimiters ""
 
 -- Line 7 --
 [1,8:"toto  "]<AlphanumericLiteral>(",Y,Y){toto  }
@@ -39,7 +39,7 @@
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,15:"toto  and titi4"]<AlphanumericLiteral>(",Y,Y){toto  and titi4}
 [16,16+:.]<PeriodSeparator>
-[5,5]<21,Error,Tokens>The first non blank character of this continuation line must be " (continuation of the alphanumeric literal on the previous line)
+Line -1[5,5] <21, Error, Tokens> - The first non blank character of this continuation line must be " (continuation of the alphanumeric literal on the previous line)
 
 -- Line 11 --
 =>continued:[1,7:"toto  'and titi5"]<AlphanumericLiteral>(",Y,Y){toto  'and titi5}
@@ -48,7 +48,7 @@
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,16:"toto  'and titi5"]<AlphanumericLiteral>(",Y,Y){toto  'and titi5}
 [17,17+:.]<PeriodSeparator>
-[5,5]<21,Error,Tokens>The first non blank character of this continuation line must be " (continuation of the alphanumeric literal on the previous line)
+Line -1[5,5] <21, Error, Tokens> - The first non blank character of this continuation line must be " (continuation of the alphanumeric literal on the previous line)
 
 -- Line 13 --
 =>continued:[1,8:"toto  ""and titi6"]<AlphanumericLiteral>(",Y,Y){toto  "and titi6}
@@ -92,7 +92,7 @@
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,17:'toto''and titi11']<AlphanumericLiteral>(',Y,Y){toto'and titi11}
 [18,18: ]<SpaceSeparator>
-[5,6]<22,Error,Tokens>Because the alphanumeric literal on the previous line ended with a delimiter ' in the last column,  this continuation line must start with two delimiters ''
+Line -1[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previous line ended with a delimiter ' in the last column,  this continuation line must start with two delimiters ''
 
 -- Line 24 --
 =>continued:[1,6:'toto''and titi11b']<AlphanumericLiteral>(',Y,Y){toto'and titi11b}
@@ -108,7 +108,7 @@
 -- Line 27 --
 [2,5:    ]<SpaceSeparator>
 [6,19:"and titi11c' ]<AlphanumericLiteral>(",Y,N){and titi11c' }
-[5,5]<21,Error,Tokens>The first non blank character of this continuation line must be ' (continuation of the alphanumeric literal on the previous line)
+Line -1[5,5] <21, Error, Tokens> - The first non blank character of this continuation line must be ' (continuation of the alphanumeric literal on the previous line)
 
 -- Line 28 --
 =>continued:[1,7:'toto  "and titi11d']<AlphanumericLiteral>(',Y,Y){toto  "and titi11d}
@@ -117,7 +117,7 @@
 [2,5:    ]<SpaceSeparator>
 =>continuation:[6,18:'toto  "and titi11d']<AlphanumericLiteral>(',Y,Y){toto  "and titi11d}
 [19,19: ]<SpaceSeparator>
-[5,5]<21,Error,Tokens>The first non blank character of this continuation line must be ' (continuation of the alphanumeric literal on the previous line)
+Line -1[5,5] <21, Error, Tokens> - The first non blank character of this continuation line must be ' (continuation of the alphanumeric literal on the previous line)
 
 -- Line 30 --
 [1,1: ]<SpaceSeparator>
@@ -173,7 +173,7 @@
 =>continuation:[6,9:titi15]<UserDefinedWord>
 [10,10: ]<SpaceSeparator>
 [11,12:==]<PseudoTextDelimiter>
-[11,12]<15,Error,Tokens>Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period
+Line -1[11,12] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period
 
 -- Line 43 --
 [2,3:==]<PseudoTextDelimiter>
@@ -181,24 +181,24 @@
 [5,9:super]<SUPER>
 [10,10: ]<SpaceSeparator>
 =>continued:[11,11:==]<PseudoTextDelimiter>
-[1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+Line -1[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 44 --
 =>continuation:[2,2:==]<PseudoTextDelimiter>
 [3,3: ]<SpaceSeparator>
 =>continued:[4,4:==]<PseudoTextDelimiter>
-[1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+Line -1[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 45 --
 =>continuation:[2,2:==]<PseudoTextDelimiter>
 [3,6:cool]<UserDefinedWord>
 =>continued:[7,7:==]<PseudoTextDelimiter>
-[1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+Line -1[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 46 --
 =>continuation:[2,2:==]<PseudoTextDelimiter>
 [3,3+:.]<PeriodSeparator>
-[1,1]<23,Warning,TextFormat>Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
+Line -1[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuation line must be blank, source text can only be continued in Area B of the next line
 
 -- Line 47 --
 [1,1: ]<SpaceSeparator>

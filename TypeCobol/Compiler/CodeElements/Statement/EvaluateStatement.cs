@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -18,11 +19,19 @@ namespace TypeCobol.Compiler.CodeElements
 		/// - Collectively, they are called a set of selection subjects.
 		/// </summary>
 		public EvaluateSelectionSubject[] SelectionSubjects { get; set; }
-	}
 
-	public class EvaluateSelectionSubject {
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) SelectionSubjects);
+        }
+    }
+
+	public class EvaluateSelectionSubject : IVisitable {
 		public VariableOrExpression AlphanumericComparisonVariable { get; set; }
 		public BooleanValueOrExpression BooleanComparisonVariable { get; set; }
+	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return this.ContinueVisitToChildren(astVisitor, AlphanumericComparisonVariable, BooleanComparisonVariable);
+        }
 	}
 
 	/// <summary>
@@ -38,9 +47,14 @@ namespace TypeCobol.Compiler.CodeElements
 		/// - Collectively, they are called a set of selection objects.
 		/// </summary>
 		public EvaluateSelectionObject[] SelectionObjects { get; set; }
-	}
 
-	public class EvaluateSelectionObject  {
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) SelectionObjects);
+        }
+    }
+
+	public class EvaluateSelectionObject : IVisitable  {
 
 		public SyntaxProperty<bool> IsAny { get; set; }
 
@@ -53,12 +67,22 @@ namespace TypeCobol.Compiler.CodeElements
 		public VariableOrExpression AlphanumericComparisonVariable { get; set; }
 
 		public VariableOrExpression AlphanumericComparisonVariable2 { get; set; }
-	}
+
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, IsAny, BooleanComparisonVariable,
+                InvertAlphanumericComparison, IsAlphanumericExpressionRange, AlphanumericComparisonVariable,
+                   AlphanumericComparisonVariable2);
+        }
+    }
 
 	/// <summary>
 	/// Default conditional expression case for the EVALUATE statement.
 	/// </summary>
 	public class WhenOtherCondition : StatementElement {
 		public WhenOtherCondition() : base(CodeElementType.WhenOtherCondition, StatementType.WhenOtherCondition) { }
-	}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 }

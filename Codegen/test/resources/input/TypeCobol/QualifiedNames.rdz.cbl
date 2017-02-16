@@ -31,6 +31,22 @@
            MOVE   p :: Location :: y     TO   z OF   Location   IN p
            MOVE   1   TO x OF Location OF p
            MOVE 1 TO p :: Location ::    y z OF Location IN p
+
+           MOVE p :: Location :: y TO p :: location :: y
+           move p::location::y to p::location::y
+
+           if Segment::p = Segment::q
+             continue
+           end-if
+
+           evaluate true
+              when Segment::p::Location::x = 1
+                  continue
+              when Segment::p::Location::y = 1
+                  continue
+              when other
+                  compute Segment::p::Location::y = 9
+           end-evaluate
            .
        
        END PROGRAM Test-Name-Qualification.

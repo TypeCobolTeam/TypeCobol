@@ -270,8 +270,8 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                return -1;
-                //return ConsumedTokens[0].Line;
+                if (ConsumedTokens.Count < 1) return -1;
+                return ConsumedTokens[0].Line;
             }
         }
 

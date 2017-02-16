@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
@@ -10,5 +9,9 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ExitMethodStatement() : base(CodeElementType.ExitMethodStatement, StatementType.ExitMethodStatement)
         { }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
     }
 }

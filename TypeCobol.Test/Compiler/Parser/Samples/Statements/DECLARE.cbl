@@ -25,12 +25,12 @@ DECLARE           FunctionOrProcedure PRIVATE
     INPUT     i PIC 9.
 * KO: TCRFUN_NO_INOUT_OR_OUTPUT_FOR_FUNCTIONS
 DECLARE Function ProcedureINOUT PRIVATE
-    INOUT  i PIC 9.
+    IN-OUT  i PIC 9.
 DECLARE Function ProcedureOUTPUT PUBLIC
     OUTPUT i PIC 9.
 DECLARE Function ProcedureINOUTAndOUTPUT PUBLIC
     INPUT     i PIC 9
-    INOUT     j PIC 9
+    IN-OUT     j PIC 9
     OUTPUT    k PIC 9
     RETURNING l PIC 9.
 
@@ -40,7 +40,7 @@ DECLARE PROCEDURE   pro PRIVATE
 DECLARE PROCEDURE   pro PUBLIC
    INPUT    i TYPE Wherever
             j TYPE Whenever
-   INOUT    k PIC 9
+   IN-OUT    k PIC 9
             j TYPE Were
             l TYPE Meant
    OUTPUT   m TYPE ToBe
@@ -51,13 +51,13 @@ DECLARE PROCEDURE ProcedureRETURNING PRIVATE
     RETURNING i PIC 9.
 * KO: cannot know if function or procedure
 DECLARE FUNCTION  Unknown PUBLIC
-    INOUT     b PIC 9
+    IN-OUT     b PIC 9
     RETURNING d PIC 9.
 DECLARE PROCEDURE Unknown PUBLIC
     OUTPUT    c PIC 9
     RETURNING d PIC 9.
 DECLARE           Unknown PUBLIC
     INPUT     a PIC 9
-    INOUT     b PIC 9
+    IN-OUT     b PIC 9
     OUTPUT    c PIC 9
     RETURNING d PIC 9.

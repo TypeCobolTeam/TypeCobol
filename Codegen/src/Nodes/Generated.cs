@@ -39,7 +39,7 @@ internal class GeneratedNode: Compiler.Nodes.Node, Generated {
 	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
-				string text = Solver.Replace();
+				string text = Solver.Replace().TrimStart();
 				_cache = new List<ITextLine>();
 				foreach(string line in text.Split('\n')) {
 					_cache.Add(new TextLineSnapshot(-1, line, null));
@@ -68,5 +68,4 @@ internal class GeneratedNode: Compiler.Nodes.Node, Generated {
             return false;
         }
     }
-
 }

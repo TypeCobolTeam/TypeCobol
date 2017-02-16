@@ -38,13 +38,29 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 					AlphanumericValue picture = null;
                         //Type exists from Cobol 2002
 					if (this.CodeElement().DataType.CobolLanguageLevel >= TypeCobol.Compiler.CobolLanguageLevel.Cobol2002) {
-						var found = this.SymbolTable.GetType(new URI(this.CodeElement().DataType.Name));
+						var found = this.SymbolTable.GetType(this.CodeElement().DataType);
 						if (found.Count > 0) {
-							customtype = (TypeDefinition)found[0];
+							customtype = found[0];
 							picture = customtype.CodeElement().Picture;
 						}
 					} else picture = this.CodeElement().Picture;
-					if(picture != null) str.Append(" PIC ").Append(picture);
+                    if (picture != null)
+                    {
+                        str.Append(" PIC ").Append(picture);
+                    }
+                    else if (this.CodeElement().DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
+                    {//JCM humm... Type without picture lookup enclosing scope.
+                        var found = this.SymbolTable.GetType(this.CodeElement().DataType);
+                        if (found.Count > 0)
+                        {
+                            customtype = found[0];
+                            picture = customtype.CodeElement().Picture;
+                            if (picture != null)
+                            {
+                                str.Append(" PIC ").Append(picture);
+                            }
+                        }
+                    }
 					str.Append('.');
 					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 

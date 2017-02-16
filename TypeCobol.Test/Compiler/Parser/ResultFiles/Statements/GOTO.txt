@@ -1,10 +1,10 @@
 ﻿--- Diagnostics ---
-[37,38]<27,Error,Syntax>Syntax error : extraneous input 'i2' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} (RuleStack=codeElement>gotoStatement>gotoConditional>variable1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference, OffendingSymbol=[37,38:i2]<UserDefinedWord> on line 42)
-[1,2]<27,Error,Syntax>Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 45)
-[1,2]<27,Error,Syntax>Syntax error : extraneous input 'GO' expecting {user defined word, DEPENDING} (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 46)
-[1,2]<27,Error,Syntax>Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 46)
-[1,2]<27,Error,Syntax>Syntax error : extraneous input 'GO' expecting {user defined word, DEPENDING} (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 48)
-[1,2]<27,Error,Syntax>Syntax error : Conditional GO TO: Maximum 255 <procedure name> allowed (RuleStack=codeElement>gotoStatement>gotoConditional, OffendingSymbol=[1,2:GO]<GO> on line 50)
+Line 42[37,38] <27, Error, Syntax> - Syntax error : extraneous input 'i2' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=codeElement>gotoStatement>gotoConditional>variable1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference,  OffendingSymbol=[37,38:i2]<UserDefinedWord>
+Line 45[1,2] <27, Error, Syntax> - Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase RuleStack=codeElement>gotoStatement>gotoConditional,  OffendingSymbol=[1,2:GO]<GO>
+Line 46[1,2] <27, Error, Syntax> - Syntax error : extraneous input 'GO' expecting {user defined word, DEPENDING} RuleStack=codeElement>gotoStatement>gotoConditional,  OffendingSymbol=[1,2:GO]<GO>
+Line 46[1,2] <27, Error, Syntax> - Syntax error : GO TO: Required only one <procedure name> or DEPENDING phrase RuleStack=codeElement>gotoStatement>gotoConditional,  OffendingSymbol=[1,2:GO]<GO>
+Line 48[1,2] <27, Error, Syntax> - Syntax error : extraneous input 'GO' expecting {user defined word, DEPENDING} RuleStack=codeElement>gotoStatement>gotoConditional,  OffendingSymbol=[1,2:GO]<GO>
+Line 50[1,2] <27, Error, Syntax> - Syntax error : Conditional GO TO: Maximum 255 <procedure name> allowed RuleStack=codeElement>gotoStatement>gotoConditional,  OffendingSymbol=[1,2:GO]<GO>
 --- Code Elements ---
 GOTO procedurename
 GOTO procedurename

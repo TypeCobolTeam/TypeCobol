@@ -22,7 +22,7 @@
 
 -- Line 7 --
 *** DIRECTIVE INVALID SYNTAX -> INSERT 0 ([1,6:INSERT]<INSERT>) ***
-[1,6]<27,Error,Syntax>Syntax error : mismatched input 'INSERT' expecting integer literal
+Line 8[1,6] <27, Error, Syntax> - Syntax error : mismatched input 'INSERT' expecting integer literal
 
 -- Line 8 --
 *** DIRECTIVE INSERT 1 ([1,6:INSERT]<INSERT>[7,7: ]<SpaceSeparator>[8,13:000001]<IntegerLiteral>{1}) ***
@@ -45,5 +45,5 @@
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> INSERT -2 ([1,6:INSERT]<INSERT>[7,7: ]<SpaceSeparator>[8,14:-000002]<IntegerLiteral>{-2}) ***
-[8,14]<16,Error,Tokens>Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
+Line 12[8,14] <16, Error, Tokens> - Invalid numeric literal format : expecting integer +12, or decimal +12,345, or floating point +12.345E-03
 

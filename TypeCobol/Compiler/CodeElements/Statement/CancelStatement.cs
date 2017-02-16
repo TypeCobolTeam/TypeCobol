@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -44,5 +45,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolReferenceVariable[] Programs { get; set; }
 
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor,(IEnumerable<IVisitable>) Programs);
+        }
     }
 }

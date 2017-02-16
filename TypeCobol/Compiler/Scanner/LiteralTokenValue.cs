@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public abstract class LiteralTokenValue
     {
-        public LiteralTokenValue(LiteralTokenValueType type)
+        protected LiteralTokenValue(LiteralTokenValueType type)
         {
             Type = type;
         }

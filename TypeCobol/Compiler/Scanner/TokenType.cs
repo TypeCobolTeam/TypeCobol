@@ -533,7 +533,7 @@ namespace TypeCobol.Compiler.Scanner
         UNSAFE = 455,
         PUBLIC = 456,
         PRIVATE = 457,
-        INOUT = 458,
+        IN_OUT = 458,
         // Group of tokens produced by the preprocessor
         // - compiler directives
         CompilerDirective = 459,
@@ -546,7 +546,7 @@ namespace TypeCobol.Compiler.Scanner
     public static class TokenConst {
         private static readonly TokenType[] TypeCobolTokenType =
         {
-            TokenType.DECLARE, TokenType.END_DECLARE, TokenType.PUBLIC, TokenType.PRIVATE, TokenType.INOUT,
+            TokenType.DECLARE, TokenType.END_DECLARE, TokenType.PUBLIC, TokenType.PRIVATE, TokenType.IN_OUT,
             TokenType.UNSAFE
         };
 

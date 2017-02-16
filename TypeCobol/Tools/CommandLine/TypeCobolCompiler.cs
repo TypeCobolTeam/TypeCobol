@@ -22,8 +22,8 @@ namespace TypeCobol.Tools.CommandLine
             string projectRootPath = currentDirectory.Substring(0, currentDirectory.IndexOf(@"\TypeCobol\") + 11);
 
             string sourcePath = projectRootPath + @"TypeCobol.Test\Samples\EI Cobol samples\EI-Production";
-            string[] programExtensions = { "*.PGM" };
-            string[] copyExtensions = { "*.CPY" };
+            string[] programExtensions = { ".PGM" };
+            string[] copyExtensions = { ".CPY" };
 
             DocumentFormat docFormat = new DocumentFormat(Encoding.GetEncoding("iso8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
 
@@ -34,7 +34,7 @@ namespace TypeCobol.Tools.CommandLine
             // Iterate over all programs in the source directory
             foreach (string programExtension in programExtensions)
             {
-                foreach (string filePath in Directory.EnumerateFiles(sourcePath, programExtension))
+                foreach (string filePath in Directory.EnumerateFiles(sourcePath, "*" + programExtension))
                 {
                     // Compile program
                     string textName = Path.GetFileNameWithoutExtension(filePath);
@@ -61,7 +61,7 @@ namespace TypeCobol.Tools.CommandLine
             // Simple test version
             // - all referenced files should be located under the current directory
             
-            CompilationProject project = new CompilationProject("project", ".", new string[] { "*.cbl", "*.cpy" },
+            CompilationProject project = new CompilationProject("project", ".", new string[] { ".cbl", ".cpy" },
                 IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), EndOfLineDelimiter.FixedLengthLines, 80, ColumnsLayout.CobolReferenceFormat, compilerOptions);
 
             // - gets one file name as argument and compiles it

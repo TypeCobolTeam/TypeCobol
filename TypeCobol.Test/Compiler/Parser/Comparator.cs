@@ -31,7 +31,7 @@ namespace TypeCobol.Test.Compiler.Parser
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator.paths.SamplePath));
             DocumentFormat format = Comparator.getSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
-            if (extensions == null) extensions = new[] { "*.cbl", "*.cpy" };
+            if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);
             CompilationProject project = new CompilationProject("TEST",
                 localDirectory.FullName, extensions,
@@ -100,7 +100,7 @@ namespace TypeCobol.Test.Compiler.Parser
 			var option = deep? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 			string[] samples = new string[0];
 			foreach(var ext in this.fileToTestsExtensions) {
-				string[] paths = Directory.GetFiles(folder, ext, option);
+				string[] paths = Directory.GetFiles(folder, "*" + ext, option);
 				var tmp = new string[samples.Length+paths.Length];
 				samples.CopyTo(tmp, 0);
 				paths.CopyTo(tmp, samples.Length);

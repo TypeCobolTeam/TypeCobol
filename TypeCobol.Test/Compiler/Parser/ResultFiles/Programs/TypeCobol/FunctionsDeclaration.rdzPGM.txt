@@ -1,17 +1,20 @@
 ﻿--- Diagnostics ---
-[8,22]<27,Error,Syntax>Syntax error : x is already a parameter. ([8>22] on line 57)
-[8,22]<27,Error,Syntax>Syntax error : y is already a parameter. ([8>22] on line 58)
-[12,26]<27,Error,Syntax>Syntax error : x is already a parameter. ([12>26] on line 60)
-[12,26]<27,Error,Syntax>Syntax error : z is already a parameter. ([12>26] on line 61)
-[8,27]<27,Error,Syntax>Syntax error : result is already a parameter. ([8>27] on line 64)
-[12,27]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol result ([12>27] on line 66)
-[12,26]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol result ([12>26] on line 67)
-[12,26]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol result ([12>26] on line 68)
-[12,26]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol result ([12>26] on line 69)
-[8,28]<27,Error,Syntax>Syntax error : Illegal GLOBAL clause in function data item. ([8>28] on line 103)
-[8,30]<27,Error,Syntax>Syntax error : Illegal EXTERNAL clause in function data item. ([8>30] on line 104)
-[8,14]<27,Error,Syntax>Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter. (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[8,14:DECLARE]<DECLARE> on line 123)
-[8,10]<27,Error,Syntax>Syntax error : Condition parameter "male" must be level 88. ([8>10] on line 123)
+Line 57[8,22] <27, Error, Syntax> - Syntax error : x is already a parameter.
+Line 58[8,22] <27, Error, Syntax> - Syntax error : y is already a parameter.
+Line 60[12,26] <27, Error, Syntax> - Syntax error : x is already a parameter.
+Line 61[12,26] <27, Error, Syntax> - Syntax error : z is already a parameter.
+Line 64[8,27] <27, Error, Syntax> - Syntax error : result is already a parameter.
+Line 66[12,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol x
+Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol y
+Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol z
+Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 103[8,28] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
+Line 104[8,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in function data item.
+Line 123[8,14] <27, Error, Syntax> - Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter. RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:DECLARE]<DECLARE>
+Line 123[8,10] <27, Error, Syntax> - Syntax error : Condition parameter "male" must be level 88.
 
 --- Program ---
 PROGRAM: FunDeclare common:False initial:False recursive:False

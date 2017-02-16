@@ -77,6 +77,19 @@ namespace TypeCobol.Compiler.Parser
                             yield return diagnostic;
                         }
                     }
+
+                    if (line.PreprocessorDiagnostics != null) {
+                        foreach (Diagnostic diagnostic in line.PreprocessorDiagnostics)
+                        {
+                            yield return diagnostic;
+                        }
+                    }
+                    if (line.ScannerDiagnostics != null) {
+                        foreach (Diagnostic diagnostic in line.ScannerDiagnostics)
+                        {
+                            yield return diagnostic;
+                        }
+                    }
                 }
             }
         }

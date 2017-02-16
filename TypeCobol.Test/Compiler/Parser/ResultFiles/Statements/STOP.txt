@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-[6,8]<27,Error,Syntax>Syntax error : no viable alternative at input 'ALL' (RuleStack=codeElement>stopStatement, OffendingSymbol=[6,8:ALL]<ALL> on line 22)
+Line 22[6,8] <27, Error, Syntax> - Syntax error : no viable alternative at input 'ALL' RuleStack=codeElement>stopStatement,  OffendingSymbol=[6,8:ALL]<ALL>
 --- Code Elements ---
 [[StopStatement]] [1,4:STOP]<STOP> --> [6,8:RUN]<RUN>
 

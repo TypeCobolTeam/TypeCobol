@@ -6,7 +6,6 @@
        WORKING-STORAGE SECTION.
        
        77  MyVariable1                 pic 9 value 0.
-       01  W-InternalRef             PIC X(20).
       * unused variables
        01  W-ELEMENT                 PIC X(20).
        01  W-ATTRIBUTE               PIC X(20).
@@ -47,6 +46,12 @@
       *    05 Identite               TYPE IDENTITY.
       *    05 Description            TYPE DESCRIPTION.
        
+      *01  W-InternalRef             type INTERNAL-REF.
+       01 W-InternalRef.
+           02 RType PIC X(03).
+           02 RReference PIC X(13).
+                                                       
+
       *01  PERSON-1                  TYPE PERSON.
        01 PERSON-1.
            02 UID PIC 9(13).
@@ -69,6 +74,7 @@
              03 Ligne-03 PIC X(32).
              03 Ligne-04 PIC X(32).
              03 Ligne-05 PIC X(32).
+                                                 
       *01  PERSON-2                  TYPE PERSON.
        01 PERSON-2.
            02 UID PIC 9(13).
@@ -91,17 +97,18 @@
              03 Ligne-03 PIC X(32).
              03 Ligne-04 PIC X(32).
              03 Ligne-05 PIC X(32).
-       
-       
-       
+                                                 
+
+
+
        PROCEDURE DIVISION.
-       
+
        TRAITEMENT.
            MOVE PERSON-1                  TO PERSON-2
            MOVE Description OF PERSON-1   TO Description OF PERSON-2
-       
+
            MOVE W-InternalRef            TO InternalRef OF PERSON-2
-           MOVE InternalRef OF PERSON-2  TO ExternalRef OF PERSON-1
+           MOVE InternalRef OF PERSON-2  TO InternalRef OF PERSON-1
            .
-       
+
        END PROGRAM Types.

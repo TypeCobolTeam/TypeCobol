@@ -143,5 +143,12 @@ namespace TypeCobol.Compiler.CodeElements
 		/// be procedure names in the same declarative procedure.
         /// </summary>
         public SymbolReference ThroughProcessingProcedure { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, CodePage, ReturningNational, OptimizedXmlSchema,
+                   OptimizedXmlSchemaFile, ProcessingProcedure, ThroughProcessingProcedure);
+        }
     }
 }

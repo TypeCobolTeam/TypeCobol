@@ -365,6 +365,31 @@ namespace TypeCobol.Compiler.Source
         }
 
         /// <summary>
+        /// Write this Source document
+        /// </summary>
+        /// <param name="writer">The target test writter</param>
+        /// <param name="bTrimRight">true if trailing white spaces must be removed</param>
+        public void Write(TextWriter writer, bool bTrimRight = false)
+        {
+            if (!bTrimRight)
+            {
+                //Directly write the source text
+                this.Source.Write(writer);
+            }
+            else
+            {   //TCCODEGEN_NO_TRAILING_SPACES
+                //Here write line by line and trim end each one.
+                for (int i = 0; i < LineCount; i++)
+                {
+                    SourceLine line = lines[i];
+                    String text = Source.GetTextAt(line.From, line.To);
+                    text = text.TrimEnd();
+                    writer.WriteLine(text);
+                }
+            }
+        }
+
+        /// <summary>
         /// Class that represents a source line in a source document.
         /// </summary>
         public class SourceLine

@@ -5,16 +5,16 @@ PROGRAM: Simple common:False initial:True recursive:False
 -- DATA --------
   str:Alphanumeric
   str:Alphanumeric
-  group:?
+  group:Alphanumeric
   num:Numeric
-  subgroup:?
+  subgroup:Alphanumeric
   vrai:Numeric
   faux:Numeric
-  subgroup2:?
+  subgroup2:Alphanumeric
   x:Numeric
   x:Alphabetic
   y:Numeric
-  E1:?
+  E1:Alphanumeric
   E2:Alphanumeric
   E3:Alphanumeric
   A:BOOL

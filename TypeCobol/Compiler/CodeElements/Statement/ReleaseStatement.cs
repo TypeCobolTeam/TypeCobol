@@ -59,5 +59,10 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public Variable FromVariable { get; set; }
 
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, RecordName, FromVariable);
+        }
     }
 }

@@ -24,7 +24,7 @@
   <!-- delete UNSAFE -->
   <skeleton name="UNSAFE">
     <conditions>
-      <condition node="TypeCobol.Compiler.CodeElements.VariableUser"/>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableWriter"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="erase">UNSAFE</pattern>

@@ -202,7 +202,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 
 			// Register call parameters (shared storage areas) information at the CodeElement level
-			var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference != null ? statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference : null };
+			var callSite = new CallSite() { CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunction.SymbolReference };
 			int parametersCount =
 				(statement.InputParameters != null ? statement.InputParameters.Count : 0)
 				+ (statement.OutputParameter != null ? 1 : 0);

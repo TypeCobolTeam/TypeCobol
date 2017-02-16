@@ -58,14 +58,14 @@ namespace TypeCobol.Compiler.AntlrUtils
     public class ParserDiagnostic : Diagnostic
     {
 		public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser) :
-			base(code, offendingSymbol == null ? -1 : offendingSymbol.Column, offendingSymbol == null ? -1 : (offendingSymbol.StopIndex < 0 ? -1 : (offendingSymbol.StopIndex+1)), message)
+			base(code, offendingSymbol == null ? -1 : offendingSymbol.Column, offendingSymbol == null ? -1 : (offendingSymbol.StopIndex < 0 ? -1 : (offendingSymbol.StopIndex+1)), offendingSymbol.Line, message)
 		{
 			OffendingSymbol = offendingSymbol;
 			this.ruleStack = ruleStack;
 		}
 
         public ParserDiagnostic(string message, int start, int stop, int line, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser)
-            : base(code, start, stop, message) {
+            : base(code, start, stop, line, message) {
             this.line = line;
             this.ruleStack = ruleStack;
         }
@@ -93,19 +93,15 @@ namespace TypeCobol.Compiler.AntlrUtils
             // This is enough to pass all unit tests, but will return false informations in real usage !
             // for real line number, use a Snapshot
             var str = new StringBuilder();
-            str.Append(base.ToString()).Append(" (");
-            if (ruleStack!=null) str.Append("RuleStack="+ruleStack+", ");
+            str.Append(base.ToString());
+            if (ruleStack!=null) str.Append(" RuleStack="+ruleStack+", ");
             if (OffendingSymbol!=null) {
-                str.Append("OffendingSymbol=").Append(OffendingSymbol);
+                str.Append(" OffendingSymbol=").Append(OffendingSymbol);
                 var  importedToken = OffendingSymbol as ImportedToken;
                 if (importedToken != null) {
                     str.Append(" in ").Append(importedToken.CopyDirective);
                 }
-            } else {
-                str.Append("[").Append(ColumnStart).Append(">").Append(ColumnEnd).Append("]");
-            }
-            str.Append(" on line ").Append(lineindex);
-            str.Append(")");
+            } 
             return str.ToString();
         }
     }

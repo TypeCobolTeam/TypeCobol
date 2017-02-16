@@ -200,7 +200,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public static void Check_EntryCodeElements()
         {
-            Check("EntryCodeElements");
+            //Check("EntryCodeElements");
         }
     }
 }

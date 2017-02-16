@@ -22,14 +22,14 @@ namespace TypeCobol.Tools.CommandLine
         {
             // Directory where the source programs and COPY files are stored
             string sourcePath = @"D:\Users\Laurent\OneDrive\Dev\Visual Studio 2012\Projects\TypeCobol\TypeCobol.Test\Samples\EI Cobol samples\EI-Production";
-            string[] programExtensions = { "*.PGM" };
-            string[] copyExtensions = { "*.CPY" };
+            string[] programExtensions = { ".PGM" };
+            string[] copyExtensions = { ".CPY" };
 
             // List of all sample programs used to compute the statistics
             IList<string> textNames = new List<string>();
             foreach (string programExtension in programExtensions)
             {
-                foreach (string filePath in Directory.EnumerateFiles(sourcePath, programExtension))
+                foreach (string filePath in Directory.EnumerateFiles(sourcePath, "*" + programExtension))
                 {
                     string textName = Path.GetFileNameWithoutExtension(filePath);
                     textNames.Add(textName);

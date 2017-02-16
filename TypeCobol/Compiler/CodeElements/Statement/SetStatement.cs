@@ -39,8 +39,7 @@
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                //TODO VariableUser
-                   && astVisitor.VisitVariableWriter(this); //TODO Variables
+                   && astVisitor.VisitVariableWriter(this);
         }
     }
 

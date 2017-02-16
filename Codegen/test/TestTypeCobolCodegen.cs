@@ -131,7 +131,6 @@ namespace TypeCobol.Codegen {
 		public void ParseProcedureCall() {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","ProcedureCall")+".rdz.cbl", skeletons);
-			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","ProcedureCall-WithOK")+".rdz.cbl", skeletons);
 		}
 
 		[TestMethod]
@@ -150,7 +149,13 @@ namespace TypeCobol.Codegen {
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","SuccessiveCalls")+".rdz.cbl", skeletons);
 		}
 
-		
-
+        [TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
+        public void ParseTypeDefLevel88()
+        {
+			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypeDefLevel88") + ".rdz.cbl", skeletons);
+		}        		
 	}
 }

@@ -10,5 +10,9 @@ namespace TypeCobol.Compiler.CodeElements
     {
         public ContinueStatement() : base(CodeElementType.ContinueStatement, StatementType.ContinueStatement)
         { }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
+        }
     }
 }

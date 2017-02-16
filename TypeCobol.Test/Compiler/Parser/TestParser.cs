@@ -16,7 +16,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             Paths paths = new Paths(sampleRoot, resultRoot, sampleRoot + Path.DirectorySeparatorChar + "Programs" + Path.DirectorySeparatorChar + "Simple.pgm", new Multipass.IndexNames());
             TestUnit unit = new TestUnit(new Multipass(paths));
-            unit.Init(new[] { "*.pgm", "*.cpy" });
+            unit.Init(new[] { ".pgm", ".cpy" });
             unit.Parse();
 
             var e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
@@ -36,7 +36,7 @@ namespace TypeCobol.Test.Compiler.Parser
         {
             Paths paths = new Paths(sampleRoot, resultRoot, sampleRoot + Path.DirectorySeparatorChar + "Programs" + Path.DirectorySeparatorChar + "Simple.pgm", new Multipass.IndexNames());
             TestUnit unit = new TestUnit(new Multipass(paths));
-            unit.Init(new[] { "*.pgm", "*.cpy" });
+            unit.Init(new[] { ".pgm", ".cpy" });
             unit.Parse();
             var names = unit.Comparator.paths.Resultnames as Multipass.IndexNames;
             names.index = 0;

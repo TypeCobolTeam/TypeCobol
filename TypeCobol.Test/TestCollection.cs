@@ -149,8 +149,8 @@ namespace TypeCobol.Test {
 
 			var errors = new System.Collections.Generic.List<Exception>();
 			int nbOfTests = 0;
-            string[] extensions = { "*.cbl", "*.pgm" };
-            string[] compilerExtensions = extensions.Concat(new[] { "*.cpy" }).ToArray();
+            string[] extensions = { ".cbl", ".pgm" };
+            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
 
             foreach (string directory in Directory.GetDirectories(sampleRoot)) {
                 var dirname = Path.GetFileName(directory);
@@ -183,8 +183,8 @@ namespace TypeCobol.Test {
         {
             int nbOfTests = 0;
 
-            string[] extensions = { "*.tcbl" };
-            string[] compilerExtensions = extensions.Concat(new[] { "*.cpy" }).ToArray();
+            string[] extensions = { ".tcbl" };
+            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
             foreach (string directory in Directory.GetDirectories(sampleRoot))
             {
                 var dirname = Path.GetFileName(directory);

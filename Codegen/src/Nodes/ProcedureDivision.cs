@@ -50,7 +50,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 					if (parameter.SharingMode.Value == ParameterSharingMode.ByValue) strmode = "BY VALUE ";
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
-					if (parameter.StorageArea != null) strname = CreateName(name);
+					if (parameter.StorageArea != null) strname = CreateName(data.SymbolReference);
 					_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 					c++;
 				}
@@ -59,7 +59,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
 					var named = ReturningParameter.StorageArea;
-					if (named != null) strname = CreateName(named.SymbolReference.Name);
+					if (named != null) strname = CreateName(named.SymbolReference);
 					_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 				}
 				_cache.Add(new TextLineSnapshot(-1, "    .", null));
@@ -67,8 +67,9 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 			return _cache;
 		}
 	}
-	private string CreateName(string name) {
-		var found = table.GetVariable(new Compiler.CodeElements.Expressions.URI(name));
+	private string CreateName(SymbolReference symbolReference) {
+	    var name = symbolReference.Name;
+        var found = table.GetVariable(symbolReference);
 		if (found.Count < 1) return "?NOT_FOUND?";
 		if (found.Count > 1) return name;
 		var pentry = (DataDescriptionEntry)found[0].CodeElement;

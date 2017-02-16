@@ -114,5 +114,12 @@ namespace TypeCobol.Compiler.CodeElements
 		/// is omitted, the repositioning is to line 1 of the next succeeding page.
 		/// </summary>
 		public SyntaxProperty<bool> ByLogicalPage { get; set; }
-	}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, RecordName, FromSendingField,
+                   WriteBeforeAdvancing, WriteAfterAdvancing, ByNumberOfLines, ByMnemonicForEnvironmentName, ByLogicalPage);
+        }
+    }
 }

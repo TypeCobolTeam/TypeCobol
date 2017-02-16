@@ -108,7 +108,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
         {
-            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, messageArgs);
+            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, this.InitialLineIndex, messageArgs);
             ScannerDiagnostics.Add(diag);
         }
 
@@ -118,7 +118,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, Token token, params object[] messageArgs)
         {
-            Diagnostic diag = new TokenDiagnostic(messageCode, token, messageArgs);
+            Diagnostic diag = new TokenDiagnostic(messageCode, token, this.InitialLineIndex, messageArgs);
             if(diag.Info.Severity == Severity.Error)
             {
                 token.HasError = true;

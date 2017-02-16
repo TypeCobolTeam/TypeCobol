@@ -1,9 +1,6 @@
 ﻿
-using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using Object = TypeCobol.Compiler.Nodes.Object;
@@ -116,6 +113,9 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(RewriteStatement rewriteStatement);
         bool Visit(SearchStatement searchStatement);
         bool Visit(SetStatement setStatement);
+        bool Visit(SetStatementForAssignment setStatement);
+        bool Visit(SetStatementForIndexes setStatement);
+        
         bool Visit(SortStatement sortStatement);
         bool Visit(StartStatement startStatement);
         bool Visit(StopStatement stopStatement);
@@ -217,7 +217,6 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(FunctionDeclarationEnd functionDeclarationEnd);
         bool Visit(FunctionDeclarationHeader functionDeclarationHeader);
         bool Visit(StatementElement statementElement);
-        bool VisitVariableUser(VariableUser variableUser);
         bool VisitVariableWriter(VariableWriter variableWriter);
         bool VisitFunctionCaller(FunctionCaller functionCaller);
         bool Visit(SetSendingVariable setSendingVariable);
@@ -330,6 +329,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(FunctionEnd functionEnd);
         bool Visit(Sentence sentence);
 
+        bool Visit(RoundedResult roundedResult);
+        bool Visit(CloseFileInstruction closeFileInstruction);
     }
 
 
@@ -512,6 +513,14 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(SetStatement setStatement) {
+            return true;
+        }
+
+        public virtual bool Visit(SetStatementForAssignment setStatement) {
+            return true;
+        }
+
+        public virtual bool Visit(SetStatementForIndexes setStatement) {
             return true;
         }
 
@@ -888,10 +897,6 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(StatementElement statementElement) {
-            return true;
-        }
-
-        public virtual bool VisitVariableUser(VariableUser variableUser) {
             return true;
         }
 
@@ -1310,6 +1315,14 @@ namespace TypeCobol.Compiler.CodeElements
         public virtual bool Visit(Sentence sentence) {
             return true;
         }
+
+        public virtual bool Visit(RoundedResult roundedResult) {
+            return true;
+        }
+
+        public virtual bool Visit(CloseFileInstruction closeFileInstruction) {
+            return true;
+        }
     }
 
 
@@ -1328,7 +1341,6 @@ namespace TypeCobol.Compiler.CodeElements
         public override void EndNode(Node node) {
             CurrentNode.NeedGeneration = NeedGeneration;
         }
-
 
 
         public override bool Visit(MoveStatement moveStatement) {
@@ -1417,11 +1429,6 @@ namespace TypeCobol.Compiler.CodeElements
             }
             //TODO analyse variables written
             return true;
-        }
-
-        public override bool VisitVariableUser(VariableUser variableUser) {
-            //TODO
-            return base.VisitVariableUser(variableUser);
         }
 
         public override bool Visit(FunctionCall functionCall)

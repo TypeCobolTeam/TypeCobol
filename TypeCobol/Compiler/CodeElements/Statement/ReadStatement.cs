@@ -67,5 +67,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// by identifier-1.
         /// </summary>
         public ReceivingStorageArea ReceivingStorageArea { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, FileName, KeyDataItem, ReadNextRecord, ReceivingStorageArea);
+        }
     }
 }

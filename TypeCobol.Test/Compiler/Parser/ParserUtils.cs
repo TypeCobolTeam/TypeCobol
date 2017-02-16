@@ -28,7 +28,7 @@ namespace TypeCobol.Test.Compiler.Parser
             }
 
             CompilationProject project = new CompilationProject("test",
-                localDirectory.FullName, new string[] { "*.cbl", "*.cpy" },
+                localDirectory.FullName, new string[] { ".cbl", ".cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
 
             FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true);
@@ -48,7 +48,7 @@ namespace TypeCobol.Test.Compiler.Parser
             if (documentFormat == null) documentFormat = DocumentFormat.RDZReferenceFormat;
             CompilationProject project = new CompilationProject("test",
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
-                localDirectory.FullName, new string[] {"*.cpy", "*.cbl" },
+                localDirectory.FullName, new string[] {".cpy", ".cbl" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
             FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false);
             compiler.CompileOnce();
@@ -63,7 +63,7 @@ namespace TypeCobol.Test.Compiler.Parser
             textDocument.LoadChars(cobolString);
 
             var typeCobolOptions = new TypeCobolOptions();
-            var project = new CompilationProject("Empty project", ".", new[] { "*.cbl", "*.cpy" },
+            var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
                 DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
 

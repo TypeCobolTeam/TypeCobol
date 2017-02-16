@@ -63,8 +63,9 @@ WORKING-STORAGE SECTION.
 01 NoRedefines1 REDEFINES BufferTobeRedefined TYPEDEF PIC X.
 01 varNoRedefines1 TYPE NoRedefines1.
 
+01 BufferTobeRedefined2 pic X(100).
 * KO: (Rule #4) no REDEFINES clause with TYPEDEF
-01 NoRedefines2 REDEFINES BufferTobeRedefined TYPEDEF STRONG.
+01 NoRedefines2 REDEFINES BufferTobeRedefined2 TYPEDEF STRONG.
    05 NoRedefines1Item PIC X.
 01 varNoRedefines2 TYPE NoRedefines2.
 
@@ -72,7 +73,6 @@ WORKING-STORAGE SECTION.
 01 NoRedefines3 REDEFINES TypeNotDefined TYPEDEF.
    05 NoRedefines1Item PIC X.
 01 varNoRedefines3 TYPE NoRedefines3.
-
 
 *KO:  (Rule #10) -  Cobol 2014 specifications are not clear, but TypeCobol forbid it for now. Better be more restrictive.
 *(source page 807 of ISO Cobol 2014) 

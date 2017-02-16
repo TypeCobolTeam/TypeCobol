@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.CodeElements;
 using Antlr4.Runtime;
@@ -43,11 +44,11 @@ namespace TypeCobol.Compiler.Parser
 							TableOfIntrisic.AddVariable(data);
 					foreach(var types in value.Types)
 						foreach(var type in types.Value)
-							TableOfIntrisic.AddType((TypeDefinition)type);
+							TableOfIntrisic.AddType(type);
 					foreach(var functions in value.Functions)
 						foreach(var function in functions.Value)
 							if (((FunctionDeclarationHeader)function.CodeElement).Visibility == AccessModifier.Public)
-								TableOfIntrisic.AddFunction((FunctionDeclaration)function);
+								TableOfIntrisic.AddFunction(function);
 				}
 				// TODO#249: use a COPY for these
 				foreach (var type in DataType.BuiltInCustomTypes)
@@ -338,15 +339,26 @@ namespace TypeCobol.Compiler.Parser
 			var node = new DataDescription(data);
             Enter(node);
 
-            var types = node.SymbolTable.GetTypes(node);
-		    if (types.Count == 1) {
-		        data.DataType.IsStrong = types[0].DataType.IsStrong;
-		    }
-            //else do nothing, it's an error that will be treated by a Checker (Cobol2002Checker obviously).
-            
+		    if (data.Indexes != null && data.Indexes.Any())
+		    {
+                var table = node.SymbolTable;
+                foreach (var index in data.Indexes)
+		        {
+                    if (node.CodeElement().IsGlobal)
+                        while (table.CurrentScope != SymbolTable.Scope.Global)
+                            table = table.EnclosingScope;
+                    table.AddVariable(index.Name, node);
+                }
+            }
 
-            
-			AddToSymbolTable(node);
+            var types = node.SymbolTable.GetTypes(node);
+            if (types.Count == 1)
+            {
+                data.DataType.IsStrong = types[0].DataType.IsStrong;
+            }
+            //else do nothing, it's an error that will be treated by a Checker (Cobol2002Checker obviously).
+
+            AddToSymbolTable(node);
 		}
 
 		private void EnterDataConditionEntry(DataConditionEntry data) {

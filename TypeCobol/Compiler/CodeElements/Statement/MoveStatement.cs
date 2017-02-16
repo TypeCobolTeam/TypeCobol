@@ -8,7 +8,7 @@ namespace TypeCobol.Compiler.CodeElements {
     /// <summary>p369: The MOVE statement transfers data from one area of storage to one or more other areas.</summary>
     public abstract class MoveStatement : StatementElement, VariableWriter,FunctionCaller
     {
-	    public MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
+        protected MoveStatement(StatementType statementType) : base(CodeElementType.MoveStatement, statementType) { }
     // [TYPECOBOL]
 	    public SyntaxProperty<bool> Unsafe { get; set; }
 	    public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
@@ -31,10 +31,8 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   //TODO VariableUser
                    && astVisitor.VisitVariableWriter(this)
                    && this.ContinueVisitToChildren(astVisitor, Unsafe) //Order is important here, as unsafe is part of VariableWriter interface
-                                                                       //TODO VariablesWritten
                    && astVisitor.VisitFunctionCaller(this)
                    && this.ContinueVisitToChildren(astVisitor, FunctionCalls); //Order is important here, as FunctionsCall is part of VariableWriter interface
         }
@@ -59,49 +57,21 @@ namespace TypeCobol.Compiler.CodeElements {
 			    : base(StatementType.MoveSimpleStatement) {
 		    SendingVariable = sendingVariable;
 		    SendingBoolean = sendingBoolean;
-		    ReceivingStorageAreas = receivingStorageAreas;
-	    }
+            //StorageAreaWrites is set with receivingStorageAreas by CobolCodeElementBuilder
+        }
 
-	    /// <summary>The sending area.</summary>
-	    public Variable SendingVariable { get; private set; }
+        /// <summary>The sending area.</summary>
+        public Variable SendingVariable { get; private set; }
     // [TYPECOBOL]
 	    public BooleanValue SendingBoolean { get; private set; }
     // [/TYPECOBOL]
-	    /// <summary>The receiving areas. Must not reference an intrinsic function.</summary>
-	    public ReceivingStorageArea[] ReceivingStorageAreas { get; private set; }
+        /// <summary>The receiving areas. Must not reference an intrinsic function.</summary>
+        //public override IList<ReceivingStorageArea> StorageAreaWrites { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   && this.ContinueVisitToChildren(astVisitor, SendingVariable, SendingBoolean)
-                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) ReceivingStorageAreas);
+                   && this.ContinueVisitToChildren(astVisitor, SendingVariable, SendingBoolean);
         }
-
-	    public IDictionary<StorageArea,object> Vars {
-		    [NotNull]
-		    get {
-			    //if (variables != null) return variables;
-			    var variables = new Dictionary<StorageArea,object>();
-		        var sendingReference = Sending as SymbolReference;
-		        if (sendingReference != null) variables.Add(new DataOrConditionStorageArea(sendingReference), null);
-			    foreach(var receiving in ReceivingStorageAreas) variables.Add(receiving.StorageArea, Sending);
-			    return variables;
-		    }
-	    }
-	    private object Sending {
-		    [CanBeNull]
-		    get {
-			    if (SendingVariable != null) {
-				    if (SendingVariable.IsLiteral) {
-					    if (SendingVariable.NumericValue != null) return SendingVariable.NumericValue.Value;
-					    if (SendingVariable.AlphanumericValue != null) return SendingVariable.AlphanumericValue.Value;
-					    throw new System.NotSupportedException();
-				    }
-				    return SendingVariable.MainSymbolReference;
-			    }
-			    if (SendingBoolean != null) return SendingBoolean.Value;
-			    return null;
-		    }
-	    }
 
 	    public override IDictionary<QualifiedName,object> Variables {
 		    [NotNull]
@@ -112,7 +82,7 @@ namespace TypeCobol.Compiler.CodeElements {
 			    var sending = SendingItem as QualifiedName;
 			    if (sending != null) variables.Add(sending, null);
 
-                foreach(var item in ReceivingStorageAreas) {
+                foreach(var item in StorageAreaWrites) {
                     var name = new URI(item.StorageArea.SymbolReference.Name);
                     if (variables.ContainsKey(name))
                         if (item.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
@@ -123,39 +93,7 @@ namespace TypeCobol.Compiler.CodeElements {
                 return variables;
 		    }
 	    }
-
-        public IDictionary<QualifiedName,ICollection<List<SubscriptExpression>>> Subscripts {
-		    get {
-			    var subscripts = new Dictionary<QualifiedName,ICollection<List<SubscriptExpression>>>();
-			    if (SendingVariable != null) {
-				    var kv = GetSubscriptedVariable(SendingVariable.StorageArea);
-                    if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
-                        AddKeyValue(subscripts, kv);
-				    }
-			    }
-			    foreach(var v in ReceivingStorageAreas) {
-				    var kv = GetSubscriptedVariable(v.StorageArea);
-                    if (!kv.Equals(default(KeyValuePair<QualifiedName,List<SubscriptExpression>>))) {
-                        AddKeyValue(subscripts, kv);
-				    }
-			    }
-			    return subscripts;
-		    }
-	    }
-	    private KeyValuePair<QualifiedName,List<SubscriptExpression>> GetSubscriptedVariable(StorageArea variable) {
-            var subscripted = variable as DataOrConditionStorageArea;
-            if (subscripted == null || subscripted.Subscripts.Count < 1) return default(KeyValuePair<QualifiedName,List<SubscriptExpression>>);
-            var name = new URI(variable.SymbolReference.Name);
-            return new KeyValuePair<QualifiedName,List<SubscriptExpression>>(name, subscripted.Subscripts);
-        }
-        private void AddKeyValue<K,V>([NotNull] Dictionary<K,ICollection<List<V>>> map, KeyValuePair<K,List<V>> kv) {
-            ICollection<List<V>> values = new List<List<V>>();
-            if (map.ContainsKey(kv.Key)) {
-                values = map[kv.Key];
-            } // else values is already initialized as an empty list
-            values.Add(kv.Value);
-            map[kv.Key] = values;
-        }
+        
 
         private object SendingItem {
 		    [CanBeNull]
@@ -241,8 +179,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		    get {
 			    if (_functions != null) return _functions;
 
-			    _functions = new List<FunctionCall>();
-			    return _functions;
+                return _functions = new List<FunctionCall>();
 		    }
 	    }
     }

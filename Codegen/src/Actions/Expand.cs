@@ -59,19 +59,24 @@ namespace TypeCobol.Codegen.Actions
         /// </summary>
         public void Execute()
         {
+            //Bug correction: Don't expand commented Nodes
+            if (this.Source.Comment != null ? this.Source.Comment.Value : false)
+                return;
+
             var typegen = GetGeneratedNode(this.Source.CodeElement.GetType());
-#if GENERATOR2
+
             if (typegen == typeof(Codegen.Nodes.TypeCobolQualifier))
                 return;//Now handle by qualifier Action
-#endif
+
             // retrieve data
             int index;
             if (DestinationURI.EndsWith(".end")) index = this.Destination.Parent.Children.Count - 1;
             else index = this.Destination.Parent.IndexOf(this.Destination);
 
+            Node nodegen = null;
             if (index > -1)
             {                
-                var nodegen = (Node)Activator.CreateInstance(typegen, this.Source);
+                nodegen = (Node)Activator.CreateInstance(typegen, this.Source);
                 this.Destination.Parent.Add(nodegen, index + 1);
             }
             // comment out original "line" (=~ non expanded node)
@@ -82,6 +87,10 @@ namespace TypeCobol.Codegen.Actions
             erasedNodes.TrimExcess();
             ErasedNodes = erasedNodes;
             this.Source.RemoveAllChildren();
+            if (nodegen != null)
+            {//Make all reused nodes persistent --> so that they will no be erased.
+                nodegen.SetFlag(Node.Flag.PersistentNode, true, true);
+            }
         }
 
         /// <summary>

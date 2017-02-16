@@ -1,9 +1,9 @@
 ﻿--- Diagnostics ---
-[3,51]<27,Error,Syntax>Syntax error : Symbol GROUP-DOUBLE.GROUP-DOUBLE.V1A2 is not referenced ([3>51] on line 34)
-[3,13]<27,Error,Syntax>Syntax error : Symbol Y is not referenced ([3>13] on line 37)
-[3,20]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol I-DOUBLE ([3>20] on line 38)
-[3,31]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol VARIANT-1B ([3>31] on line 40)
-[3,46]<27,Error,Syntax>Syntax error : Ambiguous reference to symbol GROUP-DOUBLE.VARIANT-2 ([3>46] on line 42)
+Line 34[3,51] <27, Error, Syntax> - Syntax error : Symbol GROUP-DOUBLE.GROUP-DOUBLE.V1A2 is not referenced
+Line 37[3,13] <27, Error, Syntax> - Syntax error : Symbol Y is not referenced
+Line 38[3,20] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol I-DOUBLE
+Line 40[3,31] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol VARIANT-1B
+Line 42[3,46] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol GROUP-DOUBLE.VARIANT-2
 
 --- Program ---
 PROGRAM: Doubles common:False initial:False recursive:False
@@ -15,18 +15,18 @@ PROGRAM: Doubles common:False initial:False recursive:False
   I-DOUBLE:Alphanumeric
   X:Alphanumeric
   BIGZONE:Alphanumeric
-  GROUP-DOUBLE
-  GROUP-DOUBLE
-  VARIANT-1A:?
+  GROUP-DOUBLE:Alphanumeric
+  GROUP-DOUBLE:Alphanumeric
+  VARIANT-1A:Alphanumeric
   V1A1:Alphanumeric
   V1A2:Alphanumeric
   VARIANT-1B:Alphanumeric
   VARIANT-1B:Alphanumeric
   VARIANT-2:Alphanumeric
-  VARIANT-2:?
+  VARIANT-2:Alphanumeric
   EXTRA:Alphanumeric
   V2:Alphanumeric
-  ANOTHER-GROUP:?
+  ANOTHER-GROUP:Alphanumeric
 -- PARAGRAPHS --
   PROC1
 --- Intrinsic:Global

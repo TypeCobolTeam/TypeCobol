@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
     public abstract class Program
     {
-        public Program() {
+        protected Program() {
             SyntaxTree = new SyntaxTree();
         }
 

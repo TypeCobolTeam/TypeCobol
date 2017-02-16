@@ -8,30 +8,6 @@ namespace TypeCobol.Codegen {
 
 	[TestClass]
 	public class TreeGen {
-
-		[TestMethod]
-		[TestCategory("Codegen")]
-		[TestProperty("Time","fast")]
-		public void TreeToCode() {
-			var root1 = CreateSampleTree();
-			root1.Children[0].Add(new Node("X"), 2);
-			root1.Children[2].Add(new Node("Y"), 0);
-			var writer1 = new TreeToCode();
-			root1.Accept(writer1);
-			System.Console.WriteLine(writer1.Output);
-			//new TreeToCode().execute(root);
-			var document = Parser.Parse("resources/input/TypeCobol/FUNCTION.rdz.cbl", Compiler.DocumentFormat.RDZReferenceFormat);
-			var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
-			var program = document.Results.ProgramClassDocumentSnapshot.Program;
-			var root = program.SyntaxTree.Root;
-			root.Get("program.data-division.working-storage").Add(new Node("codegen", false), 1);
-			var writer = new TreeToCode(document.Results.TokensLines);
-			root.Accept(writer);
-			System.Console.WriteLine(writer.Output);
-		}
-
-
-
 		public Node CreateSampleTree() {
 			//		0
 			//     /|\

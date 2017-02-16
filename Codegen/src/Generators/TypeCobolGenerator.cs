@@ -7,16 +7,16 @@ namespace TypeCobol.Codegen.Generators
     /// <summary>
     /// The TypeCobol Generator
     /// </summary>
-    public class TypeCobolGenerator : Generator2
+    public class TypeCobolGenerator : Generator
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="parser"> The Parser which contains parse results </param>
+        /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public TypeCobolGenerator(Parser parser, TextWriter destination, List<Skeleton> skeletons)
-            : base(parser, destination, skeletons)
+        public TypeCobolGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons)
+            : base(document, destination, skeletons)
         {
         }
 

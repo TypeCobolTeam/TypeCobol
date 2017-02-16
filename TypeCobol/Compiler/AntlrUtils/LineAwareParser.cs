@@ -6,7 +6,7 @@ namespace TypeCobol.Compiler.AntlrUtils
 {
     public abstract class LineAwareParser : Antlr4.Runtime.Parser
     {
-        public LineAwareParser(ITokenStream input) : base(input)
+        protected LineAwareParser(ITokenStream input) : base(input)
         { }
 
         public bool IsNextTokenOnTheSameLine()
