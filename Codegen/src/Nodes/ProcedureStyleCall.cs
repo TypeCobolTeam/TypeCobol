@@ -51,7 +51,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 			    var callString = $"CALL '{hash}' {(Node.FunctionCall.Arguments.Length == 0 ? null : "USING")}";
 				var callTextLine = new TextLineSnapshot(-1, callString, null);
 				_cache.Add(callTextLine);
-				var indent = new string(' ', callTextLine.Length + 1);
+				var indent = new string(' ', 13);
                 TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode = (TypeCobol.Compiler.CodeElements.ParameterSharingMode)(-1);
                 int previousSpan = 0;
                 if (Statement.ProcedureCall.InputParameters != null)

@@ -25,6 +25,13 @@
       <SubType>Content</SubType>
       <DependentUpon>Codegen.sequencediagram</DependentUpon>
     </Content>
+    <Content Include="GeneratorActions.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="GeneratorActions.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>GeneratorActions.sequencediagram</DependentUpon>
+    </Content>
     <Content Include="ModelDefinition\Codegen.uml">
       <SubType>Content</SubType>
     </Content>

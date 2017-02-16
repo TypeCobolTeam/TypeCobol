@@ -35,8 +35,7 @@ namespace TypeCobol.Codegen.Actions
         private Dictionary<Type, Type> Generators = new Dictionary<Type, Type> {
 				{ typeof(DataDescriptionEntry), typeof(TypedDataNode) },
 				{ typeof(FunctionDeclarationHeader), typeof(Codegen.Nodes.FunctionDeclaration) },
-				{ typeof(ProcedureStyleCallStatement), typeof(Codegen.Nodes.ProcedureStyleCall) },
-				{ typeof(MoveSimpleStatement), typeof(Codegen.Nodes.TypeCobolQualifier) },
+				{ typeof(ProcedureStyleCallStatement), typeof(Codegen.Nodes.ProcedureStyleCall) }
 			};
 
         /// <summary>
@@ -64,9 +63,6 @@ namespace TypeCobol.Codegen.Actions
                 return;
 
             var typegen = GetGeneratedNode(this.Source.CodeElement.GetType());
-
-            if (typegen == typeof(Codegen.Nodes.TypeCobolQualifier))
-                return;//Now handle by qualifier Action
 
             // retrieve data
             int index;
