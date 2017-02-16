@@ -15,6 +15,26 @@ namespace TypeCobol.Compiler.Diagnostics {
 
     public class Cobol85CompleteASTChecker : AbstractAstVisitor
     {
+        public override bool BeginNode(Node node)
+        {
+            CodeElement codeElement = node.CodeElement;
+            if (codeElement != null && codeElement.StorageAreaReads != null)
+            {
+                foreach (var storageAreaRead in codeElement.StorageAreaReads)
+                {
+                    CheckVariable(node, storageAreaRead);
+                }
+            }
+            if (codeElement != null && codeElement.StorageAreaWrites != null)
+            {
+                foreach (var storageAreaWrite in codeElement.StorageAreaWrites)
+                {
+                    CheckVariable(node, storageAreaWrite);
+                }
+            }
+            return base.BeginNode(node);
+        }
+
         public override bool BeginCodeElement(CodeElement codeElement) {
             //This checker is only for Node after the full AST has been created
             return false;
@@ -41,6 +61,26 @@ namespace TypeCobol.Compiler.Diagnostics {
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
             return true;
         }
+
+        private void CheckVariable(Node node, VariableBase variable)
+        {
+            var found = node.SymbolTable.GetVariable(variable);
+            if (found.Count < 1)
+                if (node.SymbolTable.GetFunction(variable).Count < 1)
+                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + variable + " is not referenced");
+            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + variable);
+        }
+
+        private void CheckVariable(Node node, StorageArea storageArea)
+        {
+            var found = node.SymbolTable.GetVariable(storageArea);
+            if (found.Count < 1)
+                if (node.SymbolTable.GetFunction(storageArea).Count < 1)
+                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + storageArea + " is not referenced");
+            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + storageArea);
+        }
+
+
     }
 
 
@@ -382,17 +422,7 @@ namespace TypeCobol.Compiler.Diagnostics {
     class VariableUsageChecker: NodeListener {
 
 	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-	        CodeElement ce = node.CodeElement;
-	        if (ce != null && ce.StorageAreaReads != null) {
-	            foreach (var storageAreaRead in ce.StorageAreaReads) {
-	                CheckVariable(node, storageAreaRead);
-	            }
-	        }
-            if (ce != null && ce.StorageAreaWrites != null) {
-	            foreach (var storageAreaWrite in ce.StorageAreaWrites) {
-	                CheckVariable(node, storageAreaWrite);
-	            }
-	        }
+	        
 
 	        //Subscript checker are desactived because it doesn't works.
             /*
@@ -450,21 +480,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		    return index;
 	    }
 
-        private void CheckVariable(Node node, VariableBase variable) {
-            var found = node.SymbolTable.GetVariable(variable);
-		    if (found.Count < 1)
-			    if (node.SymbolTable.GetFunction(variable).Count < 1)
-				    DiagnosticUtils.AddError(node.CodeElement, "Symbol "+ variable + " is not referenced");
-		    if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+ variable);
-	    }
-
-        private void CheckVariable(Node node, StorageArea storageArea) {
-            var found = node.SymbolTable.GetVariable(storageArea);
-		    if (found.Count < 1)
-			    if (node.SymbolTable.GetFunction(storageArea).Count < 1)
-				    DiagnosticUtils.AddError(node.CodeElement, "Symbol "+ storageArea + " is not referenced");
-		    if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+ storageArea);
-	    }
+       
     }
 
     class WriteTypeConsistencyChecker: NodeListener {

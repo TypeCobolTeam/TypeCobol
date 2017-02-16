@@ -63,10 +63,10 @@
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
            CALL 'c5875eec' USING 
-                                           somedate
-                                           someformat
-                              by reference flag-value
-                                           realformat
+                                 somedate
+                                 someformat
+                    by reference flag-value
+                                 realformat
            end-call
                                                   
        
@@ -74,10 +74,10 @@
       *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
            CALL 'c5875eec' USING 
-                                           somedate
-                              by content   'YYYYMMDD'
-                              by reference flag-value
-                                           realformat
+                                 somedate
+                    by content   'YYYYMMDD'
+                    by reference flag-value
+                                 realformat
                                                   
            END-CALL
       * __________________________________________________
@@ -91,10 +91,10 @@
       *                                       by content 'YYYYMMDD'
       *                            OUTPUT     flag     realformat
            CALL 'c5875eec' USING 
-                                           somedate
-                              by content   'YYYYMMDD'
-                              by reference flag-value
-                                           realformat
+                                 somedate
+                    by content   'YYYYMMDD'
+                    by reference flag-value
+                                 realformat
                                                                  
            END-CALL
            .      
@@ -104,10 +104,10 @@
       *                                        'YYYYMMDD'
       *                            OUTPUT     flag     realformat
            CALL 'c5875eec' USING 
-                              by content   somedate
-                                           'YYYYMMDD'
-                              by reference flag-value
-                                           realformat
+                    by content   somedate
+                                 'YYYYMMDD'
+                    by reference flag-value
+                                 realformat
                                                                  
            END-CALL
            .      
@@ -119,13 +119,13 @@
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
            CALL 'd5ec4efc' USING 
-                              by content   somedate
-                                           'YYYYMMDD'
-                                           myDate2
-                              by reference myDate3
-                                           myDate4
-                              by reference flag-value
-                                           realformat
+                    by content   somedate
+                                 'YYYYMMDD'
+                                 myDate2
+                    by reference myDate3
+                                 myDate4
+                    by reference flag-value
+                                 realformat
                                                                  
            END-CALL     
       * __________________________________________________
@@ -138,13 +138,13 @@
       *                 OUTPUT flag
       *                        realformat
            CALL 'd5ec4efc' USING 
-                                           somedate
-                              by content   'YYYYMMDD'
-                              by reference myDate2
-                              by reference myDate3
-                                           myDate4
-                              by reference flag-value
-                                           realformat
+                                 somedate
+                    by content   'YYYYMMDD'
+                    by reference myDate2
+                    by reference myDate3
+                                 myDate4
+                    by reference flag-value
+                                 realformat
                                          
            END-CALL
            .
