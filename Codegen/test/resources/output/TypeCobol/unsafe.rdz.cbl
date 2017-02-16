@@ -29,7 +29,7 @@
            02 y PIC 9(04).
                                        
       *01 identifier-3 TYPE Small.
-       01 identifier-3 PIC 9(04) .
+       01 identifier-3 PIC 9(04).
                                   
        01 identifier-4 PIC 9(04).
        01 myunsafeid PIC 9(04).
