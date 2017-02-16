@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using String = System.String;
 
 namespace TypeCobol.Compiler.CodeModel {
     
@@ -146,23 +147,28 @@ namespace TypeCobol.Compiler.CodeModel {
         public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode, SymbolReference symbolReference)
         {
             var childrens = redefinesNode.Parent.Children;
-            int index = childrens.Select((child, position) => new {child, position}).First(c => c.child.CodeElement == redefinesNode.CodeElement).position;
+            int index = childrens.Select((child, position) => new {child, position}).First(c => c.child.CodeElement == redefinesNode.CodeElement).position-1;
             bool redefinedVariableFound = false;
 
             while (!redefinedVariableFound && index >= 0)
             {
-                var child = childrens[index].CodeElement as DataDescriptionEntry;
-                if (child != null)
+                CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as DataDescriptionEntry ??
+                                                              (CommonDataDescriptionAndDataRedefines) (childrens[index].CodeElement as DataRedefinesEntry);
+
+                if (child != null && (child is DataDescriptionEntry || child is DataRedefinesEntry))
                 {
-                    if (child.DataName.Name == symbolReference.Name)
+                    if (child.DataName != null && string.Equals(child.DataName.Name, symbolReference.Name, StringComparison.InvariantCultureIgnoreCase))
                         return childrens[index] as DataDefinition;
-                    else
-                        return null;
+                    else if (child.DataName != null && child is DataDescriptionEntry &&
+                             !string.Equals(child.DataName.Name, symbolReference.Name,
+                                 StringComparison.InvariantCultureIgnoreCase))
+                        return null; 
                 }
+                else
+                    return null;
                     
                 index--;
             }
-
             return null;
         } 
 

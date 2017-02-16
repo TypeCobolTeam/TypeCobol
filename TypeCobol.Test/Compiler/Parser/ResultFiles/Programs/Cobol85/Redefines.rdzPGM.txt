@@ -1,5 +1,5 @@
---- Diagnostics ---
-Line 14[8,40] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'MyVar1' is not referenced
+﻿--- Diagnostics ---
+Line 19[8,40] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'MyVar1' is not referenced
 
 --- Program ---
 PROGRAM: RedefinesTest common:False initial:False recursive:False
@@ -13,6 +13,11 @@ PROGRAM: RedefinesTest common:False initial:False recursive:False
   MyRedifines:Alphanumeric
   MyRedifines2:Alphanumeric
   MyRedifines3:Alphanumeric
+  MyRedifines3:Alphanumeric
+  MyRedifines4:Alphanumeric
+  VarGroup:Alphanumeric
+  VarGroup-Bis:Alphanumeric
+  FILTER:Alphanumeric
 --- Intrinsic
 -- TYPES -------
       BOOL:BOOL
