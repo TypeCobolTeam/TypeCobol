@@ -82,7 +82,15 @@
     <Compile Include="Skeletons\*.cs" />
     <Compile Include="Skeletons\Templates\*.cs" />
     <Compile Include="Properties\*.cs" />
-    <Compile Include="Nodes\*.cs" />
+    <Compile Include="Nodes\DataDivision.cs" />
+    <Compile Include="Nodes\Factory.cs" />
+    <Compile Include="Nodes\FunctionDeclaration.cs" />
+    <Compile Include="Nodes\Generated.cs" />
+    <Compile Include="Nodes\ParameterDescription.cs" />
+    <Compile Include="Nodes\ProcedureDivision.cs" />
+    <Compile Include="Nodes\ProcedureStyleCall.cs" />
+    <Compile Include="Nodes\ProgramEnd.cs" />
+    <Compile Include="Nodes\TypedDataNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
