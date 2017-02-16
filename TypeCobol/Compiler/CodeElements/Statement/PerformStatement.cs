@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -55,6 +56,13 @@ namespace TypeCobol.Compiler.CodeElements
         // index-names, according to certain rules.
         /// </summary>
         public PerformLoopDescription[] VaryingLoopDescriptions { get; set; }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, IterationType, TimesIterationCount,
+                       TerminationConditionTestTime, UntilTerminationCondition)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) VaryingLoopDescriptions);
+        }
     }
 
     /// <summary>
@@ -95,7 +103,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// passed to the next executable statement following the PERFORM
     /// statement.
     /// </summary>
-    public class PerformLoopDescription
+    public class PerformLoopDescription : IVisitable
     {
         public ReceivingStorageArea LoopVariable { get; set; }
 
@@ -104,5 +112,8 @@ namespace TypeCobol.Compiler.CodeElements
         public NumericVariable Increment { get; set; }
 
         public ConditionalExpression TerminationCondition { get; set; }
+        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return this.ContinueVisitToChildren(astVisitor, LoopVariable, InitialValue, Increment, TerminationCondition);
+        }
     }
 }

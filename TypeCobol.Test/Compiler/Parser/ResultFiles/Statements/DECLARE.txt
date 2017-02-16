@@ -1,14 +1,14 @@
 ﻿--- Diagnostics ---
-[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 6)
-[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 7)
-[31,31]<27,Error,Syntax>Syntax error : missing {PUBLIC, PRIVATE} at '.' (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[31,31+:.]<PeriodSeparator> on line 8)
-[1,7]<27,Error,Syntax>Syntax error : Symbol "ProcedureINOUT" is defined as function, but parameter clauses describe a procedure (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 27)
-[1,7]<27,Error,Syntax>Syntax error : Symbol "ProcedureOUTPUT" is defined as function, but parameter clauses describe a procedure (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 29)
-[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for function "ProcedureINOUTAndOUTPUT" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 31)
-[1,7]<27,Error,Syntax>Syntax error : Symbol "ProcedureRETURNING" is defined as procedure, but parameter clauses describe a function (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 50)
-[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for function "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 53)
-[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for procedure "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 56)
-[1,7]<27,Error,Syntax>Syntax error : Incompatible parameter clauses for symbol "Unknown" (RuleStack=codeElement>tcCodeElement>functionDeclarationHeader, OffendingSymbol=[1,7:DECLARE]<DECLARE> on line 59)
+Line 6[31,31] <27, Error, Syntax> - Syntax error : missing {PUBLIC, PRIVATE} at '.' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[31,31+:.]<PeriodSeparator>
+Line 7[31,31] <27, Error, Syntax> - Syntax error : missing {PUBLIC, PRIVATE} at '.' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[31,31+:.]<PeriodSeparator>
+Line 8[31,31] <27, Error, Syntax> - Syntax error : missing {PUBLIC, PRIVATE} at '.' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[31,31+:.]<PeriodSeparator>
+Line 27[1,7] <27, Error, Syntax> - Syntax error : Symbol "ProcedureINOUT" is defined as function, but parameter clauses describe a procedure RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[1,7:DECLARE]<DECLARE>
+Line 29[1,7] <27, Error, Syntax> - Syntax error : Symbol "ProcedureOUTPUT" is defined as function, but parameter clauses describe a procedure RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[1,7:DECLARE]<DECLARE>
+Line 31[1,7] <27, Error, Syntax> - Syntax error : Incompatible parameter clauses for function "ProcedureINOUTAndOUTPUT" RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[1,7:DECLARE]<DECLARE>
+Line 50[1,7] <27, Error, Syntax> - Syntax error : Symbol "ProcedureRETURNING" is defined as procedure, but parameter clauses describe a function RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[1,7:DECLARE]<DECLARE>
+Line 53[1,7] <27, Error, Syntax> - Syntax error : Incompatible parameter clauses for function "Unknown" RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[1,7:DECLARE]<DECLARE>
+Line 56[1,7] <27, Error, Syntax> - Syntax error : Incompatible parameter clauses for procedure "Unknown" RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[1,7:DECLARE]<DECLARE>
+Line 59[1,7] <27, Error, Syntax> - Syntax error : Incompatible parameter clauses for symbol "Unknown" RuleStack=codeElement>tcCodeElement>functionDeclarationHeader,  OffendingSymbol=[1,7:DECLARE]<DECLARE>
 --- Code Elements ---
 fun():():():():Public:Undefined/Function
 fun():():():():Public:Function/Function

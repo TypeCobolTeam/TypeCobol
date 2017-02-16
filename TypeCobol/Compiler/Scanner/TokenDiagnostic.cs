@@ -8,8 +8,8 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class TokenDiagnostic : Diagnostic
     {
-        internal TokenDiagnostic(MessageCode messageCode, Token token, params object[] messageArgs) :
-            base(messageCode, token.Column, token.EndColumn, messageArgs)
+        internal TokenDiagnostic(MessageCode messageCode, Token token, int lineNumber, params object[] messageArgs) :
+            base(messageCode, token.Column, token.EndColumn, lineNumber, messageArgs)
         {
             Token = token;
         }

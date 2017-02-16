@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-[1,15]<27,Error,Syntax>Syntax error : Symbol VALUE1 is not referenced ([1>15] on line 12)
-[1,15]<27,Error,Syntax>Syntax error : Symbol VALUE2 is not referenced ([1>15] on line 21)
-[1,15]<27,Error,Syntax>Syntax error : Symbol VALUE3 is not referenced ([1>15] on line 39)
+Line 12[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE1 is not referenced
+Line 21[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE2 is not referenced
+Line 39[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE3 is not referenced
 
 --- Program ---
 PROGRAM: evaluate-semantic common:False initial:False recursive:False

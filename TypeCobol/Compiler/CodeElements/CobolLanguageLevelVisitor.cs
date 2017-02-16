@@ -1,9 +1,6 @@
 ﻿
-using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using Object = TypeCobol.Compiler.Nodes.Object;
@@ -116,6 +113,9 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(RewriteStatement rewriteStatement);
         bool Visit(SearchStatement searchStatement);
         bool Visit(SetStatement setStatement);
+        bool Visit(SetStatementForAssignment setStatement);
+        bool Visit(SetStatementForIndexes setStatement);
+        
         bool Visit(SortStatement sortStatement);
         bool Visit(StartStatement startStatement);
         bool Visit(StopStatement stopStatement);
@@ -329,6 +329,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(FunctionEnd functionEnd);
         bool Visit(Sentence sentence);
 
+        bool Visit(RoundedResult roundedResult);
+        bool Visit(CloseFileInstruction closeFileInstruction);
     }
 
 
@@ -511,6 +513,14 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(SetStatement setStatement) {
+            return true;
+        }
+
+        public virtual bool Visit(SetStatementForAssignment setStatement) {
+            return true;
+        }
+
+        public virtual bool Visit(SetStatementForIndexes setStatement) {
             return true;
         }
 
@@ -1305,6 +1315,14 @@ namespace TypeCobol.Compiler.CodeElements
         public virtual bool Visit(Sentence sentence) {
             return true;
         }
+
+        public virtual bool Visit(RoundedResult roundedResult) {
+            return true;
+        }
+
+        public virtual bool Visit(CloseFileInstruction closeFileInstruction) {
+            return true;
+        }
     }
 
 
@@ -1323,7 +1341,6 @@ namespace TypeCobol.Compiler.CodeElements
         public override void EndNode(Node node) {
             CurrentNode.NeedGeneration = NeedGeneration;
         }
-
 
 
         public override bool Visit(MoveStatement moveStatement) {

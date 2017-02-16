@@ -35,6 +35,35 @@ internal class TypedDataNode: DataDescription, Generated {
 	}
 
     /// <summary>
+    /// Retrieve the consumed Token as a String
+    /// </summary>
+    /// <param name="data_def">The DataDefintion to Retrieve the consumed Tokens.</param>
+    /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
+    /// <returns>The string representing the DataDefinition</returns>
+    internal static string ConsumedTokenToString(DataDefinitionEntry data_def, out bool bHasPeriod)
+    {
+        bHasPeriod = false;
+        StringBuilder sb = new StringBuilder();
+        if (data_def.ConsumedTokens != null)
+        {
+            if (data_def.ConsumedTokens != null)
+            {
+                int i = 0;
+                while (i < data_def.ConsumedTokens.Count)
+                {
+                    if ((i != data_def.ConsumedTokens.Count - 1) || (data_def.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
+                        sb.Append(string.Intern(" "));//Add a space but not before a a Period Separator
+                    sb.Append(data_def.ConsumedTokens[i].Text);
+                    if (i == data_def.ConsumedTokens.Count - 1)
+                        bHasPeriod = data_def.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
+                    i++;
+                }
+            }
+        }
+        return sb.ToString();
+    }
+
+    /// <summary>
     /// Tries to detect a TYPEDEF construction for a scalar type.
     /// </summary>
     /// <param name="customtype">The TypeDef definition node</param>
@@ -52,9 +81,14 @@ internal class TypedDataNode: DataDescription, Generated {
                 while (i < customtype.CodeElement.ConsumedTokens.Count  && customtype.CodeElement.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPEDEF)
                     i++;
 
+                //Ignore any STRONG keyword
+                if((i+1) < customtype.CodeElement.ConsumedTokens.Count && customtype.CodeElement.ConsumedTokens[i+1].TokenType == Compiler.Scanner.TokenType.STRONG)
+                    i++;
+
                 while (++i < customtype.CodeElement.ConsumedTokens.Count)
                 {
-                    sb.Append(string.Intern(" "));
+                    if ((i != customtype.CodeElement.ConsumedTokens.Count - 1) || (customtype.CodeElement.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
+                        sb.Append(string.Intern(" "));//Add a space but not before a a Period Separator
                     sb.Append(customtype.CodeElement.ConsumedTokens[i].Text);
                     if (i == customtype.CodeElement.ConsumedTokens.Count - 1)
                         bHasPeriod = customtype.CodeElement.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
@@ -64,31 +98,52 @@ internal class TypedDataNode: DataDescription, Generated {
         return sb.ToString();
     }
 
-	internal static ITextLine CreateDataDefinition(DataDescriptionEntry data, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null) {
-        bool bHasPeriod = false;
-        var line = GetIndent(level, indent, isFirst);
-		line.Append(level.ToString("00"));
-		if (data.Name != null) 
-            line.Append(' ').Append(data.Name);
-		if (!isCustomType) 
-            line.Append(" PIC ").Append(data.Picture);
-        else if (customtype != null && customtype.Children.Count == 0)
-        {   //This variable will have no subtypes as children at all
-            //So Auto detect a type based on scalar COBOL typedef.            
-            string text = ExtractAnyCobolScalarTypeDef(customtype, out bHasPeriod);
-            line.Append(text);
-        }
-        if (!bHasPeriod)
+	internal static ITextLine CreateDataDefinition(DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null) {
+        if (data_def is DataDescriptionEntry)
         {
-            line.Append('.');
+            DataDescriptionEntry data = data_def as DataDescriptionEntry;
+            bool bHasPeriod = false;
+            var line = GetIndent(level, indent, isFirst);
+		    line.Append(level.ToString("00"));
+            if (data_def.Name != null) 
+                line.Append(' ').Append(data.Name);
+		    if (!isCustomType) 
+                line.Append(" PIC ").Append(data.Picture);
+            else if (customtype != null)
+            {   //This variable will have no subtypes as children at all
+                //So Auto detect a type based on scalar COBOL typedef.            
+                string text = ExtractAnyCobolScalarTypeDef(customtype, out bHasPeriod);
+                line.Append(text);
+            }
+            if (!bHasPeriod)
+            {
+                line.Append('.');
+            }
+		    return new TextLineSnapshot(-1, line.ToString(), null);
         }
-		return new TextLineSnapshot(-1, line.ToString(), null);
+        else if (data_def is DataConditionEntry || data_def is DataRenamesEntry || data_def is DataRedefinesEntry)
+        {                        
+            bool bHasPeriod = false;
+            var line = GetIndent(level, indent, isFirst);
+            string text = ConsumedTokenToString(data_def, out bHasPeriod);
+            line.Append(text);
+            if (!bHasPeriod)
+            {
+                line.Append('.');
+            }
+            return new TextLineSnapshot(-1, line.ToString(), null);
+        }
+        else
+        {//Humm ... It will be a Bug
+            System.Diagnostics.Debug.Assert(data_def is DataDescriptionEntry || data_def is DataConditionEntry);
+        }
+        return null;
 	}
 
     private static System.Text.StringBuilder GetIndent(int level, int indent, bool isFirst)
     {
 		var str = new System.Text.StringBuilder();
-		if (level == 1 || level == 77) return str;
+        if (level == 1 || level == 77) return str;
         if (!isFirst)
 		    str.Append("    ");
 		for(int i=1; i<indent; i++) str.Append("  ");
@@ -102,8 +157,19 @@ internal class TypedDataNode: DataDescription, Generated {
 			var typed = (ITypedNode)child;
 			var types = table.GetType(typed.DataType);
 			bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
-            lines.Add(CreateDataDefinition((DataDescriptionEntry)child.CodeElement, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
-			if (isCustomTypeToo) lines.AddRange(InsertChildren(table, types[0], level+1, indent+1));
+            if (child.CodeElement is DataDefinitionEntry)
+            {
+                lines.Add(CreateDataDefinition((DataDefinitionEntry)child.CodeElement, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
+            }
+            else
+            {//Humm ... It will be a bug.
+                System.Diagnostics.Debug.Assert(child.CodeElement is DataDefinitionEntry);
+            }
+            if (isCustomTypeToo)
+                lines.AddRange(InsertChildren(table, types[0], level + 1, indent + 1));
+            else
+                lines.AddRange(InsertChildren(table, child as DataDefinition, level + 1, indent + 1));
+
 		}
 		return lines;
 	}

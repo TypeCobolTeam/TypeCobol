@@ -33,11 +33,16 @@ public class ComputeStatement: AbstractArithmeticStatement {
 			return map;
 		}
 	}
-}
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>) ReceivingStorageAreas)
+                   && this.ContinueVisitToChildren(astVisitor, ArithmeticExpression);
+        }
+    }
 
 
 
-public class RoundedResult {
+public class RoundedResult : IVisitable {
 	public ReceivingStorageArea ReceivingStorageArea { get; set; }
 	public SyntaxProperty<bool> Rounded { get; set; }
 	public bool IsRounded { get { return Rounded != null && Rounded.Value; } }
@@ -49,6 +54,11 @@ public class RoundedResult {
 		if (IsRounded) str.Append(" °");
 		return str.ToString();
 	}
+
+    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+        return astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, ReceivingStorageArea, Rounded);
+    }
 }
 
 public interface ArithmeticStatement {

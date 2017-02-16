@@ -44,7 +44,13 @@ public class SubtractSimpleStatement: SubtractStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, VariablesTogether, SendingAndReceivingStorageAreas);
+        }
+    }
 
 /// <summary>
 /// p439: Format 2: SUBTRACT statement with GIVING phrase
@@ -79,7 +85,14 @@ public class SubtractGivingStatement: SubtractStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, Operand)
+                   && this.ContinueVisitToChildren(astVisitor, VariablesTogether, ReceivingStorageAreas);
+        }
+    }
 
 /// <summary>
 /// p439: Format 3: SUBTRACT statement with CORRESPONDING phrase
@@ -109,6 +122,12 @@ public class SubtractCorrespondingStatement: SubtractStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, GroupItem, SendingAndReceivingGroupItem, Rounded);
+        }
+    }
 
 }

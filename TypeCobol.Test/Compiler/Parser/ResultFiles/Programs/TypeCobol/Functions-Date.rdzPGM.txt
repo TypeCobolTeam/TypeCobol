@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-[9,15]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[9,15:DECLARE]<DECLARE> on line 142)
-[9,15]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[9,15:DECLARE]<DECLARE> on line 154)
-[8,14]<27,Error,Syntax>Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". (RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration, OffendingSymbol=[8,14:DECLARE]<DECLARE> on line 160)
+Line 142[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[9,15:DECLARE]<DECLARE>
+Line 154[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[9,15:DECLARE]<DECLARE>
+Line 160[8,14] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:DECLARE]<DECLARE>
 
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False

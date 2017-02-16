@@ -6,6 +6,8 @@ using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scanner;
+using String = System.String;
 
 namespace TypeCobol.Compiler.CodeModel {
     
@@ -96,7 +98,20 @@ namespace TypeCobol.Compiler.CodeModel {
             Add(DataEntries, symbol);
         }
 
-	    private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node {
+        internal void AddVariable(string name, DataDefinition data)
+        {
+            string key = name;
+            List<DataDefinition> found;
+            bool present = DataEntries.TryGetValue(key, out found);
+            if (!present)
+            {
+                found = new List<DataDefinition>();
+                DataEntries.Add(key, found);
+            }
+            found.Add(data);
+        }
+
+        private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node {
 		    string key = symbol.QualifiedName.Head;
 		    List<T> found;
 		    bool present = table.TryGetValue(key, out found);
@@ -128,6 +143,34 @@ namespace TypeCobol.Compiler.CodeModel {
         {
             return GetVariable(symbolReference.URI);
         }
+
+        public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode, SymbolReference symbolReference)
+        {
+            var childrens = redefinesNode.Parent.Children;
+            int index = childrens.Select((child, position) => new {child, position}).First(c => c.child.CodeElement == redefinesNode.CodeElement).position-1;
+            bool redefinedVariableFound = false;
+
+            while (!redefinedVariableFound && index >= 0)
+            {
+                CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as DataDescriptionEntry ??
+                                                              (CommonDataDescriptionAndDataRedefines) (childrens[index].CodeElement as DataRedefinesEntry);
+
+                if (child != null && (child is DataDescriptionEntry || child is DataRedefinesEntry))
+                {
+                    if (child.DataName != null && string.Equals(child.DataName.Name, symbolReference.Name, StringComparison.InvariantCultureIgnoreCase))
+                        return childrens[index] as DataDefinition;
+                    else if (child.DataName != null && child is DataDescriptionEntry &&
+                             !string.Equals(child.DataName.Name, symbolReference.Name,
+                                 StringComparison.InvariantCultureIgnoreCase))
+                        return null; 
+                }
+                else
+                    return null;
+                    
+                index--;
+            }
+            return null;
+        } 
 
         public List<DataDefinition> GetVariable(QualifiedName name) {
 		    return new List<DataDefinition>(GetVariableExplicit(name).Keys.Cast<DataDefinition>());
@@ -331,15 +374,18 @@ namespace TypeCobol.Compiler.CodeModel {
 		    }
 		    return offset == name2.Count;
 	    }
-	    /// <summary>
-	    /// Filters out of a list of data descriptions entries all elements
-	    /// with parent element named differently than what is expected.
-	    /// </summary>
-	    /// <param name="values">List of entries to filter</param>
-	    /// <param name="pname">Expected parent name</param>
-	    /// <param name="generation">"Generation" of the parent name (1 for TopLevel, 2 for TopLevel.TopLevel and so on)</param>
-	    /// <returns>Filtered list</returns>
-	    private List<T> Filter<T>(IList<T> values, string pname, int generation) where T : Node {
+
+        
+
+        /// <summary>
+        /// Filters out of a list of data descriptions entries all elements
+        /// with parent element named differently than what is expected.
+        /// </summary>
+        /// <param name="values">List of entries to filter</param>
+        /// <param name="pname">Expected parent name</param>
+        /// <param name="generation">"Generation" of the parent name (1 for TopLevel, 2 for TopLevel.TopLevel and so on)</param>
+        /// <returns>Filtered list</returns>
+        private List<T> Filter<T>(IList<T> values, string pname, int generation) where T : Node {
 		    var filtered = new List<T>();
 		    foreach(var symbol in values) {
 			    var parent = GetAncestor(symbol, generation);

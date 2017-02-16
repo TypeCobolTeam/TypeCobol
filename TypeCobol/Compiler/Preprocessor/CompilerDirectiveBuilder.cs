@@ -97,7 +97,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     Diagnostic diag = new Diagnostic(
                         MessageCode.InvalidControlCblCompilerStatementOption, 
                         errorToken.Column, errorToken.EndColumn,
-                        option);
+                        errorToken.Line, option);
                     CompilerDirective.AddDiagnostic(diag);
                 }
             }
@@ -366,7 +366,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     Diagnostic error = new Diagnostic(
                         MessageCode.InvalidNumericLiteralFormat,
                         errorToken.Column, errorToken.EndColumn,
-                        "TODO");
+                        errorToken.Line, "TODO");
                     CompilerDirective.AddDiagnostic(error);//TODO proper diagnostic error
                 }
             }

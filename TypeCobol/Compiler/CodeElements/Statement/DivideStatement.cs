@@ -37,7 +37,14 @@ public class DivideSimpleStatement: DivideStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>)SendingAndReceivingStorageAreas)
+                   && this.ContinueVisitToChildren(astVisitor, Divisor);
+        }
+    }
 
 /// <summary>
 /// Format 2: DIVIDE statement with INTO and GIVING phrases
@@ -74,7 +81,14 @@ public class DivideGivingStatement: DivideStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>)ReceivingStorageAreas)
+                   && this.ContinueVisitToChildren(astVisitor, Dividend, Divisor);
+        }
+    }
 
 /// <summary>
 /// Format 4: DIVIDE statement with INTO and REMAINDER phrases
@@ -117,6 +131,12 @@ public class DivideRemainderStatement: DivideStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, Divisor, Dividend, Quotient, Remainder);
+        }
+    }
 
 }

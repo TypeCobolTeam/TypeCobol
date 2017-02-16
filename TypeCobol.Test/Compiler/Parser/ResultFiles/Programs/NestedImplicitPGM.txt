@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-[6,16]<27,Error,Syntax>Syntax error : Symbol AA is not referenced ([6>16] on line 9)
-[6,16]<27,Error,Syntax>Syntax error : Symbol BB is not referenced ([6>16] on line 15)
+Line 9[6,16] <27, Error, Syntax> - Syntax error : Symbol AA is not referenced
+Line 15[6,16] <27, Error, Syntax> - Syntax error : Symbol BB is not referenced
 
 --- Program ---
 PROGRAM: MYPROGA common:False initial:False recursive:False

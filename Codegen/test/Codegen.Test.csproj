@@ -71,6 +71,7 @@
     <None Include="resources\input\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="resources\input\TypeCobol\TypeDefLevel88.rdz.cbl" />
     <None Include="resources\output\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -78,6 +79,7 @@
       <Link>resources\config\TypeCobol\skeletons.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="resources\output\TypeCobol\TypeDefLevel88.rdz.cbl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TypeCobol.Test\TypeCobol.Test.csproj">

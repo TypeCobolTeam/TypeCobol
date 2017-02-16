@@ -1,8 +1,8 @@
 ﻿--- Diagnostics ---
-[1,11]<27,Error,Syntax>Syntax error : Symbol a is not referenced ([1>11] on line 4)
-[1,11]<27,Error,Syntax>Syntax error : Symbol b is not referenced ([1>11] on line 4)
-[1,11]<27,Error,Syntax>Syntax error : Symbol c is not referenced ([1>11] on line 1)
-[1,11]<27,Error,Syntax>Syntax error : Symbol d is not referenced ([1>11] on line 1)
+Line 4[1,11] <27, Error, Syntax> - Syntax error : Symbol a is not referenced
+Line 4[1,11] <27, Error, Syntax> - Syntax error : Symbol b is not referenced
+Line 1[1,11] <27, Error, Syntax> - Syntax error : Symbol c is not referenced
+Line 1[1,11] <27, Error, Syntax> - Syntax error : Symbol d is not referenced
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False

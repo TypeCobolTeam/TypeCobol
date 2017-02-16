@@ -110,6 +110,7 @@ namespace TypeCobol.Codegen.Actions
 
             public override bool BeginNode(Node node)
             {
+                PerformMatch();
                 this.CurrentNode = node;
                 return base.BeginNode(node);
             }
@@ -117,15 +118,20 @@ namespace TypeCobol.Codegen.Actions
             public override void EndNode(Node node)
             {
                 base.EndNode(node);
+                PerformMatch();
+                node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+            }
+
+            private void PerformMatch()
+            {
                 if (HasMatch)
                 {
                     //Add in the list the last qualified sequence
                     AllItemsList.Add(Items);
-                    Perform(node);
+                    Perform(this.CurrentNode);
                     Items = null;
                     AllItemsList.Clear();
                 }
-                node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
             }
 
             /// <summary>
@@ -135,7 +141,7 @@ namespace TypeCobol.Codegen.Actions
             {
                 get
                 {
-                    return Items != null;
+                    return this.CurrentNode != null && Items != null;
                 }
             }
 

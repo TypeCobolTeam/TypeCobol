@@ -31,7 +31,7 @@
 -- Line 8 --
 [8,11:    ]<SpaceSeparator>
 *** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD  ([12,18:service]<SERVICE_CD>[19,19: ]<SpaceSeparator>[20,25:RELOAD]<RELOAD>[26,26+:.]<PeriodSeparator>) ***
-[26,26]<27,Error,Syntax>Syntax error : mismatched input '.' expecting user defined word
+Line 8[26,26] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting user defined word
 
 -- Line 9 --
 [8,13:RELOAD]<RELOAD>
@@ -47,5 +47,5 @@
 
 -- Line 12 --
 *** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD <missing UserDefinedWord> ([8,14:service]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,21:reload]<RELOAD>) ***
-[1,0]<27,Error,Syntax>Syntax error : missing user defined word at ''
+Line 0[1,0] <27, Error, Syntax> - Syntax error : missing user defined word at ''
 

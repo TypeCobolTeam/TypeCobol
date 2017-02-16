@@ -11,12 +11,14 @@ namespace TypeCobol.Compiler.Diagnostics
     /// </summary>
     public class Diagnostic
     {
-        internal Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
+        internal Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
         {
             Info = DiagnosticMessage.GetFromCode[(int)messageCode];
 
             ColumnStart = Math.Max(columnStart, 0);
             ColumnEnd   = Math.Max(columnEnd,   0);
+
+            Line = lineNumber;
 
             Message = String.Format(Info.MessageTemplate, messageArgs);
             MessageArgs = messageArgs;
@@ -27,6 +29,8 @@ namespace TypeCobol.Compiler.Diagnostics
         public int ColumnStart { get; private set; }
         public int ColumnEnd { get; private set; }
 
+        public int Line { get; private set; }
+
         public string Message { get; private set; }
         internal object[] MessageArgs { get; private set; }
 
@@ -35,7 +39,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         public override string ToString()
         {
-            return "[" + ColumnStart + "," + ColumnEnd + "]<" + Info.Code + "," + Info.Severity + "," + Info.Category + ">" + Message;
+            return string.Format("Line {0}[{1},{2}] <{3}, {4}, {5}> - {6}", Line, ColumnStart, ColumnEnd, Info.Code, Info.Severity, Info.Category, Message);
         }
     }
 }

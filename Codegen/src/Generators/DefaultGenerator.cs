@@ -35,10 +35,10 @@ namespace TypeCobol.Codegen.Generators
             LinearNodeSourceCodeMapper mapper = new LinearNodeSourceCodeMapper(this);
             mapper.Accept(RootNode);
             //mapper.DebugDump();
-            SourceDocument generatedDocument = LinearGeneration(mapper, CompilationResults.TokensLines);
+            SourceText generatedDocument = LinearGeneration(mapper, CompilationResults.TokensLines);
             // Step 3: Write target document
             //TCCODEGEN_NO_TRAILING_SPACES
-            generatedDocument.Write(Destination, true);
+            generatedDocument.Write(Destination);
             Destination.Flush();
         }
 
@@ -52,10 +52,9 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="Input">Input source lines</param>
         /// <returns>The Generated Source Document</returns>
         /// </summary>
-        private SourceDocument LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
+        private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
         {
             SourceText targetSourceText = new GapSourceText();
-            SourceDocument generatedDocument = new SourceDocument(targetSourceText);
             //Stack Used to save current generation buffer when switching in a function declaration generation.
             //Beacuse a function declartion has its own buffer.
             Stack<SourceText> stackOuterBuffer = new Stack<SourceText>();
@@ -77,20 +76,16 @@ namespace TypeCobol.Codegen.Generators
                             targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
                         previousBuffer = null;
                     }
-                    IEnumerable<ITextLine> lines = Indent(Input[i], null);
-                    foreach (var line in lines)
+                    string text = Input[i].Text;
+                    if (mapper.LineData[i].Buffer != null)
+                    {//This line has been assigned a target Buffer
+                        mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                        mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                    }
+                    else
                     {
-                        string text = line.Text;
-                        if (mapper.LineData[i].Buffer != null)
-                        {//This line has been assigned a target Buffer
-                            mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                            mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                        }
-                        else
-                        {
-                            targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                            targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                        }
+                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
                     }
                     continue;
                 }
@@ -113,7 +108,7 @@ namespace TypeCobol.Codegen.Generators
                     IEnumerable<ITextLine> lines = Indent(Input[j], true);
                     foreach (var line in lines)
                     {
-                        string text = line.Text;
+                        string text = line.Text.TrimEnd();
                         targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
                         targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
                         CheckFunctionDeclCommentedheader(mapper, current_nodes, text);
@@ -175,7 +170,7 @@ namespace TypeCobol.Codegen.Generators
                             }
                             else foreach (var l in Indent(line, null))
                             {
-                                sw.WriteLine(l.Text);
+                                sw.WriteLine(l.Text.TrimEnd());
                             }
                             sw.Flush();
                             string text = sw.ToString();
@@ -261,8 +256,8 @@ namespace TypeCobol.Codegen.Generators
             {
                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                 targetSourceText.Insert(funData.FunctionDeclBuffer, targetSourceText.Size, targetSourceText.Size);
-            }
-            return generatedDocument;
+            }            
+            return targetSourceText;
         }
 
         /// <summary>
@@ -291,7 +286,7 @@ namespace TypeCobol.Codegen.Generators
                         foreach (var hl in Indent(h, null))
                         {
                             fundata.CommentedHeader.Append(crlf);
-                            fundata.CommentedHeader.Append(hl.Text);
+                            fundata.CommentedHeader.Append(hl.Text.TrimEnd());
                             crlf = Environment.NewLine;
                         }
                         fundata.CommentedHeader.Append(crlf);
@@ -339,11 +334,23 @@ namespace TypeCobol.Codegen.Generators
             }
         }
 
+        /// <summary>
+        /// Does nothing
+        /// </summary>
+        /// <param name="node">Target node</param>
+        /// <returns>return false</returns>
         protected override bool Process(Compiler.Nodes.Node node)
         {
             return false;
         }
 
+        /// <summary>
+        /// Produce an indented version of a text line. The indentation depends on the current Layout format
+        /// ColumnsLayout.CobolReferenceFormat or ColumnsLayout.FreeTextFormat.
+        /// </summary>
+        /// <param name="line">The text line to be produced an indented version</param>
+        /// <param name="isComment">if null then this is the identity function, if true a commented line is produced, otherwise an uncommented line is produced.</param>
+        /// <returns>The idented line</returns>
         private IEnumerable<ITextLine> Indent(ITextLine line, bool? isComment)
         {
             var results = new List<ITextLine>();
@@ -382,6 +389,12 @@ namespace TypeCobol.Codegen.Generators
             return results;
         }
 
+        /// <summary>
+        /// Produces a commented or an uncommeneted text line from a text line
+        /// </summary>
+        /// <param name="line">the line</param>
+        /// <param name="isComment">if null then this is the identity function, if true a commented line is produced, otherwise an uncommented line is produced.</param>
+        /// <returns>if isComment is null the same line is return, if true a commneted line is returned otherwise an uncommented line</returns>
         private static ITextLine SetComment(ITextLine line, bool? isComment)
         {
             if (isComment == true)
@@ -392,6 +405,12 @@ namespace TypeCobol.Codegen.Generators
                 else // null
                     return line;
         }
+
+        /// <summary>
+        /// Produces a commented text line of a text line
+        /// </summary>
+        /// <param name="line">The text line to be procuded a commented text line </param>
+        /// <returns>The commente dtext line</returns>
         private static ITextLine Comment(ITextLine line)
         {
             var cobol = line as CobolTextLine;
@@ -408,6 +427,12 @@ namespace TypeCobol.Codegen.Generators
                 return new TextLineSnapshot(line.InitialLineIndex, "*" + line.Text, null);
             }
         }
+
+        /// <summary>
+        /// Produces an uncommented text line from a commented text line
+        /// </summary>
+        /// <param name="line">The text line to produce the uncommented text line.</param>
+        /// <returns>The uncommented text line</returns>
         private static ITextLine Uncomment(ITextLine line)
         {
             var cobol = line as CobolTextLine;

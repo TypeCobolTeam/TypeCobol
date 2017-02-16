@@ -40,6 +40,12 @@ public class AddSimpleStatement: AddStatement {
 			return map;
 		}
 	}
+
+    public override bool VisitCodeElement(IASTVisitor astVisitor)
+    {
+        return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+            && this.ContinueVisitToChildren(astVisitor, VariablesTogether, SendingAndReceivingStorageAreas);
+    }
 }
 
 /// <summary>
@@ -74,7 +80,13 @@ public class AddGivingStatement: AddStatement {
 			return map;
 		}
 	}
-}
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, VariablesTogether, ReceivingStorageAreas)
+                   && this.ContinueVisitToChildren(astVisitor, Operand);
+        }
+    }
 
 /// <summary>
 /// p299: Format 3: ADD statement with CORRESPONDING phrase
@@ -103,6 +115,11 @@ public class AddCorrespondingStatement: AddStatement {
 			return map;
 		}
 	}
-}
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, GroupItem, SendingAndReceivingGroupItem, Rounded);
+        }
+    }
 
 }

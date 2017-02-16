@@ -77,15 +77,15 @@ namespace TypeCobol.Codegen
         /// Create the IGenerator instance corresponding to the given ID.
         /// </summary>
         /// <param name="ID">The Unique ID of the Generator instance to be created</param>
-        /// <param name="parser"> The Parser which contains parse results </param>
+        /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
         /// <returns>The IGenerator instance if one has been created, null otherwise.</returns>
-        public IGenerator Create(string ID, Parser parser, System.IO.TextWriter destination, List<Skeletons.Skeleton> skeletons)
+        public IGenerator Create(string ID, TypeCobol.Compiler.CompilationDocument document, System.IO.TextWriter destination, List<Skeletons.Skeleton> skeletons)
         {
             if (!RegistryMap.ContainsKey(ID))
                 return null;
-            return RegistryMap[ID](ID, parser, destination, skeletons);
+            return RegistryMap[ID](ID, document, destination, skeletons);
         }
     }
 }

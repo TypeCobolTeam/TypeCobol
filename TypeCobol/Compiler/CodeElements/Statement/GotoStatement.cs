@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using System.Collections.Generic;
+
+namespace TypeCobol.Compiler.CodeElements {
 /// <summary>
 /// p339:
 /// The GO TO statement transfers control from one part of the PROCEDURE DIVISION to another.
@@ -37,7 +39,13 @@ public class GotoSimpleStatement: GotoStatement {
 	/// </summary>
 	public SymbolReference ProcedureName { get; set; }
 
-	public override string ToString() {
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, ProcedureName);
+        }
+
+        public override string ToString() {
 		return "GOTO "+(ProcedureName!=null? ProcedureName.ToString():"?");
 	}
 }
@@ -77,7 +85,14 @@ public class GotoConditionalStatement: GotoStatement {
 	/// </summary>
 	public Variable DependingOn { get; set; }
 
-	public override string ToString() {
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
+                   && this.ContinueVisitToChildren(astVisitor, (IEnumerable<IVisitable>)ProcedureNames)
+                   && this.ContinueVisitToChildren(astVisitor, DependingOn);
+        }
+
+        public override string ToString() {
 		var str = new System.Text.StringBuilder("GOTO");
 		if (ProcedureNames.Length < 1) str.Append(" ?");
 		foreach(var name in ProcedureNames) str.Append(' ').Append(name.ToString());

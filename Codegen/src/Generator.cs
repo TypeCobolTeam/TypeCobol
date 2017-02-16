@@ -80,15 +80,6 @@ namespace TypeCobol.Codegen
         }
 
         /// <summary>
-        /// The source LineMap;
-        /// </summary>
-        internal Dictionary<TypeCobol.Compiler.Scanner.ITokensLine, SourceDocument.SourceLine> SourceLineMap
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Lines of Erased Nodes.
         /// </summary>
         public List<Node> ErasedNodes
@@ -243,12 +234,6 @@ namespace TypeCobol.Codegen
             //Load the Original source code
             TargetDocument.LoadSourceText(sw.ToString());
             //TargetDocument.Dump();
-            SourceLineMap = new Dictionary<TypeCobol.Compiler.Scanner.ITokensLine, SourceDocument.SourceLine>();
-            var iter = this.CompilationResults.TokensLines.GetEnumerator();
-            for (int i = 0; i < TargetDocument.LineCount && iter.MoveNext(); i++)
-            {
-                SourceLineMap[iter.Current] = TargetDocument[i];
-            }
         }
 
         /// <summary>
