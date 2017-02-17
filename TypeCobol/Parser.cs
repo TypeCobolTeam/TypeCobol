@@ -136,32 +136,6 @@ namespace TypeCobol
 			get { return Compiler.CompilationResultsForProgram; }
 		}
 
-		public TypeCobol.Tools.CodeElementDiagnostics Converter {
-			get { return new TypeCobol.Tools.CodeElementDiagnostics(Results.CodeElementsDocumentSnapshot.Lines); }
-		}
-
-		public ICollection<Diagnostic>[] Errors {
-			get {
-				var errors = new List<Diagnostic>[2];
-				for(int c = 0; c < errors.Length; c++) errors[c] = new List<Diagnostic>();
-                // 'CodeElements' parsing (1st phase) errors
-                if (Results.CodeElementsDocumentSnapshot.ParserDiagnostics != null)
-                {
-                    errors[0].AddRange(Results.CodeElementsDocumentSnapshot.ParserDiagnostics);
-                }
-				foreach(var e in Results.CodeElementsDocumentSnapshot.CodeElements) {
-					if (e.Diagnostics == null || e.Diagnostics.Count < 1) continue;
-					errors[0].AddRange(Converter.GetDiagnostics(e));
-				}
-                // 'ProgramClass' parsing (2nd phase) errors
-                if (Results.ProgramClassDocumentSnapshot.Diagnostics != null)
-                {
-                    errors[1].AddRange(Results.ProgramClassDocumentSnapshot.Diagnostics);
-                }
-				return errors;
-			}
-		}
-
 
 
 		public static Parser Parse(string path, DocumentFormat format) {

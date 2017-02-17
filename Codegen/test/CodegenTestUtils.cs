@@ -34,8 +34,7 @@ namespace TypeCobol.Codegen {
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors
-            WriteErrors(writer, document.Errors[0], "CodeElements", columns);
-            WriteErrors(writer, document.Errors[1], "ProgramClass", columns);
+            WriteErrors(writer, document.Results.AllDiagnostics(), columns);
             // write generated code
             var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons);
             var program = document.Results.ProgramClassDocumentSnapshot.Program;
@@ -49,11 +48,11 @@ namespace TypeCobol.Codegen {
             TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected);
         }
 
-        private static void WriteErrors(TextWriter writer, ICollection<Diagnostic> errors, string type,
+        private static void WriteErrors(TextWriter writer, ICollection<Diagnostic> errors,
             Compiler.Text.ColumnsLayout columns) {
             string comment = GetComment(columns);
             if (errors.Count > 0) {
-                writer.WriteLine(comment + " " + errors.Count + " " + type + " errors");
+                writer.WriteLine(comment + " " + errors.Count + " errors");
                 foreach (var error in errors)
                     writer.WriteLine(comment + " " + error);
             }

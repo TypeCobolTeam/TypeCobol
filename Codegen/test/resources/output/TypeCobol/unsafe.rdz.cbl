@@ -1,4 +1,4 @@
-﻿      * 6 CodeElements errors
+﻿      * 6 errors
       * Line 32[12,65] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
       * Line 33[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
       * Line 34[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
