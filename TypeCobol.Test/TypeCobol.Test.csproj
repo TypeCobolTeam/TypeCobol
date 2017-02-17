@@ -136,6 +136,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Compiler\Parser\Samples\Programs\EILegacy\EIRemarksRemoveLevel01.rdz.cbl" />
+    <None Include="Compiler\Parser\Samples\Programs\EILegacy\EIRemarksWithSuffix.rdz.cbl" />
+    <None Include="Compiler\Parser\Samples\Programs\EILegacy\YXXXFAL.cpy" />
+    <None Include="Compiler\Parser\temp\Samples\EIRemarksRemoveLevel01.rdz.cbl" />
+    <None Include="Compiler\Parser\temp\Samples\EIRemarksWithSuffix.rdz.cbl" />
+    <None Include="Compiler\Parser\temp\Samples\YXXXFAL.cpy" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

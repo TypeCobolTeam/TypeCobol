@@ -58,7 +58,8 @@ namespace TypeCobol.Compiler.Scanner
                 int endIndexForSignificantPart = GetEndIndexOfSignificantPart(remarksLine, tokensLine.ScanState, firstPeriodIndex);
                 string significantPart = remarksLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
 
-                if (firstPeriodIndex >= 0 || (!tokensLine.ScanState.InsideRemarksParentheses && !remarksLine.Contains("COPY"))) {
+        
+                if (tokensLine.ScanState.InsideRemarksDirective && remarksLine.Contains(").")) {
                     tokensLine.ScanState.InsideRemarksDirective = false; // indicates the end of the REMARKS compiler directive
                 }
 
@@ -147,7 +148,7 @@ namespace TypeCobol.Compiler.Scanner
                     RemarksDirective.TextNameVariation textName = new RemarksDirective.TextNameVariation(candidateName);
                     remarksDirective.CopyTextNamesVariations.Add(textName);
                 }
-                else if (!String.IsNullOrWhiteSpace(candidateName)) {
+                else if (!String.IsNullOrWhiteSpace(candidateName) && Regex.IsMatch(candidateName, @"^([a-zA-Z0-9]+)$")) {
                     // A string which is not a text name is an error : stop scanning here
                     remarksDirective = null;
                     state.InsideRemarksDirective = false;
