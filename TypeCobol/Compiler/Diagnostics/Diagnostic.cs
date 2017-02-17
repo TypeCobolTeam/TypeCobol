@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.Diagnostics
     /// </summary>
     public class Diagnostic
     {
-        internal Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
+        public Diagnostic(MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, params object[] messageArgs)
         {
             Info = DiagnosticMessage.GetFromCode[(int)messageCode];
 
@@ -24,15 +24,15 @@ namespace TypeCobol.Compiler.Diagnostics
             MessageArgs = messageArgs;
         }
 
-        public DiagnosticMessage Info { get; private set; }
+        public DiagnosticMessage Info { get; set; }
 
-        public int ColumnStart { get; private set; }
-        public int ColumnEnd { get; private set; }
+        public int ColumnStart { get; set; }
+        public int ColumnEnd { get; set; }
 
-        public int Line { get; private set; }
+        public int Line { get; set; }
 
-        public string Message { get; private set; }
-        internal object[] MessageArgs { get; private set; }
+        public string Message { get; set; }
+        internal object[] MessageArgs { get; set; }
 
          /// <summary>
         /// Text representation of a token for debugging or test purposes

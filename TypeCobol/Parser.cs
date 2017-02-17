@@ -8,6 +8,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 
 namespace TypeCobol
@@ -139,14 +140,14 @@ namespace TypeCobol
 			get { return new TypeCobol.Tools.CodeElementDiagnostics(Results.CodeElementsDocumentSnapshot.Lines); }
 		}
 
-		public ICollection<TypeCobol.Tools.Diagnostic>[] Errors {
+		public ICollection<Diagnostic>[] Errors {
 			get {
-				var errors = new List<TypeCobol.Tools.Diagnostic>[2];
-				for(int c = 0; c < errors.Length; c++) errors[c] = new List<TypeCobol.Tools.Diagnostic>();
+				var errors = new List<Diagnostic>[2];
+				for(int c = 0; c < errors.Length; c++) errors[c] = new List<Diagnostic>();
                 // 'CodeElements' parsing (1st phase) errors
                 if (Results.CodeElementsDocumentSnapshot.ParserDiagnostics != null)
                 {
-                    errors[0].AddRange(Converter.AsDiagnostics(Results.CodeElementsDocumentSnapshot.ParserDiagnostics));
+                    errors[0].AddRange(Results.CodeElementsDocumentSnapshot.ParserDiagnostics);
                 }
 				foreach(var e in Results.CodeElementsDocumentSnapshot.CodeElements) {
 					if (e.Diagnostics == null || e.Diagnostics.Count < 1) continue;
@@ -155,7 +156,7 @@ namespace TypeCobol
                 // 'ProgramClass' parsing (2nd phase) errors
                 if (Results.ProgramClassDocumentSnapshot.Diagnostics != null)
                 {
-                    errors[1].AddRange(Converter.AsDiagnostics(Results.ProgramClassDocumentSnapshot.Diagnostics));
+                    errors[1].AddRange(Results.ProgramClassDocumentSnapshot.Diagnostics);
                 }
 				return errors;
 			}

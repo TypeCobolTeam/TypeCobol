@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Codegen.Skeletons;
-using TypeCobol.Compiler; // DocumentFormat
+using TypeCobol.Compiler;
+using TypeCobol.Compiler.Diagnostics;
+// DocumentFormat
 using TypeCobol.Tools; // CodeElementDiagnostics
 
 namespace TypeCobol.Codegen {

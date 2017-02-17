@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Server {
@@ -117,21 +118,21 @@ namespace TypeCobol.Server {
 				string path = config.InputFiles[c];
 				try { parser.Init(path, config.Format, config.CopyFolders); }
 				catch(Exception ex) {
-					AddError(writer, ex.Message, path, "parserInit");
+					AddError(writer, MessageCode.ParserInit, ex.Message, path);
 					continue;
 				}
 				parser.Parse(path);
 
 				if (parser.Results.CodeElementsDocumentSnapshot == null) {
-					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path, "parsing");
+					AddError(writer, MessageCode.SyntaxErrorInParser, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
 					continue;
 				} else if (parser.Results.ProgramClassDocumentSnapshot == null) {
-					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path, "parsing");
+					AddError(writer, MessageCode.SyntaxErrorInParser, "File \"" +path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
 					continue;
 				}
 			    var allDiags = parser.Results.AllDiagnostics();
 			    int errors = allDiags.Count;
-				writer.AddErrors(path, parser.Converter.AsDiagnostics(allDiags));
+				writer.AddErrors(path, allDiags);
 
 				if (config.Codegen && errors == 0) {
 					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
@@ -144,14 +145,12 @@ namespace TypeCobol.Server {
 			writer.Flush();
 		}
 
-		private static void AddError(AbstractErrorWriter writer, string message, string path, string errorCode) {
-			var error = new TypeCobol.Tools.Diagnostic();
-			error.Message = message;
-			error.Code = errorCode;
-			try { error.Source = writer.Inputs[path]; }
-			catch(KeyNotFoundException) { error.Source = writer.Count.ToString(); }
-			writer.AddErrors(path, error);
-			Console.WriteLine(error.Message);
+		private static void AddError(AbstractErrorWriter writer, MessageCode messageCode, string message, string path)
+		{
+		    Diagnostic diag = new Diagnostic(messageCode, 0, 0, 1, null);
+		    diag.Message = message;
+			writer.AddErrors(path, diag);
+			Console.WriteLine(diag.Message);
 		}
 
 		private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths, DocumentFormat copyDocumentFormat) {
@@ -165,14 +164,12 @@ namespace TypeCobol.Server {
 			    try {
 			        parser.Init(path, copyDocumentFormat);
 			        parser.Parse(path);
-
+                     
 			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {
-			            AddError(writer, "Error during parsing of " + path + ": " + diagnostic, path,
-			                "intrinsicLoading");
+			            AddError(writer, MessageCode.IntrinsicLoading, "Error during parsing of " + path + ": " + diagnostic, path);
 			        }
 			        if (parser.Results.ProgramClassDocumentSnapshot.Program == null) {
-			            AddError(writer, "Error: Your Intrisic types/functions are not included into a program.", path,
-			                "intrinsicLoading");
+			            AddError(writer, MessageCode.IntrinsicLoading, "Error: Your Intrisic types/functions are not included into a program.", path);
 			            continue;
 			        }
 
@@ -185,7 +182,7 @@ namespace TypeCobol.Server {
 			                table.AddFunction((Compiler.Nodes.FunctionDeclaration) function);
 			        //TODO check if types or functions are already there
 			    } catch (Exception e) {
-			        AddError(writer, e.Message + "\n" + e.StackTrace, path, "intrinsicLoading");
+			        AddError(writer, MessageCode.IntrinsicLoading, e.Message + "\n" + e.StackTrace, path);
 			    }
 			}
 			return table;
