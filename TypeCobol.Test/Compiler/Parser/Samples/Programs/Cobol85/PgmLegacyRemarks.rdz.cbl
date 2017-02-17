@@ -3,7 +3,7 @@
 000000 PROGRAM-ID. MYPGM.
 001930*REMARKS.         COPY=(                                          0000000
 002630*                       YCPYRDZ  
-002700*                                 )                               0000000
+002700*                                 ).                               0000000
 000000 ENVIRONMENT DIVISION.
 000000 CONFIGURATION SECTION.
 000000 SOURCE-COMPUTER. IBM-370.
