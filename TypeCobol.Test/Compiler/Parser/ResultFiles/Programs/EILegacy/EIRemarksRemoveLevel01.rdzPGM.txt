@@ -1,0 +1,13 @@
+﻿--- Program ---
+PROGRAM: MyPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Global:Program
+-- DATA --------
+  XXXFAL:Alphanumeric
+  XXXFAL-buffer:Alphanumeric
+  XXXFALS:Alphanumeric
+  XXXFALS-buffer:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE
