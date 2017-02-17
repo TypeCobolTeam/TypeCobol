@@ -100,7 +100,8 @@ namespace TypeCobol.Server {
 			/*if (encoding.ToLower().Equals("rdz"))*/ return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 		}
 
-		private static void runOnce(Config config) {
+		private static void runOnce(Config config)
+		{
 			TextWriter w;
 			if (config.ErrorFile == null) w = Console.Error;
 			else w = File.CreateText(config.ErrorFile);

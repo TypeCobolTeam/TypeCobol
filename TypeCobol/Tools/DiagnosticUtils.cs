@@ -34,6 +34,7 @@ public class Diagnostic {
 	public string Code;
 	public string Source;
 	public string Message;
+    public int Line;
 
 	public override string ToString() {
 		return "\""+Source+"\"@("+Range+"): ["+Code+":"+Severity+"] "+Message;
@@ -72,10 +73,10 @@ public class CodeElementDiagnostics {
 
 	private Range GetRange(IList<Token> tokens, int start, int end) {
 		var range = new Range();
-		range.Start.Line = GetLine(tokens[0].TokensLine);
+		range.Start.Line = tokens[0].Line;
 		range.Start.Character = start;
 		if (tokens.Count == 1) range.End.Line = range.Start.Line;
-		else range.End.Line = GetLine(tokens[tokens.Count-1].TokensLine);
+		else range.End.Line = tokens[tokens.Count-1].Line;
 		range.End.Character = end;
 		return range;
 	}
@@ -85,18 +86,21 @@ public class CodeElementDiagnostics {
 		throw new System.ArgumentNullException("this.Line must be set from the source document snapshot");
 	}
 
-	private Diagnostic AsDiagnostic(TypeCobol.Compiler.Diagnostics.Diagnostic d) {
-		var diagnostic = new Diagnostic();
-		diagnostic.Range.Start.Character = d.ColumnStart;
-		diagnostic.Range.End.Character = d.ColumnEnd;
-		diagnostic.Severity = (int)d.Info.Severity;
-		diagnostic.Code = d.Info.Code.ToString();
-		diagnostic.Source = d.Info.Document.Id.ToString();
-		diagnostic.Message = d.Message;
-		return diagnostic;
-	}
+    private Diagnostic AsDiagnostic(TypeCobol.Compiler.Diagnostics.Diagnostic d)
+    {
+        var diagnostic = new Diagnostic();
+        diagnostic.Range.Start.Character = d.ColumnStart;
+        diagnostic.Range.Start.Line = d.Line;
+        diagnostic.Range.End.Character = d.ColumnEnd;
+        diagnostic.Range.End.Line = d.Line;
+        diagnostic.Severity = (int) d.Info.Severity;
+        diagnostic.Code = d.Info.Code.ToString();
+        diagnostic.Source = d.Info.Document.Id.ToString();
+        diagnostic.Message = d.Message;
+        return diagnostic;
+    }
 
-	public IEnumerable<Diagnostic> AsDiagnostics(IEnumerable<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics) {
+    public IEnumerable<Diagnostic> AsDiagnostics(IEnumerable<TypeCobol.Compiler.Diagnostics.Diagnostic> diagnostics) {
 		foreach(var diagnostic in diagnostics)
 			yield return AsDiagnostic(diagnostic);
 	}
