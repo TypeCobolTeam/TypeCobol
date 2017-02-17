@@ -99,7 +99,31 @@
     <Compile Include="Compiler\Text\*.cs" />
     <Content Include="**\Samples\**" />
     <Content Include="**\*TestFiles\**" />
-    <Content Include="**\*ResultFiles\**" />
+    <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopy.txt" />
+    <Content Include="Compiler\Preprocessor\CopyResultFiles\PgmCopyReplacing.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Basis.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\CblProcess.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ControlCbl.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Copy.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Delete.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Eject.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Enter.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ExecSqlInclude.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Insert.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ReadyOrResetTrace.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Replace.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ServiceLabel.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\ServiceReload.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Skip.txt" />
+    <Content Include="Compiler\Preprocessor\DirectiveResultFiles\Title.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmEmptyPartialWordReplace.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceFunction.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceMultiple.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceNested.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplacePartial.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceSingle.txt" />
+    <Content Include="Compiler\Preprocessor\ReplaceResultFiles\PgmReplaceSingleToMultiple.txt" />
+    <Content Include="**\ResultFiles\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">

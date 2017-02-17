@@ -419,69 +419,6 @@ namespace TypeCobol.Compiler.Diagnostics {
         }
     }
 
-    class VariableUsageChecker: NodeListener {
-
-	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-	        
-
-	        //Subscript checker are desactived because it doesn't works.
-            /*
-            var move = node.CodeElement as MoveSimpleStatement;
-		    if (move == null) return;
-		    var subscripts = move.Subscripts;
-		    foreach(var variable in move.Variables.Keys) {
-                ICollection<List<SubscriptExpression>> links;
-                if (subscripts.ContainsKey(variable)) {
-                    links = subscripts[variable];
-                } else {
-                    links = new List<List<SubscriptExpression>>();
-                    links.Add(new List<SubscriptExpression>());
-                }
-                foreach(var link in links)
-                    CheckSubscripting(move, node.SymbolTable, variable, link);
-            }*/
-        }
-	    private void CheckSubscripting(CodeElement e, SymbolTable table, QualifiedName name, List<SubscriptExpression> subscripts) {
-		    var map = table.GetVariableExplicit(name);
-		    foreach(var kv in map) {
-			    if (!kv.Key.QualifiedName.Matches(name)) continue;
-			    int expected = CheckSubscripting(e, kv.Value[0], subscripts);
-			    if (expected == 0 && subscripts.Count > 0)
-			        DiagnosticUtils.AddError(e, name+" must not be subscripted");
-			    else 
-                if (expected < subscripts.Count)
-			        DiagnosticUtils.AddError(e, "Too many subscripts ("+subscripts.Count+" vs expected="+expected+")");
-		    }
-	    }
-
-	    /// <param name="e">Statement to check</param>
-	    /// <param name="link">Explicit nodes used in item qualification</param>
-	    /// <param name="subscripts">Parsed number of subscripts</param>
-	    /// <returns>Expected number of subscripts</returns>
-	    private int CheckSubscripting(CodeElement e, LinkedList<Node> link, List<SubscriptExpression> subscripts) {
-		    int index = 0;
-		    foreach(var item in link) {
-			    var datanode = item as DataDescription;
-			    if (datanode == null) continue;// not subscriptable
-			    var data = datanode.CodeElement();
-			    bool isTable = data.IsTableOccurence;
-			    if (!isTable) continue;// not subscriptable
-			    int max = -1;
-			    int actual = -1;
-			    if (index < subscripts.Count) int.TryParse(subscripts[index].ToString(), out actual);
-			    if (actual == -1)
-				    DiagnosticUtils.AddError(e, item.Name+" must be subscripted");
-			    var size = data.MaxOccurencesCount;
-			    if (size != null) int.TryParse(size.ToString(), out max);
-			    if (actual != -1 && max != -1 && actual > max)
-				    DiagnosticUtils.AddError(e, item.Name+" subscripting out of bounds: "+actual+" > max="+max);
-			    index++;
-		    }
-		    return index;
-	    }
-
-       
-    }
 
     class WriteTypeConsistencyChecker: NodeListener {
 
