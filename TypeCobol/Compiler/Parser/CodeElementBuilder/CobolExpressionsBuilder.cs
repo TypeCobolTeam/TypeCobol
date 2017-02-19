@@ -296,8 +296,8 @@ namespace TypeCobol.Compiler.Parser
 		internal StorageArea CreateOtherStorageAreaReference([CanBeNull]CodeElementsParser.OtherStorageAreaReferenceContext context) {
 			if (context == null) return null;
 			if (context.intrinsicDataNameReference() != null) {
-				SymbolReference specialRegisterName = CobolWordsBuilder.CreateInstrinsicDataNameReference(context.intrinsicDataNameReference());
-				StorageArea specialRegister = new DataOrConditionStorageArea(specialRegisterName);
+                SymbolReference specialRegisterName = CobolWordsBuilder.CreateInstrinsicDataNameReference(context.intrinsicDataNameReference());
+				StorageArea specialRegister = new IntrinsicStorageArea(specialRegisterName);
 				return specialRegister;
 			}
 			else if (context.autoAllocatedDataItemReference() != null)

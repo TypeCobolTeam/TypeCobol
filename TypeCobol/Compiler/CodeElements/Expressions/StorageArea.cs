@@ -138,29 +138,41 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 	}
 
-    /* Implicitely defined special registers :
+    /// <summary>
+    /// Implicitely defined special registers :
+    ///
+    ///        statements operations
+    ///        - XML parsing
+    ///            XML-*
+    ///        - INSPECT, UNSTRING
+    ///            TALLY
+    ///        - SORT MERGE
+    ///            SORT-*
+    ///        - debugging declarative procedure
+    ///            DEBUG-ITEM 
+    ///
+    ///        environment communication
+    ///            RETURN-CODE
+    ///            JNIENVPTR
+    ///
+    ///        compiler metadata
+    ///            WHEN-COMPILED
+    ///
+    ///        constants
+    ///            SHIFT-OUT
+    ///            SHIFT-IN       
+    /// </summary>
+    public class IntrinsicStorageArea : StorageArea
+    {
+        public IntrinsicStorageArea(SymbolReference symbolReference) : base(StorageAreaKind.DataOrCondition) {
+            this.SymbolReference = symbolReference;
+        }
 
-        statements operations
-        - XML parsing
-            XML-*
-        - INSPECT, UNSTRING
-            TALLY
-        - SORT MERGE
-            SORT-*
-        - debugging declarative procedure
-            DEBUG-ITEM 
 
-        environment communication
-            RETURN-CODE
-            JNIENVPTR
-
-        compiler metadata
-            WHEN-COMPILED
-
-        constants
-            SHIFT-OUT
-            SHIFT-IN             
-        */
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
     /// <summary>Subscript used to reference a specific table element</summary>
     public class SubscriptExpression : IVisitable {
@@ -315,7 +327,7 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public FunctionCall FunctionCall { get; private set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, FunctionCall, DataDescriptionEntry);
