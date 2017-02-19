@@ -101,6 +101,7 @@
     <Content Include="**\*TestFiles\**" />
     <Content Include="**\*Preprocessor\**" />
     <Content Include="**\ResultFiles\**" />
+    <Content Include="ThirdParty\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">
@@ -116,11 +117,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Compiler\Parser\temp\Results\" />
-    <Folder Include="Compiler\Parser\temp\Samples\" />
-    <Folder Include="Compiler\Source\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
