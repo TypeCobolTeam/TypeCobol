@@ -140,6 +140,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(FunctionCallResult functionCallResult);
         bool Visit(FilePropertySpecialRegister filePropertySpecialRegister);
         bool Visit(IndexStorageArea indexStorageArea);
+        bool Visit(IntrinsicStorageArea intrinsicStorageArea);
         bool Visit(StorageAreaPropertySpecialRegister storageAreaPropertySpecialRegister);
         bool Visit(DataOrConditionStorageArea storageArea);
         bool Visit(SymbolReference symbolReference);
@@ -1321,6 +1322,10 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(CloseFileInstruction closeFileInstruction) {
+            return true;
+        }
+
+        public virtual bool Visit(IntrinsicStorageArea intrinsicStorageArea) {
             return true;
         }
     }
