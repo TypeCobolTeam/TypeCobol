@@ -177,16 +177,18 @@ namespace TypeCobol.Compiler
 
         public IList<Diagnostic> AllDiagnostics() {
             var allDiagnostics = new List<Diagnostic>();
-            if (CodeElementsDocumentSnapshot.ParserDiagnostics != null) {
+            if (CodeElementsDocumentSnapshot != null && CodeElementsDocumentSnapshot.ParserDiagnostics != null) {
                 allDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
             }
-            if (ProgramClassDocumentSnapshot.Diagnostics != null) {
+            if (ProgramClassDocumentSnapshot != null && ProgramClassDocumentSnapshot.Diagnostics != null) {
                 allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
             }
 
-            foreach (var ce in CodeElementsDocumentSnapshot.CodeElements) {
-                if (ce.Diagnostics != null) {
-                    allDiagnostics.AddRange(ce.Diagnostics);
+            if (CodeElementsDocumentSnapshot != null) {
+                foreach (var ce in CodeElementsDocumentSnapshot.CodeElements) {
+                    if (ce.Diagnostics != null) {
+                        allDiagnostics.AddRange(ce.Diagnostics);
+                    }
                 }
             }
 
