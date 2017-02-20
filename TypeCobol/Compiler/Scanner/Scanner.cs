@@ -144,7 +144,7 @@ namespace TypeCobol.Compiler.Scanner
             if (significantPart.Length < 1) return null;
             var remarksDirective = new RemarksDirective();
             foreach (string candidateName in significantPart.Split(' ')) {
-                if (candidateName.Length == 7 || candidateName.Length == 8) {
+                if (candidateName.Length >= 7) {
                     RemarksDirective.TextNameVariation textName = new RemarksDirective.TextNameVariation(candidateName);
                     remarksDirective.CopyTextNamesVariations.Add(textName);
                 }
