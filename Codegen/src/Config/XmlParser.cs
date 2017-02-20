@@ -1,6 +1,7 @@
 ﻿using System.Xml;
 using System.Collections.Generic;
 using TypeCobol.Codegen.Skeletons;
+using System.IO;
 
 namespace TypeCobol.Codegen.Config {
 
@@ -23,24 +24,50 @@ namespace TypeCobol.Codegen.Config {
         /// <summary>Parses an XML file.</summary>
         /// <param name="path">Path to an XML file</param>
         /// <returns>List of <see cref="Skeleton"/> defined in <paramref name="path"/></returns>
-        public List<Skeleton> Parse(string path) {
-			var xml = new XmlDocument();
-			xml.Load(path);
+        public List<Skeleton> Parse(string path)
+        {
+            string[] files = null;
+            //If path contains "*"
+            if (path.Contains("*"))
+            {
+                string fileName = Path.GetFileName(path);
+                path = string.Concat(Path.GetDirectoryName(path), "\\");
+                files = Directory.GetFiles(path, fileName);
+            }
+            //If path contains only directory.
+            else if (Path.GetFileName(path).Equals(string.Empty))
+            {
+                files = Directory.GetFiles(path, "*.*");
+            }
+            //If above conditions fail, it means the path has a specific file name.
+            else
+            {
+                files = new string[1];
+                files[0] = path;
+            }
 
-			var skeletons = new List<Skeleton>();
-			var factory = new SkeletonFactory();
-			foreach(var node in xml.ChildNodes) {
-				var e = node as XmlElement;
-				if (e == null) continue;
-				foreach(var child in e.ChildNodes) {
-					var ce = child as XmlElement;
-					if (ce == null) continue;
-					if (!ce.LocalName.ToLower().Equals(TAG_SKELETON)) continue;
-					skeletons.Add(factory.Create(ce));
-				}
-			}
-			return skeletons;
-		}
+            var skeletons = new List<Skeleton>();
+            var factory = new SkeletonFactory();
+            foreach (var filePath in files)
+            {
+                var xml = new XmlDocument();
+                xml.Load(filePath);
+
+                foreach (var node in xml.ChildNodes)
+                {
+                    var e = node as XmlElement;
+                    if (e == null) continue;
+                    foreach (var child in e.ChildNodes)
+                    {
+                        var ce = child as XmlElement;
+                        if (ce == null) continue;
+                        if (!ce.LocalName.ToLower().Equals(TAG_SKELETON)) continue;
+                        skeletons.Add(factory.Create(ce));
+                    }
+                }
+            }
+            return skeletons;
+        }
 
 		internal static string GetAttribute(XmlElement e, string name, string defaultvalue = null) {
 			string a = e.GetAttribute(name);
