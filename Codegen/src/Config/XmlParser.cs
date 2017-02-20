@@ -31,7 +31,7 @@ namespace TypeCobol.Codegen.Config {
             if (path.Contains("*"))
             {
                 string fileName = Path.GetFileName(path);
-                path = string.Concat(Path.GetDirectoryName(path), "\\");
+                path = string.Concat(Path.GetDirectoryName(path), Path.DirectorySeparatorChar);
                 files = Directory.GetFiles(path, fileName);
             }
             //If path contains only directory.
