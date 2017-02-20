@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿                                        using System.Collections.Generic;
 using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -48,6 +48,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// optional length for the data item.
         /// </summary>
         public ReferenceModifier ReferenceModifier { get; private set; }
+
+        public virtual bool NeedDeclaration {
+            get { return true; }
+        }
+
+        public virtual StorageArea GetStorageAreaThatNeedDeclaration
+        {
+            get { return this; }
+        }
 
         public override string ToString()
         {
@@ -138,29 +147,44 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 	}
 
-    /* Implicitely defined special registers :
+    /// <summary>
+    /// Implicitely defined special registers :
+    ///
+    ///        statements operations
+    ///        - XML parsing
+    ///            XML-*
+    ///        - INSPECT, UNSTRING
+    ///            TALLY
+    ///        - SORT MERGE
+    ///            SORT-*
+    ///        - debugging declarative procedure
+    ///            DEBUG-ITEM 
+    ///
+    ///        environment communication
+    ///            RETURN-CODE
+    ///            JNIENVPTR
+    ///
+    ///        compiler metadata
+    ///            WHEN-COMPILED
+    ///
+    ///        constants
+    ///            SHIFT-OUT
+    ///            SHIFT-IN       
+    /// </summary>
+    public class IntrinsicStorageArea : StorageArea
+    {
+        public IntrinsicStorageArea(SymbolReference symbolReference) : base(StorageAreaKind.DataOrCondition) {
+            this.SymbolReference = symbolReference;
+        }
 
-        statements operations
-        - XML parsing
-            XML-*
-        - INSPECT, UNSTRING
-            TALLY
-        - SORT MERGE
-            SORT-*
-        - debugging declarative procedure
-            DEBUG-ITEM 
+        public override bool NeedDeclaration {
+            get { return false; }
+        }
 
-        environment communication
-            RETURN-CODE
-            JNIENVPTR
-
-        compiler metadata
-            WHEN-COMPILED
-
-        constants
-            SHIFT-OUT
-            SHIFT-IN             
-        */
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
     /// <summary>Subscript used to reference a specific table element</summary>
     public class SubscriptExpression : IVisitable {
@@ -235,6 +259,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SpecialRegisterDescriptionEntry DataDescriptionEntry { get; private set; }
 
+        public override bool NeedDeclaration {
+            get { return OtherStorageAreaReference != null && OtherStorageAreaReference.NeedDeclaration; }
+        }
+
+        public override StorageArea GetStorageAreaThatNeedDeclaration
+        {
+            get { return OtherStorageAreaReference.GetStorageAreaThatNeedDeclaration ?? this; }
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -315,7 +347,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public FunctionCall FunctionCall { get; private set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+	    public override bool NeedDeclaration {
+	        get { return FunctionCall.NeedDeclaration; }
+	    }
+
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, FunctionCall, DataDescriptionEntry);
@@ -340,6 +376,9 @@ namespace TypeCobol.Compiler.CodeElements
         public List<FunctionDeclaration> FunctionDeclarations { get; set; }
         public List<FunctionDeclaration> FilteredFunctionDeclarations { get; set; }
 
+        public virtual bool NeedDeclaration {
+            get { return true; }
+        }
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this) && FunctionNameToken.AcceptASTVisitor(astVisitor)
@@ -410,11 +449,10 @@ namespace TypeCobol.Compiler.CodeElements
 		public override string FunctionName { get { return IntrinsicFunctionName.Name; } }
 		public override Token FunctionNameToken { get { return IntrinsicFunctionName.NameLiteral.Token; } }
 
-        //Don't override property CobolLanguageLevel CobolLanguageLevel here, because in this case,
-        //ExternalName is always a CobolLanguageLevel.Cobol85
-        //public override CobolLanguageLevel CobolLanguageLevel {
-        //get { return base.CobolLanguageLevel; }
-        //}
+        public override bool NeedDeclaration
+        {
+            get { return false; }
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 

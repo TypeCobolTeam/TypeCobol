@@ -327,15 +327,13 @@ namespace TypeCobol.Compiler.Nodes {
             if (continueVisit) {
                 //To Handle concurrent modifications during traverse.
                 //Get the array of Children that must be traverse.
-                Node[] children_nodes = children.ToArray();
-                foreach (Node child in children_nodes)
+                Node[] childrenNodes = children.ToArray();
+                foreach (Node child in childrenNodes)
                 {
                     if (!continueVisit) {
                         break;
                     }
-                    if (astVisitor.BeginNode(child)) {
-                        continueVisit = child.AcceptASTVisitor(astVisitor);
-                    }
+                    continueVisit = child.AcceptASTVisitor(astVisitor);
                 }
             }
 

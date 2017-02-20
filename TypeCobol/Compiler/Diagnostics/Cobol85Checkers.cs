@@ -16,8 +16,8 @@ namespace TypeCobol.Compiler.Diagnostics {
     public class Cobol85CompleteASTChecker : AbstractAstVisitor
     {
         public override bool BeginNode(Node node)
-        {
-            CodeElement codeElement = node.CodeElement;
+        {            
+           CodeElement codeElement = node.CodeElement;
             if (codeElement != null && codeElement.StorageAreaReads != null)
             {
                 foreach (var storageAreaRead in codeElement.StorageAreaReads)
@@ -64,20 +64,25 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         private void CheckVariable(Node node, VariableBase variable)
         {
-            var found = node.SymbolTable.GetVariable(variable);
-            if (found.Count < 1)
-                if (node.SymbolTable.GetFunction(variable).Count < 1)
-                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + variable + " is not referenced");
-            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + variable);
+            if (variable.StorageArea != null)
+            {
+                CheckVariable(node, variable.StorageArea);
+            }
         }
 
         private void CheckVariable(Node node, StorageArea storageArea)
         {
-            var found = node.SymbolTable.GetVariable(storageArea);
+            if (!storageArea.NeedDeclaration)
+            {
+                return;
+            }
+            var area = storageArea.GetStorageAreaThatNeedDeclaration;
+
+            var found = node.SymbolTable.GetVariable(area);
             if (found.Count < 1)
-                if (node.SymbolTable.GetFunction(storageArea).Count < 1)
-                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + storageArea + " is not referenced");
-            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + storageArea);
+                if (node.SymbolTable.GetFunction(area).Count < 1)
+                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + area + " is not referenced");
+            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + area);
         }
 
 

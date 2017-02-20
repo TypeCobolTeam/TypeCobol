@@ -6,7 +6,6 @@ using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Preprocessor;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
@@ -58,15 +57,23 @@ namespace TypeCobol.Compiler.AntlrUtils
     public class ParserDiagnostic : Diagnostic
     {
 		public ParserDiagnostic(string message, IToken offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser) :
-			base(code, offendingSymbol == null ? -1 : offendingSymbol.Column, offendingSymbol == null ? -1 : (offendingSymbol.StopIndex < 0 ? -1 : (offendingSymbol.StopIndex+1)), offendingSymbol.Line, message)
+			base(code, offendingSymbol == null ? -1 : offendingSymbol.Column, offendingSymbol == null ? -1 : (offendingSymbol.StopIndex < 0 ? -1 : (offendingSymbol.StopIndex+1)), offendingSymbol == null ? -1 : offendingSymbol.Line, message)
 		{
 			OffendingSymbol = offendingSymbol;
 			this.ruleStack = ruleStack;
-		}
+
+            // TO DO - IMPORTANT : this is the INITIAL line number, and not the CURRENT line number
+            // This is enough to pass all unit tests, but will return false informations in real usage !
+            // for real line number, use a Snapshot
+            if (Line < 0 && OffendingSymbol != null)
+            {
+                CodeElement e = OffendingSymbol as CodeElement;
+                if (e != null && e.ConsumedTokens.Count > 0) Line = e.ConsumedTokens[0].Line;
+            }
+        }
 
         public ParserDiagnostic(string message, int start, int stop, int line, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser)
             : base(code, start, stop, line, message) {
-            this.line = line;
             this.ruleStack = ruleStack;
         }
 
@@ -76,22 +83,9 @@ namespace TypeCobol.Compiler.AntlrUtils
         public IToken OffendingSymbol { get; private set; }
 
         /// <summary>Grammar rules which were being recognized when an incorrect token occured.</summary>
-        private string ruleStack;
-        /// <summary>Line at wich the error occured.</summary>
-        private int line = -1;
+        private readonly string ruleStack;
 
         public string ToStringWithRuleStack() {
-            int lineindex = line;
-            if (lineindex < 0 && OffendingSymbol != null) {
-                lineindex = OffendingSymbol.Line;
-            }
-            if (lineindex < 0 && OffendingSymbol != null) {
-                CodeElement e = OffendingSymbol as CodeElement;
-                if (e != null && e.ConsumedTokens.Count > 0) lineindex = e.ConsumedTokens[0].Line;
-            }
-            // TO DO - IMPORTANT : this is the INITIAL line number, and not the CURRENT line number
-            // This is enough to pass all unit tests, but will return false informations in real usage !
-            // for real line number, use a Snapshot
             var str = new StringBuilder();
             str.Append(base.ToString());
             if (ruleStack!=null) str.Append(" RuleStack="+ruleStack+", ");

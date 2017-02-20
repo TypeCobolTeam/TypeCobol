@@ -2,11 +2,9 @@
 using Antlr4.Runtime;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 
@@ -52,15 +50,18 @@ class FunctionCallChecker: NodeListener {
             {
                 foreach (var fun in statement.FunctionCalls)
                 {
-                    if (fun.FunctionDeclarations != null && fun.FunctionDeclarations.Count != 1)
-                        if (fun.FunctionDeclarations.Count == 0) //If Cout is null seems that the function dos not exist
+                    if (!fun.NeedDeclaration || fun.FunctionDeclarations == null) {
+                        continue;
+                    }
+                    if (fun.FunctionDeclarations != null && fun.FunctionDeclarations.Count != 1) {
+                        if (fun.FunctionDeclarations.Count == 0) //If Cout is null seems that the function does not exist
                         {
                             var m = string.Format("Function {0} does not exists", fun.FunctionName);
                             DiagnosticUtils.AddError(node.CodeElement, m);
                             continue;
                         }
-                        else
-                            continue; // ambiguity is not our job
+                        continue; // ambiguity is not our job
+                    }
                     var declaration = fun.FunctionDeclarations[0];
                     Check(node.CodeElement, node.SymbolTable, fun, declaration);
                 }
