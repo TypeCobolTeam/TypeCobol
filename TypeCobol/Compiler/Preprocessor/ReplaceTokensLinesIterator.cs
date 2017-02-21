@@ -178,27 +178,28 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Support for legacy replacing syntax semantics : 
                 // Remove the first 01 level data item found in the COPY text
                 // before copying it into the main program
-                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && !currentPosition.SawFirstIntegerLiteral)
+                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level /*&& !currentPosition.SawFirstIntegerLiteral*/)
                 {
                     //A Data description entry starts with an integer literal
                     if(nextToken.TokenType == TokenType.LevelNumber)
                     {
                         if (nextToken.Text == "01") {
+                            var firstLevelFound = true;
                             // Register that we saw the first "01" integer literal in the underlying file
                             currentPosition.SawFirstIntegerLiteral = true;
-
                             // Skip all tokens after 01 until the next period separator 
-                            while (nextToken.TokenType != TokenType.PeriodSeparator &&
-                                   nextToken.TokenType != TokenType.EndOfFile) {
+                            while (firstLevelFound && nextToken.TokenType != TokenType.EndOfFile)
+                            {
                                 nextToken = sourceIterator.NextToken();
+
+                                if (nextToken.TokenType == TokenType.PeriodSeparator)
+                                {
+                                    nextToken = sourceIterator.NextToken();
+                                    if (nextToken.Text != "01")
+                                        firstLevelFound = false;
+                                }
                             }
-                            if (nextToken.TokenType == TokenType.PeriodSeparator) {
-                                nextToken = sourceIterator.NextToken();
-                            }
-                        } else {
-                            //It's not a level 01, we don't need to skip tokens for this COPY
-                            currentPosition.SawFirstIntegerLiteral = true;
-                        }
+                        } 
                     }
                 }
 #endif
