@@ -183,7 +183,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     //A Data description entry starts with an integer literal
                     if(nextToken.TokenType == TokenType.LevelNumber)
                     {
-                        if (nextToken.Text == "01") {
+                        if (nextToken.Text == "01" && nextToken.Column <= 10) {
                             var firstLevelFound = true;
                             // Register that we saw the first "01" integer literal in the underlying file
                             currentPosition.SawFirstIntegerLiteral = true;
@@ -195,8 +195,9 @@ namespace TypeCobol.Compiler.Preprocessor
                                 if (nextToken.TokenType == TokenType.PeriodSeparator)
                                 {
                                     nextToken = sourceIterator.NextToken();
-                                    if (nextToken.Text != "01")
+                                    if (nextToken.Text != "01" || nextToken.Column > 9)
                                         firstLevelFound = false;
+                                    
                                 }
                             }
                         } 
