@@ -16,6 +16,14 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class Scanner
     {
+
+        /// <summary>
+        /// Issue #428, quick fix for this issue.
+        /// Method ScanIsolatedTokenInDefaultContext need the scanState of the previous token in order to parser the new token
+        /// correctly. But the caller of this method doesn't have the scanState. It only has the scanState at the beginning of the line.
+        /// A solution would be to rescan all the line.
+        /// </summary>
+        public bool BeSmartWithLevelNumber { get; set; }
         /// <summary>
         /// Scan a line of a document when no previous scan state object is available
         /// </summary>
@@ -434,7 +442,7 @@ namespace TypeCobol.Compiler.Scanner
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
-            Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions());
+            Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
             Token candidateToken = tempScanner.GetNextToken();
 
             if(tempTokensLine.ScannerDiagnostics.Count > 0)
@@ -457,7 +465,7 @@ namespace TypeCobol.Compiler.Scanner
 
         private TypeCobolOptions compilerOptions;
 
-        private Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
+        private Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
         {
             this.tokensLine = tokensLine;
             this.line = line;
@@ -465,6 +473,8 @@ namespace TypeCobol.Compiler.Scanner
             this.lastIndex = lastIndex;
 
             this.compilerOptions = compilerOptions;
+
+            this.BeSmartWithLevelNumber = beSmartWithLevelNumber;
         }
 
         private Token GetNextToken()
@@ -1239,10 +1249,12 @@ namespace TypeCobol.Compiler.Scanner
                     Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine);
                     token.LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
 
-                    // Distinguish the special case of a LevelNumber
-                    if(tokensLine.ScanState.InsideDataDivision && tokensLine.ScanState.AtBeginningOfSentence)
-                    {
-                        token.CorrectType(TokenType.LevelNumber);
+
+                    if (BeSmartWithLevelNumber) { 
+                        // Distinguish the special case of a LevelNumber
+                        if (tokensLine.ScanState.InsideDataDivision && tokensLine.ScanState.AtBeginningOfSentence) {
+                            token.CorrectType(TokenType.LevelNumber);
+                        }
                     }
 
                     return token;
