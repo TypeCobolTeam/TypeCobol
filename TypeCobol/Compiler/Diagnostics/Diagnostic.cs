@@ -20,7 +20,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             Line = lineNumber;
 
-            Message = String.Format(Info.MessageTemplate, messageArgs);
+            Message = String.Format(Info.MessageTemplate, messageArgs ?? new object[0]);
             MessageArgs = messageArgs;
         }
 

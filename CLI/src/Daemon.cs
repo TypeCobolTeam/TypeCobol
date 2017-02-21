@@ -145,13 +145,38 @@ namespace TypeCobol.Server {
 			writer.Flush();
 		}
 
+        /// <summary>
+        /// Add an error message
+        /// </summary>
+        /// <param name="writer">Error Writer</param>
+        /// <param name="messageCode">Message's code</param>
+        /// <param name="message">The text message</param>
+        /// <param name="path">The source file path</param>
 		private static void AddError(AbstractErrorWriter writer, MessageCode messageCode, string message, string path)
 		{
-		    Diagnostic diag = new Diagnostic(messageCode, 0, 0, 1, null);
-		    diag.Message = message;
-			writer.AddErrors(path, diag);
-			Console.WriteLine(diag.Message);
+            AddError(writer, messageCode, 0, 0, 1, message, path);
 		}
+
+        /// <summary>
+        /// Add an error message
+        /// </summary>
+        /// <param name="writer">Error Writer</param>
+        /// <param name="messageCode">Message's code</param>
+        /// <param name="columnStart">Start column in the source file</param>
+        /// <param name="columnEnd">End column in the source file</param>
+        /// <param name="lineNumber">Lien number in the source file</param>
+        /// <param name="message">The text message</param>
+        /// <param name="path">The source file path</param>
+        private static void AddError(AbstractErrorWriter writer, MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, string message, string path)
+        {
+            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, lineNumber,
+                message != null
+                ? (path != null ? new object[2] { message, path } : new object[1] { message })
+                : (path != null ? new object[1] { path } : new object[0]));
+            diag.Message = message;
+            writer.AddErrors(path, diag);
+            Console.WriteLine(diag.Message);
+        }
 
 		private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths, DocumentFormat copyDocumentFormat) {
 			var parser = new Parser();
@@ -166,7 +191,9 @@ namespace TypeCobol.Server {
 			        parser.Parse(path);
                      
 			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {
-			            AddError(writer, MessageCode.IntrinsicLoading, "Error during parsing of " + path + ": " + diagnostic, path);
+                        AddError(writer, MessageCode.IntrinsicLoading, 
+                            diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line, 
+                            "Error during parsing of " + path + ": " + diagnostic, path);
 			        }
 			        if (parser.Results.ProgramClassDocumentSnapshot.Program == null) {
 			            AddError(writer, MessageCode.IntrinsicLoading, "Error: Your Intrisic types/functions are not included into a program.", path);
