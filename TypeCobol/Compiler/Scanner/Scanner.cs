@@ -57,6 +57,7 @@ namespace TypeCobol.Compiler.Scanner
 
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
             if (IsInsideRemarks(textLine.Type, tokensLine.SourceText)) tokensLine.ScanState.InsideRemarksDirective = true;
+            else if (textLine.Type == CobolTextLineType.Source) tokensLine.ScanState.InsideRemarksDirective = false;
             // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
             if (tokensLine.ScanState.InsideRemarksDirective) {
                 string remarksLine = textLine.SourceText;
@@ -67,7 +68,7 @@ namespace TypeCobol.Compiler.Scanner
                 string significantPart = remarksLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
 
         
-                if (tokensLine.ScanState.InsideRemarksDirective && remarksLine.Contains(").")) {
+                if (tokensLine.ScanState.InsideRemarksDirective && (remarksLine.Contains(").") || remarksLine.Contains(")"))) {
                     tokensLine.ScanState.InsideRemarksDirective = false; // indicates the end of the REMARKS compiler directive
                 }
 
