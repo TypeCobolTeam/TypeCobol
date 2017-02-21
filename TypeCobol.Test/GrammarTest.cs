@@ -23,12 +23,10 @@ namespace TypeCobol.Test {
 
 	    }
 
-
-
 	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex = "*.cbl") {
-	        CheckTests(rootFolder, 10000, resultFolder, resultFile, regex, new string[] {}, new string[] {});
+	        CheckTests(rootFolder, resultFolder, resultFile, regex, new string[] {}, new string[] {});
 	    }
-        public static void CheckTests(string rootFolder, int stopAfterAsManyErrors, string resultFolder, string resultFile, string regex, string[] include, string[] exclude) { 
+        public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, int stopAfterAsManyErrors = 10000) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
