@@ -140,7 +140,7 @@ namespace TypeCobol.Test.Compiler.Parser
             CompilationUnit compilationUnit = ParserUtils.ParseCobolString(textToParse);
 
             CodeElementsDocument codeElementsDocument = compilationUnit.CodeElementsDocumentSnapshot;
-            Assert.IsTrue(codeElementsDocument.CodeElements.Count() == 1);
+            Assert.IsTrue(codeElementsDocument.CodeElements.Any());
             var firstCodeElement = codeElementsDocument.CodeElements.First();
             Assert.IsTrue(firstCodeElement.GetType() == typeof(T));
 
