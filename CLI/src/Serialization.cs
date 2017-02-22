@@ -120,10 +120,10 @@ namespace TypeCobol.Server.Serialization
         internal static Config Decode(MsgPack msgpack)
         {
             Config config = new Config();
-            config.ErrorFile = (string)msgpack.ForcePathObject("ErrorFile").AsString;
-            config.skeletonPath = (string)msgpack.ForcePathObject("skeletonPath").AsString;
-            config.Codegen = ((string)msgpack.ForcePathObject("Codegen").AsString).Equals("True") ? true : false;
-            config.EncFormat = (string)msgpack.ForcePathObject("EncFormat").AsString;
+            config.ErrorFile = msgpack.ForcePathObject("ErrorFile").AsString;
+            config.skeletonPath = msgpack.ForcePathObject("skeletonPath").AsString;
+            config.Codegen = msgpack.ForcePathObject("Codegen").AsString.Equals("True") ? true : false;
+            config.EncFormat = msgpack.ForcePathObject("EncFormat").AsString;
 
             List<string> InputFiles = new List<string>();
             foreach (MsgPack item in msgpack.ForcePathObject("InputFiles"))
@@ -149,7 +149,7 @@ namespace TypeCobol.Server.Serialization
             List<string> Copies = new List<string>();
             foreach (MsgPack item in msgpack.ForcePathObject("Copies"))
             {
-                Copies.Add(item.ForcePathObject("Copies").AsString);
+                Copies.Add(item.ForcePathObject("Copy").AsString);
             }
             config.Copies = Copies;
 

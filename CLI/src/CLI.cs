@@ -147,5 +147,22 @@ namespace TypeCobol.Server
             writer.AddErrors(path, error);
             Console.WriteLine(error.Message);
         }
+
+        /// <summary>
+        /// CreateFormat method to get the format name.
+        /// </summary>
+        /// <param name="encoding">string</param>
+        /// <param name="config">Config</param>
+        /// <returns>DocumentFormat</returns>
+        internal static Compiler.DocumentFormat CreateFormat(string encoding, ref Config config)
+        {
+            config.EncFormat = encoding;
+
+            if (encoding == null) return null;
+            if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
+            if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
+            /*if (encoding.ToLower().Equals("rdz"))*/
+            return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+        }
     }
 }

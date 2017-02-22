@@ -43,7 +43,7 @@ namespace TypeCobol.Server
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
-								v => config.Format = CreateFormat(v, ref config)
+								v => config.Format = CLI.CreateFormat(v, ref config)
 				},
 				{ "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => config.Copies.Add(v) },
 				{ "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => config.CopyFolders.Add(v) },
@@ -84,6 +84,7 @@ namespace TypeCobol.Server
                 //"startClient" will be true when "-K" is passed as an argument in command line.
                 if (startClient && once)
                 {
+                    pipename= "TypeCobol.Server";
 #if DEBUG
                     var watch = System.Diagnostics.Stopwatch.StartNew();
 #endif
@@ -146,17 +147,6 @@ namespace TypeCobol.Server
                 return exit(1, e.Message);
             }
             return 0;
-        }
-
-        private static Compiler.DocumentFormat CreateFormat(string encoding, ref Config config)
-        {
-            config.EncFormat = encoding;
-
-            if (encoding == null) return null;
-            if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
-            if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
-            /*if (encoding.ToLower().Equals("rdz"))*/
-            return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
         }
 
         private static void AddError(AbstractErrorWriter writer, string message, string path, string errorCode)

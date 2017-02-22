@@ -105,8 +105,6 @@ namespace TypeCobol.Server
     /// </summary>
     internal class RunCommandLine : AbstractCommand
     {
-        private StringSerializer Deserializer = new StringSerializer();
-
         public RunCommandLine(Parser parser, Stream istream, Stream ostream)
             : base(parser, istream, ostream) { }
 
@@ -137,26 +135,9 @@ namespace TypeCobol.Server
 
             Config config = new Config();
             config = configSerializer.Deserialize(originalbuffer);
-            config.Format = CreateFormat(config.EncFormat, ref config);
+            config.Format = CLI.CreateFormat(config.EncFormat, ref config);
 
             CLI.runOnce(config);
-        }
-
-        /// <summary>
-        /// CreateFormat method to get the format name.
-        /// </summary>
-        /// <param name="encoding">string</param>
-        /// <param name="config">Config</param>
-        /// <returns>DocumentFormat</returns>
-        private static Compiler.DocumentFormat CreateFormat(string encoding, ref Config config)
-        {
-            config.EncFormat = encoding;
-
-            if (encoding == null) return null;
-            if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
-            if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
-            /*if (encoding.ToLower().Equals("rdz"))*/
-            return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
         }
     }
 }
