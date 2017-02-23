@@ -289,15 +289,15 @@ namespace TypeCobol.Compiler.Preprocessor
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
 
             // Support for legacy replacing syntax semantics : 
-            // Insert SuffixChar before the first '-' in all user defined words found in the COPY text 
+            // Insert Suffix before the first '-' in all user defined words found in the COPY text 
             // before copying it into the main program
             if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
             {
                 string originalText = nextToken.Text;
                 int indexOFirstDash = originalText.IndexOf('-');
-                if (indexOFirstDash > 0)
+                if (indexOFirstDash > 0 && originalText.Substring(indexOFirstDash - 3, 4) == CopyReplacingDirective.PreSuffix)
                 {
-                    string replacedText = originalText.Substring(0, indexOFirstDash) + CopyReplacingDirective.SuffixChar + originalText.Substring(indexOFirstDash);
+                    string replacedText = originalText.Substring(0, indexOFirstDash) + CopyReplacingDirective.Suffix + originalText.Substring(indexOFirstDash);
                     TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
                     Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1, virtualTokensLine);
 

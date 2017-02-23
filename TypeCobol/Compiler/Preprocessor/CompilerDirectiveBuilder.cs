@@ -152,7 +152,8 @@ namespace TypeCobol.Compiler.Preprocessor
 							if (declaration.HasSuffix) {
 								copy.TextName = declaration.TextName;
 								copy.InsertSuffixChar = true;
-								copy.SuffixChar = declaration.SuffixChar;
+								copy.Suffix = declaration.Suffix;
+							    copy.PreSuffix = declaration.PreSuffix;
 							}
 						}
 					}

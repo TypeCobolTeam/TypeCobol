@@ -432,7 +432,7 @@ namespace TypeCobol.Compiler.Directives
         public bool RemoveFirst01Level { get; set; }
 
         /// <summary>
-        /// If true, insert SuffixChar before the first '-' in all user defined words found in the COPY text 
+        /// If true, insert Suffix before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
         public bool InsertSuffixChar { get; set; }
@@ -441,11 +441,12 @@ namespace TypeCobol.Compiler.Directives
         /// SUffix which should be inserted before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
-        public string SuffixChar { get; set; }
+        public string Suffix { get; set; }
+        public string PreSuffix { get; set; }
 
 #endif
 
-		public override string ToString() {
+        public override string ToString() {
 			var str = new StringBuilder(Type.ToString());
 			if (Suppress) str.Append(".SUPPRESS");
 			if (!String.IsNullOrEmpty(TextName))
@@ -855,13 +856,18 @@ namespace TypeCobol.Compiler.Directives
             /// <summary>
             /// Suffix appended to text name
             /// </summary>
-            public string SuffixChar { get { return HasSuffix ? TextNameWithSuffix.Substring(7) : string.Empty; } }
+            public string Suffix { get { return HasSuffix ? TextNameWithSuffix.Substring(7, 1) : string.Empty; } }
+
+            /// <summary>
+            /// Return the the three lettters from index 5 to 7 of the Copy name.
+            /// </summary>
+            public string PreSuffix { get { return HasSuffix ? TextName.Substring(4) + "-" : string.Empty; } }
 
             public override string ToString()
             {
                 if (HasSuffix)
                 {
-                    return TextName.Substring(0, 7) + "(" + SuffixChar + ")";
+                    return TextName.Substring(0, 7) + "(" + Suffix + ")";
                 }
                 else
                 {
