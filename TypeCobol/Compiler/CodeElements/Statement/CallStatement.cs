@@ -188,7 +188,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// deleted by the assembler, any function-pointers that had been set to that
         /// function or program's entry point are no longer valid.
         /// </summary>
-        public SymbolReferenceVariable ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction { get; set; }
+        public SymbolReference ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction { get; set; }
+        public SymbolReference ProgramNameOrProgramEntry { get; set; }
+        public SymbolReference ProcdurePointerOrTCProcedureFunction { get; set; }
 
 
         //SMEDILOL: idea use 2 SymbolReference split per CandidatesType
@@ -199,11 +201,11 @@ namespace TypeCobol.Compiler.CodeElements
         //public SymbolReferenceVariable ProgramNameOrProgramEntry { get; set; }
         //public SymbolReferenceVariable ProcdurePointerOrTCProcedureFunction { get; set; }
 
-        public ProcedureStyleCallStatement(ProcedureCall call)
-        : base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
-        {
-            this.ProcedureCall = call;
-        }
+    public ProcedureStyleCallStatement(ProcedureCall call)
+		: base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
+	{
+		this.ProcedureCall = call;
+	}
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)

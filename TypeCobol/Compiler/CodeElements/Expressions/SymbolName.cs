@@ -301,7 +301,7 @@ namespace TypeCobol.Compiler.CodeElements
 
     /// <summary>
     /// Reference to an external name implicitely defined in :
-    /// - the compiler (FunctionName, ExecTranslatorName)
+    /// - the compiler (TCFunctionName, ExecTranslatorName)
     /// - the compilation environment (TextName, LibraryName)
     /// - the execution environment (AssignmentName, EnvironmentName, UPSISwitchName)
     /// </summary>
