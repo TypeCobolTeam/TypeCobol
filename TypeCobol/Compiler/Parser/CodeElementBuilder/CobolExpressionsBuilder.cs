@@ -417,9 +417,11 @@ namespace TypeCobol.Compiler.Parser
 		internal StorageArea CreateIdentifierOrTCFunctionProcedure(CodeElementsParser.IdentifierContext context) {
 			if (context == null) return null;
 			StorageArea storageArea = CreateStorageAreaReferenceOrConditionReferenceOrTCFunctionProcedure(context.storageAreaReferenceOrConditionReference());
-			if(storageArea != null && context.referenceModifier() != null)
+            var refModifier = context.referenceModifier();
+
+            if (storageArea != null && refModifier != null)
 			{
-				storageArea.ApplyReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+				storageArea.ApplyReferenceModifier(CreateReferenceModifier(refModifier));
 			}
 			return storageArea;
 		}

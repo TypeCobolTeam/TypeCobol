@@ -1054,7 +1054,7 @@ namespace TypeCobol.Compiler.Scanner
 
         // (AUTHOR | INSTALLATION | DATE_WRITTEN | DATE_COMPILED | SECURITY) -> PeriodSeparator? -> CommentEntry*
 
-        // FUNCTION -> FunctionName
+        // FUNCTION -> TCFunctionName
 
         // (EXEC | EXECUTE) -> ExecTranslatorName -> ExecStatementText -> END_EXEC
         //                  -> (SQL | SQLIMS)     -> INCLUDE =rw=> EXEC_SQL_INCLUDE

@@ -64,7 +64,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'c5875eec' USING 
+           CALL 'c5875eec' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -75,7 +75,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
-           CALL 'c5875eec' USING 
+           CALL 'c5875eec' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -94,7 +94,7 @@
       *    CALL ValidateDateFormat INPUT      somedate
       *                                       by content 'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'c5875eec' USING 
+           CALL 'c5875eec' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -107,7 +107,7 @@
       *    CALL ValidateDateFormat INPUT     by content somedate
       *                                        'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'c5875eec' USING 
+           CALL 'c5875eec' USING
                     by content   somedate
                                  'YYYYMMDD'
                     by reference flag-value
@@ -122,7 +122,7 @@
       *                                      myDate2
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
-           CALL 'd5ec4efc' USING 
+           CALL 'd5ec4efc' USING
                     by content   somedate
                                  'YYYYMMDD'
                                  myDate2
@@ -141,7 +141,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'd5ec4efc' USING 
+           CALL 'd5ec4efc' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2

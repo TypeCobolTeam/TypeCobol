@@ -184,7 +184,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// 
     /// + only allowed for derived class EnumValue
     /// UserDefinedWord
-    /// FunctionName | LENGTH | RANDOM | WHEN_COMPILED
+    /// TCFunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
     /// </summary>
 	public class AlphanumericValue : SyntaxValue<string> {
@@ -479,7 +479,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value for tokens :
     /// UserDefinedWord
-    /// FunctionName | LENGTH | RANDOM | WHEN_COMPILED
+    /// TCFunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
     /// </summary>
     public class EnumeratedValue : AlphanumericValue

@@ -55,27 +55,35 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 return;
 
             List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
-            string message;
+            var potentialVariables = new List<DataDefinition>();
 
-            if (procedureStyleCall.FunctionCall.FunctionNameToken.TokenFamily == Scanner.TokenFamily.AlphanumericLiteral)
-                return; //We don't have to manage AlphanumericLiteral (exteral program) for the moment...
+            if (node.CodeElement.CallSites.Any(
+                c => c.CallTarget.IsAmbiguous && ((AmbiguousSymbolReference) c.CallTarget).CandidateTypes.Any(
+                         ca => ca == SymbolType.ProgramName || ca == SymbolType.ProgramEntry)))
+                return; //We don't have to manage this for the moment...
 
             if (procedureStyleCall.FunctionDeclaration == null)
             {
                 //Get Funtion just by name and profile (matches on precise parameters)
                 functionDeclarations = node.SymbolTable.GetFunction(new URI(procedureStyleCall.FunctionCall.FunctionName),
                                         (procedureStyleCall.FunctionCall as ProcedureCall).AsProfile(node.SymbolTable));
-                //Get potential variable with the same name as the called name
-                var potentialVariables =
-                    node.SymbolTable.GetVariable(new URI(procedureStyleCall.FunctionCall.FunctionName));
 
-                if (potentialVariables.Count > 1)
+                string message;
+                if (node.CodeElement.CallSites.All(c => c.CallTarget.Type != SymbolType.TCFunctionName))
                 {
-                    //If there is more than one variable with the same name is obviously ambiguous
-                    message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", procedureStyleCall.FunctionCall.FunctionName, potentialVariables.Count);
-                    DiagnosticUtils.AddError(node.CodeElement, message);
-                    return;
+                    
+                    potentialVariables = node.SymbolTable.GetVariable(new URI(procedureStyleCall.FunctionCall.FunctionName));
+
+                    if (potentialVariables.Count > 1)
+                    {
+                        //If there is more than one variable with the same name is obviously ambiguous
+                        message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", procedureStyleCall.FunctionCall.FunctionName, potentialVariables.Count);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return;
+                    }
+
                 }
+                //Get potential variable with the same name as the called name
 
                 if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
                 {
