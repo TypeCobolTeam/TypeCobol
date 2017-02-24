@@ -361,15 +361,33 @@ namespace TypeCobol.Compiler.CodeElements
 
     /// <summary>Common properties for noth types of function calls : list of expressions as arguments</summary>
     public abstract class FunctionCall : IVisitable {
-        protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
+        protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs) {
 		    Type = type;
 		    Arguments = arguments;
+
+            InputParameters = inputs ?? new List<CallSiteParameter>();
+            InoutParameters = inouts ?? new List<CallSiteParameter>();
+            OutputParameters = outputs ?? new List<CallSiteParameter>();
         }
 
 	    public FunctionCallType Type { get; private set; }
 	    public abstract string FunctionName { get; }
 	    public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
+
+        public List<CallSiteParameter> InputParameters { get; private set; }
+        public List<CallSiteParameter> InoutParameters { get; private set; }
+        public List<CallSiteParameter> OutputParameters { get; private set; }
+
+        public ParameterList AsProfile(CodeModel.SymbolTable table)
+        {
+            var profile = new FunctionCallParameterList();
+            profile.InputParameters = FunctionCallParameterList.CreateParameters(InputParameters, table);
+            profile.InoutParameters = FunctionCallParameterList.CreateParameters(InoutParameters, table);
+            profile.OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table);
+            profile.ReturningParameter = null;
+            return profile;
+        }
 
         public virtual bool NeedDeclaration {
             get { return true; }
@@ -436,7 +454,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>Call to an intrinsic function</summary>
 	public class IntrinsicFunctionCall: FunctionCall {
 		public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, CallSiteParameter[] arguments)
-			: base(FunctionCallType.IntrinsicFunctionCall, arguments) {
+			: base(FunctionCallType.IntrinsicFunctionCall, arguments, null, null, null) {
 			IntrinsicFunctionName = intrinsicFunctionName;
 		}
 
@@ -458,7 +476,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>Call to a TypeCobol user defined function</summary>
 	public class UserDefinedFunctionCall: FunctionCall {
 		public UserDefinedFunctionCall(SymbolReference functionName, CallSiteParameter[] arguments)
-			: base(FunctionCallType.UserDefinedFunctionCall, arguments) {
+			: base(FunctionCallType.UserDefinedFunctionCall, arguments, null, null, null) {
 			UserDefinedFunctionName = functionName;
 		}
 
@@ -474,11 +492,9 @@ namespace TypeCobol.Compiler.CodeElements
 
 	public class ProcedureCall: FunctionCall {
 		public ProcedureCall(SymbolReference name, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs)
-			: base(FunctionCallType.UserDefinedFunctionCall, null) {
+			: base(FunctionCallType.UserDefinedFunctionCall, null, inputs, inouts, outputs) {
 			ProcedureName = name;
-			InputParameters  = inputs  ?? new List<CallSiteParameter>();
-			InoutParameters  = inouts  ?? new List<CallSiteParameter>();
-			OutputParameters = outputs ?? new List<CallSiteParameter>();
+			
 		}
 
 		public SymbolReference ProcedureName { get; private set; }
@@ -486,9 +502,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public override Token FunctionNameToken { get { return ProcedureName.NameLiteral.Token; } }
         
 
-        public List<CallSiteParameter> InputParameters  { get; private set; }
-		public List<CallSiteParameter> InoutParameters  { get; private set; }
-		public List<CallSiteParameter> OutputParameters { get; private set; }
+       
 		private List<CallSiteParameter> _cache;
 		public override CallSiteParameter[] Arguments {
 			get {
@@ -502,14 +516,7 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		public ParameterList AsProfile(CodeModel.SymbolTable table) {
-			var profile = new FunctionCallParameterList();
-			profile.InputParameters  = FunctionCallParameterList.CreateParameters(InputParameters, table);
-			profile.InoutParameters  = FunctionCallParameterList.CreateParameters(InoutParameters, table);
-			profile.OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table);
-			profile.ReturningParameter = null;
-			return profile;
-		}
+		
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {

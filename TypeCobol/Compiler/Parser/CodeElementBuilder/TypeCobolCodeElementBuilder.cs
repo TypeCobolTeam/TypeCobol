@@ -338,20 +338,16 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (ambiguousSymbol != null &&
                     (ambiguousSymbol.Type == SymbolType.ProgramEntry || ambiguousSymbol.Type == SymbolType.ProgramName ||
-                     ambiguousSymbol.CandidateTypes.Any(c => c == SymbolType.ProgramEntry || c == SymbolType.ProgramName)))
+                     ambiguousSymbol.CandidateTypes.All(c => c == SymbolType.ProgramEntry || c == SymbolType.ProgramName)))
                 {
                     //if CandidatesTypes = Program or program Entry
                     //new ProcedureStyleCallStatement() { ProgramNameOrProgramEntry= temp}
-                    ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes =
-                       ambiguousSymbol.CandidateTypes.Where(
-                           c => c == SymbolType.ProgramEntry || c == SymbolType.ProgramName).ToArray();
                     statement =
-                        new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
-                            null, null, null))
+                        new ProcedureStyleCallStatement
                         {
                             ProgramNameOrProgramEntry = ambiguousSymbolReference.MainSymbolReference
                         };
-                    callSite.CallTarget = statement.ProgramNameOrProgramEntry;
+
                 }
                 else if (ambiguousSymbol != null &&
                          (ambiguousSymbol.Type == SymbolType.DataName ||
@@ -361,9 +357,8 @@ namespace TypeCobol.Compiler.Parser
                 {
                     //else if CandidatesTypes = data or TCFunctionName
                     //new ProcedureStyleCallStatement() {ProcdurePointerOrTCProcedureFunction = temp}
-                    ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes =
-                        ambiguousSymbol.CandidateTypes.Where(
-                            c => c == SymbolType.DataName || c == SymbolType.TCFunctionName).ToArray();
+                    ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes = new[]{SymbolType.DataName, SymbolType.TCFunctionName};
+                        
                     statement =
                         new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
                             null, null, null))

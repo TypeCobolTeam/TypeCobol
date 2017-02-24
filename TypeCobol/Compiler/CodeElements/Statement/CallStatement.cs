@@ -206,6 +206,8 @@ namespace TypeCobol.Compiler.CodeElements
 	{
 		this.ProcedureCall = call;
 	}
+        public ProcedureStyleCallStatement()
+        : base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement) { }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)

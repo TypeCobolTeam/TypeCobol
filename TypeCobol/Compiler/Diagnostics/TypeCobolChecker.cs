@@ -63,8 +63,9 @@ class ReadOnlyPropertiesChecker: NodeListener {
             if (procedureStyleCall.FunctionDeclaration == null)
             {
                 //Get Funtion just by name and profile (matches on precise parameters)
-                functionDeclarations = node.SymbolTable.GetFunction(new URI(procedureStyleCall.FunctionCall.FunctionName),
-                                        (procedureStyleCall.FunctionCall as ProcedureCall).AsProfile(node.SymbolTable));
+                functionDeclarations =
+                    node.SymbolTable.GetFunction(new URI(procedureStyleCall.FunctionCall.FunctionName),
+                        procedureStyleCall.FunctionCall.AsProfile(node.SymbolTable));
 
                 string message;
                 if (node.CodeElement.CallSites.All(c => c.CallTarget.Type != SymbolType.TCFunctionName))
