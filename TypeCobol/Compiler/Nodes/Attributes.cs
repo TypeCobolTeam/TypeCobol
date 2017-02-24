@@ -1,5 +1,4 @@
-﻿using Castle.Core.Internal;
-
+﻿
 namespace TypeCobol.Compiler.Nodes {
 
 	using System.Collections.Generic;
@@ -78,9 +77,16 @@ internal class TypeAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		try { bool.Parse(o.ToString()); return "BOOL"; }
 		catch(System.FormatException) { } // not a boolean
-		var node = (DataDescription)o;
-		var data = (DataDescriptionEntry)node.CodeElement;
-		return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType!=null? data.UserDefinedDataType.Name : null;
+
+		var node = o as DataDescription;
+	    if (node != null) {
+                var data = node.CodeElement as DataDescriptionEntry;
+	        if (data != null) {
+                    return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType != null ? data.UserDefinedDataType.Name : null;
+                }
+            }
+	    return null;
+
 	}
 }
 
