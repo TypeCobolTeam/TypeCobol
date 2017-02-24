@@ -294,12 +294,12 @@ namespace TypeCobol.Compiler.Preprocessor
             if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
             {
                 string originalText = nextToken.Text;
-                int indexOFirstDash = originalText.IndexOf('-');
-                if (indexOFirstDash > 0 && originalText.Substring(indexOFirstDash - 3, 4) == CopyReplacingDirective.PreSuffix)
+                if (originalText.Contains(CopyReplacingDirective.PreSuffix))
                 {
-                    string replacedText = originalText.Substring(0, indexOFirstDash) + CopyReplacingDirective.Suffix + originalText.Substring(indexOFirstDash);
+                    string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix , CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix));
                     TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
-                    Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1, virtualTokensLine);
+                    Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
+                        virtualTokensLine);
 
                     status.replacedToken = new ReplacedToken(replacementToken, nextToken);
                     currentPosition.CurrentToken = status.replacedToken;
