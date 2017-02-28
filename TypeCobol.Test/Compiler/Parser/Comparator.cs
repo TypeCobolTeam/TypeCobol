@@ -26,12 +26,12 @@ namespace TypeCobol.Test.Compiler.Parser
             Observer = new TestObserver();
         }
 
-        public void Init(string[] extensions = null)
+        public void Init(string[] extensions = null, bool autoRemarks = false)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator.paths.SamplePath));
             DocumentFormat format = Comparator.getSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
-            //options.AutoRemarksEnable = true;
+            options.AutoRemarksEnable = autoRemarks;
             if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);
             CompilationProject project = new CompilationProject("TEST",
@@ -130,7 +130,7 @@ namespace TypeCobol.Test.Compiler.Parser
             return samples.Count;
         }
 
-		public void Test(bool debug = false, bool json = false) {
+		public void Test(bool debug = false, bool json = false, bool autoRemarks = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
 				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
@@ -142,7 +142,7 @@ namespace TypeCobol.Test.Compiler.Parser
 				foreach (var comparator in comparators) {
 					Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(comparator, debug);
-					unit.Init(compilerExtensions);
+					unit.Init(compilerExtensions, autoRemarks);
 					unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {
