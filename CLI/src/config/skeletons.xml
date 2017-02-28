@@ -103,7 +103,6 @@
       <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
 01  CallData.
     05  DescriptionId PIC X(08).
-      88 CallIsCopy VALUE 'CALL FROM COBOL NOT SUPPORTED'.
       </pattern>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
 01  LibFctList-Loaded PIC X(01) VALUE SPACE.
@@ -129,14 +128,16 @@
       </pattern>
       <pattern action="expand" location="program.end"></pattern>
       <pattern location="program.procedure-division.sentence-0.begin" action="create" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR">
-    IF CallIsCopy
-      PERFORM Copy-Process-Mode
-    ELSE
-      PERFORM FctList-Process-Mode
-    END-IF
+*
+*    IF CallIsCopy
+*      PERFORM Copy-Process-Mode
+*    ELSE
+    PERFORM FctList-Process-Mode
+*    END-IF
 
     GOBACK
       </pattern>
+      <!--
       <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_COBOL_BEHAVIOUR">
 @{
   var entries = "";
@@ -150,6 +151,7 @@ Copy-Process-Mode.
     .
 
       </pattern>
+      -->
       <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_TYPECOBOL_BEHAVIOUR">
 @{
   var entries = "";
