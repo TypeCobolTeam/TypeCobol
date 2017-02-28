@@ -1,5 +1,6 @@
 ﻿using System.Xml;
 using System.Collections.Generic;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Tools;
 
 namespace TypeCobol.Server {
@@ -122,8 +123,8 @@ public class XMLWriter: AbstractErrorWriter {
 
 	private void writeMessage(string id, Diagnostic error) {
             writer.WriteStartElement("MESSAGE");
-            writer.WriteElementString("MSGNUMBER", "TC-" + error.Code.PadLeft(5, '0') + AsIBMSuffix(error.Severity));
-            writer.WriteElementString("MSGLINE", error.Range.End.Line.ToString());
+            writer.WriteElementString("MSGNUMBER", "TC-" + error.Info.Code.ToString().PadLeft(5, '0') + AsIBMSuffix((int)error.Info.Severity));
+            writer.WriteElementString("MSGLINE", error.Line.ToString());
             writer.WriteElementString("MSGFILE", id);
             writer.WriteElementString("MSGTEXT", error.Message);
             writer.WriteEndElement();// MESSAGE

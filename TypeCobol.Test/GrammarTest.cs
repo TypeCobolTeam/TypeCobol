@@ -11,30 +11,28 @@ namespace TypeCobol.Test {
 
 	[TestClass]
 	public class GrammarTest {
+	    [TestMethod]
+	    [TestCategory("Parsing")]
+	    [TestProperty("Time", "long")]
+	    [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
+	    public void CheckGrammarCorrectness() {
+	        string regex = "*.PGM";
+	        string samples = @"Samples";
+	        string root = PlatformUtils.GetPathForProjectFile(samples);
+	        CheckTests(root, @"GrammarTest", @"CheckGrammarResults.txt", regex);
 
-        //Sub folder where file "expected" and "actually generated" will be put when there is a difference between them
-        private const string GrammarTestFolder = @"GrammarTest";
-        //Name of grammar result file with extension
-        private const string GrammarResultFile = @"CheckGrammarResults.txt";
+	    }
 
-        [TestMethod]
-		[TestCategory("Parsing")]
-		[TestProperty("Time","long")]
-		[Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
-		public void CheckGrammarCorrectness() {
-
-			int STOP_AFTER_AS_MANY_ERRORS = 1000;
-			string regex = "*.PGM";
-			string samples = @"Samples";
-			string root = PlatformUtils.GetPathForProjectFile(samples);
-			string[] files = Directory.GetFiles(root, regex, SearchOption.AllDirectories);
-            string[] include = { };
-			string[] exclude = { };
+	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex = "*.cbl") {
+	        CheckTests(rootFolder, resultFolder, resultFile, regex, new string[] {}, new string[] {});
+	    }
+        public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, int stopAfterAsManyErrors = 10000) { 
+			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 
             
-            File.WriteAllText(GrammarResultFile, "");
+            File.WriteAllText(resultFile, "");
 			int tested = 0, nbFilesInError = 0, ignores = 0;
 			TimeSpan parsingSumDuration = new TimeSpan(0);
 			TimeSpan codeGenSumDuration = new TimeSpan(0);
@@ -44,15 +42,15 @@ namespace TypeCobol.Test {
 
 				string filename = Path.GetFileName(file);
                 
-                File.AppendAllText(GrammarResultFile, (filename + ':'));
+                File.AppendAllText(resultFile, (filename + ':'));
 				bool ignore = include.Length > 0 && !include.Contains(filename);
 				if (!ignore) ignore = exclude.Contains(filename);
 				if (ignore) {
 					ignores++;
-					File.AppendAllText(GrammarResultFile, " ignored.\n");
+					File.AppendAllText(resultFile, " ignored.\n");
                     continue;
 				}
-				string path = Path.Combine(root, filename);
+				string path = Path.Combine(rootFolder, filename);
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
                 var document = Parser.Parse(path, format);
@@ -61,12 +59,12 @@ namespace TypeCobol.Test {
 				TimeSpan elapsed = watch.Elapsed;
 				parsingSumDuration += elapsed;
 				string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
-				File.AppendAllText(GrammarResultFile, " parsed in " + formatted +"\n");
-                File.AppendAllText(GrammarResultFile, "- " + document.Results.PerfStatsForText.FirstCompilationTime + " ms : text update\n");
-                File.AppendAllText(GrammarResultFile, "- " + document.Results.PerfStatsForScanner.FirstCompilationTime + " ms : scanner\n");
-                File.AppendAllText(GrammarResultFile, "- " + document.Results.PerfStatsForPreprocessor.FirstCompilationTime + " ms : preprocessor\n");
-                File.AppendAllText(GrammarResultFile, "- " + document.Results.PerfStatsForCodeElementsParser.FirstCompilationTime + " ms : code elements parser\n");
-                File.AppendAllText(GrammarResultFile, "- " + document.Results.PerfStatsForProgramClassParser.FirstCompilationTime + " ms : program class parser\n");
+				File.AppendAllText(resultFile, " parsed in " + formatted +"\n");
+                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForText.FirstCompilationTime + " ms : text update\n");
+                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForScanner.FirstCompilationTime + " ms : scanner\n");
+                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForPreprocessor.FirstCompilationTime + " ms : preprocessor\n");
+                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForCodeElementsParser.FirstCompilationTime + " ms : code elements parser\n");
+                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForProgramClassParser.FirstCompilationTime + " ms : program class parser\n");
 
 
                 tested++;
@@ -78,15 +76,15 @@ namespace TypeCobol.Test {
 			        okay = false;
 			        parseErrors += diagnostics.Count;
 			    }
-			    displayAndWriteErrorsToGrammarResult(diagnostics);
+			    displayAndWriteErrorsToGrammarResult(resultFile, diagnostics);
 
                 
 				if (!okay) {
 					nbFilesInError++;
-					if (nbFilesInError >= STOP_AFTER_AS_MANY_ERRORS) break;
+					if (nbFilesInError >= stopAfterAsManyErrors) break;
 				}
 
-			    if (codegen) {
+			    if (codegen && okay) {
 			        var writer = new StringWriter();
                     watch.Reset();
 			        watch.Start();
@@ -100,14 +98,14 @@ namespace TypeCobol.Test {
                     elapsed = watch.Elapsed;
                     codeGenSumDuration += elapsed;
                     formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
-                    File.AppendAllText(GrammarResultFile, " generated in " + formatted + "\n");
+                    File.AppendAllText(resultFile, " generated in " + formatted + "\n");
 
                     writer.Close();
 
 			        var expected = AsLines(File.ReadAllText(path, format.Encoding));
 			        var actual = AsLines(writer.ToString());
 
-			        Directory.CreateDirectory(GrammarTestFolder);
+			        Directory.CreateDirectory(resultFolder);
 			        
 
 			        var linesKO = new List<int>();
@@ -119,10 +117,10 @@ namespace TypeCobol.Test {
 			        if (linesKO.Count > 0 || expected.Count != actual.Count) {
 			            errors.AppendLine("--- Lines mismatch ---");
                         File.WriteAllLines(
-                        GrammarTestFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Expected" +
+                        resultFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Expected" +
                         Path.GetExtension(file), expected);
                         File.WriteAllLines(
-                            GrammarTestFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Actual" +
+                            resultFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Actual" +
                             Path.GetExtension(file), actual);
                     }
 			        int start = -1;
@@ -146,11 +144,11 @@ namespace TypeCobol.Test {
 			            errors.AppendLine(String.Format("+{0:" + fmt + "} {1}", i, actual[i]));
 			        if (errors.Length > 0) {
 			            codegenErrors += linesKO.Count + Math.Abs(actual.Count - expected.Count);
-			            File.AppendAllText(GrammarResultFile, errors.ToString());
+			            File.AppendAllText(resultFile, errors.ToString());
 			            if (okay) nbFilesInError++;
 			        }
 			    } else {
-                    File.AppendAllText(GrammarResultFile, "\n");
+                    File.AppendAllText(resultFile, "\n");
                 }
 			}
             TimeSpan totalTestDuration = parsingSumDuration + codeGenSumDuration;
@@ -165,20 +163,20 @@ namespace TypeCobol.Test {
                 string totalDurationFormatted = String.Format("{0:00}m{1:00}s{2:000}ms", totalTestDuration.Minutes, totalTestDuration.Seconds, totalTestDuration.Milliseconds);
                 message += " + Codegen time: " + codeGenTotalDurationFormatted + "  => Total time: " + totalDurationFormatted;
             }
-            File.AppendAllText(GrammarResultFile, message);
+            File.AppendAllText(resultFile, message);
 			if (nbFilesInError > 0) Assert.Fail('\n'+message);
 		}
 
-		private void displayAndWriteErrorsToGrammarResult(IEnumerable<Diagnostic> diagnostics) {
+		private static void displayAndWriteErrorsToGrammarResult(string resultFile, IEnumerable<Diagnostic> diagnostics) {
 			string result = ParserUtils.DiagnosticsToString(diagnostics, false);
 			Console.WriteLine(result);
-			File.AppendAllText("CheckGrammarResults.txt", (result + "\n"));
+			File.AppendAllText(resultFile, (result + "\n"));
 		}
 
-		private List<string> AsLines(string text) {
+		private static List<string> AsLines(string text) {
 			return text.Replace("\r\n","\n").Replace("\r","\n").Split('\n').ToList();
 		}
-		private string Lines2FormatString(int lines) {
+		private static string Lines2FormatString(int lines) {
 			string res = "0";
 			for (int i=1; i<lines.ToString().Length; i++) res += "0";
 			return res;
@@ -188,11 +186,11 @@ namespace TypeCobol.Test {
 		/// <param name="index">Line index</param>
 		/// <param name="before">Number of line before line index</param>
 		/// <param name="fmt"></param>
-		private void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt="0") {
+		private static void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt="0") {
 			for(int line=index-before; line<index; line++)
 				if (line > 0) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
 		}
-		private void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt="0") {
+		private static void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt="0") {
 			for (int i=start; i<=end; i++)
 				output.AppendLine(String.Format("-{0:"+fmt+"} {1}", i+1, expected[i]));
 			for (int i=start; i<=end; i++)
@@ -203,7 +201,7 @@ namespace TypeCobol.Test {
 		/// <param name="index">Line index</param>
 		/// <param name="after">Number of line after line index</param>
 		/// <param name="fmt"></param>
-		private void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt="0") {
+		private static void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt="0") {
 			for(int line=index+1; line<=index+after; line++)
 				if (line < input.Count) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
 		}

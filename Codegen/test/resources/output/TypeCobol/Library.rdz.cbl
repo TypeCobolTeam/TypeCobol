@@ -65,7 +65,6 @@
              10 FctPointer PROCEDURE-POINTER VALUE NULL.
        01  CallData.
            05  DescriptionId PIC X(08).
-             88 CallIsCopy VALUE 'CALL FROM COBOL NOT SUPPORTED'.
 
       *=================================================================
       *PROCEDURE DIVISION.
@@ -96,22 +95,14 @@
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
 
-       IF CallIsCopy
-             PERFORM Copy-Process-Mode
-           ELSE
-             PERFORM FctList-Process-Mode
-           END-IF
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+      *    END-IF
 
            GOBACK
-           .
-       Copy-Process-Mode.
-           SET ADDRESS OF FCT TO ADDRESS OF CallData
-
-           SET FCT-currentDate-01   TO ENTRY 'e5f209fa'
-           SET FCT-currentDateDB2-01   TO ENTRY 'b8ac0397'
-           SET FCT-currentDateJulian-01   TO ENTRY 'c4e76b45'
-           SET FCT-currentDateFreeFormat-01   TO ENTRY 'd55b3ea7'
-           SET FCT-currentDateString-01   TO ENTRY 'bfb0fa9b'
            .
        FctList-Process-Mode.
            SET ADDRESS OF FctList TO ADDRESS OF CallData

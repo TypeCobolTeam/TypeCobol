@@ -503,10 +503,11 @@ ioControlParagraph:
 // More than one record description entry can be specified; each is an alternative description of the same record storage area.
 // Data areas described in the FILE SECTION are not available for processing unless the file that contains the data area is open.
 // A method FILE SECTION can define external files only. A single run-unit-level file connector is shared by all programs and methods that contain a declaration of a given external file.
+// TCRFS_EMPTY_FILE_DESCRIPTION
 
 fileSection:
 	FileSectionHeader 
-	(fileDescriptionNode dataDefinitionEntry+)*;
+	(fileDescriptionNode dataDefinitionEntry*)*;
 //Olivier Smedile: I created this rule to have a method EnterFileDescriptionNode in ProgramClassBaseListerner (and then in CobolNodeBuilder)
 //Maybe this can be avoided
 fileDescriptionNode:

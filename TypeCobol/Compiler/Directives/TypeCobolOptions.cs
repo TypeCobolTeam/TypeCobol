@@ -12,6 +12,7 @@ namespace TypeCobol.Compiler.Directives
     public class TypeCobolOptions : IBMCompilerOptions
     {
         // insert options specific to TypeCobol here ...
+        public bool AutoRemarksEnable { get; set; }
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file

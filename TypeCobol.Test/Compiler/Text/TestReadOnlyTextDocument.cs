@@ -76,7 +76,7 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("Any attempt to get char at 0 invalid offset should result in an InvalidOperationException");
             }
 
-            if(textDocument.Chars.Count() != 0)
+            if(textDocument.Chars.Any())
             {
                 throw new Exception("An empty document should have 0 chars");
             }
@@ -151,7 +151,7 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("An empty document should have 0 line count");
             }
 
-            if (textDocument.Lines.Count() != 0)
+            if (textDocument.Lines.Any())
             {
                 throw new Exception("An empty document should have 0 lines");
             }

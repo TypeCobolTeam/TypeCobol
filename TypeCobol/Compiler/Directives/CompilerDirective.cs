@@ -432,20 +432,21 @@ namespace TypeCobol.Compiler.Directives
         public bool RemoveFirst01Level { get; set; }
 
         /// <summary>
-        /// If true, insert SuffixChar before the first '-' in all user defined words found in the COPY text 
+        /// If true, insert Suffix before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
         public bool InsertSuffixChar { get; set; }
 
         /// <summary>
-        /// Character which should be inserted before the first '-' in all user defined words found in the COPY text 
+        /// SUffix which should be inserted before the first '-' in all user defined words found in the COPY text 
         /// before copying it into the main program (legacy REPLACING syntax).
         /// </summary>
-        public char SuffixChar { get; set; }
+        public string Suffix { get; set; }
+        public string PreSuffix { get; set; }
 
 #endif
 
-		public override string ToString() {
+        public override string ToString() {
 			var str = new StringBuilder(Type.ToString());
 			if (Suppress) str.Append(".SUPPRESS");
 			if (!String.IsNullOrEmpty(TextName))
@@ -453,7 +454,7 @@ namespace TypeCobol.Compiler.Directives
             if(!String.IsNullOrEmpty(LibraryName))
 				str.Append(".OF(" + LibraryName + ")");
 			foreach (var replace in ReplaceOperations)
-				str.Append(" <").Append(replace.ToString()).Append('>');
+				str.Append(" <").Append(replace).Append('>');
             return str.ToString();
         }
     }
@@ -834,10 +835,6 @@ namespace TypeCobol.Compiler.Directives
         {
             public TextNameVariation(string textNameWithSuffix)
             {
-                if (textNameWithSuffix.Length > 8)
-                {
-                    throw new ArgumentException("Text name should be at most 8 chars long");
-                }
                 TextNameWithSuffix = textNameWithSuffix;
             }
 
@@ -849,7 +846,7 @@ namespace TypeCobol.Compiler.Directives
             /// <summary>
             /// True if a suffix was appended to text name
             /// </summary>
-            public bool HasSuffix { get { return TextNameWithSuffix.Length == 8; } }
+            public bool HasSuffix { get { return TextNameWithSuffix.Length >= 8; } }
 
             /// <summary>
             /// Text name without suffix
@@ -859,13 +856,18 @@ namespace TypeCobol.Compiler.Directives
             /// <summary>
             /// Suffix appended to text name
             /// </summary>
-            public char SuffixChar { get { return HasSuffix ? TextNameWithSuffix[7] : (char)0; } }
+            public string Suffix { get { return HasSuffix ? TextNameWithSuffix.Substring(7, 1) : string.Empty; } }
+
+            /// <summary>
+            /// Return the the three lettters from index 5 to 7 of the Copy name.
+            /// </summary>
+            public string PreSuffix { get { return HasSuffix ? TextName.Substring(4) + "-" : string.Empty; } }
 
             public override string ToString()
             {
                 if (HasSuffix)
                 {
-                    return TextName.Substring(0, 7) + "(" + SuffixChar + ")";
+                    return TextName.Substring(0, 7) + "(" + Suffix + ")";
                 }
                 else
                 {

@@ -3,11 +3,9 @@ using Antlr4.Runtime;
 using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
@@ -58,7 +56,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
             var potentialVariables = new List<DataDefinition>();
 
             if (node.CodeElement.CallSites.Any(
-                c => c.CallTarget.IsAmbiguous && ((AmbiguousSymbolReference) c.CallTarget).CandidateTypes.Any(
+                c => c.CallTarget == null || c.CallTarget.IsAmbiguous && ((AmbiguousSymbolReference) c.CallTarget).CandidateTypes.Any(
                          ca => ca == SymbolType.ProgramName || ca == SymbolType.ProgramEntry)))
                 return; //We don't have to manage this for the moment...
 

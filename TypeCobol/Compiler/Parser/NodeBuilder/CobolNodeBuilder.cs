@@ -517,7 +517,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		public override void EnterParagraph(ProgramClassParser.ParagraphContext context) {
-			if (!(Program.SyntaxTree.CurrentNode is Paragraph) && context.ParagraphHeader() != null) {
+			if (context.ParagraphHeader() != null) {
 				ParagraphHeader header = (ParagraphHeader)context.ParagraphHeader().Symbol;
 				var paragraph = new Paragraph(header);
 				Enter(paragraph, context);

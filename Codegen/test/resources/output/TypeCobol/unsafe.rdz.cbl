@@ -1,10 +1,10 @@
-﻿      * 6 CodeElements errors
-      * "1"@(32:12>32:65): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(33:12>33:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(34:12>34:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(35:12>35:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(36:12>36:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(37:12>37:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
+﻿      * 6 errors
+      * Line 32[12,65] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
+      * Line 33[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
+      * Line 34[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
+      * Line 35[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
+      * Line 36[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
+      * Line 37[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
        IDENTIFICATION DIVISION.
        PROGRAM-ID.   Test-UNSAFE.
        

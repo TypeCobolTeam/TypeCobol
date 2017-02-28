@@ -93,7 +93,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Text names variations declared in REMARS compiler directives.
         /// </summary>
-        internal List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; private set; }
+        internal List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; set; }
 
         /// <summary>
         /// Register a new symbolic character name found in the source file

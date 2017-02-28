@@ -10,9 +10,17 @@
        01 MyVar2 PIC X(05).
        01 MyVar2 PIC X(09).
        01 MyRedifines REDEFINES MyVar2.
+	      05 one pic X.
+		      88 one-1 value 'x'.
        01 MyRedifines2 REDEFINES MyVar2.
+	      05 one pic X.
+		      88 one-1 value 'x'.
        01 MyRedifines3 REDEFINES myvar2.
+	      05 one pic X.
+		      88 one-1 value 'x'.
        01 MyRedifines4 REDEFINES MyVar2.
+	      05 one pic X.
+		      88 one-1 value 'x'.
        01 REDEFINES MYVAR2.
 
       * KO Redefines could not find MyVar1

@@ -1,5 +1,4 @@
-﻿using Castle.Core.Internal;
-
+﻿
 namespace TypeCobol.Compiler.Nodes {
 
 	using System.Collections.Generic;
@@ -30,18 +29,14 @@ public static class Attributes {
 		attributes = new Dictionary<string,Attribute>();
 		attributes["name"]  = new NameAttribute();
 		attributes["level"] = new LevelAttribute();
-            //not used?
 		attributes["type"]  = new TypeAttribute();
-            //not used?
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
-            //not used?
 		attributes["unsafe"] = new UnsafeAttribute();
 		attributes["function"] = new FunctionUserAttribute();
 		attributes["definitions"] = new DefinitionsAttribute();
             //not used?
 		attributes["typecobol"] = new TypeCobolAttribute();
-            //not used
 		attributes["visibility"] = new VisibilityAttribute();
 		attributes["copyname"] = new LibraryCopyAttribute();
 	}
@@ -73,14 +68,22 @@ internal class NameAttribute: Attribute {
             return null;
 	}
 }
-
 internal class TypeAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		try { bool.Parse(o.ToString()); return "BOOL"; }
-		catch(System.FormatException) { } // not a boolean
-		var node = (DataDescription)o;
-		var data = (DataDescriptionEntry)node.CodeElement;
-		return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType!=null? data.UserDefinedDataType.Name : null;
+        bool result;
+        if(bool.TryParse(o.ToString(), out result)) {
+            return "BOOL";
+        }
+
+		var node = o as DataDescription;
+	    if (node != null) {
+                var data = node.CodeElement as DataDescriptionEntry;
+	        if (data != null) {
+                    return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType != null ? data.UserDefinedDataType.Name : null;
+                }
+            }
+	    return null;
+
 	}
 }
 
@@ -123,11 +126,12 @@ internal class SenderAttribute: Attribute {
 }
 internal class ReceiverAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var statement = ((Node)o).CodeElement as VariableWriter;
-		if (statement == null) return null;
-		if (statement.VariablesWritten.Count == 0) return null;
-		if (statement.VariablesWritten.Count == 1) return new List<QualifiedName>(statement.VariablesWritten.Keys)[0];
-		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+statement.VariablesWritten.Count+")");
+	    var codeElement = ((Node)o).CodeElement;
+	    var variablesWritten = codeElement.StorageAreaWrites;
+	    if (variablesWritten == null) return null;
+        if (variablesWritten.Count == 0) return null;
+        if (variablesWritten.Count == 1) return variablesWritten[0].ToString();
+		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+ variablesWritten.Count+")");
 	}
 }
 

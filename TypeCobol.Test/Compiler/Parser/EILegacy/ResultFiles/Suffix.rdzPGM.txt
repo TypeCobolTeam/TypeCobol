@@ -1,0 +1,27 @@
+﻿--- Program ---
+PROGRAM: MYPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Global:Program
+-- DATA --------
+  PRTD20L:Alphanumeric
+  PRTD20L-RECH:Alphanumeric
+  PRTD20L-VIDE:BOOL
+  PRTD20L-I:Alphanumeric
+  LDO-NO-DOSSIER:Numeric
+  LDO-CD-ETA:Alphanumeric
+  LDO-CD-ETA-SAI:BOOL
+  LDO-CD-ETA-VAL:BOOL
+  CONVEAL:Alphanumeric
+  CONVEAL-VEAL-VEAL-OUT-VEA:Alphanumeric
+  CONVEAL-VEAL-VEAL-OUT-VEAL-2:Alphanumeric
+  CONVEA:Alphanumeric
+  CONVEAL-VEA:Alphanumeric
+  ANOTHER-DATA:Alphanumeric
+  CONVEAL-VEATEST:Alphanumeric
+  CONVEAL-TESTVEA:Alphanumeric
+  CONVEAL-TESTVEAL-TEST:Alphanumeric
+  CONVEAL-TESTVEATEST:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+      BOOL:BOOL
+      DATE:DATE

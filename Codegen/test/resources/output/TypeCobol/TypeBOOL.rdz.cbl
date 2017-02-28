@@ -31,7 +31,13 @@
          88  d-false VALUE 'F'.
                            
 
-
+000000 01 group.
+000000    05 array occurs 5.
+      *      10 checkToDo type bool.
+000000       10  checkToDo-value PIC X VALUE LOW-VALUE.
+         88  checkToDo       VALUE 'T'.
+         88  checkToDo-false VALUE 'F'.
+                                    
 
        PROCEDURE DIVISION.
 
@@ -53,6 +59,11 @@
       * OK: copying chunks of memories of different layouts is standard COBOL practice
            MOVE x   TO      AGroup
            MOVE x   TO a IN AGroup
+      * OK: with occurs
+           set checkToDo(1) to true
+      *    set checkToDo(1) to false
+           SET checkToDo(1)-false TO TRUE.
+                                    
            .
 
        END PROGRAM Booleans.

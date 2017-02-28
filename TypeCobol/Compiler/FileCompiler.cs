@@ -7,6 +7,7 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler
 {
@@ -141,6 +142,7 @@ namespace TypeCobol.Compiler
 				CompilationResultsForProgram.CustomSymbols = customSymbols;
 			}
             CompilerOptions = compilerOptions;
+            OptionHelper.CompilationOptions = compilerOptions;
         }
         
         /// <summary>

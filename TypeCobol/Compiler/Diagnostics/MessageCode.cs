@@ -40,5 +40,7 @@ namespace TypeCobol.Compiler.Diagnostics
         SemanticTCErrorInParser = 30,
         ImplementationError = 31,
         TypeCobolParserLimitation = 32,
+        ParserInit = 33,
+        IntrinsicLoading = 34,
     }
 }
