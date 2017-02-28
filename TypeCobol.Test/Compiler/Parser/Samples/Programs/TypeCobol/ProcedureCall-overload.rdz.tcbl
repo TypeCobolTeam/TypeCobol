@@ -4,87 +4,205 @@
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
 
-       01  somedate     TYPE Date.
-       01  someformat   PIC X(08).
-       01  flag         TYPE Bool.
-       01  realformat   PIC X(08).
+       01  myDate         TYPE Date.
+       01  fakeDate       PIC X(08).
+       01  result         TYPE Bool.
+       01  realfakeDate   PIC X(08).
+
+       01 case1 pic X.
+       01 case2 pic X.
+       01 case3 pic X.
+       01 case4 pic X.
+      *No case5
+       01 case6 pic X.
+      *No case7
+       01 case8 pic X.
+       01 case9 pic X.
+      *No case10
+       01 case11 pic X.
+       01 case12 pic X.
+      *No case13
+       01 case14 pic X.
+       01 case15 pic X.
+       01 group.
+            05 case1 pic X.
+            05 case2 pic X.
+            05 case3 pic X.
+            05 case4 pic X.
+      *     no case5
+            05 case6 pic X.
+      *     no case7
+      *     no case8, we need only one defined
+            05 case9 pic X.
+      *     no case10
+      *     no case11, we need only one defined
+            05 case12 pic X.
+      *     no case13
+      *     no case14, we need only one defined
+            05 case15 pic X.
 
        PROCEDURE DIVISION.
        
-       DECLARE PROCEDURE ValidateDateFormat PRIVATE
+       DECLARE PROCEDURE case1 PRIVATE
            INPUT mydate        TYPE Date
-                 format        PIC X(08)
-          OUTPUT okay          TYPE Bool
-                 actual-format PIC X(08).
-         .
+                 fakeDate      PIC X(08)
+          OUTPUT result        TYPE Bool.
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 
-       DECLARE PROCEDURE ValidateDateFormat PRIVATE
-           INPUT mydate        TYPE Date
-           OUTPUT okay         TYPE Bool
-                 actual-format PIC X(08).
-         .
+       DECLARE PROCEDURE case3 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 
-       DECLARE PROCEDURE ValidateDateFormat PRIVATE
-           INPUT  mydate       TYPE Date
-           OUTPUT okay         TYPE Bool
-         .
+       DECLARE PROCEDURE case4 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case4 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 
+       DECLARE PROCEDURE case5 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case6 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case10 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case11 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case12 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case13 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case13 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case14 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case14 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case15 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case15 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
 
        TRAITEMENT.
-      * __________________________________________________
-      * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
-           CALL ValidateDateFormat
-                    INPUT      somedate someformat
-                    OUTPUT     flag     realformat
-       
-           CALL ValidateDateFormat
-                    INPUT      somedate by content 'YYYYMMDD'
-                    OUTPUT     flag     realformat
-           END-CALL
-      * __________________________________________________
-      * KO : procedure doesn't exist
-           CALL ValidateDatFormatt
-                    INPUT      somedate someformat
-                    OUTPUT              realformat
-           END-CALL
-      
-      * __________________________________________________
-      * KO : wrong parameter number (TCRFUN_MATCH_PARAMETERS_NUMBER)
-           CALL ValidateDateFormat
-                    INPUT      somedate someformat
-                    OUTPUT              realformat
-           END-CALL
-      * __________________________________________________
-      * KO : wrong parameter order (TCRFUN_MATCH_PARAMETERS_TYPE)
-           CALL ValidateDateFormat
-                    INPUT      someformat somedate
-                    OUTPUT     realformat flag
-      
-      * OK with INPUT on the same line as call
-           CALL ValidateDateFormat INPUT      somedate 
-                                              by content 'YYYYMMDD'
-                                   OUTPUT     flag     realformat
-           END-CALL
-           .
-      * __________________________________________________
-      * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
-           CALL ValidateDateFormat
-                    INPUT      somedate 
-                    OUTPUT     flag     realformat
-       
-           CALL ValidateDateFormat
-                    INPUT      somedate
-                    OUTPUT     flag    
-           END-CALL.
-      * ______
+      *OK: call with a program name
+           call 'case1'
 
+      * __________________________________________________
+      *OK: match with full signature
+           CALL case1 INPUT      myDate fakeDate
+                      OUTPUT     result
+           
+      *KO: case2 doesn't exists
+      *1 error max
+           CALL case2 INPUT      myDate fakeDate
+                      OUTPUT     result
+
+      *KO: case3 doesn't match signature: add 1st and 4th argument as extra arguments
+      *1 error + 1 error per wrong argument
+           CALL case3 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+       
+      *KO: case4 doesn't match signature but 2 case4 declared
+      *1 error max
+           CALL case4 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+
+      * Ok: case5
+           CALL case5
+           
+      * KO: case6 is ambiguous (function + variable)
+           CALL case6
+       
+      * KO: case7 doesn't exists
+           CALL case7
+       
+      * Ok: case8 is a variable
+           CALL case8
+
+      * Ko: 2 variables named case9
+           CALL case9
+       
+      *KO: case10 doesn't match signature: procedure with no argument
+      *1 error + 1 error per wrong argument
+           CALL case10 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+
+      *Warning: case11 is a variable but a function with a different signature exists
+           CALL case11      
+
+      *Ko: case12 is defined 2 times
+           CALL case12
+
+      *Ko: case13 is defined 2 times but with mandatory arguments
+           CALL case13
+
+      **Warning: case14 is a variable but 2 functions with a different signature exists
+           CALL case14
+
+      **Ko: case15 is defined 2 times
+           CALL case15
+
+       .
        END PROGRAM ProcedureCallOverload.
