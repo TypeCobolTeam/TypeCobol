@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
@@ -135,6 +136,18 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
+        public virtual bool IsOrCanBeOfType(SymbolType symbolType) {
+            return Type == symbolType;
+        }
+
+        public virtual bool IsOrCanBeOfType(params SymbolType[] symbolTypes) {
+            return symbolTypes.Contains(Type);
+        }
+
+        public virtual bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes) {
+            return symbolTypes.Contains(Type);
+        }
+
         private URI _uri;
         public URI URI {
             get { return _uri ?? (_uri = new URI(Name)); }
@@ -168,6 +181,21 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolType[] CandidateTypes { get; set; }
 
+        public override bool IsOrCanBeOfType(SymbolType symbolType)
+        {
+            return CandidateTypes.Contains(symbolType);
+        }
+
+        public override bool IsOrCanBeOfType([NotNull] params SymbolType[] symbolTypes)
+        {
+            return CandidateTypes.Intersect(symbolTypes).Any();
+        }
+
+        public override bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes)
+        {
+            return !CandidateTypes.Except(symbolTypes).Any();
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
         }
@@ -199,8 +227,20 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		/// <summary>Used to resolve the symbol reference in a hierarchy of names</summary>
-		public override string DefinitionPathPattern {
+        public override bool IsOrCanBeOfType(SymbolType symbolType) {
+            return Head.IsOrCanBeOfType(symbolType) || Tail.IsOrCanBeOfType(symbolType);
+        }
+
+        public override bool IsOrCanBeOfType([NotNull] params SymbolType[] symbolTypes) {
+            return Head.IsOrCanBeOfType(symbolTypes) || Tail.IsOrCanBeOfType(symbolTypes);
+        }
+
+        public override bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes) {
+            return Head.IsOrCanBeOnlyOfTypes(symbolTypes) || Tail.IsOrCanBeOnlyOfTypes(symbolTypes);
+        }
+
+        /// <summary>Used to resolve the symbol reference in a hierarchy of names</summary>
+        public override string DefinitionPathPattern {
 			get { return "\\." + Head.Name + "\\..*" + Tail.DefinitionPathPattern; }
 		}
 
