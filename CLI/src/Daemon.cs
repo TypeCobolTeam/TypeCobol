@@ -15,7 +15,8 @@ namespace TypeCobol.Server {
 		class Config {
 			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			public bool Codegen = false;
-			public List<string> CopyFolders = new List<string>();
+            public bool AutoRemarks;
+            public List<string> CopyFolders = new List<string>();
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
 			public string ErrorFile = null;
@@ -24,7 +25,8 @@ namespace TypeCobol.Server {
 				get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
 			}
 			public List<string> Copies = new List<string>();
-		}
+           
+        }
 
 		static int Main(string[] argv) {
 			bool help = false;
@@ -48,6 +50,7 @@ namespace TypeCobol.Server {
 				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
 				{ "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
+                { "a|autoremarks=", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = (v!=null) },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -116,7 +119,7 @@ namespace TypeCobol.Server {
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
-				try { parser.Init(path, config.Format, config.CopyFolders); }
+				try { parser.Init(path, config.Format, config.CopyFolders, config.AutoRemarks); }
 				catch(Exception ex) {
 					AddError(writer, MessageCode.ParserInit, ex.Message, path);
 					continue;
