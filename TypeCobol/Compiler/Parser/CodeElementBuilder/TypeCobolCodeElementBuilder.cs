@@ -215,22 +215,16 @@ namespace TypeCobol.Compiler.Parser
 
             var cbCallProc = context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable();
 
-            var inputs = new List<CallSiteParameter>();
-            var inouts = new List<CallSiteParameter>();
-            var outputs = new List<CallSiteParameter>();
-
             // Register call parameters (shared storage areas) information at the CodeElement level
-            CallSite callSite = new CallSite();
+            CallSite callSite = null;
             ProcedureStyleCallStatement statement = null;
             Context = context;
-            bool isInError = false;
 
             //Here ambiguousSymbolReference with either CandidatesType:
             // - ProgramNameOrProgramEntry
             // - data, condition, UPSISwitch, TCFunctionName
             var ambiguousSymbolReference =
-                CobolExpressionsBuilder
-                    .CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(
+                CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(
                         cbCallProc);
             var ambiguousSymbol = (ambiguousSymbolReference.MainSymbolReference as AmbiguousSymbolReference);
 
@@ -238,153 +232,161 @@ namespace TypeCobol.Compiler.Parser
             if (context.callOutputParameter().Length > 0 || context.callInputParameter().Length > 0 ||
                 context.callInoutParameter().Length > 0)
             {
-                //Check Type or CandidatesTypes to see if a TCFunctionName is possible
 
-                if (ambiguousSymbol != null && (ambiguousSymbol.Type == SymbolType.TCFunctionName ||
-                                                ambiguousSymbol.CandidateTypes.Any(c => c == SymbolType.TCFunctionName)))
+                callSite = new CallSite();
+                #region Setup Input Output Inout CallSitesParameters
+
+                var inputs = new List<CallSiteParameter>();
+                var inouts = new List<CallSiteParameter>();
+                var outputs = new List<CallSiteParameter>();
+
+                SyntaxProperty<ParameterSharingMode> mode = null;
+                foreach (var p in context.callInputParameter())
                 {
-                    //If so, create ProcedureStyleCallStatement with a ProcedureCall and fix SymbolReference so it's not ambiguous
-                    var nonAmbiguousSymbolRef = new SymbolReference(ambiguousSymbol.NameLiteral,
-                        SymbolType.TCFunctionName);
+                    CreateSharingMode(p, ref mode); // TCRFUN_INPUT_BY
+                    inputs.Add(new CallSiteParameter
+                    {
+                        SharingMode = mode,
+                        StorageAreaOrValue =
+                            CobolExpressionsBuilder.CreateSharedVariableOrFileName(p.sharedVariableOrFileName()),
+                    });
+                }
 
-                    statement =
-                        new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
-                            inputs,
-                            inouts, outputs))
+                foreach (var p in context.callInoutParameter())
+                {
+                    inouts.Add(new CallSiteParameter
+                    {
+                        // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
+                        SharingMode =
+                            new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null),
+                        StorageAreaOrValue =
+                            new Variable(CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1())),
+                    });
+                }
+
+                foreach (var p in context.callOutputParameter())
+                {
+                    outputs.Add(new CallSiteParameter
+                    {
+                        // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
+                        SharingMode =
+                            new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null),
+                        StorageAreaOrValue =
+                            new Variable(CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1())),
+                    });
+                }
+
+                int parametersCount = inputs.Count + outputs.Count + inouts.Count;
+                callSite.Parameters = new CallSiteParameter[parametersCount];
+                int i = 0;
+
+                //Add inputs to global callsites parameters
+                if (inputs.Count > 0)
+                {
+                    foreach (var param in inputs)
+                    {
+                        callSite.Parameters[i] = param;
+                        i++;
+                    }
+                }
+
+                //Add outputs to global callsites parameters
+                if (outputs.Count > 0)
+                {
+                    foreach (var param in outputs)
+                    {
+                        callSite.Parameters[i] = param;
+                        i++;
+                    }
+                }
+
+                //Add inouts to global callsites parameters
+                if (inouts.Count > 0)
+                {
+                    foreach (var param in inouts)
+                    {
+                        callSite.Parameters[i] = param;
+                        i++;
+                    }
+                }
+
+                #endregion
+
+                //Check Type or CandidatesTypes to see if a TCFunctionName is possible
+                if (ambiguousSymbol != null && ambiguousSymbol.IsOrCanBeOfType(SymbolType.TCFunctionName)) {
+                    //If so, create ProcedureStyleCallStatement with a ProcedureCall and fix SymbolReference so it's not ambiguous
+                    var nonAmbiguousSymbolRef = new SymbolReference(ambiguousSymbol.NameLiteral, SymbolType.TCFunctionName);
+                    var TCFunctionNameRefVariable = new SymbolReferenceVariable(StorageDataType.MethodName, nonAmbiguousSymbolRef);
+
+
+                    //CobolExpressionsBuilder store every StorageArea created into storageAreaReads and then after
+                    //storageAreaReads is set to the CodeElement
+                    //We must remove it as TCFunctionNameRefVariable doesn't contains a StorageArea
+                    if (ambiguousSymbolReference.StorageArea != null) {
+                        CobolExpressionsBuilder.storageAreaReads.Remove(ambiguousSymbolReference.StorageArea);
+                    }
+
+                    statement = new ProcedureStyleCallStatement(new ProcedureCall(TCFunctionNameRefVariable.MainSymbolReference,
+                            inputs, inouts, outputs))
                         {
-                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = nonAmbiguousSymbolRef
+                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = TCFunctionNameRefVariable.MainSymbolReference
                         };
 
-                    callSite.CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction;
+                    callSite.CallTarget = TCFunctionNameRefVariable.MainSymbolReference;
 
-                    #region Setup Input Output Inout CallSitesParameters
-
-                    SyntaxProperty<ParameterSharingMode> mode = null;
-                    foreach (var p in context.callInputParameter())
-                    {
-                        CreateSharingMode(p, ref mode); // TCRFUN_INPUT_BY
-                        inputs.Add(new CallSiteParameter
-                        {
-                            SharingMode = mode,
-                            StorageAreaOrValue =
-                                CobolExpressionsBuilder.CreateSharedVariableOrFileName(p.sharedVariableOrFileName()),
-                        });
-                    }
-
-                    foreach (var p in context.callInoutParameter())
-                    {
-                        inouts.Add(new CallSiteParameter
-                        {
-                            // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
-                            SharingMode =
-                                new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null),
-                            StorageAreaOrValue =
-                                new Variable(CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1())),
-                        });
-                    }
-
-                    foreach (var p in context.callOutputParameter())
-                    {
-                        outputs.Add(new CallSiteParameter
-                        {
-                            // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
-                            SharingMode =
-                                new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null),
-                            StorageAreaOrValue =
-                                new Variable(CobolExpressionsBuilder.CreateSharedStorageArea(p.sharedStorageArea1())),
-                        });
-                    }
-
-                    int parametersCount = inputs.Count + outputs.Count + inouts.Count;
-                    callSite.Parameters = new CallSiteParameter[parametersCount];
-                    int i = 0;
-
-                    //Add inputs to global callsites parameters
-                    if (inputs.Count > 0)
-                    {
-                        foreach (var param in inputs)
-                        {
-                            callSite.Parameters[i] = param;
-                            i++;
-                        }
-                    }
-
-                    //Add outputs to global callsites parameters
-                    if (outputs.Count > 0)
-                    {
-                        foreach (var param in outputs)
-                        {
-                            callSite.Parameters[i] = param;
-                            i++;
-                        }
-                    }
-
-                    //Add inouts to global callsites parameters
-                    if (inouts.Count > 0)
-                    {
-                        foreach (var param in inouts)
-                        {
-                            callSite.Parameters[i] = param;
-                            i++;
-                        }
-                    }
-
-                    #endregion
+                    
+                } else { //else it's an error
+                    statement = new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference, inputs, inouts, outputs))
+                       {
+                           ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = ambiguousSymbolReference.MainSymbolReference,
+                       };
+                    statement.Diagnostics.Add(new Diagnostic(MessageCode.ImplementationError, context.Start.Column, context.Stop.Column, context.Start.Line, "A call with arguments is not a TCFunctionName"));
+                    callSite.CallTarget = ambiguousSymbolReference.MainSymbolReference;
                 }
-                else //else it's an error
-                    isInError = true;
             }
             else
             {
-                if (ambiguousSymbol != null &&
-                    (ambiguousSymbol.Type == SymbolType.ProgramEntry || ambiguousSymbol.Type == SymbolType.ProgramName ||
-                     ambiguousSymbol.CandidateTypes.All(c => c == SymbolType.ProgramEntry || c == SymbolType.ProgramName)))
+                //It's a ProgramNameOrProgramEntry
+                if (ambiguousSymbol != null && ambiguousSymbol.IsOrCanBeOnlyOfTypes(SymbolType.ProgramEntry, SymbolType.ProgramName))
                 {
-                    //if CandidatesTypes = Program or program Entry
-                    //new ProcedureStyleCallStatement() { ProgramNameOrProgramEntry= temp}
-                    statement =
-                        new ProcedureStyleCallStatement
+                    statement = new ProcedureStyleCallStatement
                         {
                             ProgramNameOrProgramEntry = ambiguousSymbolReference.MainSymbolReference
                         };
 
                 }
                 else if (ambiguousSymbol != null &&
-                         (ambiguousSymbol.Type == SymbolType.DataName ||
-                          ambiguousSymbol.Type == SymbolType.TCFunctionName ||
-                          ambiguousSymbol.CandidateTypes.Any(
-                              c => c == SymbolType.DataName || c == SymbolType.TCFunctionName)))
-                {
-                    //else if CandidatesTypes = data or TCFunctionName
-                    //new ProcedureStyleCallStatement() {ProcdurePointerOrTCProcedureFunction = temp}
-                    ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes = new[]{SymbolType.DataName, SymbolType.TCFunctionName};
-                        
-                    statement =
-                        new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
+                         ambiguousSymbol.IsOrCanBeOfType(SymbolType.DataName, SymbolType.TCFunctionName)) {
+
+                    ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes = new[] {SymbolType.DataName, SymbolType.TCFunctionName};
+
+                    statement = new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
                             null, null, null))
                         {
                             ProcdurePointerOrTCProcedureFunction = ambiguousSymbolReference.MainSymbolReference
                         };
+                    callSite = new CallSite();
                     callSite.CallTarget = statement.ProcdurePointerOrTCProcedureFunction;
+                } else { //else, it's an error
+                    statement =
+                        new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
+                            null, null, null))
+                        {
+                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction =
+                                ambiguousSymbolReference.MainSymbolReference,
+                        };
+                    statement.Diagnostics.Add(new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Column,
+                        context.Stop.Column, context.Start.Line, "Error in detecting Procedure Call type"));
+                    callSite = new CallSite();
+                    callSite.CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction;
                 }
-                else //else, it's an error
-                    isInError = true;
             }
 
 
-            if (isInError)
-            {
-                statement =
-                       new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference, null, null, null))
-                       {
-                           ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = ambiguousSymbolReference.MainSymbolReference,
-                       };
-                statement.Diagnostics.Add(new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Column, context.Stop.Column, context.Start.Line, "Error in detecting Procedure Call type"));
-                callSite.CallTarget = statement.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction;
+            if (callSite != null) {
+                if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
+                statement.CallSites.Add(callSite);
             }
-
-            if (statement.CallSites == null) statement.CallSites = new List<CallSite>();
-            statement.CallSites.Add(callSite);
 
             CodeElement = statement;
         }
