@@ -15,7 +15,9 @@
              10  b TYPE BOOL.
            05  d TYPE BOOL.
 
-
+000000 01 group.
+000000    05 array occurs 5.
+000000       10 checkToDo type bool.
 
        PROCEDURE DIVISION.
 
@@ -35,6 +37,9 @@
       * OK: copying chunks of memories of different layouts is standard COBOL practice
            MOVE x   TO      AGroup
            MOVE x   TO a IN AGroup
+      * OK: with occurs
+           set checkToDo(1) to true
+           set checkToDo(1) to false
            .
 
        END PROGRAM Booleans.
