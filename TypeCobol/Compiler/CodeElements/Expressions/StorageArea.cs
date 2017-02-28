@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.CodeElements
         public StorageAreaKind Kind { get; protected set;  }
 
         [CanBeNull]
-        public SymbolReference SymbolReference { get; protected set; }
+        public SymbolReference SymbolReference { get; set; }
 
         /// <summary>
         /// True if this storage area is read from by the program

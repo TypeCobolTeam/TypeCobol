@@ -48,59 +48,62 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
         public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program)
         {
-            var procedureStyleCall = node as FunctionCaller;
-            if (procedureStyleCall == null || procedureStyleCall.FunctionCall == null)
+            var functionCaller = node as FunctionCaller;
+            if (functionCaller == null || functionCaller.FunctionCall == null)
                 return;
-
+            
             List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
             var potentialVariables = new List<DataDefinition>();
 
+
+            //TODO no CallSites if it's a ProgramName or ProgramEntry. functionCaller.FunctionCall is null
             if (node.CodeElement.CallSites.Any(
                 c => c.CallTarget.IsAmbiguous && ((AmbiguousSymbolReference) c.CallTarget).CandidateTypes.Any(
                          ca => ca == SymbolType.ProgramName || ca == SymbolType.ProgramEntry)))
                 return; //We don't have to manage this for the moment...
 
-            if (procedureStyleCall.FunctionDeclaration == null)
+            if (functionCaller.FunctionDeclaration == null)
             {
-                //Get Funtion just by name and profile (matches on precise parameters)
+                //Get Funtion by name and profile (matches on precise parameters)
                 functionDeclarations =
-                    node.SymbolTable.GetFunction(new URI(procedureStyleCall.FunctionCall.FunctionName),
-                        procedureStyleCall.FunctionCall.AsProfile(node.SymbolTable));
+                    node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
+                        functionCaller.FunctionCall.AsProfile(node.SymbolTable));
 
                 string message;
+                //There is one CallSite per function call
                 if (node.CodeElement.CallSites.All(c => c.CallTarget.Type != SymbolType.TCFunctionName))
                 {
                     
-                    potentialVariables = node.SymbolTable.GetVariable(new URI(procedureStyleCall.FunctionCall.FunctionName));
+                    potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
 
                     if (potentialVariables.Count > 1)
                     {
                         //If there is more than one variable with the same name is obviously ambiguous
-                        message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", procedureStyleCall.FunctionCall.FunctionName, potentialVariables.Count);
+                        message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", functionCaller.FunctionCall.FunctionName, potentialVariables.Count);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
 
                 }
                 //Get potential variable with the same name as the called name
-
                 if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
                 {
-                    procedureStyleCall.FunctionDeclaration = functionDeclarations.First();
+                    functionCaller.FunctionDeclaration = functionDeclarations.First();
                     return; //Everything seems to be ok, lets continue on the next one
                 }
 
                 //Check if there is more than one FunctionDeclaration filtered by profile
-                if (IsFonctionAmbiguous(functionDeclarations, procedureStyleCall, node))
+                if (IsFonctionAmbiguous(functionDeclarations, functionCaller, node))
                     return; //Do not continue, the fonction is ambigous
 
                 if (functionDeclarations.Count == 0)
+                    //TODO "matches only on parameters count" is not a rule described in the issue
                     //Get Funtion just by name and profile (matches only on parameters count)
-                    functionDeclarations = node.SymbolTable.GetFunction(new URI(procedureStyleCall.FunctionCall.FunctionName),
-                                            (procedureStyleCall.FunctionCall as ProcedureCall).AsProfile(node.SymbolTable), false);
+                    functionDeclarations = node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
+                                            (functionCaller.FunctionCall as ProcedureCall).AsProfile(node.SymbolTable), false);
 
                 //Check if there is more than one FunctionDeclaration
-                if (IsFonctionAmbiguous(functionDeclarations, procedureStyleCall, node))
+                if (IsFonctionAmbiguous(functionDeclarations, functionCaller, node))
                     return; //Do not continue, the fonction is ambiguous
 
 
@@ -108,16 +111,16 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 {
                     //Get function just by name (no matches on parameters)
                     functionDeclarations =
-                        node.SymbolTable.GetFunction(new URI(procedureStyleCall.FunctionCall.FunctionName));
+                        node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
                     if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
                     {
-                        message = string.Format("No suitable function signature found for '{0}'", procedureStyleCall.FunctionCall.FunctionName);
+                        message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
                     if (functionDeclarations.Count >= 1 && potentialVariables.Count == 1)
                     {
-                        message = string.Format("Warning: Risk of confusion in call of '{0}'", procedureStyleCall.FunctionCall.FunctionName);
+                        message = string.Format("Warning: Risk of confusion in call of '{0}'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
@@ -126,16 +129,16 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 //Check Variable and Function Name Ambiguity
                 if (potentialVariables.Count > 0 && functionDeclarations.Count > 0)
                 {
-                    message = string.Format("Call to '{0}' is ambigous. '{0}' is defined multiple times", procedureStyleCall.FunctionCall.FunctionName);
+                    message = string.Format("Call to '{0}' is ambigous. '{0}' is defined multiple times", functionCaller.FunctionCall.FunctionName);
                     DiagnosticUtils.AddError(node.CodeElement, message);
                     return; //Do not continue, the CALL is ambiguous
                 }
 
                 if (functionDeclarations.Count == 0) return; //If nothing is found, do nothing (Symbol statement error as already been raised)
 
-                procedureStyleCall.FunctionDeclaration = functionDeclarations.FirstOrDefault();
+                functionCaller.FunctionDeclaration = functionDeclarations.FirstOrDefault();
                 //If function is not ambigous and exists, lets check the parameters
-                Check(node.CodeElement, node.SymbolTable, procedureStyleCall.FunctionCall, procedureStyleCall.FunctionDeclaration);
+                Check(node.CodeElement, node.SymbolTable, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
             }
         }
 
@@ -371,7 +374,7 @@ class LibraryChecker: NodeListener {
 			var ce = child.CodeElement;
 			if (child.CodeElement == null) {
 				elementsInError.Add(procedureDivision.CodeElement);
-				errorMessages.Add("Illegal default section in library.");
+				errorMessages.Add("Illegal default section in library. " + child);
 			} else {
 				var function = child.CodeElement as FunctionDeclarationHeader;
 				if (function != null) {
