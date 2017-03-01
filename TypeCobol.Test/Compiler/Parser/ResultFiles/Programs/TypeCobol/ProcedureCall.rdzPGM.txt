@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
 Line 119[18,21] <27, Error, Syntax> - Syntax error : no viable alternative at input 'var1' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[18,21:var1]<UserDefinedWord>
-Line 87[12,50] <27, Error, Syntax> - Syntax error : Symbol ValidateDatFormatt is not referenced
+Line 87[12,50] <27, Error, Syntax> - Syntax error : No function found for ValidateDatFormatt
 Line 95[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
 Line 95[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
 Line 95[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
@@ -16,7 +16,7 @@ Line 156[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateForma
 Line 156[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
 Line 156[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 8
 Line 164[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
-Line 173[12,20] <27, Error, Syntax> - Syntax error : Call to 'varC' is ambigous. 'varC' is defined multiple times
+Line 173[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
 Line 176[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD'
 
 --- Program ---

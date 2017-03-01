@@ -55,13 +55,6 @@ class ReadOnlyPropertiesChecker: NodeListener {
             List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
             var potentialVariables = new List<DataDefinition>();
 
-
-            //TODO no CallSites if it's a ProgramName or ProgramEntry. functionCaller.FunctionCall is null
-            if (node.CodeElement.CallSites.Any(
-                c => c.CallTarget == null || c.CallTarget.IsAmbiguous && ((AmbiguousSymbolReference) c.CallTarget).CandidateTypes.Any(
-                         ca => ca == SymbolType.ProgramName || ca == SymbolType.ProgramEntry)))
-                return; //We don't have to manage this for the moment...
-
             if (functionCaller.FunctionDeclaration == null)
             {
                 //Get Funtion by name and profile (matches on precise parameters)
@@ -71,87 +64,76 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
                 string message;
                 //There is one CallSite per function call
-                if (node.CodeElement.CallSites.All(c => c.CallTarget.Type != SymbolType.TCFunctionName))
+                if (node.CodeElement.CallSites.Count == 1 && node.CodeElement.CallSites.Any(c => c.Parameters != null && c.Parameters.Length > 0))
                 {
-                    
-                    potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
-
-                    if (potentialVariables.Count > 1)
+                    if (functionDeclarations.Count == 1)
                     {
-                        //If there is more than one variable with the same name is obviously ambiguous
-                        message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", functionCaller.FunctionCall.FunctionName, potentialVariables.Count);
+                        functionCaller.FunctionDeclaration = functionDeclarations.First();
+                        return; //Everything seems to be ok, lets continue on the next one
+                    }
+
+                    var otherDeclarations =
+                        node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
+
+                    if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
+                    {
+                        message = string.Format("No function found for {0}", functionCaller.FunctionCall.FunctionName);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return; //Do not continue the function/procedure does not exists
+                    }
+                    if (otherDeclarations.Count > 1)
+                    {
+                        message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
 
+                    functionDeclarations = otherDeclarations;
                 }
-                //Get potential variable with the same name as the called name
-                if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
+                else
                 {
-                    functionCaller.FunctionDeclaration = functionDeclarations.First();
-                    return; //Everything seems to be ok, lets continue on the next one
-                }
-
-                //Check if there is more than one FunctionDeclaration filtered by profile
-                if (IsFonctionAmbiguous(functionDeclarations, functionCaller, node))
-                    return; //Do not continue, the fonction is ambigous
-
-                if (functionDeclarations.Count == 0)
-                    //TODO "matches only on parameters count" is not a rule described in the issue
-                    //Get Funtion just by name and profile (matches only on parameters count)
-                    functionDeclarations = node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
-                                            (functionCaller.FunctionCall as ProcedureCall).AsProfile(node.SymbolTable), false);
-
-                //Check if there is more than one FunctionDeclaration
-                if (IsFonctionAmbiguous(functionDeclarations, functionCaller, node))
-                    return; //Do not continue, the fonction is ambiguous
-
-
-                if (functionDeclarations.Count == 0)
-                {
-                    //Get function just by name (no matches on parameters)
+                    potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
                     functionDeclarations =
-                        node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
+                            node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
+
+                    if (potentialVariables.Count > 1)
+                    {
+                        //If there is more than one variable with the same name, it's ambiguous
+                        message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", functionCaller.FunctionCall.FunctionName, potentialVariables.Count + functionDeclarations.Count);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return;
+                    }
+                   
                     if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
+
                     if (functionDeclarations.Count >= 1 && potentialVariables.Count == 1)
                     {
                         message = string.Format("Warning: Risk of confusion in call of '{0}'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
-                }
 
-                //Check Variable and Function Name Ambiguity
-                if (potentialVariables.Count > 0 && functionDeclarations.Count > 0)
-                {
-                    message = string.Format("Call to '{0}' is ambigous. '{0}' is defined multiple times", functionCaller.FunctionCall.FunctionName);
-                    DiagnosticUtils.AddError(node.CodeElement, message);
-                    return; //Do not continue, the CALL is ambiguous
-                }
+                    if (functionDeclarations.Count == 0 && potentialVariables.Count == 0)
+                    {
+                        message = string.Format("No function found for {0}", functionCaller.FunctionCall.FunctionName);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return; //Do not continue the function/procedure does not exists
+                    }
 
-                if (functionDeclarations.Count == 0) return; //If nothing is found, do nothing (Symbol statement error as already been raised)
+                    if (potentialVariables.Count == 1)
+                        return; //Stop here, it's a standard Cobol call
+                }
+               
 
                 functionCaller.FunctionDeclaration = functionDeclarations.FirstOrDefault();
                 //If function is not ambigous and exists, lets check the parameters
                 Check(node.CodeElement, node.SymbolTable, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
             }
-        }
-
-        private bool IsFonctionAmbiguous(List<FunctionDeclaration> functionDeclarations,
-            FunctionCaller func, Node node)
-        {
-            if (functionDeclarations.Count > 1)
-            {
-                var m = string.Format("Function '{0}' is ambigous. '{0}' is defined {1} times.", func.FunctionCall.FunctionName, functionDeclarations.Count);
-                DiagnosticUtils.AddError(node.CodeElement, m);
-                return true;
-            }
-            return false;
         }
 
         private void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
