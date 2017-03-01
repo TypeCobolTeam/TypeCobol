@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace TypeCobol.LanguageServer.Utilities
 {
     /// <summary>
-    /// This class is used only to redirect a Text Writting to a Debug Output.
+    /// This class is used only to redirect a Text witting to a Debug Output.
     /// So it is helpfull in debug mode.
     /// </summary>
     public class DebugTextWriter : TextWriter

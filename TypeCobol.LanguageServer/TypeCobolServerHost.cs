@@ -93,7 +93,6 @@ namespace TypeCobol.LanguageServer
                 if (logWriter == null)
                 {
                     logWriter = new DebugTextWriter();
-
                 }
             }
         }
