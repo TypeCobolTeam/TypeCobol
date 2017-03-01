@@ -13,20 +13,21 @@ namespace TypeCobol.LanguageServer.StdioHttp
         private const int BUFFER_SIZE = 8192;
         private Encoding messageEncoding;
         private ServerLogLevel logLevel;
-        private StreamWriter logWriter;
+        private TextWriter logWriter;
 
         /// <summary>
         /// Configure the Http server
         /// </summary>
         /// <param name="messageEncoding">Encoding used for the body of the Http messages</param>
         /// <param name="logLevel">Verbosity of the logs written by the Http server</param>
-        /// <param name="logWriter">Stream used to write all the logs of the Http server</param>
-        public StdioHttpServer(Encoding messageEncoding, ServerLogLevel logLevel, StreamWriter logWriter)
+        /// <param name="logWriter">Text Writer used to write all the logs of the Http server</param>
+        public StdioHttpServer(Encoding messageEncoding, ServerLogLevel logLevel, TextWriter logWriter)
         {
             this.messageEncoding = messageEncoding;
             this.logLevel = logLevel;
             this.logWriter = logWriter;
-            this.logWriter.AutoFlush = true;
+            if (logWriter is StreamWriter)
+                (this.logWriter as StreamWriter).AutoFlush = true;
         }
 
         // Shutdown request
