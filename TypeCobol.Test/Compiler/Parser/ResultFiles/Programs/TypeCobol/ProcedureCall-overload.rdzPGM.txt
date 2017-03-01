@@ -1,19 +1,19 @@
 ﻿--- Diagnostics ---
-No error message for case2, Except "the function is not found"
-Line 162[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' only takes 3 parameter(s)
-Line 162[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'mydate' of type DATE and length 1 and received 'fakeDate' of type Alphanumeric and length 8
-Line 162[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'fakeDate' of type Alphanumeric and length 8 and received 'myDate' of type DATE and length 1
-Line 162[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'result' of type BOOL and length 1 and received 'fakeDate' of type Alphanumeric and length 8
-Line 167[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case4'
-Wrong error message case6 is both a function and a variable (defined 3 times)		Line 174[12,21] <27, Error, Syntax> - Syntax error : Call to 'case6' is ambigous. 'case6' is defined 2 times
-No error message for case7, except the function is not found
-Line 183[12,21] <27, Error, Syntax> - Syntax error : Call to 'case9' is ambigous. 'case9' is defined 2 times
-Line 187[12,48] <27, Error, Syntax> - Syntax error : Function 'case10' only takes 0 parameter(s)
-Line 191[12,22] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'case11'
-Line 194[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12' is ambigous. 'case12' is defined 2 times
-Line 197[12,22] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case13'
-Line 200[12,22] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'case14'
-Line 203[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15' is ambigous. 'case15' is defined 2 times
+Line 159[12,39] <27, Error, Syntax> - Syntax error : No function found for case2
+Line 164[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' only takes 3 parameter(s)
+Line 164[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'mydate' of type DATE and length 1 and received 'fakeDate' of type Alphanumeric and length 8
+Line 164[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'fakeDate' of type Alphanumeric and length 8 and received 'myDate' of type DATE and length 1
+Line 164[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'result' of type BOOL and length 1 and received 'fakeDate' of type Alphanumeric and length 8
+Line 169[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case4'
+Line 176[12,21] <27, Error, Syntax> - Syntax error : Call to 'case6' is ambigous. 'case6' is defined 3 times
+Line 179[12,21] <27, Error, Syntax> - Syntax error : No function found for case7
+Line 185[12,21] <27, Error, Syntax> - Syntax error : Call to 'case9' is ambigous. 'case9' is defined 2 times
+Line 189[12,48] <27, Error, Syntax> - Syntax error : Function 'case10' only takes 0 parameter(s)
+Line 193[12,22] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'case11'
+Line 196[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12' is ambigous. 'case12' is defined 3 times
+Line 199[12,22] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case13'
+Line 202[12,22] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'case14'
+Line 205[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15' is ambigous. 'case15' is defined 4 times
 
 --- Program ---
 PROGRAM: ProcedureCallOverload common:False initial:False recursive:False
