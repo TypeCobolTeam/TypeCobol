@@ -50,6 +50,21 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolType Type { get; private set; }
 
+        public virtual bool IsOrCanBeOfType(SymbolType symbolType)
+        {
+            return Type == symbolType;
+        }
+
+        public virtual bool IsOrCanBeOfType(params SymbolType[] symbolTypes)
+        {
+            return symbolTypes.Contains(Type);
+        }
+
+        public virtual bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes)
+        {
+            return symbolTypes.Contains(Type);
+        }
+
         // -- Override Equals & GetHashCode --
 
         public override bool Equals(object obj)
@@ -136,17 +151,7 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
-        public virtual bool IsOrCanBeOfType(SymbolType symbolType) {
-            return Type == symbolType;
-        }
-
-        public virtual bool IsOrCanBeOfType(params SymbolType[] symbolTypes) {
-            return symbolTypes.Contains(Type);
-        }
-
-        public virtual bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes) {
-            return symbolTypes.Contains(Type);
-        }
+        
 
         private URI _uri;
         public URI URI {
