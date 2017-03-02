@@ -26,7 +26,13 @@ namespace TypeCobol.Test {
 	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex = "*.cbl") {
 	        CheckTests(rootFolder, resultFolder, resultFile, regex, new string[] {}, new string[] {});
 	    }
-        public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, int stopAfterAsManyErrors = 10000) { 
+
+	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex,
+	        string[] include, string[] exclude, int stopAfterAsManyErrors = 10000) {
+            CheckTests(rootFolder, resultFolder, resultFile, regex, include, exclude, new string[] { });
+        }
+
+	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, int stopAfterAsManyErrors = 10000) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
@@ -53,7 +59,11 @@ namespace TypeCobol.Test {
 				string path = Path.Combine(rootFolder, filename);
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
-                var document = Parser.Parse(path, format);
+                var document = new Parser();
+                document.Init(path, format, copiesFolder);
+                document.Parse(path);
+                
+
                 watch.Stop();
 				//TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
 				TimeSpan elapsed = watch.Elapsed;
