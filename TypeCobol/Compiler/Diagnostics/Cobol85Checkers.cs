@@ -514,6 +514,9 @@ namespace TypeCobol.Compiler.Diagnostics {
                     entry = GetDataDescriptionEntry(table, redefines);
 			    }
 			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
+		    if (entry == null) {
+		        return null;
+		    }
 			if (entry.UserDefinedDataType == null) return entry.DataType;//not a custom type
 		}
         ITypedNode typed = symbol as ITypedNode;
@@ -531,6 +534,9 @@ namespace TypeCobol.Compiler.Diagnostics {
         /// <returns></returns>
         private DataDescriptionEntry GetDataDescriptionEntry(SymbolTable table, DataRedefinesEntry dataRedefinesEntry) {
             var node = GetSymbol(table, dataRedefinesEntry.RedefinesDataName);
+            if (node == null) {
+                return null;
+            }
             if (node is DataDescription) {
                 return (DataDescriptionEntry)node.CodeElement;
             }
