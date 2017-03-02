@@ -49,7 +49,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
         public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program)
         {
             var functionCaller = node as FunctionCaller;
-            if (functionCaller == null || functionCaller.FunctionCall == null)
+            if (functionCaller == null || functionCaller.FunctionCall == null || !functionCaller.FunctionCall.NeedDeclaration)
                 return;
             
             List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
@@ -64,7 +64,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
                 string message;
                 //There is one CallSite per function call
-                if (node.CodeElement.CallSites.Count == 1 && node.CodeElement.CallSites.Any(c => c.Parameters != null && c.Parameters.Length > 0))
+                if (node.CodeElement.CallSites.Count == 1 && node.CodeElement.CallSites[0].CallTarget.IsOrCanBeOnlyOfTypes(SymbolType.TCFunctionName))
                 {
                     if (functionDeclarations.Count == 1)
                     {
@@ -130,7 +130,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 }
 
 
-                functionCaller.FunctionDeclaration = functionDeclarations.FirstOrDefault();
+                functionCaller.FunctionDeclaration = functionDeclarations[0];
                 //If function is not ambigous and exists, lets check the parameters
                 Check(node.CodeElement, node.SymbolTable, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
             }
