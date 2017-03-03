@@ -59,26 +59,106 @@
       *  .
 
        TRAITEMENT.
+      * __________________________________________________
+      * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
+      *    CALL ValidateDateFormat
+      *             INPUT      somedate someformat
+      *             OUTPUT     flag     realformat
+           CALL 'c5875eec' USING
+                                 somedate
+                                 someformat
+                    by reference flag-value
+                                 realformat
+           end-call
+     
+       
+      *    CALL ValidateDateFormat
+      *             INPUT      somedate by content 'YYYYMMDD'
+      *             OUTPUT     flag     realformat
+           CALL 'c5875eec' USING
+                                 somedate
+                    by content   'YYYYMMDD'
+                    by reference flag-value
+                                 realformat
                                                   
+           END-CALL
       * __________________________________________________
       * OK : parameter number for a procedure
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
-      *    CALL ValidateDateFormat
+      *    CALL ValidateDateFormat END-CALL
            CALL 'd5130bbc' 
-           end-call
+                                   END-CALL
+      * __________________________________________________
+      * OK with INPUT on the same line as call
+      *    CALL ValidateDateFormat INPUT      somedate
+      *                                       by content 'YYYYMMDD'
+      *                            OUTPUT     flag     realformat
+           CALL 'c5875eec' USING
+                                 somedate
+                    by content   'YYYYMMDD'
+                    by reference flag-value
+                                 realformat
                                                                  
+           END-CALL
            .      
+      * __________________________________________________
+      * OK  by content
+      *    CALL ValidateDateFormat INPUT     by content somedate
+      *                                        'YYYYMMDD'
+      *                            OUTPUT     flag     realformat
+           CALL 'c5875eec' USING
+                    by content   somedate
+                                 'YYYYMMDD'
+                    by reference flag-value
+                                 realformat
                                                                  
+           END-CALL
+           .      
+      * __________________________________________________
+      * OK  
+      *    CALL myProc  INPUT     by content somedate
+      *                                        'YYYYMMDD'
+      *                                      myDate2
+      *                 IN-OUT myDate3 myDate4
+      *                            OUTPUT     flag     realformat
+           CALL 'd5ec4efc' USING
+                    by content   somedate
+                                 'YYYYMMDD'
+                                 myDate2
+                    by reference myDate3
+                                 myDate4
+                    by reference flag-value
+                                 realformat
+                                                                 
+           END-CALL     
+      * __________________________________________________
+      * OK  
+      *    CALL myProc  INPUT  somedate
+      *                        by content 'YYYYMMDD'
+      *                        by reference myDate2
+      *                 IN-OUT myDate3
+      *                        myDate4
+      *                 OUTPUT flag
+      *                        realformat
+           CALL 'd5ec4efc' USING
+                                 somedate
+                    by content   'YYYYMMDD'
+                    by reference myDate2
+                    by reference myDate3
+                                 myDate4
+                    by reference flag-value
+                                 realformat
+                                  
+           END-CALL
+           .
+
        END PROGRAM ProcedureCall.
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d5130bbc.
-       PROCEDURE DIVISION
-           .
-           CONTINUE.
        END PROGRAM d5130bbc.
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
