@@ -13,8 +13,10 @@
        01 case2 pic X.
        01 case3 pic X.
        01 case4 pic X.
-      *No case5
-       01 case6 pic X.
+      *No case51, case52, case53
+       01 case61 pic X.
+       01 case62 pic X.
+       01 case63 pic X.
       *No case7
        01 case8 pic X.
        01 case9 pic X.
@@ -29,8 +31,10 @@
             05 case2 pic X.
             05 case3 pic X.
             05 case4 pic X.
-      *     no case5
-            05 case6 pic X.
+      *     no case51, case52, case53
+            05 case61 pic X.
+            05 case62 pic X.
+            05 case63 pic X.
       *     no case7
       *     no case8, we need only one defined
             05 case9 pic X.
@@ -73,12 +77,74 @@
            CONTINUE.
        END-DECLARE.
 
-       DECLARE PROCEDURE case5 PRIVATE.
+       DECLARE PROCEDURE case51 PRIVATE.
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
 
-       DECLARE PROCEDURE case6 PRIVATE.
+       DECLARE PROCEDURE case52 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE case52 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case53 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case53 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case53 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case61 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case62 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE case62 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case63 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case63 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case63 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
@@ -145,6 +211,8 @@
            CONTINUE.
        END-DECLARE.
 
+
+
        TRAITEMENT.
       *OK: call with a program name
            call 'case1'
@@ -169,11 +237,19 @@
            CALL case4 INPUT      fakeDate myDate fakeDate
                       OUTPUT     fakeDate result
 
-      * Ok: case5
-           CALL case5
+      * Ok: case51
+           CALL case51
+      * Ok: case52 exists with no argument
+           CALL case52
+      * Ok: case53 exists with no argument
+           CALL case53
            
-      * KO: case6 is ambiguous (function + variable)
-           CALL case6
+      * KO: case61 is ambiguous (function + variable)
+           CALL case61
+      * KO: case62 is ambiguous (function + variable)
+           CALL case62
+      * KO: case63 is ambiguous (function + variable)
+           CALL case63
        
       * KO: case7 doesn't exists
            CALL case7
@@ -203,6 +279,7 @@
 
       **Ko: case15 is defined 2 times
            CALL case15
+
 
        .
        END PROGRAM ProcedureCallOverload.
