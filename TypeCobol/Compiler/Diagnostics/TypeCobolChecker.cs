@@ -43,10 +43,10 @@ class ReadOnlyPropertiesChecker: NodeListener {
 }
 
 
-    class FunctionCallChecker : NodeListener
+    class FunctionCallChecker 
     {
 
-        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program)
+        public static void OnNode(Node node)
         {
             var functionCaller = node as FunctionCaller;
             if (functionCaller == null || functionCaller.FunctionCall == null || !functionCaller.FunctionCall.NeedDeclaration)
@@ -54,7 +54,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
             
             List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
             var potentialVariables = new List<DataDefinition>();
-
+           
             if (functionCaller.FunctionDeclaration == null)
             {
                 //Get Funtion by name and profile (matches on precise parameters)
@@ -73,7 +73,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     }
 
                     var otherDeclarations =
-                        node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
+                        node.SymbolTable.GetFunction(((ProcedureCall)functionCaller.FunctionCall).ProcedureName.URI);
 
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
@@ -136,7 +136,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
             }
         }
 
-        private void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
+        private static void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
             [NotNull] FunctionDeclaration definition)
         {
             var parameters = definition.Profile.Parameters;
