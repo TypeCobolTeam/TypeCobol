@@ -77,7 +77,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
-                        message = string.Format("No function found for {0}", functionCaller.FunctionCall.FunctionName);
+                        message = string.Format("No function found for '{0}'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return; //Do not continue the function/procedure does not exists
                     }
@@ -93,8 +93,15 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 else
                 {
                     potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
+
+                    if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
+                    {
+                        functionCaller.FunctionDeclaration = functionDeclarations.First();
+                        return; //Everything seems to be ok, lets continue on the next one
+                    }
+
                     functionDeclarations =
-                            node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
+                           node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
 
                     if (potentialVariables.Count > 1)
                     {
@@ -103,7 +110,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
-                   
+
                     if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
@@ -120,7 +127,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
                     if (functionDeclarations.Count == 0 && potentialVariables.Count == 0)
                     {
-                        message = string.Format("No function found for {0}", functionCaller.FunctionCall.FunctionName);
+                        message = string.Format("No function found for '{0}'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return; //Do not continue the function/procedure does not exists
                     }
