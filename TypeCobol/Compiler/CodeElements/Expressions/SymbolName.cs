@@ -214,13 +214,14 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class QualifiedSymbolReference: SymbolReference, IList<SymbolReference> {
 		public QualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head.NameLiteral, head.Type) {
-			IsAmbiguous = head.IsAmbiguous;
+			IsAmbiguous = head.IsAmbiguous || tail.IsAmbiguous;
 			IsQualifiedReference = true;
 			Head = head;
 			Tail = tail;
+
 		}
 
-		public SymbolReference Head { get; private set; }
+	    public SymbolReference Head { get; private set; }
 		public SymbolReference Tail { get; private set; }
 		public SymbolReference First {
 			get {

@@ -485,28 +485,26 @@ namespace TypeCobol.Compiler.CodeModel {
             return GetFunction(uri, profile);
         }
 
-        public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, bool strictMatches = true) {
+        public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null) {
 		    var found = GetFunction(name.Head);
 		    found = Get(found, name);
 		    if (profile != null) {
 			    var filtered = new List<FunctionDeclaration>();
 			    foreach(var function in found) {
-				    if (Matches(function.Profile, profile, strictMatches))
+				    if (Matches(function.Profile, profile))
 					    filtered.Add(function);
 			    }
 			    found = filtered;
 		    }
 		    return found;
 	    }
-	    private bool Matches(ParameterList p1, ParameterList p2, bool strictMatches) {
+	    private bool Matches(ParameterList p1, ParameterList p2) {
     //		if (p1.ReturningParameter == null && p2.ReturningParameter != null) return false;
     //		if (p1.ReturningParameter != null && p2.ReturningParameter == null) return false;
     //		if (p1.ReturningParameter != p2.ReturningParameter) return false;
 		    if (p1.InputParameters.Count  != p2.InputParameters.Count)  return false;
 		    if (p1.InoutParameters.Count  != p2.InoutParameters.Count)  return false;
 		    if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
-
-	        if (!strictMatches) return true;
 
 	        for (int c = 0; c < p1.InputParameters.Count; c++)
 	            if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
@@ -524,6 +522,7 @@ namespace TypeCobol.Compiler.CodeModel {
         {
             return symbolTable.Functions;
         }
+
 
 
 

@@ -32,8 +32,12 @@ namespace TypeCobol.Compiler.Diagnostics {
                     CheckVariable(node, storageAreaWrite);
                 }
             }
+
+            FunctionCallChecker.OnNode(node);
             return base.BeginNode(node);
         }
+
+
 
         public override bool BeginCodeElement(CodeElement codeElement) {
             //This checker is only for Node after the full AST has been created

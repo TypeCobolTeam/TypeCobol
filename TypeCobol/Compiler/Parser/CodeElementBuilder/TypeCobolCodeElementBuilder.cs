@@ -226,13 +226,11 @@ namespace TypeCobol.Compiler.Parser
             var ambiguousSymbolReference =
                 CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(
                         cbCallProc);
-            var ambiguousSymbol = (ambiguousSymbolReference.MainSymbolReference as AmbiguousSymbolReference);
+          
 
             //If (inputs, inouts ou outputs).Count > 0, then it's a procedure call
-            if (context.callOutputParameter().Length > 0 || context.callInputParameter().Length > 0 ||
-                context.callInoutParameter().Length > 0)
+            if (context.callOutputParameter().Length > 0 || context.callInputParameter().Length > 0 || context.callInoutParameter().Length > 0)
             {
-
                 callSite = new CallSite();
                 #region Setup Input Output Inout CallSitesParameters
 
@@ -313,41 +311,74 @@ namespace TypeCobol.Compiler.Parser
                 #endregion
 
                 //Check Type or CandidatesTypes to see if a TCFunctionName is possible
-                if (ambiguousSymbol != null && ambiguousSymbol.IsOrCanBeOfType(SymbolType.TCFunctionName)) {
-                    //If so, create ProcedureStyleCallStatement with a ProcedureCall and fix SymbolReference so it's not ambiguous
-                    var nonAmbiguousSymbolRef = new SymbolReference(ambiguousSymbol.NameLiteral, SymbolType.TCFunctionName);
-                    var TCFunctionNameRefVariable = new SymbolReferenceVariable(StorageDataType.MethodName, nonAmbiguousSymbolRef);
+                if (ambiguousSymbolReference.MainSymbolReference != null &&
+                    ambiguousSymbolReference.MainSymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName))
+                {
+                    SymbolReferenceVariable TCFunctionNameRefVariable;
 
+                    if (ambiguousSymbolReference.MainSymbolReference.IsQualifiedReference)
+                    {
+                        var nonAmbiguousHead =
+                            new SymbolReference(
+                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference).Head
+                                .NameLiteral, SymbolType.TCFunctionName);
+                        var nonAmbiguousTail =
+                            new SymbolReference(
+                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference).Tail
+                                .NameLiteral, SymbolType.ProgramName);
+
+                        TypeCobolQualifiedSymbolReference newQualifiedSymbolReferece =
+                            new TypeCobolQualifiedSymbolReference(nonAmbiguousHead, nonAmbiguousTail);
+                        TCFunctionNameRefVariable = new SymbolReferenceVariable(StorageDataType.MethodName,
+                            newQualifiedSymbolReferece);
+                    }
+                    else
+                    {
+                        //If so, create ProcedureStyleCallStatement with a ProcedureCall and fix SymbolReference so it's not ambiguous
+                        var nonAmbiguousSymbolRef =
+                            new SymbolReference(ambiguousSymbolReference.MainSymbolReference.NameLiteral,
+                                SymbolType.TCFunctionName);
+                        TCFunctionNameRefVariable = new SymbolReferenceVariable(StorageDataType.MethodName,
+                            nonAmbiguousSymbolRef);
+                    }
 
                     //CobolExpressionsBuilder store every StorageArea created into storageAreaReads and then after
                     //storageAreaReads is set to the CodeElement
                     //We must remove it as TCFunctionNameRefVariable doesn't contains a StorageArea
-                    if (ambiguousSymbolReference.StorageArea != null) {
+                    if (ambiguousSymbolReference.StorageArea != null)
+                    {
                         CobolExpressionsBuilder.storageAreaReads.Remove(ambiguousSymbolReference.StorageArea);
                     }
 
-                    statement = new ProcedureStyleCallStatement(new ProcedureCall(TCFunctionNameRefVariable.MainSymbolReference,
+                    statement =
+                        new ProcedureStyleCallStatement(new ProcedureCall(TCFunctionNameRefVariable.MainSymbolReference,
                             inputs, inouts, outputs))
                         {
-                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = TCFunctionNameRefVariable.MainSymbolReference
+                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction =
+                                TCFunctionNameRefVariable.MainSymbolReference
                         };
 
                     callSite.CallTarget = TCFunctionNameRefVariable.MainSymbolReference;
-
-                    
-                } else { //else it's an error
-                    statement = new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference, inputs, inouts, outputs))
-                       {
-                           ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = ambiguousSymbolReference.MainSymbolReference,
-                       };
-                    statement.Diagnostics.Add(new Diagnostic(MessageCode.ImplementationError, context.Start.Column, context.Stop.Column, context.Start.Line, "A call with arguments is not a TCFunctionName"));
+                }
+                else
+                {
+                    //else it's an error
+                    statement =
+                        new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
+                            inputs, inouts, outputs))
+                        {
+                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction =
+                                ambiguousSymbolReference.MainSymbolReference,
+                        };
+                    statement.Diagnostics.Add(new Diagnostic(MessageCode.ImplementationError, context.Start.Column,
+                        context.Stop.Column, context.Start.Line, "A call with arguments is not a TCFunctionName"));
                     callSite.CallTarget = ambiguousSymbolReference.MainSymbolReference;
                 }
             }
             else
             {
                 //It's a ProgramNameOrProgramEntry
-                if (ambiguousSymbol != null && ambiguousSymbol.IsOrCanBeOnlyOfTypes(SymbolType.ProgramEntry, SymbolType.ProgramName))
+                if (ambiguousSymbolReference.MainSymbolReference != null && ambiguousSymbolReference.MainSymbolReference.IsOrCanBeOnlyOfTypes(SymbolType.ProgramEntry, SymbolType.ProgramName))
                 {
                     statement = new ProcedureStyleCallStatement
                         {
@@ -355,8 +386,8 @@ namespace TypeCobol.Compiler.Parser
                         };
 
                 }
-                else if (ambiguousSymbol != null &&
-                         ambiguousSymbol.IsOrCanBeOfType(SymbolType.DataName, SymbolType.TCFunctionName)) {
+                else if (ambiguousSymbolReference.MainSymbolReference != null &&
+                         ambiguousSymbolReference.MainSymbolReference.IsOrCanBeOfType(SymbolType.DataName, SymbolType.TCFunctionName)) {
 
                     ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes = new[] {SymbolType.DataName, SymbolType.TCFunctionName};
 
