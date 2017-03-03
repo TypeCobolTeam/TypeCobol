@@ -71,13 +71,13 @@ class ReadOnlyPropertiesChecker: NodeListener {
                         functionCaller.FunctionDeclaration = functionDeclarations.First();
                         return; //Everything seems to be ok, lets continue on the next one
                     }
-                    
+
                     var otherDeclarations =
                         node.SymbolTable.GetFunction(((ProcedureCall)functionCaller.FunctionCall).ProcedureName.URI);
 
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
-                        message = string.Format("No function found for {0}", functionCaller.FunctionCall.FunctionName);
+                        message = string.Format("No function found for '{0}'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return; //Do not continue the function/procedure does not exists
                     }
@@ -93,17 +93,24 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 else
                 {
                     potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
+
+                    if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
+                    {
+                        functionCaller.FunctionDeclaration = functionDeclarations.First();
+                        return; //Everything seems to be ok, lets continue on the next one
+                    }
+
                     functionDeclarations =
                             node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
 
                     if (potentialVariables.Count > 1)
-                {
+                    {
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", functionCaller.FunctionCall.FunctionName, potentialVariables.Count + functionDeclarations.Count);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
-                }
-
+                    }
+                   
                     if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
@@ -119,16 +126,16 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     }
 
                     if (functionDeclarations.Count == 0 && potentialVariables.Count == 0)
-                {
-                        message = string.Format("No function found for {0}", functionCaller.FunctionCall.FunctionName);
-                    DiagnosticUtils.AddError(node.CodeElement, message);
+                    {
+                        message = string.Format("No function found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
                         return; //Do not continue the function/procedure does not exists
                     }
 
                     if (potentialVariables.Count == 1)
                         return; //Stop here, it's a standard Cobol call
                 }
-
+               
 
                 functionCaller.FunctionDeclaration = functionDeclarations[0];
                 //If function is not ambigous and exists, lets check the parameters
