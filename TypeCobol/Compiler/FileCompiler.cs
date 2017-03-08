@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
@@ -97,16 +98,27 @@ namespace TypeCobol.Compiler
         {
             // 1.a Find the Cobol source file
             CobolFile sourceFile = null;
+
             if (textName != null)
             {
                 if (sourceFileProvider.TryGetFile(libraryName, textName, out sourceFile))
                 {
                     CobolFile = sourceFile;
                 }
-                else
+                else 
                 {
-                    throw new Exception(String.Format("Could not find a Cobol source file named {0} in {1}", textName, libraryName));
+                    if (!string.IsNullOrEmpty(compilerOptions.HaltOnMissingCopyFilePath))
+                    {
+                        //Add copy name to text file. 
+                        using (var file = new System.IO.StreamWriter((sourceFileProvider.CobolLibraries.First() as LocalDirectoryLibrary).RootDirectory.FullName + @"\" + compilerOptions.HaltOnMissingCopyFilePath, true))
+                        {
+                            file.WriteLine(textName);
+                        }
+                    }
+                       
+                    throw new Exception(string.Format("Could not find a Cobol source file named {0} in {1}", textName, libraryName));
                 }
+              
             }
             // 1.b Register a Cobol source file which was already loaded
             else if(loadedCobolFile != null)
@@ -160,9 +172,12 @@ namespace TypeCobol.Compiler
                 CompilationResultsForProgram.UpdateTokensLines();
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
+                if (!string.IsNullOrEmpty(CompilerOptions.HaltOnMissingCopyFilePath)) return; //If the Option is set to true, we don't have to do the semantic phase
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
             }
+
+           
         }
 
         // Timers used for background execution of all compiler steps

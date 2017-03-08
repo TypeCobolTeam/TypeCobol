@@ -35,14 +35,14 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init([NotNull] string path,  DocumentFormat format = null, IList<string> copies = null, bool autoRemarks = false) {
+		public void Init([NotNull] string path,  DocumentFormat format = null, IList<string> copies = null, bool autoRemarks = false, string haltOnMissingCopyFilePath = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
-            TypeCobolOptions options = new TypeCobolOptions {AutoRemarksEnable = autoRemarks};
+		    TypeCobolOptions options = new TypeCobolOptions {AutoRemarksEnable = autoRemarks, HaltOnMissingCopyFilePath = haltOnMissingCopyFilePath };
 #endif
             CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
