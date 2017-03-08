@@ -12,7 +12,9 @@ namespace TypeCobol.Compiler.Directives
     public class TypeCobolOptions : IBMCompilerOptions
     {
         // insert options specific to TypeCobol here ...
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
         public bool AutoRemarksEnable { get; set; }
+#endif
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file

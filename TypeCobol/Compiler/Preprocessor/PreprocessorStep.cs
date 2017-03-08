@@ -85,7 +85,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             // Prepare to analyze the parse tree
             ParseTreeWalker walker = new ParseTreeWalker();
-            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder();
+            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder(compilerOptions);
 
             // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
             foreach (Token compilerDirectiveStartingToken in documentLines
