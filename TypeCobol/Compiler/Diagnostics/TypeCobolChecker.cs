@@ -51,16 +51,12 @@ class ReadOnlyPropertiesChecker: NodeListener {
             var functionCaller = node as FunctionCaller;
             if (functionCaller == null || functionCaller.FunctionCall == null || !functionCaller.FunctionCall.NeedDeclaration)
                 return;
-            
-            List<FunctionDeclaration> functionDeclarations = new List<FunctionDeclaration>();
-            var potentialVariables = new List<DataDefinition>();
-           
+
             if (functionCaller.FunctionDeclaration == null)
             {
                 //Get Funtion by name and profile (matches on precise parameters)
-                functionDeclarations =
-                    node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
-                        functionCaller.FunctionCall.AsProfile(node.SymbolTable), functionCaller.FunctionCall.Namespace);
+                var functionDeclarations = node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
+                    functionCaller.FunctionCall.AsProfile(node.SymbolTable), functionCaller.FunctionCall.Namespace);
 
                 string message;
                 //There is one CallSite per function call
@@ -70,6 +66,12 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     {
                         functionCaller.FunctionDeclaration = functionDeclarations.First();
                         return; //Everything seems to be ok, lets continue on the next one
+                    }
+                    //Another checker should check if function declaration is not duplicated
+                    if (functionDeclarations.Count > 0) {
+                        message = string.Format("same procedure/function '{0}' declared '{1}' times", functionCaller.FunctionCall.FunctionName, functionDeclarations.Count);
+                        DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.ImplementationError);
+                        return; //Do not continue the function/procedure does not exists
                     }
 
                     var otherDeclarations =
@@ -92,7 +94,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 }
                 else
                 {
-                    potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
+                    var potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
 
                     if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
                     {
@@ -360,7 +362,6 @@ class LibraryChecker: NodeListener {
 		var elementsInError = new List<CodeElement>();
 		var errorMessages = new List<string>();
 		foreach(var child in procedureDivision.Children) {
-			var ce = child.CodeElement;
 			if (child.CodeElement == null) {
 				elementsInError.Add(procedureDivision.CodeElement);
 				errorMessages.Add("Illegal default section in library. " + child);
@@ -374,9 +375,6 @@ class LibraryChecker: NodeListener {
 				}
 			}
 		}
-		var pgm = (Nodes.Program)procedureDivision.Root.GetChildren<ProgramIdentification>()[0];
-		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
-		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		if (isPublicLibrary) {
 //			if (copy == null || copy.CodeElement().Name == null) // TCRFUN_LIBRARY_COPY
 //				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
