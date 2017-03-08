@@ -60,5 +60,5 @@ PROGRAM: ParagraphsSections common:False initial:False recursive:False
   fun
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE
