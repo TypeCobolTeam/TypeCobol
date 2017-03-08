@@ -142,7 +142,6 @@ namespace TypeCobol.Compiler
 				CompilationResultsForProgram.CustomSymbols = customSymbols;
 			}
             CompilerOptions = compilerOptions;
-            OptionHelper.CompilationOptions = compilerOptions;
         }
         
         /// <summary>

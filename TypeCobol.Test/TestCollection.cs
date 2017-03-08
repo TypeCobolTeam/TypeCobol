@@ -199,6 +199,7 @@ namespace TypeCobol.Test {
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
 
+
         [TestMethod]
         //[Ignore]
         [TestCategory("Parsing")]
@@ -210,8 +211,8 @@ namespace TypeCobol.Test {
             string tempResultRoot = tempRoot + Path.DirectorySeparatorChar + "ResultFiles";
 
             int nbOfTests = 0;
-
             string[] extensions = { ".tcbl", ".cbl"};
+
             string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
             foreach (string directory in Directory.GetDirectories(tempRoot))
             {
@@ -219,13 +220,14 @@ namespace TypeCobol.Test {
 
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
                 var folderTester = new FolderTester(tempSampleRoot, tempResultRoot, directory, extensions, compilerExtensions);
+
                 folderTester.Test(false, false, true);
+
                 nbOfTests += folderTester.GetTestCount();
                 Console.Write("\n");
             }
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
-
     }
 }
