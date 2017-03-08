@@ -162,6 +162,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
         }
+
     }
 
     /// <summary>
@@ -203,6 +204,24 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
+
+        public static void ApplyCandidatesTypes(SymbolReference symbolReference, SymbolType[] symbolTypes)
+        {
+            if (symbolReference.IsAmbiguous)
+            {
+                if (symbolReference.IsQualifiedReference)
+                {
+                    var qualifiedSymbolReference = (QualifiedSymbolReference)symbolReference;
+                    ApplyCandidatesTypes(qualifiedSymbolReference.Head, symbolTypes);
+                    ApplyCandidatesTypes(qualifiedSymbolReference.Tail, symbolTypes);
+
+                }
+                else
+                {
+                    ((AmbiguousSymbolReference)symbolReference).CandidateTypes = symbolTypes;
+                }
+            }
         }
     }
 

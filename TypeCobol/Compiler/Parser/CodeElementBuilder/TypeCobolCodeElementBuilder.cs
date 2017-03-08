@@ -389,7 +389,19 @@ namespace TypeCobol.Compiler.Parser
                 else if (ambiguousSymbolReference.MainSymbolReference != null &&
                          ambiguousSymbolReference.MainSymbolReference.IsOrCanBeOfType(SymbolType.DataName, SymbolType.TCFunctionName)) {
 
-                    ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes = new[] {SymbolType.DataName, SymbolType.TCFunctionName};
+
+                    //TODO think about uniformity of CandidateTypes inside QualifiedReference.
+                    //Maybe just define CandidatesTypes for the Head...
+                    if (ambiguousSymbolReference.MainSymbolReference.IsQualifiedReference) {
+                        var qualifiedSymbolReference = (QualifiedSymbolReference) ambiguousSymbolReference.MainSymbolReference;
+                        if (qualifiedSymbolReference.Head.IsAmbiguous) {
+                            ((AmbiguousSymbolReference) qualifiedSymbolReference.Head).CandidateTypes = new[]{SymbolType.DataName, SymbolType.TCFunctionName};
+                        }
+                        AmbiguousSymbolReference.ApplyCandidatesTypes(qualifiedSymbolReference.Tail, new[] {SymbolType.DataName, SymbolType.ProgramName});
+
+                    } else {
+                        ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes = new[] {SymbolType.DataName, SymbolType.TCFunctionName};
+                    }
 
                     statement = new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
                             null, null, null))
