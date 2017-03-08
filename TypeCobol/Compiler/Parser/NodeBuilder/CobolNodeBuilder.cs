@@ -37,7 +37,8 @@ namespace TypeCobol.Compiler.Parser
 
         private readonly SymbolTable TableOfIntrisic = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
         private SymbolTable TableOfGlobals;
-    
+        private SymbolTable TableOfNamespaces;
+
 
         public SymbolTable CustomSymbols
         {
@@ -124,7 +125,8 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public override void EnterCobolCompilationUnit(ProgramClassParser.CobolCompilationUnitContext context)
         {
-            TableOfGlobals = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Global);
+            TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace);
+            TableOfGlobals = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.Global);
             Program = null;
             Class = null;
         }
@@ -133,18 +135,19 @@ namespace TypeCobol.Compiler.Parser
         {
             if (Program == null)
             {
-                Program = new SourceProgram(TableOfGlobals);
+                Program = new SourceProgram(TableOfGlobals, null);
                 programsStack = new Stack<CodeModel.Program>();
                 CurrentProgram = Program;
             }
             else
             {
                 var enclosing = CurrentProgram;
-                CurrentProgram = new NestedProgram(enclosing);
+                CurrentProgram = new NestedProgram(enclosing, null);
                 Enter(CurrentProgram.SyntaxTree.Root, context, new SymbolTable(TableOfGlobals));
             }
             var pgm = context.programAttributes();
             if (pgm != null) CurrentProgram.Identification = (ProgramIdentification)pgm.ProgramIdentification().Symbol;
+
             Enter(new Nodes.Program(CurrentProgram.Identification), pgm, CurrentProgram.SymbolTable);
             if (pgm != null && pgm.LibraryCopy() != null)
             { // TCRFUN_LIBRARY_COPY
@@ -152,6 +155,8 @@ namespace TypeCobol.Compiler.Parser
                 Enter(cnode, pgm, CurrentProgram.SymbolTable);
                 Exit();
             }
+
+            TableOfNamespaces.AddProgram(CurrentProgram); //Add Program to Namespace table. 
         }
 
         public override void ExitCobolProgram(ProgramClassParser.CobolProgramContext context)
@@ -508,12 +513,7 @@ namespace TypeCobol.Compiler.Parser
             var node = new FunctionDeclaration(header);
             node.Label = uidfactory.FromOriginal(header.FunctionName.Name);
             node.Library = CurrentProgram.Identification.ProgramName.Name;
-
-            if (((FunctionDeclarationHeader)node.CodeElement).Visibility == AccessModifier.Public)
-                TableOfIntrisic.AddFunction(node);
-            else
-                CurrentProgram.CurrentTable.AddFunction(node);
-
+            CurrentProgram.CurrentTable.AddFunction(node);
             Enter(node, context, new SymbolTable(CurrentProgram.CurrentTable, SymbolTable.Scope.Function));
         }
         public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context)

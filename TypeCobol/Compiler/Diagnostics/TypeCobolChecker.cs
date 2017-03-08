@@ -60,7 +60,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 //Get Funtion by name and profile (matches on precise parameters)
                 functionDeclarations =
                     node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
-                        functionCaller.FunctionCall.AsProfile(node.SymbolTable));
+                        functionCaller.FunctionCall.AsProfile(node.SymbolTable), functionCaller.FunctionCall.Namespace);
 
                 string message;
                 //There is one CallSite per function call
