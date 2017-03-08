@@ -364,11 +364,9 @@ namespace TypeCobol.Compiler.CodeElements
 
     /// <summary>Common properties for noth types of function calls : list of expressions as arguments</summary>
     public abstract class FunctionCall : IVisitable {
-        protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs) {
+        protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
 		    Type = type;
-		    Arguments = arguments;
-
-
+            Arguments = arguments;
         }
 
 	    public FunctionCallType Type { get; private set; }
@@ -452,7 +450,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>Call to an intrinsic function</summary>
 	public class IntrinsicFunctionCall: FunctionCall {
 		public IntrinsicFunctionCall(ExternalName intrinsicFunctionName, CallSiteParameter[] arguments)
-			: base(FunctionCallType.IntrinsicFunctionCall, arguments, null, null, null) {
+			: base(FunctionCallType.IntrinsicFunctionCall, arguments) {
 			IntrinsicFunctionName = intrinsicFunctionName;
 		}
 
@@ -482,7 +480,7 @@ namespace TypeCobol.Compiler.CodeElements
 	/// <summary>Call to a TypeCobol user defined function</summary>
 	public class UserDefinedFunctionCall: FunctionCall {
 		public UserDefinedFunctionCall(SymbolReference functionName, CallSiteParameter[] arguments)
-			: base(FunctionCallType.UserDefinedFunctionCall, arguments, null, null, null) {
+			: base(FunctionCallType.UserDefinedFunctionCall, arguments) {
 			UserDefinedFunctionName = functionName;
 		}
 
@@ -502,7 +500,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 	public class ProcedureCall: FunctionCall {
 		public ProcedureCall(SymbolReference name, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs)
-			: base(FunctionCallType.UserDefinedFunctionCall, null, inputs, inouts, outputs) {
+			: base(FunctionCallType.UserDefinedFunctionCall, null) {
 			ProcedureName = name;
 
             InputParameters = inputs ?? new List<CallSiteParameter>();
