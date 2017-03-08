@@ -161,6 +161,10 @@ namespace TypeCobol.Compiler.CodeElements
 		FunctionDeclarationHeader,
 		FunctionDeclarationEnd,
 		ProcedureStyleCall,
-// [/TYPECOBOL]
+
+        // [/TYPECOBOL]
+
+
+        Program,
     }
 }

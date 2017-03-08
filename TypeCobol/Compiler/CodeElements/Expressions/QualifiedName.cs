@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public virtual string Tail {
 			get {
 				var uri = this.ToString();
-				return uri.Remove(uri.Length-2-Head.Length);
+				return uri.Split('.')[0];
 			}
 		}
 		public abstract QualifiedName Parent { get; }

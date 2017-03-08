@@ -373,7 +373,8 @@ namespace TypeCobol.Compiler.CodeElements
 
 	    public FunctionCallType Type { get; private set; }
 	    public abstract string FunctionName { get; }
-	    public abstract Token FunctionNameToken { get; }
+        public abstract string Namespace { get; }
+        public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
 
         public virtual ParameterList AsProfile(CodeModel.SymbolTable table)
@@ -464,6 +465,14 @@ namespace TypeCobol.Compiler.CodeElements
             get { return false; }
         }
 
+        public override string Namespace
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, IntrinsicFunctionName, FunctionNameToken);
@@ -480,6 +489,8 @@ namespace TypeCobol.Compiler.CodeElements
 		public SymbolReference UserDefinedFunctionName { get; private set;  }
 		public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
 		public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
+
+        public override string Namespace { get { return (UserDefinedFunctionName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference)UserDefinedFunctionName).Tail.Name; } }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
@@ -521,7 +532,9 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-	    public override ParameterList AsProfile(SymbolTable table)
+        public override string Namespace { get { return (ProcedureName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference) ProcedureName).Tail.Name; } }
+
+        public override ParameterList AsProfile(SymbolTable table)
 	    {
 	        var profile = new FunctionCallParameterList
 	        {
