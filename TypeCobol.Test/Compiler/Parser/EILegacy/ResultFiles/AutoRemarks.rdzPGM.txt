@@ -23,5 +23,5 @@ PROGRAM: MYPGM common:False initial:False recursive:False
   CONVEAL-TESTVEATEST:Alphanumeric
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

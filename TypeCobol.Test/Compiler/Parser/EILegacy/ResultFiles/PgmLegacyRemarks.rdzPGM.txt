@@ -8,5 +8,5 @@ PROGRAM: MYPGM common:False initial:False recursive:False
   WK-MAXI-QOCC-0003:Numeric
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE
