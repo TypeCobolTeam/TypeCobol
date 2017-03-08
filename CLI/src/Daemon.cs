@@ -3,6 +3,7 @@ using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -16,6 +17,7 @@ namespace TypeCobol.Server {
 			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			public bool Codegen = false;
             public bool AutoRemarks;
+            public string HaltOnMissingCopyFilePath;
             public List<string> CopyFolders = new List<string>();
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
@@ -35,7 +37,7 @@ namespace TypeCobol.Server {
 			var config = new Config();
 			var pipename = "TypeCobol.Server";
 
-			var p = new OptionSet () {
+            var p = new OptionSet () {
 				"USAGE",
 				"  "+PROGNAME+" [OPTIONS]... [PIPENAME]",
 				"",
@@ -51,6 +53,7 @@ namespace TypeCobol.Server {
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
 				{ "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
                 { "a|autoremarks=", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = (v!=null) },
+                { "hc|HaltOnMissingCopyFilePath=", "HaltOnMissingCopyFilePath will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -106,6 +109,7 @@ namespace TypeCobol.Server {
 
 		private static void runOnce(Config config)
 		{
+		   
 			TextWriter w;
 			if (config.ErrorFile == null) w = Console.Error;
 			else w = File.CreateText(config.ErrorFile);
@@ -119,7 +123,7 @@ namespace TypeCobol.Server {
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
-				try { parser.Init(path, config.Format, config.CopyFolders, config.AutoRemarks); }
+				try { parser.Init(path, config.Format, config.CopyFolders, config.AutoRemarks, config.HaltOnMissingCopyFilePath); }
 				catch(Exception ex) {
 					AddError(writer, MessageCode.ParserInit, ex.Message, path);
 					continue;

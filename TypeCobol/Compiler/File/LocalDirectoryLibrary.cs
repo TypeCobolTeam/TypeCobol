@@ -12,6 +12,8 @@ namespace TypeCobol.Compiler.File
     /// </summary>
     public class LocalDirectoryLibrary : ICobolLibrary
     {
+        public DirectoryInfo RootDirectory { get { return rootDirectory; } }
+
         // Local directory properties
 
         private DirectoryInfo rootDirectory;
