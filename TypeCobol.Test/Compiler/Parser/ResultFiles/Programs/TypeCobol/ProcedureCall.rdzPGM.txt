@@ -22,7 +22,7 @@ Line 176[12,39] <27, Error, Syntax> - Syntax error : No suitable function signat
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   somedate:DATE
   someformat:Alphanumeric
@@ -71,5 +71,5 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
      inout: var1:DATE
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

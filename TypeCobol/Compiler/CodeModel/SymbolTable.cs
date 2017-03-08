@@ -765,7 +765,7 @@ namespace TypeCobol.Compiler.CodeModel
             return this.ToString(false);
         }
 
-        public string ToString(bool verbose, int indent = 1)
+        public string ToString(bool verbose)
         {
             var str = new StringBuilder();
             if (verbose && (DataEntries.Count > 0 || Types.Count > 0))
@@ -775,45 +775,44 @@ namespace TypeCobol.Compiler.CodeModel
                 str.AppendLine("-- DATA --------");
                 foreach (var line in DataEntries)
                 foreach (var item in line.Value)
-                    Dump(str, item, indent);
+                    Dump(str, item, new string(' ', 2));
             }
             if (Sections.Count > 0)
             {
                 str.AppendLine("-- SECTIONS ----");
                 foreach (var line in Sections)
                 foreach (var item in line.Value)
-                    Dump(str, item, indent);
+                    Dump(str, item, new string(' ', 2));
             }
             if (Paragraphs.Count > 0)
             {
                 str.AppendLine("-- PARAGRAPHS --");
                 foreach (var line in Paragraphs)
                 foreach (var item in line.Value)
-                    Dump(str, item, indent);
+                    Dump(str, item, new string(' ', 2));
             }
             if (Types.Count > 0)
             {
                 str.AppendLine("-- TYPES -------");
                 foreach (var line in Types)
                 foreach (var item in line.Value)
-                    Dump(str, item, indent);
+                    Dump(str, item, new string(' ', 2));
             }
             if (Functions.Count > 0)
             {
                 str.AppendLine("-- FUNCTIONS ---");
                 foreach (var line in Functions)
                 foreach (var item in line.Value)
-                    Dump(str, item, indent);
+                    Dump(str, item, new string(' ', 2));
             }
             if (verbose && EnclosingScope != null)
-                str.Append(EnclosingScope.ToString(verbose, indent + 1));
+                str.Append(EnclosingScope.ToString(verbose));
             return str.ToString().TrimEnd(Environment.NewLine.ToCharArray());
-            ;
         }
 
-        private static StringBuilder Dump(StringBuilder str, Node symbol, int indent = 0)
+        private static StringBuilder Dump(StringBuilder str, Node symbol, string indent = null)
         {
-            for (int c = 0; c < indent; c++) str.Append("  ");
+            str.Append(indent);
             str.Append(symbol.Name);
             if (symbol is ITypedNode) str.Append(':').Append(((ITypedNode) symbol).DataType);
             var fun = symbol as FunctionDeclaration;
@@ -823,22 +822,22 @@ namespace TypeCobol.Compiler.CodeModel
                 foreach (var p in fun.CodeElement().Profile.InputParameters)
                 {
                     str.Append("        in: ");
-                    Dump(str, new ParameterDescription(p), 0);
+                    Dump(str, new ParameterDescription(p));
                 }
                 foreach (var p in fun.CodeElement().Profile.OutputParameters)
                 {
                     str.Append("       out: ");
-                    Dump(str, new ParameterDescription(p), 0);
+                    Dump(str, new ParameterDescription(p));
                 }
                 foreach (var p in fun.CodeElement().Profile.InoutParameters)
                 {
                     str.Append("     inout: ");
-                    Dump(str, new ParameterDescription(p), 0);
+                    Dump(str, new ParameterDescription(p));
                 }
                 if (fun.Profile.ReturningParameter != null)
                 {
                     str.Append("    return: ");
-                    Dump(str, new ParameterDescription(fun.Profile.ReturningParameter), 0);
+                    Dump(str, new ParameterDescription(fun.Profile.ReturningParameter));
                 }
                 if (fun.Profile.ReturningParameter == null && fun.Profile.Parameters.Count == 0) str.AppendLine();
             }

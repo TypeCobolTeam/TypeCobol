@@ -1,11 +1,11 @@
 ﻿--- Program ---
 PROGRAM: MyPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   ASCII-v:BOOL
   EBCDIC-v:BOOL
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

@@ -1,12 +1,12 @@
 ﻿--- Program ---
 PROGRAM: SelectFile common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   WK-CTRL-FILE-STATUS:Alphanumeric
   WK-ST-ENT010:Numeric
   FIN-FICHIER-ENT010:BOOL
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

@@ -10,5 +10,5 @@ PROGRAM: evaluate-semantic common:False initial:False recursive:False
   procedurename
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

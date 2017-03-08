@@ -20,7 +20,7 @@ Line 281[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15' is ambigou
 --- Program ---
 PROGRAM: ProcedureCallOverload common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   myDate:DATE
   fakeDate:Alphanumeric
@@ -128,5 +128,5 @@ PROGRAM: ProcedureCallOverload common:False initial:False recursive:False
        out: result:BOOL
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE
