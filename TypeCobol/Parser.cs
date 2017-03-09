@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
@@ -16,6 +17,7 @@ namespace TypeCobol
 	public class Parser
 	{
 		public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
+	    public List<string> MissingCopys { get; set; }
         protected Dictionary<string,bool> Inits;
         protected Dictionary<string,FileCompiler> Compilers;
         protected FileCompiler Compiler = null;
@@ -42,7 +44,7 @@ namespace TypeCobol
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
-		    TypeCobolOptions options = new TypeCobolOptions {AutoRemarksEnable = autoRemarks, HaltOnMissingCopyFilePath = haltOnMissingCopyFilePath };
+		    TypeCobolOptions options = new TypeCobolOptions {AutoRemarksEnable = autoRemarks, HaltOnMissingCopy = (haltOnMissingCopyFilePath != null) };
 #endif
             CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
@@ -52,7 +54,8 @@ namespace TypeCobol
 			foreach (var folder in copies) {
 				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, CopyExtensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
 			}
-			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false);
+			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false, project);
+            
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);
 		}
@@ -78,6 +81,8 @@ namespace TypeCobol
 				Observer.OnError(ex);
 				System.Console.WriteLine(ex.ToString());
 			}
+
+		    MissingCopys = Compiler.CompilationProject.MissingCopys;
 
 			Compiler.CompilationResultsForProgram.TextLinesChanged -= OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged -= OnCodeElementLine;

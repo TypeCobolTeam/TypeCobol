@@ -31,7 +31,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 localDirectory.FullName, new string[] { ".cbl", ".cpy" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
 
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, true, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForCopy;
@@ -50,7 +50,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
                 localDirectory.FullName, new string[] {".cpy", ".cbl" },
                 documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
@@ -67,7 +67,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
                 DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
 
-            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false);
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;

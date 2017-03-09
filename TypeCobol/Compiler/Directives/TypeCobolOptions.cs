@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Directives
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
         public bool AutoRemarksEnable { get; set; }
 #endif
-        public string HaltOnMissingCopyFilePath { get; set; }
+        public bool HaltOnMissingCopy { get; set; }
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file
