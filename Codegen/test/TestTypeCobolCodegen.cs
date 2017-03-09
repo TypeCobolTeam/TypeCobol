@@ -140,6 +140,13 @@ namespace TypeCobol.Codegen {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-PrivateQualifier") +".rdz.tcbl", skeletons);
 		}
+        [TestMethod]
+		[TestCategory("Codegen")]
+		[TestProperty("Time","fast")]
+		public void ParseProcedureCallPublic() {
+			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
+			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-Public") +".rdz.tcbl", skeletons);
+		}
 
 		[TestMethod]
 		[TestCategory("Codegen")]
