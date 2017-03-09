@@ -634,19 +634,26 @@ namespace TypeCobol.Compiler.CodeModel
         [NotNull]
         private List<FunctionDeclaration> GetFunction(string head, string nameSpace)
         {
-            List<FunctionDeclaration> result;
+            var result = new List<FunctionDeclaration>();
             result = GetFromTableAndEnclosing(head, GetFunctionTable);
-            if (result != null && (result.Count != 0 || nameSpace.IsNullOrEmpty())) return result;
+
+            if (string.IsNullOrEmpty(nameSpace) || result.Any(f => string.Compare(f.QualifiedName.Tail, nameSpace, StringComparison.InvariantCultureIgnoreCase) == 0))
+                return result;
 
             var programs = GetProgram(nameSpace); //If no results found and Namespace != null, then search program in the given namespace
             if (programs.Count == 0)
                 return result;
+            if(programs.GroupBy(p => p.ID).Count(p => p.Count() > 1) > 1)
+                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().ID));
 
+            
             var programFunctions = programs.FirstOrDefault().CurrentTable.Functions; //Get the first program (will change with the real use of namespace) and functions
-            var publicFunctions =
-                programFunctions.Where(p => p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public)).ToDictionary(f => f.Key, f => f.Value); //Sort functions to get only the one with public AccessModifier
+            programFunctions = programFunctions
+                                .Where(p => 
+                                        p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
+                                        .ToDictionary(f => f.Key, f => f.Value); //Sort functions to get only the one with public AccessModifier
 
-            result = GetFromTable(head, publicFunctions); //Check if there is a function that correspond to the given name (head)
+            result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
 
             return result;
         }

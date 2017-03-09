@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
-Line 59[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2PrivateValidateDateFormat'
-Line 64[12,50] <27, Error, Syntax> - Syntax error : No function found for 'PGM2.Pgm2PrivateValidateDateFormat'
-Line 69[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2.Pgm2PrivateValidateDateFormat'
+Line 66[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2PrivateValidateDateFormat'
+Line 71[12,50] <27, Error, Syntax> - Syntax error : No function found for 'PGM2.Pgm2PrivateValidateDateFormat'
+Line 76[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2.Pgm2PrivateValidateDateFormat'
 
 --- Program ---
 PROGRAM: PGM1 common:False initial:False recursive:False
@@ -15,6 +15,8 @@ PROGRAM: PGM1 common:False initial:False recursive:False
 -- PARAGRAPHS --
   TRAITEMENT
 -- FUNCTIONS ---
+  check
+        in: mydate:DATE
   Pgm1PrivateValidateDateFormat
         in: mydate:DATE
         in: format:Alphanumeric

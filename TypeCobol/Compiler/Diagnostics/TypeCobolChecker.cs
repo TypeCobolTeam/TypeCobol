@@ -75,7 +75,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     }
 
                     var otherDeclarations =
-                        node.SymbolTable.GetFunction(((ProcedureCall)functionCaller.FunctionCall).ProcedureName.URI);
+                        node.SymbolTable.GetFunction(((ProcedureCall)functionCaller.FunctionCall).ProcedureName.URI, null, functionCaller.FunctionCall.Namespace);
 
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
@@ -103,7 +103,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     }
 
                     functionDeclarations =
-                            node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
+                           node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null, functionCaller.FunctionCall.Namespace);
 
                     if (potentialVariables.Count > 1)
                     {
@@ -112,7 +112,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
-                   
+
                     if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);

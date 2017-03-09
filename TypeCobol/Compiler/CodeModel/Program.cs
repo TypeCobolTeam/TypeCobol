@@ -23,6 +23,9 @@ namespace TypeCobol.Compiler.CodeModel
             get { return Identification != null ? Identification.ProgramName.Name : base.ID; }
         }
 
+        //TODO: As to change in the future when implementing the full namespace functionnality.
+        public string Namespace { get { return ID; } }
+
         /// <summary>
         /// True if the current program is contained in another program.
         /// </summary>
