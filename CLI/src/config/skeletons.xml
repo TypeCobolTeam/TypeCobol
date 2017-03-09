@@ -65,9 +65,9 @@
         COPY %copyname REPLACING ==:%copyname:== BY ==FCT==.
       </pattern>
       <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
-01  CallData.
-    05  DescriptionId PIC X(08).
-      88 CallIsCopy VALUE '%copyname'.
+        01  CallData.
+        05  DescriptionId PIC X(08).
+        88 CallIsCopy VALUE '%copyname'.
       </pattern>
       <!--pattern location="program.begin" action="create" group="TCRFUN_CODEGEN_COPY">
 @{
@@ -87,44 +87,24 @@
   </skeleton>
 
   <!-- replace DECLARE FUNCTION PUBLIC by a stacked program -->
-  <skeleton name="FUN.DECLARE.PUBLIC" var="definitions,copyname">
+  <skeleton name="FUN.DECLARE.PUBLIC" var="definitions,copyname,programName8">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" />
     </conditions>
     <patterns>
-      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALLS_ARRAY">
-01  FctList.
-    05 NumberOfFunctions   PIC 9(04).
-    05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions
-                           INDEXED BY FctIndex.
-      10 FctCode    PIC X(08).
-      10 FctPointer PROCEDURE-POINTER VALUE NULL.
-      </pattern>
-      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
-01  CallData.
-    05  DescriptionId PIC X(08).
-      </pattern>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
-01  LibFctList-Loaded PIC X(01) VALUE SPACE.
-    88 LibFctList-IsLoaded      VALUE '1'.
+01  TC-%programName8-LibFctList-Loaded PIC X(01) VALUE SPACE.
+    88 TC-%programName8-LibFctList-IsLoaded      VALUE '1'.
       </pattern>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY">
-@{
-  var items = "";
-  foreach (var f in %definitions.functions.Public) {
-    items += "*    "+f.Hash+" -> "+f.Name+'\n';
-    items += "    05 PIC X(08) VALUE \'"+f.Hash+"\'.\n";
-    items += "    05 PIC X(08) VALUE LOW-VALUES.\n";
-  }
-}
-01  LibFctList-VALUES.
-@items
-      </pattern>
-      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_REDEFINED_ARRAY">
-01  LibFctList REDEFINES LibFctList-Values.
-    05   LibFctItem    OCCURS %definitions.functions.Public.Count INDEXED BY LibFctIndex.
-      10 LibFctCode    PIC X(08).
-      10 LibFctPointer PROCEDURE-POINTER.
+        @{
+        var items = "";
+        foreach (var f in %definitions.functions.Public) {
+        items += "*"+%programName8 + "::" +f.Name+'\n';
+        items += " 01 TC-"+%programName8 + "-" + f.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
+        }
+        }
+        @items
       </pattern>
       <pattern action="expand" location="program.end"></pattern>
       <pattern location="program.procedure-division.sentence-0.begin" action="create" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR">
@@ -135,54 +115,28 @@
     PERFORM FctList-Process-Mode
 *    END-IF
 
-    GOBACK
-      </pattern>
-      <!--
-      <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_COBOL_BEHAVIOUR">
-@{
-  var entries = "";
-  foreach (var f in %definitions.functions.Public) {
-    entries += "\n    SET FCT-"+f.Label+"   TO ENTRY \'"+f.Hash+'\'';
-  }
-}
-Copy-Process-Mode.
-    SET ADDRESS OF FCT TO ADDRESS OF CallData
+    GOBACK.
+        @{
+        var entries = "";
+        int c = 0;
+        foreach (var f in %definitions.functions.Public) {
+        entries += "       SET TC-"+%programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
+        }
+        }
+ FctList-Process-Mode.
+     IF NOT TC-%programName8-LibFctList-IsLoaded
 @entries
-    .
+       SET TC-%programName8-LibFctList-IsLoaded TO TRUE
+     END-IF
+        .
 
       </pattern>
-      -->
-      <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_TYPECOBOL_BEHAVIOUR">
-@{
-  var entries = "";
-  int c = 0;
-  foreach (var f in %definitions.functions.Public) {
-    entries += "      SET LibFctPointer("+(++c)+")   TO ENTRY \'"+f.Hash+"\'\n";
-  }
-}
-FctList-Process-Mode.
-    SET ADDRESS OF FctList TO ADDRESS OF CallData
-
-    IF NOT LibFctList-IsLoaded
-@entries
-      SET LibFctList-IsLoaded TO TRUE
-    END-IF
-
-    PERFORM VARYING FctIndex FROM 1 BY 1
-            UNTIL FctIndex > NumberOfFunctions
-
-      SEARCH LibFctItem VARYING LibFctIndex
-        WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
-          SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
-      END-SEARCH
-
-    END-PERFORM
-    .
-
-      </pattern>
+<!--Because of bug, we need to keep this for now. Seems the procedure division of other public function is added as a procedure
+ division of the main program. Issue #463-->
       <pattern location="program.procedure-division" action="replace" group="TCRFUN_CODEGEN_PROCEDURE_USING">
-PROCEDURE DIVISION USING CallData.
+        PROCEDURE DIVISION.
       </pattern>
+      
     </patterns>
   </skeleton>
   <!-- replace DECLARE FUNCTION PRIVATE by a stacked program -->
