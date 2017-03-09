@@ -3,6 +3,7 @@ using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
@@ -53,7 +54,7 @@ namespace TypeCobol.Server {
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
 				{ "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
                 { "a|autoremarks=", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = (v!=null) },
-                { "hc|HaltOnMissingCopyFilePath=", "HaltOnMissingCopyFilePath will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
+                { "hc|HaltOnMissingCopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -130,7 +131,10 @@ namespace TypeCobol.Server {
 				}
 				parser.Parse(path);
 
-				if (parser.Results.CodeElementsDocumentSnapshot == null) {
+			    if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath) && parser.MissingCopys.Count > 0)
+			        File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys); //Write in the specified file all the absent copys detected
+
+                if (parser.Results.CodeElementsDocumentSnapshot == null) {
 					AddError(writer, MessageCode.SyntaxErrorInParser, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
 					continue;
 				} else if (parser.Results.ProgramClassDocumentSnapshot == null) {

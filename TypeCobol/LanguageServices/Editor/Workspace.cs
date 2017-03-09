@@ -49,7 +49,7 @@ namespace TypeCobol.LanguageServices.Editor
         public void OpenSourceFile(string fileName, string sourceText)
         {
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, compilationProject.Encoding, compilationProject.ColumnsLayout, sourceText);
-            FileCompiler fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, false);
+            FileCompiler fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, false, compilationProject);
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
             lock (OpenedFileCompilers)
             {

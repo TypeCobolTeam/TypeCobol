@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
@@ -47,6 +48,8 @@ namespace TypeCobol.Compiler
         /// </summary>
         public CompilationUnit CompilationResultsForProgram { get; private set; }
 
+        public CompilationProject CompilationProject { get; set; }
+
         /// <summary>
         /// Output text buffer in memory where the target Cobol code will be generated
         /// </summary>
@@ -65,58 +68,53 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
-        public FileCompiler(string libraryName, string textName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile) :
-            this(libraryName, textName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile, null)
+        public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, CompilationProject compilationProject) :
+            this(libraryName, fileName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile, null, compilationProject)
         { }
 
         /// <summary>
         /// Load a Cobol source file in an pre-existing text document
         /// </summary>
-        public FileCompiler(string libraryName, string textName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ITextDocument textDocument, TypeCobolOptions compilerOptions, bool isCopyFile) :
-            this(libraryName, textName, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile, null)
+        public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ITextDocument textDocument, TypeCobolOptions compilerOptions, bool isCopyFile, CompilationProject compilationProject) :
+            this(libraryName, fileName, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile, null, compilationProject)
         { }
 
         /// <summary>
         /// Use a pre-existing text document, not yet associated with a Cobol file
         /// </summary>
-        public FileCompiler(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions, bool isCopyFile) :
-            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile, null)
+        public FileCompiler(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions, bool isCopyFile, CompilationProject compilationProject) :
+            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, null, isCopyFile, null, compilationProject)
         { }
 
         /// <summary>
         /// Use a pre-existing text document, already initialized from a Cobol file
         /// </summary>
-        public FileCompiler(string libraryName, string textName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, MultilineScanState scanState) :
-            this(libraryName, textName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile, scanState)
+        public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, MultilineScanState scanState, CompilationProject compilationProject) :
+            this(libraryName, fileName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile, scanState, compilationProject)
         { }
 
         /// <summary>
         /// Common internal implementation for all 4 constructors above
         /// </summary>
-        private FileCompiler(string libraryName, string textName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile,
-            [CanBeNull] MultilineScanState scanState)
+        private FileCompiler(string libraryName, string fileName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile,
+            [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject)
         {
             // 1.a Find the Cobol source file
             CobolFile sourceFile = null;
+            CompilationProject = compilationProject;
 
-            if (textName != null)
+            if (fileName != null)
             {
-                if (sourceFileProvider.TryGetFile(libraryName, textName, out sourceFile))
+                if (sourceFileProvider.TryGetFile(libraryName, fileName, out sourceFile))
                 {
                     CobolFile = sourceFile;
                 }
                 else 
                 {
-                    if (!string.IsNullOrEmpty(compilerOptions.HaltOnMissingCopyFilePath))
-                    {
-                        //Add copy name to text file. 
-                        using (var file = new System.IO.StreamWriter((sourceFileProvider.CobolLibraries.First() as LocalDirectoryLibrary).RootDirectory.FullName + @"\" + compilerOptions.HaltOnMissingCopyFilePath, true))
-                        {
-                            file.WriteLine(textName);
-                        }
-                    }
-                       
-                    throw new Exception(string.Format("Could not find a Cobol source file named {0} in {1}", textName, libraryName));
+                    if(isCopyFile)
+                        compilationProject.MissingCopys.Add(fileName);
+
+                    throw new Exception(string.Format("Could not find a Cobol source file named {0} in {1}", fileName, libraryName));
                 }
               
             }
@@ -172,7 +170,7 @@ namespace TypeCobol.Compiler
                 CompilationResultsForProgram.UpdateTokensLines();
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
-                if (!string.IsNullOrEmpty(CompilerOptions.HaltOnMissingCopyFilePath)) return; //If the Option is set to true, we don't have to do the semantic phase
+                if (CompilerOptions.HaltOnMissingCopy && CompilationProject.MissingCopys.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
             }
