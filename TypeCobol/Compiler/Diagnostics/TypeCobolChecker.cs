@@ -75,7 +75,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     }
 
                     var otherDeclarations =
-                        node.SymbolTable.GetFunction(((ProcedureCall)functionCaller.FunctionCall).ProcedureName.URI);
+                        node.SymbolTable.GetFunction(((ProcedureCall)functionCaller.FunctionCall).ProcedureName.URI, null, functionCaller.FunctionCall.Namespace);
 
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
@@ -103,7 +103,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     }
 
                     functionDeclarations =
-                           node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName));
+                           node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null, functionCaller.FunctionCall.Namespace);
 
                     if (potentialVariables.Count > 1)
                     {
