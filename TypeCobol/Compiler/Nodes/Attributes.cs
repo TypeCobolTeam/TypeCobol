@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace TypeCobol.Compiler.Nodes {
 
 	using System.Collections.Generic;
@@ -39,6 +41,7 @@ public static class Attributes {
 		attributes["typecobol"] = new TypeCobolAttribute();
 		attributes["visibility"] = new VisibilityAttribute();
 		attributes["copyname"] = new LibraryCopyAttribute();
+		attributes["programName8"] = new ProgramName8Attribute();
 	}
 	private static ContainerAttribute DEFAULT = new ContainerAttribute();
 }
@@ -310,6 +313,24 @@ internal class LibraryCopyAttribute: Attribute {
 		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement().Name.Name;
 	}
 }
+    /// <summary>
+    /// return the name of enclosing program of the current node.
+    /// The name is limited to 8 characters
+    /// </summary>
+    internal class ProgramName8Attribute: Attribute {
+	    public object GetValue(object o, SymbolTable table) {
+            var node = o as Node;
+	        while (node != null) {
+	            var pgm = node as Program;
+	            if (pgm != null) {
+	                var name = pgm.CodeElement().ProgramName.Name;
+                    return pgm.CodeElement().ProgramName.Name.Substring(0,Math.Min(name.Length, 8));
+	            }
+	            node = node.Parent;
+	        }
+	        return "";
+	    }
+    }
 
 
 }
