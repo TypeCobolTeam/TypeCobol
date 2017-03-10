@@ -1,6 +1,8 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using Object = TypeCobol.Compiler.Nodes.Object;
@@ -231,11 +233,11 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(Perform perform);
         bool Visit(PerformProcedure performProcedure);
         bool Visit(Root root);
-        bool Visit(Program program);
+        bool Visit(Nodes.Program program);
         bool Visit(LibraryCopy libraryCopy);
-        bool Visit(Class classNode);
+        bool Visit(Nodes.Class classNode);
         bool Visit(Factory factory);
-        bool Visit(Method method);
+        bool Visit(Nodes.Method method);
         bool Visit(Object objectNode);
         bool Visit(End end);
 
@@ -332,6 +334,8 @@ namespace TypeCobol.Compiler.CodeElements
 
         bool Visit(RoundedResult roundedResult);
         bool Visit(CloseFileInstruction closeFileInstruction);
+
+        bool Visit(CodeModel.Program program);
     }
 
 
@@ -941,26 +945,13 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public virtual bool Visit(Program program) {
-            return true;
-        }
-
         public virtual bool Visit(LibraryCopy libraryCopy) {
-            return true;
-        }
-
-        public virtual bool Visit(Class classNode) {
             return true;
         }
 
         public virtual bool Visit(Factory factory) {
             return true;
         }
-
-        public virtual bool Visit(Method method) {
-            return true;
-        }
-
         public virtual bool Visit(Object objectNode) {
             return true;
         }
@@ -1326,6 +1317,26 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(IntrinsicStorageArea intrinsicStorageArea) {
+            return true;
+        }
+
+        public bool Visit(CodeModel.Program program)
+        {
+            return true;
+        }
+
+        public bool Visit(Nodes.Program program)
+        {
+            return true;
+        }
+
+        public bool Visit(Nodes.Class classNode)
+        {
+            return true;
+        }
+
+        public bool Visit(Nodes.Method method)
+        {
             return true;
         }
     }
