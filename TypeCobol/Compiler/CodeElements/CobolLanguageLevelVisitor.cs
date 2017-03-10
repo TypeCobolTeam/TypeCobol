@@ -63,6 +63,13 @@ namespace TypeCobol.Compiler.CodeElements
 
     public  interface IASTVisitor {
 
+        /// <summary>
+        /// Is this Visitor Allow visiting SymbolInformationForTokens?
+        /// </summary>
+        bool IsSymbolInformationForTokensEnabled
+        {
+            get;
+        }
         bool BeginNode([NotNull] Node node);
         void EndNode([NotNull] Node node);
 
@@ -337,6 +344,14 @@ namespace TypeCobol.Compiler.CodeElements
 
 
     public abstract class AbstractAstVisitor : IASTVisitor {
+        public virtual bool IsSymbolInformationForTokensEnabled
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public virtual bool BeginNode(Node node) {
             return true;
         }
