@@ -1508,3 +1508,4 @@ namespace TypeCobol.Compiler.CodeElements
         }
     }
 }
+

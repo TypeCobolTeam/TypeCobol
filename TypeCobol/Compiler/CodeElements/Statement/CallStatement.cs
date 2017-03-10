@@ -210,9 +210,11 @@ namespace TypeCobol.Compiler.CodeElements
         : base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement) { }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
-            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   &&
-                   this.ContinueVisitToChildren(astVisitor,
+            if (!base.VisitCodeElement(astVisitor))
+                return false;
+            if (!astVisitor.Visit(this))
+                return false;
+            return this.ContinueVisitToChildren(astVisitor,
                        ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction, ProcedureCall);
         }
     }

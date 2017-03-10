@@ -104,7 +104,7 @@ namespace TypeCobol.Compiler.CodeElements
                 continueVisit = this.ContinueVisitToChildren(astVisitor, StorageAreaDefinitions.Keys,
                                                                             StorageAreaDefinitions.Values);
             }
-            if (continueVisit && SymbolInformationForTokens != null)
+            if (astVisitor.IsSymbolInformationForTokensEnabled && continueVisit && SymbolInformationForTokens != null)
             {
                 continueVisit = this.ContinueVisitToChildren(astVisitor, SymbolInformationForTokens.Keys,
                                                                          SymbolInformationForTokens.Values);
