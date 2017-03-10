@@ -17,6 +17,10 @@ namespace TypeCobol.Compiler.CodeModel
         {
             SyntaxTree = new SyntaxTree();
         }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
 
         public override string ID
         {

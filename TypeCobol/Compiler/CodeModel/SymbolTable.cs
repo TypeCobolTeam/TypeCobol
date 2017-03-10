@@ -157,12 +157,10 @@ namespace TypeCobol.Compiler.CodeModel
         public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode, SymbolReference symbolReference)
         {
             var childrens = redefinesNode.Parent.Children;
-            int index =
-                childrens.Select((child, position) => new {child, position})
-                    .First(c => c.child.CodeElement == redefinesNode.CodeElement)
-                    .position - 1;
-            bool redefinedVariableFound = false;
+            int index =  childrens.IndexOf(redefinesNode);
 
+            bool redefinedVariableFound = false;
+           
             while (!redefinedVariableFound && index >= 0)
             {
                 CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as DataDescriptionEntry ??
