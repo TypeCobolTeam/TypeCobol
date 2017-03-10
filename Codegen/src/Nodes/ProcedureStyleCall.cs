@@ -63,7 +63,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 				_cache = new List<ITextLine>();
 				var hash = Node.FunctionDeclaration.Hash;
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
-			    var callString = $"CALL '{hash}' {(Node.FunctionCall.Arguments.Length == 0 ? null : "USING")}";
+			    var callString = string.Format("CALL '{0}'{1}", hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
 				var callTextLine = new TextLineSnapshot(-1, callString, null);
 				_cache.Add(callTextLine);
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL_PARAMS

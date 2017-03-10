@@ -32,11 +32,11 @@ namespace TypeCobolStudio
             FileCompiler compiler = null;
             if (textName != null)
             {
-                compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, TextDocument, compilerOptions, false);                    
+                compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, TextDocument, compilerOptions, false, project);                    
             }
             else
             {
-                compiler = new FileCompiler(TextDocument, project.SourceFileProvider, project, compilerOptions, false);
+                compiler = new FileCompiler(TextDocument, project.SourceFileProvider, project, compilerOptions, false, project);
             }
             CompilationUnit = compiler.CompilationResultsForProgram;
 
