@@ -5,14 +5,14 @@ namespace TypeCobol.Compiler.CodeElements
 {
 	public class DataType : ICobolLanguageLevel, IVisitable {
 		public string Name { get; private set; }
-		public bool IsStrong { get; internal set; }
+        public RestrictionLevel RestrictionLevel { get; internal set; }
 		public CobolLanguageLevel CobolLanguageLevel  { get; private set; }
 
-		public DataType([NotNull] string name, bool isStrong=false, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
+		public DataType([NotNull] string name, RestrictionLevel restrictionLevel = RestrictionLevel.WEAK, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
 			Name = name;
 			if (name == null) throw new ArgumentNullException();
-			this.IsStrong = isStrong;
-			this.CobolLanguageLevel = cobolLanguageLevel;
+		    this.RestrictionLevel = restrictionLevel;
+            this.CobolLanguageLevel = cobolLanguageLevel;
 		}
 
 		public override string ToString() { return Name; }
@@ -39,11 +39,11 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public static DataType CreateCustom(string name, bool isStrong=true, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
+		public static DataType CreateCustom(string name, RestrictionLevel restrictionLevel = RestrictionLevel.STRONG, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
 			foreach(var builtin in BuiltInCustomTypes)
-				if (builtin.Name.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))
+				if (builtin.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 					return builtin;
-			return new DataType(name, isStrong, cobolLanguageLevel);
+			return new DataType(name, restrictionLevel, cobolLanguageLevel);
 		}
 
 		public static DataType Create(string picture) {
@@ -127,9 +127,9 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType Occurs             = new DataType("Array");
         // [TYPECOBOL]
         //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
-        public static readonly DataType Boolean            = new DataType("BOOL", true, CobolLanguageLevel.TypeCobol);
+        public static readonly DataType Boolean            = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
         //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
-        public static readonly DataType Date               = new DataType("DATE", true, CobolLanguageLevel.TypeCobol);
+        public static readonly DataType Date               = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
 		public static Nodes.TypeDefinition CreateBuiltIn(DataType type) {
 			if (type == DataType.Date) return CreateDate();
@@ -159,8 +159,12 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 
 		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, };
-// [/TYPECOBOL]
-
-
-	}
+        // [/TYPECOBOL]
+    }
+    public enum RestrictionLevel
+    {
+        WEAK = 0,
+        STRICT = 1,
+        STRONG = 2
+    }
 }

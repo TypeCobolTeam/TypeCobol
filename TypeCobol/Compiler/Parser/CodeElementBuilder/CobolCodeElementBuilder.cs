@@ -1026,11 +1026,15 @@ namespace TypeCobol.Compiler.Parser
 				var typedef = new DataTypeDescriptionEntry();
                 typedef.DataTypeName = CobolWordsBuilder.CreateDataTypeNameDefinition(context.dataNameDefinition());
                 var strong = context.cobol2002TypedefClause().STRONG();
-				typedef.Strong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
-
+                var strict = context.cobol2002TypedefClause().STRICT();
+                typedef.Strong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
+                typedef.Strict = new SyntaxProperty<bool>(strict != null, ParseTreeUtils.GetFirstToken(strict));
+                var restrictionLevel = typedef.Strong.Value ? RestrictionLevel.STRONG 
+                                        : typedef.Strict.Value ? RestrictionLevel.STRICT 
+                                        : RestrictionLevel.WEAK;
                 entry = typedef;
                 entry.DataName = typedef.DataTypeName;
-                entry.DataType = new DataType(typedef.DataTypeName.Name, typedef.IsStrong, CobolLanguageLevel.Cobol2002);               
+                entry.DataType = new DataType(typedef.DataTypeName.Name, restrictionLevel, CobolLanguageLevel.Cobol2002);               
             }
 // [/COBOL 2002]
             else {               
@@ -1269,10 +1273,9 @@ namespace TypeCobol.Compiler.Parser
                 // [COBOL 2002]
                 if (entry.UserDefinedDataType != null)
                 {
-                    //Note we can't know here, if the type is strongly typed or not. This must be done during semantic phase (Node)
-                    //use false for "isStrong", because we must make a choice
-                    entry.DataType = DataType.CreateCustom(entry.UserDefinedDataType.Name, isStrong: false,
-                        cobolLanguageLevel: CobolLanguageLevel.Cobol2002);
+                    //Note we can't know here, if the type is strongly/strictly typed or not. This must be done during semantic phase (Node)
+                    //use false for "isStrong" and "isStrict", because we must make a choice
+                    entry.DataType = DataType.CreateCustom(entry.UserDefinedDataType.Name, RestrictionLevel.WEAK, cobolLanguageLevel: CobolLanguageLevel.Cobol2002);
                 }
                 // [/COBOL 2002]
                 else if (entry.Picture != null)

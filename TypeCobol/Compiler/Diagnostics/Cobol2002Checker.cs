@@ -26,24 +26,42 @@
         }
         private void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
             if (typedef == null) return;
-            if (typedef.LevelNumber.Value != 1) {
+
+           
+            if (typedef.LevelNumber.Value != 1)
+            {
                 string message = "TYPEDEF clause can only be specified for level 01 entries";
                 DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
             }
-            if (typedef.Picture != null && typedef.DataType.IsStrong) {
-                string message = "Elementary TYPEDEF cannot be STRONG";
-                string rulestack = new RuleStackBuilder().GetRuleStack(context.cobol2002TypedefClause());
-                DiagnosticUtils.AddError(typedef, message, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
-            }
-            if (typedef.IsExternal) {
+
+            if (typedef.IsExternal)
+            {
                 string message = "EXTERNAL clause cannot be specified with TYPEDEF clause";
                 foreach (var external in context.externalClause())
                     DiagnosticUtils.AddError(typedef, message, external);
             }
-            if (typedef.DataType.IsStrong && typedef.InitialValue != null) {
-                string message = "STRONG TYPEDEF cannot contain VALUE clause:";
-                foreach (var valeuClause in context.valueClause())
-                    DiagnosticUtils.AddError(typedef, message, valeuClause);
+            
+
+            if (typedef.RestrictionLevel == RestrictionLevel.STRICT) //Manage as a STRICT TYPEDEF
+            {
+
+            }
+
+            if (typedef.RestrictionLevel == RestrictionLevel.STRONG)//Manage as a STRONG TYPEDEF
+            {
+                if (typedef.InitialValue != null)
+                {
+                    string message = "STRONG TYPEDEF cannot contain VALUE clause:";
+                    foreach (var valeuClause in context.valueClause())
+                        DiagnosticUtils.AddError(typedef, message, valeuClause);
+                }
+
+                if (typedef.Picture != null)
+                {
+                    string message = "Elementary TYPEDEF cannot be STRONG";
+                    string rulestack = new RuleStackBuilder().GetRuleStack(context.cobol2002TypedefClause());
+                    DiagnosticUtils.AddError(typedef, message, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
+                }
             }
         }
     }
@@ -55,7 +73,7 @@
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
                 DiagnosticUtils.AddError(typeDefinition.CodeElement, message, MessageCode.SemanticTCErrorInParser);
             }
-            if (typeDefinition.IsStrong) {
+            if (typeDefinition.RestrictionLevel == RestrictionLevel.STRONG) {
                 foreach (var sub in typeDefinition.Children) {
                     CheckForValueClause(sub, typeDefinition.QualifiedName);
                 }
@@ -93,9 +111,9 @@
                 return;
             }
 
-            if (redefinedVariable.IsStronglyTyped)
+            if (redefinedVariable.IsStronglyTyped || redefinedVariable.IsStrictlyTyped)
             {
-                string message = "Illegal REDEFINES: \'"+ redefinesSymbolReference + "\' is strongly-typed";
+                string message = string.Format("Illegal REDEFINES: '{0}' is {1}", redefinesSymbolReference, redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
                 DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
             }
         }
@@ -121,10 +139,11 @@ class RenamesChecker: NodeListener {
 			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
 		}
 		foreach(var v in found) {
-			if (v.IsStronglyTyped) {
-                    string message = "Illegal RENAMES: \'"+renames+"\' is strongly-typed";
-				DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-			}
+                if (v.IsStronglyTyped || v.IsStrictlyTyped)
+                {
+                    string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames, v.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
+                    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                }
 		}
 	}
 }

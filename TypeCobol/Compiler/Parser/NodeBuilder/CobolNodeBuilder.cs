@@ -354,7 +354,7 @@ namespace TypeCobol.Compiler.Parser
             var types = node.SymbolTable.GetTypes(node);
             if (types.Count == 1)
             {
-                data.DataType.IsStrong = types[0].DataType.IsStrong;
+                data.DataType.RestrictionLevel = types[0].DataType.RestrictionLevel;
             }
             //else do nothing, it's an error that will be treated by a Checker (Cobol2002Checker obviously).
 

@@ -462,11 +462,14 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		if (sending != receiving) {
 			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
-			if (receiving.IsStrong) {
-				if (!IsUnsafe) {
-					string message = "Cannot write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+".";
-					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-				}
+			if (receiving.RestrictionLevel > RestrictionLevel.WEAK) {
+                    if (!IsUnsafe)
+                    {
+                        string message = string.Format("Cannot write {0} to {1} typed variable {2}:{3}."
+                                                      , sending, receiving.RestrictionLevel == RestrictionLevel.STRONG ? "strongly" : "strictly"
+                                                      , wname.Head, receiving);
+                        DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                    }
 			} else {
 				if (IsUnsafe) {
 					string message = "Useless UNSAFE with non strongly typed receiver.";

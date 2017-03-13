@@ -170,9 +170,19 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                if (DataType.IsStrong) return true;
+                if (DataType.RestrictionLevel == RestrictionLevel.STRONG) return true;
                 var parent = Parent as DataDefinition;
                 return parent != null && parent.IsStronglyTyped;
+            }
+        }
+
+        public bool IsStrictlyTyped
+        {
+            get
+            {
+                if (DataType.RestrictionLevel == RestrictionLevel.STRICT) return true;
+                var parent = Parent as DataDefinition;
+                return parent != null && parent.IsStrictlyTyped;
             }
         }
     }
@@ -212,7 +222,7 @@ namespace TypeCobol.Compiler.Nodes {
     public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>
     {
         public TypeDefinition(DataTypeDescriptionEntry entry): base(entry) { }
-        public bool IsStrong { get { return this.CodeElement().IsStrong; } }
+        public RestrictionLevel RestrictionLevel { get { return this.CodeElement().RestrictionLevel; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);

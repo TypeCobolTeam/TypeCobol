@@ -131,3 +131,6 @@ tcCallStatement:
 callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? sharedVariableOrFileName; // TCRFUN_INPUT_BY
 callInoutParameter: sharedStorageArea1;  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
 callOutputParameter: sharedStorageArea1; // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
+
+// When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
+cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)?;
