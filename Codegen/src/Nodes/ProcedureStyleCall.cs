@@ -61,9 +61,9 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-				var hash = GetHash(Statement.ProcedureCall);
-                //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
-				var callTextLine = new TextLineSnapshot(-1, "CALL '" + hash + "' USING ", null);
+				var hash = Node.FunctionDeclaration.Hash;
+			    var callString = string.Format("CALL '{0}'{1}", hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+				var callTextLine = new TextLineSnapshot(-1, callString, null);
 				_cache.Add(callTextLine);
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL_PARAMS
 				var indent = new string(' ', 13);
@@ -111,24 +111,6 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		}
 	}
 
-        private string GetHash(ProcedureCall call)
-        {
-            var funcDeclarations = call.FilteredFunctionDeclarations;
-            if (funcDeclarations != null && funcDeclarations.Count < 1) return "?NOT_FOUND?";
-            if (funcDeclarations.Count > 1) return "?AMBIGUOUS?";
-            return funcDeclarations[0].Hash;
-        }
-
-    /// <summary>
-    /// Get the String representation of an parameter with a Sharing Mode.
-    /// Rule: TCCODEGEN_FUNCALL_PARAMS
-    /// </summary>
-    /// <param name="parameter">The Parameter</param>
-    /// <param name="table">The Symbol table</param>
-    /// <param name="mode">Argument mode Input, InOut, Output, etc...</param>
-    /// <param name="previousSharingMode">The previous Sharing Mode</param>
-    /// <param name="previousSpan">The previous marging span</param>
-    /// <returns>The String representation of the Sharing Mode paramaters</returns>
 	private string ToString(TypeCobol.Compiler.CodeElements.CallSiteParameter parameter, Compiler.CodeModel.SymbolTable table, ArgMode mode,
         ref TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode, ref int previousSpan) {
         Variable variable = parameter.StorageAreaOrValue;

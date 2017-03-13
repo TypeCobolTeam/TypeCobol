@@ -142,19 +142,80 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-public class ProcedureStyleCallStatement: StatementElement {
-	public ProcedureCall ProcedureCall { get; private set; }
+    public class ProcedureStyleCallStatement : StatementElement
+    {
+        public ProcedureCall ProcedureCall { get; private set; }
 
-	public ProcedureStyleCallStatement(ProcedureCall call)
+        /// <summary>
+        /// p304:
+        /// identifier-1, literal-1
+        /// literal-1 must be an alphanumeric literal. identifier-1 must be an
+        /// alphanumeric, alphabetic, or numeric data item described with USAGE
+        /// DISPLAY such that its value can be a program-name.
+        /// The rules of formation for program-names are dependent on the
+        /// PGMNAME compiler option. For details, see the discussion of
+        /// 304 Enterprise COBOL for z/OS, V5.1.1 Language Reference
+        /// program-names in “PROGRAM-ID paragraph” on page 100 and also the
+        /// description of PGMNAME in the Enterprise COBOL Programming Guide.
+        /// Usage note: Do not specify the name of a class or method in the CALL
+        /// statement.
+        ///
+        /// p305:
+        /// When the called subprogram is to be entered at the beginning of the PROCEDURE
+        /// DIVISION, literal-1 or the contents of identifier-1 must specify the program-name of
+        /// the called subprogram.
+        /// When the called subprogram is entered through an ENTRY statement, literal-1 or
+        /// the contents of identifier-1 must be the same as the name specified in the called
+        /// subprogram's ENTRY statement.
+        /// For information about how the compiler resolves calls to program-names found in
+        /// multiple programs, see “Conventions for program-names” on page 86.
+        ///
+        /// p305:
+        /// procedure-pointer-1
+        /// Must be defined with USAGE IS PROCEDURE-POINTER and must be set
+        /// to a valid program entry point; otherwise, the results of the CALL
+        /// statement are undefined.
+        /// After a program has been canceled by COBOL, released by PL/I or C, or
+        /// deleted by assembler, any procedure-pointers that had been set to that
+        /// program's entry point are no longer valid.
+        ///
+        /// p305:
+        /// function-pointer-1
+        /// Must be defined with USAGE IS FUNCTION-POINTER and must be set to
+        /// a valid function or program entry point; otherwise, the results of the CALL
+        /// statement are undefined.
+        /// After a program has been canceled by COBOL, released by PL/I or C, or
+        /// deleted by the assembler, any function-pointers that had been set to that
+        /// function or program's entry point are no longer valid.
+        /// </summary>
+        public SymbolReference ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction { get; set; }
+        public SymbolReference ProgramNameOrProgramEntry { get; set; }
+        public SymbolReference ProcdurePointerOrTCProcedureFunction { get; set; }
+
+
+        //SMEDILOL: idea use 2 SymbolReference split per CandidatesType
+        //Both are ambiguous, but less ambiguous than one
+        //But this can be a bad idea, because code that use CallStatement will now have to deal with 2 variables
+        //So try it, but don't hesitate to remove if it's a bad idea
+
+        //public SymbolReferenceVariable ProgramNameOrProgramEntry { get; set; }
+        //public SymbolReferenceVariable ProcdurePointerOrTCProcedureFunction { get; set; }
+
+        public ProcedureStyleCallStatement(ProcedureCall call)
 		: base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement)
 	{
 		this.ProcedureCall = call;
 	}
+        public ProcedureStyleCallStatement()
+        : base(CodeElementType.ProcedureStyleCall, StatementType.CallStatement) { }
 
-        public override bool VisitCodeElement(IASTVisitor astVisitor)
-        {
-            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                   && this.ContinueVisitToChildren(astVisitor, ProcedureCall);
+        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+            if (!base.VisitCodeElement(astVisitor))
+                return false;
+            if (!astVisitor.Visit(this))
+                return false;
+            return this.ContinueVisitToChildren(astVisitor,
+                       ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction, ProcedureCall);
         }
     }
 

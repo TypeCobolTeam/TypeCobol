@@ -83,7 +83,24 @@ namespace TypeCobol.Compiler.Parser
 			}
 		}
 
-		internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrIndexName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrIndexNameContext context)
+        internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrTCFunctionProcedure(CodeElementsParser.DataItemReferenceOrConditionReferenceContext context)
+		{
+			SymbolReference qualifiedDataNameOrQualifiedConditionName = CobolWordsBuilder.CreateQualifiedDataNameOrQualifiedConditionNameOrTCFunctionProcedure(context.qualifiedDataNameOrQualifiedConditionName());
+			if (context.subscript() == null || context.subscript().Length == 0)
+			{
+				return new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionName);
+			}
+			else
+			{
+				return new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionName,
+					CreateSubscriptExpressions(context.subscript()));
+			}
+		}
+
+
+        
+
+        internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReferenceOrIndexName(CodeElementsParser.DataItemReferenceOrConditionReferenceOrIndexNameContext context)
 		{
 			SymbolReference qualifiedDataNameOrQualifiedConditionNameOrIndexName = CobolWordsBuilder.CreateQualifiedDataNameOrQualifiedConditionNameOrIndexName(context.qualifiedDataNameOrQualifiedConditionNameOrIndexName());
 			DataOrConditionStorageArea storageArea = null;
@@ -335,6 +352,20 @@ namespace TypeCobol.Compiler.Parser
             return null;
 		}
 
+        [CanBeNull]
+		internal StorageArea CreateStorageAreaReferenceOrConditionReferenceOrTCFunctionProcedure([NotNull] CodeElementsParser.StorageAreaReferenceOrConditionReferenceContext context)
+		{
+			if (context.dataItemReferenceOrConditionReference() != null)
+			{
+				return CreateDataItemReferenceOrConditionReferenceOrTCFunctionProcedure(context.dataItemReferenceOrConditionReference());
+			}
+			else if(context.otherStorageAreaReference() != null)
+			{
+				return CreateOtherStorageAreaReference(context.otherStorageAreaReference());
+			}
+            return null;
+		}
+
 		internal StorageArea CreateStorageAreaReferenceOrConditionReferenceOrIndexName(CodeElementsParser.StorageAreaReferenceOrConditionReferenceOrIndexNameContext context)
 		{
 			if (context.dataItemReferenceOrConditionReferenceOrIndexName() != null)
@@ -378,6 +409,19 @@ namespace TypeCobol.Compiler.Parser
 			if(storageArea != null && context.referenceModifier() != null)
 			{
 				storageArea.ApplyReferenceModifier(CreateReferenceModifier(context.referenceModifier()));
+			}
+			return storageArea;
+		}
+
+        [CanBeNull]
+		internal StorageArea CreateIdentifierOrTCFunctionProcedure(CodeElementsParser.IdentifierContext context) {
+			if (context == null) return null;
+			StorageArea storageArea = CreateStorageAreaReferenceOrConditionReferenceOrTCFunctionProcedure(context.storageAreaReferenceOrConditionReference());
+            var refModifier = context.referenceModifier();
+
+            if (storageArea != null && refModifier != null)
+			{
+				storageArea.ApplyReferenceModifier(CreateReferenceModifier(refModifier));
 			}
 			return storageArea;
 		}
@@ -1150,6 +1194,29 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				StorageArea storageArea = CreateIdentifier(context.identifier());
+				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, storageArea);
+			}
+
+            // Collect storage area read/writes at the code element level
+            if (variable.StorageArea != null)
+            {
+                this.storageAreaReads.Add(variable.StorageArea);
+            }
+
+            return variable;
+        }
+
+        internal SymbolReferenceVariable CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(CodeElementsParser.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableContext context)
+		{
+            SymbolReferenceVariable variable = null;
+			if (context.programNameReferenceOrProgramEntryReference() != null)
+			{
+				SymbolReference symbolReference = CobolWordsBuilder.CreateProgramNameReferenceOrProgramEntryReference(context.programNameReferenceOrProgramEntryReference());
+				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, symbolReference);
+			}
+			else
+			{
+				StorageArea storageArea = CreateIdentifierOrTCFunctionProcedure(context.identifier());
 				variable = new SymbolReferenceVariable(StorageDataType.ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer, storageArea);
 			}
 

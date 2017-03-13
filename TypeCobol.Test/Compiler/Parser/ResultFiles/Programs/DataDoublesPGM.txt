@@ -8,7 +8,7 @@ Line 42[3,46] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol
 --- Program ---
 PROGRAM: Doubles common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   I-DOUBLE:Alphanumeric
   I-DOUBLE:Alphanumeric
@@ -29,10 +29,10 @@ PROGRAM: Doubles common:False initial:False recursive:False
   ANOTHER-GROUP:Alphanumeric
 -- PARAGRAPHS --
   PROC1
---- Intrinsic:Global
+--- Intrinsic:Namespace:Global
 -- DATA --------
-    GLOBO:Alphanumeric
+  GLOBO:Alphanumeric
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using TypeCobol.Compiler.Nodes;
+
+namespace TypeCobol.Compiler.CodeElements {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements.Expressions;
@@ -15,8 +17,9 @@ public interface VariableWriter {
 
 /// <summary>For statements calling functions.</summary>
 public interface FunctionCaller {
-	IList<FunctionCall> FunctionCalls { get; }
-}
+	FunctionCall FunctionCall { get; }
+    FunctionDeclaration FunctionDeclaration { get; set; }
+    }
 
 
 

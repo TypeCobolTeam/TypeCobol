@@ -1,7 +1,7 @@
 ﻿--- Program ---
 PROGRAM: Simple common:False initial:True recursive:False
  author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   str:Alphanumeric
   str:Alphanumeric
@@ -27,5 +27,5 @@ PROGRAM: Simple common:False initial:True recursive:False
   EMPTY-PARAGRAPH
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

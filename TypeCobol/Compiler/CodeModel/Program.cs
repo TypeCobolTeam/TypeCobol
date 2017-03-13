@@ -4,17 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeModel
 {
     /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public abstract class Program
+    public abstract class Program : Node
     {
-        protected Program() {
+        protected Program(CodeElement codeElement) : base(codeElement)
+        {
             SyntaxTree = new SyntaxTree();
         }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+
+        public override string ID
+        {
+            get { return Identification != null ? Identification.ProgramName.Name : base.ID; }
+        }
+
+        //TODO: As to change in the future when implementing the full namespace functionnality.
+        public string Namespace { get { return ID; } }
 
         /// <summary>
         /// True if the current program is contained in another program.
@@ -94,7 +108,8 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
     public class SourceProgram: Program {
 
-		public SourceProgram(SymbolTable EnclosingScope) {
+		public SourceProgram(SymbolTable EnclosingScope, CodeElement codeElement) : base(codeElement)
+		{
 			IsNested = false;
 			SymbolTable = new SymbolTable(EnclosingScope);
 			SyntaxTree.Root.SymbolTable = SymbolTable;
@@ -137,6 +152,11 @@ namespace TypeCobol.Compiler.CodeModel
         /// between class-names and external class-names.
         /// </summary>
         public RepositoryParagraph RepositoryOfClassNames { get; set; }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            throw new NotImplementedException();
+        }
     }
     
     /// <summary>
@@ -145,7 +165,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// Nested programs are not supported for programs compiled with the THREAD option
     /// </summary>
 	public class NestedProgram: Program {
-		public NestedProgram(Program containingProgram) {
+		public NestedProgram(Program containingProgram, CodeElement codeElement) : base(codeElement) {
 			IsNested = true;
 			ContainingProgram = containingProgram;
 			SymbolTable = new SymbolTable(containingProgram.SymbolTable);
@@ -154,5 +174,10 @@ namespace TypeCobol.Compiler.CodeModel
 
         /// <summary>A nested program is a program that is contained in another program.</summary>
 		public Program ContainingProgram { get; private set; }
-	}
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

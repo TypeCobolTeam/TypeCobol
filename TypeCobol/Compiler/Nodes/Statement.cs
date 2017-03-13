@@ -1,12 +1,12 @@
 ﻿namespace TypeCobol.Compiler.Nodes {
+    using System;
+    using System.Collections.Generic;
+    using TypeCobol.Compiler.CodeElements;
+    using TypeCobol.Compiler.CodeElements.Expressions;
 
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.CodeElements.Expressions;
 
 
-
-public interface Statement { }
+    public interface Statement { }
 
 
 
@@ -34,20 +34,15 @@ public interface Statement { }
             return astVisitor.Visit(this);
         }
     }
-    public class ProcedureStyleCall: Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller {
-	    public ProcedureStyleCall(ProcedureStyleCallStatement statement): base(statement) { }
+    public class ProcedureStyleCall : Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller {
+        public ProcedureStyleCall(ProcedureStyleCallStatement statement) : base(statement) { }
 
-	    public IList<FunctionCall> FunctionCalls {
-		    get {
-			    var call = ((ProcedureStyleCallStatement)CodeElement).ProcedureCall;
-                call.FunctionDeclarations = this.SymbolTable.GetFunction(new URI(call.FunctionName));
-                call.FilteredFunctionDeclarations = this.SymbolTable.GetFunction(call.ProcedureName, call.AsProfile(this.SymbolTable));
-                var calls =  new List<FunctionCall>();
-			    calls.Add(call);
-			    return calls;
-		    }
-	    }
+        public FunctionCall FunctionCall
+        {
+            get { return ((ProcedureStyleCallStatement) CodeElement).ProcedureCall; }
+        }
 
+        public FunctionDeclaration FunctionDeclaration {get; set;}
 	    
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -179,10 +174,12 @@ public interface Statement { }
 
     public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableWriter,FunctionCaller {
 	    public Move(MoveStatement statement): base(statement) { }
-	    public IList<FunctionCall> FunctionCalls { get { return this.CodeElement().FunctionCalls; } }
+	    public FunctionCall FunctionCall { get { return this.CodeElement().FunctionCall; } }
 	   
 	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
+
+        public FunctionDeclaration FunctionDeclaration { get; set; }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

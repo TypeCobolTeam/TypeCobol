@@ -37,8 +37,8 @@ namespace TypeCobol.Compiler.Nodes {
         /// and
         /// <see cref="Remove" />
         /// methods.
-        public IReadOnlyList<Node> Children {
-            get { return children.AsReadOnly(); }
+        public List<Node> Children {
+            get { return children; }
         }
 
         /// <summary>

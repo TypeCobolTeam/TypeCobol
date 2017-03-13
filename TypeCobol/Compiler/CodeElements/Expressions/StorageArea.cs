@@ -1,9 +1,11 @@
-﻿                                        using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -23,7 +25,7 @@ namespace TypeCobol.Compiler.CodeElements
         public StorageAreaKind Kind { get; protected set;  }
 
         [CanBeNull]
-        public SymbolReference SymbolReference { get; protected set; }
+        public SymbolReference SymbolReference { get; set; }
 
         /// <summary>
         /// True if this storage area is read from by the program
@@ -364,18 +366,25 @@ namespace TypeCobol.Compiler.CodeElements
     public abstract class FunctionCall : IVisitable {
         protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
 		    Type = type;
-		    Arguments = arguments;
-            FunctionDeclarations = new List<FunctionDeclaration>();
-            FilteredFunctionDeclarations = new List<FunctionDeclaration>();
+            Arguments = arguments;
         }
 
 	    public FunctionCallType Type { get; private set; }
 	    public abstract string FunctionName { get; }
-	    public abstract Token FunctionNameToken { get; }
+        public abstract string Namespace { get; }
+        public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
-        public List<FunctionDeclaration> FunctionDeclarations { get; set; }
-        public List<FunctionDeclaration> FilteredFunctionDeclarations { get; set; }
 
+        public virtual ParameterList AsProfile(CodeModel.SymbolTable table)
+        {
+            //Need to be updated in a near future
+            var profile = new FunctionCallParameterList
+            {
+                InputParameters = FunctionCallParameterList.CreateParameters(Arguments.ToList(), table),
+            };
+            return profile;
+        }
+     
         public virtual bool NeedDeclaration {
             get { return true; }
         }
@@ -454,6 +463,14 @@ namespace TypeCobol.Compiler.CodeElements
             get { return false; }
         }
 
+        public override string Namespace
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, IntrinsicFunctionName, FunctionNameToken);
@@ -471,30 +488,36 @@ namespace TypeCobol.Compiler.CodeElements
 		public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
 		public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
 
+        public override string Namespace { get { return (UserDefinedFunctionName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference)UserDefinedFunctionName).Tail.Name; } }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, UserDefinedFunctionName, FunctionNameToken);
         }
+
+        
     }
 
 	public class ProcedureCall: FunctionCall {
 		public ProcedureCall(SymbolReference name, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs)
 			: base(FunctionCallType.UserDefinedFunctionCall, null) {
 			ProcedureName = name;
-			InputParameters  = inputs  ?? new List<CallSiteParameter>();
-			InoutParameters  = inouts  ?? new List<CallSiteParameter>();
-			OutputParameters = outputs ?? new List<CallSiteParameter>();
-		}
+
+            InputParameters = inputs ?? new List<CallSiteParameter>();
+            InoutParameters = inouts ?? new List<CallSiteParameter>();
+            OutputParameters = outputs ?? new List<CallSiteParameter>();
+
+        }
 
 		public SymbolReference ProcedureName { get; private set; }
 		public override string FunctionName { get { return ProcedureName.Name; } }
 		public override Token FunctionNameToken { get { return ProcedureName.NameLiteral.Token; } }
-        
 
-        public List<CallSiteParameter> InputParameters  { get; private set; }
-		public List<CallSiteParameter> InoutParameters  { get; private set; }
-		public List<CallSiteParameter> OutputParameters { get; private set; }
-		private List<CallSiteParameter> _cache;
+        public List<CallSiteParameter> InputParameters { get; private set; }
+        public List<CallSiteParameter> InoutParameters { get; private set; }
+        public List<CallSiteParameter> OutputParameters { get; private set; }
+
+        private List<CallSiteParameter> _cache;
 		public override CallSiteParameter[] Arguments {
 			get {
 				if (_cache == null) {
@@ -507,16 +530,22 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		public ParameterList AsProfile(CodeModel.SymbolTable table) {
-			var profile = new FunctionCallParameterList();
-			profile.InputParameters  = FunctionCallParameterList.CreateParameters(InputParameters, table);
-			profile.InoutParameters  = FunctionCallParameterList.CreateParameters(InoutParameters, table);
-			profile.OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table);
-			profile.ReturningParameter = null;
-			return profile;
-		}
+        public override string Namespace { get { return (ProcedureName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference) ProcedureName).Tail.Name; } }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+        public override ParameterList AsProfile(SymbolTable table)
+	    {
+	        var profile = new FunctionCallParameterList
+	        {
+	            InputParameters = FunctionCallParameterList.CreateParameters(InputParameters, table),
+	            InoutParameters = FunctionCallParameterList.CreateParameters(InoutParameters, table),
+	            OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table),
+	            ReturningParameter = null
+	        };
+	        return profile;
+        }
+
+
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, ProcedureName, FunctionNameToken)

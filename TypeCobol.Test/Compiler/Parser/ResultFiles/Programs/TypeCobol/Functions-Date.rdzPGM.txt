@@ -1,12 +1,12 @@
 ﻿--- Diagnostics ---
-Line 142[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[9,15:DECLARE]<DECLARE>
-Line 154[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[9,15:DECLARE]<DECLARE>
-Line 160[8,14] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunction". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:DECLARE]<DECLARE>
+Line 142[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[9,15:DECLARE]<DECLARE>
+Line 154[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[9,15:DECLARE]<DECLARE>
+Line 160[8,14] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:DECLARE]<DECLARE>
 
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- TYPES -------
   DateJulian:DateJulian
   DateDB2:DateDB2
@@ -82,5 +82,5 @@ PROGRAM: DateFunctions common:False initial:False recursive:False
     return: y:Numeric
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

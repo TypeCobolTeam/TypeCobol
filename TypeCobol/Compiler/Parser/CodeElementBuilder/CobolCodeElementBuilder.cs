@@ -2569,7 +2569,7 @@ namespace TypeCobol.Compiler.Parser
 			else
 			if (context.WHEN_COMPILED() != null) node = context.WHEN_COMPILED();
 			Token symbolToken = ParseTreeUtils.GetFirstToken(node);
-			SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.FunctionName);
+			SymbolInformation symbolInfo = new SymbolInformation(symbolToken, SymbolRole.ExternalName, SymbolType.TCFunctionName);
 			CodeElement.SymbolInformationForTokens[symbolToken] = symbolInfo;
         }
 

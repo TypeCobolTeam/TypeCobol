@@ -16,8 +16,8 @@ namespace TypeCobol.Compiler.Diagnostics {
     public class Cobol85CompleteASTChecker : AbstractAstVisitor
     {
         public override bool BeginNode(Node node)
-        {            
-           CodeElement codeElement = node.CodeElement;
+        {
+            CodeElement codeElement = node.CodeElement;
             if (codeElement != null && codeElement.StorageAreaReads != null)
             {
                 foreach (var storageAreaRead in codeElement.StorageAreaReads)
@@ -32,8 +32,12 @@ namespace TypeCobol.Compiler.Diagnostics {
                     CheckVariable(node, storageAreaWrite);
                 }
             }
+
+            FunctionCallChecker.OnNode(node);
             return base.BeginNode(node);
         }
+
+
 
         public override bool BeginCodeElement(CodeElement codeElement) {
             //This checker is only for Node after the full AST has been created
@@ -70,23 +74,26 @@ namespace TypeCobol.Compiler.Diagnostics {
             }
         }
 
-        private void CheckVariable(Node node, StorageArea storageArea)
-        {
+        private void CheckVariable(Node node, StorageArea storageArea) {
             if (!storageArea.NeedDeclaration)
             {
                 return;
             }
             var area = storageArea.GetStorageAreaThatNeedDeclaration;
 
+            if (area.SymbolReference == null) return;
+            //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
+            if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return;
+
             var found = node.SymbolTable.GetVariable(area);
             if (found.Count < 1)
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node.CodeElement, "Symbol " + area + " is not referenced");
             if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + area);
+
+        }
         }
 
-
-    }
 
 
     class DataDescriptionChecker: CodeElementListener {
@@ -422,7 +429,7 @@ namespace TypeCobol.Compiler.Diagnostics {
         {
             Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
         }
-    }
+		    }
 
 
     class WriteTypeConsistencyChecker: NodeListener {

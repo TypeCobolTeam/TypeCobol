@@ -6,7 +6,7 @@ Line 23[44,48] <27, Error, Syntax> - Syntax error : PICTURE clause incompatible 
 --- Program ---
 PROGRAM: TESTPGM1 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   W-TAB-LCC-NONCLOSES:Alphanumeric
   W-TAB-LCC-X:Array
@@ -21,5 +21,5 @@ PROGRAM: TESTPGM1 common:False initial:False recursive:False
   PRINCIPALE
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE
