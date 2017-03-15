@@ -143,6 +143,7 @@ namespace TypeCobol.Codegen {
         [TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
+        [Ignore]
 		public void ParseProcedureCallPublic() {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-Public") +".rdz.tcbl", skeletons);
