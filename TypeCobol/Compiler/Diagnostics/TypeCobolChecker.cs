@@ -152,7 +152,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
             var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
             if (callArgsCount > parameters.Count)
             {
-                var m = string.Format("Function '{0}' only takes {1} parameter(s)", definition.Name, parameters.Count);
+                var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName , parameters.Count);
                 DiagnosticUtils.AddError(e, m);
             }
             for (int c = 0; c < parameters.Count; c++)
@@ -179,7 +179,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                         var m =
                             string.Format(
                                 "Function '{0}' expected parameter '{1}' of type {2} and length {3} and received '{4}' of type {5} and length {6}",
-                                definition.Name, expected.Name, expected.DataType, expected.Length,
+                                call.FunctionName, expected.Name, expected.DataType, expected.Length,
                                 callArgName ?? string.Format("position {0}", c + 1), type.DataType, type.Length);
                         DiagnosticUtils.AddError(e, m);
                     }
@@ -187,7 +187,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 else
                 {
                     var m = string.Format("Function '{0}' is missing parameter '{1}' of type {2} and length {3}",
-                        definition.Name, expected.Name, expected.DataType, expected.Length);
+                        call.FunctionName, expected.Name, expected.DataType, expected.Length);
                     DiagnosticUtils.AddError(e, m);
                 }
             }
