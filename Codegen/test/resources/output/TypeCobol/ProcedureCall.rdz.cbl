@@ -70,7 +70,7 @@
                     by reference flag-value
                                  realformat
            end-call
-     
+                                                  
        
       *    CALL ValidateDateFormat
       *             INPUT      somedate by content 'YYYYMMDD'
@@ -87,7 +87,7 @@
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
       *    CALL ValidateDateFormat END-CALL
-           CALL 'd5130bbc' 
+           CALL 'd5130bbc'
                                    END-CALL
       * __________________________________________________
       * OK with INPUT on the same line as call
@@ -149,7 +149,7 @@
                                  myDate4
                     by reference flag-value
                                  realformat
-                                  
+                                         
            END-CALL
            .
 

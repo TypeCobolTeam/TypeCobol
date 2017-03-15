@@ -55,19 +55,21 @@
                     by reference flag-value
                                  realformat
            end-call
+                                                  
 
 
       *OK  call check of PGM1
       *   call check input somedate
           CALL 'c5ff0cee' USING
                                  somedate
-          end-call
+           end-call
                                    
       *OK 
       *   call PGM1::check input somedate
           CALL 'c5ff0cee' USING
                                  somedate
-          end-call
+           end-call
+                                         
           .
 
        END PROGRAM PGM1.
