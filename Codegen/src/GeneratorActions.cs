@@ -155,6 +155,20 @@ namespace TypeCobol.Codegen
             return null;
         }
 
+        /// <summary>
+        /// Get the Program Node corresponding to a Child
+        /// </summary>
+        /// <param name="child">The Child Node</param>
+        /// <returns>The Program Node</returns>
+        public static Node GetProgramNode(Node child)
+        {
+            if (child == null)
+                return null;
+            while (child != null && !(child is TypeCobol.Compiler.Nodes.Program))
+                child = child.Parent;
+            return child;
+        }
+
         public Node GetLocation(Node node, string location, out int? index)
         {
             index = null;
@@ -170,7 +184,7 @@ namespace TypeCobol.Codegen
                 }
 
             if (location == null || location.ToLower().Equals("node")) return node;
-            var root = node.Root;
+            var root = GetProgramNode(node) ?? node.Root;
             var result = root.Get(location);
             if (result != null) return result;
             result = Create(root, location);
