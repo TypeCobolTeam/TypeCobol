@@ -38,7 +38,6 @@ namespace TypeCobol.Codegen
         /// </summary>
         private TypeCobol.Compiler.Nodes.Program CurrentProgram = null;
 
-
         /// <summary>
         /// Constructor
         /// </summary>

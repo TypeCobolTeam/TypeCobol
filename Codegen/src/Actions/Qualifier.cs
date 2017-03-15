@@ -456,7 +456,6 @@ namespace TypeCobol.Codegen.Actions
                 return null;
             }
         }
-
         /// <summary>
         /// Execute the Qualification action
         /// <param name="generator">The Genarator instance</param>
