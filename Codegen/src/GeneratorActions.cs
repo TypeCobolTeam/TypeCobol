@@ -29,6 +29,15 @@ namespace TypeCobol.Codegen
         /// Event After executing an action
         /// </summary>
         public event EventHandler AfterAction;
+        /// <summary>
+        /// The Group Prefix of the current Program node.
+        /// </summary>
+        private string ProgramGroupPrefix = null;
+        /// <summary>
+        /// The Current Program Node.
+        /// </summary>
+        private TypeCobol.Compiler.Nodes.Program CurrentProgram = null;
+
 
         /// <summary>
         /// Constructor
@@ -62,10 +71,24 @@ namespace TypeCobol.Codegen
         /// <param name="node"></param>
         public void Visit(Node node)
         {
+            string saveProgramGroupPrefix = ProgramGroupPrefix;
+            TypeCobol.Compiler.Nodes.Program saveCurrentProgram = CurrentProgram;
+            if (node is TypeCobol.Compiler.Nodes.Program)
+            {
+                CurrentProgram = node as TypeCobol.Compiler.Nodes.Program;
+                ProgramGroupPrefix = node.CodeElement.Text;
+            }
+
             var actions = GetActions(node);
             AddRange(actions);
             foreach (var child in new List<Node>(node.Children)) 
                 child.Accept(this);
+
+            if (node is TypeCobol.Compiler.Nodes.Program)
+            {
+                ProgramGroupPrefix = saveProgramGroupPrefix;
+                CurrentProgram = saveCurrentProgram;
+            }
         }
 
         /// <summary>
@@ -130,14 +153,19 @@ namespace TypeCobol.Codegen
         public TypeCobol.Codegen.Actions.Action GetAction(Node source, Dictionary<string, object> properties, Pattern pattern)
         {
             int? index;
+            string group = pattern.Group;
+            if (group != null && ProgramGroupPrefix != null)
+            {                
+                group = ProgramGroupPrefix + group;
+            }
             var destination = GetLocation(source, pattern.Location, out index);
             if ("create".Equals(pattern.Action))
             {
-                return new Create(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter, index);
+                return new Create(destination, pattern.Template, properties, group, pattern.Delimiter, index);
             }
             if ("replace".Equals(pattern.Action))
             {
-                return new Replace(destination, pattern.Template, properties, pattern.Group, pattern.Delimiter);
+                return new Replace(destination, pattern.Template, properties, group, pattern.Delimiter);
             }
             if ("comment".Equals(pattern.Action))
             {
@@ -160,13 +188,13 @@ namespace TypeCobol.Codegen
         /// </summary>
         /// <param name="child">The Child Node</param>
         /// <returns>The Program Node</returns>
-        public static Node GetProgramNode(Node child)
+        public static TypeCobol.Compiler.Nodes.Program GetProgramNode(Node child)
         {
             if (child == null)
                 return null;
             while (child != null && !(child is TypeCobol.Compiler.Nodes.Program))
                 child = child.Parent;
-            return child;
+            return (TypeCobol.Compiler.Nodes.Program)child;
         }
 
         public Node GetLocation(Node node, string location, out int? index)
@@ -184,7 +212,7 @@ namespace TypeCobol.Codegen
                 }
 
             if (location == null || location.ToLower().Equals("node")) return node;
-            var root = GetProgramNode(node) ?? node.Root;
+            var root = CurrentProgram ?? (GetProgramNode(node) ?? node.Root);
             var result = root.Get(location);
             if (result != null) return result;
             result = Create(root, location);
