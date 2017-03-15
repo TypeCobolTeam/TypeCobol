@@ -157,7 +157,7 @@ namespace TypeCobol.Compiler.CodeModel
         public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode, SymbolReference symbolReference)
         {
             var childrens = redefinesNode.Parent.Children;
-            int index =  childrens.ToList().IndexOf(redefinesNode);
+            int index = redefinesNode.Parent.IndexOf(redefinesNode);
 
             bool redefinedVariableFound = false;
            
