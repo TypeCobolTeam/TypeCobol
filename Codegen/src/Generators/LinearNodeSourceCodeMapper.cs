@@ -914,6 +914,11 @@ namespace TypeCobol.Codegen.Generators
                 lastNode = node;
                 foreach (var child in node.Children)
                 {
+                    if (child.NodeIndex >= 0 && Nodes[child.NodeIndex].Positions != null)
+                    {
+                        if (Nodes[child.NodeIndex] is NodeFunctionData)
+                            continue;//Ignore Function Nodes that will be moved.
+                    }
                     GetAfterLinearizationLastLine(child, ref lastLine, ref lastNode);
                 }
             }
