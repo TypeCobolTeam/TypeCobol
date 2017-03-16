@@ -83,6 +83,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new PGMName(),
                 new MemoryName(),
                 new NodeName(),
+                new TokenName(),
             };
 
         private IList<string> samples;
@@ -374,7 +375,38 @@ internal class ArithmeticComparator : FilesComparator {
         }
     }
 
-	internal class MemoryComparator: FilesComparator
+    internal class TokenComparator : FilesComparator
+    {
+        public TokenComparator(Paths path, bool debug = false) : base(path, debug)
+        {
+        }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        {
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var diagnostic in diagnostics)
+            {
+                sb.AppendLine(diagnostic.ToString());
+            }
+
+            sb.AppendLine("--- Tokens ---");
+            foreach (var tokensLine in compilationUnit.TokensLines) {
+                sb.AppendLine("---------------------------------");
+                sb.AppendLine("_" + tokensLine.SourceText + "_");
+                foreach (var sourceToken in tokensLine.SourceTokens) {
+                    sb.AppendLine("    _" + sourceToken.SourceText + "_    " +  sourceToken);
+                }
+            }
+
+            string result = sb.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+        }
+    }
+
+    internal class MemoryComparator: FilesComparator
 	{
 	    public MemoryComparator(Paths path, bool debug = false) : base(path, debug)
 	    {
@@ -490,6 +522,12 @@ internal class ArithmeticComparator : FilesComparator {
     {
         public string CreateName(string name) { return name + "-Nodes"; }
         public Type GetComparatorType() { return typeof(NodeComparator); }
+    }
+
+    internal class TokenName : Names
+    {
+        public string CreateName(string name) { return name + "-Tokens"; }
+        public Type GetComparatorType() { return typeof(TokenComparator); }
     }
 
     internal class MemoryName : Names
