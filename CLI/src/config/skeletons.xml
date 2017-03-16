@@ -93,7 +93,7 @@
     </conditions>
     <patterns>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
-01  TC-%programName8-LibFctList-Loaded PIC X(01) VALUE SPACE.
+01  TC-%programName8-LibFctList-Loaded PIC X(01) VALUE SPACE EXTERNAL.
     88 TC-%programName8-LibFctList-IsLoaded      VALUE '1'.
       </pattern>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY">
@@ -206,5 +206,59 @@
       <pattern action="expand" location="NODE"></pattern>
     </patterns>
   </skeleton>
+
+  <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.Program"/>
+    </conditions>
+    <patterns>
+      <pattern location="program.data-division.working-storage" action="create">
+        @{
+          var items = "";
+          foreach (var pgm in %imports.Programs.Values) {
+            items += "01  TC-"+pgm.Name + "-LibFctList-Loaded PIC X(01) VALUE SPACE EXTERNAL.\n";
+            items += "    88 TC-" + pgm.Name + "-LibFctList-IsLoaded      VALUE '1'.\n";
+            foreach (var proc in pgm.Procedures.Values) {
+              items += "*"+ pgm.Name + "::" +proc.Name+'\n';
+              items += " 01 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
+            }
+          }
+        }
+        @items
+      </pattern>
+      <pattern location="program.procedure-division.sentence-0.begin" action="create">
+        <conditions>
+          <condition node="TypeCobol.Compiler.Nodes.Program"/>
+        </conditions>
+        @{
+        var clause = "";
+        if (!%imports.IsEmpty) {
+        clause = "PERFORM TC-Initializations\n";
+        }
+        }
+        @clause
+      </pattern>
+      <pattern location="program.end" action="create">
+        <conditions>
+          <condition node="TypeCobol.Compiler.Nodes.Program"/>
+        </conditions>
+        @{
+        var clause = "";
+        if (!%imports.IsEmpty) {
+        clause += "*=================================================================\n";
+        clause += " TC-Initializations.\n";
+        clause += "*=================================================================\n";
+        foreach (var pgm in %imports.Programs.Values) {
+        clause += "     IF NOT TC-" + pgm.Name + "-LibFctList-IsLoaded\n";
+        clause += "         CALL 'ZCALLPGM' USING '"+ pgm.Name +"'\n";
+        clause += "     END-IF\n";
+        }
+        clause += "     .\n";
+        }
+        }
+        @clause
+      </pattern>
+    </patterns>
+    </skeleton>
 
 </skeletons>
