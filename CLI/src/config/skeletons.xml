@@ -207,6 +207,7 @@
     </patterns>
   </skeleton>
 
+  <!--
   <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.Program"/>
@@ -260,5 +261,6 @@
       </pattern>
     </patterns>
     </skeleton>
+    -->
 
 </skeletons>
