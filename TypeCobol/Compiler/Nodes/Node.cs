@@ -491,6 +491,16 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        /// <summary>
+        /// The Dictionary of all Procedure Style Calls performed by this Program.
+        /// Dictionary<hash:string, Tuple<qualified_items:IList<SymbolReference>, proc:TypeCobol.Compiler.Nodes.ProcedureStyleCall>>
+        /// This values is calculated by the Generator during the Qualifier Action.
+        /// </summary>
+        public Dictionary<string, Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>> ProcStyleCalls
+        {
+            get;
+            set;
+        }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
