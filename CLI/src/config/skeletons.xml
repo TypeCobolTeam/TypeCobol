@@ -93,8 +93,8 @@
     </conditions>
     <patterns>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
-01  TC-%programName8-LibFctList-Loaded PIC X(01) VALUE SPACE EXTERNAL.
-    88 TC-%programName8-LibFctList-IsLoaded      VALUE '1'.
+01  TC-%programName8-FctList-Loaded PIC X(02) EXTERNAL.
+    88 TC-%programName8-FctList-IsLoaded      VALUE 'OK'.
       </pattern>
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY">
         @{
@@ -124,9 +124,9 @@
         }
         }
  FctList-Process-Mode.
-     IF NOT TC-%programName8-LibFctList-IsLoaded
+     IF NOT TC-%programName8-FctList-IsLoaded
 @entries
-       SET TC-%programName8-LibFctList-IsLoaded TO TRUE
+       SET TC-%programName8-FctList-IsLoaded TO TRUE
      END-IF
         .
 
@@ -212,8 +212,8 @@
         @{
           var items = "";
           foreach (var pgm in %imports.Programs.Values) {
-            items += "01  TC-"+pgm.Name + "-LibFctList-Loaded PIC X(01) VALUE SPACE EXTERNAL.\n";
-            items += "    88 TC-" + pgm.Name + "-LibFctList-IsLoaded      VALUE '1'.\n";
+            items += "01  TC-"+pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
+            items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
             foreach (var proc in pgm.Procedures.Values) {
               items += "*"+ pgm.Name + "::" +proc.Name+'\n';
               items += " 01 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
@@ -245,7 +245,7 @@
         clause += " TC-Initializations.\n";
         clause += "*=================================================================\n";
         foreach (var pgm in %imports.Programs.Values) {
-        clause += "     IF NOT TC-" + pgm.Name + "-LibFctList-IsLoaded\n";
+        clause += "     IF NOT TC-" + pgm.Name + "-FctList-IsLoaded\n";
         clause += "         CALL 'ZCALLPGM' USING '"+ pgm.Name +"'\n";
         clause += "     END-IF\n";
         }

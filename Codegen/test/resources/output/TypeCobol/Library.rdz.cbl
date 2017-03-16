@@ -33,8 +33,8 @@
       *01 culture        TYPEDEF STRONG.
       *    10 lng                    PIC X(02).
       *    10 cty                    PIC X(02).
-       01  TC-DVZZDATE-LibFctList-Loaded PIC X(01) VALUE SPACE.
-           88 TC-DVZZDATE-LibFctList-IsLoaded      VALUE '1'.
+       01  TC-DVZZDATE-FctList-Loaded PIC X(02) EXTERNAL.
+           88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
       *DVZZDATE::currentDate
         01 TC-DVZZDATE-e5f209fa PROCEDURE-POINTER EXTERNAL.
       *DVZZDATE::currentDateDB2
@@ -86,14 +86,14 @@
            GOBACK.
 
         FctList-Process-Mode.
-            IF NOT TC-DVZZDATE-LibFctList-IsLoaded
+            IF NOT TC-DVZZDATE-FctList-IsLoaded
               SET TC-DVZZDATE-e5f209fa   TO ENTRY 'e5f209fa'
               SET TC-DVZZDATE-b8ac0397   TO ENTRY 'b8ac0397'
               SET TC-DVZZDATE-c4e76b45   TO ENTRY 'c4e76b45'
               SET TC-DVZZDATE-d55b3ea7   TO ENTRY 'd55b3ea7'
               SET TC-DVZZDATE-bfb0fa9b   TO ENTRY 'bfb0fa9b'
 
-              SET TC-DVZZDATE-LibFctList-IsLoaded TO TRUE
+              SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
             END-IF
                .
            .
