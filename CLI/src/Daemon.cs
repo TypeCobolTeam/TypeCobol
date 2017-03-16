@@ -2,6 +2,7 @@
 using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using Mono.Options;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -91,12 +92,27 @@ namespace TypeCobol.Server {
 		        if (args.Count > 0) pipename = args[0];
 
 		        if (once) {
-		            runOnce(config);
-		        } else {
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
+                    string debugLine = DateTime.Now + " start parsing of ";
+                    if (config.InputFiles.Count > 0)
+                    {
+                        debugLine += Path.GetFileName(config.InputFiles[0]);
+                    }
+                    debugLine += "\n";
+                    File.AppendAllText("TypeCobol.CLI.log", debugLine);
+                    runOnce(config);
+
+                    stopWatch.Stop();
+                    debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
+                    File.AppendAllText("TypeCobol.CLI.log", debugLine);
+                } else {
 		            runServer(pipename);
 		        }
 		    } catch (Exception e) {
+                File.AppendAllText("TypeCobol.CLI.log", e.ToString());
                 return exit(1, e.Message);
+                
             }
 		    return 0;
 		}
@@ -131,10 +147,18 @@ namespace TypeCobol.Server {
 				}
 				parser.Parse(path);
 
-			    if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath) && parser.MissingCopys.Count > 0)
-			        File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys); //Write in the specified file all the absent copys detected
 
-                if (parser.Results.CodeElementsDocumentSnapshot == null) {
+			    if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath)) {
+			        if (parser.MissingCopys.Count > 0) {
+			            //Write in the specified file all the absent copys detected
+			            File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
+			        } else {
+			            //Delete the file
+			            File.Delete(config.HaltOnMissingCopyFilePath);
+			        }
+			    }
+
+			    if (parser.Results.CodeElementsDocumentSnapshot == null) {
 					AddError(writer, MessageCode.SyntaxErrorInParser, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
 					continue;
 				} else if (parser.Results.ProgramClassDocumentSnapshot == null) {
