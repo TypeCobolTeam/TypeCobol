@@ -17,8 +17,8 @@
            88  flag-false VALUE 'F'.
                                   
        01  realformat   PIC X(08).
-	   01  TC-Callee-LibFctList-Loaded PIC X(01) VALUE SPACE.
-           88 TC-Callee-LibFctList-IsLoaded      VALUE '1'.
+	   01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
+           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::check
         01 TC-Callee-afc9521c PROCEDURE-POINTER EXTERNAL.
 SMEDILOL note: procedures check2 of Callee are never called so their PROCEDURE-POINTER don't appear in PGM1
@@ -104,8 +104,8 @@ SMEDILOL note: procedures check2 of Callee are never called so their PROCEDURE-P
       *=================================================================
        TC-Initializations.
       *=================================================================
-           IF NOT TC-DVZZDATE-LibFctList-IsLoaded 
-               CALL 'ZCALLPGM' USING TC-DVZZDATE
+           IF NOT TC-Callee-FctList-IsLoaded 
+               CALL 'ZCALLPGM' USING Callee
            END-IF
            .
 
@@ -129,8 +129,8 @@ SMEDILOL note: procedures check2 of Callee are never called so their PROCEDURE-P
            88  flag-false VALUE 'F'.
                                   
        01  realformat   PIC X(08).
-	   01  TC-Callee-LibFctList-Loaded PIC X(01) VALUE SPACE.
-           88 TC-Callee-LibFctList-IsLoaded      VALUE '1'.
+	   01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
+           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::check
         01 TC-Callee-afc9521c PROCEDURE-POINTER EXTERNAL.
       *Callee::check2
@@ -170,13 +170,13 @@ SMEDILOL note: procedures check2 of Callee are never called so their PROCEDURE-P
            GOBACK.
 
         FctList-Process-Mode.
-            IF NOT TC-Callee-LibFctList-IsLoaded
+            IF NOT TC-Callee-FctList-IsLoaded
               SET TC-Callee-afc9521c   TO ENTRY 'afc9521c'
               SET TC-Callee-b856189b   TO ENTRY 'b856189b'
               SET TC-Callee-f17c8b08   TO ENTRY 'f17c8b08'
               SET TC-Callee-f0eabed9   TO ENTRY 'f0eabed9'
 
-              SET TC-Callee-LibFctList-IsLoaded TO TRUE
+              SET TC-Callee-FctList-IsLoaded TO TRUE
             END-IF
                .
        END PROGRAM Callee.

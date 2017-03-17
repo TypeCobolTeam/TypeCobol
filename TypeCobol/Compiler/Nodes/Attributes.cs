@@ -43,6 +43,7 @@ namespace TypeCobol.Compiler.Nodes {
 		attributes["visibility"] = new VisibilityAttribute();
 		attributes["copyname"] = new LibraryCopyAttribute();
 		attributes["programName8"] = new ProgramName8Attribute();
+        attributes["imports"] = new ProgramImportsAttribute();
 	}
 	private static ContainerAttribute DEFAULT = new ContainerAttribute();
 }
@@ -333,5 +334,129 @@ internal class LibraryCopyAttribute: Attribute {
 	    }
     }
 
+    public class ProcedureImport
+    {
+        /// <summary>
+        /// Hash of the Imported Procedure
+        /// </summary>
+        public string Hash
+        { get; internal set; }
 
+        /// <summary>
+        /// Name of the Imported procedure
+        /// </summary>
+        public string Name
+        { get; internal set; }
+    }
+
+    /// <summary>
+    /// Descriptor of an Imoprted Program.
+    /// </summary>
+    public class ProgramImport
+    {
+        /// <summary>
+        /// The Imported Program Name.
+        /// </summary>
+        public string Name
+        { get; internal set; }
+
+        /// <summary>
+        /// List of All imported procedure from the Program (hash,name).
+        /// </summary>
+        public Dictionary<string, ProcedureImport> Procedures
+        { get; internal set; }
+
+        public ProgramImport()
+        {
+            Procedures = new Dictionary<string, ProcedureImport>();
+        }
+    }
+
+    /// <summary>
+    /// All Imports from Program.
+    /// </summary>
+    public class ProgramImports
+    {
+        /// <summary>
+        /// Imported Programs
+        /// </summary>
+        public Dictionary<string, ProgramImport> Programs;
+        /// <summary>
+        /// Is The this Program Import Empty ?
+        /// </summary>
+        public bool IsEmpty
+        {
+            get
+            {
+                return Programs.Count == 0;
+            }
+        }
+        public ProgramImports()
+        {
+            Programs = new Dictionary<string, ProgramImport>();
+        }
+    }
+
+    /// <summary>
+    /// return all imports of a Program Node
+    /// </summary>
+    internal class ProgramImportsAttribute : Attribute {
+        public object GetValue(object o, SymbolTable table)
+        {
+            ProgramImports imports = new ProgramImports();
+            var program = o as TypeCobol.Compiler.Nodes.Program;
+            if (program != null)
+            {
+                if (program.ProcStyleCalls != null)
+                {
+                    //All imported program.                    
+                    var name = program.CodeElement().ProgramName.Name;
+                    string name_low = name.ToLower();
+                    string pgm_name = program.CodeElement().ProgramName.Name.Substring(0, Math.Min(name.Length, 8));
+                    string pgm_name_low = pgm_name.ToLower();
+                    //For each entry in the Procedure Style Call Dictionary
+                    foreach (var e in program.ProcStyleCalls)
+                    {
+                        var hash = e.Key;
+                        var call = e.Value;
+                        ProcedureStyleCall proc_style_call = call.Item2;
+                        //Only import Public Functions
+                        FunctionDeclaration fun_decl = proc_style_call.FunctionDeclaration;
+                        if (fun_decl != null)
+                        {
+                            if (fun_decl.CodeElement().Visibility == AccessModifier.Private)
+                                continue;//Ignore a Private function ==> Cannot Import It.
+                        }
+                        var item_pgm = call.Item1[call.Item1.Count - 1];                        
+                        if (name_low.Equals(item_pgm.Name.ToLower()))
+                        {   //Avoid imports to itself.
+                            continue;
+                        }
+                        string item_pgm_name = item_pgm.Name.Substring(0, Math.Min(item_pgm.Name.Length, 8));
+                        string item_pgm_name_low = item_pgm_name.ToLower();
+                        ProgramImport prg_imp = null;
+                        if (!imports.Programs.ContainsKey(item_pgm_name_low))
+                        {
+                            prg_imp = new ProgramImport();
+                            prg_imp.Name = item_pgm_name;
+                            imports.Programs[item_pgm_name_low] = prg_imp;
+                        }
+                        if (prg_imp == null)
+                            prg_imp = imports.Programs[item_pgm_name_low];
+                        //Store the Procedure if it is not alreday there                                                
+                        string proc_hash = hash;
+                        if (!prg_imp.Procedures.ContainsKey(proc_hash))
+                        {
+                            ProcedureImport proc_imp = new ProcedureImport();
+                            string item_proc_name = call.Item1[0].Name;
+                            proc_imp.Name = item_proc_name;
+                            proc_imp.Hash = proc_hash;
+                            prg_imp.Procedures[proc_hash] = proc_imp;
+                        }
+                    }
+                }
+            }
+            return imports;
+        }
+    }
 }

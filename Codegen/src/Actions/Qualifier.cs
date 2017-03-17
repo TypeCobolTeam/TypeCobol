@@ -36,12 +36,6 @@ namespace TypeCobol.Codegen.Actions
             /// </summary>
             public Stack<ProgramIdetificationNode> ProgramStack = null; 
             /// <summary>
-            /// The Dictionary which gives for each Program Node, its Dictionary of <hash,ProcedureStyleCall>
-            /// using a qualified name.
-            /// Dictionary<ProgrameName,HashSet<>>
-            /// </summary>
-            public Dictionary<ProgramIdetificationNode, Dictionary<string, TypeCobol.Compiler.Nodes.ProcedureStyleCall>> Programs_StyleCalls = null;
-            /// <summary>
             /// Constructor
             /// </summary>
             /// <param name="generator">The Generator instance</param>
@@ -140,12 +134,8 @@ namespace TypeCobol.Codegen.Actions
                         this.ProgramStack = new Stack<ProgramIdetificationNode>();
                     ProgramIdetificationNode program = node as ProgramIdetificationNode;
                     this.ProgramStack.Push(program);
-                    //Create the Dictionary of ProcStyleCall                    
-                    if (Programs_StyleCalls == null)
-                    {
-                        Programs_StyleCalls = new Dictionary<ProgramIdetificationNode, Dictionary<string, TypeCobol.Compiler.Nodes.ProcedureStyleCall>>();
-                    }
-                    Programs_StyleCalls[program] = new Dictionary<string, Compiler.Nodes.ProcedureStyleCall>();
+                    //Create the Dictionary of ProcStyleCall for this program
+                    program.ProcStyleCalls = new Dictionary<string, Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>>();
                 }
                 return base.BeginNode(node);
             }
@@ -185,7 +175,7 @@ namespace TypeCobol.Codegen.Actions
             }
 
             /// <summary>
-            /// Checks and handle any procedure call resolution.
+            /// Checks and handles any procedure call resolution.
             /// </summary>
             /// <param name="items">The items to check if they correspond to the procedure qualified name</param>
             /// <returns>true if it was a Procedure style call, false otherwise.</returns>
@@ -211,11 +201,10 @@ namespace TypeCobol.Codegen.Actions
                             {//This is a reference to a Function Call.
                                 hashFunction = procStyleCall.FunctionDeclaration.Hash;
                                 if (ProgramStack != null && ProgramStack.Count > 0)
-                                {   //Memoïze the (hash,ProcedureStyleCall)
-                                    var program = ProgramStack.Peek();
-                                    var styles_calls = Programs_StyleCalls[program];
-                                    if (!styles_calls.ContainsKey(hashFunction))
-                                        styles_calls[hashFunction] = procStyleCall;
+                                {   //Memoïze the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
+                                    var program = ProgramStack.Peek();                                    
+                                    if (!program.ProcStyleCalls.ContainsKey(hashFunction))
+                                        program.ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
                                 }
                                 return true;
                             }
