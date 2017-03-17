@@ -20,6 +20,7 @@ namespace TypeCobol.Codegen.Config {
 		internal static string ATTR_ACTION      = "action";
 		internal static string ATTR_VARIABLES   = "var";
         internal static string ATTR_POSITION = "position";
+        internal static string ATTR_NEWLINE = "newline";
 
         /// <summary>Parses an XML file.</summary>
         /// <param name="path">Path to an XML file</param>
@@ -184,6 +185,8 @@ namespace TypeCobol.Codegen.Config {
 			pattern.Group = XmlParser.GetAttribute(e, XmlParser.ATTR_GROUP);
 			pattern.Location = XmlParser.GetAttribute(e, XmlParser.ATTR_LOCATION);
 			pattern.Action = XmlParser.GetAttribute(e, XmlParser.ATTR_ACTION);
+            string val = XmlParser.GetAttribute(e, XmlParser.ATTR_NEWLINE);
+            pattern.NewLine = val != null ? val.Equals("true") : false;
 			pattern.Variables = new Dictionary<string,string>();
 			string vars = e.GetAttribute(XmlParser.ATTR_VARIABLES);
 			foreach(var var in vars.Split(',')) {

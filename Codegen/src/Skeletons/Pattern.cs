@@ -20,6 +20,10 @@ namespace TypeCobol.Codegen.Skeletons {
 		public string Template  { get; internal set; }
 		/// <summary>Variable Delimiter</summary>
 		internal string Delimiter = "%";
+        /// <summary>
+        /// True if a new line must be generated before the template
+        /// </summary>
+        public bool NewLine { get; internal set; }
 
         public int? Position { get; internal set; }
 
@@ -33,6 +37,7 @@ namespace TypeCobol.Codegen.Skeletons {
 			if (Location != null) str.Append(" location:").Append(Location);
             if (Position != null) str.Append(" at position:").Append(Position);
             if (Action != null) str.Append(" action:").Append(Action);
+            str.Append(" newline:").Append(NewLine);
 			if (Variables.Count > 0) {
 				str.Append(" variables: {");
 				foreach(var kv in Variables)

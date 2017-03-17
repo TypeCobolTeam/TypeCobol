@@ -161,7 +161,7 @@ namespace TypeCobol.Codegen
             var destination = GetLocation(source, pattern.Location, out index);
             if ("create".Equals(pattern.Action))
             {
-                return new Create(destination, pattern.Template, properties, group, pattern.Delimiter, index);
+                return new Create(destination, pattern, properties, group, pattern.Delimiter, index);
             }
             if ("replace".Equals(pattern.Action))
             {
@@ -238,6 +238,8 @@ namespace TypeCobol.Codegen
                     //Mark them so that the generator can associate them to the first
                     //parent having a location in the source file.
                     current.SetFlag(Node.Flag.FactoryGeneratedNode, true, true);
+                    //Keep The insertion sequence ??
+                    current.SetFlag(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex, true, false);
                     int index = 0;
                     if (nextsibling != null)
                     {
