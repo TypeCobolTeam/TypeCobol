@@ -3,14 +3,15 @@ using System;
 
 namespace TypeCobol.Compiler.Nodes {
 
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeModel;
+    using System.Collections.Generic;
+    using System.Linq;
+    using TypeCobol.Compiler.CodeElements;
+    using TypeCobol.Compiler.CodeElements.Expressions;
+    using TypeCobol.Compiler.CodeModel;
 
 
 
-public static class Attributes {
+    public static class Attributes {
 	internal static object Get(Node node, string attribute) {
 		var table = node.SymbolTable;
 		object value = node;
@@ -307,8 +308,8 @@ internal class VisibilityAttribute: Attribute {
 
 internal class LibraryCopyAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var pgm = (Program)((Node)o).Root.GetChildren<ProgramIdentification>()[0];
-		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
+		var pgmIdentification = ((Node)o).GetProgramNode().Children.First(n => n is ProgramIdetificationNode);
+		var copies = pgmIdentification.GetChildren<LibraryCopyCodeElement>();
 		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement().Name.Name;
 	}
@@ -323,8 +324,8 @@ internal class LibraryCopyAttribute: Attribute {
 	        while (node != null) {
 	            var pgm = node as Program;
 	            if (pgm != null) {
-	                var name = pgm.CodeElement().ProgramName.Name;
-                    return pgm.CodeElement().ProgramName.Name.Substring(0,Math.Min(name.Length, 8));
+	                var name = pgm.Name;
+                    return pgm.Name.Substring(0,Math.Min(name.Length, 8));
 	            }
 	            node = node.Parent;
 	        }

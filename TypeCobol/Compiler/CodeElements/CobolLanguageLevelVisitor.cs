@@ -240,7 +240,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(Perform perform);
         bool Visit(PerformProcedure performProcedure);
         bool Visit(Root root);
-        bool Visit(Nodes.Program program);
+        bool Visit(ProgramIdetificationNode program);
         bool Visit(LibraryCopy libraryCopy);
         bool Visit(Nodes.Class classNode);
         bool Visit(Factory factory);
@@ -1335,12 +1335,12 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public bool Visit(CodeModel.Program program)
+        public bool Visit(Program program)
         {
             return true;
         }
 
-        public bool Visit(Nodes.Program program)
+        public bool Visit(ProgramIdetificationNode program)
         {
             return true;
         }

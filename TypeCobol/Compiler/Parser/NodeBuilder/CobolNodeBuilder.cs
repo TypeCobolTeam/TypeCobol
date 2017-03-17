@@ -21,12 +21,12 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Program object resulting of the visit the parse tree
         /// </summary>
-        public CodeModel.Program Program { get; private set; }
+        public Program Program { get; private set; }
 
         // Programs can be nested => track current programs being analyzed
-        private Stack<CodeModel.Program> programsStack = null;
+        private Stack<Program> programsStack = null;
 
-        private CodeModel.Program CurrentProgram
+        private Program CurrentProgram
         {
             get { return programsStack.Peek(); }
             set { programsStack.Push(value); }
@@ -136,8 +136,9 @@ namespace TypeCobol.Compiler.Parser
             if (Program == null)
             {
                 Program = new SourceProgram(TableOfGlobals, null);
-                programsStack = new Stack<CodeModel.Program>();
+                programsStack = new Stack<Program>();
                 CurrentProgram = Program;
+                Enter(CurrentProgram, context, CurrentProgram.SymbolTable);
             }
             else
             {
@@ -148,15 +149,17 @@ namespace TypeCobol.Compiler.Parser
             var pgm = context.programAttributes();
             if (pgm != null) CurrentProgram.Identification = (ProgramIdentification)pgm.ProgramIdentification().Symbol;
 
-            Enter(new Nodes.Program(CurrentProgram.Identification), pgm, CurrentProgram.SymbolTable);
+            Enter(new ProgramIdetificationNode(CurrentProgram.Identification), pgm, CurrentProgram.SymbolTable);
             if (pgm != null && pgm.LibraryCopy() != null)
             { // TCRFUN_LIBRARY_COPY
-                var cnode = new Nodes.LibraryCopy((LibraryCopyCodeElement)pgm.LibraryCopy().Symbol);
+                var cnode = new LibraryCopy((LibraryCopyCodeElement)pgm.LibraryCopy().Symbol);
                 Enter(cnode, pgm, CurrentProgram.SymbolTable);
                 Exit();
             }
 
             TableOfNamespaces.AddProgram(CurrentProgram); //Add Program to Namespace table. 
+
+            Exit(); //Exit Programdentification
         }
 
         public override void ExitCobolProgram(ProgramClassParser.CobolProgramContext context)

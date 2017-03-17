@@ -34,7 +34,8 @@ Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strong
 Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
 --- Nodes ---
 ?
-  program
+  TypeCobol
+    program-identification
     data-division
       working-storage
         Feature

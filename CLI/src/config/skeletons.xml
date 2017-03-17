@@ -131,11 +131,7 @@
         .
 
       </pattern>
-<!--Because of bug, we need to keep this for now. Seems the procedure division of other public function is added as a procedure
- division of the main program. Issue #463-->
-      <pattern location="program.procedure-division" action="replace" group="TCRFUN_CODEGEN_PROCEDURE_USING">
-        PROCEDURE DIVISION.
-      </pattern>
+
       
     </patterns>
   </skeleton>

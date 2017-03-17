@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeModel
@@ -11,9 +12,9 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public abstract class Program : Node
+    public class Program : Node
     {
-        protected Program(CodeElement codeElement) : base(codeElement)
+        public Program(CodeElement codeElement) : base(codeElement)
         {
             SyntaxTree = new SyntaxTree();
         }
@@ -24,11 +25,23 @@ namespace TypeCobol.Compiler.CodeModel
 
         public override string ID
         {
-            get { return Identification != null ? Identification.ProgramName.Name : base.ID; }
+            get { return "program"; }
         }
 
+        public override string Name
+        {
+            get { return Identification != null ? Identification.ProgramName.Name : ID; }
+        }
+
+        public override QualifiedName QualifiedName
+        {
+            get
+            {
+                return new URI(Identification != null ? Identification.ProgramName.Name : ID);
+            }
+        }
         //TODO: As to change in the future when implementing the full namespace functionnality.
-        public string Namespace { get { return ID; } }
+        public string Namespace { get { return Identification != null ? Identification.ProgramName.Name : null; } }
 
         /// <summary>
         /// True if the current program is contained in another program.
@@ -155,7 +168,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
     
@@ -168,7 +181,7 @@ namespace TypeCobol.Compiler.CodeModel
 		public NestedProgram(Program containingProgram, CodeElement codeElement) : base(codeElement) {
 			IsNested = true;
 			ContainingProgram = containingProgram;
-			SymbolTable = new SymbolTable(containingProgram.SymbolTable);
+			SymbolTable = new SymbolTable();
 			SyntaxTree.Root.SymbolTable = SymbolTable;
 		}
 
@@ -177,7 +190,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 }

@@ -216,6 +216,19 @@ namespace TypeCobol.Compiler.Nodes {
             return results;
         }
 
+        /// <summary>
+        /// Get the Program Node corresponding to a Child
+        /// </summary>
+        /// <param name="child">The Child Node</param>
+        /// <returns>The Program Node</returns>
+        public Program GetProgramNode()
+        {
+            Node child = this;
+            while (child != null && !(child is Program))
+                child = child.Parent;
+            return (Program)child;
+        }
+
         /// <summary>Search for all children of a specific Name</summary>
         /// <param name="name">Name we search for</param>
         /// <param name="deep">true for deep search, false for shallow search</param>
@@ -481,15 +494,10 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Program : Node, CodeElementHolder<ProgramIdentification> {
-        public Program(ProgramIdentification identification) : base(identification) {}
+    public class ProgramIdetificationNode : Node, CodeElementHolder<ProgramIdentification> {
+        public ProgramIdetificationNode(ProgramIdentification identification) : base(identification) {}
 
-        public override string ID {
-            get {
-                if (Parent is Root) return "program";
-                return this.CodeElement().ProgramName.Name;
-            }
-        }
+        public override string ID { get { return "program-identification"; } }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

@@ -4,6 +4,7 @@ using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen
@@ -36,7 +37,7 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// The Current Program Node.
         /// </summary>
-        private TypeCobol.Compiler.Nodes.Program CurrentProgram = null;
+        private Program CurrentProgram = null;
 
         /// <summary>
         /// Constructor
@@ -71,11 +72,11 @@ namespace TypeCobol.Codegen
         public void Visit(Node node)
         {
             string saveProgramGroupPrefix = ProgramGroupPrefix;
-            TypeCobol.Compiler.Nodes.Program saveCurrentProgram = CurrentProgram;
-            if (node is TypeCobol.Compiler.Nodes.Program)
+            Program saveCurrentProgram = CurrentProgram;
+            if (node is Program)
             {
-                CurrentProgram = node as TypeCobol.Compiler.Nodes.Program;
-                ProgramGroupPrefix = node.CodeElement.Text;
+                CurrentProgram = node as Program;
+                ProgramGroupPrefix = CurrentProgram.Identification.Text;
             }
 
             var actions = GetActions(node);
@@ -83,7 +84,7 @@ namespace TypeCobol.Codegen
             foreach (var child in new List<Node>(node.Children)) 
                 child.Accept(this);
 
-            if (node is TypeCobol.Compiler.Nodes.Program)
+            if (node is Program)
             {
                 ProgramGroupPrefix = saveProgramGroupPrefix;
                 CurrentProgram = saveCurrentProgram;
@@ -187,13 +188,13 @@ namespace TypeCobol.Codegen
         /// </summary>
         /// <param name="child">The Child Node</param>
         /// <returns>The Program Node</returns>
-        public static TypeCobol.Compiler.Nodes.Program GetProgramNode(Node child)
+        public static Program GetProgramNode(Node child)
         {
             if (child == null)
                 return null;
-            while (child != null && !(child is TypeCobol.Compiler.Nodes.Program))
+            while (child != null && !(child is ProgramIdetificationNode))
                 child = child.Parent;
-            return (TypeCobol.Compiler.Nodes.Program)child;
+            return (Program)child;
         }
 
         public Node GetLocation(Node node, string location, out int? index)
@@ -211,7 +212,7 @@ namespace TypeCobol.Codegen
                 }
 
             if (location == null || location.ToLower().Equals("node")) return node;
-            var root = CurrentProgram ?? (GetProgramNode(node) ?? node.Root);
+            var root = CurrentProgram ?? (node.GetProgramNode() ?? node.Root);
             var result = root.Get(location);
             if (result != null) return result;
             result = Create(root, location);

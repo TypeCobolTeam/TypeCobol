@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+﻿IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        AUTHOR. REYDELPA.
        
@@ -48,9 +48,7 @@
 
 
       *=================================================================
-      *PROCEDURE DIVISION.
        PROCEDURE DIVISION.
-                          
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC
       *Description of currentDate
@@ -76,27 +74,6 @@
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
 
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-      *    END-IF
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-DVZZDATE-LibFctList-IsLoaded
-              SET TC-DVZZDATE-e5f209fa   TO ENTRY 'e5f209fa'
-              SET TC-DVZZDATE-b8ac0397   TO ENTRY 'b8ac0397'
-              SET TC-DVZZDATE-c4e76b45   TO ENTRY 'c4e76b45'
-              SET TC-DVZZDATE-d55b3ea7   TO ENTRY 'd55b3ea7'
-              SET TC-DVZZDATE-bfb0fa9b   TO ENTRY 'bfb0fa9b'
-
-              SET TC-DVZZDATE-LibFctList-IsLoaded TO TRUE
-            END-IF
-               .
-           .
        END PROGRAM DVZZDAT.
       *
       *DECLARE FUNCTION currentDate PUBLIC
@@ -237,6 +214,27 @@
        01 Result PIC 9(08).
        PROCEDURE DIVISION
              USING BY REFERENCE Result
+           .
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-DVZZDATE-LibFctList-IsLoaded
+              SET TC-DVZZDATE-e5f209fa   TO ENTRY 'e5f209fa'
+              SET TC-DVZZDATE-b8ac0397   TO ENTRY 'b8ac0397'
+              SET TC-DVZZDATE-c4e76b45   TO ENTRY 'c4e76b45'
+              SET TC-DVZZDATE-d55b3ea7   TO ENTRY 'd55b3ea7'
+              SET TC-DVZZDATE-bfb0fa9b   TO ENTRY 'bfb0fa9b'
+
+              SET TC-DVZZDATE-LibFctList-IsLoaded TO TRUE
+            END-IF
+               .
            .
            ACCEPT Result FROM DATE YYYYMMDD
            .

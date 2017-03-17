@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen.Actions
@@ -33,13 +34,13 @@ namespace TypeCobol.Codegen.Actions
             /// <summary>
             /// The Stack of Programs encountered
             /// </summary>
-            public Stack<TypeCobol.Compiler.Nodes.Program> ProgramStack = null; 
+            public Stack<ProgramIdetificationNode> ProgramStack = null; 
             /// <summary>
             /// The Dictionary which gives for each Program Node, its Dictionary of <hash,ProcedureStyleCall>
             /// using a qualified name.
             /// Dictionary<ProgrameName,HashSet<>>
             /// </summary>
-            public Dictionary<TypeCobol.Compiler.Nodes.Program, Dictionary<string, TypeCobol.Compiler.Nodes.ProcedureStyleCall>> Programs_StyleCalls = null;
+            public Dictionary<ProgramIdetificationNode, Dictionary<string, TypeCobol.Compiler.Nodes.ProcedureStyleCall>> Programs_StyleCalls = null;
             /// <summary>
             /// Constructor
             /// </summary>
@@ -133,18 +134,18 @@ namespace TypeCobol.Codegen.Actions
             {
                 PerformMatch();
                 this.CurrentNode = node;
-                if (node is TypeCobol.Compiler.Nodes.Program)
+                if (node is ProgramIdetificationNode)
                 {
                     if (this.ProgramStack == null)
-                        this.ProgramStack = new Stack<TypeCobol.Compiler.Nodes.Program>();
-                    TypeCobol.Compiler.Nodes.Program program = node as TypeCobol.Compiler.Nodes.Program;
+                        this.ProgramStack = new Stack<ProgramIdetificationNode>();
+                    ProgramIdetificationNode program = node as ProgramIdetificationNode;
                     this.ProgramStack.Push(program);
                     //Create the Dictionary of ProcStyleCall                    
                     if (Programs_StyleCalls == null)
                     {
-                        Programs_StyleCalls = new Dictionary<TypeCobol.Compiler.Nodes.Program, Dictionary<string, TypeCobol.Compiler.Nodes.ProcedureStyleCall>>();
+                        Programs_StyleCalls = new Dictionary<ProgramIdetificationNode, Dictionary<string, TypeCobol.Compiler.Nodes.ProcedureStyleCall>>();
                     }
-                    Programs_StyleCalls[program] = new Dictionary<string, TypeCobol.Compiler.Nodes.ProcedureStyleCall>();
+                    Programs_StyleCalls[program] = new Dictionary<string, Compiler.Nodes.ProcedureStyleCall>();
                 }
                 return base.BeginNode(node);
             }
@@ -154,7 +155,7 @@ namespace TypeCobol.Codegen.Actions
                 base.EndNode(node);
                 PerformMatch();
                 node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-                if (node is TypeCobol.Compiler.Nodes.Program)
+                if (node is ProgramIdetificationNode)
                 {
                     this.ProgramStack.Pop();
                 }
