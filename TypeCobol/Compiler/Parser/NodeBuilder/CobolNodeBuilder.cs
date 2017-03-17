@@ -149,7 +149,7 @@ namespace TypeCobol.Compiler.Parser
             var pgm = context.programAttributes();
             if (pgm != null) CurrentProgram.Identification = (ProgramIdentification)pgm.ProgramIdentification().Symbol;
 
-            Enter(new ProgramIdetificationNode(CurrentProgram.Identification), pgm, CurrentProgram.SymbolTable);
+            Enter(new ProgramIdentificationNode(CurrentProgram.Identification), pgm, CurrentProgram.SymbolTable);
             if (pgm != null && pgm.LibraryCopy() != null)
             { // TCRFUN_LIBRARY_COPY
                 var cnode = new LibraryCopy((LibraryCopyCodeElement)pgm.LibraryCopy().Symbol);

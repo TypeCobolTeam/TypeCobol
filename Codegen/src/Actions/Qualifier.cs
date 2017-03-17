@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Actions
             /// <summary>
             /// The Stack of Programs encountered
             /// </summary>
-            public Stack<ProgramIdetificationNode> ProgramStack = null; 
+            public Stack<ProgramIdentificationNode> ProgramStack = null; 
             /// <summary>
             /// Constructor
             /// </summary>
@@ -131,8 +131,8 @@ namespace TypeCobol.Codegen.Actions
                 if (node is Program)
                 {
                     if (this.ProgramStack == null)
-                        this.ProgramStack = new Stack<ProgramIdetificationNode>();
-                    ProgramIdetificationNode program = node.GetChildren<ProgramIdentification>()[0] as ProgramIdetificationNode;
+                        this.ProgramStack = new Stack<ProgramIdentificationNode>();
+                    ProgramIdentificationNode program = node.GetChildren<ProgramIdentification>()[0] as ProgramIdentificationNode;
                     this.ProgramStack.Push(program);
                     //Create the Dictionary of ProcStyleCall for this program
                     ((Program)node).ProcStyleCalls = new Dictionary<string, Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>>();

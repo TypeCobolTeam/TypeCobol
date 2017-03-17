@@ -192,7 +192,7 @@ namespace TypeCobol.Codegen
         {
             if (child == null)
                 return null;
-            while (child != null && !(child is ProgramIdetificationNode))
+            while (child != null && !(child is ProgramIdentificationNode))
                 child = child.Parent;
             return (Program)child;
         }

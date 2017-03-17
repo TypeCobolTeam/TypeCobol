@@ -503,8 +503,8 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class ProgramIdetificationNode : Node, CodeElementHolder<ProgramIdentification> {
-        public ProgramIdetificationNode(ProgramIdentification identification) : base(identification) {}
+    public class ProgramIdentificationNode : Node, CodeElementHolder<ProgramIdentification> {
+        public ProgramIdentificationNode(ProgramIdentification identification) : base(identification) {}
 
         public override string ID { get { return "program-identification"; } }
 
