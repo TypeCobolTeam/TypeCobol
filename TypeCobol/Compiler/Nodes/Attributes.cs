@@ -404,15 +404,15 @@ internal class LibraryCopyAttribute: Attribute {
         public object GetValue(object o, SymbolTable table)
         {
             ProgramImports imports = new ProgramImports();
-            var program = o as TypeCobol.Compiler.Nodes.Program;
+            var program = o as Program;
             if (program != null)
             {
                 if (program.ProcStyleCalls != null)
                 {
                     //All imported program.                    
-                    var name = program.CodeElement().ProgramName.Name;
+                    var name = program.Name;
                     string name_low = name.ToLower();
-                    string pgm_name = program.CodeElement().ProgramName.Name.Substring(0, Math.Min(name.Length, 8));
+                    string pgm_name = program.Name.Substring(0, Math.Min(name.Length, 8));
                     string pgm_name_low = pgm_name.ToLower();
                     //For each entry in the Procedure Style Call Dictionary
                     foreach (var e in program.ProcStyleCalls)

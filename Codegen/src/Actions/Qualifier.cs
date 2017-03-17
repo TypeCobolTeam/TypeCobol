@@ -128,14 +128,14 @@ namespace TypeCobol.Codegen.Actions
             {
                 PerformMatch();
                 this.CurrentNode = node;
-                if (node is ProgramIdetificationNode)
+                if (node is Program)
                 {
                     if (this.ProgramStack == null)
                         this.ProgramStack = new Stack<ProgramIdetificationNode>();
-                    ProgramIdetificationNode program = node as ProgramIdetificationNode;
+                    ProgramIdetificationNode program = node.GetChildren<ProgramIdentification>()[0] as ProgramIdetificationNode;
                     this.ProgramStack.Push(program);
                     //Create the Dictionary of ProcStyleCall for this program
-                    program.ProcStyleCalls = new Dictionary<string, Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>>();
+                    ((Program)node).ProcStyleCalls = new Dictionary<string, Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>>();
                 }
                 return base.BeginNode(node);
             }
@@ -145,7 +145,7 @@ namespace TypeCobol.Codegen.Actions
                 base.EndNode(node);
                 PerformMatch();
                 node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-                if (node is ProgramIdetificationNode)
+                if (node is Program)
                 {
                     this.ProgramStack.Pop();
                 }
@@ -203,8 +203,8 @@ namespace TypeCobol.Codegen.Actions
                                 if (ProgramStack != null && ProgramStack.Count > 0)
                                 {   //Memoïze the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
                                     var program = ProgramStack.Peek();                                    
-                                    if (!program.ProcStyleCalls.ContainsKey(hashFunction))
-                                        program.ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
+                                    if (!((Program)program.Parent).ProcStyleCalls.ContainsKey(hashFunction))
+                                        ((Program)program.Parent).ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
                                 }
                                 return true;
                             }
