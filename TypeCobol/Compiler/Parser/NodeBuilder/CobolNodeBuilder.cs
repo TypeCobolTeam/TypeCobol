@@ -144,7 +144,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 var enclosing = CurrentProgram;
                 CurrentProgram = new NestedProgram(enclosing, null);
-                Enter(CurrentProgram.SyntaxTree.Root, context, new SymbolTable(TableOfGlobals));
+                Enter(CurrentProgram, context, new SymbolTable(TableOfGlobals));
             }
             var pgm = context.programAttributes();
             if (pgm != null) CurrentProgram.Identification = (ProgramIdentification)pgm.ProgramIdentification().Symbol;

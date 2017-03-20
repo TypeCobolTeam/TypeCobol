@@ -192,7 +192,7 @@ namespace TypeCobol.Compiler.CodeModel
 		public NestedProgram(Program containingProgram, CodeElement codeElement) : base(codeElement) {
 			IsNested = true;
 			ContainingProgram = containingProgram;
-			SymbolTable = new SymbolTable(containingProgram.SymbolTable);
+			SymbolTable = new SymbolTable(containingProgram.SymbolTable.EnclosingScope);
 			SyntaxTree.Root.SymbolTable = SymbolTable;
 		}
 
