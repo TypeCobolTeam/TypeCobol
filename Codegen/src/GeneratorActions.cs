@@ -152,6 +152,11 @@ namespace TypeCobol.Codegen
 
         public TypeCobol.Codegen.Actions.Action GetAction(Node source, Dictionary<string, object> properties, Pattern pattern)
         {
+            //Evaluate Any Proprty
+            if (!pattern.EvalBooleanProperty(properties))
+            {
+                return null;
+            }
             int? index;
             string group = pattern.Group;
             if (group != null && ProgramGroupPrefix != null)

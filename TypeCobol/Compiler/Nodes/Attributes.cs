@@ -391,6 +391,16 @@ internal class LibraryCopyAttribute: Attribute {
                 return Programs.Count == 0;
             }
         }
+        /// <summary>
+        /// Is The this Program Import Not Empty ?
+        /// </summary>
+        public bool IsNotEmpty
+        {
+            get
+            {
+                return !IsEmpty;
+            }
+        }
         public ProgramImports()
         {
             Programs = new Dictionary<string, ProgramImport>();

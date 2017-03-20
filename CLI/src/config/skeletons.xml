@@ -202,13 +202,12 @@
     </patterns>
   </skeleton>
 
-  <!--
   <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports">
     <conditions>
-      <condition node="TypeCobol.Compiler.Nodes.Program"/>
+      <condition node="TypeCobol.Compiler.CodeModel.Program"/>
     </conditions>
     <patterns>
-      <pattern location="program.data-division.working-storage" action="create">
+      <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty">
         @{
           var items = "";
           foreach (var pgm in %imports.Programs.Values) {
@@ -222,9 +221,9 @@
         }
         @items
       </pattern>
-      <pattern location="program.procedure-division.sentence-0.begin" action="create">
+      <pattern location="program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
         <conditions>
-          <condition node="TypeCobol.Compiler.Nodes.Program"/>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>
         @{
         var clause = "";
@@ -234,9 +233,9 @@
         }
         @clause
       </pattern>
-      <pattern location="program.end" action="create">
+      <pattern location="program.end" action="create"  boolean_property="imports.IsNotEmpty">
         <conditions>
-          <condition node="TypeCobol.Compiler.Nodes.Program"/>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>
         @{
         var clause = "";
@@ -256,6 +255,4 @@
       </pattern>
     </patterns>
     </skeleton>
-    -->
-
 </skeletons>

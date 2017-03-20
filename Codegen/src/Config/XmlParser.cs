@@ -21,6 +21,7 @@ namespace TypeCobol.Codegen.Config {
 		internal static string ATTR_VARIABLES   = "var";
         internal static string ATTR_POSITION = "position";
         internal static string ATTR_NEWLINE = "newline";
+        internal static string ATTR_BOOLEAN_PROPERTY = "boolean_property";
 
         /// <summary>Parses an XML file.</summary>
         /// <param name="path">Path to an XML file</param>
@@ -187,6 +188,7 @@ namespace TypeCobol.Codegen.Config {
 			pattern.Action = XmlParser.GetAttribute(e, XmlParser.ATTR_ACTION);
             string val = XmlParser.GetAttribute(e, XmlParser.ATTR_NEWLINE);
             pattern.NewLine = val != null ? val.Equals("true") : false;
+            pattern.BooleanProperty = XmlParser.GetAttribute(e, XmlParser.ATTR_BOOLEAN_PROPERTY);
 			pattern.Variables = new Dictionary<string,string>();
 			string vars = e.GetAttribute(XmlParser.ATTR_VARIABLES);
 			foreach(var var in vars.Split(',')) {

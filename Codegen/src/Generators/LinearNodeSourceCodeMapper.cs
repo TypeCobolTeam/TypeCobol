@@ -572,8 +572,8 @@ namespace TypeCobol.Codegen.Generators
                 Node lastNode = Nodes[parent.NodeIndex].LastNode;
                 if (LineData[lastLine - 1].LineNodes == null)
                     LineData[lastLine - 1].LineNodes = new List<int>();
-                if (lastNode is TypeCobol.Compiler.Nodes.End)
-                    //This a End Node ==> add before the last end node
+                if ((lastNode is TypeCobol.Compiler.Nodes.End) && lastNode.CodeElement.Type == Compiler.CodeElements.CodeElementType.ProgramEnd)
+                    //This a ProgramEnd Node ==> add before the last ProgramEnd node
                     LineData[lastLine - 1].LineNodes.Insert(LineData[lastLine - 1].LineNodes.Count - 1, node.NodeIndex);
                 else
                     LineData[lastLine - 1].LineNodes.Add(node.NodeIndex);
@@ -1038,7 +1038,7 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Get the last line of a node.
         /// BECAREFUL this method must be called after the linearization phase,
-        /// beacuse it uses positions calculated during the linearization phase.
+        /// because it uses positions calculated during the linearization phase.
         /// </summary>
         /// <param name="node">The node to get the last line</param>
         /// <param name="lastLine">output le last line number</param>
@@ -1048,21 +1048,24 @@ namespace TypeCobol.Codegen.Generators
         {
             if (node == null)
                 return;
-            if (node.NodeIndex < 0)
-                return;
-            if (Nodes[node.NodeIndex].Positions != null)
+            if (node.NodeIndex >= 0)
             {
-                lastLine = Nodes[node.NodeIndex].Positions.Item4[Nodes[node.NodeIndex].Positions.Item4.Count - 1];
-                lastNode = node;
-                foreach (var child in node.Children)
+                if (Nodes[node.NodeIndex].Positions != null)
                 {
-                    if (child.NodeIndex >= 0 && Nodes[child.NodeIndex].Positions != null)
-                    {
-                        if (Nodes[child.NodeIndex] is NodeFunctionData)
-                            continue;//Ignore Function Nodes that will be moved.
-                    }
-                    GetAfterLinearizationLastLine(child, ref lastLine, ref lastNode);
+                    lastLine = Nodes[node.NodeIndex].Positions.Item4[Nodes[node.NodeIndex].Positions.Item4.Count - 1];
+                    lastNode = node;
                 }
+            }
+            foreach (var child in node.Children)
+            {
+                if (child.NodeIndex >= 0 && Nodes[child.NodeIndex].Positions != null)
+                {
+                    if (Nodes[child.NodeIndex] is NodeFunctionData)
+                        continue;//Ignore Function Nodes that will be moved.
+                    if (Nodes[child.NodeIndex].node is TypeCobol.Compiler.CodeModel.NestedProgram)
+                        return;//After a Nested Program there is nothing else than a Nested Program.
+                }
+                GetAfterLinearizationLastLine(child, ref lastLine, ref lastNode);
             }
         }
 
