@@ -59,6 +59,8 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public Encoding EncodingForAlphanumericLiterals { get; private set; }
 
+        private List<RemarksDirective.TextNameVariation> _CopyTextNameVariations;
+
         /// <summary>
         /// Symbolic character names previously defined in the source file
         /// NB : value will be null until at least one symbolic character is defined
@@ -81,49 +83,36 @@ namespace TypeCobol.Compiler.Scanner
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
 
         /// <summary>
+        /// True when we are existing a remarks directive. 
+        /// </summary>
+        public bool LeavingRemarksDirective { get; set; }
+        /// <summary>
         /// True if we detect in the comments lines stream that we are inside a REMARKS compiler directive.
         /// </summary>
-        internal bool InsideRemarksDirective { get; set; }
+        public bool InsideRemarksDirective { get; set; }
 
         /// <summary>
         /// True if we are inside a COPY=(..) of a REMARKS compiler directive.
         /// </summary>
-        internal bool InsideRemarksParentheses { get; set; }
+        public bool InsideRemarksParentheses { get; set; }
 
-        /// <summary>
-        /// Text names variations declared in REMARS compiler directives.
-        /// </summary>
-        internal List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; set; }
 
-        /// <summary>
-        /// Register a new symbolic character name found in the source file
-        /// </summary>
-        internal void AddCopyTextNamesVariations(IList<RemarksDirective.TextNameVariation> textNamesVariations)
-        {
-            if (CopyTextNamesVariations == null)
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
-            }
-            else
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
-            }
-            CopyTextNamesVariations.AddRange(textNamesVariations);
-        }
+
+        
 
 #endif
 
         /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
-            this(insideDataDivision, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
+            this(insideDataDivision, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals, copyTextNameVariations)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -132,6 +121,7 @@ namespace TypeCobol.Compiler.Scanner
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
             EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
+            _CopyTextNameVariations = copyTextNameVariations;
         }
 
         /// <summary>
@@ -139,7 +129,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals, _CopyTextNameVariations);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -149,10 +139,6 @@ namespace TypeCobol.Compiler.Scanner
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
             clone.InsideRemarksDirective = InsideRemarksDirective;
             clone.InsideRemarksParentheses = InsideRemarksParentheses;
-            if (CopyTextNamesVariations != null)
-            {
-                clone.CopyTextNamesVariations = CopyTextNamesVariations;
-            }
 #endif
             return clone;
         }
@@ -458,8 +444,8 @@ namespace TypeCobol.Compiler.Scanner
                        InsideSymbolicCharacterDefinitions == otherScanState.InsideSymbolicCharacterDefinitions &&
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
                 InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
-                    ((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
-                     (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
+                    //((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
+                    // (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
 #endif
                     DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
                     WithDebuggingMode == otherScanState.WithDebuggingMode &&
@@ -484,9 +470,9 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();
-                if (CopyTextNamesVariations != null)
+                if (_CopyTextNameVariations != null)
                 {
-                    hash = hash * 23 + CopyTextNamesVariations.Count;
+                    hash = hash * 23 + this._CopyTextNameVariations.Count;
                 }
 #endif
                 hash = hash * 23 + DecimalPointIsComma.GetHashCode();

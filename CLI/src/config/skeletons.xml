@@ -1,6 +1,16 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <skeletons>
 
+    <!-- add REMARKS after program declaration-->
+  <skeleton name="PROGRAM">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="remarks"></pattern>
+    </patterns>
+  </skeleton>
+  
   <!-- comment TYPEDEF -->
   <skeleton name="TYPEDEF">
     <conditions>

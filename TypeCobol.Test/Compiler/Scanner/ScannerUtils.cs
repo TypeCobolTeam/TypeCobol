@@ -41,6 +41,7 @@ namespace TypeCobol.Test.Compiler.Scanner
     {
         public static TextSourceInfo TextSourceInfo = new TextSourceInfo("test", IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147), ColumnsLayout.FreeTextFormat);
         public static TypeCobolOptions CompilerOptions = new TypeCobolOptions();
+        public static List<RemarksDirective.TextNameVariation> CopyTextNameVariations = new List<RemarksDirective.TextNameVariation>();
 
         public static string ScanLine(string testLine)
         {
@@ -63,7 +64,7 @@ namespace TypeCobol.Test.Compiler.Scanner
 
         public static string ScanTextLine(TokensLine tokensLine)
         {
-            TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(tokensLine, false, false, false, TextSourceInfo.EncodingForAlphanumericLiterals, CompilerOptions);
+            TypeCobol.Compiler.Scanner.Scanner.ScanFirstLine(tokensLine, false, false, false, TextSourceInfo.EncodingForAlphanumericLiterals, CompilerOptions, CopyTextNameVariations);
             return BuildResultString(tokensLine);
         }
         
@@ -72,7 +73,7 @@ namespace TypeCobol.Test.Compiler.Scanner
             ImmutableList<TokensLine>.Builder tokensLinesList = ImmutableList<TokensLine>.Empty.ToBuilder();
             tokensLinesList.AddRange(tokensLines);
 
-            ScannerStep.ScanDocument(TextSourceInfo, tokensLinesList, CompilerOptions);
+            ScannerStep.ScanDocument(TextSourceInfo, tokensLinesList, CompilerOptions, CopyTextNameVariations);
 
             StringBuilder sbResult = new StringBuilder();
             for (int i = 0; i < tokensLines.Length; i++)

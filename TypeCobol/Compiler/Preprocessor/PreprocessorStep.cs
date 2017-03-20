@@ -21,15 +21,15 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Initial preprocessing of a complete document
         /// </summary>
-        internal static void ProcessDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider)
+        internal static void ProcessDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
-            ProcessTokensLinesChanges(textSourceInfo, documentLines, null, null, compilerOptions, processedTokensDocumentProvider);
+            ProcessTokensLinesChanges(textSourceInfo, documentLines, null, null, compilerOptions, processedTokensDocumentProvider, copyTextNameVariations);
         }
 
         /// <summary>
         /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider)
+        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             // Collect all changes applied to the processed tokens lines during the incremental scan
             IList<DocumentChange<IProcessedTokensLine>> processedTokensLinesChanges = new List<DocumentChange<IProcessedTokensLine>>();
@@ -85,7 +85,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             // Prepare to analyze the parse tree
             ParseTreeWalker walker = new ParseTreeWalker();
-            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder(compilerOptions);
+            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder(compilerOptions, copyTextNameVariations);
 
             // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
             foreach (Token compilerDirectiveStartingToken in documentLines

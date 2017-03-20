@@ -22,12 +22,14 @@ namespace TypeCobol.Compiler.Preprocessor
     internal class CompilerDirectiveBuilder : CobolCompilerDirectivesBaseListener
     {
 
-        public CompilerDirectiveBuilder(TypeCobolOptions compilerOptions)
+        public CompilerDirectiveBuilder(TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             TypeCobolOptions = compilerOptions;
+            CopyTextNameVariations = copyTextNameVariations;
         }
 
         public TypeCobolOptions TypeCobolOptions { get; set; }
+        public List<RemarksDirective.TextNameVariation> CopyTextNameVariations { get; set; }
         /// <summary>
         /// CompilerDirective object resulting of the visit the parse tree
         /// </summary>
@@ -149,9 +151,9 @@ namespace TypeCobol.Compiler.Preprocessor
 				copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
 				if (copy.TextName != null) {
-                   
-					// Find the list of copy text names variations declared by previous REMARKS compiler directives
-					var variations = ((TokensLine)copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations;
+
+                    // Find the list of copy text names variations declared by previous REMARKS compiler directives
+                    var variations = CopyTextNameVariations;
                     if (TypeCobolOptions.AutoRemarksEnable && (variations == null || !variations.Any(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase)))) //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
 				    {
 				        variations = new List<RemarksDirective.TextNameVariation>
@@ -159,10 +161,7 @@ namespace TypeCobol.Compiler.Preprocessor
 				            new RemarksDirective.TextNameVariation(copy.TextName)
 				        };
 
-                        if(((TokensLine)copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations == null)
-                            ((TokensLine)copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
-
-                        ((TokensLine) copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations.AddRange(variations);
+                       CopyTextNameVariations.AddRange(variations);
 				    }
 
 				    if (variations != null)
