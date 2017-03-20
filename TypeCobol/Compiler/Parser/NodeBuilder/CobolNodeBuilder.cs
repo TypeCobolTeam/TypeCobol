@@ -133,9 +133,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterCobolProgram(ProgramClassParser.CobolProgramContext context)
         {
+            ProgramIdentification programIdentification = null;
+            var pgm = context.programAttributes();
+            if (pgm != null)
+                programIdentification = (ProgramIdentification)pgm.ProgramIdentification().Symbol;
+
             if (Program == null)
             {
-                Program = new SourceProgram(TableOfGlobals, null);
+                Program = new SourceProgram(TableOfGlobals, programIdentification);
                 programsStack = new Stack<Program>();
                 CurrentProgram = Program;
                 Enter(CurrentProgram, context, CurrentProgram.SymbolTable);
@@ -143,13 +148,10 @@ namespace TypeCobol.Compiler.Parser
             else
             {
                 var enclosing = CurrentProgram;
-                CurrentProgram = new NestedProgram(enclosing, null);
+                CurrentProgram = new NestedProgram(enclosing, programIdentification);
                 Enter(CurrentProgram, context, new SymbolTable(TableOfGlobals));
             }
-            var pgm = context.programAttributes();
-            if (pgm != null) CurrentProgram.Identification = (ProgramIdentification)pgm.ProgramIdentification().Symbol;
-
-            Enter(new ProgramIdentificationNode(CurrentProgram.Identification), pgm, CurrentProgram.SymbolTable);
+            
             if (pgm != null && pgm.LibraryCopy() != null)
             { // TCRFUN_LIBRARY_COPY
                 var cnode = new LibraryCopy((LibraryCopyCodeElement)pgm.LibraryCopy().Symbol);
@@ -158,8 +160,6 @@ namespace TypeCobol.Compiler.Parser
             }
 
             TableOfNamespaces.AddProgram(CurrentProgram); //Add Program to Namespace table. 
-
-            Exit(); //Exit Programdentification
         }
 
         public override void ExitCobolProgram(ProgramClassParser.CobolProgramContext context)

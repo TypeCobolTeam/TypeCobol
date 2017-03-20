@@ -12,7 +12,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public class Program : Node
+    public class Program : Node, CodeElementHolder<ProgramIdentification>
     {
         public Program(CodeElement codeElement) : base(codeElement)
         {
@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// Program name, Initial / 
         /// </summary>
-        public ProgramIdentification Identification { get; set; }        
+        public ProgramIdentification Identification { get { return this.CodeElement as ProgramIdentification; } }        
 
         // -- ENVIRONMENT DIVISION --
 

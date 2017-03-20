@@ -309,8 +309,8 @@ internal class VisibilityAttribute: Attribute {
 
 internal class LibraryCopyAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var pgmIdentification = ((Node)o).GetProgramNode().Children.First(n => n is ProgramIdentificationNode);
-		var copies = pgmIdentification.GetChildren<LibraryCopyCodeElement>();
+		var pgm = ((Node)o).GetProgramNode();
+		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
 		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement().Name.Name;
 	}

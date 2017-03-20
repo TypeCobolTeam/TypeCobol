@@ -35,7 +35,6 @@ Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strong
 --- Nodes ---
 ?
   TypeCobol
-    program-identification
     data-division
       working-storage
         Feature

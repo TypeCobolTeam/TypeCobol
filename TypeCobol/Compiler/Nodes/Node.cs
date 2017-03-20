@@ -235,7 +235,7 @@ namespace TypeCobol.Compiler.Nodes {
             Node child = this;
             while (child != null && !(child is Program))
                 child = child.Parent;
-            return (Program)child;
+            return (Program)child.Children;
         }
 
         /// <summary>Search for all children of a specific Name</summary>
@@ -497,18 +497,6 @@ namespace TypeCobol.Compiler.Nodes {
     /// <summary>Root of any Node tree, with null CodeElement.</summary>
     public class Root : Node, CodeElementHolder<CodeElement> {
         public Root() : base(null) {}
-        public override bool VisitNode(IASTVisitor astVisitor)
-        {
-            return astVisitor.Visit(this);
-        }
-    }
-
-    public class ProgramIdentificationNode : Node, CodeElementHolder<ProgramIdentification> {
-        public ProgramIdentificationNode(ProgramIdentification identification) : base(identification) {}
-
-        public override string ID { get { return "program-identification"; } }
-
- 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
