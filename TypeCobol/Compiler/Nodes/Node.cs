@@ -235,7 +235,7 @@ namespace TypeCobol.Compiler.Nodes {
             Node child = this;
             while (child != null && !(child is Program))
                 child = child.Parent;
-            return (Program)child.Children;
+            return (Program)child;
         }
 
         /// <summary>Search for all children of a specific Name</summary>
