@@ -103,5 +103,4 @@
             return astVisitor.Visit(this);
         }
     }
-
 } // end of namespace TypeCobol.Compiler.Nodes
