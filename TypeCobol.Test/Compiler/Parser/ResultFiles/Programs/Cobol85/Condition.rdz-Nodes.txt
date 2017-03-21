@@ -1,0 +1,19 @@
+﻿--- Nodes ---
+?
+  MyPGM
+    data-division
+      working-storage
+        [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [31,31+:.]<PeriodSeparator>
+
+          ASCII-v
+          EBCDIC-v
+    procedure-division
+      sentence-0
+        [[IfStatement]] [12,13:IF]<IF> --> [39,39:)]<RightParenthesisSeparator>
+
+          ?
+            [[DisplayStatement]] [15,21:DISPLAY]<DISPLAY> --> [23,29+:'Hello']<AlphanumericLiteral>(',Y,Y){Hello}
+- variables = 'Hello'
+
+          end
+        end

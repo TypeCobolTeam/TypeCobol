@@ -1,0 +1,330 @@
+﻿Line 58[12,39] <27, Error, Syntax> - Syntax error : No function found for 'case1'
+Line 61[12,39] <27, Error, Syntax> - Syntax error : No function found for 'case2'
+Line 64[12,48] <27, Error, Syntax> - Syntax error : No function found for 'case3'
+Line 67[12,48] <27, Error, Syntax> - Syntax error : No function found for 'case4'
+Line 70[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case51'
+Line 72[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case52'
+Line 74[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case53'
+Line 77[12,22] <27, Error, Syntax> - Syntax error : Call to 'case61' is ambigous. 'case61' is defined 2 times
+Line 79[12,22] <27, Error, Syntax> - Syntax error : Call to 'case62' is ambigous. 'case62' is defined 2 times
+Line 81[12,22] <27, Error, Syntax> - Syntax error : Call to 'case63' is ambigous. 'case63' is defined 2 times
+Line 84[12,21] <27, Error, Syntax> - Syntax error : No function found for 'case7'
+Line 90[12,21] <27, Error, Syntax> - Syntax error : Call to 'case9' is ambigous. 'case9' is defined 2 times
+Line 93[12,48] <27, Error, Syntax> - Syntax error : No function found for 'case10'
+Line 100[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12' is ambigous. 'case12' is defined 2 times
+Line 103[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case13'
+Line 109[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15' is ambigous. 'case15' is defined 2 times
+Line 124[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case2'
+Line 129[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
+Line 129[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and length 1 and received 'fakeDate' of type Alphanumeric and length 8
+Line 129[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of type Alphanumeric and length 8 and received 'myDate' of type DATE and length 1
+Line 129[12,48] <27, Error, Syntax> - Syntax error : Parameter fakeD is not referenced
+Line 134[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case4'
+Line 152[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case7'
+Line 155[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case8'
+Line 158[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case9'
+Line 162[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case10' only takes 0 parameter(s)
+Line 167[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'mydate' of type DATE and length 1
+Line 167[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'fakeDate' of type Alphanumeric and length 8
+Line 167[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'result' of type BOOL and length 1
+Line 171[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'mydate' of type DATE and length 1
+Line 171[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'fakeDate' of type Alphanumeric and length 8
+Line 171[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'result' of type BOOL and length 1
+Line 174[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case13'
+Line 178[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case14'
+Line 181[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case15'
+--- Nodes ---
+?
+  CallToPublicProcedure
+    data-division
+      local-storage
+        myDate
+        fakeDate
+        result
+        realfakeDate
+        case1
+        case2
+        case3
+        case4
+        case61
+        case62
+        case63
+        case8
+        case9
+        case11
+        case12
+        case14
+        case15
+        group
+          case1
+          case2
+          case3
+          case4
+          case61
+          case62
+          case63
+          case9
+          case12
+          case15
+    procedure-division
+      TRAITEMENT
+        sentence-0
+          [[ProcedureStyleCall]] [12,15:call]<CALL> --> [17,23+:'case1']<AlphanumericLiteral>(',Y,Y){case1}
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [34,39:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [34,39:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [43,48:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [43,48:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case51]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case52]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case53]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case61]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case62]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case63]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,21:case7]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,21:case8]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,21:case9]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [43,48:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case11]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case12]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case13]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case14]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [17,22:case15]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [34,39:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [34,39:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [43,48:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [43,48:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case51]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case52]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case53]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case61]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case62]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case63]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,39:case7]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,39:case8]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,39:case9]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [43,48:result]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case11]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case12]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case13]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case14]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case15]<UserDefinedWord>
+
+          end
+    PublicProcedures
+      data-division
+      procedure-division
+        case1
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case3
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case4
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case4
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case51
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case52
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case52
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case53
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case53
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case53
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case61
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case62
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case62
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case63
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case63
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case63
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case10
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case11
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case12
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case13
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case13
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case14
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case14
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case15
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        case15
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+      end
+    end
