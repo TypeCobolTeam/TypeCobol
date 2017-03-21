@@ -152,10 +152,24 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>Node unique identifier (scope: tree this Node belongs to)</summary>
-        public virtual string URI {
+        public string URI {
             get {
                 if (ID == null) return null;
                 var puri = Parent == null ? null : Parent.URI;
+                if (puri == null) return ID;
+                return puri + '.' + ID;
+            }
+        }
+
+        /// <summary>
+        /// Node unique identifier (scope: tree this Node belongs to) This is the version used by the Generator
+        /// </summary>
+        public virtual string GenURI
+        {
+            get
+            {
+                if (ID == null) return null;
+                var puri = Parent == null ? null : Parent.GenURI;
                 if (puri == null) return ID;
                 return puri + '.' + ID;
             }
@@ -326,6 +340,38 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        /// <summary>GenGet this node or one of its children that has a given URI.</summary>
+        /// This the version used by the Generator.
+        /// <param name="uri">Node unique identifier to search for</param>
+        /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
+        public Node GenGet(string uri)
+        {
+            if (GenURI != null && GenURI.EndsWith(uri)) return this;
+            foreach (var child in Children)
+            {
+                var found = child.GenGet(uri);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        /// <summary>As <see cref="GenGet" /> method, but can specify the type of Node to retrieve.</summary>
+        /// This the version used by the Generator
+        /// <typeparam name="N"></typeparam>
+        /// <param name="uri"></param>
+        /// <returns>null if a node with the given URI is found but is not of the proper type</returns>
+        public N GenGet<N>(string uri) where N : Node
+        {
+            var node = GenGet(uri);
+            try
+            {
+                return (N)node;
+            }
+            catch (InvalidCastException)
+            {
+                return default(N);
+            }
+        }
 
         public override string ToString() {
             var str = new StringBuilder();
