@@ -82,16 +82,6 @@
     public class Paragraph: Node, CodeElementHolder<ParagraphHeader> {
 	    public Paragraph(ParagraphHeader header): base(header) { }
 	    public override string ID { get { return this.CodeElement().ParagraphName.Name; } }
-        public override string URI
-        {
-            get
-            {
-                string id = string.Intern("paragraph");
-                var puri = Parent == null ? null : Parent.URI;
-                if (puri == null) return id;
-                return puri + '.' + id;
-            }
-        }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
