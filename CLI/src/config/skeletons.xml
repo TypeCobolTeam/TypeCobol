@@ -221,7 +221,7 @@
         }
         @items
       </pattern>
-      <pattern location="program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
+      <pattern location="program.procedure-division.paragraph.sentence-0.begin|program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>

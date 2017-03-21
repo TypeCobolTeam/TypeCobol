@@ -152,7 +152,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>Node unique identifier (scope: tree this Node belongs to)</summary>
-        public string URI {
+        public virtual string URI {
             get {
                 if (ID == null) return null;
                 var puri = Parent == null ? null : Parent.URI;

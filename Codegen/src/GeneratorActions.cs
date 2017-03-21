@@ -202,7 +202,14 @@ namespace TypeCobol.Codegen
             return (Program)child;
         }
 
-        public Node GetLocation(Node node, string location, out int? index)
+        /// <summary>
+        /// Normalize of location
+        /// </summary>
+        /// <param name="node">The parent node of the location</param>
+        /// <param name="location">The location to normalize</param>
+        /// <param name="index">The index of the location if any</param>
+        /// <returns>The normalized location string</returns>
+        private static string NormalizeLocation(Node node, string location, out int? index)
         {
             index = null;
             if (location.EndsWith(".begin"))
@@ -215,7 +222,37 @@ namespace TypeCobol.Codegen
                 {
                     location = location.Substring(0, location.Length - ".end".Length);
                 }
+            return location;
+        }
 
+        /// <summary>
+        /// Determines if the given location exists
+        /// </summary>
+        /// <param name="node">The parent node of the location</param>
+        /// <param name="location">The loctaion to test.</param>
+        /// <returns>true if the location exists, fals eotherwise</returns>
+        public bool IsLocationExists(Node node, string location, out int? index)
+        {
+            index = null;
+            location = NormalizeLocation(node, location, out index);
+            if (location == null || location.ToLower().Equals("node")) 
+                return true;
+            var root = CurrentProgram ?? (node.GetProgramNode() ?? node.Root);
+            var result = root.Get(location);
+            return result != null;
+        }
+
+        /// <summary>
+        /// Get a Single Location Node
+        /// </summary>
+        /// <param name="node">The parent node of the location</param>
+        /// <param name="location">The location to get</param>
+        /// <param name="index">Output Index of the location in the parent node</param>
+        /// <returns>The location's node</returns>
+        public Node GetSingleLocation(Node node, string location, out int? index)
+        {
+            index = null;
+            location = NormalizeLocation(node, location, out index);
             if (location == null || location.ToLower().Equals("node")) return node;
             var root = CurrentProgram ?? (node.GetProgramNode() ?? node.Root);
             var result = root.Get(location);
@@ -224,6 +261,20 @@ namespace TypeCobol.Codegen
             if (result != null) return result;
             throw new System.ArgumentException("Undefined URI: " + location);
         }
+
+        public Node GetLocation(Node node, string location, out int? index)
+        {
+            string[] locations = location.Split(new char[] { '|' });
+            for(int i = 0; i < locations.Length; i++)
+            {
+                if (IsLocationExists(node, locations[i], out index))
+                {
+                    return GetSingleLocation(node, locations[i], out index);
+                }
+            }
+            return GetSingleLocation(node, locations[locations.Length - 1], out index);
+        }
+
         public Node Create(Node node, string location)
         {
             var factory = new Codegen.Nodes.Factory();

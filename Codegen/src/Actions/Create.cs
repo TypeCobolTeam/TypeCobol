@@ -45,7 +45,12 @@ namespace TypeCobol.Codegen.Actions
         /// </summary>
         public void Execute()
         {
-            Parent.Add(Child, (position ?? -1));
+            int index = (position ?? -1);
+            Parent.Add(Child, index);
+            if (index >= 0)
+            {
+                Child.SetFlag(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex, true);
+            }
         }
     }
 }

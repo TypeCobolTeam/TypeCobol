@@ -14,6 +14,8 @@ internal class DataDivision: Compiler.Nodes.DataDivision, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
+                if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
+                    _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "DATA DIVISION.", null));
 			}
 			return _cache;
@@ -32,6 +34,8 @@ internal class WorkingStorageSection: Compiler.Nodes.WorkingStorageSection, Gene
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
+                if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
+                    _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "WORKING-STORAGE SECTION.", null));
 			}
 			return _cache;
@@ -48,6 +52,8 @@ internal class LocalStorageSection: Compiler.Nodes.LocalStorageSection, Generate
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
+                if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
+                    _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "LOCAL-STORAGE SECTION.", null));
 			}
 			return _cache;
@@ -64,6 +70,8 @@ internal class LinkageSection: Compiler.Nodes.LinkageSection, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
+                if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
+                    _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "LINKAGE SECTION.", null));
 			}
 			return _cache;
@@ -80,6 +88,8 @@ internal class FileSection: Compiler.Nodes.FileSection, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
+                if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
+                    _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "FILE SECTION.", null));
 			}
 			return _cache;

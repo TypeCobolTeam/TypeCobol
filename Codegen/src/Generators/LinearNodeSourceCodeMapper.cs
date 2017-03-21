@@ -450,7 +450,8 @@ namespace TypeCobol.Codegen.Generators
             //Determine the Line number of the before line.
             int before_line = Nodes[beforeNode.NodeIndex].Positions.Item4[0] - 1;
             //Add the node to the same line
-            LineData[before_line].LineNodes.Add(theNode.NodeIndex);
+            int insertIndex = LineData[before_line].LineNodes.IndexOf(beforeNode.NodeIndex);
+            LineData[before_line].LineNodes.Insert(insertIndex, theNode.NodeIndex);
             //The Node is Inserted at the beginning of the before node
             Nodes[theNode.NodeIndex].Buffer = Nodes[beforeNode.NodeIndex].Buffer;
             Nodes[theNode.NodeIndex].From = Nodes[beforeNode.NodeIndex].From;
@@ -482,8 +483,8 @@ namespace TypeCobol.Codegen.Generators
             Debug.Assert(afterNode != null);
             if (!(afterNode != null))
                 return false;
-            Debug.Assert(afterNode.NodeIndex > 0);
-            if (!(afterNode.NodeIndex > 0))
+            Debug.Assert(afterNode.NodeIndex >= 0);
+            if (!(afterNode.NodeIndex >= 0))
                 return false;
             Debug.Assert(theNode.NodeIndex > 0);
             if (!(theNode.NodeIndex > 0))
@@ -523,6 +524,8 @@ namespace TypeCobol.Codegen.Generators
                 new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item4[0] },
                 new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item5[0] }
                 );
+            //First generate a new line befor this node
+            theNode.SetFlag(Node.Flag.FactoryGeneratedNodeWithFirstNewLine, true);
             return true;
         }
 
@@ -548,14 +551,14 @@ namespace TypeCobol.Codegen.Generators
                 {//So we must keep the insertion index
                     Node beforeNode = null;
                     int index = node.Parent.IndexOf(node);
-                    while (index != (node.Parent.Children.Count - 1))
+                    while (index != 0 && index != (node.Parent.Children.Count - 1))
                     {
-                        beforeNode = node.Parent.Children[++index];
+                        beforeNode = node.Parent.Children[index++];
                         //Ignore Functions Declarations.
                         if(!(beforeNode is TypeCobol.Compiler.Nodes.FunctionDeclaration))
                             break;
                     }
-                    if (index != (node.Parent.Children.Count - 1))
+                    if (index != 0 && index != (node.Parent.Children.Count - 1))
                     {
                         if (InsertNodeBeforeNode(node, beforeNode))
                             return true;
@@ -563,7 +566,17 @@ namespace TypeCobol.Codegen.Generators
                     else
                     {
                         //We must insert after the parent.                        
-                        if (InsertNodeAfterNode(node, node.Parent))
+                        if (node.Parent.IsFlagSet(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex) && node.Children.Count == 0)
+                        {
+                            //It's parent is already a repositionned node, and this node has no children.
+                            node.SetFlag(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex, false);
+                            return true;
+                        }
+                        //Look for the first parent with a position
+                        Node valid_parent = node.Parent;
+                        if (valid_parent != null && (valid_parent.NodeIndex < 0 || Nodes[valid_parent.NodeIndex].Positions == null))
+                            valid_parent = valid_parent.Parent;
+                        if (InsertNodeAfterNode(node, valid_parent ?? node.Parent))
                             return true;
                     }
                 }           
