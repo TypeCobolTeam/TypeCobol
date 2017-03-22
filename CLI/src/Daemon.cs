@@ -67,7 +67,7 @@ namespace TypeCobol.Server {
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
 			};
 
-
+             
             //Add SQLCA Intrinsic
             config.Copies.Add(@"config\SQLCA.cbl");
 
@@ -242,10 +242,10 @@ namespace TypeCobol.Server {
 			        var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
 			        foreach (var types in symbols.Types)
 			            foreach (var type in types.Value)
-			                table.AddType((Compiler.Nodes.TypeDefinition) type);
+			                table.AddType(type);
 			        foreach (var functions in symbols.Functions)
 			            foreach (var function in functions.Value)
-			                table.AddFunction((Compiler.Nodes.FunctionDeclaration) function);
+			                table.AddFunction(function);
 			        //TODO check if types or functions are already there
 			    } catch (Exception e) {
 			        AddError(writer, MessageCode.IntrinsicLoading, e.Message + "\n" + e.StackTrace, path);
