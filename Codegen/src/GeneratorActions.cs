@@ -48,6 +48,11 @@ namespace TypeCobol.Codegen
             Skeletons = skeletons ?? new List<Skeleton>();
         }
 
+        /// <summary>
+        /// Get all actions created for a node.
+        /// </summary>
+        /// <param name="node">The node to get all actions.</param>
+        /// <returns>The collection of actiosn.</returns>
         public ICollection<TypeCobol.Codegen.Actions.Action> GetActions(Node node)
         {
             var actions = new List<TypeCobol.Codegen.Actions.Action>();
@@ -115,6 +120,11 @@ namespace TypeCobol.Codegen
             }
         }
 
+        /// <summary>
+        /// Give the first skeleton that match a node.
+        /// </summary>
+        /// <param name="node">The node to get the active skeleton</param>
+        /// <returns>The first matching skeleton if any, null otherwise.</returns>
         public Skeleton GetActiveSkeleton(Node node)
         {
             foreach (var skeleton in Skeletons)
@@ -130,6 +140,12 @@ namespace TypeCobol.Codegen
             return null;
         }
 
+        /// <summary>
+        /// Compute all dynamic values corresponding to a set of properties.
+        /// </summary>
+        /// <param name="node">The node to get properties values</param>
+        /// <param name="properties">All properties value</param>
+        /// <returns>A dictionary of properties values Dictionary<property:string, value:object></returns>
         public Dictionary<string, object> GetProperties(Node node, IEnumerable<string> properties)
         {
             var result = new Dictionary<string, object>();
@@ -150,6 +166,13 @@ namespace TypeCobol.Codegen
             return result;
         }
 
+        /// <summary>
+        /// Create the action associated to a node using a pattern.
+        /// </summary>
+        /// <param name="source">The source node</param>
+        /// <param name="properties">The dictonary of property values</param>
+        /// <param name="pattern">The action pattern</param>
+        /// <returns>The create action if any, null otherwise</returns>
         public TypeCobol.Codegen.Actions.Action GetAction(Node source, Dictionary<string, object> properties, Pattern pattern)
         {
             //Evaluate Any Proprty
@@ -262,20 +285,37 @@ namespace TypeCobol.Codegen
             throw new System.ArgumentException("Undefined URI: " + location);
         }
 
-        public Node GetLocation(Node node, string location, out int? index)
+        /// <summary>
+        /// Get the node corresponding to a set of locations.
+        /// </summary>
+        /// <param name="parent">The parent node</param>
+        /// <param name="location">The location access path, this can be a set of access path using the character '|' as separator.
+        /// The lookup semantic is as follow: each access path is tested for existence, if it exists then a corresponding node is searched for it and returned.
+        /// Finally the last access path will be used to locate the node, if none of the previous path exists.
+        /// </param>
+        /// <param name="index">[output] the position index of the resulting node within its parent children.</param>
+        /// <returns>The </returns>
+        public Node GetLocation(Node parent, string location, out int? index)
         {
             string[] locations = location.Split(new char[] { '|' });
             for(int i = 0; i < locations.Length; i++)
             {
-                if (IsLocationExists(node, locations[i], out index))
+                locations[i] = locations[i].Trim();
+                if (IsLocationExists(parent, locations[i], out index))
                 {
-                    return GetSingleLocation(node, locations[i], out index);
+                    return GetSingleLocation(parent, locations[i], out index);
                 }
             }
-            return GetSingleLocation(node, locations[locations.Length - 1], out index);
+            return GetSingleLocation(parent, locations[locations.Length - 1], out index);
         }
 
-        public Node Create(Node node, string location)
+        /// <summary>
+        /// Create a node at the given location.
+        /// </summary>
+        /// <param name="parent">The parent root node</param>
+        /// <param name="location">The location as access path.</param>
+        /// <returns>The create node</returns>
+        public Node Create(Node parent, string location)
         {
             var factory = new Codegen.Nodes.Factory();
             var parts = location.Split(new char[] { '.' });
@@ -284,7 +324,7 @@ namespace TypeCobol.Codegen
             foreach (var part in parts)
             {
                 path.Append(part);
-                var current = node.GenGet(path.ToString());
+                var current = parent.GenGet(path.ToString());
                 if (current == null)
                 {
                     string nextsibling;
