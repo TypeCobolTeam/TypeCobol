@@ -9,13 +9,13 @@
 
        WORKING-STORAGE SECTION.
 
-       01 ProcessingMode2 typedef pic X(02).
+       01 ProcessingMode2 typedef strict pic X(02).
               88 RealTime value "TP".
               88 IMSBatch value "TI".
               88 DB2Batch value "TD".
               88 Batch    value "  ".
 
-       01 ProcessingMode typedef .
+       01 ProcessingMode typedef strict.
            05 temp pic X(02).
               88 RealTime value "TP".
               88 IMSBatch value "TI".

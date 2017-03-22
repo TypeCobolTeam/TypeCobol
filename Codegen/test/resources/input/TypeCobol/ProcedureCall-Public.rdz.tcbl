@@ -57,8 +57,6 @@
           call PGM1::check input somedate
       *OK 
           call Callee::check input somedate
-      *OK 
-          call Callee::check2 input somedate
         .
 
 

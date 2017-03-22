@@ -1,8 +1,4 @@
-﻿      * 6 errors
-      * Line 32[12,65] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
-      * Line 33[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
-      * Line 34[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
-      * Line 35[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
+﻿      * 2 errors
       * Line 36[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
       * Line 37[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
        IDENTIFICATION DIVISION.
@@ -10,13 +6,13 @@
        
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      *01 SmallGroup TYPEDEF.
+      *01 SmallGroup TYPEDEF strict.
       *  05 x PIC 9(04).
       *  05 y PIC 9(04).
-      *01 ToughGroup TYPEDEF STRONG.
+      *01 ToughGroup TYPEDEF strict.
       *  05 x PIC 9(04).
       *  05 y PIC 9(04).
-      *01 Small TYPEDEF        PIC 9(04).
+      *01 Small TYPEDEF strict  PIC 9(04).
 
       *01 identifier-1 TYPE ToughGroup.
        01 identifier-1.
