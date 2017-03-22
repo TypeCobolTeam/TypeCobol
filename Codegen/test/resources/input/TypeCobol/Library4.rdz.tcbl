@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZDATE.
+
+      *=================================================================
+       PROCEDURE DIVISION.                   
+       DECLARE FUNCTION currentDateString PUBLIC     
+           RETURNING Result PIC 9(08).         
+       PROCEDURE DIVISION.
+           display "toto"
+           .
+       END-DECLARE.
+
+       END PROGRAM DVZZDAT.

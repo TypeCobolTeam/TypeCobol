@@ -124,6 +124,8 @@ namespace TypeCobol.Codegen {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","Library")+".rdz.cbl", skeletons);
 			//CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol","Library2")+".rdz.tcbl", skeletons);
+            //CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Library3") + ".rdz.tcbl", skeletons);
+            //CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Library4") + ".rdz.tcbl", skeletons);
 		}
 
 		[TestMethod]

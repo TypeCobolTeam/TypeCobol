@@ -1,0 +1,15 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZDATE.
+       DATA DIVISION. local-STORAGE SECTION.
+       01  dateString    TYPEDEF     PIC 9(08).
+
+      *=================================================================
+       PROCEDURE DIVISION.                   
+       DECLARE FUNCTION currentDateString PUBLIC     
+           RETURNING Result TYPE dateString.         
+       PROCEDURE DIVISION.
+           display "toto"
+           .
+       END-DECLARE.
+
+       END PROGRAM DVZZDAT.
