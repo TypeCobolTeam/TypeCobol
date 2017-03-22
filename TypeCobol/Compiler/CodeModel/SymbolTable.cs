@@ -641,8 +641,8 @@ namespace TypeCobol.Compiler.CodeModel
             var programs = GetProgram(nameSpace); //If no results found and Namespace != null, then search program in the given namespace
             if (programs.Count == 0)
                 return result;
-            if(programs.GroupBy(p => p.ID).Count(p => p.Count() > 1) > 1)
-                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().ID));
+            if (programs.Count > 1)
+                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().Name));
 
             
             var programFunctions = programs.FirstOrDefault().CurrentTable.Functions; //Get the first program (will change with the real use of namespace) and functions

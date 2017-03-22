@@ -100,11 +100,6 @@ namespace TypeCobol.Compiler.CodeModel
             get;
             set;
         }
-        /// <summary>
-        /// Table of symbols defined in this program.
-        /// Includes WORKING-STORAGE, LOCAL-STORAGE and LINKAGE data.
-        /// </summary>
-        public SymbolTable SymbolTable;
 
 		public SymbolTable CurrentTable {
 			get { return SyntaxTree.CurrentNode.SymbolTable; }
@@ -179,7 +174,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return true;
+            return astVisitor.Visit(this);
         }
     }
     
@@ -201,7 +196,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return true;
+            return astVisitor.Visit(this);
         }
     }
 }

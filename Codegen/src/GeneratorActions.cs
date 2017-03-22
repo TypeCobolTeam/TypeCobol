@@ -212,20 +212,6 @@ namespace TypeCobol.Codegen
         }
 
         /// <summary>
-        /// Get the Program Node corresponding to a Child
-        /// </summary>
-        /// <param name="child">The Child Node</param>
-        /// <returns>The Program Node</returns>
-        public static Program GetProgramNode(Node child)
-        {
-            if (child == null)
-                return null;
-            while (child != null && !(child is Program))
-                child = child.Parent;
-            return (Program)child;
-        }
-
-        /// <summary>
         /// Normalize of location
         /// </summary>
         /// <param name="node">The parent node of the location</param>
