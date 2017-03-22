@@ -28,7 +28,8 @@
 
 
        PROCEDURE DIVISION.
-       PERFORM TC-Initializations
+      *
+           PERFORM TC-Initializations
 
                           
 
@@ -43,7 +44,7 @@
       *          actual-format PIC X(08).
       *  .
 
-       move someformat to realformat
+           move someformat to realformat
 
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)

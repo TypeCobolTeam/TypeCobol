@@ -28,7 +28,8 @@
            CONTINUE.
        END-DECLARE.
 
-       move someformat to realformat
+           move someformat to realformat
+           .
        TRAITEMENT.
            DISPLAY "TOTO"
       * __________________________________________________

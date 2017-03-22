@@ -28,7 +28,7 @@
            CONTINUE.
        END-DECLARE.
 
-       move someformat to realformat
+           move someformat to realformat
 
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)
