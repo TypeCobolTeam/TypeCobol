@@ -346,7 +346,22 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
         public Node GenGet(string uri)
         {
-            if (GenURI != null && GenURI.EndsWith(uri)) return this;
+            string gen_uri = GenURI;
+            if (gen_uri != null)
+            {
+                if (uri.IndexOf('(') >= 0 && uri.IndexOf(')') > 0)
+                {//Pattern matching URI                    
+                    System.Text.RegularExpressions.Regex re = new System.Text.RegularExpressions.Regex(uri);
+                    if (re.IsMatch(GenURI))
+                    {
+                        return this;
+                    }
+                }
+                if (gen_uri.EndsWith(uri))
+                {
+                    return this;
+                }
+            }
             foreach (var child in Children)
             {
                 var found = child.GenGet(uri);

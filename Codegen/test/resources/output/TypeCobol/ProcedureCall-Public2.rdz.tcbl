@@ -30,7 +30,6 @@
        PROCEDURE DIVISION.
        PERFORM TC-Initializations
 
-           .
                           
 
       *declare procedure check private
@@ -51,7 +50,7 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'f0eabed9' USING
+           CALL TC-Callee-f0eabed9 USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -62,7 +61,7 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'f0eabed9' USING
+           CALL TC-Callee-f0eabed9 USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -110,13 +109,13 @@
                                          
       *OK 
       *   call Callee::check input somedate
-          CALL 'afc9521c' USING
+          CALL TC-Callee-afc9521c USING
                                  somedate
            end-call
                                            
       *OK 
       *   call Callee::check2 input somedate
-          CALL 'b856189b' USING
+          CALL TC-Callee-b856189b USING
                                  somedate
            end-call
                                             
