@@ -298,12 +298,15 @@ namespace TypeCobol.Codegen
         public Node GetLocation(Node parent, string location, out int? index)
         {
             string[] locations = location.Split(new char[] { '|' });
-            for(int i = 0; i < locations.Length; i++)
+            if (locations.Length > 1)
             {
-                locations[i] = locations[i].Trim();
-                if (IsLocationExists(parent, locations[i], out index))
+                for (int i = 0; i < locations.Length; i++)
                 {
-                    return GetSingleLocation(parent, locations[i], out index);
+                    locations[i] = locations[i].Trim();
+                    if (IsLocationExists(parent, locations[i], out index))
+                    {
+                        return GetSingleLocation(parent, locations[i], out index);
+                    }
                 }
             }
             return GetSingleLocation(parent, locations[locations.Length - 1], out index);
