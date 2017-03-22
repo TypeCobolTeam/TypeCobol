@@ -67,6 +67,10 @@ namespace TypeCobol.Server {
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
 			};
 
+
+            //Add SQLCA Intrinsic
+            config.Copies.Add(@"config\SQLCA.cbl");
+
 		    try {
                 List<string> args;
 		        try {
