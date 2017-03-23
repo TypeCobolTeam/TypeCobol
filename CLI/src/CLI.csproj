@@ -65,7 +65,7 @@
     <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config\SQLCA.cbl">
+    <Content Include="DefaultCopies\SQLCA.cpy">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />

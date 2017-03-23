@@ -67,9 +67,10 @@ namespace TypeCobol.Server {
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
 			};
 
-             
-            //Add SQLCA Intrinsic
-            config.Copies.Add(@"config\SQLCA.cbl");
+      
+            //Add DefaultCopies to running session
+            var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            config.CopyFolders.Add(folder + @"\DefaultCopies\");
 
 		    try {
                 List<string> args;
@@ -246,8 +247,9 @@ namespace TypeCobol.Server {
 			        foreach (var functions in symbols.Functions)
 			            foreach (var function in functions.Value)
 			                table.AddFunction(function);
-			        //TODO check if types or functions are already there
-			    } catch (Exception e) {
+                    //TODO check if types or functions are already there
+                }
+                catch (Exception e) {
 			        AddError(writer, MessageCode.IntrinsicLoading, e.Message + "\n" + e.StackTrace, path);
 			    }
 			}
