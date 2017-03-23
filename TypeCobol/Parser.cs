@@ -44,10 +44,10 @@ namespace TypeCobol
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
             TypeCobolOptions options = new TypeCobolOptions();
+            options.HaltOnMissingCopy = (haltOnMissingCopyFilePath != null);
 
 #if EUROINFO_RULES
-		    options.AutoRemarksEnable = autoRemarks;
-            options.HaltOnMissingCopy = (haltOnMissingCopyFilePath != null);
+            options.AutoRemarksEnable = autoRemarks;
 #endif
             CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);

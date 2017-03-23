@@ -170,9 +170,7 @@ namespace TypeCobol.Compiler
                 CompilationResultsForProgram.UpdateTokensLines();
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
-#if EUROINFO_RULES
                 if (CompilerOptions.HaltOnMissingCopy && CompilationProject.MissingCopys.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
-#endif
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
             }

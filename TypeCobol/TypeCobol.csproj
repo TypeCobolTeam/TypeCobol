@@ -33,7 +33,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EIRules_Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\EIRules_Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,7 +43,6 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EIRules_Release|AnyCPU'">
-    <OutputPath>bin\EIRules_Release\</OutputPath>
     <DefineConstants>TRACE;EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>

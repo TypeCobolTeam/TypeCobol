@@ -14,9 +14,8 @@ namespace TypeCobol.Compiler.Directives
         // insert options specific to TypeCobol here ...
 #if EUROINFO_RULES
         public bool AutoRemarksEnable { get; set; }
-        public bool HaltOnMissingCopy { get; set; }
 #endif
-
+        public bool HaltOnMissingCopy { get; set; }
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file
