@@ -174,14 +174,14 @@ namespace TypeCobol.Compiler
 
 
         public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName) {
-            return GetProcessedTokensDocument(libraryName, textName, null);
+            return GetProcessedTokensDocument(libraryName, textName, null, null);
         }
 
         /// <summary>
         /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
         public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, [NotNull] string textName,
-            [CanBeNull] MultilineScanState scanState)
+            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
             if (scanState != null) {
@@ -198,7 +198,7 @@ namespace TypeCobol.Compiler
             else
             {
                 
-                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true, scanState, this);
+                FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true, scanState, this, copyTextNameVariations);
                 //FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true);
                 fileCompiler.CompileOnce();
                 resultDocument = fileCompiler.CompilationResultsForCopy;

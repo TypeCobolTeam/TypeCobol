@@ -124,17 +124,17 @@ namespace TypeCobol.Compiler
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
         public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines,
-            TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider) :
-            this(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, null)
+            TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
+            this(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, null, copyTextNameVariations)
         { 
         }
 
         public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
-            [CanBeNull] MultilineScanState scanState)
+            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
-            CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
+            CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
 
             this.processedTokensDocumentProvider = processedTokensDocumentProvider;
 

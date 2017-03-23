@@ -81,6 +81,7 @@ namespace TypeCobol.Codegen.Actions
                 get
                 {
                     var lines = new List<ITextLine>();
+                    lines.Add(new TextLineSnapshot(-1, "", null)); //Add first blank line because CodeGen doesn't handle generated comment line.
                     lines.Add(new TextLineSnapshot(-1, "*REMARKS. COPY=(", null));
                     foreach (var copy in Copys)
                     {

@@ -1,4 +1,6 @@
-﻿using TypeCobol.Compiler.Scanner;
+﻿using System.Collections.Generic;
+using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -19,6 +21,6 @@ namespace TypeCobol.Compiler.Preprocessor
         /// COPY textName ((OF | IN) libraryName)?
         /// </summary>
         /// <param name="scanState">Provide an initial MultilineScanState (from the enclosing program) to reuse information about special names paragraph or enclosing context (such as: is the copy inside a data division?)</param>
-        ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, MultilineScanState scanState);
+        ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations);
     }
 }

@@ -59,8 +59,6 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public Encoding EncodingForAlphanumericLiterals { get; private set; }
 
-        private List<RemarksDirective.TextNameVariation> _CopyTextNameVariations;
-
         /// <summary>
         /// Symbolic character names previously defined in the source file
         /// NB : value will be null until at least one symbolic character is defined
@@ -105,14 +103,14 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Initialize scanner state for the first line
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
-            this(insideDataDivision, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals, copyTextNameVariations)
+        public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
+            this(insideDataDivision, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
@@ -121,7 +119,6 @@ namespace TypeCobol.Compiler.Scanner
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
             EncodingForAlphanumericLiterals = encodingForAlphanumericLiterals;
-            _CopyTextNameVariations = copyTextNameVariations;
         }
 
         /// <summary>
@@ -129,7 +126,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals, _CopyTextNameVariations);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -470,10 +467,6 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();
-                if (_CopyTextNameVariations != null)
-                {
-                    hash = hash * 23 + this._CopyTextNameVariations.Count;
-                }
 #endif
                 hash = hash * 23 + DecimalPointIsComma.GetHashCode();
                 hash = hash * 23 + WithDebuggingMode.GetHashCode();

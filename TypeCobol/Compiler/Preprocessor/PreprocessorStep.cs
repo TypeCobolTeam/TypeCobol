@@ -243,7 +243,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             ProcessedTokensDocument importedDocumentSource =
                                 processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
                                     copyDirective.TextName,
-                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken]);
+                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken], copyTextNameVariations);
 
                             // Store it on the current line after appying the REPLACING directive
                             ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
