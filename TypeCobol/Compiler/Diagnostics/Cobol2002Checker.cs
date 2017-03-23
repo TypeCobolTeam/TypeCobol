@@ -27,7 +27,14 @@
         private void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
             if (typedef == null) return;
 
-           
+#if EUROINFO_LEGACY_TYPEDEF
+            if(typedef.RestrictionLevel != RestrictionLevel.STRICT)
+            {
+                string message = "Custom EI rule : Only TYPEDEF STRICT is allowed.";
+                DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
+                return;
+            }
+#endif
             if (typedef.LevelNumber.Value != 1)
             {
                 string message = "TYPEDEF clause can only be specified for level 01 entries";
