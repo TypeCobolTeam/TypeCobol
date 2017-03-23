@@ -6,70 +6,82 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler.Diagnostics;
+using System.Runtime.InteropServices;
 
-namespace TypeCobol.Test {
+namespace TypeCobol.Test
+{
 
-	[TestClass]
-	public class GrammarTest {
-	    [TestMethod]
-	    [TestCategory("Parsing")]
-	    [TestProperty("Time", "long")]
-	    [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
-	    public void CheckGrammarCorrectness() {
-	        string regex = "*.PGM";
-	        string samples = @"Samples";
-	        string root = PlatformUtils.GetPathForProjectFile(samples);
-	        CheckTests(root, @"GrammarTest", @"CheckGrammarResults.txt", regex);
+    [TestClass]
+    public class GrammarTest
+    {
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "long")]
+        [Ignore] // Ignored, as everybody does not have a Samples folder. Remove this if you do have one.
+        public void CheckGrammarCorrectness()
+        {
+            string regex = "*.PGM";
+            string samples = @"Samples";
+            string root = PlatformUtils.GetPathForProjectFile(samples);
+            CheckTests(root, @"GrammarTest", @"CheckGrammarResults.txt", regex);
 
-	    }
+        }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex = "*.cbl") {
-	        CheckTests(rootFolder, resultFolder, resultFile, regex, new string[] {}, new string[] {});
-	    }
+        public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex = "*.cbl")
+        {
+            CheckTests(rootFolder, resultFolder, resultFile, regex, new string[] { }, new string[] { });
+        }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex,
-	        string[] include, string[] exclude, int stopAfterAsManyErrors = 10000) {
+        public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex,
+            string[] include, string[] exclude, int stopAfterAsManyErrors = 10000)
+        {
             CheckTests(rootFolder, resultFolder, resultFile, regex, include, exclude, new string[] { });
         }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, int stopAfterAsManyErrors = 10000) { 
-			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
-			bool codegen = true;
-			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+        public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, int stopAfterAsManyErrors = 10000)
+        {
+            string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
+            bool codegen = true;
+            var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 
-            
+            ulong startCPU, endCPU;
+            //Get start time.
+            startCPU = CPUCycle.GetThreadCycles();
+
             File.WriteAllText(resultFile, "");
-			int tested = 0, nbFilesInError = 0, ignores = 0;
-			TimeSpan parsingSumDuration = new TimeSpan(0);
-			TimeSpan codeGenSumDuration = new TimeSpan(0);
-			int parseErrors = 0;
-			int codegenErrors = 0;
-			foreach (var file in files) {
+            int tested = 0, nbFilesInError = 0, ignores = 0;
+            TimeSpan parsingSumDuration = new TimeSpan(0);
+            TimeSpan codeGenSumDuration = new TimeSpan(0);
+            int parseErrors = 0;
+            int codegenErrors = 0;
+            foreach (var file in files)
+            {
 
-				string filename = Path.GetFileName(file);
-                
+                string filename = Path.GetFileName(file);
+
                 File.AppendAllText(resultFile, (filename + ':'));
-				bool ignore = include.Length > 0 && !include.Contains(filename);
-				if (!ignore) ignore = exclude.Contains(filename);
-				if (ignore) {
-					ignores++;
-					File.AppendAllText(resultFile, " ignored.\n");
+                bool ignore = include.Length > 0 && !include.Contains(filename);
+                if (!ignore) ignore = exclude.Contains(filename);
+                if (ignore)
+                {
+                    ignores++;
+                    File.AppendAllText(resultFile, " ignored.\n");
                     continue;
-				}
-				string path = Path.Combine(rootFolder, filename);
-				Stopwatch watch = new Stopwatch();
-				watch.Start();
+                }
+                string path = Path.Combine(rootFolder, filename);
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
                 var document = new Parser();
                 document.Init(path, format, copiesFolder);
                 document.Parse(path);
-                
+
 
                 watch.Stop();
-				//TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
-				TimeSpan elapsed = watch.Elapsed;
-				parsingSumDuration += elapsed;
-				string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
-				File.AppendAllText(resultFile, " parsed in " + formatted +"\n");
+                //TestJSONSerializer.DumpAsJSON(unit.CodeElementsDocumentSnapshot.CodeElements, filename);
+                TimeSpan elapsed = watch.Elapsed;
+                parsingSumDuration += elapsed;
+                string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
+                File.AppendAllText(resultFile, " parsed in " + formatted + "\n");
                 File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForText.FirstCompilationTime + " ms : text update\n");
                 File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForScanner.FirstCompilationTime + " ms : scanner\n");
                 File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForPreprocessor.FirstCompilationTime + " ms : preprocessor\n");
@@ -81,27 +93,30 @@ namespace TypeCobol.Test {
                 Console.WriteLine(filename);
                 bool okay = true;
 
-			    var diagnostics = document.Results.AllDiagnostics();
-			    if (diagnostics.Count > 0) {
-			        okay = false;
-			        parseErrors += diagnostics.Count;
-			    }
-			    displayAndWriteErrorsToGrammarResult(resultFile, diagnostics);
+                var diagnostics = document.Results.AllDiagnostics();
+                if (diagnostics.Count > 0)
+                {
+                    okay = false;
+                    parseErrors += diagnostics.Count;
+                }
+                displayAndWriteErrorsToGrammarResult(resultFile, diagnostics);
 
-                
-				if (!okay) {
-					nbFilesInError++;
-					if (nbFilesInError >= stopAfterAsManyErrors) break;
-				}
 
-			    if (codegen && okay) {
-			        var writer = new StringWriter();
+                if (!okay)
+                {
+                    nbFilesInError++;
+                    if (nbFilesInError >= stopAfterAsManyErrors) break;
+                }
+
+                if (codegen && okay)
+                {
+                    var writer = new StringWriter();
                     watch.Reset();
-			        watch.Start();
-                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, null);			        
-			        var program = document.Results.ProgramClassDocumentSnapshot.Program;
-			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
-			        generator.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
+                    watch.Start();
+                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, null);
+                    var program = document.Results.ProgramClassDocumentSnapshot.Program;
+                    var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
+                    generator.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
 
                     //Write duration to GrammarResultFile
                     watch.Stop();
@@ -112,20 +127,22 @@ namespace TypeCobol.Test {
 
                     writer.Close();
 
-			        var expected = AsLines(File.ReadAllText(path, format.Encoding));
-			        var actual = AsLines(writer.ToString());
+                    var expected = AsLines(File.ReadAllText(path, format.Encoding));
+                    var actual = AsLines(writer.ToString());
 
-			        Directory.CreateDirectory(resultFolder);
-			        
+                    Directory.CreateDirectory(resultFolder);
 
-			        var linesKO = new List<int>();
-			        for (int i = 0; i < Math.Min(expected.Count, actual.Count); i++) {
-			            if (!expected[i].Equals(actual[i])) linesKO.Add(i);
-			        }
-			        var errors = new System.Text.StringBuilder();
-			        string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));
-			        if (linesKO.Count > 0 || expected.Count != actual.Count) {
-			            errors.AppendLine("--- Lines mismatch ---");
+
+                    var linesKO = new List<int>();
+                    for (int i = 0; i < Math.Min(expected.Count, actual.Count); i++)
+                    {
+                        if (!expected[i].Equals(actual[i])) linesKO.Add(i);
+                    }
+                    var errors = new System.Text.StringBuilder();
+                    string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));
+                    if (linesKO.Count > 0 || expected.Count != actual.Count)
+                    {
+                        errors.AppendLine("--- Lines mismatch ---");
                         File.WriteAllLines(
                         resultFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Expected" +
                         Path.GetExtension(file), expected);
@@ -133,87 +150,133 @@ namespace TypeCobol.Test {
                             resultFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Actual" +
                             Path.GetExtension(file), actual);
                     }
-			        int start = -1;
-			        for (int i = 0; i < linesKO.Count; i++) {
-			            int currentline = linesKO[i];
-			            bool follows = i > 0 && linesKO[i - 1] == currentline - 1;
-			            if (!follows) {
-			                start = currentline;
-			                before(errors, expected, currentline, 3, fmt);
-			            }
-			            bool preceeds = i + 1 < linesKO.Count && linesKO[i + 1] == currentline + 1;
-			            if (!preceeds) {
-			                diff(errors, expected, actual, start, currentline, fmt);
-			                after(errors, expected, currentline, 3, fmt);
-			                start = -1;
-			            }
-			        }
-			        for (int i = actual.Count; i < expected.Count; i++)
-			            errors.AppendLine(String.Format("-{0:" + fmt + "} {1}", i, expected[i]));
-			        for (int i = expected.Count; i < actual.Count; i++)
-			            errors.AppendLine(String.Format("+{0:" + fmt + "} {1}", i, actual[i]));
-			        if (errors.Length > 0) {
-			            codegenErrors += linesKO.Count + Math.Abs(actual.Count - expected.Count);
-			            File.AppendAllText(resultFile, errors.ToString());
-			            if (okay) nbFilesInError++;
-			        }
-			    } else {
+                    int start = -1;
+                    for (int i = 0; i < linesKO.Count; i++)
+                    {
+                        int currentline = linesKO[i];
+                        bool follows = i > 0 && linesKO[i - 1] == currentline - 1;
+                        if (!follows)
+                        {
+                            start = currentline;
+                            before(errors, expected, currentline, 3, fmt);
+                        }
+                        bool preceeds = i + 1 < linesKO.Count && linesKO[i + 1] == currentline + 1;
+                        if (!preceeds)
+                        {
+                            diff(errors, expected, actual, start, currentline, fmt);
+                            after(errors, expected, currentline, 3, fmt);
+                            start = -1;
+                        }
+                    }
+                    for (int i = actual.Count; i < expected.Count; i++)
+                        errors.AppendLine(String.Format("-{0:" + fmt + "} {1}", i, expected[i]));
+                    for (int i = expected.Count; i < actual.Count; i++)
+                        errors.AppendLine(String.Format("+{0:" + fmt + "} {1}", i, actual[i]));
+                    if (errors.Length > 0)
+                    {
+                        codegenErrors += linesKO.Count + Math.Abs(actual.Count - expected.Count);
+                        File.AppendAllText(resultFile, errors.ToString());
+                        if (okay) nbFilesInError++;
+                    }
+                }
+                else
+                {
                     File.AppendAllText(resultFile, "\n");
                 }
-			}
+            }
+
+            //Get end time.
+            endCPU = CPUCycle.GetThreadCycles();
+            //Compute actual time.
+            ulong cycles = endCPU - startCPU;
+
             TimeSpan totalTestDuration = parsingSumDuration + codeGenSumDuration;
             string parsingTotalDurationFormatted = String.Format("{0:00}m{1:00}s{2:000}ms", parsingSumDuration.Minutes, parsingSumDuration.Seconds, parsingSumDuration.Milliseconds);
-            
-			string message = "Files tested=" + tested + "/" + files.Length + ", files in error=" + nbFilesInError + ", ignored=" + ignores + "\n";
-			if (parseErrors > 0)   message += "Parsing errors: "+ parseErrors   + '\n';
-			if (codegenErrors > 0) message += "Codegen errors: "+ codegenErrors + '\n';
+
+            string message = "Files tested=" + tested + "/" + files.Length + ", files in error=" + nbFilesInError + ", ignored=" + ignores + "\n";
+            if (parseErrors > 0) message += "Parsing errors: " + parseErrors + '\n';
+            if (codegenErrors > 0) message += "Codegen errors: " + codegenErrors + '\n';
             message += "Parsing time: " + parsingTotalDurationFormatted;
-            if (codegen) {
+
+            if (codegen)
+            {
                 string codeGenTotalDurationFormatted = string.Format("{0:00}m{1:00}s{2:000}ms", codeGenSumDuration.Minutes, codeGenSumDuration.Seconds, codeGenSumDuration.Milliseconds);
                 string totalDurationFormatted = String.Format("{0:00}m{1:00}s{2:000}ms", totalTestDuration.Minutes, totalTestDuration.Seconds, totalTestDuration.Milliseconds);
                 message += " + Codegen time: " + codeGenTotalDurationFormatted + "  => Total time: " + totalDurationFormatted;
             }
+
+            //Concatenate CPU time with message to append in result file.
+            message += ", CPU time: " + cycles;
+
             File.AppendAllText(resultFile, message);
-			if (nbFilesInError > 0) Assert.Fail('\n'+message);
-		}
+            if (nbFilesInError > 0) Assert.Fail('\n' + message);
+        }
 
-		private static void displayAndWriteErrorsToGrammarResult(string resultFile, IEnumerable<Diagnostic> diagnostics) {
-			string result = ParserUtils.DiagnosticsToString(diagnostics, false);
-			Console.WriteLine(result);
-			File.AppendAllText(resultFile, (result + "\n"));
-		}
+        private static void displayAndWriteErrorsToGrammarResult(string resultFile, IEnumerable<Diagnostic> diagnostics)
+        {
+            string result = ParserUtils.DiagnosticsToString(diagnostics, false);
+            Console.WriteLine(result);
+            File.AppendAllText(resultFile, (result + "\n"));
+        }
 
-		private static List<string> AsLines(string text) {
-			return text.Replace("\r\n","\n").Replace("\r","\n").Split('\n').ToList();
-		}
-		private static string Lines2FormatString(int lines) {
-			string res = "0";
-			for (int i=1; i<lines.ToString().Length; i++) res += "0";
-			return res;
-		}
-		/// <param name="output"></param>
-		/// <param name="input">Input text</param>
-		/// <param name="index">Line index</param>
-		/// <param name="before">Number of line before line index</param>
-		/// <param name="fmt"></param>
-		private static void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt="0") {
-			for(int line=index-before; line<index; line++)
-				if (line > 0) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
-		}
-		private static void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt="0") {
-			for (int i=start; i<=end; i++)
-				output.AppendLine(String.Format("-{0:"+fmt+"} {1}", i+1, expected[i]));
-			for (int i=start; i<=end; i++)
-				output.AppendLine(String.Format("+{0:"+fmt+"} {1}", i+1, actual[i]));
-		}
-		/// <param name="output"></param>
-		/// <param name="input">Input text</param>
-		/// <param name="index">Line index</param>
-		/// <param name="after">Number of line after line index</param>
-		/// <param name="fmt"></param>
-		private static void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt="0") {
-			for(int line=index+1; line<=index+after; line++)
-				if (line < input.Count) output.AppendLine(String.Format(" {0:"+fmt+"} {1}", line+1, input[line]));
-		}
-	}
+        private static List<string> AsLines(string text)
+        {
+            return text.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n').ToList();
+        }
+        private static string Lines2FormatString(int lines)
+        {
+            string res = "0";
+            for (int i = 1; i < lines.ToString().Length; i++) res += "0";
+            return res;
+        }
+        /// <param name="output"></param>
+        /// <param name="input">Input text</param>
+        /// <param name="index">Line index</param>
+        /// <param name="before">Number of line before line index</param>
+        /// <param name="fmt"></param>
+        private static void before(System.Text.StringBuilder output, List<string> input, int index, int before, string fmt = "0")
+        {
+            for (int line = index - before; line < index; line++)
+                if (line > 0) output.AppendLine(String.Format(" {0:" + fmt + "} {1}", line + 1, input[line]));
+        }
+        private static void diff(System.Text.StringBuilder output, List<string> expected, List<string> actual, int start, int end, string fmt = "0")
+        {
+            for (int i = start; i <= end; i++)
+                output.AppendLine(String.Format("-{0:" + fmt + "} {1}", i + 1, expected[i]));
+            for (int i = start; i <= end; i++)
+                output.AppendLine(String.Format("+{0:" + fmt + "} {1}", i + 1, actual[i]));
+        }
+        /// <param name="output"></param>
+        /// <param name="input">Input text</param>
+        /// <param name="index">Line index</param>
+        /// <param name="after">Number of line after line index</param>
+        /// <param name="fmt"></param>
+        private static void after(System.Text.StringBuilder output, List<string> input, int index, int after, string fmt = "0")
+        {
+            for (int line = index + 1; line <= index + after; line++)
+                if (line < input.Count) output.AppendLine(String.Format(" {0:" + fmt + "} {1}", line + 1, input[line]));
+        }
+    }
+
+    /// <summary>
+    /// CPUCycle class to get CPU time.
+    /// </summary>
+    static class CPUCycle
+    {
+        /// <summary>
+        /// GetThreadCycles method to get CPU time.
+        /// </summary>
+        /// <returns>cycles</returns>
+        public static ulong GetThreadCycles()
+        {
+            ulong cycles;
+            if (!QueryThreadCycleTime(PseudoHandle, out cycles))
+                throw new System.ComponentModel.Win32Exception();
+            return cycles;
+        }
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool QueryThreadCycleTime(IntPtr hThread, out ulong cycles);
+        private static readonly IntPtr PseudoHandle = (IntPtr)(-2);
+
+    }
 }
