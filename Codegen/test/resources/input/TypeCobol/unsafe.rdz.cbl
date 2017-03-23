@@ -3,13 +3,13 @@
        
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 SmallGroup TYPEDEF.
+       01 SmallGroup TYPEDEF strict.
          05 x PIC 9(04).
          05 y PIC 9(04).
-       01 ToughGroup TYPEDEF STRONG.
+       01 ToughGroup TYPEDEF strict.
          05 x PIC 9(04).
          05 y PIC 9(04).
-       01 Small TYPEDEF        PIC 9(04).
+       01 Small TYPEDEF strict  PIC 9(04).
 
        01 identifier-1 TYPE ToughGroup.
        01 identifier-2 TYPE SmallGroup.

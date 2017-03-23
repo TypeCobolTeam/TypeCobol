@@ -84,6 +84,12 @@ namespace TypeCobol.Compiler.CodeElements
 
         public IList<Diagnostic> Diagnostics { get; set; }
 
+        public bool IsInError
+        {
+            get { return Diagnostics != null && Diagnostics.Count > 0; }
+        }
+
+
         public bool AcceptASTVisitor(IASTVisitor astVisitor) {
             bool continueVisit = astVisitor.BeginCodeElement(this) && VisitCodeElement(astVisitor);
             astVisitor.EndCodeElement(this);
@@ -98,7 +104,7 @@ namespace TypeCobol.Compiler.CodeElements
                 continueVisit = this.ContinueVisitToChildren(astVisitor, StorageAreaDefinitions.Keys,
                                                                             StorageAreaDefinitions.Values);
             }
-            if (continueVisit && SymbolInformationForTokens != null)
+            if (astVisitor.IsSymbolInformationForTokensEnabled && continueVisit && SymbolInformationForTokens != null)
             {
                 continueVisit = this.ContinueVisitToChildren(astVisitor, SymbolInformationForTokens.Keys,
                                                                          SymbolInformationForTokens.Values);

@@ -888,12 +888,22 @@ namespace TypeCobol.Compiler.CodeElements {
         public SymbolDefinition DataTypeName { get; set; }
 
         public SyntaxProperty<bool> Strong { get; internal set; }
-        public bool IsStrong { get { return Strong != null && Strong.Value; } }
+        public SyntaxProperty<bool> Strict { get; internal set; }
+
+        public RestrictionLevel RestrictionLevel
+        {
+            get
+            {
+                return Strong.Value
+                    ? RestrictionLevel.STRONG
+                    : Strict.Value ? RestrictionLevel.STRICT : RestrictionLevel.WEAK;
+            }
+        }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                && this.ContinueVisitToChildren(astVisitor, DataTypeName, Strong);
+                && this.ContinueVisitToChildren(astVisitor, DataTypeName, Strong, Strict);
         }
     }
 

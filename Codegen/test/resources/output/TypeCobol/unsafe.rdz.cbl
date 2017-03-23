@@ -1,22 +1,18 @@
-﻿      * 6 CodeElements errors
-      * "1"@(32:12>32:65): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(33:12>33:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(34:12>34:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(35:12>35:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(36:12>36:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
-      * "1"@(37:12>37:51): [29:2] Warning: Useless UNSAFE with non strongly typed receiver.
+﻿      * 2 errors
+      * Line 36[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
+      * Line 37[12,51] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.
        IDENTIFICATION DIVISION.
        PROGRAM-ID.   Test-UNSAFE.
        
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      *01 SmallGroup TYPEDEF.
+      *01 SmallGroup TYPEDEF strict.
       *  05 x PIC 9(04).
       *  05 y PIC 9(04).
-      *01 ToughGroup TYPEDEF STRONG.
+      *01 ToughGroup TYPEDEF strict.
       *  05 x PIC 9(04).
       *  05 y PIC 9(04).
-      *01 Small TYPEDEF        PIC 9(04).
+      *01 Small TYPEDEF strict  PIC 9(04).
 
       *01 identifier-1 TYPE ToughGroup.
        01 identifier-1.
@@ -29,7 +25,7 @@
            02 y PIC 9(04).
                                        
       *01 identifier-3 TYPE Small.
-       01 identifier-3 PIC 9(04) .
+       01 identifier-3 PIC 9(04).
                                   
        01 identifier-4 PIC 9(04).
        01 myunsafeid PIC 9(04).

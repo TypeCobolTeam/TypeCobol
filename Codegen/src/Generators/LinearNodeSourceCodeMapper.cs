@@ -409,6 +409,127 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Insert a Node bafore an another Node.
+        /// </summary>
+        /// <param name="theNode"></param>
+        /// <param name="beforeNode"></param>
+        /// <returns>true if the insertion have been performed, false otherwise</returns>
+        private bool InsertNodeBeforeNode(Node theNode, Node beforeNode)
+        {
+            Debug.Assert(theNode != null);
+            if (!(theNode != null))
+                return false;
+            Debug.Assert(beforeNode != null);
+            if (!(beforeNode != null))
+                return false;
+            Debug.Assert(beforeNode.NodeIndex > 0);
+            if (!(beforeNode.NodeIndex > 0))
+                return false;
+            Debug.Assert(theNode.NodeIndex > 0);
+            if (!(theNode.NodeIndex > 0))
+                return false;
+            Debug.Assert(Nodes[beforeNode.NodeIndex].Buffer != null);
+            if (!(Nodes[beforeNode.NodeIndex].Buffer != null))
+                return false;
+            Debug.Assert(Nodes[beforeNode.NodeIndex].Positions != null);
+            if (!(Nodes[beforeNode.NodeIndex].Positions != null))
+                return false;
+            Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.Item4.Count > 0);
+            if (!(Nodes[beforeNode.NodeIndex].Positions.Item4.Count > 0))
+                return false;
+            Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.Item5.Count > 0);
+            if (!(Nodes[beforeNode.NodeIndex].Positions.Item5.Count > 0))
+                return false;
+            Debug.Assert(Nodes[beforeNode.NodeIndex].From != null);
+            if (!(Nodes[beforeNode.NodeIndex].From != null))
+                return false;
+            Debug.Assert(Nodes[beforeNode.NodeIndex].To != null);
+            if (!(Nodes[beforeNode.NodeIndex].To != null))
+                return false;
+
+            //Determine the Line number of the before line.
+            int before_line = Nodes[beforeNode.NodeIndex].Positions.Item4[0] - 1;
+            //Add the node to the same line
+            int insertIndex = LineData[before_line].LineNodes.IndexOf(beforeNode.NodeIndex);
+            LineData[before_line].LineNodes.Insert(insertIndex, theNode.NodeIndex);
+            //The Node is Inserted at the beginning of the before node
+            Nodes[theNode.NodeIndex].Buffer = Nodes[beforeNode.NodeIndex].Buffer;
+            Nodes[theNode.NodeIndex].From = Nodes[beforeNode.NodeIndex].From;
+            Nodes[theNode.NodeIndex].To = Nodes[beforeNode.NodeIndex].From;
+            //Give to the Node its new span
+            Nodes[theNode.NodeIndex].Positions = new Tuple<int, int, int, List<int>, List<int>>(
+                Nodes[beforeNode.NodeIndex].Positions.Item1,
+                Nodes[beforeNode.NodeIndex].Positions.Item1,
+                Nodes[beforeNode.NodeIndex].Positions.Item1,
+                new List<int>() { Nodes[beforeNode.NodeIndex].Positions.Item4[0] },
+                new List<int>() { Nodes[beforeNode.NodeIndex].Positions.Item5[0] }
+                );
+            //We must insert a NewLine
+
+            return true;
+        }
+
+        /// <summary>
+        /// Insert a Node after an another Node.
+        /// </summary>
+        /// <param name="theNode"></param>
+        /// <param name="afterNode"></param>
+        /// <returns>true if the insertion have been performed, false otherwise</returns>
+        private bool InsertNodeAfterNode(Node theNode, Node afterNode)
+        {
+            Debug.Assert(theNode != null);
+            if (!(theNode != null))
+                return false;
+            Debug.Assert(afterNode != null);
+            if (!(afterNode != null))
+                return false;
+            Debug.Assert(afterNode.NodeIndex >= 0);
+            if (!(afterNode.NodeIndex >= 0))
+                return false;
+            Debug.Assert(theNode.NodeIndex > 0);
+            if (!(theNode.NodeIndex > 0))
+                return false;
+            Debug.Assert(Nodes[afterNode.NodeIndex].Buffer != null);
+            if (!(Nodes[afterNode.NodeIndex].Buffer != null))
+                return false;
+            Debug.Assert(Nodes[afterNode.NodeIndex].Positions != null);
+            if (!(Nodes[afterNode.NodeIndex].Positions != null))
+                return false;
+            Debug.Assert(Nodes[afterNode.NodeIndex].Positions.Item4.Count > 0);
+            if (!(Nodes[afterNode.NodeIndex].Positions.Item4.Count > 0))
+                return false;
+            Debug.Assert(Nodes[afterNode.NodeIndex].Positions.Item5.Count > 0);
+            if (!(Nodes[afterNode.NodeIndex].Positions.Item5.Count > 0))
+                return false;
+            Debug.Assert(Nodes[afterNode.NodeIndex].From != null);
+            if (!(Nodes[afterNode.NodeIndex].From != null))
+                return false;
+            Debug.Assert(Nodes[afterNode.NodeIndex].To != null);
+            if (!(Nodes[afterNode.NodeIndex].To != null))
+                return false;
+
+            //Determine the Line number of the before line.
+            int before_line = Nodes[afterNode.NodeIndex].Positions.Item4[0] - 1;
+            //Add the node to the same line
+            LineData[before_line].LineNodes.Add(theNode.NodeIndex);
+            //The Node is Inserted at the beginning of the before node
+            Nodes[theNode.NodeIndex].Buffer = Nodes[afterNode.NodeIndex].Buffer;
+            Nodes[theNode.NodeIndex].From = Nodes[afterNode.NodeIndex].To;
+            Nodes[theNode.NodeIndex].To = Nodes[afterNode.NodeIndex].To;
+            //Give to the Node its new span
+            Nodes[theNode.NodeIndex].Positions = new Tuple<int, int, int, List<int>, List<int>>(
+                Nodes[afterNode.NodeIndex].Positions.Item1,
+                Nodes[afterNode.NodeIndex].Positions.Item1,
+                Nodes[afterNode.NodeIndex].Positions.Item2,
+                new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item4[0] },
+                new List<int>() { Nodes[afterNode.NodeIndex].Positions.Item5[0] }
+                );
+            //First generate a new line befor this node
+            theNode.SetFlag(Node.Flag.FactoryGeneratedNodeWithFirstNewLine, true);
+            return true;
+        }
+
+        /// <summary>
         /// This Phase deals with node created by the Generator Factory thus nodes
         /// that cannot be associated to a Position. The strategy is to associate these nodes
         /// to the last line of the first parent node which has positions.
@@ -426,12 +547,46 @@ namespace TypeCobol.Codegen.Generators
                 data_node.node = node;
                 Nodes.Add(data_node);
                 Node parent = GetFirstParentWithPosition(node);                   
+                if (node.IsFlagSet(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex))
+                {//So we must keep the insertion index
+                    Node beforeNode = null;
+                    int index = node.Parent.IndexOf(node);
+                    while (index != 0 && index != (node.Parent.Children.Count - 1))
+                    {
+                        beforeNode = node.Parent.Children[index++];
+                        //Ignore Functions Declarations.
+                        if(!(beforeNode is TypeCobol.Compiler.Nodes.FunctionDeclaration))
+                            break;
+                    }
+                    if (index != 0 && index != (node.Parent.Children.Count - 1))
+                    {
+                        if (InsertNodeBeforeNode(node, beforeNode))
+                            return true;
+                    }
+                    else
+                    {
+                        //We must insert after the parent.                        
+                        if (node.Parent.IsFlagSet(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex) && node.Children.Count == 0)
+                        {
+                            //It's parent is already a repositionned node, and this node has no children.
+                            node.SetFlag(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex, false);
+                            return true;
+                        }
+                        //Look for the first parent with a position
+                        Node valid_parent = node.Parent;
+                        if (valid_parent != null && (valid_parent.NodeIndex < 0 || Nodes[valid_parent.NodeIndex].Positions == null))
+                            valid_parent = valid_parent.Parent;
+                        if (InsertNodeAfterNode(node, valid_parent ?? node.Parent))
+                            return true;
+                    }
+                }           
+                //Fall to the default case insert the Node at the last line of the parent node.
                 int lastLine = Nodes[parent.NodeIndex].LastLocatedLine;
                 Node lastNode = Nodes[parent.NodeIndex].LastNode;
                 if (LineData[lastLine - 1].LineNodes == null)
                     LineData[lastLine - 1].LineNodes = new List<int>();
-                if (lastNode is TypeCobol.Compiler.Nodes.End)
-                    //This a End Node ==> add before the last end node
+                if ((lastNode is TypeCobol.Compiler.Nodes.End) && lastNode.CodeElement.Type == Compiler.CodeElements.CodeElementType.ProgramEnd)
+                    //This a ProgramEnd Node ==> add before the last ProgramEnd node
                     LineData[lastLine - 1].LineNodes.Insert(LineData[lastLine - 1].LineNodes.Count - 1, node.NodeIndex);
                 else
                     LineData[lastLine - 1].LineNodes.Add(node.NodeIndex);
@@ -896,7 +1051,7 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Get the last line of a node.
         /// BECAREFUL this method must be called after the linearization phase,
-        /// beacuse it uses positions calculated during the linearization phase.
+        /// because it uses positions calculated during the linearization phase.
         /// </summary>
         /// <param name="node">The node to get the last line</param>
         /// <param name="lastLine">output le last line number</param>
@@ -906,16 +1061,24 @@ namespace TypeCobol.Codegen.Generators
         {
             if (node == null)
                 return;
-            if (node.NodeIndex < 0)
-                return;
-            if (Nodes[node.NodeIndex].Positions != null)
+            if (node.NodeIndex >= 0)
             {
-                lastLine = Nodes[node.NodeIndex].Positions.Item4[Nodes[node.NodeIndex].Positions.Item4.Count - 1];
-                lastNode = node;
-                foreach (var child in node.Children)
+                if (Nodes[node.NodeIndex].Positions != null)
                 {
-                    GetAfterLinearizationLastLine(child, ref lastLine, ref lastNode);
+                    lastLine = Nodes[node.NodeIndex].Positions.Item4[Nodes[node.NodeIndex].Positions.Item4.Count - 1];
+                    lastNode = node;
                 }
+            }
+            foreach (var child in node.Children)
+            {
+                if (child.NodeIndex >= 0 && Nodes[child.NodeIndex].Positions != null)
+                {
+                    if (Nodes[child.NodeIndex] is NodeFunctionData)
+                        continue;//Ignore Function Nodes that will be moved.
+                    if (Nodes[child.NodeIndex].node is TypeCobol.Compiler.CodeModel.NestedProgram)
+                        return;//After a Nested Program there is nothing else than a Nested Program.
+                }
+                GetAfterLinearizationLastLine(child, ref lastLine, ref lastNode);
             }
         }
 

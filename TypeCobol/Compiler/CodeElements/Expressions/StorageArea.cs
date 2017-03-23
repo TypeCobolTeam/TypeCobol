@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+                                        using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -23,7 +25,7 @@ namespace TypeCobol.Compiler.CodeElements
         public StorageAreaKind Kind { get; protected set;  }
 
         [CanBeNull]
-        public SymbolReference SymbolReference { get; protected set; }
+        public SymbolReference SymbolReference { get; set; }
 
         /// <summary>
         /// True if this storage area is read from by the program
@@ -48,6 +50,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// optional length for the data item.
         /// </summary>
         public ReferenceModifier ReferenceModifier { get; private set; }
+
+        public virtual bool NeedDeclaration {
+            get { return true; }
+        }
+
+        public virtual StorageArea GetStorageAreaThatNeedDeclaration
+        {
+            get { return this; }
+        }
 
         public override string ToString()
         {
@@ -138,29 +149,44 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 	}
 
-    /* Implicitely defined special registers :
+    /// <summary>
+    /// Implicitely defined special registers :
+    ///
+    ///        statements operations
+    ///        - XML parsing
+    ///            XML-*
+    ///        - INSPECT, UNSTRING
+    ///            TALLY
+    ///        - SORT MERGE
+    ///            SORT-*
+    ///        - debugging declarative procedure
+    ///            DEBUG-ITEM 
+    ///
+    ///        environment communication
+    ///            RETURN-CODE
+    ///            JNIENVPTR
+    ///
+    ///        compiler metadata
+    ///            WHEN-COMPILED
+    ///
+    ///        constants
+    ///            SHIFT-OUT
+    ///            SHIFT-IN       
+    /// </summary>
+    public class IntrinsicStorageArea : StorageArea
+    {
+        public IntrinsicStorageArea(SymbolReference symbolReference) : base(StorageAreaKind.DataOrCondition) {
+            this.SymbolReference = symbolReference;
+        }
 
-        statements operations
-        - XML parsing
-            XML-*
-        - INSPECT, UNSTRING
-            TALLY
-        - SORT MERGE
-            SORT-*
-        - debugging declarative procedure
-            DEBUG-ITEM 
+        public override bool NeedDeclaration {
+            get { return false; }
+        }
 
-        environment communication
-            RETURN-CODE
-            JNIENVPTR
-
-        compiler metadata
-            WHEN-COMPILED
-
-        constants
-            SHIFT-OUT
-            SHIFT-IN             
-        */
+        public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+            return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
+    }
 
     /// <summary>Subscript used to reference a specific table element</summary>
     public class SubscriptExpression : IVisitable {
@@ -235,6 +261,14 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SpecialRegisterDescriptionEntry DataDescriptionEntry { get; private set; }
 
+        public override bool NeedDeclaration {
+            get { return OtherStorageAreaReference != null && OtherStorageAreaReference.NeedDeclaration; }
+        }
+
+        public override StorageArea GetStorageAreaThatNeedDeclaration
+        {
+            get { return OtherStorageAreaReference.GetStorageAreaThatNeedDeclaration ?? this; }
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
@@ -315,7 +349,11 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public FunctionCall FunctionCall { get; private set; }
 
-        public override bool AcceptASTVisitor(IASTVisitor astVisitor)
+	    public override bool NeedDeclaration {
+	        get { return FunctionCall.NeedDeclaration; }
+	    }
+
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, FunctionCall, DataDescriptionEntry);
@@ -328,18 +366,28 @@ namespace TypeCobol.Compiler.CodeElements
     public abstract class FunctionCall : IVisitable {
         protected FunctionCall(FunctionCallType type, CallSiteParameter[] arguments) {
 		    Type = type;
-		    Arguments = arguments;
-            FunctionDeclarations = new List<FunctionDeclaration>();
-            FilteredFunctionDeclarations = new List<FunctionDeclaration>();
+            Arguments = arguments;
         }
 
 	    public FunctionCallType Type { get; private set; }
 	    public abstract string FunctionName { get; }
-	    public abstract Token FunctionNameToken { get; }
+        public abstract string Namespace { get; }
+        public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
-        public List<FunctionDeclaration> FunctionDeclarations { get; set; }
-        public List<FunctionDeclaration> FilteredFunctionDeclarations { get; set; }
 
+        public virtual ParameterList AsProfile(CodeModel.SymbolTable table)
+        {
+            //Need to be updated in a near future
+            var profile = new FunctionCallParameterList
+            {
+                InputParameters = FunctionCallParameterList.CreateParameters(Arguments.ToList(), table),
+            };
+            return profile;
+        }
+     
+        public virtual bool NeedDeclaration {
+            get { return true; }
+        }
 
         public virtual bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this) && FunctionNameToken.AcceptASTVisitor(astVisitor)
@@ -410,11 +458,18 @@ namespace TypeCobol.Compiler.CodeElements
 		public override string FunctionName { get { return IntrinsicFunctionName.Name; } }
 		public override Token FunctionNameToken { get { return IntrinsicFunctionName.NameLiteral.Token; } }
 
-        //Don't override property CobolLanguageLevel CobolLanguageLevel here, because in this case,
-        //ExternalName is always a CobolLanguageLevel.Cobol85
-        //public override CobolLanguageLevel CobolLanguageLevel {
-        //get { return base.CobolLanguageLevel; }
-        //}
+        public override bool NeedDeclaration
+        {
+            get { return false; }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
@@ -433,29 +488,35 @@ namespace TypeCobol.Compiler.CodeElements
 		public override string FunctionName { get { return UserDefinedFunctionName.Name; } }
 		public override Token FunctionNameToken { get { return UserDefinedFunctionName.NameLiteral.Token; } }
 
+        public override string Namespace { get { return (UserDefinedFunctionName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference)UserDefinedFunctionName).Tail.Name; } }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this) 
                 && this.ContinueVisitToChildren(astVisitor, UserDefinedFunctionName, FunctionNameToken);
         }
+
+        
     }
 
 	public class ProcedureCall: FunctionCall {
 		public ProcedureCall(SymbolReference name, List<CallSiteParameter> inputs, List<CallSiteParameter> inouts, List<CallSiteParameter> outputs)
 			: base(FunctionCallType.UserDefinedFunctionCall, null) {
 			ProcedureName = name;
-			InputParameters  = inputs  ?? new List<CallSiteParameter>();
-			InoutParameters  = inouts  ?? new List<CallSiteParameter>();
-			OutputParameters = outputs ?? new List<CallSiteParameter>();
+			
+            InputParameters = inputs ?? new List<CallSiteParameter>();
+            InoutParameters = inouts ?? new List<CallSiteParameter>();
+            OutputParameters = outputs ?? new List<CallSiteParameter>();
+
 		}
 
 		public SymbolReference ProcedureName { get; private set; }
 		public override string FunctionName { get { return ProcedureName.Name; } }
 		public override Token FunctionNameToken { get { return ProcedureName.NameLiteral.Token; } }
         
-
-        public List<CallSiteParameter> InputParameters  { get; private set; }
-		public List<CallSiteParameter> InoutParameters  { get; private set; }
-		public List<CallSiteParameter> OutputParameters { get; private set; }
+        public List<CallSiteParameter> InputParameters { get; private set; }
+        public List<CallSiteParameter> InoutParameters { get; private set; }
+        public List<CallSiteParameter> OutputParameters { get; private set; }
+       
 		private List<CallSiteParameter> _cache;
 		public override CallSiteParameter[] Arguments {
 			get {
@@ -469,14 +530,20 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		public ParameterList AsProfile(CodeModel.SymbolTable table) {
-			var profile = new FunctionCallParameterList();
-			profile.InputParameters  = FunctionCallParameterList.CreateParameters(InputParameters, table);
-			profile.InoutParameters  = FunctionCallParameterList.CreateParameters(InoutParameters, table);
-			profile.OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table);
-			profile.ReturningParameter = null;
-			return profile;
-		}
+        public override string Namespace { get { return (ProcedureName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference) ProcedureName).Tail.Name; } }
+
+        public override ParameterList AsProfile(SymbolTable table)
+	    {
+	        var profile = new FunctionCallParameterList
+	        {
+	            InputParameters = FunctionCallParameterList.CreateParameters(InputParameters, table),
+	            InoutParameters = FunctionCallParameterList.CreateParameters(InoutParameters, table),
+	            OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table),
+	            ReturningParameter = null
+	        };
+	        return profile;
+        }
+		
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor)
         {

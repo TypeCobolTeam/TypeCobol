@@ -29,20 +29,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugGen2|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\bin\DebugGen2\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;GENERATOR2</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseGen2|AnyCPU'">
-    <OutputPath>..\..\bin\ReleaseGen2\</OutputPath>
-    <DefineConstants>GENERATOR2</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Antlr4.Runtime.4.5.3\lib\net45\Antlr4.Runtime.dll</HintPath>
@@ -61,28 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App.cs" />
-    <Compile Include="Generator.cs" />
-    <Compile Include="GeneratorActions.cs" />
-    <Compile Include="GeneratorFactory.cs" />
-    <Compile Include="GeneratorFactoryManager.cs" />
-    <Compile Include="IGenerator.cs" />
-    <Compile Include="Actions\Action.cs" />
-    <Compile Include="Actions\Comment.cs" />
-    <Compile Include="Actions\Create.cs" />
-    <Compile Include="Actions\Erase.cs" />
-    <Compile Include="Actions\Expand.cs" />
-    <Compile Include="Actions\IEraseAction.cs" />
-    <Compile Include="Actions\Qualifier.cs" />
-    <Compile Include="Actions\Replace.cs" />
-    <Compile Include="Config\*.cs" />
-    <Compile Include="Generators\DefaultGenerator.cs" />
-    <Compile Include="Generators\LinearNodeSourceCodeMapper.cs" />
-    <Compile Include="Generators\TypeCobolGenerator.cs" />
-    <Compile Include="Skeletons\*.cs" />
-    <Compile Include="Skeletons\Templates\*.cs" />
-    <Compile Include="Properties\*.cs" />
-    <Compile Include="Nodes\*.cs" />
+    <Compile Include="**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

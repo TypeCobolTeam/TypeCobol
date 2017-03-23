@@ -41,6 +41,8 @@ internal class GeneratedNode: Compiler.Nodes.Node, Generated {
 			if (_cache == null) {
 				string text = Solver.Replace().TrimStart();
 				_cache = new List<ITextLine>();
+                if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
+                    _cache.Add(new TextLineSnapshot(-1, "", null));
 				foreach(string line in text.Split('\n')) {
 					_cache.Add(new TextLineSnapshot(-1, line, null));
 				}

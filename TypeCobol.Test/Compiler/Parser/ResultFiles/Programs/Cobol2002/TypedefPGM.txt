@@ -28,7 +28,7 @@ Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strong
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   Equipment:Alphanumeric
   Equipment-id:Array
@@ -98,5 +98,5 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   strongType1:strongType1
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

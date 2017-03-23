@@ -26,18 +26,19 @@ namespace TypeCobol.Test.Compiler.Parser
             Observer = new TestObserver();
         }
 
-        public void Init(string[] extensions = null)
+        public void Init(string[] extensions = null, bool autoRemarks = false)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator.paths.SamplePath));
             DocumentFormat format = Comparator.getSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
+            options.AutoRemarksEnable = autoRemarks;
             if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);
             CompilationProject project = new CompilationProject("TEST",
                 localDirectory.FullName, extensions,
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
             string filename = Comparator.paths.SampleName;
-            Compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, false);
+            Compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, false, project);
         }
 
 		public void Parse() {
@@ -82,6 +83,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new PGMName(),
                 new MemoryName(),
                 new NodeName(),
+                new TokenName(),
             };
 
         private IList<string> samples;
@@ -129,7 +131,7 @@ namespace TypeCobol.Test.Compiler.Parser
             return samples.Count;
         }
 
-		public void Test(bool debug = false, bool json = false) {
+		public void Test(bool debug = false, bool json = false, bool autoRemarks = false) {
 			var errors = new StringBuilder();
 			foreach (var samplePath in samples) {
 				IList<FilesComparator> comparators = GetComparators(_sampleRoot, _resultsRoot, samplePath, debug);
@@ -141,7 +143,7 @@ namespace TypeCobol.Test.Compiler.Parser
 				foreach (var comparator in comparators) {
 					Console.WriteLine(comparator.paths.Result + " checked with " + comparator.GetType().Name);
 					var unit = new TestUnit(comparator, debug);
-					unit.Init(compilerExtensions);
+					unit.Init(compilerExtensions, autoRemarks);
 					unit.Parse();
 				    if (unit.Observer.HasErrors)
 				    {
@@ -373,7 +375,38 @@ internal class ArithmeticComparator : FilesComparator {
         }
     }
 
-	internal class MemoryComparator: FilesComparator
+    internal class TokenComparator : FilesComparator
+    {
+        public TokenComparator(Paths path, bool debug = false) : base(path, debug)
+        {
+        }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        {
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var diagnostic in diagnostics)
+            {
+                sb.AppendLine(diagnostic.ToString());
+            }
+
+            sb.AppendLine("--- Tokens ---");
+            foreach (var tokensLine in compilationUnit.TokensLines) {
+                sb.AppendLine("---------------------------------");
+                sb.AppendLine("_" + tokensLine.SourceText + "_");
+                foreach (var sourceToken in tokensLine.SourceTokens) {
+                    sb.AppendLine("    _" + sourceToken.SourceText + "_    " +  sourceToken);
+                }
+            }
+
+            string result = sb.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+        }
+    }
+
+    internal class MemoryComparator: FilesComparator
 	{
 	    public MemoryComparator(Paths path, bool debug = false) : base(path, debug)
 	    {
@@ -489,6 +522,12 @@ internal class ArithmeticComparator : FilesComparator {
     {
         public string CreateName(string name) { return name + "-Nodes"; }
         public Type GetComparatorType() { return typeof(NodeComparator); }
+    }
+
+    internal class TokenName : Names
+    {
+        public string CreateName(string name) { return name + "-Tokens"; }
+        public Type GetComparatorType() { return typeof(TokenComparator); }
     }
 
     internal class MemoryName : Names

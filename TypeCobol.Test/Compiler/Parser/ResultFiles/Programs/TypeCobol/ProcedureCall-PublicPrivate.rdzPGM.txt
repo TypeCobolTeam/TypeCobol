@@ -1,0 +1,28 @@
+﻿--- Diagnostics ---
+Line 66[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2PrivateValidateDateFormat'
+Line 71[12,50] <27, Error, Syntax> - Syntax error : No function found for 'PGM2.Pgm2PrivateValidateDateFormat'
+Line 76[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2.Pgm2PrivateValidateDateFormat'
+
+--- Program ---
+PROGRAM: PGM1 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Program
+-- DATA --------
+  somedate:DATE
+  someformat:Alphanumeric
+  flag:BOOL
+  realformat:Alphanumeric
+-- PARAGRAPHS --
+  TRAITEMENT
+-- FUNCTIONS ---
+  check
+        in: mydate:DATE
+  Pgm1PrivateValidateDateFormat
+        in: mydate:DATE
+        in: format:Alphanumeric
+       out: okay:BOOL
+       out: actual-format:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\TypeCobol.VsCodeClient\server\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,24 +26,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\TypeCobol.VsCodeClient\server\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugGen2|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\DebugGen2\TypeCobol.VsCodeClient\server\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;GENERATOR2</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseGen2|AnyCPU'">
-    <OutputPath>..\bin\ReleaseGen2\TypeCobol.VsCodeClient\server\</OutputPath>
-    <DefineConstants>GENERATOR2</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -79,6 +65,7 @@
     <Compile Include="StdioHttp\StdioHttpServer.cs" />
     <Compile Include="TypeCobolServer.cs" />
     <Compile Include="TypeCobolServerHost.cs" />
+    <Compile Include="Utilities\DebugTextWriter.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionContext.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionParams.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionRequest.cs" />

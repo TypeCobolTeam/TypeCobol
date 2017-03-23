@@ -1,14 +1,14 @@
 ﻿using System;
 using Antlr4.Runtime;
 using System.Collections.Generic;
+using System.Diagnostics;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
+using System.Linq;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
@@ -43,70 +43,159 @@ class ReadOnlyPropertiesChecker: NodeListener {
 }
 
 
-class FunctionCallChecker: NodeListener {
+    class FunctionCallChecker 
+    {
 
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-		var statement = node as FunctionCaller;
+        public static void OnNode(Node node)
+        {
+            var functionCaller = node as FunctionCaller;
+            if (functionCaller == null || functionCaller.FunctionCall == null || !functionCaller.FunctionCall.NeedDeclaration)
+                return;
 
-            if (statement != null)
+            if (functionCaller.FunctionDeclaration == null)
             {
-                foreach (var fun in statement.FunctionCalls)
+                //Get Funtion by name and profile (matches on precise parameters)
+                var functionDeclarations = node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
+                    functionCaller.FunctionCall.AsProfile(node.SymbolTable), functionCaller.FunctionCall.Namespace);
+
+                string message;
+                //There is one CallSite per function call
+                if (node.CodeElement.CallSites.Count == 1 && node.CodeElement.CallSites[0].CallTarget.IsOrCanBeOnlyOfTypes(SymbolType.TCFunctionName))
                 {
-                    if (fun.FunctionDeclarations != null && fun.FunctionDeclarations.Count != 1)
-                        if (fun.FunctionDeclarations.Count == 0) //If Cout is null seems that the function dos not exist
-                        {
-                            var m = string.Format("Function {0} does not exists", fun.FunctionName);
-                            DiagnosticUtils.AddError(node.CodeElement, m);
-                            continue;
-                        }
-                        else
-                            continue; // ambiguity is not our job
-                    var declaration = fun.FunctionDeclarations[0];
-                    Check(node.CodeElement, node.SymbolTable, fun, declaration);
+                    if (functionDeclarations.Count == 1)
+                    {
+                        functionCaller.FunctionDeclaration = functionDeclarations.First();
+                        return; //Everything seems to be ok, lets continue on the next one
+                    }
+                    //Another checker should check if function declaration is not duplicated
+                    if (functionDeclarations.Count > 0) {
+                        message = string.Format("same procedure/function '{0}' declared '{1}' times", functionCaller.FunctionCall.FunctionName, functionDeclarations.Count);
+                        DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.ImplementationError);
+                        return; //Do not continue the function/procedure does not exists
+                    }
+
+                    var otherDeclarations =
+                        node.SymbolTable.GetFunction(((ProcedureCall)functionCaller.FunctionCall).ProcedureName.URI, null, functionCaller.FunctionCall.Namespace);
+
+                    if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
+                    {
+                        message = string.Format("No function found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return; //Do not continue the function/procedure does not exists
+                    }
+                    if (otherDeclarations.Count > 1)
+                    {
+                        message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return;
+                    }
+
+                    functionDeclarations = otherDeclarations;
+                }
+                else
+                {
+                    var potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
+
+                    if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
+                    {
+                        functionCaller.FunctionDeclaration = functionDeclarations.First();
+                        return; //Everything seems to be ok, lets continue on the next one
+                    }
+
+                    functionDeclarations =
+                           node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null, functionCaller.FunctionCall.Namespace);
+
+                    if (potentialVariables.Count > 1)
+                    {
+                        //If there is more than one variable with the same name, it's ambiguous
+                        message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", functionCaller.FunctionCall.FunctionName, potentialVariables.Count + functionDeclarations.Count);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return;
+                    }
+
+                    if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
+                    {
+                        message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return;
+                    }
+
+                    if (functionDeclarations.Count >= 1 && potentialVariables.Count == 1)
+                    {
+                        message = string.Format("Warning: Risk of confusion in call of '{0}'", functionCaller.FunctionCall.FunctionName);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return;
+                    }
+
+                    if (functionDeclarations.Count == 0 && potentialVariables.Count == 0)
+                    {
+                        message = string.Format("No function found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        return; //Do not continue the function/procedure does not exists
+                    }
+
+                    if (potentialVariables.Count == 1)
+                        return; //Stop here, it's a standard Cobol call
+                }
+               
+
+                functionCaller.FunctionDeclaration = functionDeclarations[0];
+                //If function is not ambigous and exists, lets check the parameters
+                Check(node.CodeElement, node.SymbolTable, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
+            }
+        }
+
+        private static void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
+            [NotNull] FunctionDeclaration definition)
+        {
+            var parameters = definition.Profile.Parameters;
+            var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
+            if (callArgsCount > parameters.Count)
+            {
+                var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName , parameters.Count);
+                DiagnosticUtils.AddError(e, m);
+            }
+            for (int c = 0; c < parameters.Count; c++)
+            {
+                var expected = parameters[c];
+                if (c < callArgsCount)
+                {
+                    var actual = call.Arguments[c].StorageAreaOrValue;
+                    if (actual.IsLiteral) continue;
+                    var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
+                    var found = table.GetVariable(actual);
+                    if (found.Count < 1)
+                        DiagnosticUtils.AddError(e, "Parameter " + callArgName + " is not referenced");
+                    if (found.Count > 1)
+                        DiagnosticUtils.AddError(e, "Ambiguous reference to parameter " + callArgName);
+                    if (found.Count != 1) continue;
+                    var type = found[0] as ITypedNode;
+                    // type check. please note:
+                    // 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
+                    // 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
+                    // and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
+                    if (type != null && (type.DataType != expected.DataType || type.Length > expected.Length))
+                    {
+                        var m =
+                            string.Format(
+                                "Function '{0}' expected parameter '{1}' of type {2} and length {3} and received '{4}' of type {5} and length {6}",
+                                call.FunctionName, expected.Name, expected.DataType, expected.Length,
+                                callArgName ?? string.Format("position {0}", c + 1), type.DataType, type.Length);
+                        DiagnosticUtils.AddError(e, m);
+                    }
+                }
+                else
+                {
+                    var m = string.Format("Function '{0}' is missing parameter '{1}' of type {2} and length {3}",
+                        call.FunctionName, expected.Name, expected.DataType, expected.Length);
+                    DiagnosticUtils.AddError(e, m);
                 }
             }
-	}
-	private void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
-	    [NotNull] FunctionDeclaration definition) {
-		var parameters = definition.Profile.Parameters;
-        var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
-        if (callArgsCount > parameters.Count) {
-			var m = string.Format("Function {0} only takes {1} parameters", definition.Name, parameters.Count);
-			DiagnosticUtils.AddError(e, m);
-		}
-		for (int c = 0; c < parameters.Count; c++) {
-			var expected = parameters[c];
-			if (c < callArgsCount) {
-				var actual = call.Arguments[c].StorageAreaOrValue;
-				if (actual.IsLiteral) continue;
-                var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
-                var found = table.GetVariable(actual);
-				if (found.Count < 1) DiagnosticUtils.AddError(e, "Parameter "+callArgName+" is not referenced");
-				if (found.Count > 1) DiagnosticUtils.AddError(e, "Ambiguous reference to parameter "+callArgName);
-				if (found.Count!= 1) continue;
-				var type = found[0] as ITypedNode;
-				// type check. please note:
-				// 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
-				// 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
-				//    and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
-				if (type == null || type.DataType != expected.DataType) {
-					var m = string.Format("Function {0} expected parameter {1} of type {2} (actual: {3})", definition.Name, c+1, expected.DataType, type.DataType);
-					DiagnosticUtils.AddError(e, m);
-				}
-				if (type.Length > expected.Length) {
-					var m = string.Format("Function {0} expected parameter {1} of max length {2} (actual: {3})", definition.Name, c+1, expected.Length, type.Length);
-					DiagnosticUtils.AddError(e, m);
-				}
-			} else {
-				var m = string.Format("Function {0} is missing parameter {1} of type {2}", definition.Name, c+1, expected.DataType);
-				DiagnosticUtils.AddError(e, m);
-			}
-		}
-	}
-}
+        }
+    }
 
 
-class FunctionDeclarationTypeChecker: CodeElementListener {
+    class FunctionDeclarationTypeChecker: CodeElementListener {
 
 	public void OnCodeElement(CodeElement ce, ParserRuleContext context) {
 		var function = ce as FunctionDeclarationHeader;
@@ -273,10 +362,9 @@ class LibraryChecker: NodeListener {
 		var elementsInError = new List<CodeElement>();
 		var errorMessages = new List<string>();
 		foreach(var child in procedureDivision.Children) {
-			var ce = child.CodeElement;
 			if (child.CodeElement == null) {
 				elementsInError.Add(procedureDivision.CodeElement);
-				errorMessages.Add("Illegal default section in library.");
+				errorMessages.Add("Illegal default section in library. " + child);
 			} else {
 				var function = child.CodeElement as FunctionDeclarationHeader;
 				if (function != null) {
@@ -287,9 +375,6 @@ class LibraryChecker: NodeListener {
 				}
 			}
 		}
-		var pgm = (Nodes.Program)procedureDivision.Root.GetChildren<ProgramIdentification>()[0];
-		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
-		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		if (isPublicLibrary) {
 //			if (copy == null || copy.CodeElement().Name == null) // TCRFUN_LIBRARY_COPY
 //				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);

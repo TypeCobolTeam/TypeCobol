@@ -17,59 +17,59 @@
        01  W-IfrPgm.
            05 C-PgmNme               PIC X(08) Value 'LIBDATE'.
 
-      *01  dateJulian    TYPEDEF STRONG.
+      *01  dateJulian    TYPEDEF strict.
       *    10 YYYY                   PIC 9(04).
       *    10 DDD                    PIC 9(03).
 
-      *01  dateDB2       TYPEDEF STRONG.
+      *01  dateDB2       TYPEDEF strict.
       *    10 YYYY                   PIC 9(04).
       *    10                        PIC X(01).
       *    10 MM                     PIC 9(02).
       *    10                        PIC X(01).
       *    10 DD                     PIC 9(02).
 
-      *01  dateString    TYPEDEF     PIC 9(08).
+      *01  dateString    TYPEDEF strict  PIC 9(08).
 
-      *01 culture        TYPEDEF STRONG.
+      *01 culture        TYPEDEF strict.
       *    10 lng                    PIC X(02).
       *    10 cty                    PIC X(02).
-       01  LibFctList-Loaded PIC X(01) VALUE SPACE.
-           88 LibFctList-IsLoaded      VALUE '1'.
-       01  LibFctList-VALUES.
-      *    e5f209fa -> currentDate
-           05 PIC X(08) VALUE 'e5f209fa'.
-           05 PIC X(08) VALUE LOW-VALUES.
-      *    b8ac0397 -> currentDateDB2
-           05 PIC X(08) VALUE 'b8ac0397'.
-           05 PIC X(08) VALUE LOW-VALUES.
-      *    c4e76b45 -> currentDateJulian
-           05 PIC X(08) VALUE 'c4e76b45'.
-           05 PIC X(08) VALUE LOW-VALUES.
-      *    d55b3ea7 -> currentDateFreeFormat
-           05 PIC X(08) VALUE 'd55b3ea7'.
-           05 PIC X(08) VALUE LOW-VALUES.
-      *    bfb0fa9b -> currentDateString
-           05 PIC X(08) VALUE 'bfb0fa9b'.
-           05 PIC X(08) VALUE LOW-VALUES.
+       01  TC-DVZZDATE-FctList-Loaded PIC X(02) EXTERNAL.
+           88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
+      *DVZZDATE::currentDate
+        01 TC-DVZZDATE-e5f209fa PROCEDURE-POINTER EXTERNAL.
+      *DVZZDATE::currentDateDB2
+        01 TC-DVZZDATE-b8ac0397 PROCEDURE-POINTER EXTERNAL.
+      *DVZZDATE::currentDateJulian
+        01 TC-DVZZDATE-c4e76b45 PROCEDURE-POINTER EXTERNAL.
+      *DVZZDATE::currentDateFreeFormat
+        01 TC-DVZZDATE-d55b3ea7 PROCEDURE-POINTER EXTERNAL.
+      *DVZZDATE::currentDateString
+        01 TC-DVZZDATE-bfb0fa9b PROCEDURE-POINTER EXTERNAL.
 
-       01  LibFctList REDEFINES LibFctList-Values.
-           05   LibFctItem    OCCURS 5 INDEXED BY LibFctIndex.
-             10 LibFctCode    PIC X(08).
-             10 LibFctPointer PROCEDURE-POINTER.
-       LINKAGE SECTION.
-       01  FctList.
-           05 NumberOfFunctions   PIC 9(04).
-           05 FctItem OCCURS 9999 DEPENDING ON NumberOfFunctions
-                                  INDEXED BY FctIndex.
-             10 FctCode    PIC X(08).
-             10 FctPointer PROCEDURE-POINTER VALUE NULL.
-       01  CallData.
-           05  DescriptionId PIC X(08).
-             88 CallIsCopy VALUE 'CALL FROM COBOL NOT SUPPORTED'.
 
       *=================================================================
-      *PROCEDURE DIVISION.
-       PROCEDURE DIVISION USING CallData.
+       PROCEDURE DIVISION.
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-DVZZDATE-FctList-IsLoaded
+              SET TC-DVZZDATE-e5f209fa   TO ENTRY 'e5f209fa'
+              SET TC-DVZZDATE-b8ac0397   TO ENTRY 'b8ac0397'
+              SET TC-DVZZDATE-c4e76b45   TO ENTRY 'c4e76b45'
+              SET TC-DVZZDATE-d55b3ea7   TO ENTRY 'd55b3ea7'
+              SET TC-DVZZDATE-bfb0fa9b   TO ENTRY 'bfb0fa9b'
+
+              SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+           .
                           
       *=================================================================
       *DECLARE FUNCTION currentDate PUBLIC
@@ -96,46 +96,6 @@
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
 
-       IF CallIsCopy
-             PERFORM Copy-Process-Mode
-           ELSE
-             PERFORM FctList-Process-Mode
-           END-IF
-
-           GOBACK
-           .
-       Copy-Process-Mode.
-           SET ADDRESS OF FCT TO ADDRESS OF CallData
-
-           SET FCT-currentDate-01   TO ENTRY 'e5f209fa'
-           SET FCT-currentDateDB2-01   TO ENTRY 'b8ac0397'
-           SET FCT-currentDateJulian-01   TO ENTRY 'c4e76b45'
-           SET FCT-currentDateFreeFormat-01   TO ENTRY 'd55b3ea7'
-           SET FCT-currentDateString-01   TO ENTRY 'bfb0fa9b'
-           .
-       FctList-Process-Mode.
-           SET ADDRESS OF FctList TO ADDRESS OF CallData
-
-           IF NOT LibFctList-IsLoaded
-             SET LibFctPointer(1)   TO ENTRY 'e5f209fa'
-             SET LibFctPointer(2)   TO ENTRY 'b8ac0397'
-             SET LibFctPointer(3)   TO ENTRY 'c4e76b45'
-             SET LibFctPointer(4)   TO ENTRY 'd55b3ea7'
-             SET LibFctPointer(5)   TO ENTRY 'bfb0fa9b'
-
-             SET LibFctList-IsLoaded TO TRUE
-           END-IF
-
-           PERFORM VARYING FctIndex FROM 1 BY 1
-                   UNTIL FctIndex > NumberOfFunctions
-
-             SEARCH LibFctItem VARYING LibFctIndex
-               WHEN LibFctCode(LibFctIndex) = FctCode(FctIndex)
-                 SET FctPointer(FctIndex) TO LibFctPointer(LibFctIndex)
-             END-SEARCH
-
-           END-PERFORM
-           .
        END PROGRAM DVZZDAT.
       *
       *DECLARE FUNCTION currentDate PUBLIC

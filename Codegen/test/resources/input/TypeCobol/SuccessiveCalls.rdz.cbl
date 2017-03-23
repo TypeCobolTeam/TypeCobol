@@ -3,11 +3,11 @@
        SERVICE IS YSUXXESS.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01  DATE-EU                   TYPEDEF.
+       01  DATE-EU                   TYPEDEF strict.
            10 DD                     PIC 9(02).
            10 MM                     PIC 9(02).
            10 YYYY                   PIC 9(04).
-       01  DATE-US                   TYPEDEF.
+       01  DATE-US                   TYPEDEF strict.
            10 YYYY                   PIC 9(04).
            10 DD                     PIC 9(02).
            10 MM                     PIC 9(02).

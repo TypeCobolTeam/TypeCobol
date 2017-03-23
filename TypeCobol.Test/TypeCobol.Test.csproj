@@ -34,20 +34,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugGen2|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\DebugGen2\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;GENERATOR2</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>5</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseGen2|AnyCPU'">
-    <OutputPath>..\bin\ReleaseGen2\</OutputPath>
-    <DefineConstants>GENERATOR2</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.4.5.3\lib\net45\Antlr4.Runtime.dll</HintPath>
@@ -97,9 +83,17 @@
     <Compile Include="Compiler\Preprocessor\*.cs" />
     <Compile Include="Compiler\Scanner\*.cs" />
     <Compile Include="Compiler\Text\*.cs" />
-    <Content Include="**\Samples\**" />
+    <Content Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
+    <Content Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
+    <Content Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
+    <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
+    <Content Include="Compiler\File\Samples\EbcdicRefFormatWithBadChars.TXT" />
+    <Content Include="Compiler\File\Samples\UTF8Format.txt" />
+    <Content Include="**\*Samples\**" />
     <Content Include="**\*TestFiles\**" />
-    <Content Include="**\*ResultFiles\**" />
+    <Content Include="**\*Preprocessor\**" />
+    <Content Include="**\ResultFiles\**" />
+    <Content Include="ThirdParty\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">
@@ -112,12 +106,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Compiler\Parser\Samples\Programs\Cobol85\BlockContains.rdz.cbl" />
+    <None Include="Compiler\Parser\EILegacy\Samples\AutoRemarks.rdz.cbl" />
+    <None Include="Compiler\Parser\EILegacy\Samples\YCONVEA.CPY" />
+    <None Include="Compiler\Parser\EILegacy\Samples\YPRTD20.CPY" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Compiler\Source\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

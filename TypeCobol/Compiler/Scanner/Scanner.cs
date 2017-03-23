@@ -16,6 +16,14 @@ namespace TypeCobol.Compiler.Scanner
     /// </summary>
     public class Scanner
     {
+
+        /// <summary>
+        /// Issue #428, quick fix for this issue.
+        /// Method ScanIsolatedTokenInDefaultContext need the scanState of the previous token in order to parser the new token
+        /// correctly. But the caller of this method doesn't have the scanState. It only has the scanState at the beginning of the line.
+        /// A solution would be to rescan all the line.
+        /// </summary>
+        public bool BeSmartWithLevelNumber { get; set; }
         /// <summary>
         /// Scan a line of a document when no previous scan state object is available
         /// </summary>
@@ -49,6 +57,7 @@ namespace TypeCobol.Compiler.Scanner
 
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
             if (IsInsideRemarks(textLine.Type, tokensLine.SourceText)) tokensLine.ScanState.InsideRemarksDirective = true;
+            else if (textLine.Type == CobolTextLineType.Source) tokensLine.ScanState.InsideRemarksDirective = false;
             // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
             if (tokensLine.ScanState.InsideRemarksDirective) {
                 string remarksLine = textLine.SourceText;
@@ -58,7 +67,8 @@ namespace TypeCobol.Compiler.Scanner
                 int endIndexForSignificantPart = GetEndIndexOfSignificantPart(remarksLine, tokensLine.ScanState, firstPeriodIndex);
                 string significantPart = remarksLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
 
-                if (firstPeriodIndex >= 0 || (!tokensLine.ScanState.InsideRemarksParentheses && !remarksLine.Contains("COPY"))) {
+        
+                if (tokensLine.ScanState.InsideRemarksDirective && (remarksLine.Contains(").") || remarksLine.Contains(")"))) {
                     tokensLine.ScanState.InsideRemarksDirective = false; // indicates the end of the REMARKS compiler directive
                 }
 
@@ -115,7 +125,7 @@ namespace TypeCobol.Compiler.Scanner
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
 		private static bool IsInsideRemarks(CobolTextLineType type, string line) {
 			if (type != CobolTextLineType.Comment || line == null) return false;
-			return line.StartsWith("REMARKS. ", StringComparison.InvariantCultureIgnoreCase);
+			return line.StartsWith("REMARKS.", StringComparison.InvariantCultureIgnoreCase);
 		}
         private static int GetStartIndexOfSignificantPart(string line, MultilineScanState state) {
             int start = Math.Max(line.IndexOf(' ') +1, line.IndexOf('=') +1);
@@ -143,11 +153,11 @@ namespace TypeCobol.Compiler.Scanner
             if (significantPart.Length < 1) return null;
             var remarksDirective = new RemarksDirective();
             foreach (string candidateName in significantPart.Split(' ')) {
-                if (candidateName.Length == 7 || candidateName.Length == 8) {
+                if (candidateName.Length >= 7) {
                     RemarksDirective.TextNameVariation textName = new RemarksDirective.TextNameVariation(candidateName);
                     remarksDirective.CopyTextNamesVariations.Add(textName);
                 }
-                else if (!String.IsNullOrWhiteSpace(candidateName)) {
+                else if (!String.IsNullOrWhiteSpace(candidateName) && Regex.IsMatch(candidateName, @"^([a-zA-Z0-9]+)$")) {
                     // A string which is not a text name is an error : stop scanning here
                     remarksDirective = null;
                     state.InsideRemarksDirective = false;
@@ -433,7 +443,7 @@ namespace TypeCobol.Compiler.Scanner
             TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, tokenText);
             tempTokensLine.InitializeScanState(new MultilineScanState(true, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
 
-            Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions());
+            Scanner tempScanner = new Scanner(tokenText, 0, tokenText.Length - 1, tempTokensLine, new TypeCobolOptions(), false);
             Token candidateToken = tempScanner.GetNextToken();
 
             if(tempTokensLine.ScannerDiagnostics.Count > 0)
@@ -456,7 +466,7 @@ namespace TypeCobol.Compiler.Scanner
 
         private TypeCobolOptions compilerOptions;
 
-        private Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions)
+        private Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
         {
             this.tokensLine = tokensLine;
             this.line = line;
@@ -464,6 +474,8 @@ namespace TypeCobol.Compiler.Scanner
             this.lastIndex = lastIndex;
 
             this.compilerOptions = compilerOptions;
+
+            this.BeSmartWithLevelNumber = beSmartWithLevelNumber;
         }
 
         private Token GetNextToken()
@@ -609,11 +621,11 @@ namespace TypeCobol.Compiler.Scanner
                         //IntegerLiteral = 27,
                         //DecimalLiteral = 28,
                         //FloatingPointLiteral = 29,
-                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.CommaSeparator, MessageCode.InvalidCharAfterComma); 
+                        return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.CommaSeparator, MessageCode.InvalidCharAfterComma, false); 
                     }
                     else
                     {
-                        return ScanOneCharFollowedBySpace(startIndex, TokenType.CommaSeparator, MessageCode.InvalidCharAfterComma);
+                        return ScanOneCharFollowedBySpace(startIndex, TokenType.CommaSeparator, MessageCode.InvalidCharAfterComma, false);
                     }
                 case ';':
                     //SemicolonSeparator=3,
@@ -623,7 +635,8 @@ namespace TypeCobol.Compiler.Scanner
                     //MultiplyOperator=14,
                     // p254: These operators are represented by specific characters that
                     // must be preceded and followed by a space.
-                    if(currentIndex == lastIndex)
+                    //However IBM Z/OS only raise a warning if there is no space - Issue #430
+                    if (currentIndex == lastIndex)
                     {
                         // consume the * char
                         currentIndex++;
@@ -639,12 +652,13 @@ namespace TypeCobol.Compiler.Scanner
                     //PowerOperator=15,
                     // p254: These operators are represented by specific characters that
                     // must be preceded and followed by a space.
+                    //However IBM Z/OS only raise a warning if there is no space - Issue #430
                     else if (line[currentIndex + 1] == '*')
                     {
                         // consume the first * char
                         currentIndex++;
                         // scan the second * char and a space
-                        return ScanOneCharFollowedBySpace(startIndex, TokenType.PowerOperator, MessageCode.PowerOperatorShouldBeFollowedBySpace);
+                        return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.PowerOperator);
                     }
                     //FloatingComment=5,                    
                     else if (line[currentIndex + 1] == '>')
@@ -673,9 +687,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume * char and try to match it as a multiply operator
                         currentIndex++;
-                        Token invalidToken = new Token(TokenType.MultiplyOperator, startIndex, startIndex, tokensLine);
-                        tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterAsterisk, invalidToken);
-                        return invalidToken;
+                        return new Token(TokenType.MultiplyOperator, startIndex, startIndex, tokensLine);
                     }
                 case '.':
                     //PeriodSeparator=7,
@@ -726,28 +738,32 @@ namespace TypeCobol.Compiler.Scanner
                     //PlusOperator=11,
                     // p254: These operators are represented by specific characters that
                     // must be preceded and followed by a space.
+                    //However IBM Z/OS only raise a warning if there is no space - Issue #430
                     //IntegerLiteral = 27,
                     //DecimalLiteral = 28,
                     //FloatingPointLiteral = 29,
-                    return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PlusOperator, MessageCode.InvalidCharAfterPlus);
+                    return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.PlusOperator, MessageCode.ImplementationError, false);
                 case '-':
                     //MinusOperator=12,
                     // p254: These operators are represented by specific characters that
                     // must be preceded and followed by a space.
+                    //However IBM Z/OS only raise a warning if there is no space - Issue #430
                     //IntegerLiteral = 27,
                     //DecimalLiteral = 28,
                     //FloatingPointLiteral = 29,
-                    return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.MinusOperator, MessageCode.InvalidCharAfterMinus);
+                    return ScanOneCharFollowedBySpaceOrNumericLiteral(startIndex, TokenType.MinusOperator, MessageCode.ImplementationError, false);
                 case '/':
                     //DivideOperator=13,
                     // p254: These operators are represented by specific characters that
                     // must be preceded and followed by a space.
-                    return ScanOneCharFollowedBySpace(startIndex, TokenType.DivideOperator, MessageCode.DivideOperatorShouldBeFollowedBySpace);
+                    //However IBM Z/OS only raise a warning if there is no space - Issue #430
+                    return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.DivideOperator);
                 case '<':
                     //LessThanOperator=16,
                     //LessThanOrEqualOperator=18,
                     // p260: Each relational operator must be preceded and followed
                     // by a space. 
+                    //However IBM Z/OS only raise a warning if there is no space - Issue #430
                     if (currentIndex == lastIndex)
                     {
                         // consume the < char
@@ -766,21 +782,18 @@ namespace TypeCobol.Compiler.Scanner
                         // consume the < char
                         currentIndex++;
                         // scan the = char and a space
-                        return ScanOneCharFollowedBySpace(startIndex, TokenType.LessThanOrEqualOperator, MessageCode.LessThanOrEqualOperatorShouldBeFollowedBySpace); 
-                    }
-                    else
-                    {
+                        return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.LessThanOrEqualOperator);
+                    } else {
                         // consume < char and try to match it as a less than operator
                         currentIndex++;
-                        Token invalidToken = new Token(TokenType.LessThanOperator, startIndex, startIndex, tokensLine);
-                        tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterLessThan, invalidToken);
-                        return invalidToken;
+                        return new Token(TokenType.LessThanOperator, startIndex, startIndex, tokensLine);
                     }
                 case '>':
                     //GreaterThanOperator=17,
                     //GreaterThanOrEqualOperator=19,
                     // p260: Each relational operator must be preceded and followed
                     // by a space. 
+                    //However IBM Z/OS only raise a warning if there is no space - Issue #430
                     if (currentIndex == lastIndex)
                     {
                         // consume the > char
@@ -799,20 +812,17 @@ namespace TypeCobol.Compiler.Scanner
                         // consume the > char
                         currentIndex++;
                         // scan the = char and a space
-                        return ScanOneCharFollowedBySpace(startIndex, TokenType.GreaterThanOrEqualOperator, MessageCode.GreaterThanOrEqualOperatorShouldBeFollowedBySpace);
-                    }
-                    else
-                    {
+                        return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.GreaterThanOrEqualOperator);
+                    } else {
                         // consume > char and try to match it as a greater than operator
                         currentIndex++;
-                        Token invalidToken = new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);
-                        tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterGreaterThan, invalidToken);
-                        return invalidToken;
+                        return new Token(TokenType.GreaterThanOperator, startIndex, startIndex, tokensLine);
                     }
                 case '=':
                     //EqualOperator=20,
                     // p260: Each relational operator must be preceded and followed
                     // by a space. 
+                    //However IBM Z/OS only raise a warning if there is no space - Issue #430
                     if (currentIndex == lastIndex)
                     {
                         // consume the = char
@@ -873,9 +883,7 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         // consume = char and try to match it as an equal operator
                         currentIndex++;
-                        Token invalidToken = new Token(TokenType.EqualOperator, startIndex, startIndex, tokensLine);
-                        tokensLine.AddDiagnostic(MessageCode.InvalidCharAfterEquals, invalidToken);
-                        return invalidToken;
+                        return new Token(TokenType.EqualOperator, startIndex, startIndex, tokensLine);
                     }
                 case '"':
                 case '\'':
@@ -1054,7 +1062,7 @@ namespace TypeCobol.Compiler.Scanner
 
         // (AUTHOR | INSTALLATION | DATE_WRITTEN | DATE_COMPILED | SECURITY) -> PeriodSeparator? -> CommentEntry*
 
-        // FUNCTION -> FunctionName
+        // FUNCTION -> TCFunctionName
 
         // (EXEC | EXECUTE) -> ExecTranslatorName -> ExecStatementText -> END_EXEC
         //                  -> (SQL | SQLIMS)     -> INCLUDE =rw=> EXEC_SQL_INCLUDE
@@ -1091,7 +1099,12 @@ namespace TypeCobol.Compiler.Scanner
             return new Token(tokenType, startIndex, startIndex, tokensLine);
         }
 
-        private Token ScanOneCharFollowedBySpace(int startIndex, TokenType tokenType, MessageCode messageCode)
+        private Token ScanOneCharWithPossibleSpaceAfter(int startIndex, TokenType tokenType) {
+            //Use MessageCode.ImplementationError because ScanOneCharFollowedBySpace must not create an error
+            return ScanOneCharFollowedBySpace(startIndex, tokenType, MessageCode.ImplementationError, false);
+        }
+
+    private Token ScanOneCharFollowedBySpace(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterisMandatory =true)
         {
             if (currentIndex == lastIndex)
             {
@@ -1110,13 +1123,16 @@ namespace TypeCobol.Compiler.Scanner
                 // consume one char and register an error because the following char is missing
                 // even if the space is missing, try to match the expected tokenType
                 currentIndex++;
-                Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                tokensLine.AddDiagnostic(messageCode, invalidToken);
-                return invalidToken;
+                if (spaceAfterisMandatory) {
+                    Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
+                    tokensLine.AddDiagnostic(messageCode, invalidToken);
+                    return invalidToken;
+                }
+                return new Token(tokenType, startIndex, currentIndex-1, tokensLine);
             }
         }
 
-        private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType, MessageCode messageCode)
+        private Token ScanOneCharFollowedBySpaceOrNumericLiteral(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterIsMandatory = true)
         {
             if (currentIndex == lastIndex)
             {
@@ -1144,9 +1160,12 @@ namespace TypeCobol.Compiler.Scanner
                 // consume one char and register an error because the following char is missing
                 // even if the space is missing, try to match the expected tokenType
                 currentIndex++;
-                Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
-                tokensLine.AddDiagnostic(messageCode, invalidToken);
-                return invalidToken;
+                if (spaceAfterIsMandatory) {
+                    Token invalidToken = new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
+                    tokensLine.AddDiagnostic(messageCode, invalidToken);
+                    return invalidToken;
+                }
+                return new Token(tokenType, startIndex, currentIndex - 1, tokensLine);
             }
         }
 
@@ -1231,10 +1250,12 @@ namespace TypeCobol.Compiler.Scanner
                     Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine);
                     token.LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
 
-                    // Distinguish the special case of a LevelNumber
-                    if(tokensLine.ScanState.InsideDataDivision && tokensLine.ScanState.AtBeginningOfSentence)
-                    {
-                        token.CorrectType(TokenType.LevelNumber);
+
+                    if (BeSmartWithLevelNumber) { 
+                        // Distinguish the special case of a LevelNumber
+                        if (tokensLine.ScanState.InsideDataDivision && tokensLine.ScanState.AtBeginningOfSentence) {
+                            token.CorrectType(TokenType.LevelNumber);
+                        }
                     }
 
                     return token;

@@ -113,7 +113,7 @@ functionDeclarationEnd: END_DECLARE PeriodSeparator;
 
 
 
-callStatement: cobolCallStatement | tcCallStatement;
+callStatement:  tcCallStatement | cobolCallStatement;
 
 cobolCallStatement:
 	CALL programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable
@@ -122,7 +122,15 @@ cobolCallStatement:
 
 // TCRFUN_CALL_PARAMETER_ORDER
 tcCallStatement:
-	CALL functionNameReference
+//SMEDILOL: 
+//programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable can lead to "identifier"
+//functionNameReference only leads to "identifier"
+//so functionNameReference can never be filled by Antlr
+//
+//We should create an entry programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionNameReference
+//But as we are thinking to simplify the grammar, for now only the TypeCobolCodeElementBuilder will now that 
+//programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable can be ambiguous an one of its CandidatesType can be TCFunctionName
+	CALL (programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable | functionNameReference)
 		(INPUT  callInputParameter+)?
 		(IN_OUT  callInoutParameter+)?
 		(OUTPUT callOutputParameter+)?
@@ -131,3 +139,6 @@ tcCallStatement:
 callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? sharedVariableOrFileName; // TCRFUN_INPUT_BY
 callInoutParameter: sharedStorageArea1;  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
 callOutputParameter: sharedStorageArea1; // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
+
+// When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
+cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)?;

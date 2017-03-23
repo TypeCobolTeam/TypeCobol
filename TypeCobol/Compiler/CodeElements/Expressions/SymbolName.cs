@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 
@@ -48,6 +49,21 @@ namespace TypeCobol.Compiler.CodeElements
         /// Type of the symbol
         /// </summary>
         public SymbolType Type { get; private set; }
+
+        public virtual bool IsOrCanBeOfType(SymbolType symbolType)
+        {
+            return Type == symbolType;
+        }
+
+        public virtual bool IsOrCanBeOfType(params SymbolType[] symbolTypes)
+        {
+            return symbolTypes.Contains(Type);
+        }
+
+        public virtual bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes)
+        {
+            return symbolTypes.Contains(Type);
+        }
 
         // -- Override Equals & GetHashCode --
 
@@ -135,6 +151,8 @@ namespace TypeCobol.Compiler.CodeElements
             }
         }
 
+        
+
         private URI _uri;
         public URI URI {
             get { return _uri ?? (_uri = new URI(Name)); }
@@ -144,6 +162,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
         }
+
     }
 
     /// <summary>
@@ -168,8 +187,41 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SymbolType[] CandidateTypes { get; set; }
 
+        public override bool IsOrCanBeOfType(SymbolType symbolType)
+        {
+            return CandidateTypes.Contains(symbolType);
+        }
+
+        public override bool IsOrCanBeOfType([NotNull] params SymbolType[] symbolTypes)
+        {
+            return CandidateTypes.Intersect(symbolTypes).Any();
+        }
+
+        public override bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes)
+        {
+            return !CandidateTypes.Except(symbolTypes).Any();
+        }
+
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
+        }
+
+        public static void ApplyCandidatesTypes(SymbolReference symbolReference, SymbolType[] symbolTypes)
+        {
+            if (symbolReference.IsAmbiguous)
+            {
+                if (symbolReference.IsQualifiedReference)
+                {
+                    var qualifiedSymbolReference = (QualifiedSymbolReference)symbolReference;
+                    ApplyCandidatesTypes(qualifiedSymbolReference.Head, symbolTypes);
+                    ApplyCandidatesTypes(qualifiedSymbolReference.Tail, symbolTypes);
+
+                }
+                else
+                {
+                    ((AmbiguousSymbolReference)symbolReference).CandidateTypes = symbolTypes;
+                }
+            }
         }
     }
 
@@ -181,13 +233,14 @@ namespace TypeCobol.Compiler.CodeElements
 	/// </summary>
 	public class QualifiedSymbolReference: SymbolReference, IList<SymbolReference> {
 		public QualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head.NameLiteral, head.Type) {
-			IsAmbiguous = head.IsAmbiguous;
+			IsAmbiguous = head.IsAmbiguous || tail.IsAmbiguous;
 			IsQualifiedReference = true;
 			Head = head;
 			Tail = tail;
+
 		}
 
-		public SymbolReference Head { get; private set; }
+	    public SymbolReference Head { get; private set; }
 		public SymbolReference Tail { get; private set; }
 		public SymbolReference First {
 			get {
@@ -199,8 +252,20 @@ namespace TypeCobol.Compiler.CodeElements
 			}
 		}
 
-		/// <summary>Used to resolve the symbol reference in a hierarchy of names</summary>
-		public override string DefinitionPathPattern {
+        public override bool IsOrCanBeOfType(SymbolType symbolType) {
+            return Head.IsOrCanBeOfType(symbolType) || Tail.IsOrCanBeOfType(symbolType);
+        }
+
+        public override bool IsOrCanBeOfType([NotNull] params SymbolType[] symbolTypes) {
+            return Head.IsOrCanBeOfType(symbolTypes) || Tail.IsOrCanBeOfType(symbolTypes);
+        }
+
+        public override bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes) {
+            return Head.IsOrCanBeOnlyOfTypes(symbolTypes) || Tail.IsOrCanBeOnlyOfTypes(symbolTypes);
+        }
+
+        /// <summary>Used to resolve the symbol reference in a hierarchy of names</summary>
+        public override string DefinitionPathPattern {
 			get { return "\\." + Head.Name + "\\..*" + Tail.DefinitionPathPattern; }
 		}
 
@@ -301,7 +366,7 @@ namespace TypeCobol.Compiler.CodeElements
 
     /// <summary>
     /// Reference to an external name implicitely defined in :
-    /// - the compiler (FunctionName, ExecTranslatorName)
+    /// - the compiler (TCFunctionName, ExecTranslatorName)
     /// - the compilation environment (TextName, LibraryName)
     /// - the execution environment (AssignmentName, EnvironmentName, UPSISwitchName)
     /// </summary>

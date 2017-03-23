@@ -11,7 +11,7 @@
        01  W-ATTRIBUTE               PIC X(20).
        
       * Redeclaration of "intrinsic" TYPE DATE
-      *01  TC-DATE                    TYPEDEF.
+      *01  TC-DATE                    TYPEDEF strict.
       * YEAR (on 4 chars)
       *    10 YYYY                   PIC 9(04).
       * MONTH NUMBER (on 2 chars)
@@ -19,27 +19,27 @@
       * DAY OF MONTH (on 2 chars)
       *    10 DD                     PIC 9(02).
        
-      *01  DESCRIPTION               TYPEDEF.
+      *01  DESCRIPTION               TYPEDEF strict.
       *    05 Ligne-01               PIC X(32).
       *    05 Ligne-02               PIC X(32).
       *    05 Ligne-03               PIC X(32).
       *    05 Ligne-04               PIC X(32).
       *    05 Ligne-05               PIC X(32).
            
-      *01  IDENTITY                  TYPEDEF.
+      *01  IDENTITY                  TYPEDEF strict.
       *    05 LastName               PIC X(32).
       *    05 FirstName              PIC X(25).
       *    05 BirthDay               TYPE TC-DATE.
            
-      *01  INTERNAL-REF              TYPEDEF STRONG.
+      *01  INTERNAL-REF              TYPEDEF strict.
       *    05  RType                 PIC X(03).
       *    05  RReference            PIC X(13).
            
-      *01  EXTERNAL-REF              TYPEDEF STRONG.
+      *01  EXTERNAL-REF              TYPEDEF strict.
       *    05  RType                 PIC X(03).
       *    05  RReference            PIC X(30).
            
-      *01  PERSON                    TYPEDEF.
+      *01  PERSON                    TYPEDEF strict.
       *    05 UID                    PIC 9(13).
       *    05 InternalRef            TYPE INTERNAL-REF.
       *    05 ExternalRef            TYPE EXTERNAL-REF.

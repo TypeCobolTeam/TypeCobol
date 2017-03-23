@@ -82,7 +82,7 @@ internal class TypedDataNode: DataDescription, Generated {
                     i++;
 
                 //Ignore any STRONG keyword
-                if((i+1) < customtype.CodeElement.ConsumedTokens.Count && customtype.CodeElement.ConsumedTokens[i+1].TokenType == Compiler.Scanner.TokenType.STRONG)
+                if((i+1) < customtype.CodeElement.ConsumedTokens.Count && (customtype.CodeElement.ConsumedTokens[i+1].TokenType == Compiler.Scanner.TokenType.STRONG || customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.STRICT))
                     i++;
 
                 while (++i < customtype.CodeElement.ConsumedTokens.Count)

@@ -7,12 +7,12 @@
        01 a PIC 9.
        01 b PIC 9.
        
-      *01 Vector TYPEDEF.
+      *01 Vector TYPEDEF strict.
       *    05 x PIC 9.
       *    05 y PIC 9.
       *    05 z PIC 9.
        
-      *01 Point TYPEDEF.
+      *01 Point TYPEDEF strict.
       *    02 Location TYPE Vector.
       *    02 Movment  TYPE Vector.
       *      04 Speed        TYPE Vector.

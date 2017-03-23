@@ -1,15 +1,17 @@
-﻿using Castle.Core.Internal;
+﻿
+using System;
 
 namespace TypeCobol.Compiler.Nodes {
 
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeModel;
+    using System.Collections.Generic;
+    using System.Linq;
+    using TypeCobol.Compiler.CodeElements;
+    using TypeCobol.Compiler.CodeElements.Expressions;
+    using TypeCobol.Compiler.CodeModel;
 
 
 
-public static class Attributes {
+    public static class Attributes {
 	internal static object Get(Node node, string attribute) {
 		var table = node.SymbolTable;
 		object value = node;
@@ -30,20 +32,18 @@ public static class Attributes {
 		attributes = new Dictionary<string,Attribute>();
 		attributes["name"]  = new NameAttribute();
 		attributes["level"] = new LevelAttribute();
-            //not used?
 		attributes["type"]  = new TypeAttribute();
-            //not used?
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
-            //not used?
 		attributes["unsafe"] = new UnsafeAttribute();
 		attributes["function"] = new FunctionUserAttribute();
 		attributes["definitions"] = new DefinitionsAttribute();
             //not used?
 		attributes["typecobol"] = new TypeCobolAttribute();
-            //not used
 		attributes["visibility"] = new VisibilityAttribute();
 		attributes["copyname"] = new LibraryCopyAttribute();
+		attributes["programName8"] = new ProgramName8Attribute();
+        attributes["imports"] = new ProgramImportsAttribute();
 	}
 	private static ContainerAttribute DEFAULT = new ContainerAttribute();
 }
@@ -73,14 +73,22 @@ internal class NameAttribute: Attribute {
             return null;
 	}
 }
-
 internal class TypeAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		try { bool.Parse(o.ToString()); return "BOOL"; }
-		catch(System.FormatException) { } // not a boolean
-		var node = (DataDescription)o;
-		var data = (DataDescriptionEntry)node.CodeElement;
-		return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType!=null? data.UserDefinedDataType.Name : null;
+        bool result;
+        if(bool.TryParse(o.ToString(), out result)) {
+            return "BOOL";
+        }
+
+		var node = o as DataDescription;
+	    if (node != null) {
+                var data = node.CodeElement as DataDescriptionEntry;
+	        if (data != null) {
+                    return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType != null ? data.UserDefinedDataType.Name : null;
+                }
+            }
+	    return null;
+
 	}
 }
 
@@ -123,11 +131,12 @@ internal class SenderAttribute: Attribute {
 }
 internal class ReceiverAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var statement = ((Node)o).CodeElement as VariableWriter;
-		if (statement == null) return null;
-		if (statement.VariablesWritten.Count == 0) return null;
-		if (statement.VariablesWritten.Count == 1) return new List<QualifiedName>(statement.VariablesWritten.Keys)[0];
-		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+statement.VariablesWritten.Count+")");
+	    var codeElement = ((Node)o).CodeElement;
+	    var variablesWritten = codeElement.StorageAreaWrites;
+	    if (variablesWritten == null) return null;
+        if (variablesWritten.Count == 0) return null;
+        if (variablesWritten.Count == 1) return variablesWritten[0].ToString();
+		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+ variablesWritten.Count+")");
 	}
 }
 
@@ -144,13 +153,13 @@ internal class FunctionUserAttribute: Attribute {
 		var statement = ((Node)o).CodeElement as FunctionCaller;
 		if (statement == null) return null;
 		var functions = new List<FunctionCallInfo>();
-		foreach(var fun in statement.FunctionCalls) {
-			var found = table.GetFunction(new URI(fun.FunctionName));
-			if (found.Count < 1) continue;
-			if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
-			var declaration = found[0];
-			functions.Add(Create(fun, declaration));
-		}
+		
+		var found = table.GetFunction(new URI(statement.FunctionCall.FunctionName));
+			
+		if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
+		var declaration = found[0];
+		functions.Add(Create(statement.FunctionCall, declaration));
+		
 		if (functions.Count == 0) return null;
 		if (functions.Count == 1) return functions[0];
 		return functions;
@@ -300,12 +309,164 @@ internal class VisibilityAttribute: Attribute {
 
 internal class LibraryCopyAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
-		var pgm = (Program)((Node)o).Root.GetChildren<ProgramIdentification>()[0];
+		var pgm = ((Node)o).GetProgramNode();
 		var copies = pgm.GetChildren<LibraryCopyCodeElement>();
 		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
 		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement().Name.Name;
 	}
 }
+    /// <summary>
+    /// return the name of enclosing program of the current node.
+    /// The name is limited to 8 characters
+    /// </summary>
+    internal class ProgramName8Attribute: Attribute {
+	    public object GetValue(object o, SymbolTable table) {
+            var node = o as Node;
+	        while (node != null) {
+	            var pgm = node as Program;
+	            if (pgm != null) {
+	                var name = pgm.Name;
+                    return pgm.Name.Substring(0,Math.Min(name.Length, 8));
+	            }
+	            node = node.Parent;
+	        }
+	        return "";
+	    }
+    }
 
+    public class ProcedureImport
+    {
+        /// <summary>
+        /// Hash of the Imported Procedure
+        /// </summary>
+        public string Hash
+        { get; internal set; }
 
+        /// <summary>
+        /// Name of the Imported procedure
+        /// </summary>
+        public string Name
+        { get; internal set; }
+    }
+
+    /// <summary>
+    /// Descriptor of an Imoprted Program.
+    /// </summary>
+    public class ProgramImport
+    {
+        /// <summary>
+        /// The Imported Program Name.
+        /// </summary>
+        public string Name
+        { get; internal set; }
+
+        /// <summary>
+        /// List of All imported procedure from the Program (hash,name).
+        /// </summary>
+        public Dictionary<string, ProcedureImport> Procedures
+        { get; internal set; }
+
+        public ProgramImport()
+        {
+            Procedures = new Dictionary<string, ProcedureImport>();
+        }
+    }
+
+    /// <summary>
+    /// All Imports from Program.
+    /// </summary>
+    public class ProgramImports
+    {
+        /// <summary>
+        /// Imported Programs
+        /// </summary>
+        public Dictionary<string, ProgramImport> Programs;
+        /// <summary>
+        /// Is The this Program Import Empty ?
+        /// </summary>
+        public bool IsEmpty
+        {
+            get
+            {
+                return Programs.Count == 0;
+            }
+        }
+        /// <summary>
+        /// Is The this Program Import Not Empty ?
+        /// </summary>
+        public bool IsNotEmpty
+        {
+            get
+            {
+                return !IsEmpty;
+            }
+        }
+        public ProgramImports()
+        {
+            Programs = new Dictionary<string, ProgramImport>();
+        }
+    }
+
+    /// <summary>
+    /// return all imports of a Program Node
+    /// </summary>
+    internal class ProgramImportsAttribute : Attribute {
+        public object GetValue(object o, SymbolTable table)
+        {
+            ProgramImports imports = new ProgramImports();
+            var program = o as Program;
+            if (program != null)
+            {
+                if (program.ProcStyleCalls != null)
+                {
+                    //All imported program.                    
+                    var name = program.Name;
+                    string name_low = name.ToLower();
+                    string pgm_name = program.Name.Substring(0, Math.Min(name.Length, 8));
+                    string pgm_name_low = pgm_name.ToLower();
+                    //For each entry in the Procedure Style Call Dictionary
+                    foreach (var e in program.ProcStyleCalls)
+                    {
+                        var hash = e.Key;
+                        var call = e.Value;
+                        ProcedureStyleCall proc_style_call = call.Item2;
+                        //Only import Public Functions
+                        FunctionDeclaration fun_decl = proc_style_call.FunctionDeclaration;
+                        if (fun_decl != null)
+                        {
+                            if (fun_decl.CodeElement().Visibility == AccessModifier.Private)
+                                continue;//Ignore a Private function ==> Cannot Import It.
+                        }
+                        var item_pgm = call.Item1[call.Item1.Count - 1];                        
+                        if (name_low.Equals(item_pgm.Name.ToLower()))
+                        {   //Avoid imports to itself.
+                            continue;
+                        }
+                        string item_pgm_name = item_pgm.Name.Substring(0, Math.Min(item_pgm.Name.Length, 8));
+                        string item_pgm_name_low = item_pgm_name.ToLower();
+                        ProgramImport prg_imp = null;
+                        if (!imports.Programs.ContainsKey(item_pgm_name_low))
+                        {
+                            prg_imp = new ProgramImport();
+                            prg_imp.Name = item_pgm_name;
+                            imports.Programs[item_pgm_name_low] = prg_imp;
+                        }
+                        if (prg_imp == null)
+                            prg_imp = imports.Programs[item_pgm_name_low];
+                        //Store the Procedure if it is not alreday there                                                
+                        string proc_hash = hash;
+                        if (!prg_imp.Procedures.ContainsKey(proc_hash))
+                        {
+                            ProcedureImport proc_imp = new ProcedureImport();
+                            string item_proc_name = call.Item1[0].Name;
+                            proc_imp.Name = item_proc_name;
+                            proc_imp.Hash = proc_hash;
+                            prg_imp.Procedures[proc_hash] = proc_imp;
+                        }
+                    }
+                }
+            }
+            return imports;
+        }
+    }
 }

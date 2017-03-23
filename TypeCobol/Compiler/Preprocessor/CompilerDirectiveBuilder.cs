@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Preprocessor.Generated;
 using TypeCobol.Compiler.Scanner;
 using Antlr4.Runtime.Misc;
+using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -20,6 +21,13 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     internal class CompilerDirectiveBuilder : CobolCompilerDirectivesBaseListener
     {
+
+        public CompilerDirectiveBuilder(TypeCobolOptions compilerOptions)
+        {
+            TypeCobolOptions = compilerOptions;
+        }
+
+        public TypeCobolOptions TypeCobolOptions { get; set; }
         /// <summary>
         /// CompilerDirective object resulting of the visit the parse tree
         /// </summary>
@@ -141,24 +149,43 @@ namespace TypeCobol.Compiler.Preprocessor
 				copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
 				if (copy.TextName != null) {
+                   
 					// Find the list of copy text names variations declared by previous REMARKS compiler directives
 					var variations = ((TokensLine)copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations;
-					if (variations != null && variations.Count > 0) {
-						// Check if the current text name was mentioned in a REMARKS compiler directive
-						var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase));
-						if (declaration != null) {
-							// Declaration found => apply the legacy REPLACING semantics to the copy directive
-							copy.RemoveFirst01Level = true;
-							if (declaration.HasSuffix) {
-								copy.TextName = declaration.TextName;
-								copy.InsertSuffixChar = true;
-								copy.SuffixChar = declaration.SuffixChar;
-							}
-						}
-					}
+                    if (TypeCobolOptions.AutoRemarksEnable && (variations == null || !variations.Any(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase)))) //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
+				    {
+				        variations = new List<RemarksDirective.TextNameVariation>
+				        {
+				            new RemarksDirective.TextNameVariation(copy.TextName)
+				        };
+
+                        if(((TokensLine)copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations == null)
+                            ((TokensLine)copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
+
+                        ((TokensLine) copy.TextNameSymbol.TokensLine).InitialScanState.CopyTextNamesVariations.AddRange(variations);
+				    }
+
+				    if (variations != null)
+				    {
+                        var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase));
+                        if (declaration != null)
+                        {
+                            // Declaration found => apply the legacy REPLACING semantics to the copy directive
+                            copy.RemoveFirst01Level = true;
+                            if (declaration.HasSuffix)
+                            {
+                                copy.TextName = declaration.TextName;
+                                copy.InsertSuffixChar = true;
+                                copy.Suffix = declaration.Suffix;
+                                copy.PreSuffix = declaration.PreSuffix;
+                            }
+                        }
+                    }
+				    
+					
 				}
 #endif
-				copy.LibraryName = GetLibraryName(ctxt.libraryName());
+                    copy.LibraryName = GetLibraryName(ctxt.libraryName());
 				copy.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.libraryName());
 			}
 			copy.Suppress = (context.SUPPRESS() != null);

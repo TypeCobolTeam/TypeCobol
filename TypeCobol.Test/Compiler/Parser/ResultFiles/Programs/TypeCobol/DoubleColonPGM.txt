@@ -11,7 +11,7 @@ Line 97[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A i
 --- Program ---
 PROGRAM: COLON common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Global:Program
+--- Intrinsic:Namespace:Global:Program
 -- DATA --------
   T1-A:Alphanumeric
   T1-B1:Alphanumeric
@@ -48,5 +48,5 @@ PROGRAM: COLON common:False initial:False recursive:False
   TEST-4
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

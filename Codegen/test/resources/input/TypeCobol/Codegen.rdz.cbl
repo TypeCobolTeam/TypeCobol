@@ -10,8 +10,8 @@
 001520         ==:INFO:==  by ==CCTFAL-LOG-LVL-I or TRC-I==             000000
 001530         ==:TRAC:==  by ==CCTFAL-LOG-LVL-T or TRC-T==.            000000
 000060 COPY Codegen-FirstCopy.                                          000060
-000070 01  MyKey    TYPEDEF PIC X(04).                                  000070
-000071 01  MyKey2    TYPEDEF.
+000070 01  MyKey    TYPEDEF strict PIC X(04).
+000071 01  MyKey2    TYPEDEF strict.
            05 partA pic X(04).
            05 partB pic 9(04).
            05 partC pic X(05).

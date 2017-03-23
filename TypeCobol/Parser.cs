@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using JetBrains.Annotations;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
@@ -8,6 +9,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 
 namespace TypeCobol
@@ -15,6 +17,7 @@ namespace TypeCobol
 	public class Parser
 	{
 		public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
+	    public List<string> MissingCopys { get; set; }
         protected Dictionary<string,bool> Inits;
         protected Dictionary<string,FileCompiler> Compilers;
         protected FileCompiler Compiler = null;
@@ -34,14 +37,16 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init([NotNull] string path, DocumentFormat format = null, IList<string> copies = null) {
+		public void Init([NotNull] string path,  DocumentFormat format = null, IList<string> copies = null, bool autoRemarks = false, string haltOnMissingCopyFilePath = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
-			TypeCobolOptions options = new TypeCobolOptions();
-			CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+		    TypeCobolOptions options = new TypeCobolOptions {AutoRemarksEnable = autoRemarks, HaltOnMissingCopy = (haltOnMissingCopyFilePath != null) };
+#endif
+            CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
 			//Add copy folder into sourceFileProvider
 			SourceFileProvider sourceFileProvider = project.SourceFileProvider;
@@ -49,7 +54,8 @@ namespace TypeCobol
 			foreach (var folder in copies) {
 				sourceFileProvider.AddLocalDirectoryLibrary(folder, false, CopyExtensions, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
 			}
-			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false);
+			compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, CustomSymbols, false, project);
+            
 			Compilers.Add(path, compiler);
 			Inits.Add(path, false);
 		}
@@ -75,6 +81,8 @@ namespace TypeCobol
 				Observer.OnError(ex);
 				System.Console.WriteLine(ex.ToString());
 			}
+
+		    MissingCopys = Compiler.CompilationProject.MissingCopys;
 
 			Compiler.CompilationResultsForProgram.TextLinesChanged -= OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged -= OnCodeElementLine;
@@ -133,32 +141,6 @@ namespace TypeCobol
 
 		public CompilationUnit Results {
 			get { return Compiler.CompilationResultsForProgram; }
-		}
-
-		public TypeCobol.Tools.CodeElementDiagnostics Converter {
-			get { return new TypeCobol.Tools.CodeElementDiagnostics(Results.CodeElementsDocumentSnapshot.Lines); }
-		}
-
-		public ICollection<TypeCobol.Tools.Diagnostic>[] Errors {
-			get {
-				var errors = new List<TypeCobol.Tools.Diagnostic>[2];
-				for(int c = 0; c < errors.Length; c++) errors[c] = new List<TypeCobol.Tools.Diagnostic>();
-                // 'CodeElements' parsing (1st phase) errors
-                if (Results.CodeElementsDocumentSnapshot.ParserDiagnostics != null)
-                {
-                    errors[0].AddRange(Converter.AsDiagnostics(Results.CodeElementsDocumentSnapshot.ParserDiagnostics));
-                }
-				foreach(var e in Results.CodeElementsDocumentSnapshot.CodeElements) {
-					if (e.Diagnostics == null || e.Diagnostics.Count < 1) continue;
-					errors[0].AddRange(Converter.GetDiagnostics(e));
-				}
-                // 'ProgramClass' parsing (2nd phase) errors
-                if (Results.ProgramClassDocumentSnapshot.Diagnostics != null)
-                {
-                    errors[1].AddRange(Converter.AsDiagnostics(Results.ProgramClassDocumentSnapshot.Diagnostics));
-                }
-				return errors;
-			}
 		}
 
 

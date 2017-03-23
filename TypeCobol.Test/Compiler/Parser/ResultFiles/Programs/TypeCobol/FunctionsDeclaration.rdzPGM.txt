@@ -55,10 +55,10 @@ PROGRAM: FunDeclare common:False initial:False recursive:False
   MyNOT
         in: x:BOOL
     return: y:BOOL
---- Intrinsic:Global
+--- Intrinsic:Namespace:Global
 -- DATA --------
-    g:Alphanumeric
+  g:Alphanumeric
 --- Intrinsic
 -- TYPES -------
-      BOOL:BOOL
-      DATE:DATE
+  BOOL:BOOL
+  DATE:DATE

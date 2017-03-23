@@ -85,7 +85,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
             // Prepare to analyze the parse tree
             ParseTreeWalker walker = new ParseTreeWalker();
-            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder();
+            CompilerDirectiveBuilder directiveBuilder = new CompilerDirectiveBuilder(compilerOptions);
 
             // 1. Iterate over all compiler directive starting tokens found in the lines which were updated 
             foreach (Token compilerDirectiveStartingToken in documentLines
@@ -240,10 +240,14 @@ namespace TypeCobol.Compiler.Preprocessor
                         {
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
-                            ProcessedTokensDocument importedDocumentSource = processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName, copyDirective.TextName, tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken]);
+                            ProcessedTokensDocument importedDocumentSource =
+                                processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
+                                    copyDirective.TextName,
+                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken]);
 
                             // Store it on the current line after appying the REPLACING directive
-                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective, importedDocumentSource);
+                            ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
+                                importedDocumentSource);
                             tokensLineWithCopyDirective.ImportedDocuments[copyDirective] = importedDocument;
                         }
                         catch (Exception e)
@@ -251,11 +255,16 @@ namespace TypeCobol.Compiler.Preprocessor
                             // Text name refenced by COPY directive was not found
                             // => register a preprocessor error on this line                            
                             Token failedDirectiveToken = tokensLineWithCopyDirective.TokensWithCompilerDirectives
-                                .First(token => token.TokenType == TokenType.CopyImportDirective && ((CompilerDirectiveToken)token).CompilerDirective == copyDirective);
+                                .First(
+                                    token =>
+                                        token.TokenType == TokenType.CopyImportDirective &&
+                                        ((CompilerDirectiveToken) token).CompilerDirective == copyDirective);
+
                             Diagnostic diag = new Diagnostic(
                                 MessageCode.FailedToLoadTextDocumentReferencedByCopyDirective,
                                 failedDirectiveToken.Column, failedDirectiveToken.EndColumn,
                                 failedDirectiveToken.Line, e.Message);
+
                             tokensLineWithCopyDirective.AddDiagnostic(diag);
                         }
                     }

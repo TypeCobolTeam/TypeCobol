@@ -15,6 +15,30 @@ namespace TypeCobol.Compiler.Diagnostics {
 
     public class Cobol85CompleteASTChecker : AbstractAstVisitor
     {
+        public override bool BeginNode(Node node)
+        {
+            CodeElement codeElement = node.CodeElement;
+            if (codeElement != null && codeElement.StorageAreaReads != null)
+            {
+                foreach (var storageAreaRead in codeElement.StorageAreaReads)
+                {
+                    CheckVariable(node, storageAreaRead);
+                }
+            }
+            if (codeElement != null && codeElement.StorageAreaWrites != null)
+            {
+                foreach (var storageAreaWrite in codeElement.StorageAreaWrites)
+                {
+                    CheckVariable(node, storageAreaWrite);
+                }
+            }
+
+            FunctionCallChecker.OnNode(node);
+            return base.BeginNode(node);
+        }
+
+
+
         public override bool BeginCodeElement(CodeElement codeElement) {
             //This checker is only for Node after the full AST has been created
             return false;
@@ -41,7 +65,35 @@ namespace TypeCobol.Compiler.Diagnostics {
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
             return true;
         }
-    }
+
+        private void CheckVariable(Node node, VariableBase variable)
+        {
+            if (variable.StorageArea != null)
+            {
+                CheckVariable(node, variable.StorageArea);
+            }
+        }
+
+        private void CheckVariable(Node node, StorageArea storageArea) {
+            if (!storageArea.NeedDeclaration)
+            {
+                return;
+            }
+            var area = storageArea.GetStorageAreaThatNeedDeclaration;
+
+            if (area.SymbolReference == null) return;
+            //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
+            if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return;
+
+            var found = node.SymbolTable.GetVariable(area);
+            if (found.Count < 1)
+                if (node.SymbolTable.GetFunction(area).Count < 1)
+                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + area + " is not referenced");
+            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + area);
+
+        }
+        }
+
 
 
     class DataDescriptionChecker: CodeElementListener {
@@ -377,95 +429,8 @@ namespace TypeCobol.Compiler.Diagnostics {
         {
             Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
         }
-    }
-
-    class VariableUsageChecker: NodeListener {
-
-	    public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-	        CodeElement ce = node.CodeElement;
-	        if (ce != null && ce.StorageAreaReads != null) {
-	            foreach (var storageAreaRead in ce.StorageAreaReads) {
-	                CheckVariable(node, storageAreaRead);
-	            }
-	        }
-            if (ce != null && ce.StorageAreaWrites != null) {
-	            foreach (var storageAreaWrite in ce.StorageAreaWrites) {
-	                CheckVariable(node, storageAreaWrite);
-	            }
-	        }
-
-	        //Subscript checker are desactived because it doesn't works.
-            /*
-            var move = node.CodeElement as MoveSimpleStatement;
-		    if (move == null) return;
-		    var subscripts = move.Subscripts;
-		    foreach(var variable in move.Variables.Keys) {
-                ICollection<List<SubscriptExpression>> links;
-                if (subscripts.ContainsKey(variable)) {
-                    links = subscripts[variable];
-                } else {
-                    links = new List<List<SubscriptExpression>>();
-                    links.Add(new List<SubscriptExpression>());
-                }
-                foreach(var link in links)
-                    CheckSubscripting(move, node.SymbolTable, variable, link);
-            }*/
-        }
-	    private void CheckSubscripting(CodeElement e, SymbolTable table, QualifiedName name, List<SubscriptExpression> subscripts) {
-		    var map = table.GetVariableExplicit(name);
-		    foreach(var kv in map) {
-			    if (!kv.Key.QualifiedName.Matches(name)) continue;
-			    int expected = CheckSubscripting(e, kv.Value[0], subscripts);
-			    if (expected == 0 && subscripts.Count > 0)
-			        DiagnosticUtils.AddError(e, name+" must not be subscripted");
-			    else 
-                if (expected < subscripts.Count)
-			        DiagnosticUtils.AddError(e, "Too many subscripts ("+subscripts.Count+" vs expected="+expected+")");
 		    }
-	    }
 
-	    /// <param name="e">Statement to check</param>
-	    /// <param name="link">Explicit nodes used in item qualification</param>
-	    /// <param name="subscripts">Parsed number of subscripts</param>
-	    /// <returns>Expected number of subscripts</returns>
-	    private int CheckSubscripting(CodeElement e, LinkedList<Node> link, List<SubscriptExpression> subscripts) {
-		    int index = 0;
-		    foreach(var item in link) {
-			    var datanode = item as DataDescription;
-			    if (datanode == null) continue;// not subscriptable
-			    var data = datanode.CodeElement();
-			    bool isTable = data.IsTableOccurence;
-			    if (!isTable) continue;// not subscriptable
-			    int max = -1;
-			    int actual = -1;
-			    if (index < subscripts.Count) int.TryParse(subscripts[index].ToString(), out actual);
-			    if (actual == -1)
-				    DiagnosticUtils.AddError(e, item.Name+" must be subscripted");
-			    var size = data.MaxOccurencesCount;
-			    if (size != null) int.TryParse(size.ToString(), out max);
-			    if (actual != -1 && max != -1 && actual > max)
-				    DiagnosticUtils.AddError(e, item.Name+" subscripting out of bounds: "+actual+" > max="+max);
-			    index++;
-		    }
-		    return index;
-	    }
-
-        private void CheckVariable(Node node, VariableBase variable) {
-            var found = node.SymbolTable.GetVariable(variable);
-		    if (found.Count < 1)
-			    if (node.SymbolTable.GetFunction(variable).Count < 1)
-				    DiagnosticUtils.AddError(node.CodeElement, "Symbol "+ variable + " is not referenced");
-		    if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+ variable);
-	    }
-
-        private void CheckVariable(Node node, StorageArea storageArea) {
-            var found = node.SymbolTable.GetVariable(storageArea);
-		    if (found.Count < 1)
-			    if (node.SymbolTable.GetFunction(storageArea).Count < 1)
-				    DiagnosticUtils.AddError(node.CodeElement, "Symbol "+ storageArea + " is not referenced");
-		    if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol "+ storageArea);
-	    }
-    }
 
     class WriteTypeConsistencyChecker: NodeListener {
 
@@ -504,11 +469,14 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		if (sending != receiving) {
 			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
-			if (receiving.IsStrong) {
-				if (!IsUnsafe) {
-					string message = "Cannot write "+sending+" to strongly typed variable "+wname.Head+":"+receiving+".";
-					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-				}
+			if (receiving.RestrictionLevel > RestrictionLevel.WEAK) {
+                    if (!IsUnsafe)
+                    {
+                        string message = string.Format("Cannot write {0} to {1} typed variable {2}:{3}."
+                                                      , sending, receiving.RestrictionLevel == RestrictionLevel.STRONG ? "strongly" : "strictly"
+                                                      , wname.Head, receiving);
+                        DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                    }
 			} else {
 				if (IsUnsafe) {
 					string message = "Useless UNSAFE with non strongly typed receiver.";
@@ -549,6 +517,9 @@ namespace TypeCobol.Compiler.Diagnostics {
                     entry = GetDataDescriptionEntry(table, redefines);
 			    }
 			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
+		    if (entry == null) {
+		        return null;
+		    }
 			if (entry.UserDefinedDataType == null) return entry.DataType;//not a custom type
 		}
         ITypedNode typed = symbol as ITypedNode;
@@ -566,6 +537,9 @@ namespace TypeCobol.Compiler.Diagnostics {
         /// <returns></returns>
         private DataDescriptionEntry GetDataDescriptionEntry(SymbolTable table, DataRedefinesEntry dataRedefinesEntry) {
             var node = GetSymbol(table, dataRedefinesEntry.RedefinesDataName);
+            if (node == null) {
+                return null;
+            }
             if (node is DataDescription) {
                 return (DataDescriptionEntry)node.CodeElement;
             }

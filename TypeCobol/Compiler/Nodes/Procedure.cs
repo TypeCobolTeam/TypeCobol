@@ -83,6 +83,17 @@
 	    public Paragraph(ParagraphHeader header): base(header) { }
 	    public override string ID { get { return this.CodeElement().ParagraphName.Name; } }
 
+        public override string GenURI
+        {
+            get
+            {
+                string id = string.Intern("paragraph");
+                var puri = Parent == null ? null : Parent.GenURI;
+                if (puri == null) return id;
+                return puri + '.' + id;
+            }
+        }  
+
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }
@@ -103,5 +114,4 @@
             return astVisitor.Visit(this);
         }
     }
-
 } // end of namespace TypeCobol.Compiler.Nodes

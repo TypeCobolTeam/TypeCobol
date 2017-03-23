@@ -2,9 +2,13 @@
 using System.IO.Pipes; // NamedPipeServerStream, PipeDirection
 using Mono.Options;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Server {
@@ -14,7 +18,9 @@ namespace TypeCobol.Server {
 		class Config {
 			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 			public bool Codegen = false;
-			public List<string> CopyFolders = new List<string>();
+            public bool AutoRemarks;
+            public string HaltOnMissingCopyFilePath;
+            public List<string> CopyFolders = new List<string>();
 			public List<string> InputFiles  = new List<string>();
 			public List<string> OutputFiles = new List<string>();
 			public string ErrorFile = null;
@@ -23,7 +29,8 @@ namespace TypeCobol.Server {
 				get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
 			}
 			public List<string> Copies = new List<string>();
-		}
+           
+        }
 
 		static int Main(string[] argv) {
 			bool help = false;
@@ -32,7 +39,7 @@ namespace TypeCobol.Server {
 			var config = new Config();
 			var pipename = "TypeCobol.Server";
 
-			var p = new OptionSet () {
+            var p = new OptionSet () {
 				"USAGE",
 				"  "+PROGNAME+" [OPTIONS]... [PIPENAME]",
 				"",
@@ -47,6 +54,8 @@ namespace TypeCobol.Server {
 				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
 				{ "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
+                { "a|autoremarks=", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = (v!=null) },
+                { "hc|HaltOnMissingCopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -57,6 +66,11 @@ namespace TypeCobol.Server {
 				{ "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
 			};
+
+      
+            //Add DefaultCopies to running session
+            var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            config.CopyFolders.Add(folder + @"\DefaultCopies\");
 
 		    try {
                 List<string> args;
@@ -83,12 +97,27 @@ namespace TypeCobol.Server {
 		        if (args.Count > 0) pipename = args[0];
 
 		        if (once) {
-		            runOnce(config);
-		        } else {
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
+                    string debugLine = DateTime.Now + " start parsing of ";
+                    if (config.InputFiles.Count > 0)
+                    {
+                        debugLine += Path.GetFileName(config.InputFiles[0]);
+                    }
+                    debugLine += "\n";
+                    File.AppendAllText("TypeCobol.CLI.log", debugLine);
+                    runOnce(config);
+
+                    stopWatch.Stop();
+                    debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
+                    File.AppendAllText("TypeCobol.CLI.log", debugLine);
+                } else {
 		            runServer(pipename);
 		        }
 		    } catch (Exception e) {
+                File.AppendAllText("TypeCobol.CLI.log", e.ToString());
                 return exit(1, e.Message);
+                
             }
 		    return 0;
 		}
@@ -100,7 +129,9 @@ namespace TypeCobol.Server {
 			/*if (encoding.ToLower().Equals("rdz"))*/ return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
 		}
 
-		private static void runOnce(Config config) {
+		private static void runOnce(Config config)
+		{
+		   
 			TextWriter w;
 			if (config.ErrorFile == null) w = Console.Error;
 			else w = File.CreateText(config.ErrorFile);
@@ -114,23 +145,34 @@ namespace TypeCobol.Server {
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
-				try { parser.Init(path, config.Format, config.CopyFolders); }
+				try { parser.Init(path, config.Format, config.CopyFolders, config.AutoRemarks, config.HaltOnMissingCopyFilePath); }
 				catch(Exception ex) {
-					AddError(writer, ex.Message, path, "parserInit");
+					AddError(writer, MessageCode.ParserInit, ex.Message, path);
 					continue;
 				}
 				parser.Parse(path);
 
-				if (parser.Results.CodeElementsDocumentSnapshot == null) {
-					AddError(writer, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path, "parsing");
+
+			    if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath)) {
+			        if (parser.MissingCopys.Count > 0) {
+			            //Write in the specified file all the absent copys detected
+			            File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
+			        } else {
+			            //Delete the file
+			            File.Delete(config.HaltOnMissingCopyFilePath);
+			        }
+			    }
+
+			    if (parser.Results.CodeElementsDocumentSnapshot == null) {
+					AddError(writer, MessageCode.SyntaxErrorInParser, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
 					continue;
 				} else if (parser.Results.ProgramClassDocumentSnapshot == null) {
-					AddError(writer, "File \""+path+"\" has semantic error(s) preventing codegen (ProgramClass).", path, "parsing");
+					AddError(writer, MessageCode.SyntaxErrorInParser, "File \"" +path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
 					continue;
 				}
 			    var allDiags = parser.Results.AllDiagnostics();
 			    int errors = allDiags.Count;
-				writer.AddErrors(path, parser.Converter.AsDiagnostics(allDiags));
+				writer.AddErrors(path, allDiags);
 
 				if (config.Codegen && errors == 0) {
 					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
@@ -143,15 +185,38 @@ namespace TypeCobol.Server {
 			writer.Flush();
 		}
 
-		private static void AddError(AbstractErrorWriter writer, string message, string path, string errorCode) {
-			var error = new TypeCobol.Tools.Diagnostic();
-			error.Message = message;
-			error.Code = errorCode;
-			try { error.Source = writer.Inputs[path]; }
-			catch(KeyNotFoundException) { error.Source = writer.Count.ToString(); }
-			writer.AddErrors(path, error);
-			Console.WriteLine(error.Message);
+        /// <summary>
+        /// Add an error message
+        /// </summary>
+        /// <param name="writer">Error Writer</param>
+        /// <param name="messageCode">Message's code</param>
+        /// <param name="message">The text message</param>
+        /// <param name="path">The source file path</param>
+		private static void AddError(AbstractErrorWriter writer, MessageCode messageCode, string message, string path)
+		{
+            AddError(writer, messageCode, 0, 0, 1, message, path);
 		}
+
+        /// <summary>
+        /// Add an error message
+        /// </summary>
+        /// <param name="writer">Error Writer</param>
+        /// <param name="messageCode">Message's code</param>
+        /// <param name="columnStart">Start column in the source file</param>
+        /// <param name="columnEnd">End column in the source file</param>
+        /// <param name="lineNumber">Lien number in the source file</param>
+        /// <param name="message">The text message</param>
+        /// <param name="path">The source file path</param>
+        private static void AddError(AbstractErrorWriter writer, MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, string message, string path)
+        {
+            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, lineNumber,
+                message != null
+                ? (path != null ? new object[2] { message, path } : new object[1] { message })
+                : (path != null ? new object[1] { path } : new object[0]));
+            diag.Message = message;
+            writer.AddErrors(path, diag);
+            Console.WriteLine(diag.Message);
+        }
 
 		private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths, DocumentFormat copyDocumentFormat) {
 			var parser = new Parser();
@@ -164,27 +229,28 @@ namespace TypeCobol.Server {
 			    try {
 			        parser.Init(path, copyDocumentFormat);
 			        parser.Parse(path);
-
+                     
 			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {
-			            AddError(writer, "Error during parsing of " + path + ": " + diagnostic, path,
-			                "intrinsicLoading");
+                        AddError(writer, MessageCode.IntrinsicLoading, 
+                            diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line, 
+                            "Error during parsing of " + path + ": " + diagnostic, path);
 			        }
 			        if (parser.Results.ProgramClassDocumentSnapshot.Program == null) {
-			            AddError(writer, "Error: Your Intrisic types/functions are not included into a program.", path,
-			                "intrinsicLoading");
+			            AddError(writer, MessageCode.IntrinsicLoading, "Error: Your Intrisic types/functions are not included into a program.", path);
 			            continue;
 			        }
 
 			        var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
 			        foreach (var types in symbols.Types)
 			            foreach (var type in types.Value)
-			                table.AddType((Compiler.Nodes.TypeDefinition) type);
+			                table.AddType(type);
 			        foreach (var functions in symbols.Functions)
 			            foreach (var function in functions.Value)
-			                table.AddFunction((Compiler.Nodes.FunctionDeclaration) function);
-			        //TODO check if types or functions are already there
-			    } catch (Exception e) {
-			        AddError(writer, e.Message + "\n" + e.StackTrace, path, "intrinsicLoading");
+			                table.AddFunction(function);
+                    //TODO check if types or functions are already there
+                }
+                catch (Exception e) {
+			        AddError(writer, MessageCode.IntrinsicLoading, e.Message + "\n" + e.StackTrace, path);
 			    }
 			}
 			return table;

@@ -1,0 +1,285 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ProcedureCallOverload.
+
+       DATA DIVISION.
+       LOCAL-STORAGE SECTION.
+
+       01  myDate         TYPE Date.
+       01  fakeDate       PIC X(08).
+       01  result         TYPE Bool.
+       01  realfakeDate   PIC X(08).
+
+       01 case1 pic X.
+       01 case2 pic X.
+       01 case3 pic X.
+       01 case4 pic X.
+      *No case51, case52, case53
+       01 case61 pic X.
+       01 case62 pic X.
+       01 case63 pic X.
+      *No case7
+       01 case8 pic X.
+       01 case9 pic X.
+      *No case10
+       01 case11 pic X.
+       01 case12 pic X.
+      *No case13
+       01 case14 pic X.
+       01 case15 pic X.
+       01 group.
+            05 case1 pic X.
+            05 case2 pic X.
+            05 case3 pic X.
+            05 case4 pic X.
+      *     no case51, case52, case53
+            05 case61 pic X.
+            05 case62 pic X.
+            05 case63 pic X.
+      *     no case7
+      *     no case8, we need only one defined
+            05 case9 pic X.
+      *     no case10
+      *     no case11, we need only one defined
+            05 case12 pic X.
+      *     no case13
+      *     no case14, we need only one defined
+            05 case15 pic X.
+
+       PROCEDURE DIVISION.
+       
+       DECLARE PROCEDURE case1 PRIVATE
+           INPUT mydate        TYPE Date
+                 fakeDate      PIC X(08)
+          OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case3 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case4 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case4 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case51 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case52 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE case52 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case53 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case53 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case53 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case61 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case62 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE case62 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case63 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case63 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case63 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case10 PRIVATE.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case11 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case12 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case13 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case13 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case14 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case14 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case15 PRIVATE
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case15 PRIVATE
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+
+
+       TRAITEMENT.
+      *OK: call with a program name
+           call 'case1'
+
+      * __________________________________________________
+      *OK: match with full signature
+           CALL case1 INPUT      myDate fakeDate
+                      OUTPUT     result
+           
+      *KO: case2 doesn't exists
+      *1 error max
+           CALL case2 INPUT      myDate fakeDate
+                      OUTPUT     result
+
+      *KO: case3 doesn't match signature: add 1st and 4th argument as extra arguments
+      *1 error + 1 error per wrong argument
+           CALL case3 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+       
+      *KO: case4 doesn't match signature but 2 case4 declared
+      *1 error max
+           CALL case4 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+
+      * Ok: case51
+           CALL case51
+      * Ok: case52 exists with no argument
+           CALL case52
+      * Ok: case53 exists with no argument
+           CALL case53
+           
+      * KO: case61 is ambiguous (function + variable)
+           CALL case61
+      * KO: case62 is ambiguous (function + variable)
+           CALL case62
+      * KO: case63 is ambiguous (function + variable)
+           CALL case63
+       
+      * KO: case7 doesn't exists
+           CALL case7
+       
+      * Ok: case8 is a variable
+           CALL case8
+
+      * Ko: 2 variables named case9
+           CALL case9
+       
+      *KO: case10 doesn't match signature: procedure with no argument
+      *1 error + 1 error per wrong argument
+           CALL case10 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+
+      *Warning: case11 is a variable but a function with a different signature exists
+           CALL case11      
+
+      *Ko: case12 is defined 2 times
+           CALL case12
+
+      *Ko: case13 is defined 2 times but with mandatory arguments
+           CALL case13
+
+      **Warning: case14 is a variable but 2 functions with a different signature exists
+           CALL case14
+
+      **Ko: case15 is defined 2 times
+           CALL case15
+
+
+       .
+       END PROGRAM ProcedureCallOverload.

@@ -1,5 +1,5 @@
 ﻿--- Code Elements ---
-[[CallStatement]] [1,4:CALL]<CALL> --> [6,6:f]<UserDefinedWord>
+[[ProcedureStyleCall]] [1,4:CALL]<CALL> --> [6,6:f]<UserDefinedWord>
 
 [[CallStatement]] [1,4:CALL]<CALL> --> [18,18:x]<UserDefinedWord>
 

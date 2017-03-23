@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeElements
         ExternalClassName,
         IndexName,
         FileName,
-        FunctionName, // <= TYPECOBOL specific : user defined functions
+        TCFunctionName, // <= TYPECOBOL specific : user defined functions
         MethodName,
         MnemonicForEnvironmentName,
         MnemonicForUPSISwitchName,
@@ -47,7 +47,7 @@ namespace TypeCobol.Compiler.CodeElements
             if (symbolType == SymbolType.DataTypeName) {
                 return CobolLanguageLevel.Cobol2002;
             }
-            if (symbolType == SymbolType.FunctionName) {
+            if (symbolType == SymbolType.TCFunctionName) {
                 return CobolLanguageLevel.TypeCobol;
             }
             return CobolLanguageLevel.Cobol85;

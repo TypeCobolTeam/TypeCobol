@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen.Actions
@@ -31,13 +32,28 @@ namespace TypeCobol.Codegen.Actions
             public IList<SymbolReference> Items;
             public IList< IList<SymbolReference> > AllItemsList;
             /// <summary>
+            /// The Stack of Programs encountered
+            /// </summary>
+            public Stack<Program> ProgramStack = null; 
+            /// <summary>
             /// Constructor
             /// </summary>
             /// <param name="generator">The Generator instance</param>
             internal TypeCobolCobolQualifierVistor(Generator generator)
             {
                 this.Generator = generator;
-                this.AllItemsList = new List<IList<SymbolReference>>();
+                this.AllItemsList = new List<IList<SymbolReference>>();                
+            }
+
+            /// <summary>
+            /// Avoid visiting Symbol Information Tokens
+            /// </summary>
+            public override bool IsSymbolInformationForTokensEnabled
+            {
+                get
+                {
+                    return false;
+                }
             }
 
             /// <summary>
@@ -112,6 +128,15 @@ namespace TypeCobol.Codegen.Actions
             {
                 PerformMatch();
                 this.CurrentNode = node;
+                if (node is Program)
+                {
+                    if (this.ProgramStack == null)
+                        this.ProgramStack = new Stack<Program>();
+                    Program program = node as Program;
+                    this.ProgramStack.Push(program);
+                    //Create the Dictionary of ProcStyleCall for this program
+                    program.ProcStyleCalls = new Dictionary<string, Tuple<IList<SymbolReference>, Compiler.Nodes.ProcedureStyleCall>>();
+                }
                 return base.BeginNode(node);
             }
 
@@ -120,6 +145,10 @@ namespace TypeCobol.Codegen.Actions
                 base.EndNode(node);
                 PerformMatch();
                 node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                if (node is Program)
+                {
+                    this.ProgramStack.Pop();
+                }
             }
 
             private void PerformMatch()
@@ -134,6 +163,56 @@ namespace TypeCobol.Codegen.Actions
                 }
             }
 
+            private static bool EqualItems(IList<SymbolReference> items1, IList<SymbolReference> items2)
+            {
+                if (items1.Count != items2.Count)
+                    return false;
+                int n = items1.Count;
+                for (int i = 0; i < n; i++)
+                    if (items1[i] != items2[i])
+                        return false;
+                return true;
+            }
+
+            /// <summary>
+            /// Checks and handles any procedure call resolution.
+            /// </summary>
+            /// <param name="items">The items to check if they correspond to the procedure qualified name</param>
+            /// <returns>true if it was a Procedure style call, false otherwise.</returns>
+            private bool IsProcedureStyleCallItems(IList<SymbolReference> items, out string hashFunction)
+            {
+                hashFunction = null;
+                if (CurrentNode is TypeCobol.Compiler.Nodes.ProcedureStyleCall)
+                {
+                    TypeCobol.Compiler.Nodes.ProcedureStyleCall procStyleCall = CurrentNode as TypeCobol.Compiler.Nodes.ProcedureStyleCall;
+                    if (procStyleCall.CodeElement is TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement)
+                    {
+                        TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement procStyleCallStmt =
+                            procStyleCall.CodeElement as TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement;
+                        if (procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction is
+                            TypeCobol.Compiler.CodeElements.TypeCobolQualifiedSymbolReference)
+                        {
+                            TypeCobol.Compiler.CodeElements.TypeCobolQualifiedSymbolReference tcqsr = procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction as
+                            TypeCobol.Compiler.CodeElements.TypeCobolQualifiedSymbolReference;
+                            IList<SymbolReference> names_items = tcqsr.AsList();
+                            if (names_items.Count != items.Count)
+                                return false;
+                            if (EqualItems(items, names_items))
+                            {//This is a reference to a Function Call.
+                                hashFunction = procStyleCall.FunctionDeclaration.Hash;
+                                if (ProgramStack != null && ProgramStack.Count > 0)
+                                {   //Memoïze the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
+                                    var program = ProgramStack.Peek();                                    
+                                    if (!program.ProcStyleCalls.ContainsKey(hashFunction))
+                                        program.ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
             /// <summary>
             /// Have we matched a Type Cobol Qualifier ?
             /// </summary>
@@ -189,16 +268,49 @@ namespace TypeCobol.Codegen.Actions
                 if (sourceNode.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
                     return;
                 //Now this Node Is Visited
-                sourceNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                sourceNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);                
                 Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(sourceNode);
                 IList<TypeCobol.Compiler.Scanner.Token> nodeTokens = sourceNode.CodeElement.ConsumedTokens;
                 List<Tuple<int, int>> boundaries = ItemsListIndexBoundary(nodeTokens);
                 int b = 0;
+                bool bWasProcCall = false;
                 foreach (var items in AllItemsList)
                 {
+                    string hashFunction;
+                    bool bProcCall = IsProcedureStyleCallItems(items, out hashFunction);
                     Tuple<int, int> range = boundaries[b++];
                     Items = items;
-                    int i = range.Item1;
+                    int i = range.Item1;                    
+                    if (bProcCall)
+                    {   //----------------------------------------------------------------------------------------------
+                        // This is for a procedure call.
+                        // The Code below is commented. This code was used to test that in normal situation
+                        // The TypeCobolQualifierReference for the function name can be replaced by a the hash code name.
+                        //----------------------------------------------------------------------------------------------
+                        //SymbolReference sr1 = Items[Items.Count - 1];
+                        //SymbolReference sr2 = Items[0];                        
+                        //List<TypeCobol.Compiler.Scanner.Token> consumedTokens = new List<TypeCobol.Compiler.Scanner.Token>();
+                        //for (; i <= range.Item2; i++)
+                        //{
+                        //    if (nodeTokens[i] == sr1.NameLiteral.Token)
+                        //    {
+                        //        consumedTokens.Add(nodeTokens[i]);                                
+                        //    }
+                        //    else if (nodeTokens[i] == sr2.NameLiteral.Token)
+                        //    {
+                        //        consumedTokens.Add(nodeTokens[i]);
+                        //        break;
+                        //    }
+                        //}
+                        //GenerateQualifierToken item = new GenerateQualifierToken(new QualifierTokenCodeElement(consumedTokens), "'" + hashFunction + "'",
+                        //    sourcePositions);
+                        //item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                        //sourceNode.Add(item);
+                        //------------------------------------------------------------------------------------------------------------------------
+
+                        bWasProcCall = true;//Remember that we have a Procedure Style Call Node.
+                        continue;//Continue
+                    }
                     for (int j = 0; j < Items.Count; j++)
                     {
                         SymbolReference sr = Items[Items.Count - j - 1];
@@ -238,8 +350,11 @@ namespace TypeCobol.Codegen.Actions
                         }
                     }
                 }
-                //Now Comment the Source Node
-                sourceNode.Comment = true;
+                //Now Comment the Source Node, only and only if it was not a Procedure Style Call,
+                //Because the Qualifier action is the first action performed, before any Expand action.
+                //Expand Action does not expand Commented Nodes, it will comment theses nodes itself.
+                if (!bWasProcCall)
+                    sourceNode.Comment = true;
             }
 
         }
@@ -253,6 +368,11 @@ namespace TypeCobol.Codegen.Actions
             {
                 base.ConsumedTokens = new List<TypeCobol.Compiler.Scanner.Token>();
                 base.ConsumedTokens.Add(token);
+            }
+            public QualifierTokenCodeElement(List<TypeCobol.Compiler.Scanner.Token> consumedTokens)
+                : base((CodeElementType)0)
+            {
+                base.ConsumedTokens = consumedTokens;
             }
         }
 
@@ -326,7 +446,6 @@ namespace TypeCobol.Codegen.Actions
                 return null;
             }
         }
-
         /// <summary>
         /// Execute the Qualification action
         /// <param name="generator">The Genarator instance</param>

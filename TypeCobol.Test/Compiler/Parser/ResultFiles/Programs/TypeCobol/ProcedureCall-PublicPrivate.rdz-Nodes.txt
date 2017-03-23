@@ -1,0 +1,124 @@
+﻿Line 66[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2PrivateValidateDateFormat'
+Line 71[12,50] <27, Error, Syntax> - Syntax error : No function found for 'PGM2.Pgm2PrivateValidateDateFormat'
+Line 76[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2.Pgm2PrivateValidateDateFormat'
+--- Nodes ---
+?
+  PGM1
+    data-division
+      local-storage
+        somedate
+        someformat
+        flag
+        realformat
+    procedure-division
+      check
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+            end
+        function-end
+      Pgm1PrivateValidateDateFormat
+        procedure-division
+          sentence-0
+            [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+            end
+        function-end
+      TRAITEMENT
+        sentence-0
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [11,14:call]<CALL> --> [28,35:somedate]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [11,14:call]<CALL> --> [34,41:somedate]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [11,14:call]<CALL> --> [34,41:somedate]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [11,14:call]<CALL> --> [35,42:somedate]<UserDefinedWord>
+
+          end
+    PGM2
+      data-division
+        local-storage
+          somedate
+          someformat
+          flag
+          realformat
+      procedure-division
+        check
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        check2
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        check2
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+        Pgm2PrivateValidateDateFormat
+          procedure-division
+            sentence-0
+              [[ProcedureStyleCall]] [13,16:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+              end
+          function-end
+        MyPublicProcedure
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+      end
+    PGM3
+      data-division
+        local-storage
+          somedate
+          someformat
+          flag
+          realformat
+      procedure-division
+        PrivateProc
+          procedure-division
+            sentence-0
+              [[ProcedureStyleCall]] [13,16:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
+
+              end
+          function-end
+        MyPublicProcedure
+          procedure-division
+            sentence-0
+              [[ContinueStatement]] [12,19:CONTINUE]<CONTINUE> --> [12,19:CONTINUE]<CONTINUE>
+
+              end
+          function-end
+      end
+    end

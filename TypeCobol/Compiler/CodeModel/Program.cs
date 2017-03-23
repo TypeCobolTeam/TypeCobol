@@ -4,17 +4,44 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.CodeModel
 {
     /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public abstract class Program
+    public class Program : Node, CodeElementHolder<ProgramIdentification>
     {
-        protected Program() {
+        public Program(CodeElement codeElement) : base(codeElement)
+        {
             SyntaxTree = new SyntaxTree();
         }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+
+        public override string ID
+        {
+            get { return "program"; }
+        }
+
+        public override string Name
+        {
+            get { return Identification != null ? Identification.ProgramName.Name : ID; }
+        }
+
+        public override QualifiedName QualifiedName
+        {
+            get
+            {
+                return new URI(Identification != null ? Identification.ProgramName.Name : ID);
+            }
+        }
+        //TODO: As to change in the future when implementing the full namespace functionnality.
+        public string Namespace { get { return Identification != null ? Identification.ProgramName.Name : null; } }
 
         /// <summary>
         /// True if the current program is contained in another program.
@@ -26,7 +53,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// Program name, Initial / 
         /// </summary>
-        public ProgramIdentification Identification { get; set; }        
+        public ProgramIdentification Identification { get { return this.CodeElement as ProgramIdentification; } }        
 
         // -- ENVIRONMENT DIVISION --
 
@@ -62,11 +89,17 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         public IDictionary<SymbolDefinition, FileDescription> FileDescriptions { get; set; }
 
+
         /// <summary>
-        /// Table of symbols defined in this program.
-        /// Includes WORKING-STORAGE, LOCAL-STORAGE and LINKAGE data.
+        /// The Dictionary of all Procedure Style Calls performed by this Program.
+        /// Dictionary<hash:string, Tuple<qualified_items:IList<SymbolReference>, proc:TypeCobol.Compiler.Nodes.ProcedureStyleCall>>
+        /// This values is calculated by the Generator during the Qualifier Action.
         /// </summary>
-        public SymbolTable SymbolTable;
+        public Dictionary<string, Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>> ProcStyleCalls
+        {
+            get;
+            set;
+        }
 
 		public SymbolTable CurrentTable {
 			get { return SyntaxTree.CurrentNode.SymbolTable; }
@@ -94,7 +127,8 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
     public class SourceProgram: Program {
 
-		public SourceProgram(SymbolTable EnclosingScope) {
+		public SourceProgram(SymbolTable EnclosingScope, CodeElement codeElement) : base(codeElement)
+		{
 			IsNested = false;
 			SymbolTable = new SymbolTable(EnclosingScope);
 			SyntaxTree.Root.SymbolTable = SymbolTable;
@@ -137,6 +171,11 @@ namespace TypeCobol.Compiler.CodeModel
         /// between class-names and external class-names.
         /// </summary>
         public RepositoryParagraph RepositoryOfClassNames { get; set; }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
     }
     
     /// <summary>
@@ -145,14 +184,19 @@ namespace TypeCobol.Compiler.CodeModel
     /// Nested programs are not supported for programs compiled with the THREAD option
     /// </summary>
 	public class NestedProgram: Program {
-		public NestedProgram(Program containingProgram) {
+		public NestedProgram(Program containingProgram, CodeElement codeElement) : base(codeElement) {
 			IsNested = true;
 			ContainingProgram = containingProgram;
-			SymbolTable = new SymbolTable(containingProgram.SymbolTable);
+			SymbolTable = new SymbolTable(containingProgram.SymbolTable.EnclosingScope);
 			SyntaxTree.Root.SymbolTable = SymbolTable;
 		}
 
         /// <summary>A nested program is a program that is contained in another program.</summary>
 		public Program ContainingProgram { get; private set; }
-	}
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
 }

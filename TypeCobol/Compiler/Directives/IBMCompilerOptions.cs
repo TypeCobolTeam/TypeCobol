@@ -757,9 +757,10 @@ namespace TypeCobol.Compiler.Directives
         public bool TrySetIBMOptionStatusAndValue(string optionWord, string optionParameters)
         {
             IBMCompilerOptionStatus optionStatus = null;
-            if(optionWordToOptionName.TryGetValue(optionWord, out optionStatus))
+            String optionWordUpper = optionWord.ToUpper();
+            if (optionWordToOptionName.TryGetValue(optionWordUpper, out optionStatus))
             {
-                return optionStatus.SetStatutsAndValue(optionWord, optionParameters);
+                return optionStatus.SetStatutsAndValue(optionWordUpper, optionParameters);
             }
             else
             {

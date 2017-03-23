@@ -30,7 +30,7 @@ namespace TypeCobol.Test.Compiler.Parser
             var project = new CompilationProject("test project", ".", new[] { ".cbl", ".cpy" },
                 DocumentFormat.FreeTextFormat.Encoding, DocumentFormat.FreeTextFormat.EndOfLineDelimiter,
                 DocumentFormat.FreeTextFormat.FixedLineLength, DocumentFormat.FreeTextFormat.ColumnsLayout, typeCobolOptions);
-            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false);
+            var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, typeCobolOptions, false, project);
 
             // Execute compilation - until the CodeElements phase ONLY
             compiler.CompilationResultsForProgram.UpdateTokensLines();

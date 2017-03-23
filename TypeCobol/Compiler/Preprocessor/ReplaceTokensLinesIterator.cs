@@ -178,27 +178,29 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Support for legacy replacing syntax semantics : 
                 // Remove the first 01 level data item found in the COPY text
                 // before copying it into the main program
-                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && !currentPosition.SawFirstIntegerLiteral)
+                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && CopyReplacingDirective.ReplaceOperations.Count == 0)
                 {
                     //A Data description entry starts with an integer literal
                     if(nextToken.TokenType == TokenType.LevelNumber)
                     {
-                        if (nextToken.Text == "01") {
+                        if (nextToken.Text == "01" && nextToken.Column <= 10) {
+                            var firstLevelFound = true;
                             // Register that we saw the first "01" integer literal in the underlying file
                             currentPosition.SawFirstIntegerLiteral = true;
-
                             // Skip all tokens after 01 until the next period separator 
-                            while (nextToken.TokenType != TokenType.PeriodSeparator &&
-                                   nextToken.TokenType != TokenType.EndOfFile) {
+                            while (firstLevelFound && nextToken.TokenType != TokenType.EndOfFile)
+                            {
                                 nextToken = sourceIterator.NextToken();
+
+                                if (nextToken.TokenType == TokenType.PeriodSeparator)
+                                {
+                                    nextToken = sourceIterator.NextToken();
+                                    if (nextToken.Text != "01" || nextToken.Column > 9)
+                                        firstLevelFound = false;
+                                    
+                                }
                             }
-                            if (nextToken.TokenType == TokenType.PeriodSeparator) {
-                                nextToken = sourceIterator.NextToken();
-                            }
-                        } else {
-                            //It's not a level 01, we don't need to skip tokens for this COPY
-                            currentPosition.SawFirstIntegerLiteral = true;
-                        }
+                        } 
                     }
                 }
 #endif
@@ -287,17 +289,17 @@ namespace TypeCobol.Compiler.Preprocessor
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
 
             // Support for legacy replacing syntax semantics : 
-            // Insert SuffixChar before the first '-' in all user defined words found in the COPY text 
+            // Insert Suffix before the first '-' in all user defined words found in the COPY text 
             // before copying it into the main program
             if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
             {
                 string originalText = nextToken.Text;
-                int indexOFirstDash = originalText.IndexOf('-');
-                if (indexOFirstDash > 0)
+                if (originalText.Contains(CopyReplacingDirective.PreSuffix))
                 {
-                    string replacedText = originalText.Substring(0, indexOFirstDash) + CopyReplacingDirective.SuffixChar + originalText.Substring(indexOFirstDash);
+                    string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix , CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix));
                     TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
-                    Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1, virtualTokensLine);
+                    Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
+                        virtualTokensLine);
 
                     status.replacedToken = new ReplacedToken(replacementToken, nextToken);
                     currentPosition.CurrentToken = status.replacedToken;

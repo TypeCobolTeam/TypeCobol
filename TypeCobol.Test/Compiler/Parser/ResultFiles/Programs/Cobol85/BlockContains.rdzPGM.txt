@@ -1,0 +1,13 @@
+﻿--- Diagnostics ---
+Line 11[11,24] <28, Error, Directives> - Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named NOTFOUND in 
+
+--- Program ---
+PROGRAM: MYPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Program
+-- DATA --------
+  ENT002-REC:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE

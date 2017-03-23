@@ -1,0 +1,51 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZDATE.
+       DATA DIVISION. 
+       WORKING-STORAGE SECTION.
+       01  TC-DVZZDATE-FctList-Loaded PIC X(02) EXTERNAL.
+           88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
+      *DVZZDATE::currentDateString
+        01 TC-DVZZDATE-bfb0fa9b PROCEDURE-POINTER EXTERNAL.
+
+                      local-STORAGE SECTION.
+      *01  dateString    TYPEDEF strict PIC 9(08).
+
+      *=================================================================
+       PROCEDURE DIVISION. 
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-DVZZDATE-FctList-IsLoaded
+              SET TC-DVZZDATE-bfb0fa9b   TO ENTRY 'bfb0fa9b'
+
+              SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+           .
+                                             
+      *DECLARE FUNCTION currentDateString PUBLIC
+      *    RETURNING Result TYPE dateString.
+
+       END PROGRAM DVZZDAT.
+      *
+      *DECLARE FUNCTION currentDateString PUBLIC
+      *    RETURNING Result TYPE dateString.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bfb0fa9b.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 Result PIC 9(08).
+       PROCEDURE DIVISION
+             USING BY REFERENCE Result
+           .
+           display "toto"
+           .
+       END PROGRAM bfb0fa9b.
