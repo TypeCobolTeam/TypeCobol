@@ -15,12 +15,39 @@ using TypeCobol.Server.Serialization;
 
 namespace TypeCobol.Server {
 
+    /// <summary>
+    /// Config class that holds all the argument information like input files, output files, error file etc.
+    /// </summary>
+    public class Config
+    {
+        public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+        public bool Codegen = false;
+        public bool AutoRemarks;
+        public string HaltOnMissingCopyFilePath;
+        public List<string> CopyFolders = new List<string>();
+        public List<string> InputFiles = new List<string>();
+        public List<string> OutputFiles = new List<string>();
+        public string ErrorFile = null;
+        public string skeletonPath = "";
+        public bool IsErrorXML
+        {
+            get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
+        }
+        public List<string> Copies = new List<string>();
+
+        public string EncFormat = null;
+    }
+
     class Server {
+
+        enum StartClient {
+            No, HiddenWindow, NormalWindow
+        }
         static int Main(string[] argv) {
 			bool help = false;
 			bool version = false;
 			bool once = false;
-            bool startClient = false;
+            StartClient startClient = StartClient.No;
 			var config = new Config();
 			var pipename = "TypeCobol.Server";
 
@@ -30,10 +57,19 @@ namespace TypeCobol.Server {
 				"",
 				"VERSION:",
 				"  "+PROGVERSION,
-				"",
+				"", 
 				"DESCRIPTION:",
 				"  Run the TypeCobol parser server.",
-                { "k|start server & execute commandline", "Start the server if not already started, and executes commandline.", v=>startClient = (v!=null)},
+                { "k|startServer:", "Start the server if not already started, and executes commandline.\n" +
+                                    "By default the server is started in window mode\n" +
+                                    "'{hidden}' hide the window.", v =>
+                {
+                    if ("hidden".Equals(v, StringComparison.InvariantCultureIgnoreCase)) {
+                        startClient = StartClient.HiddenWindow;
+                    } else {
+                        startClient = StartClient.NormalWindow;
+                    }
+                }  },
 				{ "1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v!=null) },
 				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => config.InputFiles.Add(v) },
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", v => config.OutputFiles.Add(v) },
@@ -62,8 +98,8 @@ namespace TypeCobol.Server {
                 List<string> args;
 		        try {
 
-                    args = p.Parse(argv);
-                } catch (OptionException ex) {
+		            args = p.Parse(argv);
+		        } catch (OptionException ex) {
                     return exit(1, ex.Message);
 		        }
 
@@ -82,8 +118,9 @@ namespace TypeCobol.Server {
 
 		        if (args.Count > 0) pipename = args[0];
 
+
                 //"startClient" will be true when "-K" is passed as an argument in command line.
-                if (startClient && once) {
+                if (startClient != StartClient.No && once) {
                     pipename= "TypeCobol.Server";
                     using (NamedPipeClientStream namedPipeClient = new NamedPipeClientStream(pipename))
                     {
@@ -92,8 +129,12 @@ namespace TypeCobol.Server {
 		                } catch (TimeoutException tEx) {
                             System.Diagnostics.Process process = new System.Diagnostics.Process();
                             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-                            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
-                            startInfo.FileName = "cmd.exe";
+		                    if (startClient == StartClient.NormalWindow) {
+		                        startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+		                    } else {
+                                startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                            }
+		                    startInfo.FileName = "cmd.exe";
                             startInfo.Arguments = @"/c " + folder + Path.DirectorySeparatorChar+ "TypeCobol.CLI.exe";
                             process.StartInfo = startInfo;
                             process.Start();
