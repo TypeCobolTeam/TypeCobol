@@ -43,8 +43,11 @@ namespace TypeCobol
 			string filename = Path.GetFileName(path);
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
-		    TypeCobolOptions options = new TypeCobolOptions {AutoRemarksEnable = autoRemarks, HaltOnMissingCopy = (haltOnMissingCopyFilePath != null) };
+            TypeCobolOptions options = new TypeCobolOptions();
+
+#if EUROINFO_RULES
+		    options.AutoRemarksEnable = autoRemarks;
+            options.HaltOnMissingCopy = (haltOnMissingCopyFilePath != null);
 #endif
             CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);

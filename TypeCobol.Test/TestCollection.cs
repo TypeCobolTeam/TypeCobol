@@ -85,7 +85,9 @@ namespace TypeCobol.Test {
             TestCompilerDirectiveBuilder.CheckBASIS();
             TestCompilerDirectiveBuilder.CheckCBL_PROCESS();
             TestCompilerDirectiveBuilder.CheckASTERISK_CONTROL_CBL();
-            TestCompilerDirectiveBuilder.CheckCOPY();
+#if EUROINFO_RULES
+            TestCompilerDirectiveBuilder.CheckCOPY(); //Because of the presence of remarks directive and non use of comprarator
+#endif
             TestCompilerDirectiveBuilder.CheckDELETE();
             TestCompilerDirectiveBuilder.CheckEJECT();
             TestCompilerDirectiveBuilder.CheckENTER();
@@ -200,6 +202,7 @@ namespace TypeCobol.Test {
         }
 
 
+#if EUROINFO_RULES
         [TestMethod]
         //[Ignore]
         [TestCategory("Parsing")]
@@ -229,5 +232,6 @@ namespace TypeCobol.Test {
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
+#endif
     }
 }

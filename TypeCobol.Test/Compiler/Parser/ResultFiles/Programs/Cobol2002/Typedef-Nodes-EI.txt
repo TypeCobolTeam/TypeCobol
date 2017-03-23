@@ -1,0 +1,159 @@
+﻿Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 40[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 45[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword}
+Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 57[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 73[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 80[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 84[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 93[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 96[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01
+Line 101[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 109[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
+Line 39[1,33] <30, Error, Semantics> - Semantic error: TYPE 'TypeDefinedAfter' is not referenced
+Line 40[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 45[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword}
+Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
+Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 57[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
+Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
+Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 70[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
+Line 73[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
+Line 73[1,49] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
+Line 75[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
+Line 80[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 82[5,57] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
+Line 84[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 90[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
+Line 93[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 96[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01
+Line 101[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 109[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 114[5,35] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP'
+Line 115[5,34] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP'
+Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 132[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed
+Line 145[6,66] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
+Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
+Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
+--- Nodes ---
+?
+  TypeCobol
+    data-division
+      working-storage
+        Feature
+          Feature-name
+        Equipment
+          Equipment-id
+            Feature-list
+        Vect2
+          Coord2d
+            X
+            Y
+          Coord3d
+            Z
+        Point
+          Position2d
+          Movment2d
+            Accel2d
+            Speed2d
+        Point
+        Point
+        Point
+        Point
+        Point
+        Point
+        unknown
+        unknown
+        TypeDefinedAfter
+        LevelKOGroup
+          LevelKO
+            LevelKOItem
+        varLevelKO
+        ClausesOrderKO
+        varClausesOrderKO
+        ClausesOrderOK
+        varClausesOrderOK
+        NoDescription
+        varNoDescription
+        BufferTobeRedefined
+        NoRedefines1
+        varNoRedefines1
+        BufferTobeRedefined2
+        NoRedefines2
+          NoRedefines1Item
+        varNoRedefines2
+        NoRedefines3
+          NoRedefines1Item
+        varNoRedefines3
+        varNoRedefines4
+          varNoRedefines4A
+          varNoRedefines4B
+        varNoRedefines5
+          varNoRedefines5-a
+        varNoRedefines5bis
+          varNoRedefines5bis-a
+        ExternalType1
+          varExternalType1
+        ExternalType2
+          varExternalType2
+        CannotBeStrong
+        varCannotBeStrong
+        TYPE_ELT
+          TYPE-ELT-VALB
+          TYPE-ELT-VALC
+        TYPE-GRP
+          TYPE-GRP-1
+          TYPE-GRP-2
+        TYPE-GRP-STRONG
+          TYPE-GRP-STRONG-PART1
+          TYPE-GRP-STRONG-PART2
+          TYPE-GRP-STRONG-PART3
+        USE-TYPE-GRP
+          USE-TYPE-GRP-STRONG
+          USE-TYPE-GRP-STRONG-RED
+            USE-TYPE-GRP-STRONG-RED-PART1
+        MyWeakGroup
+          MyWeakVar1
+          MyWeakVar2
+        useTypeGrp2
+          useTypeGrp2Strong
+            USE-TYPE-GRP-STRONG-RED-2
+              USE-TYPE-GRP-STRONG-RED-2-PART1
+        GroupWithLevel77JustAfter
+          a
+        MyVariable
+        strongType1
+          strongType1-PART1
+          strongType1-PART2
+        useStrongType1
+          TYPE-GRP-STRONG-REN
+    procedure-division
+      sentence-0
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [95,99:Point]<UserDefinedWord>
+
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [74,78:Point]<UserDefinedWord>
+
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [71,75:Point]<UserDefinedWord>
+
+        end
