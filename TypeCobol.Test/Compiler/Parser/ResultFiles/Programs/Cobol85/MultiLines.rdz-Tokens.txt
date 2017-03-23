@@ -1,0 +1,110 @@
+﻿--- Tokens ---
+---------------------------------
+_Don't except any errors_
+    _Don't except any errors_    [8,30:Don't except any errors]<CommentLine>
+---------------------------------
+_IDENTIFICATION DIVISION._
+    _IDENTIFICATION_    [8,21:IDENTIFICATION]<IDENTIFICATION>
+    _ _    [22,22: ]<SpaceSeparator>
+    _DIVISION_    [23,30:DIVISION]<DIVISION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_PROGRAM-ID. PGM._
+    _PROGRAM-ID_    [8,17:PROGRAM-ID]<PROGRAM_ID>
+    _. _    [18,19:. ]<PeriodSeparator>
+    _PGM_    [20,22:PGM]<UserDefinedWord>
+    _._    [23,23+:.]<PeriodSeparator>
+---------------------------------
+_ENVIRONMENT DIVISION._
+    _ENVIRONMENT_    [8,18:ENVIRONMENT]<ENVIRONMENT>
+    _ _    [19,19: ]<SpaceSeparator>
+    _DIVISION_    [20,27:DIVISION]<DIVISION>
+    _._    [28,28+:.]<PeriodSeparator>
+---------------------------------
+_CONFIGURATION SECTION._
+    _CONFIGURATION_    [8,20:CONFIGURATION]<CONFIGURATION>
+    _ _    [21,21: ]<SpaceSeparator>
+    _SECTION_    [22,28:SECTION]<SECTION>
+    _._    [29,29+:.]<PeriodSeparator>
+---------------------------------
+_SOURCE-COMPUTER. IBM-370._
+    _SOURCE-COMPUTER_    [8,22:SOURCE-COMPUTER]<SOURCE_COMPUTER>
+    _. _    [23,24:. ]<PeriodSeparator>
+    _IBM-370_    [25,31:IBM-370]<UserDefinedWord>
+    _._    [32,32+:.]<PeriodSeparator>
+---------------------------------
+_OBJECT-COMPUTER. IBM-370._
+    _OBJECT-COMPUTER_    [8,22:OBJECT-COMPUTER]<OBJECT_COMPUTER>
+    _. _    [23,24:. ]<PeriodSeparator>
+    _IBM-370_    [25,31:IBM-370]<UserDefinedWord>
+    _._    [32,32+:.]<PeriodSeparator>
+---------------------------------
+_DATA DIVISION._
+    _DATA_    [8,11:DATA]<DATA>
+    _ _    [12,12: ]<SpaceSeparator>
+    _DIVISION_    [13,20:DIVISION]<DIVISION>
+    _._    [21,21+:.]<PeriodSeparator>
+---------------------------------
+_WORKING-STORAGE SECTION._
+    _WORKING-STORAGE_    [8,22:WORKING-STORAGE]<WORKING_STORAGE>
+    _ _    [23,23: ]<SpaceSeparator>
+    _SECTION_    [24,30:SECTION]<SECTION>
+    _._    [31,31+:.]<PeriodSeparator>
+---------------------------------
+_01  GROUP._
+    _01_    [8,9:01]<LevelNumber>{1}
+    _  _    [10,11:  ]<SpaceSeparator>
+    _GROUP_    [12,16:GROUP]<UserDefinedWord>
+    _._    [17,17+:.]<PeriodSeparator>
+---------------------------------
+_    05 VAR1 PIC X(78) value 'f_
+    _    _    [8,11:    ]<SpaceSeparator>
+    _05_    [12,13:05]<LevelNumber>{5}
+    _ _    [14,14: ]<SpaceSeparator>
+    _VAR1_    [15,18:VAR1]<UserDefinedWord>
+    _ _    [19,19: ]<SpaceSeparator>
+    _PIC_    [20,22:PIC]<PIC>
+    _ _    [23,23: ]<SpaceSeparator>
+    _X(78)_    [24,28:X(78)]<PictureCharacterString>
+    _ _    [29,29: ]<SpaceSeparator>
+    _value_    [30,34:value]<VALUE>
+    _è_    [20,20:è]<SpaceSeparator>
+    _'f_    =>continued:[36,37:'f accès illimité* à vos comptes                  ']<AlphanumericLiteral>(',Y,Y){f accès illimité* à vos comptes                  }
+---------------------------------
+_       ' accès illimité* à vos comptes                  '._
+    _       _    [8,14:       ]<SpaceSeparator>
+    _' acc_    =>continuation:[15,19:value]<VALUE>
+    _è_    [20,20:è]<SpaceSeparator>
+    _' accès illimité* à vos comptes                  '_    =>continuation:[15,64:'f accès illimité* à vos comptes                  ']<AlphanumericLiteral>(',Y,Y){f accès illimité* à vos comptes                  }
+    _._    [65,65+:.]<PeriodSeparator>
+---------------------------------
+_    05 VAR2 PIC X(46) value '_
+    _    _    [8,11:    ]<SpaceSeparator>
+    _05_    [12,13:05]<LevelNumber>{5}
+    _ _    [14,14: ]<SpaceSeparator>
+    _VAR2_    [15,18:VAR2]<UserDefinedWord>
+    _ _    [19,19: ]<SpaceSeparator>
+    _PIC_    [20,22:PIC]<PIC>
+    _ _    [23,23: ]<SpaceSeparator>
+    _X(46)_    [24,28:X(46)]<PictureCharacterString>
+    _ _    [29,29: ]<SpaceSeparator>
+    _value_    [30,34:value]<VALUE>
+    _ _    [22,22: ]<SpaceSeparator>
+    _'_    =>continued:[36,36:'         ']<AlphanumericLiteral>(',Y,Y){         }
+---------------------------------
+_        '         '._
+    _        _    [8,15:        ]<SpaceSeparator>
+    _'     _    =>continuation:[16,21:value]<VALUE>
+    _ _    [22,22: ]<SpaceSeparator>
+    _'         '_    =>continuation:[16,26:'         ']<AlphanumericLiteral>(',Y,Y){         }
+    _._    [27,27+:.]<PeriodSeparator>
+---------------------------------
+_PROCEDURE DIVISION._
+    _PROCEDURE_    [8,16:PROCEDURE]<PROCEDURE>
+    _ _    [17,17: ]<SpaceSeparator>
+    _DIVISION_    [18,25:DIVISION]<DIVISION>
+    _._    [26,26+:.]<PeriodSeparator>
+---------------------------------
+_    ._
+    _    _    [8,11:    ]<SpaceSeparator>
+    _._    [12,12+:.]<PeriodSeparator>

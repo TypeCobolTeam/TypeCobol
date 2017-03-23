@@ -74,7 +74,7 @@ Line -1[1,1] <23, Warning, TextFormat> - Area A (first 4 columns) of a continuat
 
 -- Line 21 --
 [2,5:    ]<SpaceSeparator>
-[6,7:23]<IntegerLiteral>{23}
+=>continuation:[6,7:23]<IntegerLiteral>{23}
 
 -- Line 22 --
 [1,1: ]<SpaceSeparator>

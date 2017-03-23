@@ -29,7 +29,7 @@ Line -1[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previ
 
 -- Line 8 --
 [2,5:    ]<SpaceSeparator>
-[6,17:"and titi3b"]<AlphanumericLiteral>(",Y,Y){and titi3b}
+=>continuation:[6,17:"and titi3b"]<AlphanumericLiteral>(",Y,Y){and titi3b}
 [18,18+:.]<PeriodSeparator>
 
 -- Line 9 --
@@ -83,7 +83,7 @@ Line -1[5,5] <21, Error, Tokens> - The first non blank character of this continu
 
 -- Line 21 --
 [2,5:    ]<SpaceSeparator>
-[6,17+:'and titi10']<AlphanumericLiteral>(',Y,Y){and titi10}
+=>continuation:[6,17+:'and titi10']<AlphanumericLiteral>(',Y,Y){and titi10}
 
 -- Line 22 --
 =>continued:[1,6:'toto''and titi11']<AlphanumericLiteral>(',Y,Y){toto'and titi11}
@@ -107,7 +107,7 @@ Line -1[5,6] <22, Error, Tokens> - Because the alphanumeric literal on the previ
 
 -- Line 27 --
 [2,5:    ]<SpaceSeparator>
-[6,19:"and titi11c' ]<AlphanumericLiteral>(",Y,N){and titi11c' }
+=>continuation:[6,19:"and titi11c' ]<AlphanumericLiteral>(",Y,N){and titi11c' }
 Line -1[5,5] <21, Error, Tokens> - The first non blank character of this continuation line must be ' (continuation of the alphanumeric literal on the previous line)
 
 -- Line 28 --
@@ -176,7 +176,7 @@ Line -1[5,5] <21, Error, Tokens> - The first non blank character of this continu
 Line -1[11,12] <15, Error, Tokens> - Invalid character found after pseudo-text delimiter == : expecting space, comma, semicolon or period
 
 -- Line 43 --
-[2,3:==]<PseudoTextDelimiter>
+=>continuation:[2,3:==]<PseudoTextDelimiter>
 [4,4: ]<SpaceSeparator>
 [5,9:super]<SUPER>
 [10,10: ]<SpaceSeparator>
