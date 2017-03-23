@@ -9,7 +9,7 @@ namespace TypeCobol.Server {
 
 interface ErrorWriter {
 	void Write();
-	void Flush();
+	void FlushAndClose();
 }
 
 
@@ -50,7 +50,7 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 	private int GenerateNumber() { return count++; }
 
 	public abstract void Write();
-	public abstract void Flush();
+	public abstract void FlushAndClose();
 }
 
 
@@ -77,11 +77,12 @@ public class XMLWriter: AbstractErrorWriter {
             writeTail();
 	}
 
-	public override void Flush() {
+	public override void FlushAndClose() {
+		writer.Flush();
 		writer.Close();
 	}
 
-	private void writeHead() {
+    private void writeHead() {
 		    writer.WriteStartElement("BUILD");
             writer.WriteStartElement("PACKAGE");
 	}
@@ -171,7 +172,8 @@ public class ConsoleWriter: AbstractErrorWriter {
 		}
 	}
 
-	public override void Flush() {
+	public override void FlushAndClose() {
+		writer.Flush();
 		writer.Close();
 	}
 }

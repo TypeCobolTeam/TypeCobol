@@ -10,32 +10,17 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
+using SimpleMsgPack;
+using TypeCobol.Server.Serialization;
 
 namespace TypeCobol.Server {
 
-	class Server {
-
-		class Config {
-			public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
-			public bool Codegen = false;
-            public bool AutoRemarks;
-            public string HaltOnMissingCopyFilePath;
-            public List<string> CopyFolders = new List<string>();
-			public List<string> InputFiles  = new List<string>();
-			public List<string> OutputFiles = new List<string>();
-			public string ErrorFile = null;
-			public string skeletonPath = "";
-			public bool IsErrorXML {
-				get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
-			}
-			public List<string> Copies = new List<string>();
-           
-        }
-
-		static int Main(string[] argv) {
+    class Server {
+        static int Main(string[] argv) {
 			bool help = false;
 			bool version = false;
 			bool once = false;
+            bool startClient = false;
 			var config = new Config();
 			var pipename = "TypeCobol.Server";
 
@@ -48,6 +33,7 @@ namespace TypeCobol.Server {
 				"",
 				"DESCRIPTION:",
 				"  Run the TypeCobol parser server.",
+                { "k|start server & execute commandline", "Start the server if not already started, and executes commandline.", v=>startClient = (v!=null)},
 				{ "1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v!=null) },
 				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => config.InputFiles.Add(v) },
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", v => config.OutputFiles.Add(v) },
@@ -59,7 +45,7 @@ namespace TypeCobol.Server {
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
-								v => config.Format = CreateFormat(v)
+								v => config.Format = CLI.CreateFormat(v, ref config)
 				},
 				{ "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => config.Copies.Add(v) },
 				{ "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => config.CopyFolders.Add(v) },
@@ -92,97 +78,50 @@ namespace TypeCobol.Server {
 		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
 		            return exit(2, "The number of output files must be equal to the number of input files.");
 		        if (config.OutputFiles.Count == 0 && config.Codegen)
-		            foreach(var path in config.InputFiles) config.OutputFiles.Add(path+".cee");
+                    foreach(var path in config.InputFiles) config.OutputFiles.Add(path+".cee");
 
 		        if (args.Count > 0) pipename = args[0];
 
-		        if (once) {
-                    Stopwatch stopWatch = new Stopwatch();
-                    stopWatch.Start();
-                    string debugLine = DateTime.Now + " start parsing of ";
-                    if (config.InputFiles.Count > 0)
+                //"startClient" will be true when "-K" is passed as an argument in command line.
+                if (startClient && once) {
+                    pipename= "TypeCobol.Server";
+                    using (NamedPipeClientStream namedPipeClient = new NamedPipeClientStream(pipename))
                     {
-                        debugLine += Path.GetFileName(config.InputFiles[0]);
+                        try {
+                            namedPipeClient.Connect(100);
+		                } catch (TimeoutException tEx) {
+                            System.Diagnostics.Process process = new System.Diagnostics.Process();
+                            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+                            startInfo.FileName = "cmd.exe";
+                            startInfo.Arguments = @"/c " + folder + Path.DirectorySeparatorChar+ "TypeCobol.CLI.exe";
+                            process.StartInfo = startInfo;
+                            process.Start();
+                            
+                            namedPipeClient.Connect(1000);
+		                }
+                        namedPipeClient.WriteByte(68);
+                        
+
+                        ConfigSerializer configSerializer = new ConfigSerializer();
+                        var configBytes = configSerializer.Serialize(config);
+
+                        namedPipeClient.Write(configBytes, 0, configBytes.Length);
+                        //Wait for the response "job is done"
+                        namedPipeClient.ReadByte();
                     }
-                    debugLine += "\n";
-                    File.AppendAllText("TypeCobol.CLI.log", debugLine);
-                    runOnce(config);
-
-                    stopWatch.Stop();
-                    debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
-                    File.AppendAllText("TypeCobol.CLI.log", debugLine);
+				}
+                //option -1
+                else if (once) {
+                    CLI.runOnce(config);
                 } else {
-		            runServer(pipename);
-		        }
-		    } catch (Exception e) {
-                File.AppendAllText("TypeCobol.CLI.log", e.ToString());
-                return exit(1, e.Message);
-                
-            }
-		    return 0;
-		}
-
-		private static Compiler.DocumentFormat CreateFormat(string encoding) {
-			if (encoding == null) return null;
-			if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
-			if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
-			/*if (encoding.ToLower().Equals("rdz"))*/ return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
-		}
-
-		private static void runOnce(Config config)
-		{
-		   
-			TextWriter w;
-			if (config.ErrorFile == null) w = Console.Error;
-			else w = File.CreateText(config.ErrorFile);
-			AbstractErrorWriter writer;
-			if (config.IsErrorXML) writer = new XMLWriter(w);
-			else writer = new ConsoleWriter(w);
-			writer.Outputs = config.OutputFiles;
-
-			var parser = new Parser();
-			parser.CustomSymbols = LoadCopies(writer, config.Copies, config.Format);
-
-			for(int c=0; c<config.InputFiles.Count; c++) {
-				string path = config.InputFiles[c];
-				try { parser.Init(path, config.Format, config.CopyFolders, config.AutoRemarks, config.HaltOnMissingCopyFilePath); }
-				catch(Exception ex) {
-					AddError(writer, MessageCode.ParserInit, ex.Message, path);
-					continue;
-				}
-				parser.Parse(path);
-
-
-			    if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath)) {
-			        if (parser.MissingCopys.Count > 0) {
-			            //Write in the specified file all the absent copys detected
-			            File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
-			        } else {
-			            //Delete the file
-			            File.Delete(config.HaltOnMissingCopyFilePath);
-			        }
-			    }
-
-			    if (parser.Results.CodeElementsDocumentSnapshot == null) {
-					AddError(writer, MessageCode.SyntaxErrorInParser, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
-					continue;
-				} else if (parser.Results.ProgramClassDocumentSnapshot == null) {
-					AddError(writer, MessageCode.SyntaxErrorInParser, "File \"" +path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
-					continue;
-				}
-			    var allDiags = parser.Results.AllDiagnostics();
-			    int errors = allDiags.Count;
-				writer.AddErrors(path, allDiags);
-
-				if (config.Codegen && errors == 0) {
-					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
-					var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
-					var program = parser.Results.ProgramClassDocumentSnapshot.Program;
-					codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, ColumnsLayout.CobolReferenceFormat);
-				}
+                    runServer(pipename);
+                }
 			}
-			writer.Write();
-			writer.Flush();
+            catch (Exception e) {
+                return exit(1, e.Message);
+			}
+            return 0;
 		}
 
         /// <summary>
@@ -192,7 +131,7 @@ namespace TypeCobol.Server {
         /// <param name="messageCode">Message's code</param>
         /// <param name="message">The text message</param>
         /// <param name="path">The source file path</param>
-		private static void AddError(AbstractErrorWriter writer, MessageCode messageCode, string message, string path)
+		internal static void AddError(AbstractErrorWriter writer, MessageCode messageCode, string message, string path)
 		{
             AddError(writer, messageCode, 0, 0, 1, message, path);
 		}
@@ -207,7 +146,7 @@ namespace TypeCobol.Server {
         /// <param name="lineNumber">Lien number in the source file</param>
         /// <param name="message">The text message</param>
         /// <param name="path">The source file path</param>
-        private static void AddError(AbstractErrorWriter writer, MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, string message, string path)
+        internal static void AddError(AbstractErrorWriter writer, MessageCode messageCode, int columnStart, int columnEnd, int lineNumber, string message, string path)
         {
             Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, lineNumber,
                 message != null
@@ -216,67 +155,39 @@ namespace TypeCobol.Server {
             diag.Message = message;
             writer.AddErrors(path, diag);
             Console.WriteLine(diag.Message);
-        }
-
-		private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths, DocumentFormat copyDocumentFormat) {
-			var parser = new Parser();
-			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
-
-			var copies = new List<string>();
-			foreach(string path in paths) copies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false));
-
-			foreach(string path in copies) {
-			    try {
-			        parser.Init(path, copyDocumentFormat);
-			        parser.Parse(path);
-                     
-			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {
-                        AddError(writer, MessageCode.IntrinsicLoading, 
-                            diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line, 
-                            "Error during parsing of " + path + ": " + diagnostic, path);
-			        }
-			        if (parser.Results.ProgramClassDocumentSnapshot.Program == null) {
-			            AddError(writer, MessageCode.IntrinsicLoading, "Error: Your Intrisic types/functions are not included into a program.", path);
-			            continue;
-			        }
-
-			        var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
-			        foreach (var types in symbols.Types)
-			            foreach (var type in types.Value)
-			                table.AddType(type);
-			        foreach (var functions in symbols.Functions)
-			            foreach (var function in functions.Value)
-			                table.AddFunction(function);
-                    //TODO check if types or functions are already there
-                }
-                catch (Exception e) {
-			        AddError(writer, MessageCode.IntrinsicLoading, e.Message + "\n" + e.StackTrace, path);
-			    }
-			}
-			return table;
 		}
 
-		private static void runServer(string pipename) {
+        private static void runServer(string pipename) {
 			var parser = new Parser();
-			var pipe = new NamedPipeServerStream(pipename, PipeDirection.InOut, 4);
+
+            var pipe = new NamedPipeServerStream(pipename, PipeDirection.InOut, 4, PipeTransmissionMode.Message);
+
 			Commands.Register(66, new Parse(parser, pipe, pipe));
 			Commands.Register(67, new Initialize(parser, pipe, pipe));
+            Commands.Register(68, new RunCommandLine(parser, pipe, pipe));
 			var decoder = new TypeCobol.Server.Serialization.IntegerSerializer();
 			System.Console.WriteLine("NamedPipeServerStream thread created. Wait for a client to connect on " + pipename);
 			while (true) {
 				pipe.WaitForConnection(); // blocking
-				//System.Console.WriteLine("Client connected.");
-				try {
-					int code = decoder.Deserialize(pipe);
+                //System.Console.WriteLine("Client connected.");
+			    int code = 0;
+                try {
+					code = decoder.Deserialize(pipe);
 					var command = Commands.Get(code);
-					command.execute();
+                    command.execute(pipe);
 				}
 				catch (IOException ex) { Console.WriteLine("Error: {0}", ex.Message); }
-				catch (System.Runtime.Serialization.SerializationException ex ) { Console.WriteLine("Error: {0}", ex.Message); }
-				finally { pipe.Disconnect(); pipe.Close(); }
+                catch (System.Runtime.Serialization.SerializationException ex) { Console.WriteLine("Error: {0}", ex.Message); }
+                finally {
+                    pipe.Disconnect();
+                    //68 is a server that need to stay alive
+                    if(code.Equals(66) || code.Equals(67)) {
+                        pipe.Close();
+                    }
+                }
 			}
 		}
-
+        
 
 
 		private static readonly string PROGNAME = System.AppDomain.CurrentDomain.FriendlyName;

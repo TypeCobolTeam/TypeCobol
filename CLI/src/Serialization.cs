@@ -6,6 +6,8 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Scanner;
+using System;
+using TypeCobol.Codegen.Config;
 
 namespace TypeCobol.Server.Serialization
 {
@@ -49,7 +51,108 @@ namespace TypeCobol.Server.Serialization
         internal override string Decode() { return msgpack.AsString; }
     }
 
-    public class CodeElementSerializer: Serializer<CodeElement> {
+    /// <summary>
+    /// ConfigSerializer class to encode/decode config object between client & server communication. 
+    /// </summary>
+    public class ConfigSerializer : Serializer<Config>
+    {
+        internal override void Encode(Config data) { Encode(msgpack, data); }
+        internal override Config Decode() { return Decode(msgpack); }
+
+        internal static void Encode(MsgPack msgpack, Config data)
+        {
+            msgpack.ForcePathObject("ErrorFile").AsString = string.IsNullOrEmpty(data.ErrorFile)?string.Empty:data.ErrorFile;
+            msgpack.ForcePathObject("skeletonPath").AsString = string.IsNullOrEmpty(data.skeletonPath) ? string.Empty : data.skeletonPath;
+            msgpack.ForcePathObject("Codegen").AsString = Convert.ToString(data.Codegen);
+            msgpack.ForcePathObject("EncFormat").AsString = string.IsNullOrEmpty(data.EncFormat) ? string.Empty : data.EncFormat;
+
+            MsgPack item;
+            item = msgpack.ForcePathObject("InputFiles");
+
+            if (data.InputFiles != null && data.InputFiles.Count > 0)
+            {
+                foreach (string inputFile in data.InputFiles)
+                {
+                    var child = item.AddArrayChild();
+                    child.ForcePathObject("InputFile").AsString = inputFile;
+                }
+            }
+
+            item = msgpack.ForcePathObject("OutputFiles");
+
+            if (data.OutputFiles !=null && data.OutputFiles.Count>0)
+            {
+                foreach (string outputFile in data.OutputFiles)
+                {
+                    var child = item.AddArrayChild();
+                    child.ForcePathObject("OutputFile").AsString = outputFile;
+                }
+            }
+
+            item = msgpack.ForcePathObject("CopyFolders");
+
+            if (data.CopyFolders != null && data.CopyFolders.Count > 0)
+            {
+                foreach (string copyFolder in data.CopyFolders)
+                {
+                    var child = item.AddArrayChild();
+                    child.ForcePathObject("CopyFolder").AsString = copyFolder;
+                }
+            }
+
+            item = msgpack.ForcePathObject("Copies");
+
+            if (data.Copies != null && data.Copies.Count > 0)
+            {
+                foreach (string copy in data.Copies)
+                {
+                    var child = item.AddArrayChild();
+                    child.ForcePathObject("Copy").AsString = copy;
+                }
+            }
+        }
+        internal static Config Decode(MsgPack msgpack)
+        {
+            Config config = new Config();
+            config.ErrorFile = msgpack.ForcePathObject("ErrorFile").AsString;
+            config.skeletonPath = msgpack.ForcePathObject("skeletonPath").AsString;
+            config.Codegen = msgpack.ForcePathObject("Codegen").AsString.Equals("True", StringComparison.InvariantCultureIgnoreCase);
+            config.EncFormat = msgpack.ForcePathObject("EncFormat").AsString;
+
+            List<string> InputFiles = new List<string>();
+            foreach (MsgPack item in msgpack.ForcePathObject("InputFiles"))
+            {
+                InputFiles.Add(item.ForcePathObject("InputFile").AsString);
+            }
+            config.InputFiles = InputFiles;
+
+            List<string> OutputFiles = new List<string>();
+            foreach (MsgPack item in msgpack.ForcePathObject("OutputFiles"))
+            {
+                OutputFiles.Add(item.ForcePathObject("OutputFile").AsString);
+            }
+            config.OutputFiles = OutputFiles;
+
+            List<string> CopyFolders = new List<string>();
+            foreach (MsgPack item in msgpack.ForcePathObject("CopyFolders"))
+            {
+                CopyFolders.Add(item.ForcePathObject("CopyFolder").AsString);
+            }
+            config.CopyFolders = CopyFolders;
+
+            List<string> Copies = new List<string>();
+            foreach (MsgPack item in msgpack.ForcePathObject("Copies"))
+            {
+                Copies.Add(item.ForcePathObject("Copy").AsString);
+            }
+            config.Copies = Copies;
+
+            return config;
+        }
+
+    }
+
+    public class CodeElementSerializer : Serializer<CodeElement> {
         public ISearchableReadOnlyList<ICodeElementsLine> Lines;
 
         internal override void Encode(CodeElement data) {
@@ -119,8 +222,8 @@ namespace TypeCobol.Server.Serialization
                 int ecode = (int)item.ForcePathObject("Code").AsInteger;
             }
             return null; //TODO CodeElementFactory.Create(CodeElementType),
-                        // then fill in the blanks of the CodeElement instance
-                       // (C#-side CodeElement decoding wasn't necessary at the time of implementation)
+            // then fill in the blanks of the CodeElement instance
+            // (C#-side CodeElement decoding wasn't necessary at the time of implementation)
         }
     }
 
