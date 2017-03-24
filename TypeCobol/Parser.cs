@@ -37,7 +37,7 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init([NotNull] string path,  DocumentFormat format = null, IList<string> copies = null, bool autoRemarks = false, string haltOnMissingCopyFilePath = null) {
+		public void Init([NotNull] string path,  DocumentFormat format = null, IList<string> copies = null, bool autoRemarks = false, string haltOnMissingCopyFilePath = null, ProcessingStep processingStep = ProcessingStep.SemanticCheck) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
@@ -45,6 +45,7 @@ namespace TypeCobol
 			if (format == null) format = GetFormat(path);
             TypeCobolOptions options = new TypeCobolOptions();
             options.HaltOnMissingCopy = (haltOnMissingCopyFilePath != null);
+            options.ExecToStep = processingStep;
 
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;

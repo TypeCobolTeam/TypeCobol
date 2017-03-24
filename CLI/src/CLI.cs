@@ -70,14 +70,20 @@ namespace TypeCobol.Server
 			        }
 			    }
 
-			    if (parser.Results.CodeElementsDocumentSnapshot == null) {
-                    Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, "File \""+path+"\" has syntactic error(s) preventing codegen (CodeElements).", path);
-					continue;
-				} else if (parser.Results.ProgramClassDocumentSnapshot == null) {
-                    Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, "File \"" +path+"\" has semantic error(s) preventing codegen (ProgramClass).", path);
-					continue;
-				}
-			    var allDiags = parser.Results.AllDiagnostics();
+                if (parser.Results.CodeElementsDocumentSnapshot == null)
+                {
+                    if (config.ProcessingStep > ProcessingStep.Preprocessor)
+                        Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has syntactic error(s) preventing codegen (CodeElements).", path);
+                    continue;
+                }
+                else if (parser.Results.ProgramClassDocumentSnapshot == null)
+                {
+                    if (config.ProcessingStep > ProcessingStep.SyntaxCheck)
+                        Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path);
+                    continue;
+                }
+
+                var allDiags = parser.Results.AllDiagnostics();
 			    int errors = allDiags.Count;
 				errorWriter.AddErrors(path, allDiags);
 

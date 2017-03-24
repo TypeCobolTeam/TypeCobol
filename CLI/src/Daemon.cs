@@ -27,6 +27,7 @@ namespace TypeCobol.Server {
         public List<string> CopyFolders = new List<string>();
         public List<string> InputFiles = new List<string>();
         public List<string> OutputFiles = new List<string>();
+        public ProcessingStep ProcessingStep = ProcessingStep.SemanticCheck; //Default value is SemanticCheck
         public string ErrorFile = null;
         public string skeletonPath = "";
         public bool IsErrorXML
@@ -78,6 +79,7 @@ namespace TypeCobol.Server {
 				{ "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
                 { "a|autoremarks=", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = (v!=null) },
                 { "hc|HaltOnMissingCopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
+                { "ets|ExecToStep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3)", v => Enum.TryParse(v.ToString(), true, out config.ProcessingStep) },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",

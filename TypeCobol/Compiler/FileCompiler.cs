@@ -159,7 +159,10 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void CompileOnce()
         {
-            if(CompilationResultsForCopy != null)
+            if (CompilerOptions.ExecToStep == null)
+                CompilerOptions.ExecToStep = ProcessingStep.SemanticCheck;
+
+            if (CompilationResultsForCopy != null)
             {
                 CompilationResultsForCopy.UpdateTokensLines();
                 CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
@@ -167,12 +170,21 @@ namespace TypeCobol.Compiler
             }
             else
             {
-                CompilationResultsForProgram.UpdateTokensLines();
+                CompilationResultsForProgram.UpdateTokensLines(); //Scanner
+
+                if (!(CompilerOptions.ExecToStep > ProcessingStep.Scanner)) return;
+
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
+                CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
+
+                if (!(CompilerOptions.ExecToStep > ProcessingStep.Preprocessor)) return;
                 if (CompilerOptions.HaltOnMissingCopy && CompilationProject.MissingCopys.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
-                CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
-                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+                
+                CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck
+
+                if (!(CompilerOptions.ExecToStep > ProcessingStep.SyntaxCheck)) return;
+
+                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //SemanticCheck
             }
 
            
