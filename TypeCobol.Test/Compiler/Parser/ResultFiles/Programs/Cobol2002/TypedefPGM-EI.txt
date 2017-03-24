@@ -2,6 +2,7 @@
 Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[12,18:TYPEDEF]<TYPEDEF>
 Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[10,16:TYPEDEF]<TYPEDEF>
 Line 40[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[21,27:TYPEDEF]<TYPEDEF>
+Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
 Line 45[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
 Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[29,35:TYPEDEF]<TYPEDEF>
 Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:TYPEDEF]<TYPEDEF>
@@ -11,6 +12,7 @@ Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be s
 Line 73[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[17,25:REDEFINES]<REDEFINES>
 Line 80[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
 Line 84[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
+Line 93[26,33] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL>
 Line 93[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
 Line 96[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
 Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL>
