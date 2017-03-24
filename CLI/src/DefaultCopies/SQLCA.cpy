@@ -1,9 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
-       PROGRAM-ID. SQLCA.
-       DATA DIVISION.
-       WORKING-STORAGE SECTION. 
-       
-       01 SQLCA.
+﻿       01 SQLCA.
            05 SQLCAID      PIC X(8).
            05 SQLCABC      PIC S9(9) BINARY.
            05 SQLCODE      PIC S9(9) BINARY.
@@ -26,4 +21,3 @@
               10 SQLWARN9  PIC X(1).
               10 SQLWARNA  PIC X(1).
            05 SQLSTATE     PIC X(5).
-       END PROGRAM SQLCA.
