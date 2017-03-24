@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
@@ -22,6 +23,10 @@ namespace TypeCobol.Codegen
             get;
             private set;
         }
+        /// <summary>
+        /// CompilationDocument that contains all the code parsing results
+        /// </summary>
+        public CompilationDocument CompilationDocument { get; set; }
         /// <summary>
         /// Event Before executing an Action.
         /// </summary>
@@ -43,9 +48,10 @@ namespace TypeCobol.Codegen
         /// Constructor
         /// </summary>
         /// <param name="Skeletons">Skeletons pattern for actions</param>
-        public GeneratorActions(List<Skeleton> skeletons)
+        public GeneratorActions(List<Skeleton> skeletons, CompilationDocument compilationDocument)
         {
             Skeletons = skeletons ?? new List<Skeleton>();
+            CompilationDocument = compilationDocument;
         }
 
         /// <summary>
@@ -206,6 +212,10 @@ namespace TypeCobol.Codegen
             if ("erase".Equals(pattern.Action))
             {
                 return new Erase(destination, pattern.Template);
+            }
+            if ("remarks".Equals(pattern.Action))
+            {
+                return new Remarks(source, destination, pattern.Location, CompilationDocument);
             }
             System.Console.WriteLine("Unknown action: \"" + pattern.Action + "\"");
             return null;

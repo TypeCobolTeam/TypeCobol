@@ -174,7 +174,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Internal state used by the Scanner to disambiguate context-sensitive keywords
         /// </summary>
-        internal MultilineScanState ScanState { get; private set; }
+        public MultilineScanState ScanState { get; private set; }
        
         // --- Incremental compilation process ---
 

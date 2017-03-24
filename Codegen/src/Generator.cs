@@ -98,7 +98,7 @@ namespace TypeCobol.Codegen
         {
             this.CompilationResults = document;
             Destination = destination;
-            Actions = new GeneratorActions(skeletons);
+            Actions = new GeneratorActions(skeletons, document);
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
             //The After Action Listener

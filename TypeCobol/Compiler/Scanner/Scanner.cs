@@ -27,16 +27,16 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Scan a line of a document when no previous scan state object is available
         /// </summary>
-        public static void ScanFirstLine(TokensLine tokensLine, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, TypeCobolOptions compilerOptions)
+        public static void ScanFirstLine(TokensLine tokensLine, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             MultilineScanState initialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals);            
-            ScanTokensLine(tokensLine, initialScanState, compilerOptions);
+            ScanTokensLine(tokensLine, initialScanState, compilerOptions, copyTextNameVariations);
         }
 
         /// <summary>
         /// Scan a line of a document
         /// </summary>
-        public static void ScanTokensLine(TokensLine tokensLine, MultilineScanState initialScanState, TypeCobolOptions compilerOptions)
+        public static void ScanTokensLine(TokensLine tokensLine, MultilineScanState initialScanState, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             // Updates are forbidden after a snapshot of a specific version of a line
             if(!tokensLine.CanStillBeUpdatedBy(CompilationStep.Scanner))
@@ -56,6 +56,9 @@ namespace TypeCobol.Compiler.Scanner
             int lastIndex = textLine.Source.EndIndex;
 
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
+            if(tokensLine.ScanState.LeavingRemarksDirective) //If last scanned line was the end of a remarksDirective then mark scanstate as outside of remarksDirective for this new line
+                tokensLine.ScanState.InsideRemarksDirective = false;
+
             if (IsInsideRemarks(textLine.Type, tokensLine.SourceText)) tokensLine.ScanState.InsideRemarksDirective = true;
             else if (textLine.Type == CobolTextLineType.Source) tokensLine.ScanState.InsideRemarksDirective = false;
             // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
@@ -69,13 +72,13 @@ namespace TypeCobol.Compiler.Scanner
 
         
                 if (tokensLine.ScanState.InsideRemarksDirective && (remarksLine.Contains(").") || remarksLine.Contains(")"))) {
-                    tokensLine.ScanState.InsideRemarksDirective = false; // indicates the end of the REMARKS compiler directive
+                    tokensLine.ScanState.LeavingRemarksDirective = true; // indicates the end of the REMARKS compiler directive
                 }
 
                 RemarksDirective remarksDirective = CreateRemarksDirective(significantPart, tokensLine.ScanState);
                 if (remarksDirective != null && remarksDirective.CopyTextNamesVariations.Count > 0) {
                     // A non empty remarks directive will replace the comment line
-                    tokensLine.AddToken(CreateCompilerDirectiveToken(remarksDirective, tokensLine, startIndex, lastIndex));
+                    tokensLine.AddToken(CreateCompilerDirectiveToken(remarksDirective, tokensLine, startIndex, lastIndex, copyTextNameVariations));
                     return;
                 }
             }
@@ -160,14 +163,15 @@ namespace TypeCobol.Compiler.Scanner
                 else if (!String.IsNullOrWhiteSpace(candidateName) && Regex.IsMatch(candidateName, @"^([a-zA-Z0-9]+)$")) {
                     // A string which is not a text name is an error : stop scanning here
                     remarksDirective = null;
-                    state.InsideRemarksDirective = false;
+                    state.LeavingRemarksDirective = true;
                     break;
                 }
             }
             return remarksDirective;
         }
-        private static Token CreateCompilerDirectiveToken(RemarksDirective remarksDirective, TokensLine tokensLine, int start, int end) {
-            tokensLine.ScanState.AddCopyTextNamesVariations(remarksDirective.CopyTextNamesVariations);
+        private static Token CreateCompilerDirectiveToken(RemarksDirective remarksDirective, TokensLine tokensLine, int start, int end, List<RemarksDirective.TextNameVariation> copyTextNameVariations) {
+
+            copyTextNameVariations.AddRange(remarksDirective.CopyTextNamesVariations);
             IList<Token> originalTokens = new List<Token>(1);
             originalTokens.Add(new Token(TokenType.CommentLine, start,end, tokensLine));
             return new CompilerDirectiveToken(remarksDirective, originalTokens, false);
@@ -177,16 +181,16 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Scan a group of continuation lines when no previous scan state object is available
         /// </summary>
-        public static void ScanFirstLineContinuationGroup(IList<TokensLine> continuationLinesGroup, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, TypeCobolOptions compilerOptions)
+        public static void ScanFirstLineContinuationGroup(IList<TokensLine> continuationLinesGroup, bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             MultilineScanState initialScanState = new MultilineScanState(insideDataDivision, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals);
-            ScanTokensLineContinuationGroup(continuationLinesGroup, initialScanState, compilerOptions);
+            ScanTokensLineContinuationGroup(continuationLinesGroup, initialScanState, compilerOptions, copyTextNameVariations);
         }
 
         /// <summary>
         /// Scan a group of continuation lines
         /// </summary>
-        public static void ScanTokensLineContinuationGroup(IList<TokensLine> continuationLinesGroup, MultilineScanState initialScanState, TypeCobolOptions compilerOptions)
+        public static void ScanTokensLineContinuationGroup(IList<TokensLine> continuationLinesGroup, MultilineScanState initialScanState, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             // p54: Continuation lines
             // Any sentence, entry, clause, or phrase that requires more than one line can be
@@ -209,7 +213,7 @@ namespace TypeCobol.Compiler.Scanner
             else
             {
                 concatenatedLine = String.Empty;
-                Scanner.ScanTokensLine(firstLine, initialScanState, compilerOptions);
+                Scanner.ScanTokensLine(firstLine, initialScanState, compilerOptions, copyTextNameVariations);
             }
             textAreasForOriginalLinesInConcatenatedLine[0] = new TextArea(TextAreaType.Source, 0, concatenatedLine.Length -1);
             startIndexForTextAreasInOriginalLines[0] = firstLine.Source.StartIndex;
@@ -274,7 +278,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     // Scan the continuation text, and get its last token so far
                     TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
-                    Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions);
+                    Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
                     Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count - 1];
 
                     // Check if the last token so far is an alphanumeric or national literal
@@ -343,7 +347,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Scan the complete continuation text as a whole
             TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
-            Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions);
+            Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
 
             // Then attribute each token and diagnostic to its corresponding tokens line
             MultilineScanState scanState = initialScanState;

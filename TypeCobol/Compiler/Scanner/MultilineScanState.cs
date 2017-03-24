@@ -81,35 +81,22 @@ namespace TypeCobol.Compiler.Scanner
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
 
         /// <summary>
+        /// True when we are existing a remarks directive. 
+        /// </summary>
+        public bool LeavingRemarksDirective { get; set; }
+        /// <summary>
         /// True if we detect in the comments lines stream that we are inside a REMARKS compiler directive.
         /// </summary>
-        internal bool InsideRemarksDirective { get; set; }
+        public bool InsideRemarksDirective { get; set; }
 
         /// <summary>
         /// True if we are inside a COPY=(..) of a REMARKS compiler directive.
         /// </summary>
-        internal bool InsideRemarksParentheses { get; set; }
+        public bool InsideRemarksParentheses { get; set; }
 
-        /// <summary>
-        /// Text names variations declared in REMARS compiler directives.
-        /// </summary>
-        internal List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; set; }
 
-        /// <summary>
-        /// Register a new symbolic character name found in the source file
-        /// </summary>
-        internal void AddCopyTextNamesVariations(IList<RemarksDirective.TextNameVariation> textNamesVariations)
-        {
-            if (CopyTextNamesVariations == null)
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
-            }
-            else
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
-            }
-            CopyTextNamesVariations.AddRange(textNamesVariations);
-        }
+
+        
 
 #endif
 
@@ -149,10 +136,6 @@ namespace TypeCobol.Compiler.Scanner
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
             clone.InsideRemarksDirective = InsideRemarksDirective;
             clone.InsideRemarksParentheses = InsideRemarksParentheses;
-            if (CopyTextNamesVariations != null)
-            {
-                clone.CopyTextNamesVariations = CopyTextNamesVariations;
-            }
 #endif
             return clone;
         }
@@ -458,8 +441,8 @@ namespace TypeCobol.Compiler.Scanner
                        InsideSymbolicCharacterDefinitions == otherScanState.InsideSymbolicCharacterDefinitions &&
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
                 InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
-                    ((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
-                     (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
+                    //((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
+                    // (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
 #endif
                     DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
                     WithDebuggingMode == otherScanState.WithDebuggingMode &&
@@ -484,10 +467,6 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();
-                if (CopyTextNamesVariations != null)
-                {
-                    hash = hash * 23 + CopyTextNamesVariations.Count;
-                }
 #endif
                 hash = hash * 23 + DecimalPointIsComma.GetHashCode();
                 hash = hash * 23 + WithDebuggingMode.GetHashCode();

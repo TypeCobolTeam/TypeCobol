@@ -44,6 +44,28 @@ namespace TypeCobol.Compiler
         // - accessing an element by index requires traversing the tree from its root, a O(log n) operation
         private ImmutableList<CodeElementsLine>.Builder compilationDocumentLines;
 
+
+        /// <summary>
+        /// Text names variations declared in REMARKS compiler directives or automaticly detected in CompilerDirectiveBuilder.
+        /// </summary>
+        public List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; set; }
+
+        /// <summary>
+        /// Register a new symbolic character name found in the source file
+        /// </summary>
+        internal void AddCopyTextNamesVariations(IList<RemarksDirective.TextNameVariation> textNamesVariations)
+        {
+            if (CopyTextNamesVariations == null)
+            {
+                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
+            }
+            else
+            {
+                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
+            }
+            CopyTextNamesVariations.AddRange(textNamesVariations);
+        }
+
         /// <summary>
         /// Issue #315
         /// </summary>
@@ -102,16 +124,18 @@ namespace TypeCobol.Compiler
         /// You must explicitely call UpdateTokensLines() to start an initial scan of the document.
         /// </summary>
         public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines,
-            TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider) :
-            this(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, null)
+            TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
+            this(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, null, copyTextNameVariations)
         { 
         }
 
         public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
-            [CanBeNull] MultilineScanState scanState)
+            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
+            CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
+
             this.processedTokensDocumentProvider = processedTokensDocumentProvider;
 
             // Initialize the compilation document lines
@@ -399,11 +423,11 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, initialScanStateForCopy);
+                    ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
                 }
                 else
                 {
-                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, initialScanStateForCopy);
+                    IList<DocumentChange<ITokensLine>> documentChanges = ScannerStep.ScanTextLinesChanges(TextSourceInfo, compilationDocumentLines, textLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
 
                     // Create a new version of the document to track these changes
                     currentTokensLinesVersion.changes = documentChanges;
@@ -525,7 +549,7 @@ namespace TypeCobol.Compiler
                 if (scanAllDocumentLines)
                 {
                     // Process all lines of the document for the first time
-                    PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider);
+                    PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations);
 
                     // Create the first processed tokens document snapshot
                     ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines));
@@ -533,7 +557,7 @@ namespace TypeCobol.Compiler
                 else
                 {
                     ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>)tokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(TextSourceInfo, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, processedTokensDocumentProvider);
+                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(TextSourceInfo, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<IProcessedTokensLine> currentProcessedTokensLineVersion = previousProcessedTokensDocument.CurrentVersion;
