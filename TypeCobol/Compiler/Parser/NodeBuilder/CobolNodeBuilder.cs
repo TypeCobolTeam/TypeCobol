@@ -149,7 +149,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 var enclosing = CurrentProgram;
                 CurrentProgram = new NestedProgram(enclosing, programIdentification);
-                Enter(CurrentProgram, context, new SymbolTable(TableOfGlobals));
+                Enter(CurrentProgram, context, CurrentProgram.SymbolTable);
             }
             
             if (pgm != null && pgm.LibraryCopy() != null)
