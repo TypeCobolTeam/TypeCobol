@@ -105,7 +105,9 @@ namespace TypeCobol.Test.Compiler.Parser
         private string _sampleRoot;
         private string _resultsRoot;
 
-		internal FolderTester(string sampleRoot, string resultsRoot, string folder, string[] fileToTestsExtensions, string[] compilerExtensions, string[] ignored = null, bool deep = true) {
+        private int _nbOfTests;
+
+        internal FolderTester(string sampleRoot, string resultsRoot, string folder, string[] fileToTestsExtensions, string[] compilerExtensions, string[] ignored = null, bool deep = true) {
 			_sampleRoot = sampleRoot;
 			_resultsRoot = resultsRoot;
 
@@ -140,7 +142,7 @@ namespace TypeCobol.Test.Compiler.Parser
         /// <returns></returns>
         public int GetTestCount()
         {
-            return samples.Count;
+            return _nbOfTests;
         }
 
 		public void Test(bool debug = false, bool json = false, bool autoRemarks = false) {
@@ -177,6 +179,8 @@ namespace TypeCobol.Test.Compiler.Parser
 				        try
 				        {
 				            unit.Compare();
+				            _nbOfTests++;
+
 				        }
 				        catch (Exception ex)
 				        {
