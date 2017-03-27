@@ -164,9 +164,12 @@ namespace TypeCobol.Compiler
 
             if (CompilationResultsForCopy != null)
             {
-                CompilationResultsForCopy.UpdateTokensLines();
+                CompilationResultsForCopy.UpdateTokensLines(); //Scanner
+
+                if (!(CompilerOptions.ExecToStep > ProcessingStep.Scanner)) return;
+
                 CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
-                CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot();
+                CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
             }
             else
             {

@@ -37,7 +37,7 @@ namespace TypeCobol.Test.Compiler.Parser
             return compiler.CompilationResultsForCopy;
         }
 
-        public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null, string folder = null)
+        public static CompilationUnit ParseCobolFile(string textName, DocumentFormat documentFormat = null, string folder = null, ProcessingStep processingStep = ProcessingStep.SemanticCheck)
         {
             if (folder == null) folder = "Compiler" + Path.DirectorySeparatorChar + "Parser" + Path.DirectorySeparatorChar + "Samples";
             DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(folder));
@@ -46,11 +46,13 @@ namespace TypeCobol.Test.Compiler.Parser
                 throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));
             }
             if (documentFormat == null) documentFormat = DocumentFormat.RDZReferenceFormat;
+
+            TypeCobolOptions options = new TypeCobolOptions { ExecToStep = processingStep }; //Create CompilerOptions. ExecToStep / AutoRemarks / HaltOnMissingCopy have to be set here.
             CompilationProject project = new CompilationProject("test",
                 //First use *.cpy as tests will use file WITH extension for program but without extension for copy inside programs => small perf gain
                 localDirectory.FullName, new string[] {".cpy", ".cbl" },
-                documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, new TypeCobolOptions());
-            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
+                documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, options);
+            FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, options, null, false, project);
             compiler.CompileOnce();
 
             return compiler.CompilationResultsForProgram;
