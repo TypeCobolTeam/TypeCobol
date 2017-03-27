@@ -50,10 +50,10 @@ namespace TypeCobol.Compiler.Directives
         // readyOrResetTraceCompilerStatement
         READY_TRACE,
         RESET_TRACE,
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+
         // NON-STANDARD EI Compiler Directive, roughly equivalent to COPY REPLACING
         REMARKS,
-#endif
+
         // replaceCompilerStatement
         REPLACE,
         REPLACE_OFF,
@@ -781,7 +781,6 @@ namespace TypeCobol.Compiler.Directives
 		}
     }
 
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
 
     /// <summary>
     /// Legacy syntax used instead of COPY REPLACING :
@@ -877,7 +876,6 @@ namespace TypeCobol.Compiler.Directives
         }
     }
 
-#endif
 
     /// <summary>
     /// p541: REPLACE statement

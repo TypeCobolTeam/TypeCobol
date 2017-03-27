@@ -78,8 +78,6 @@ namespace TypeCobol.Compiler.Scanner
             SymbolicCharacters.Add(tokenText);
         }
 
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
-
         /// <summary>
         /// True when we are existing a remarks directive. 
         /// </summary>
@@ -93,12 +91,6 @@ namespace TypeCobol.Compiler.Scanner
         /// True if we are inside a COPY=(..) of a REMARKS compiler directive.
         /// </summary>
         public bool InsideRemarksParentheses { get; set; }
-
-
-
-        
-
-#endif
 
         /// <summary>
         /// Initialize scanner state for the first line
