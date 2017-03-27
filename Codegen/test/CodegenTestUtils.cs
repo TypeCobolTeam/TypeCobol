@@ -16,8 +16,8 @@ namespace TypeCobol.Codegen {
         private const string OUTPUT = "output";
 
 
-        public static void ParseGenerateCompare(string path, string skeletonPath) {
-            ParseGenerateCompare(path, ParseConfig(skeletonPath));
+        public static void ParseGenerateCompare(string path, string skeletonPath, bool autoRemarks = false) {
+            ParseGenerateCompare(path, ParseConfig(skeletonPath), autoRemarks);
         }
 
         /// <summary>
@@ -26,11 +26,11 @@ namespace TypeCobol.Codegen {
         /// </summary>
         /// <param name="path"></param>
         /// <param name="skeletons"></param>
-        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null) {
-            ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat);
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false) {
+            ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, autoRemarks);
         }
-        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format) {
-            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format);
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format, bool autoRemarks = false) {
+            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks);
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors

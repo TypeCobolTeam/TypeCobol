@@ -149,9 +149,9 @@ namespace TypeCobol
 
 
 
-		public static Parser Parse(string path, DocumentFormat format) {
+		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false) {
 			var parser = new Parser();
-			parser.Init(path, format);
+			parser.Init(path, format, null, autoRemarks);
 			parser.Parse(path);
 			return parser;
 		}
