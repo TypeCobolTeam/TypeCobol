@@ -128,6 +128,7 @@ namespace TypeCobol.Compiler.Scanner
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
             clone.InsideRemarksDirective = InsideRemarksDirective;
             clone.InsideRemarksParentheses = InsideRemarksParentheses;
+            clone.LeavingRemarksDirective = LeavingRemarksDirective;
 #endif
             return clone;
         }

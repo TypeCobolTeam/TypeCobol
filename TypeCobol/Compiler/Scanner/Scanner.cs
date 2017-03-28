@@ -57,7 +57,7 @@ namespace TypeCobol.Compiler.Scanner
 
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
             if(tokensLine.ScanState.LeavingRemarksDirective) //If last scanned line was the end of a remarksDirective then mark scanstate as outside of remarksDirective for this new line
-                tokensLine.ScanState.InsideRemarksDirective = false;
+                tokensLine.ScanState.InsideRemarksDirective = tokensLine.ScanState.LeavingRemarksDirective = false;
 
             if (IsInsideRemarks(textLine.Type, tokensLine.SourceText)) tokensLine.ScanState.InsideRemarksDirective = true;
             else if (textLine.Type == CobolTextLineType.Source) tokensLine.ScanState.InsideRemarksDirective = false;
