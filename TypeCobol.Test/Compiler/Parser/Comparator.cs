@@ -199,16 +199,17 @@ namespace TypeCobol.Test.Compiler.Parser
                 Paths path = new Paths(sampleRoot, resultsRoot, samplePath, names);
                 if (System.IO.File.Exists(path.Result)) {
                     Type type = names.GetComparatorType();
-                    System.Reflection.ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Paths), typeof(bool) });
-                    comparators.Add((FilesComparator)constructor.Invoke(new object[] { path, debug }));
+                    var isEI = names.IsEI();
+                    System.Reflection.ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Paths), typeof(bool), typeof(bool) });
+                    comparators.Add((FilesComparator)constructor.Invoke(new object[] { path, debug, isEI }));
                 }
             }
 #if EUROINFO_RULES
-            if(comparators.Any(c => c is EIComparator))
+            if(comparators.Any(c => c.IsEI))
             {
-                //If any -EI result file exists => Remove all comparators that doesn't inherit from EIComparator.
+                //If any -EI result file exists => Remove all comparators without isEI flag to true. 
                 //We only want to check EI results files. 
-                foreach (var comparatorToRemove in comparators.Where(c => !(c is EIComparator)).ToList())
+                foreach (var comparatorToRemove in comparators.Where(c => !(c.IsEI)).ToList())
                 {
                     comparators.Remove(comparatorToRemove);
                 }
@@ -227,20 +228,21 @@ namespace TypeCobol.Test.Compiler.Parser
         void Compare(CompilationUnit result, StreamReader expected);
     }
 
-#region DefaultComparators
     internal class FilesComparator : Comparator
 	{
 		internal Paths paths;
 		internal bool debug;
+        internal bool IsEI { get; private set; }
 
-	    public FilesComparator(string name, bool debug) /*: this(name, null, debug)*/
+        public FilesComparator(string name, bool debug) /*: this(name, null, debug)*/
 	    {
 	        
 	    }
-		public FilesComparator(Paths path, bool debug = false)
+		public FilesComparator(Paths path, bool debug = false, bool isEI = false)
 		{
 		    paths = path;
 			this.debug = debug;
+            IsEI = isEI;
 		}
 
 		public virtual void Compare(CompilationUnit result, StreamReader reader) {
@@ -262,7 +264,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class ArithmeticComparator : FilesComparator
     {
-        public ArithmeticComparator(Paths path, bool debug = false) : base(path, debug) { }
+        public ArithmeticComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
         internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
             var errors = new System.Text.StringBuilder();
@@ -300,9 +302,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class NYComparator : FilesComparator
     {
-        public NYComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
+        public NYComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
         internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
@@ -333,7 +333,7 @@ namespace TypeCobol.Test.Compiler.Parser
     internal class Outputter : FilesComparator
     {
 
-        public Outputter(Paths path, bool debug = false) : base(path, debug) { }
+        public Outputter(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
         internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
         {
@@ -353,21 +353,20 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class Multipass : FilesComparator
     {
-        public Multipass(Paths path, bool debug = false) : base(path, debug) { }
-        
+        public Multipass(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
+
         internal class IndexNames : Names
         {
             internal int index = 0;
             public string CreateName(string name) { return name+'.'+index; }
             public Type GetComparatorType() { return typeof(Multipass); }
+            public bool IsEI() { return false; }
         }
     }
 
     internal class ProgramsComparator : FilesComparator
     {
-        public ProgramsComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
+        public ProgramsComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
         public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
         {
@@ -387,9 +386,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class NodeComparator : FilesComparator
     {
-        public NodeComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
+        public NodeComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
         public override void Compare(CompilationUnit compilationUnit, StreamReader reader) {
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
@@ -411,9 +408,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class TokenComparator : FilesComparator
     {
-        public TokenComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
+        public TokenComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
         public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
         {
@@ -442,11 +437,9 @@ namespace TypeCobol.Test.Compiler.Parser
 
     internal class MemoryComparator: FilesComparator
 	{
-	    public MemoryComparator(Paths path, bool debug = false) : base(path, debug)
-	    {
-	    }
+	    public MemoryComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-	    public override void Compare(CompilationUnit result, StreamReader reader) {
+        public override void Compare(CompilationUnit result, StreamReader reader) {
 			ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
 			Compare(pcd.Program.SymbolTable, reader);
 		}
@@ -513,415 +506,132 @@ namespace TypeCobol.Test.Compiler.Parser
 			return prefix + (index >= 0?((prefix.Length > 0?",":"")+(index+1)):"");
 		}
 	}
-#endregion
 
-#region EIComprarators
-#if EUROINFO_RULES
-    internal interface EIComparator { }
-    internal class EIFilesComparator : FilesComparator, Comparator, EIComparator
-    {
-        public EIFilesComparator(string name, bool debug)
-            :base(name, debug) 
-        {
-
-        }
-        public EIFilesComparator(Paths path, bool debug = false)
-            :base(path, debug)
-        {
-            paths = path;
-            this.debug = debug;
-        }
-
-       
-    }
-    internal class EIArithmeticComparator : FilesComparator, EIComparator
-    {
-        public EIArithmeticComparator(Paths path, bool debug = false) : base(path, debug) { }
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
-        {
-            var errors = new System.Text.StringBuilder();
-            int c = 0, line = 1;
-            foreach (var e in elements)
-            {
-                c++;
-                var operation = e as ArithmeticStatement;
-                if (operation == null) continue;
-                string rpn = expected.ReadLine();
-                if (rpn == null) errors.AppendFormat("RPN number {0} not provided.", line);
-                string dump = ToString(operation);
-                if (dump != rpn) errors.AppendFormat("line {0}: \"{1}\", expected \"{2}\"\n", line, dump, rpn);
-                line++;
-            }
-            if (c < 1) throw new Exception("No CodeElements found!");
-            if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + (line - 1) + ") lesser than expected.");
-            if (errors.Length > 0)
-            {
-                errors.Insert(0, paths.SamplePath + ":\n");
-                throw new Exception(errors.ToString());
-            }
-        }
-        private string ToString(ArithmeticStatement statement)
-        {
-            if (statement == null) return null;
-            var str = new System.Text.StringBuilder();
-            foreach (var operations in statement.Affectations)
-                foreach (var operation in operations.Value)
-                    str.Append(operations.Key).Append(" = ").Append(operation).Append(", ");
-            if (statement.Affectations.Count > 0) str.Length -= 2;
-            return str.ToString();
-        }
-    }
-
-    internal class EINYComparator : FilesComparator, EIComparator
-    {
-        public EINYComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
-
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
-        {
-            int c = 0;
-            StringBuilder errors = new StringBuilder();
-            foreach (var e in elements)
-            {
-                if ((e as SentenceEnd) != null) continue;
-                string line = expected.ReadLine();
-                if (line != "Y") errors.AppendFormat("line {0}: \"Y\", expected \"{1}\"\n", c, line);
-                c++;
-            }
-            foreach (var d in diagnostics)
-            {
-                string line = expected.ReadLine();
-                if (line != "N") errors.AppendFormat("line {0}: \"N\", expected \"{1}\"\n", c, line);
-                c++;
-            }
-            if (expected.ReadLine() != null) errors.AppendLine("Number of CodeElements (" + c + ") lesser than expected.");
-            if (errors.Length > 0)
-            {
-                errors.Insert(0, paths.SamplePath + ":\n");
-                throw new Exception(errors.ToString());
-            }
-        }
-    }
-
-    internal class EIOutputter : FilesComparator, EIComparator
-    {
-
-        public EIOutputter(Paths path, bool debug = false) : base(path, debug) { }
-
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
-        {
-            foreach (var e in elements)
-            {
-                if (e.GetType() == typeof(SentenceEnd)) continue;
-                string line = expected.ReadLine();
-                TestLine(e, line);
-            }
-        }
-
-        private static void TestLine(CodeElement e, string line)
-        {
-            Console.WriteLine("TODO TestLine( " + e + " , \"" + line + "\")");
-        }
-    }
-
-    internal class EIMultipass : FilesComparator, EIComparator
-    {
-        public EIMultipass(Paths path, bool debug = false) : base(path, debug) { }
-
-        internal class IndexNames : Names
-        {
-            internal int index = 0;
-            public string CreateName(string name) { return name + '.' + index; }
-            public Type GetComparatorType() { return typeof(Multipass); }
-        }
-    }
-
-    internal class EIProgramsComparator : FilesComparator, EIComparator
-    {
-        public EIProgramsComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
-
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
-        {
-            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
-            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
-
-            Compare(pcd.Program, pcd.Class, diagnostics, reader);
-        }
-
-        internal void Compare(Program program, Class cls, IList<Diagnostic> diagnostics, StreamReader expected)
-        {
-            string result = ParserUtils.DumpResult(program, cls, diagnostics);
-            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
-        }
-    }
-
-    internal class EINodeComparator : FilesComparator, EIComparator
-    {
-        public EINodeComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
-
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
-        {
-            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
-            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var diagnostic in diagnostics)
-            {
-                sb.AppendLine(diagnostic.ToString());
-            }
-
-            sb.AppendLine("--- Nodes ---");
-            sb.Append(pcd.Program.SyntaxTree);
-
-            string result = sb.ToString();
-            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
-        }
-    }
-
-    internal class EITokenComparator : FilesComparator, EIComparator
-    {
-        public EITokenComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
-
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
-        {
-            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var diagnostic in diagnostics)
-            {
-                sb.AppendLine(diagnostic.ToString());
-            }
-
-            sb.AppendLine("--- Tokens ---");
-            foreach (var tokensLine in compilationUnit.TokensLines)
-            {
-                sb.AppendLine("---------------------------------");
-                sb.AppendLine("_" + tokensLine.SourceText + "_");
-                foreach (var sourceToken in tokensLine.SourceTokens)
-                {
-                    sb.AppendLine("    _" + sourceToken.SourceText + "_    " + sourceToken);
-                }
-            }
-
-            string result = sb.ToString();
-            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
-        }
-    }
-
-    internal class EIMemoryComparator : FilesComparator, EIComparator
-    {
-        public EIMemoryComparator(Paths path, bool debug = false) : base(path, debug)
-        {
-        }
-
-        public override void Compare(CompilationUnit result, StreamReader reader)
-        {
-            ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
-            Compare(pcd.Program.SymbolTable, reader);
-        }
-
-        internal void Compare(SymbolTable table, StreamReader expected)
-        {
-            string result = Dump(table);
-            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
-        }
-
-        private string Dump(SymbolTable table)
-        {
-            var str = new StringBuilder();
-            str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
-            foreach (var line in table.DataEntries)
-            {
-                foreach (var data in line.Value)
-                {
-                    //TODO#249 print memory representation
-                    //					if (data is DataDefinition && ((DataDefinition)data).CodeElement().LevelNumber.Value == 1)
-                    //					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
-                }
-            }
-            return str.ToString();
-        }
-        private void Dump(StringBuilder str, object data, int indent, string indexes = "", int baseaddress = 1)
-        {
-            /*TODO#249
-                        long level = data.LevelNumber.Value;
-                        string name = (data.DataName != null?data.DataName.Name:"?");
-                        if (data.MemoryArea is TableInMemory) {
-                            var table = data.MemoryArea as TableInMemory;
-                            foreach(var e in table) {
-                                str.AppendLine(CreateLine(level, name, e.Offset, e.Length, e.Index, table.Count, indent));
-                                string strindexes = CreateIndexes(indexes, e.Index);
-                                foreach(var child in data.Subordinates) Dump(str, child, indent+1, strindexes);
-                            }
-                        } else {
-                            str.AppendLine(CreateLine(level, name, data.MemoryArea.Offset, data.MemoryArea.Length, 0, 1, indent));
-                            foreach(var child in data.Subordinates) Dump(str, child, indent+1, indexes);
-                        }
-            */
-        }
-        private string CreateLine(long level, string name, int offset, int length, int index, int max, int indent, string strindexes = "")
-        {
-            var res = new StringBuilder();
-            BeginFirstColumn(res, indent, level, name);
-            EndFirstColumn(res, strindexes, index, max);
-            EndLine(res, offset, length);
-            return res.ToString();
-        }
-        private void BeginFirstColumn(StringBuilder str, int indent, long level, string name)
-        {
-            for (int i = 0; i < indent; i++) str.Append("  ");
-            if (level > 1) str.Append(String.Format("{0,2} ", level));
-            str.Append(name);
-        }
-        private void EndFirstColumn(StringBuilder str, string strprefix, int index, int max)
-        {
-            if (strprefix.Length > 0 || (index >= 0 && max > 1))
-            {
-                str.Append('(').Append(CreateIndexes(strprefix, index)).Append(')');
-            }
-            while (str.Length < 36) str.Append(' ');
-        }
-        private void EndLine(StringBuilder str, int offset, int size, int baseaddress = 1)
-        {
-            str.Append(String.Format(" {0,6:0} ", baseaddress + offset));//start
-            str.Append(String.Format(" {0,6:0} ", offset + size));//end
-            str.Append(String.Format(" {0,6:0} ", size));//length
-        }
-        private string CreateIndexes(string prefix, int index)
-        {
-            return prefix + (index >= 0 ? ((prefix.Length > 0 ? "," : "") + (index + 1)) : "");
-        }
-    }
-#endif
-#endregion
 
     internal interface Names
     {
         string CreateName(string name);
         Type GetComparatorType();
+        bool IsEI();
     }
 
-#region DefaultComprators
+    #region DefaultNames
     internal class EmptyName : Names
     {
         public string CreateName(string name) { return name; }
         public Type GetComparatorType() { return typeof(FilesComparator); }
+        public bool IsEI() { return false; }
     }
 
     internal class CodeElementName : Names
     {
         public string CreateName(string name) { return name + "CodeElements"; }
         public Type GetComparatorType() { return typeof(FilesComparator); }
+        public bool IsEI() { return false; }
     }
 
     internal class RPNName : Names
     {
         public string CreateName(string name) { return name + "RPN"; }
         public Type GetComparatorType() { return typeof(ArithmeticComparator); }
+        public bool IsEI() { return false; }
     }
 
     internal class NYName : Names
     {
         public string CreateName(string name) { return name + "NY"; }
         public Type GetComparatorType() { return typeof(NYComparator); }
+        public bool IsEI() { return false; }
     }
 
     internal class PGMName : Names
     {
         public string CreateName(string name) { return name + "PGM"; }
         public Type GetComparatorType() { return typeof(ProgramsComparator); }
+        public bool IsEI() { return false; }
     }
 
     internal class NodeName : Names
     {
         public string CreateName(string name) { return name + "-Nodes"; }
         public Type GetComparatorType() { return typeof(NodeComparator); }
+        public bool IsEI() { return false; }
     }
 
     internal class TokenName : Names
     {
         public string CreateName(string name) { return name + "-Tokens"; }
         public Type GetComparatorType() { return typeof(TokenComparator); }
+        public bool IsEI() { return false; }
     }
 
     internal class MemoryName : Names
     {
         public string CreateName(string name) { return name + "MEM"; }
         public Type GetComparatorType() { return typeof(MemoryComparator); }
+        public bool IsEI() { return false; }
     }
-#endregion
+    #endregion
 
-#region EIComparators
+    #region EINames
 #if EUROINFO_RULES
-
-    internal interface IEIComparator
-    {
-        //Interface used for recognize the different comparator
-    }
-
     internal class EIEmptyName : Names
     {
-        public string CreateName(string name) { return name; }
-        public Type GetComparatorType() { return typeof(EIFilesComparator); }
-    }
+        public string CreateName(string name) { return name + "-EI"; }
+        public Type GetComparatorType() { return typeof(FilesComparator); }
 
-    
+        public bool IsEI() { return true; }
+    }
 
     internal class EICodeElementName : Names
     {
         public string CreateName(string name) { return name + "CodeElements-EI"; }
-        public Type GetComparatorType() { return typeof(EIFilesComparator); }
+        public Type GetComparatorType() { return typeof(FilesComparator); }
+        public bool IsEI() { return true; }
     }
 
     internal class EIRPNName : Names
     {
         public string CreateName(string name) { return name + "RPN-EI"; }
-        public Type GetComparatorType() { return typeof(EIArithmeticComparator); }
+        public Type GetComparatorType() { return typeof(ArithmeticComparator); }
+        public bool IsEI() { return true; }
     }
 
     internal class EINYName : Names
     {
         public string CreateName(string name) { return name + "NY-EI"; }
-        public Type GetComparatorType() { return typeof(EINYComparator); }
+        public Type GetComparatorType() { return typeof(NYComparator); }
+        public bool IsEI() { return true; }
     }
-
     internal class EIPGMName : Names
     {
         public string CreateName(string name) { return name + "PGM-EI"; }
-        public Type GetComparatorType() { return typeof(EIProgramsComparator); }
+        public Type GetComparatorType() { return typeof(ProgramsComparator); }
+        public bool IsEI() { return true; }
     }
 
     internal class EINodeName : Names
     {
         public string CreateName(string name) { return name + "-Nodes-EI"; }
-        public Type GetComparatorType() { return typeof(EINodeComparator); }
+        public Type GetComparatorType() { return typeof(NodeComparator); }
+        public bool IsEI() { return true; }
     }
 
     internal class EITokenName : Names
     {
         public string CreateName(string name) { return name + "-Tokens-EI"; }
-        public Type GetComparatorType() { return typeof(EITokenComparator); }
+        public Type GetComparatorType() { return typeof(TokenComparator); }
+        public bool IsEI() { return true; }
     }
 
     internal class EIMemoryName : Names
     {
         public string CreateName(string name) { return name + "MEM-EI"; }
-        public Type GetComparatorType() { return typeof(EIMemoryComparator); }
+        public Type GetComparatorType() { return typeof(MemoryComparator); }
+        public bool IsEI() { return true; }
     }
 #endif
-
-#endregion
+    #endregion
 
     internal class Paths
     {
