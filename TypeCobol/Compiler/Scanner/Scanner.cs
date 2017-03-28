@@ -381,53 +381,17 @@ namespace TypeCobol.Compiler.Scanner
                             originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
                         }
                     }
-                    else if(token.StartIndex > 0 && token.StartIndex == textAreaForOriginalLine.StartIndex && token.StopIndex <= textAreaForOriginalLine.EndIndex)
-                    {
-                        bool isContinuationFromPreviousLine = token.StartIndex <= textAreaForOriginalLine.StartIndex;
-                        bool isContinuedOnNextLine = token.StopIndex > textAreaForOriginalLine.EndIndex;
-
-                        int startIndexInOriginalLine = 0;
-                        if (isContinuationFromPreviousLine)
-                        {
-                            startIndexInOriginalLine = startIndexForTextAreasInOriginalLines[i] - offsetForLiteralContinuationInOriginalLines[i];
-                        }
-                        else
-                        {
-                            startIndexInOriginalLine = token.StartIndex + concatenatedLineToOriginalLineOffset;
-                        }
-                        int stopIndexInOriginalLine = 0;
-                        if (isContinuedOnNextLine)
-                        {
-                            stopIndexInOriginalLine = originalLine.Source.EndIndex;
-                            // If a continued line ends with a floating comment, the continued token ends just before the floating comment
-                            if (originalLine.SourceTokens.Count > 0 && originalLine.SourceTokens[originalLine.SourceTokens.Count - 1].TokenType == TokenType.FloatingComment)
-                            {
-                                stopIndexInOriginalLine -= originalLine.SourceTokens[originalLine.SourceTokens.Count - 1].Length;
-                            }
-                        }
-                        else
-                        {
-                            stopIndexInOriginalLine = token.StopIndex + concatenatedLineToOriginalLineOffset;
-                        }
-
-                        ContinuationToken continuationToken = new ContinuationToken(token, startIndexInOriginalLine, stopIndexInOriginalLine,
-                            originalLine, isContinuationFromPreviousLine, isContinuedOnNextLine);
-                        originalLine.AddToken(continuationToken);
-
-                        // Copy diagnostics on the first line only
-                        if (!isContinuationFromPreviousLine)
-                        {
-                            foreach (Diagnostic diag in virtualContinuationTokensLine.GetDiagnosticsForToken(token))
-                            {
-                                originalLine.AddDiagnostic((MessageCode)diag.Info.Code, token, diag.MessageArgs);
-                            }
-                        }
-                    }
                     // Multiline continuation token only partially located on this line
                     else
                     {
-                        bool isContinuationFromPreviousLine = token.StartIndex < textAreaForOriginalLine.StartIndex;
-                        bool isContinuedOnNextLine = token.StopIndex > textAreaForOriginalLine.EndIndex;
+                        bool isContinuationFromPreviousLine = token.StartIndex < textAreaForOriginalLine.StartIndex; //Will create a continuation token type
+                        bool isContinuedOnNextLine = token.StopIndex > textAreaForOriginalLine.EndIndex; //Will create a continued token type
+
+                        if(token.StartIndex > 0 && token.StartIndex == textAreaForOriginalLine.StartIndex && token.StopIndex <= textAreaForOriginalLine.EndIndex)
+                        {
+                            //Detect if the token index is on same position that text area index. If so, a continuation token type has to be use. 
+                            isContinuationFromPreviousLine = token.StartIndex <= textAreaForOriginalLine.StartIndex;
+                        }
 
                         int startIndexInOriginalLine = 0; 
                         if (isContinuationFromPreviousLine)
