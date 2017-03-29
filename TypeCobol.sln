@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B0CAA3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Transform", "TypeCobol.Transform\TypeCobol.Transform.csproj", "{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI.Test", "CLI\test\CLI.Test.csproj", "{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,22 @@ Global
 		{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}.EIRules_Release|Any CPU.Build.0 = EIRules_Release|Any CPU
 		{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CEBCC42-9C36-44FB-94BB-4C164FF1FE86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}.EIRules_Debug|Any CPU.ActiveCfg = EIRules_Debug|Any CPU
+		{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}.EIRules_Debug|Any CPU.Build.0 = EIRules_Debug|Any CPU
+		{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}.EIRules_Release|Any CPU.ActiveCfg = EIRules_Release|Any CPU
+		{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}.EIRules_Release|Any CPU.Build.0 = EIRules_Release|Any CPU
+		{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24C85D7C-A234-4AF6-BAD1-2C7425BA2D5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.EIRules_Debug|Any CPU.ActiveCfg = EIRules_Debug|Any CPU
+		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.EIRules_Debug|Any CPU.Build.0 = EIRules_Debug|Any CPU
+		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.EIRules_Release|Any CPU.ActiveCfg = EIRules_Release|Any CPU
+		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.EIRules_Release|Any CPU.Build.0 = EIRules_Release|Any CPU
+		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
