@@ -1,0 +1,6 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. FunDeclare.
+       PROCEDURE DIVISION.
+           move a to move
+       
+       END PROGRAM FunDeclare.

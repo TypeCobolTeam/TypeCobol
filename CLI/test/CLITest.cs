@@ -20,6 +20,12 @@ namespace CLI.Test
         }
 
         [TestMethod]
+        [Ignore]
+        public void TestExecToStep_1() {
+            CLITestHelper.Test("execToStep_1");
+        }
+
+        [TestMethod]
         public void TestGenerate_1() {
             CLITestHelper.Test("generate_1");
         }
