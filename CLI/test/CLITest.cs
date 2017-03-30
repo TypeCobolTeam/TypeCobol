@@ -117,9 +117,9 @@ namespace CLI.Test
                 throw new InvalidOperationException();
             }
             for (int i = 0; i < commonTargetFiles.Count; i++) {
-                string targetFileContent = File.ReadAllText(commonTargetFiles[i].FullName);
-                string actualFileContent = File.ReadAllText(commonActualFiles[i].FullName);
-                if (targetFileContent != actualFileContent) {
+                var targetFileContent = File.ReadAllLines(commonTargetFiles[i].FullName);
+                var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
+                if (!targetFileContent.SequenceEqual(actualFileContent)) {
                     Console.WriteLine("File not equals: " + commonTargetFiles[i]);
                     dirIdentical = false;
                 }
