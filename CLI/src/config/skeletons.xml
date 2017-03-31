@@ -233,7 +233,7 @@
         }
         @clause
       </pattern>
-      <pattern location="program.end" action="create"  boolean_property="imports.IsNotEmpty">
+      <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>
