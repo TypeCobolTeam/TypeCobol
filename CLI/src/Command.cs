@@ -45,7 +45,7 @@ namespace TypeCobol.Server
 
         public override void execute(NamedPipeServerStream pipe) {
             string path = Deserializer.Deserialize(Input);
-            Parser.Init(path);
+            Parser.Init(path, new Compiler.Directives.TypeCobolOptions { ExecToStep = ProcessingStep.Generate });
             SerializeReturnCode(0);
         }
     }

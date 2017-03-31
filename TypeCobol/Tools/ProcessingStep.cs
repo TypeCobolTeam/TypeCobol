@@ -11,6 +11,7 @@ namespace TypeCobol
         Scanner = 0,
         Preprocessor,
         SyntaxCheck,
-        SemanticCheck
+        SemanticCheck,
+        Generate
     }
 }

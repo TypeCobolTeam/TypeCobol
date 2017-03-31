@@ -21,13 +21,12 @@ namespace TypeCobol.Server {
     public class Config
     {
         public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
-        public bool Codegen = false;
         public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
         public List<string> CopyFolders = new List<string>();
         public List<string> InputFiles = new List<string>();
         public List<string> OutputFiles = new List<string>();
-        public ProcessingStep ProcessingStep = ProcessingStep.SemanticCheck; //Default value is SemanticCheck
+        public ProcessingStep ProcessingStep = ProcessingStep.Generate; //Default value is Generate
         public string ErrorFile = null;
         public string skeletonPath = "";
         public bool IsErrorXML
@@ -74,12 +73,11 @@ namespace TypeCobol.Server {
 				{ "1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v!=null) },
 				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => config.InputFiles.Add(v) },
 				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", v => config.OutputFiles.Add(v) },
-				{ "g|generate",  "If present, this option generates code corresponding to each input file parsed.", v => config.Codegen = (v!=null) },
 				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
 				{ "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
                 { "a|autoremarks=", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = (v!=null) },
-                { "hc|HaltOnMissingCopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
-                { "ets|ExecToStep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3)", v => Enum.TryParse(v.ToString(), true, out config.ProcessingStep) },
+                { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
+                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3)", v => Enum.TryParse(v.ToString(), true, out config.ProcessingStep) },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
 								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -113,9 +111,12 @@ namespace TypeCobol.Server {
 		            Console.WriteLine(PROGVERSION);
 		            return 0;
 		        }
+                if (config.OutputFiles.Count == 0 && config.ProcessingStep >= ProcessingStep.Generate)
+                    config.ProcessingStep = ProcessingStep.SemanticCheck; //If there is no given output file, we can't run generation, fallback to SemanticCheck
+
 		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
 		            return exit(2, "The number of output files must be equal to the number of input files.");
-		        if (config.OutputFiles.Count == 0 && config.Codegen)
+		        if (config.OutputFiles.Count == 0 && config.ProcessingStep >= ProcessingStep.Generate)
                     foreach(var path in config.InputFiles) config.OutputFiles.Add(path+".cee");
 
 		        if (args.Count > 0) pipename = args[0];
@@ -154,6 +155,7 @@ namespace TypeCobol.Server {
                         namedPipeClient.ReadByte();
                     }
 				}
+                
                 //option -1
                 else if (once) {
                     CLI.runOnce(config);

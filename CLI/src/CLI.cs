@@ -5,6 +5,7 @@ using System.IO;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Server
@@ -52,11 +53,23 @@ namespace TypeCobol.Server
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
-				try { parser.Init(path, config.Format, config.CopyFolders, config.AutoRemarks, config.HaltOnMissingCopyFilePath); }
-				catch(Exception ex) {
-					Server.AddError(errorWriter, MessageCode.ParserInit, ex.Message, path);
-					continue;
-				}
+                try
+                {
+
+                    var typeCobolOptions = new TypeCobolOptions
+                                            {
+                                                HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
+                                                ExecToStep = config.ProcessingStep,
+                                            };
+#if EUROINFO_RULES
+                    typeCobolOptions.AutoRemarksEnable = config.AutoRemarks;
+#endif
+                    parser.Init(path, typeCobolOptions, config.Format, config.CopyFolders);
+                }
+                catch (Exception ex) {
+                    Server.AddError(errorWriter, MessageCode.ParserInit, ex.Message, path);
+                    continue;
+                }
 				parser.Parse(path);
 
 
@@ -70,16 +83,14 @@ namespace TypeCobol.Server
 			        }
 			    }
 
-                if (parser.Results.CodeElementsDocumentSnapshot == null)
+                if (parser.Results.CodeElementsDocumentSnapshot == null && config.ProcessingStep > ProcessingStep.Preprocessor)
                 {
-                    if (config.ProcessingStep > ProcessingStep.Preprocessor)
-                        Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has syntactic error(s) preventing codegen (CodeElements).", path);
+                    Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has syntactic error(s) preventing codegen (CodeElements).", path);
                     continue;
                 }
-                else if (parser.Results.ProgramClassDocumentSnapshot == null)
+                else if (parser.Results.ProgramClassDocumentSnapshot == null && config.ProcessingStep > ProcessingStep.SyntaxCheck)
                 {
-                    if (config.ProcessingStep > ProcessingStep.SyntaxCheck)
-                        Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path);
+                    Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path);
                     continue;
                 }
 
@@ -87,7 +98,8 @@ namespace TypeCobol.Server
 			    int errors = allDiags.Count;
 				errorWriter.AddErrors(path, allDiags);
 
-				if (config.Codegen && errors == 0) {
+				if (config.ProcessingStep >= ProcessingStep.Generate && errors == 0)
+                {
 					var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
 					var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
 					var program = parser.Results.ProgramClassDocumentSnapshot.Program;
@@ -118,7 +130,7 @@ namespace TypeCobol.Server
 
 			foreach(string path in copies) {
 			    try {
-			        parser.Init(path, copyDocumentFormat);
+			        parser.Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.Preprocessor}, copyDocumentFormat);
 			        parser.Parse(path);
                      
 			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {

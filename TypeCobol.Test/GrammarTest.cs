@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Test {
 
@@ -60,7 +61,7 @@ namespace TypeCobol.Test {
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
                 var document = new Parser();
-                document.Init(path, format, copiesFolder);
+                document.Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.SemanticCheck }, format, copiesFolder);
                 document.Parse(path);
                 
 

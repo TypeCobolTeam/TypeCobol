@@ -37,19 +37,13 @@ namespace TypeCobol
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect
 		}
 
-		public void Init([NotNull] string path,  DocumentFormat format = null, IList<string> copies = null, bool autoRemarks = false, string haltOnMissingCopyFilePath = null, ProcessingStep processingStep = ProcessingStep.SemanticCheck) {
+		public void Init([NotNull] string path, TypeCobolOptions options, DocumentFormat format = null, IList<string> copies = null) {
 			FileCompiler compiler;
 			if (Compilers.TryGetValue(path, out compiler)) return;
 			string filename = Path.GetFileName(path);
 			var root = new DirectoryInfo(Directory.GetParent(path).FullName);
 			if (format == null) format = GetFormat(path);
-            TypeCobolOptions options = new TypeCobolOptions();
-            options.HaltOnMissingCopy = (haltOnMissingCopyFilePath != null);
-            options.ExecToStep = processingStep;
-
-#if EUROINFO_RULES
-            options.AutoRemarksEnable = autoRemarks;
-#endif
+            
             CompilationProject project = new CompilationProject(path, root.FullName, Extensions,
 				format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
 			//Add copy folder into sourceFileProvider
@@ -71,7 +65,7 @@ namespace TypeCobol
 			//This is useful when debugging. Perhaps it'll be deleted at the end
 			if (!Compilers.ContainsKey(path))
 			{
-				Init(path);
+				Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.Generate});
 			}
 			Compiler = Compilers[path];
 
@@ -151,8 +145,13 @@ namespace TypeCobol
 
 		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false) {
 			var parser = new Parser();
-			parser.Init(path, format, null, autoRemarks);
-			parser.Parse(path);
+            var typeCobolOption = new TypeCobolOptions { ExecToStep = ProcessingStep.Generate };
+#if EUROINFO_RULES
+            typeCobolOption.AutoRemarksEnable = autoRemarks;
+#endif
+            parser.Init(path, typeCobolOption, format);
+
+            parser.Parse(path);
 			return parser;
 		}
 	}

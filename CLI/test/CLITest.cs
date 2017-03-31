@@ -20,7 +20,6 @@ namespace CLI.Test
         }
 
         [TestMethod]
-        [Ignore]
         public void TestExecToStep_1() {
             CLITestHelper.Test("execToStep_1");
         }
@@ -38,6 +37,11 @@ namespace CLI.Test
             CLITestHelper.Test("dependencies_3");
         }
 
+        [TestMethod]
+        public void TestHaltOnMissingCopy_1()
+        {
+            CLITestHelper.Test("haltOnMissingCopy_1");
+        }
 
     }
 
