@@ -1,0 +1,98 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM2.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+      *01  somedate     TYPE Date.
+       01 somedate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                                  
+       01  message      PIC X(80).
+       01  TC-MyIntrin-FctList-Loaded PIC X(02) EXTERNAL.
+           88 TC-MyIntrin-FctList-IsLoaded      VALUE 'OK'.
+      *MyIntrin::dump
+        01 TC-MyIntrin-dfdc288f PROCEDURE-POINTER EXTERNAL.
+       01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
+           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
+      *Callee::MyPublicProcedure
+        01 TC-Callee-XXXXXXXX PROCEDURE-POINTER EXTERNAL.
+
+
+       PROCEDURE DIVISION.
+
+      *declare procedure check private
+      *   input mydate        TYPE Date.
+
+
+       TRAITEMENT.
+      *
+           PERFORM TC-Initializations
+
+                  
+      * __________________________________________________
+      * OK public procedure declared in "dependencies" file
+      *    CALL Callee::MyPublicProcedure
+      *             INPUT      somedate
+	       CALL TC-Callee-XXXXXXXX USING
+                                 somedate
+           end-call
+      * __________________________________________________
+      *procedure declared in this program
+      *    CALL PGM2::check INPUT      somedate
+           CALL 'c5ff0cee' USING
+                                 somedate
+           end-call
+                                               
+
+      *procedure declared in this program
+      *   CALL check         INPUT      somedate
+          CALL 'c5ff0cee' USING
+                                 somedate
+           end-call
+                                                
+
+      * __________________________________________________
+      *procedure declared as intrinsic in MyIntrinsicFunctions
+      *   call dump input message
+          CALL TC-MyIntrinsicFunctions-dfdc288f USING
+                                 message
+           end-call
+                                 
+      
+      *procedure declared as intrinsic in MyIntrinsicFunctions
+      *   call MyIntrinsicFunctions::dump input message
+          CALL TC-MyIntrinsicFunctions-dfdc288f USING
+                                 message
+           end-call
+                                                       
+        .
+      *=================================================================
+        TC-Initializations.
+      *=================================================================
+            IF NOT TC-MyIntrin-FctList-IsLoaded
+                CALL 'ZCALLPGM' USING 'MyIntrin'
+            END-IF
+            .
+
+       END PROGRAM PGM2.
+
+      *
+      *declare procedure check private
+      *   input mydate        TYPE Date.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c5ff0cee.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 mydate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate
+           .
+           CONTINUE.
+       END PROGRAM c5ff0cee.

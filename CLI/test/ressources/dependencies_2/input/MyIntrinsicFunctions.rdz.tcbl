@@ -1,0 +1,11 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyIntrinsicFunctions.
+       PROCEDURE DIVISION.
+       
+       declare procedure dump public
+          input message pic X(80)
+         .
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       END PROGRAM Callee.

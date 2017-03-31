@@ -32,8 +32,10 @@ namespace CLI.Test
 
         [TestMethod]
         [Ignore]
-        public void TestDependencies_1() {
+        public void TestDependencies() {
             CLITestHelper.Test("dependencies_1");
+            CLITestHelper.Test("dependencies_2");
+            CLITestHelper.Test("dependencies_3");
         }
 
 
