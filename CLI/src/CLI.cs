@@ -130,7 +130,7 @@ namespace TypeCobol.Server
 
 			foreach(string path in copies) {
 			    try {
-			        parser.Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.Preprocessor}, copyDocumentFormat);
+			        parser.Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.SemanticCheck}, copyDocumentFormat);
 			        parser.Parse(path);
                      
 			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {
