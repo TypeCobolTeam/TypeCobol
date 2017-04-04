@@ -50,6 +50,7 @@ namespace TypeCobol.Server
 
 			var parser = new Parser();
 			parser.CustomSymbols = LoadCopies(errorWriter, config.Copies, config.Format);
+            parser.CustomSymbols = LoadDependencies(errorWriter, config.Dependencies, config.Format, parser.CustomSymbols);
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
@@ -157,6 +158,53 @@ namespace TypeCobol.Server
 			    }
 			}
 			return table;
+        }
+
+        /// <summary>
+        /// LoadCopies method.
+        /// </summary>
+        /// <param name="writer">AbstractErrorWriter</param>
+        /// <param name="paths">List<string></param>
+        /// <param name="copyDocumentFormat">DocumentFormat</param>
+        /// <returns>SymbolTable</returns>
+        private static SymbolTable LoadDependencies(AbstractErrorWriter writer, List<string> paths, DocumentFormat format, SymbolTable intrinsicTable)
+        {
+            var parser = new Parser();
+            var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
+
+            var dependencies = new List<string>();
+            foreach (var path in paths)
+            {
+                dependencies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false)); //Get FIle by name or search the directory for all files
+            }
+
+            foreach (string path in dependencies)
+            {
+                try
+                {
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.SemanticCheck }, format);
+                    parser.Parse(path); //Parse the dependencie file
+
+                    foreach (var diagnostic in parser.Results.AllDiagnostics())
+                    {
+                        Server.AddError(writer, MessageCode.DependenciesLoading,
+                            diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
+                            "Error during parsing of " + path + ": " + diagnostic, path);
+                    }
+                    if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
+                    {
+                        Server.AddError(writer, MessageCode.DependenciesLoading, "Error: Your dependency file is not included into a program.", path);
+                        continue;
+                    }
+
+                    table.AddProgram(parser.Results.ProgramClassDocumentSnapshot.Program); //Add program to Namespace symbol table
+                }
+                catch (Exception e)
+                {
+                    Server.AddError(writer, MessageCode.DependenciesLoading, e.Message + "\n" + e.StackTrace, path);
+                }
+            }
+            return table;
         }
 
         /// <summary>

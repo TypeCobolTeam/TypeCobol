@@ -42,5 +42,6 @@ namespace TypeCobol.Compiler.Diagnostics
         TypeCobolParserLimitation = 32,
         ParserInit = 33,
         IntrinsicLoading = 34,
+        DependenciesLoading = 35,
     }
 }

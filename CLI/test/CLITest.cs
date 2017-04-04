@@ -30,7 +30,7 @@ namespace CLI.Test
         }
 
         [TestMethod]
-        [Ignore]
+       
         public void TestDependencies() {
             CLITestHelper.Test("dependencies_1");
             CLITestHelper.Test("dependencies_2");

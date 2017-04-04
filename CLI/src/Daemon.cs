@@ -34,6 +34,7 @@ namespace TypeCobol.Server {
             get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
         }
         public List<string> Copies = new List<string>();
+        public List<string> Dependencies = new List<string>();
 
         public string EncFormat = null;
     }
@@ -51,15 +52,15 @@ namespace TypeCobol.Server {
 			var config = new Config();
 			var pipename = "TypeCobol.Server";
 
-            var p = new OptionSet () {
-				"USAGE",
-				"  "+PROGNAME+" [OPTIONS]... [PIPENAME]",
-				"",
-				"VERSION:",
-				"  "+PROGVERSION,
-				"", 
-				"DESCRIPTION:",
-				"  Run the TypeCobol parser server.",
+            var p = new OptionSet() {
+                "USAGE",
+                "  "+PROGNAME+" [OPTIONS]... [PIPENAME]",
+                "",
+                "VERSION:",
+                "  "+PROGVERSION,
+                "",
+                "DESCRIPTION:",
+                "  Run the TypeCobol parser server.",
                 { "k|startServer:", "Start the server if not already started, and executes commandline.\n" +
                                     "By default the server is started in window mode\n" +
                                     "'{hidden}' hide the window.", v =>
@@ -70,24 +71,25 @@ namespace TypeCobol.Server {
                         startClient = StartClient.NormalWindow;
                     }
                 }  },
-				{ "1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v!=null) },
-				{ "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => config.InputFiles.Add(v) },
-				{ "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", v => config.OutputFiles.Add(v) },
-				{ "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
-				{ "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
+                { "1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v!=null) },
+                { "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => config.InputFiles.Add(v) },
+                { "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", v => config.OutputFiles.Add(v) },
+                { "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
+                { "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
                 { "a|autoremarks=", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = (v!=null) },
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
                 { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3)", v => Enum.TryParse(v.ToString(), true, out config.ProcessingStep) },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
-								+"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
-								v => config.Format = CLI.CreateFormat(v, ref config)
-				},
-				{ "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => config.Copies.Add(v) },
-				{ "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => config.CopyFolders.Add(v) },
-				{ "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
+                                +"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
+                                v => config.Format = CLI.CreateFormat(v, ref config)
+                },
+                { "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => config.Copies.Add(v) },
+                { "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => config.CopyFolders.Add(v) },
+                { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => config.Dependencies.Add(v) },
+                { "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
-			};
+            };
 
       
             //Add DefaultCopies to running session

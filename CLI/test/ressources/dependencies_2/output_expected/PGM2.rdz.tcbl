@@ -11,14 +11,14 @@
            02 DD PIC 9(2).
                                   
        01  message      PIC X(80).
+       01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
+           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
+      *Callee::MyPublicProcedure
+        01 TC-Callee-bbaa0eac PROCEDURE-POINTER EXTERNAL.
        01  TC-MyIntrin-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-MyIntrin-FctList-IsLoaded      VALUE 'OK'.
       *MyIntrin::dump
         01 TC-MyIntrin-dfdc288f PROCEDURE-POINTER EXTERNAL.
-       01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
-           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
-      *Callee::MyPublicProcedure
-        01 TC-Callee-XXXXXXXX PROCEDURE-POINTER EXTERNAL.
 
 
        PROCEDURE DIVISION.
@@ -36,20 +36,22 @@
       * OK public procedure declared in "dependencies" file
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate
-	       CALL TC-Callee-XXXXXXXX USING
+           CALL TC-Callee-bbaa0eac USING
                                  somedate
            end-call
+                                       
+	   
       * __________________________________________________
       *procedure declared in this program
       *    CALL PGM2::check INPUT      somedate
-           CALL 'c5ff0cee' USING
+           CALL 'fc73115a' USING
                                  somedate
            end-call
                                                
 
       *procedure declared in this program
       *   CALL check         INPUT      somedate
-          CALL 'c5ff0cee' USING
+          CALL 'fc73115a' USING
                                  somedate
            end-call
                                                 
@@ -72,6 +74,9 @@
       *=================================================================
         TC-Initializations.
       *=================================================================
+            IF NOT TC-Callee-FctList-IsLoaded
+                CALL 'ZCALLPGM' USING 'Callee'
+            END-IF
             IF NOT TC-MyIntrin-FctList-IsLoaded
                 CALL 'ZCALLPGM' USING 'MyIntrin'
             END-IF
@@ -84,7 +89,7 @@
       *   input mydate        TYPE Date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c5ff0cee.
+       PROGRAM-ID. fc73115a.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -95,4 +100,4 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM c5ff0cee.
+       END PROGRAM fc73115a.

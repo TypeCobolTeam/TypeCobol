@@ -47,20 +47,42 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (value != null)
                 {
-                    foreach (var values in value.DataEntries.Values)
+                    SymbolTable intrinsicTable = value;
+                    SymbolTable nameSpaceTable = null;
+
+                    while (intrinsicTable.CurrentScope != SymbolTable.Scope.Intrinsic) //Make sure we are on the Intrinsic Scope. If we pass throw NameSpaceTable save it. 
+                    {
+                        if (intrinsicTable.CurrentScope == SymbolTable.Scope.Namespace)
+                            nameSpaceTable = intrinsicTable;
+
+                        intrinsicTable = intrinsicTable.EnclosingScope;
+                    }
+
+                    foreach (var values in intrinsicTable.DataEntries.Values)
                         foreach (var data in values)
                             TableOfIntrisic.AddVariable(data);
-                    foreach (var types in value.Types)
+                    foreach (var types in intrinsicTable.Types)
                         foreach (var type in types.Value)
                             TableOfIntrisic.AddType(type);
-                    foreach (var functions in value.Functions)
+                    foreach (var functions in intrinsicTable.Functions)
                         foreach (var function in functions.Value)
                             if (((FunctionDeclarationHeader)function.CodeElement).Visibility == AccessModifier.Public)
                                 TableOfIntrisic.AddFunction(function);
+
+
+                    if(nameSpaceTable != null)
+                    {
+                        TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace); //Set TableOfNamespace with program if dependencies were given. (See CLI.cs runOnce2() LoadDependencies())
+
+                        foreach (var values in nameSpaceTable.Programs.Values)
+                            foreach (var program in values)
+                                TableOfNamespaces.AddProgram(program);
+                    }
+                   
                 }
                 // TODO#249: use a COPY for these
                 foreach (var type in DataType.BuiltInCustomTypes)
-                    TableOfIntrisic.AddType(DataType.CreateBuiltIn(type));
+                    TableOfIntrisic.AddType(DataType.CreateBuiltIn(type)); //Add default TypeCobol types BOOLEAN and DATE
             }
         }
 
@@ -125,7 +147,9 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public override void EnterCobolCompilationUnit(ProgramClassParser.CobolCompilationUnitContext context)
         {
-            TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace);
+            if(TableOfNamespaces == null)
+                TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace);
+
             TableOfGlobals = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.Global);
             Program = null;
             Class = null;
