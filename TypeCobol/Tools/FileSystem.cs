@@ -18,11 +18,11 @@ public static class FileSystem {
 		} else
 		if (Directory.Exists(path)) {
 			var option = recursive? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-			if (patterns == null) {
-				results.AddRange(Directory.EnumerateFiles(path, "*", option));
-			} else
-			foreach(var pattern in patterns) {
-				results.AddRange(Directory.EnumerateFiles(path, pattern, option));
+                if (patterns == null) {
+                    results.AddRange(Directory.EnumerateFiles(path, "*", option));
+                } else
+                    foreach (var pattern in patterns) {
+				results.AddRange(Directory.EnumerateFiles(path, pattern[0] != '*' ? "*"+pattern : pattern, option));
 			}
 		}
 		return results;
