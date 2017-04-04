@@ -1,11 +1,13 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
+      *
       *REMARKS. COPY=(
       *        MyCOPY2
       *        YCCTEXT
       *        YCCTEX2
       *        YCCTEX3
       *        ).
+                 
        DATA DIVISION.
        working-storage section.
        01 CCTEXT. COPY YCCTEXT.

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
@@ -41,6 +42,9 @@ namespace TypeCobol.Codegen.Actions
 
         public void Execute()
         {
+            if ((Source as Program).IsNested)
+                return; //We dont have to care about nested program. It prevents from generating REMARKS directive multiple times
+
             //Get tokensLine
             var tokensLines = (CompilationDocument.CobolTextLines as IReadOnlyList<Compiler.Scanner.TokensLine>);
 
@@ -81,7 +85,7 @@ namespace TypeCobol.Codegen.Actions
                 get
                 {
                     var lines = new List<ITextLine>();
-                    lines.Add(new TextLineSnapshot(-1, "", null)); //Add first blank line because CodeGen doesn't handle generated comment line.
+                    lines.Add(new TextLineSnapshot(-1, "", null)); //Add first blank line because CodeGen doesn't handle generating comment line.
                     lines.Add(new TextLineSnapshot(-1, "*REMARKS. COPY=(", null));
                     foreach (var copy in Copys)
                     {
