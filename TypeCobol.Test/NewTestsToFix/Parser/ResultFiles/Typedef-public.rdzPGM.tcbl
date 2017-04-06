@@ -1,0 +1,126 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+      
+       DATA DIVISION.      
+       WORKING-STORAGE SECTION.
+      
+       01 Vect2 TYPEDEF strict public.
+        11 Coord2d.
+          15 X PIC 9.
+          12 Y PIC 9.
+        05 Coord3d.
+          10 Z PIC 9.
+       01 Point.
+        05 Position2d TYPE Vect2.
+        05 Movment2d.
+          14 Accel2d  TYPE Vect2.
+          10 Speed2d  TYPE Vect2.
+      
+      *OK: type must be case insensitive
+       01 Point type VECT2.
+       01 Point type VeCt2.
+       01 Point TYPE VECT2.
+       01 Point type VECT2.
+       01 Point tYpE VEcT2.
+       01 Point typE vECT2.
+       01 Point2 type vect2.
+       01 Point3 type vect2.
+
+       01 Person typedef public.
+          05 LastName  pic X(80).
+          05 FirstName pic X(80).
+
+      *KO: Type Person is already defined
+       01 Person typedef.
+          05 LastName  pic X(80).
+          05 FirstName pic X(80).
+
+      *OK
+       01 PersonWeak typedef public.
+          05 LastName  pic X(80).
+          05 FirstName pic X(80).
+      *OK
+       01 PersonStrict typedef strict public.
+          05 LastName  pic X(80).
+          05 FirstName pic X(80).
+
+      *OK
+       01 PersonStrong typedef strong public.
+          05 LastName  pic X(80).
+          05 FirstName pic X(80).
+
+       01 personW1  type PersonWeak.
+       01 personW2  type PersonWeak.
+       01 personSi1 type PersonStrict.
+       01 personSi2 type PersonStrict.
+       01 personSo1 type PersonStrong.
+       01 personSo2 type PersonStrong.
+
+      *TYPEDEF private
+      *OK
+       01 AddressWeak typedef.
+          05 address  pic X(80).
+      *OK
+       01 address typedef strict.
+          05 LastName  pic X(80).
+      *OK
+       01 AddressStrong typedef strong.
+          05 address  pic X(80).
+
+      *OK
+       01 address1  type AddressWeak.
+       01 address2  type AddressStrict.
+       01 address3  type AddressStrong.
+
+
+       PROCEDURE DIVISION.
+           move X OF Coord2d OF Accel2d OF Movment2d OF Point 
+           TO X OF Coord2d OF Speed2d OF Movment2d OF Point
+           move Y OF Position2d OF Point                      
+           TO Z OF Position2d OF Point
+           move Z In Accel2d OF Point                         
+           TO Y of Speed2d In Point
+      *OK
+           move personW1 to personW2
+           move personSi1 to personSi2
+           move personSo1 to personSo2
+    
+      *OK same type
+           move Point2 to Point3
+      *OK same type
+           move Point3 to Point2
+           .
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM2.
+       DATA DIVISION.      
+       WORKING-STORAGE SECTION.
+      *OK : use type defined in PGM1 as public
+       01 personW1  type PGM1::PersonWeak.
+       01 personW2  type PGM1::PersonWeak.
+       01 personSi1 type PGM1::PersonStrict.
+       01 personSi2 type PGM1::PersonStrict.
+       01 personSo1 type PGM1::PersonStrong.
+       01 personSo2 type PGM1::PersonStrong.
+
+      *KO type is not defined in this program
+       01 personW11  type PersonWeak.
+       01 personW21  type PersonWeak.
+       01 personSi11 type PersonStrict.
+       01 personSi21 type PersonStrict.
+       01 personSo11 type PersonStrong.
+       01 personSo21 type PersonStrong.
+   
+      *KO types Address* are not defined as public
+       01 address1  type PGM1::AddressWeak.
+       01 address2  type PGM1::AddressStrict.
+       01 address3  type PGM1::AddressStrong.
+
+
+       PROCEDURE DIVISION.
+           move personW1 to personW2
+           move personSi1 to personSi2
+           move personSo1 to personSo2
+           .
+       END PROGRAM PGM2.
+
+       END PROGRAM PGM1.
