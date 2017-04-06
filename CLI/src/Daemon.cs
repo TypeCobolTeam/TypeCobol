@@ -118,8 +118,6 @@ namespace TypeCobol.Server {
 
 		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
 		            return exit(2, "The number of output files must be equal to the number of input files.");
-		        if (config.OutputFiles.Count == 0 && config.ProcessingStep >= ProcessingStep.Generate)
-                    foreach(var path in config.InputFiles) config.OutputFiles.Add(path+".cee");
 
 		        if (args.Count > 0) pipename = args[0];
 
