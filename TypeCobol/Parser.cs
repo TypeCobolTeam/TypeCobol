@@ -11,18 +11,19 @@ using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol
 {
 	public class Parser
 	{
-		public IObserver<TypeCobol.Compiler.Parser.CodeElementChangedEvent> Observer { get; private set; }
+		public IObserver<CodeElementChangedEvent> Observer { get; private set; }
 	    public List<string> MissingCopys { get; set; }
         protected Dictionary<string,bool> Inits;
         protected Dictionary<string,FileCompiler> Compilers;
         protected FileCompiler Compiler = null;
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
-		public TypeCobol.Compiler.CodeModel.SymbolTable CustomSymbols = null;
+		public SymbolTable CustomSymbols = null;
 
 		public string[] Extensions = { ".tcbl", ".cbl", ".cpy" };
 		public string[] CopyExtensions = { ".cpy" };
@@ -32,6 +33,11 @@ namespace TypeCobol
 			Inits = new Dictionary<string,bool>();
 			Compilers = new Dictionary<string,FileCompiler>();
 		}
+
+        public Parser(SymbolTable custmSymbols) :this()
+        {
+            CustomSymbols = custmSymbols;
+        }
 
 		private static DocumentFormat GetFormat(string filename) {
 			return DocumentFormat.FreeUTF8Format;//TODO autodetect

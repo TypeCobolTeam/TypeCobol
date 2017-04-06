@@ -11,10 +11,20 @@
            02 DD PIC 9(2).
                                   
        01  message      PIC X(80).
+      *01  vect2        TYPE Vect2.
+       01 vect2.
+           02 Coord2d PIC .
+             03 X PIC 9.
+             03 Y PIC 9.
+           02 Coord3d PIC .
+             03 Z PIC 9.
+                                   
        01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::MyPublicProcedure
         01 TC-Callee-bbaa0eac PROCEDURE-POINTER EXTERNAL.
+      *Callee::MySecondPublicProcedure
+        01 TC-Callee-b63277d0 PROCEDURE-POINTER EXTERNAL.
        01  TC-MyIntrin-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-MyIntrin-FctList-IsLoaded      VALUE 'OK'.
       *MyIntrin::dump
@@ -33,14 +43,20 @@
 
                   
       * __________________________________________________
-      * OK public procedure declared in "dependencies" file
+      * OK public procedures declared in "dependencies" file
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate
            CALL TC-Callee-bbaa0eac USING
                                  somedate
            end-call
                                        
-	   
+
+      *    CALL Callee::MySecondPublicProcedure
+      *             INPUT      vect2
+           CALL TC-Callee-b63277d0 USING
+                                 vect2
+           end-call
+                                       
       * __________________________________________________
       *procedure declared in this program
       *    CALL PGM2::check INPUT      somedate

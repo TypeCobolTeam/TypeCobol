@@ -6,6 +6,7 @@
 
        01  somedate     TYPE Date.
        01  message      PIC X(80).
+       01  vect2        TYPE Vect2.
 
        PROCEDURE DIVISION.
 
@@ -18,10 +19,12 @@
 
        TRAITEMENT.
       * __________________________________________________
-      * OK public procedure declared in "dependencies" file
+      * OK public procedures declared in "dependencies" file
            CALL Callee::MyPublicProcedure
                     INPUT      somedate
-	   
+
+           CALL Callee::MySecondPublicProcedure
+                    INPUT      vect2   
       * __________________________________________________
       *procedure declared in this program
            CALL PGM2::check INPUT      somedate

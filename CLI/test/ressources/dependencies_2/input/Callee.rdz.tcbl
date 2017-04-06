@@ -9,4 +9,11 @@
          PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.
+
+       DECLARE PROCEDURE MySecondPublicProcedure PUBLIC
+           INPUT vect2        TYPE Vect2
+         .
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
        END PROGRAM Callee.

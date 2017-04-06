@@ -49,8 +49,8 @@ namespace TypeCobol.Server
 			errorWriter.Outputs = config.OutputFiles;
 
 			var parser = new Parser();
-			parser.CustomSymbols = LoadCopies(errorWriter, config.Copies, config.Format);
-            parser.CustomSymbols = LoadDependencies(errorWriter, config.Dependencies, config.Format, parser.CustomSymbols);
+			parser.CustomSymbols = LoadCopies(errorWriter, config.Copies, config.Format); //Load of the intrinsics
+            parser.CustomSymbols = LoadDependencies(errorWriter, config.Dependencies, config.Format, parser.CustomSymbols); //Load of the dependency files
 
 			for(int c=0; c<config.InputFiles.Count; c++) {
 				string path = config.InputFiles[c];
@@ -169,7 +169,7 @@ namespace TypeCobol.Server
         /// <returns>SymbolTable</returns>
         private static SymbolTable LoadDependencies(AbstractErrorWriter writer, List<string> paths, DocumentFormat format, SymbolTable intrinsicTable)
         {
-            var parser = new Parser();
+            var parser = new Parser(intrinsicTable);
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
