@@ -67,6 +67,7 @@ namespace TypeCobol.Server.Serialization
             msgpack.ForcePathObject("EncFormat").AsString = string.IsNullOrEmpty(data.EncFormat) ? string.Empty : data.EncFormat;
             msgpack.ForcePathObject("HaltOnMissingCopyFilePath").AsString = string.IsNullOrEmpty(data.HaltOnMissingCopyFilePath) ? string.Empty : data.HaltOnMissingCopyFilePath;
             msgpack.ForcePathObject("AutoRmarks").AsString = Convert.ToString(data.AutoRemarks);
+            
 
 
 
@@ -114,6 +115,17 @@ namespace TypeCobol.Server.Serialization
                     child.ForcePathObject("Copy").AsString = copy;
                 }
             }
+
+
+            item = msgpack.ForcePathObject("Dependencies");
+            if (data.Dependencies != null)
+            {
+                foreach (string dependecy in data.Dependencies)
+                {
+                    var child = item.AddArrayChild();
+                    child.ForcePathObject("Dependency").AsString = dependecy;
+                }
+            }
         }
         internal static Config Decode(MsgPack msgpack)
         {
@@ -152,6 +164,12 @@ namespace TypeCobol.Server.Serialization
                 Copies.Add(item.ForcePathObject("Copy").AsString);
             }
             config.Copies = Copies;
+            var dependencies = new List<string>();
+            foreach (MsgPack item in msgpack.ForcePathObject("Dependencies"))
+            {
+                dependencies.Add(item.ForcePathObject("Dependency").AsString);
+            }
+            config.Dependencies = dependencies;
 
             return config;
         }
