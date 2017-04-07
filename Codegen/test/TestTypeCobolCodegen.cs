@@ -67,7 +67,10 @@ namespace TypeCobol.Codegen {
 			Assert.AreEqual(skeletons[2].Patterns.Count, 1);
 
 			CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl", skeletons);
-		}
+
+            file = Path.Combine("TypeCobol", "Types2");
+            //CodegenTestUtils.ParseGenerateCompare(file + ".rdz.cbl", skeletons);
+        }
 
 		[TestMethod]
 		[TestCategory("Codegen")]
