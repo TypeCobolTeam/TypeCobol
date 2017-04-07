@@ -102,7 +102,7 @@ namespace TypeCobol.Server {
 
 		            args = p.Parse(argv);
 		        } catch (OptionException ex) {
-                    return exit(1, ex.Message);
+                    return exit((int)ReturnCode.FatalError, ex.Message);
 		        }
 
 		        if (help) {
@@ -117,7 +117,7 @@ namespace TypeCobol.Server {
                     config.ProcessingStep = ProcessingStep.SemanticCheck; //If there is no given output file, we can't run generation, fallback to SemanticCheck
 
 		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
-		            return exit(2, "The number of output files must be equal to the number of input files.");
+		            return exit((int)ReturnCode.OutputFileError, "The number of output files must be equal to the number of input files.");
 
 		        if (args.Count > 0) pipename = args[0];
 
@@ -158,15 +158,17 @@ namespace TypeCobol.Server {
                 
                 //option -1
                 else if (once) {
-                    CLI.runOnce(config);
+                    var returnCode = CLI.runOnce(config);
+                    if (returnCode != ReturnCode.Success)
+                        return exit((int)returnCode, "Parsing Failled");
                 } else {
                     runServer(pipename);
                 }
 			}
             catch (Exception e) {
-                return exit(1, e.Message);
+                return exit((int)ReturnCode.FatalError, e.Message);
 			}
-            return 0;
+            return exit((int)ReturnCode.Success, "Success");
 		}
 
         /// <summary>
@@ -199,7 +201,7 @@ namespace TypeCobol.Server {
                 : (path != null ? new object[1] { path } : new object[0]));
             diag.Message = message;
             writer.AddErrors(path, diag);
-            Console.WriteLine(diag.Message);
+            Console.WriteLine(string.Format("Code : {0} - Message : {1}", messageCode , message));
 		}
 
         private static void runServer(string pipename) {
@@ -252,4 +254,12 @@ namespace TypeCobol.Server {
 		}
 
 	}
+
+    public enum ReturnCode
+    {
+        Success = 0,
+        FatalError = 1, 
+        OutputFileError = 2,
+        ParsingError = 3,
+    }
 }

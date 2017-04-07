@@ -166,7 +166,7 @@ public class ConsoleWriter: AbstractErrorWriter {
 		writer.WriteAsync(title);
 		if (errors.Count > 0) {
 			writer.WriteLineAsync("\":");
-			foreach(var e in errors) writer.WriteLineAsync(e.ToString());
+			foreach(var e in errors) writer.WriteLine(e.ToString());
 		} else {
 			writer.WriteLineAsync("\".");
 		}

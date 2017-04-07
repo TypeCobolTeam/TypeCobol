@@ -117,9 +117,9 @@ namespace TypeCobol.Server
             config = configSerializer.Deserialize(originalbuffer);
             config.Format = CLI.CreateFormat(config.EncFormat, ref config);
 
-            CLI.runOnce(config);
+            var retrunCode = CLI.runOnce(config);
             //Write a "reponse" to the client which is waiting
-            pipe.WriteByte(68);
+            pipe.WriteByte((byte)retrunCode);
         }
     }
 }
