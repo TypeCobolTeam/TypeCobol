@@ -284,18 +284,7 @@ class FunctionDeclarationChecker: NodeListener {
         }
 
         var type = parameter.DataType;
-        if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return; //nothing to do, Type exists
-        var found = node.SymbolTable.GetType(type); //Try to find the type in SymbolTable
-        if (found.Count < 1)
-        {
-            string message = string.Format("Parameter '{0}' - TYPE '{1}' is not referenced.", parameter.Name, type.Name);
-            DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-        }
-        else if (found.Count > 1)
-        {
-            string message = string.Format("Parameter '{0}' - Ambiguous reference to TYPE '{1}'.", parameter.Name, type.Name);
-            DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-        }
+        TypeDefinitionHelper.Check(node, type); //Check if the type exists and is not ambiguous
 
         }
 	/// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
