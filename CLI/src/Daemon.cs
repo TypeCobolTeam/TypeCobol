@@ -102,7 +102,7 @@ namespace TypeCobol.Server {
 
 		            args = p.Parse(argv);
 		        } catch (OptionException ex) {
-                    return exit((int)ReturnCode.FatalError, ex.Message);
+                    return exit(ReturnCode.FatalError, ex.Message);
 		        }
 
 		        if (help) {
@@ -117,7 +117,7 @@ namespace TypeCobol.Server {
                     config.ProcessingStep = ProcessingStep.SemanticCheck; //If there is no given output file, we can't run generation, fallback to SemanticCheck
 
 		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
-		            return exit((int)ReturnCode.OutputFileError, "The number of output files must be equal to the number of input files.");
+		            return exit(ReturnCode.OutputFileError, "The number of output files must be equal to the number of input files.");
 
 		        if (args.Count > 0) pipename = args[0];
 
@@ -160,13 +160,13 @@ namespace TypeCobol.Server {
                 else if (once) {
                     var returnCode = CLI.runOnce(config);
                     if (returnCode != ReturnCode.Success)
-                        return exit((int)returnCode, "Parsing Failled");
+                        return exit(returnCode, "Parsing Failled");
                 } else {
                     runServer(pipename);
                 }
 			}
             catch (Exception e) {
-                return exit((int)ReturnCode.FatalError, e.Message);
+                return exit(ReturnCode.FatalError, e.Message);
 			}
             return exit((int)ReturnCode.Success, "Success");
 		}
@@ -246,11 +246,11 @@ namespace TypeCobol.Server {
 			return info.FileVersion;
 		}
 
-		static int exit(int code, string message) {
+		static int exit(ReturnCode code, string message) {
 			string errmsg = PROGNAME+": "+message+"\n";
 			errmsg += "Try "+PROGNAME+" --help for usage information.";
 			Console.WriteLine(errmsg);
-			return code;
+			return (int)code;
 		}
 
 	}

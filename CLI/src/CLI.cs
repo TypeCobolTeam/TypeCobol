@@ -47,7 +47,9 @@ namespace TypeCobol.Server
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
-                Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex, typeCobolException.LineNumber, typeCobolException.Message, typeCobolException.Path);
+                if(typeCobolException.Logged)
+                    Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex, typeCobolException.LineNumber, typeCobolException.Message, typeCobolException.Path);
+
                 return ReturnCode.ParsingError;
             }
             catch (Exception e)//Catch all others exceptions
@@ -131,7 +133,7 @@ namespace TypeCobol.Server
                 errorWriter.AddErrors(path, allDiags); //Write diags into error file
 
                 if (allDiags.Count > 0)
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "Diagostics detected after parsing file : ", path); //Make ParsingException trace back to RunOnce()
+                    throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, false); //Make ParsingException trace back to RunOnce()
 
                 if (config.ProcessingStep >= ProcessingStep.Generate)
                 {
@@ -173,12 +175,12 @@ namespace TypeCobol.Server
                             "Error during parsing of " + path + ": " + diagnostic, path);
                     }
                     if (diagnostics.Count > 0)
-                        throw new CopyLoadingException(MessageCode.IntrinsicLoading, "Diagnostics detected while parsing Intrinsic file", path);
+                        throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", path);
 
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
                     {
-                        throw new CopyLoadingException(MessageCode.IntrinsicLoading, "Error: Your Intrisic types/functions are not included into a program.", path);
+                        throw new CopyLoadingException("Error: Your Intrisic types/functions are not included into a program.", path);
                     }
 
                     var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
@@ -196,7 +198,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception e)
                 {
-                    throw new CopyLoadingException(MessageCode.IntrinsicLoading, e.Message + "\n" + e.StackTrace, path);
+                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path);
                 }
                
             }
@@ -236,11 +238,11 @@ namespace TypeCobol.Server
                             "Error during parsing of " + path + ": " + diagnostic, path);
                     }
                     if (diagnostics.Count > 0)
-                        throw new DepedenciesLoadingException(MessageCode.DependenciesLoading, "Diagnostics detected while parsing dependency file", path);
+                        throw new DepedenciesLoadingException("Diagnostics detected while parsing dependency file", path);
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
                     {
-                        throw new DepedenciesLoadingException(MessageCode.DependenciesLoading, "Error: Your dependency file is not included into a program", path);
+                        throw new DepedenciesLoadingException("Error: Your dependency file is not included into a program", path);
                     }
 
                     table.AddProgram(parser.Results.ProgramClassDocumentSnapshot.Program); //Add program to Namespace symbol table
@@ -251,7 +253,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception e)
                 {
-                    throw new DepedenciesLoadingException(MessageCode.DependenciesLoading, e.Message + "\n" + e.StackTrace, path);
+                    throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path);
                 }
             }
             return table;
