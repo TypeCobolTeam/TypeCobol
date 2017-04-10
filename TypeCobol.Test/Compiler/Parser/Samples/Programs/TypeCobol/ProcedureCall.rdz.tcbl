@@ -175,6 +175,13 @@
       * KO : varD is definied multiple times but always with a signature different to call
            CALL varD
                     INPUT      somedate
+           .
 
+      * KO contains an unknown Type
+       DECLARE PROCEDURE MyProc3 PRIVATE
+          INPUT  mydate        TYPE Date2.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
        .
        END PROGRAM ProcedureCall.

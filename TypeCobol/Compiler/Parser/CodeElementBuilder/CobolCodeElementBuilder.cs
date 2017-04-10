@@ -1274,7 +1274,6 @@ namespace TypeCobol.Compiler.Parser
                 if (entry.UserDefinedDataType != null)
                 {
                     //Note we can't know here, if the type is strongly/strictly typed or not. This must be done during semantic phase (Node)
-                    //use false for "isStrong" and "isStrict", because we must make a choice
                     entry.DataType = DataType.CreateCustom(entry.UserDefinedDataType.Name, RestrictionLevel.WEAK, cobolLanguageLevel: CobolLanguageLevel.Cobol2002);
                 }
                 // [/COBOL 2002]

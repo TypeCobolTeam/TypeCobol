@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 
-		public static DataType CreateCustom(string name, RestrictionLevel restrictionLevel = RestrictionLevel.STRONG, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol85) {
+		public static DataType CreateCustom(string name, RestrictionLevel restrictionLevel = RestrictionLevel.STRONG, CobolLanguageLevel cobolLanguageLevel = CobolLanguageLevel.Cobol2002) {
 			foreach(var builtin in BuiltInCustomTypes)
 				if (builtin.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 					return builtin;
