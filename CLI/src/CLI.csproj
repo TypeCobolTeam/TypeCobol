@@ -81,6 +81,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.cs" />
+    <Compile Include="CustomExceptions\CopyLoadingException.cs" />
+    <Compile Include="CustomExceptions\DepedenciesLoadingException.cs" />
+    <Compile Include="CustomExceptions\GenerateException.cs" />
+    <Compile Include="CustomExceptions\ParsingException.cs" />
+    <Compile Include="CustomExceptions\TypeCobolException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="DefaultCopies\SQLCA.cpy">
