@@ -144,15 +144,16 @@ namespace TypeCobol.Server {
                             
                             namedPipeClient.Connect(1000);
 		                }
+
                         namedPipeClient.WriteByte(68);
-                        
 
                         ConfigSerializer configSerializer = new ConfigSerializer();
                         var configBytes = configSerializer.Serialize(config);
 
                         namedPipeClient.Write(configBytes, 0, configBytes.Length);
                         //Wait for the response "job is done"
-                        namedPipeClient.ReadByte();
+                        var returnCode = namedPipeClient.ReadByte(); //Get running server ReturnCode
+                        return exit((ReturnCode)returnCode, "");
                     }
 				}
                 
@@ -168,6 +169,7 @@ namespace TypeCobol.Server {
             catch (Exception e) {
                 return exit(ReturnCode.FatalError, e.Message);
 			}
+
             return exit((int)ReturnCode.Success, "Success");
 		}
 
