@@ -175,7 +175,7 @@ namespace TypeCobol.Server
             var dependencies = new List<string>();
             foreach (var path in paths)
             {
-                dependencies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false)); //Get FIle by name or search the directory for all files
+                dependencies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, true)); //Get File by name or search the directory for all files
             }
 
             foreach (string path in dependencies)
