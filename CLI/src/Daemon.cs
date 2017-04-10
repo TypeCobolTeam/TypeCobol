@@ -76,7 +76,7 @@ namespace TypeCobol.Server {
                 { "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", v => config.OutputFiles.Add(v) },
                 { "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
                 { "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
-                { "a|autoremarks=", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = (v!=null) },
+                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = true },
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
                 { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3)", v => Enum.TryParse(v.ToString(), true, out config.ProcessingStep) },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
