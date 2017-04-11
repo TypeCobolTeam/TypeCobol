@@ -169,7 +169,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     if (found.Count > 1)
                         DiagnosticUtils.AddError(e, "Ambiguous reference to parameter " + callArgName);
                     if (found.Count != 1) continue;
-                    var type = found[0] as ITypedNode;
+                    var type = found[0];
                     // type check. please note:
                     // 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
                     // 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
