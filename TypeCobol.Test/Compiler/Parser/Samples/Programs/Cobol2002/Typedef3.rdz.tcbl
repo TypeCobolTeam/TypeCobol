@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+       01  T-Disp TYPEDEF STRICT.
+             05 LIG-DET                  pic X(50).
+             05 LIG-NB                   pic ZZZ.ZZZ.ZZ9.
+       01 DISP Type T-Disp.
+      
+       procedure division.
+           move LIG-DET to LIG-NB
+           .
+       END PROGRAM MainProgram.

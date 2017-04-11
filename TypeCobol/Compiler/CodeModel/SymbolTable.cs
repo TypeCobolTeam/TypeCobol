@@ -204,7 +204,7 @@ namespace TypeCobol.Compiler.CodeModel
         public Dictionary<Node, List<LinkedList<Node>>> GetVariableExplicit(QualifiedName name)
         {
             var candidates = new List<Node>();
-            if (name.Count > 1) candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
+            candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
             candidates.AddRange(GetVariable(name.Head));
             //TODO candidates.AddRange(GetFunction(name.Head));
 
@@ -330,15 +330,17 @@ namespace TypeCobol.Compiler.CodeModel
         /// <returns>Direct or indirect subordinates of a custom type</returns>
         private List<Node> GetCustomTypesSubordinatesNamed(string name)
         {
-            var types = new List<Node>();
+            var subs = new List<Node>();
             var scope = this;
-            while (scope != null)
-            {
-                foreach (var type in scope.Types) types.AddRange(type.Value);
+            while (scope != null) {
+                foreach (var type in scope.Types) {
+                    foreach (var type2 in type.Value) {
+                        subs.AddRange(type2.GetChildren(name, true));
+                    }
+                }
                 scope = scope.EnclosingScope;
             }
-            var subs = new List<Node>();
-            foreach (var type in types) subs.AddRange(type.GetChildren(name, true));
+            
             return subs;
         }
 
