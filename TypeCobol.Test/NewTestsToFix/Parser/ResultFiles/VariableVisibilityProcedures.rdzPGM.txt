@@ -1,0 +1,59 @@
+﻿--- Diagnostics ---
+Line 10[13,45] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced
+Line 10[13,45] <27, Error, Syntax> - Syntax error : Symbol dataNested22 is not referenced
+Line 12[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced
+Line 12[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested2 is not referenced
+Line 25[13,48] <27, Error, Syntax> - Syntax error : Symbol dataNestedProc1 is not referenced
+Line 25[13,48] <27, Error, Syntax> - Syntax error : Symbol paramNested1 is not referenced
+Line 27[13,50] <27, Error, Syntax> - Syntax error : Symbol dataNestedProc21 is not referenced
+Line 27[13,50] <27, Error, Syntax> - Syntax error : Symbol paramNested21 is not referenced
+Line 29[13,45] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced
+Line 29[13,45] <27, Error, Syntax> - Syntax error : Symbol dataNested22 is not referenced
+Line 31[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced
+Line 31[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested2 is not referenced
+Line 33[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced
+Line 33[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain2 is not referenced
+Line 46[13,45] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced
+Line 46[13,45] <27, Error, Syntax> - Syntax error : Symbol dataNested22 is not referenced
+Line 49[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced
+Line 59[13,40] <27, Error, Syntax> - Syntax error : Symbol dataProc1 is not referenced
+Line 59[13,40] <27, Error, Syntax> - Syntax error : Symbol paramMain1 is not referenced
+Line 63[13,50] <27, Error, Syntax> - Syntax error : Symbol dataNestedProc21 is not referenced
+Line 63[13,50] <27, Error, Syntax> - Syntax error : Symbol paramNested21 is not referenced
+Line 65[13,45] <27, Error, Syntax> - Syntax error : Symbol dataNested21 is not referenced
+Line 65[13,45] <27, Error, Syntax> - Syntax error : Symbol dataNested22 is not referenced
+Line 67[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced
+Line 67[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested2 is not referenced
+Line 69[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced
+Line 69[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain2 is not referenced
+Line 83[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced
+Line 85[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced
+Line 94[13,40] <27, Error, Syntax> - Syntax error : Symbol dataProc1 is not referenced
+Line 94[13,40] <27, Error, Syntax> - Syntax error : Symbol paramMain1 is not referenced
+Line 96[13,48] <27, Error, Syntax> - Syntax error : Symbol dataNestedProc1 is not referenced
+Line 96[13,48] <27, Error, Syntax> - Syntax error : Symbol paramNested1 is not referenced
+Line 100[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced
+Line 100[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested2 is not referenced
+Line 102[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested1 is not referenced
+Line 102[13,43] <27, Error, Syntax> - Syntax error : Symbol dataNested2 is not referenced
+Line 104[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not referenced
+Line 104[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain2 is not referenced
+
+--- Program ---
+PROGRAM: MainProgram common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Program
+-- DATA --------
+  dataMain1:Alphanumeric
+-- FUNCTIONS ---
+  checkMain
+        in: paramMain1:Alphanumeric
+--- Intrinsic:Namespace:Global
+-- DATA --------
+  dataMain2:Alphanumeric
+  dataNested2:Alphanumeric
+  dataNested22:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
