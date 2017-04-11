@@ -17,7 +17,8 @@
            88  flag-false VALUE 'F'.
                                   
        01  realformat   PIC X(08).
-       01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
+       01 TC-Callee pic X(08) value 'Callee'.
+       01 TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::MyPublicProcedure
         01 TC-Callee-f0eabed9 PROCEDURE-POINTER EXTERNAL.
@@ -127,7 +128,7 @@
         TC-Initializations.
       *=================================================================
             IF NOT TC-Callee-FctList-IsLoaded
-                CALL 'ZCALLPGM' USING 'Callee'
+                CALL 'ZCALLPGM' USING TC-Callee
             END-IF
             .
 
