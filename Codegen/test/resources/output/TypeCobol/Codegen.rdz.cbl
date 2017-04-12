@@ -58,9 +58,9 @@
        LINKAGE SECTION.
        01 ikey PIC X(04).
        01 ikey2.
-           02 partA PIC X(04).
-           02 partB PIC 9(04).
-           02 partC PIC X(05).
+           02 partA pic X(04).
+           02 partB pic 9(04).
+           02 partC pic X(05).
        01 result PIC 9(32).
        PROCEDURE DIVISION
              USING BY REFERENCE ikey

@@ -98,6 +98,41 @@ internal class TypedDataNode: DataDescription, Generated {
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Tries to detect a (PIC|PICTURE) construction for a Data Description Entry.
+    /// </summary>
+    /// <param name="dataDescEntry">The Data Description Entry Node</param>
+    /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
+    /// <returns>The string representing the PIC clause </returns>
+    internal static string ExtractPicTokensValues(DataDescriptionEntry dataDescEntry, out bool bHasPeriod)
+    {
+        bHasPeriod = false;
+        StringBuilder sb = new StringBuilder();
+        if (dataDescEntry.ConsumedTokens != null)
+        {
+            if (dataDescEntry.ConsumedTokens != null)
+            {
+                int i = 0;
+                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PIC && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PICTURE)
+                    i++;
+                if (i < dataDescEntry.ConsumedTokens.Count)
+                {
+                    sb.Append(string.Intern(" "));
+                    sb.Append(dataDescEntry.ConsumedTokens[i].Text);
+                }
+                while (++i < dataDescEntry.ConsumedTokens.Count)
+                {
+                    if ((i != dataDescEntry.ConsumedTokens.Count - 1) || (dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
+                        sb.Append(string.Intern(" "));//Add a space but not before a a Period Separator
+                    sb.Append(dataDescEntry.ConsumedTokens[i].Text);
+                    if (i == dataDescEntry.ConsumedTokens.Count - 1)
+                        bHasPeriod = dataDescEntry.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
+                }
+            }
+        }
+        return sb.ToString();
+    }
+
 	internal static ITextLine CreateDataDefinition(DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null) {
         if (data_def is DataDescriptionEntry)
         {
@@ -107,8 +142,14 @@ internal class TypedDataNode: DataDescription, Generated {
 		    line.Append(level.ToString("00"));
             if (data_def.Name != null) 
                 line.Append(' ').Append(data.Name);
-		    if (!isCustomType) 
-                line.Append(" PIC ").Append(data.Picture);
+            if (!isCustomType)
+            {
+                string text = ExtractPicTokensValues(data, out bHasPeriod);
+                if (text.Length > 0)
+                    line.Append(text);
+                else
+                    line.Append(" PIC ").Append(data.Picture);
+            }
             else if (customtype != null)
             {   //This variable will have no subtypes as children at all
                 //So Auto detect a type based on scalar COBOL typedef.            

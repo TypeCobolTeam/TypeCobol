@@ -24,7 +24,7 @@
 
       *01  MyPM type ProcessingMode.
        01 MyPM.
-           02 temp PIC X(02).
+           02 temp pic X(02).
               88 RealTime value "TP".
               88 IMSBatch value "TI".
               88 DB2Batch value "TD".
