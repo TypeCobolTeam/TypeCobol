@@ -71,7 +71,7 @@ namespace TypeCobol
 			//This is useful when debugging. Perhaps it'll be deleted at the end
 			if (!Compilers.ContainsKey(path))
 			{
-				Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.Generate});
+				Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.Generate});
 			}
 			Compiler = Compilers[path];
 
@@ -151,7 +151,7 @@ namespace TypeCobol
 
 		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false) {
 			var parser = new Parser();
-            var typeCobolOption = new TypeCobolOptions { ExecToStep = ProcessingStep.Generate };
+            var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.Generate };
 #if EUROINFO_RULES
             typeCobolOption.AutoRemarksEnable = autoRemarks;
 #endif
