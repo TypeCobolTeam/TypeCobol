@@ -61,7 +61,7 @@ namespace TypeCobol.Test {
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
                 var document = new Parser();
-                document.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copiesFolder);
+                document.Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.SemanticCheck }, format, copiesFolder);
                 document.Parse(path);
                 
 

@@ -160,13 +160,13 @@ namespace TypeCobol.Compiler
         public void CompileOnce()
         {
             if (CompilerOptions.ExecToStep == null)
-                CompilerOptions.ExecToStep = ExecutionStep.SemanticCheck;
+                CompilerOptions.ExecToStep = ProcessingStep.SemanticCheck;
 
             if (CompilationResultsForCopy != null)
             {
                 CompilationResultsForCopy.UpdateTokensLines(); //Scanner
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Scanner)) return;
+                if (!(CompilerOptions.ExecToStep > ProcessingStep.Scanner)) return;
 
                 CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
                 CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
@@ -175,17 +175,17 @@ namespace TypeCobol.Compiler
             {
                 CompilationResultsForProgram.UpdateTokensLines(); //Scanner
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Scanner)) return;
+                if (!(CompilerOptions.ExecToStep > ProcessingStep.Scanner)) return;
 
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Preprocessor)) return;
+                if (!(CompilerOptions.ExecToStep > ProcessingStep.Preprocessor)) return;
                 if (CompilerOptions.HaltOnMissingCopy && CompilationProject.MissingCopys.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
                 
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.SyntaxCheck)) return;
+                if (!(CompilerOptions.ExecToStep > ProcessingStep.SyntaxCheck)) return;
 
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //SemanticCheck
             }

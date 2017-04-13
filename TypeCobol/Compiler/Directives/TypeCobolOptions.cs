@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Option used to defined the maximum processing step. (See FileCompiler for usage)
         /// </summary>
-        public ExecutionStep? ExecToStep { get; set; }
+        public ProcessingStep? ExecToStep { get; set; }
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file

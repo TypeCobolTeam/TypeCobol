@@ -63,7 +63,7 @@ namespace TypeCobol.Server.Serialization
         {
             msgpack.ForcePathObject("ErrorFile").AsString = string.IsNullOrEmpty(data.ErrorFile)?string.Empty:data.ErrorFile;
             msgpack.ForcePathObject("skeletonPath").AsString = string.IsNullOrEmpty(data.skeletonPath) ? string.Empty : data.skeletonPath;
-            msgpack.ForcePathObject("ExecToStep").AsString = data.ExecToStep.ToString();
+            msgpack.ForcePathObject("ProcessingStep").AsString = data.ProcessingStep.ToString();
             msgpack.ForcePathObject("EncFormat").AsString = string.IsNullOrEmpty(data.EncFormat) ? string.Empty : data.EncFormat;
             msgpack.ForcePathObject("HaltOnMissingCopyFilePath").AsString = string.IsNullOrEmpty(data.HaltOnMissingCopyFilePath) ? string.Empty : data.HaltOnMissingCopyFilePath;
             msgpack.ForcePathObject("AutoRmarks").AsString = Convert.ToString(data.AutoRemarks);
@@ -132,7 +132,7 @@ namespace TypeCobol.Server.Serialization
             Config config = new Config();
             config.ErrorFile = msgpack.ForcePathObject("ErrorFile").AsString;
             config.skeletonPath = msgpack.ForcePathObject("skeletonPath").AsString;
-            Enum.TryParse(msgpack.ForcePathObject("ExecToStep").AsString, true, out config.ExecToStep); //Get string processing step into enum value
+            Enum.TryParse(msgpack.ForcePathObject("ProcessingStep").AsString, true, out config.ProcessingStep); //Get string processing step into enum value
             config.EncFormat = msgpack.ForcePathObject("EncFormat").AsString;
             config.HaltOnMissingCopyFilePath = msgpack.ForcePathObject("HaltOnMissingCopyFilePath").AsString;
             config.AutoRemarks = msgpack.ForcePathObject("AutoRmarks").AsString.Equals("True", StringComparison.InvariantCultureIgnoreCase);
