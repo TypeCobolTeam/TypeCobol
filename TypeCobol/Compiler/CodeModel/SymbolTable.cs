@@ -555,7 +555,24 @@ namespace TypeCobol.Compiler.CodeModel
         public List<TypeDefinition> GetType(QualifiedName name)
         {
             var found = GetType(name.Head);
-            return Get(found, name);
+
+            if (string.IsNullOrEmpty(name.Tail) || found.Any(f => string.Compare(f.QualifiedName.Tail, name.Tail, StringComparison.InvariantCultureIgnoreCase) == 0))
+                return Get(found, name);
+
+            var program = GetProgramHelper(name.Tail); //Get the program corresponding to the given namespace
+            if (program != null)
+            {
+                var programTypes = program.CurrentTable.Types; //Get all types from this program
+                programTypes = programTypes
+                                    .Where(p =>
+                                            p.Value.All(f => (f.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public))
+                                            .ToDictionary(f => f.Key, f => f.Value); //Sort types to get only the ones with public AccessModifier
+
+                found = GetFromTable(name.Head, programTypes); //Check if there is a type that correspond to the given name (head)
+            }
+
+
+            return found;
         }
 
         private List<TypeDefinition> GetType(string name)
@@ -640,20 +657,17 @@ namespace TypeCobol.Compiler.CodeModel
             if (string.IsNullOrEmpty(nameSpace) || result.Any(f => string.Compare(f.QualifiedName.Tail, nameSpace, StringComparison.InvariantCultureIgnoreCase) == 0))
                 return result;
 
-            var programs = GetProgram(nameSpace); //If no results found and Namespace != null, then search program in the given namespace
-            if (programs.Count == 0)
-                return result;
-            if (programs.Count > 1)
-                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().Name));
+            var program = GetProgramHelper(nameSpace); //Get the program corresponding to the given namespace
+            if(program != null)
+            {
+                var programFunctions = program.CurrentTable.Functions; //Get all function from this program
+                programFunctions = programFunctions
+                                    .Where(p =>
+                                            p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
+                                            .ToDictionary(f => f.Key, f => f.Value); //Sort functions to get only the one with public AccessModifier
 
-            
-            var programFunctions = programs.FirstOrDefault().CurrentTable.Functions; //Get the first program (will change with the real use of namespace) and functions
-            programFunctions = programFunctions
-                                .Where(p => 
-                                        p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
-                                        .ToDictionary(f => f.Key, f => f.Value); //Sort functions to get only the one with public AccessModifier
-
-            result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
+                result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
+            }
 
             return result;
         }
@@ -763,7 +777,15 @@ namespace TypeCobol.Compiler.CodeModel
             // [/TYPECOBOL]
         }
 
+        private Program GetProgramHelper(string nameSpace)
+        {
+            var programs = GetProgram(nameSpace);
+  
+            if (programs.Count > 1)
+                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().Name));
 
+            return programs.FirstOrDefault();
+        }
 
 
 

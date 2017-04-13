@@ -155,10 +155,10 @@ class RenamesChecker: NodeListener {
 	}
 }
 
-class TypedDeclarationChecker: NodeListener {
+class TypedDeclarationChecker {
 	public IList<Type> GetNodes() { return new List<Type>() { typeof(ITypedNode), }; }
 
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+	public static void OnNode(Node node) {
         DataDefinition dataDefinition = node as DataDefinition;
 	    if (dataDefinition == null || node is TypeDefinition) {
 	        return; //not my job

@@ -34,6 +34,7 @@ namespace TypeCobol.Compiler.Diagnostics {
             }
 
             FunctionCallChecker.OnNode(node);
+            TypedDeclarationChecker.OnNode(node);
             return base.BeginNode(node);
         }
 

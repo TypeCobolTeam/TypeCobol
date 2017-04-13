@@ -35,7 +35,7 @@ WORKING-STORAGE SECTION.
 * KO: no TYPEDEF for this TYPE
 01 unknown TYPE TypeNotDefined.
 
-* KO TYPEDEF is after usage
+* OK TYPEDEF is after usage
 01 unknown TYPE TypeDefinedAfter.
 01 TypeDefinedAfter TYPEDEF pic X .
 

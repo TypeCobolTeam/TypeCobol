@@ -889,6 +889,7 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public SyntaxProperty<bool> Strong { get; internal set; }
         public SyntaxProperty<bool> Strict { get; internal set; }
+        public AccessModifier Visibility { get; internal set; }
 
         public RestrictionLevel RestrictionLevel
         {

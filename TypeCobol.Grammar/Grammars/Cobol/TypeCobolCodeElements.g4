@@ -141,4 +141,5 @@ callInoutParameter: sharedStorageArea1;  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFE
 callOutputParameter: sharedStorageArea1; // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
 
 // When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
-cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)?;
+cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? PUBLIC?;
+cobol2002TypeClause:    TYPE (programNameVariable QualifiedNameSeparator)? (UserDefinedWord | DATE);
