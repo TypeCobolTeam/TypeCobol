@@ -557,11 +557,19 @@ namespace TypeCobol.Compiler.Nodes {
 
     /// <summary>Root of any Node tree, with null CodeElement.</summary>
     public class Root : Node, CodeElementHolder<CodeElement> {
-        public Root() : base(null) {}
+        public Root() : base(null)
+        {
+            GeneratedCobolHashes = new Dictionary<string, string>();
+        }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
+
+        /// <summary>
+        /// Dictionary of hashes and signatures for the different function and procedure. Allows to avoid duplicates. 
+        /// </summary>
+        public Dictionary<string, string> GeneratedCobolHashes { get; set; }
     }
 
     public class LibraryCopy : Node, CodeElementHolder<LibraryCopyCodeElement>, Child<Program> {
