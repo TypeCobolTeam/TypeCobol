@@ -26,7 +26,7 @@ namespace TypeCobol.Server {
         public List<string> CopyFolders = new List<string>();
         public List<string> InputFiles = new List<string>();
         public List<string> OutputFiles = new List<string>();
-        public ProcessingStep ProcessingStep = ProcessingStep.Generate; //Default value is Generate
+        public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
         public string ErrorFile = null;
         public string skeletonPath = "";
         public bool IsErrorXML
@@ -78,7 +78,7 @@ namespace TypeCobol.Server {
                 { "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
                 { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = true },
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
-                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3)", v => Enum.TryParse(v.ToString(), true, out config.ProcessingStep) },
+                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, Generate/4)", v => Enum.TryParse(v.ToString(), true, out config.ExecToStep) },
 //				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
                                 +"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
@@ -113,8 +113,8 @@ namespace TypeCobol.Server {
 		            Console.WriteLine(PROGVERSION);
 		            return 0;
 		        }
-                if (config.OutputFiles.Count == 0 && config.ProcessingStep >= ProcessingStep.Generate)
-                    config.ProcessingStep = ProcessingStep.SemanticCheck; //If there is no given output file, we can't run generation, fallback to SemanticCheck
+                if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
+                    config.ExecToStep = ExecutionStep.SemanticCheck; //If there is no given output file, we can't run generation, fallback to SemanticCheck
 
 		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
 		            return exit(2, "The number of output files must be equal to the number of input files.");
