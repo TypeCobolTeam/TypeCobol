@@ -589,10 +589,10 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolReference CreateQualifiedDataTypeReference(CodeElementsParser.Cobol2002TypeClauseContext context)
         {
-            var pgmNameContext = context.programNameVariable(); //Get program name Context
-            var dataNameContext = context.UserDefinedWord(); //Get variable/type name Context
+            var pgmNameContext = context.programNameReference3(); //Get program name Context
+            var dataNameContext = context.typeNameReference().UserDefinedWord(); //Get variable/type name Context
             if (dataNameContext == null)
-                dataNameContext = context.DATE();
+                dataNameContext = context.typeNameReference().DATE();
 
             Token pgmToken, dataToken = null;
             AlphanumericValue pgmAlph, dataAlpha = null;

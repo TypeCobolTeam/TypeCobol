@@ -140,6 +140,8 @@ callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? sharedVariableOrFileNam
 callInoutParameter: sharedStorageArea1;  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
 callOutputParameter: sharedStorageArea1; // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
 
+typeNameReference: (UserDefinedWord | DATE);
+
 // When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
 cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? PUBLIC?;
-cobol2002TypeClause:    TYPE (programNameVariable QualifiedNameSeparator)? (UserDefinedWord | DATE);
+cobol2002TypeClause:    TYPE (programNameReference3 QualifiedNameSeparator)? typeNameReference;

@@ -931,6 +931,8 @@ programNameReference1: symbolReference1;
 
 programNameReference2: symbolReference5;
 
+programNameReference3: symbolReference4;
+
 // p330: ENTRY statement
 // literal-1 
 // Must be an alphanumeric literal that conform to the rules for the formation of a program-name in an outermost program (see “PROGRAM-ID paragraph” on page 100). 
