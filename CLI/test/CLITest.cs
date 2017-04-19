@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.Server;
 
 namespace CLI.Test
 {
@@ -43,19 +44,36 @@ namespace CLI.Test
             CLITestHelper.Test("haltOnMissingCopy_1");
         }
 
+        [TestMethod]
+        public void TestReturnCode()
+        {
+            if(CLITestHelper.Test("return_code_0") != ReturnCode.Success)
+                throw new Exception("Wrong return code detected 'return_code_0'");
+
+            if (CLITestHelper.Test("return_code_1") != ReturnCode.FatalError)
+                throw new Exception("Wrong return code detected 'return_code_1'"); 
+
+            if (CLITestHelper.Test("return_code_2") != ReturnCode.OutputFileError)
+                throw new Exception("Wrong return code detected 'return_code_2'");
+
+            if (CLITestHelper.Test("return_code_3") != ReturnCode.ParsingError)
+                throw new Exception("Wrong return code detected 'return_code_3'");
+        }
+
     }
 
     class CLITestHelper {
 
-        internal static void Test(string testFolderName)
+        internal static ReturnCode Test(string testFolderName)
         {
             var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
             string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
-            Test(workingDirectory, arguments);
+            return Test(workingDirectory, arguments);
         }
 
-        internal static void Test(string workingDirectory, string arguments)
+        internal static ReturnCode Test(string workingDirectory, string arguments)
         {
+            //
             //Create output folder because CLI will not create it
             DirectoryInfo outputDir = new DirectoryInfo(workingDirectory + Path.DirectorySeparatorChar + "output");
             if (outputDir.Exists)
@@ -90,12 +108,16 @@ namespace CLI.Test
             if (!dirIdentical) {
                 throw new Exception("directory not equals");
             }
+
+            return (ReturnCode)process.ExitCode;
         }
 
         internal static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir)
         {
             bool dirIdentical = true;
 
+            if (!targetDir.Exists)
+                return dirIdentical; //If the output_expected does not exist it means that the test doesn't have any expected output. 
 
             // Take a snapshot of the file system.  
             var targetFiles = targetDir.GetFiles("*.*", System.IO.SearchOption.AllDirectories).ToList();
