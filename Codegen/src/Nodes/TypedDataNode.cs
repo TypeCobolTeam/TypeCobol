@@ -35,6 +35,28 @@ internal class TypedDataNode: DataDescription, Generated {
 	}
 
     /// <summary>
+    ///  Flush Consumed tokens into a buffer
+    /// 
+    /// </summary>
+    /// <param name="i">The start index in the list of consumed tokens</param>
+    /// <param name="consumedTokens">The consumed tokens list</param>
+    /// <param name="sb">The String buffer to flush into</param>
+    /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
+    internal static void FlushConsumedTokens(int i, IList<Compiler.Scanner.Token> consumedTokens, StringBuilder sb, out bool bHasPeriod)
+    {
+        bHasPeriod = false;
+        while (i < consumedTokens.Count)
+        {
+            if ((i != consumedTokens.Count - 1) || (consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
+                sb.Append(string.Intern(" "));//Add a space but not before a a Period Separator
+            sb.Append(consumedTokens[i].Text);
+            if (i == consumedTokens.Count - 1)
+                bHasPeriod = consumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
+            i++;
+        }
+    }
+
+    /// <summary>
     /// Retrieve the consumed Token as a String
     /// </summary>
     /// <param name="data_def">The DataDefintion to Retrieve the consumed Tokens.</param>
@@ -48,16 +70,7 @@ internal class TypedDataNode: DataDescription, Generated {
         {
             if (data_def.ConsumedTokens != null)
             {
-                int i = 0;
-                while (i < data_def.ConsumedTokens.Count)
-                {
-                    if ((i != data_def.ConsumedTokens.Count - 1) || (data_def.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
-                        sb.Append(string.Intern(" "));//Add a space but not before a a Period Separator
-                    sb.Append(data_def.ConsumedTokens[i].Text);
-                    if (i == data_def.ConsumedTokens.Count - 1)
-                        bHasPeriod = data_def.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
-                    i++;
-                }
+                FlushConsumedTokens(0, data_def.ConsumedTokens, sb, out bHasPeriod);
             }
         }
         return sb.ToString();
@@ -90,14 +103,7 @@ internal class TypedDataNode: DataDescription, Generated {
                 if((i+1) < customtype.CodeElement.ConsumedTokens.Count && (customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PUBLIC || customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PRIVATE))
                     i++;
 
-                while (++i < customtype.CodeElement.ConsumedTokens.Count)
-                {
-                    if ((i != customtype.CodeElement.ConsumedTokens.Count - 1) || (customtype.CodeElement.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
-                        sb.Append(string.Intern(" "));//Add a space but not before a a Period Separator
-                    sb.Append(customtype.CodeElement.ConsumedTokens[i].Text);
-                    if (i == customtype.CodeElement.ConsumedTokens.Count - 1)
-                        bHasPeriod = customtype.CodeElement.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
-                }
+                FlushConsumedTokens(++i, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod);
             }
         }
         return sb.ToString();
@@ -125,14 +131,7 @@ internal class TypedDataNode: DataDescription, Generated {
                     sb.Append(string.Intern(" "));
                     sb.Append(dataDescEntry.ConsumedTokens[i].Text);
                 }
-                while (++i < dataDescEntry.ConsumedTokens.Count)
-                {
-                    if ((i != dataDescEntry.ConsumedTokens.Count - 1) || (dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
-                        sb.Append(string.Intern(" "));//Add a space but not before a a Period Separator
-                    sb.Append(dataDescEntry.ConsumedTokens[i].Text);
-                    if (i == dataDescEntry.ConsumedTokens.Count - 1)
-                        bHasPeriod = dataDescEntry.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
-                }
+                FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
             }
         }
         return sb.ToString();
