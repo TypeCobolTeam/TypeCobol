@@ -187,7 +187,14 @@ namespace TypeCobol.Compiler.CodeModel
 		public NestedProgram(Program containingProgram, CodeElement codeElement) : base(codeElement) {
 			IsNested = true;
 			ContainingProgram = containingProgram;
-			SymbolTable = new SymbolTable(containingProgram.SymbolTable.EnclosingScope);
+            SymbolTable namespaceTable = containingProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace); //Get Parent Program namespace Table
+
+            var globalNestedSymbolTable = new SymbolTable(namespaceTable, SymbolTable.Scope.Global); //Create a new Global symbol table for this nested program and his childrens programs
+            globalNestedSymbolTable.CopyAllDataEntries(containingProgram.SymbolTable.EnclosingScope.DataEntries.Values);
+            globalNestedSymbolTable.CopyAllTypes(containingProgram.SymbolTable.EnclosingScope.Types);
+            //It allows to goes down with global variable and ensure that nested global variables and types are not accessible to parent program. 
+
+            SymbolTable = new SymbolTable(globalNestedSymbolTable);
 			SyntaxTree.Root.SymbolTable = SymbolTable;
 		}
 

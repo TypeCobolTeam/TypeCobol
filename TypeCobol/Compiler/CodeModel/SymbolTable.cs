@@ -887,6 +887,72 @@ namespace TypeCobol.Compiler.CodeModel
             return str.ToString();
         }
 
+        /// <summary>
+        /// Helper to add all the DataEntries from a SymbolTable to the current one. 
+        /// </summary>
+        /// <param name="DataEntries"></param>
+        public void CopyAllDataEntries(ICollection<List<DataDefinition>> DataEntries)
+        {
+            foreach (var values in DataEntries)
+                foreach (var data in values)
+                    this.AddVariable(data);
+        }
+
+        /// <summary>
+        /// Helper to add all the Types from a SymbolTable to the current one.
+        /// </summary>
+        /// <param name="Types"></param>
+        public void CopyAllTypes(IDictionary<string, List<TypeDefinition>> Types)
+        {
+            foreach (var types in Types)
+                foreach (var type in types.Value)
+                    this.AddType(type);
+        }
+
+        /// <summary>
+        /// Helper to add Functions from a SymbolTable to the curret one, depending on the given access modifier
+        /// </summary>
+        /// <param name="Functions">Functions to add</param>
+        /// <param name="accessModifier">AccessModifier is nullable. If null, all functions will be added otherwise only functions with the specified AccessModifier will be added</param>
+        public void CopyAllFunctions(IDictionary<string, List<FunctionDeclaration>> Functions, AccessModifier? accessModifier = null)
+        {
+            foreach (var functions in Functions)
+                foreach (var function in functions.Value)
+                {
+                    if (accessModifier != null && ((FunctionDeclarationHeader)function.CodeElement).Visibility == accessModifier)
+                        this.AddFunction(function); //Add function depending on the specified AccessModifier
+                    else if(accessModifier == null)
+                        this.AddFunction(function); //If no AccessModifier given, add all the functions
+                }
+        }
+
+        /// <summary>
+        /// Helper to add Programs from a SymbolTable to the current one
+        /// </summary>
+        /// <param name="Programs">Programs to add</param>
+        public void CopyAllPrograms(ICollection<List<Program>> Programs)
+        {
+            foreach (var values in Programs)
+                foreach (var program in values)
+                    this.AddProgram(program);
+        }
+
+        /// <summary>
+        /// Helper to get the SymbolTable with a given scope. 
+        /// </summary>
+        /// <param name="scope"></param>
+        /// <returns></returns>
+        public SymbolTable GetTableFromScope(Scope scope)
+        {
+            SymbolTable tableToReturn = this;
+            while (tableToReturn != null && tableToReturn.CurrentScope != scope)
+                tableToReturn = tableToReturn.EnclosingScope;
+
+            return tableToReturn;
+        }
+
+
+
         #endregion
     }
 }
