@@ -78,11 +78,16 @@ internal class TypedDataNode: DataDescription, Generated {
             if (customtype.CodeElement.ConsumedTokens != null)
             {
                 int i = 0;
+                //Ignore TYPEDEF Keyword
                 while (i < customtype.CodeElement.ConsumedTokens.Count  && customtype.CodeElement.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPEDEF)
                     i++;
 
-                //Ignore any STRONG keyword
+                //Ignore any STRONG or STRICT keywords
                 if((i+1) < customtype.CodeElement.ConsumedTokens.Count && (customtype.CodeElement.ConsumedTokens[i+1].TokenType == Compiler.Scanner.TokenType.STRONG || customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.STRICT))
+                    i++;
+
+                //Ignore any PUBLIC or PRIVATE keywords
+                if((i+1) < customtype.CodeElement.ConsumedTokens.Count && (customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PUBLIC || customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PRIVATE))
                     i++;
 
                 while (++i < customtype.CodeElement.ConsumedTokens.Count)
