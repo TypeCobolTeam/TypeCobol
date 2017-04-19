@@ -204,7 +204,7 @@ namespace TypeCobol.Compiler.CodeModel
         public Dictionary<Node, List<LinkedList<Node>>> GetVariableExplicit(QualifiedName name)
         {
             var candidates = new List<Node>();
-            if (name.Count > 1) candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
+            candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
             candidates.AddRange(GetVariable(name.Head));
             //TODO candidates.AddRange(GetFunction(name.Head));
 
@@ -330,15 +330,17 @@ namespace TypeCobol.Compiler.CodeModel
         /// <returns>Direct or indirect subordinates of a custom type</returns>
         private List<Node> GetCustomTypesSubordinatesNamed(string name)
         {
-            var types = new List<Node>();
+            var subs = new List<Node>();
             var scope = this;
-            while (scope != null)
-            {
-                foreach (var type in scope.Types) types.AddRange(type.Value);
+            while (scope != null) {
+                foreach (var type in scope.Types) {
+                    foreach (var type2 in type.Value) {
+                        subs.AddRange(type2.GetChildren(name, true));
+                    }
+                }
                 scope = scope.EnclosingScope;
             }
-            var subs = new List<Node>();
-            foreach (var type in types) subs.AddRange(type.GetChildren(name, true));
+            
             return subs;
         }
 
@@ -553,7 +555,24 @@ namespace TypeCobol.Compiler.CodeModel
         public List<TypeDefinition> GetType(QualifiedName name)
         {
             var found = GetType(name.Head);
-            return Get(found, name);
+
+            if (string.IsNullOrEmpty(name.Tail) || found.Any(f => string.Compare(f.QualifiedName.Tail, name.Tail, StringComparison.InvariantCultureIgnoreCase) == 0))
+                return Get(found, name);
+
+            var program = GetProgramHelper(name.Tail); //Get the program corresponding to the given namespace
+            if (program != null)
+            {
+                var programTypes = program.CurrentTable.Types; //Get all types from this program
+                programTypes = programTypes
+                                    .Where(p =>
+                                            p.Value.All(f => (f.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public))
+                                            .ToDictionary(f => f.Key, f => f.Value); //Sort types to get only the ones with public AccessModifier
+
+                found = GetFromTable(name.Head, programTypes); //Check if there is a type that correspond to the given name (head)
+            }
+
+
+            return found;
         }
 
         private List<TypeDefinition> GetType(string name)
@@ -638,20 +657,17 @@ namespace TypeCobol.Compiler.CodeModel
             if (string.IsNullOrEmpty(nameSpace) || result.Any(f => string.Compare(f.QualifiedName.Tail, nameSpace, StringComparison.InvariantCultureIgnoreCase) == 0))
                 return result;
 
-            var programs = GetProgram(nameSpace); //If no results found and Namespace != null, then search program in the given namespace
-            if (programs.Count == 0)
-                return result;
-            if (programs.Count > 1)
-                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().Name));
+            var program = GetProgramHelper(nameSpace); //Get the program corresponding to the given namespace
+            if(program != null)
+            {
+                var programFunctions = program.CurrentTable.Functions; //Get all function from this program
+                programFunctions = programFunctions
+                                    .Where(p =>
+                                            p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
+                                            .ToDictionary(f => f.Key, f => f.Value); //Sort functions to get only the one with public AccessModifier
 
-            
-            var programFunctions = programs.FirstOrDefault().CurrentTable.Functions; //Get the first program (will change with the real use of namespace) and functions
-            programFunctions = programFunctions
-                                .Where(p => 
-                                        p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
-                                        .ToDictionary(f => f.Key, f => f.Value); //Sort functions to get only the one with public AccessModifier
-
-            result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
+                result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
+            }
 
             return result;
         }
@@ -761,7 +777,15 @@ namespace TypeCobol.Compiler.CodeModel
             // [/TYPECOBOL]
         }
 
+        private Program GetProgramHelper(string nameSpace)
+        {
+            var programs = GetProgram(nameSpace);
+  
+            if (programs.Count > 1)
+                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().Name));
 
+            return programs.FirstOrDefault();
+        }
 
 
 
@@ -862,6 +886,72 @@ namespace TypeCobol.Compiler.CodeModel
             str.Length -= 1;
             return str.ToString();
         }
+
+        /// <summary>
+        /// Helper to add all the DataEntries from a SymbolTable to the current one. 
+        /// </summary>
+        /// <param name="DataEntries"></param>
+        public void CopyAllDataEntries(ICollection<List<DataDefinition>> DataEntries)
+        {
+            foreach (var values in DataEntries)
+                foreach (var data in values)
+                    this.AddVariable(data);
+        }
+
+        /// <summary>
+        /// Helper to add all the Types from a SymbolTable to the current one.
+        /// </summary>
+        /// <param name="Types"></param>
+        public void CopyAllTypes(IDictionary<string, List<TypeDefinition>> Types)
+        {
+            foreach (var types in Types)
+                foreach (var type in types.Value)
+                    this.AddType(type);
+        }
+
+        /// <summary>
+        /// Helper to add Functions from a SymbolTable to the curret one, depending on the given access modifier
+        /// </summary>
+        /// <param name="Functions">Functions to add</param>
+        /// <param name="accessModifier">AccessModifier is nullable. If null, all functions will be added otherwise only functions with the specified AccessModifier will be added</param>
+        public void CopyAllFunctions(IDictionary<string, List<FunctionDeclaration>> Functions, AccessModifier? accessModifier = null)
+        {
+            foreach (var functions in Functions)
+                foreach (var function in functions.Value)
+                {
+                    if (accessModifier != null && ((FunctionDeclarationHeader)function.CodeElement).Visibility == accessModifier)
+                        this.AddFunction(function); //Add function depending on the specified AccessModifier
+                    else if(accessModifier == null)
+                        this.AddFunction(function); //If no AccessModifier given, add all the functions
+                }
+        }
+
+        /// <summary>
+        /// Helper to add Programs from a SymbolTable to the current one
+        /// </summary>
+        /// <param name="Programs">Programs to add</param>
+        public void CopyAllPrograms(ICollection<List<Program>> Programs)
+        {
+            foreach (var values in Programs)
+                foreach (var program in values)
+                    this.AddProgram(program);
+        }
+
+        /// <summary>
+        /// Helper to get the SymbolTable with a given scope. 
+        /// </summary>
+        /// <param name="scope"></param>
+        /// <returns></returns>
+        public SymbolTable GetTableFromScope(Scope scope)
+        {
+            SymbolTable tableToReturn = this;
+            while (tableToReturn != null && tableToReturn.CurrentScope != scope)
+                tableToReturn = tableToReturn.EnclosingScope;
+
+            return tableToReturn;
+        }
+
+
 
         #endregion
     }

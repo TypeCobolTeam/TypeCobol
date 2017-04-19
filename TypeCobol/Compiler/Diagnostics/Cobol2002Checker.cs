@@ -155,10 +155,10 @@ class RenamesChecker: NodeListener {
 	}
 }
 
-class TypedDeclarationChecker: NodeListener {
+class TypedDeclarationChecker {
 	public IList<Type> GetNodes() { return new List<Type>() { typeof(ITypedNode), }; }
 
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+	public static void OnNode(Node node) {
         DataDefinition dataDefinition = node as DataDefinition;
 	    if (dataDefinition == null || node is TypeDefinition) {
 	        return; //not my job
@@ -170,17 +170,34 @@ class TypedDeclarationChecker: NodeListener {
 			DiagnosticUtils.AddError(node.CodeElement, message, data.Picture.Token);
 		}
 		var type = dataDefinition.DataType;
-		if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return; //nothing to do, Type exists from Cobol 2002
-		var found = node.SymbolTable.GetType(type);
-		if (found.Count < 1) {
-			string message = "TYPE \'"+type.Name+"\' is not referenced";
-			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-		} else if (found.Count > 1) {
-		    string message = "Ambiguous reference to TYPE \'" + type.Name + "\'";
-		    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
-		}
+        TypeDefinitionHelper.Check(node, type); //Check if the type exists and is not ambiguous
+		
 	}
 }
+
+    public static class TypeDefinitionHelper
+    {
+        /// <summary>
+        /// Generic method to check if a type is referenced or not or if it is ambiguous.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="type"></param>
+        public static void Check(Node node, DataType type)
+        {
+            if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return; //nothing to do, Type exists from Cobol 2002
+            var found = node.SymbolTable.GetType(type);
+            if (found.Count < 1)
+            {
+                string message = "TYPE \'" + type.Name + "\' is not referenced";
+                DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+            }
+            else if (found.Count > 1)
+            {
+                string message = "Ambiguous reference to TYPE \'" + type.Name + "\'";
+                DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+            }
+        }
+    }
     /*
     class StronglyTypedReceiverChecker: NodeListener {
         public IList<Type> GetNodes() { return new List<Type> { typeof(VariableWriter) }; }

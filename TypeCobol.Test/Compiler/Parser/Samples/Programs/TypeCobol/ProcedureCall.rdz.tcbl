@@ -175,6 +175,32 @@
       * KO : varD is definied multiple times but always with a signature different to call
            CALL varD
                     INPUT      somedate
+           .
 
+      * KO contains an unknown Type
+       DECLARE PROCEDURE MyProc3 PRIVATE
+          INPUT  mydate        TYPE Date2.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
        .
+
+      * OK All the parameters of the Nested Program are recognize
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedProc.
+
+       PROCEDURE DIVISION.
+       declare procedure check private
+            input    rate1  pic X
+            output   rate2 pic X.
+       data division.
+       working-storage section.
+       01 data1 pic X.
+       01 data2 pic X.
+       procedure division.
+            move rate1 to rate2
+            move data1 to data2
+            .
+       end-declare.
+       END PROGRAM NestedProc.
        END PROGRAM ProcedureCall.

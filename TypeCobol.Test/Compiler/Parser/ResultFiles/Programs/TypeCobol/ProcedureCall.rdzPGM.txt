@@ -18,6 +18,7 @@ Line 156[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateForma
 Line 164[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
 Line 173[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
 Line 176[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD'
+Line 181[8,42] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not referenced
 
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
@@ -69,6 +70,8 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
        out: okay:BOOL
        out: actual-format:Alphanumeric
      inout: var1:DATE
+  MyProc3
+        in: mydate:Date2
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

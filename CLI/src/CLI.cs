@@ -88,10 +88,10 @@ namespace TypeCobol.Server
                 {
 
                     var typeCobolOptions = new TypeCobolOptions
-                    {
-                        HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
-                        ExecToStep = config.ProcessingStep,
-                    };
+                                            {
+                                                HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
+                                                ExecToStep = config.ExecToStep,
+                                            };
 
 #if EUROINFO_RULES
                     typeCobolOptions.AutoRemarksEnable = config.AutoRemarks;
@@ -120,11 +120,11 @@ namespace TypeCobol.Server
                     }
                 }
 
-                if (parser.Results.CodeElementsDocumentSnapshot == null && config.ProcessingStep > ProcessingStep.Preprocessor)
+                if (parser.Results.CodeElementsDocumentSnapshot == null && config.ExecToStep > ExecutionStep.Preprocessor)
                 {
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has syntactic error(s) preventing codegen (CodeElements).", path); //Make ParsingException trace back to RunOnce()
                 }
-                else if (parser.Results.ProgramClassDocumentSnapshot == null && config.ProcessingStep > ProcessingStep.SyntaxCheck)
+                else if (parser.Results.ProgramClassDocumentSnapshot == null && config.ExecToStep > ExecutionStep.SyntaxCheck)
                 {
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path); //Make ParsingException trace back to RunOnce()
                 }
@@ -135,7 +135,8 @@ namespace TypeCobol.Server
                 if (allDiags.Count > 0)
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, false); //Make ParsingException trace back to RunOnce()
 
-                if (config.ProcessingStep >= ProcessingStep.Generate)
+
+				if (config.ExecToStep >= ExecutionStep.Generate && errors == 0)
                 {
                     var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
                     var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
@@ -155,23 +156,20 @@ namespace TypeCobol.Server
         private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths, DocumentFormat copyDocumentFormat)
         {
             var parser = new Parser();
-            var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
 
-            var copies = new List<string>();
-            foreach (string path in paths) copies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false));
+			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
 
-            foreach (string path in copies)
-            {
-                try
-                {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.SemanticCheck }, copyDocumentFormat);
-                    parser.Parse(path);
+			var copies = new List<string>();
+			foreach(string path in paths) copies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false));
 
-                    var diagnostics = parser.Results.AllDiagnostics();
-                    foreach (var diagnostic in diagnostics)
-                    {
-                        Server.AddError(writer, MessageCode.IntrinsicLoading,
-                            diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
+			foreach(string path in copies) {
+			    try {
+			        parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck}, copyDocumentFormat);
+			        parser.Parse(path);
+                     
+			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {
+                        Server.AddError(writer, MessageCode.IntrinsicLoading, 
+                            diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line, 
                             "Error during parsing of " + path + ": " + diagnostic, path);
                     }
                     if (diagnostics.Count > 0)
@@ -220,14 +218,14 @@ namespace TypeCobol.Server
             var dependencies = new List<string>();
             foreach (var path in paths)
             {
-                dependencies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false)); //Get FIle by name or search the directory for all files
+                dependencies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, true)); //Get File by name or search the directory for all files
             }
 
             foreach (string path in dependencies)
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ProcessingStep.SemanticCheck }, format);
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format);
                     parser.Parse(path); //Parse the dependencie file
 
                     var diagnostics = parser.Results.AllDiagnostics();

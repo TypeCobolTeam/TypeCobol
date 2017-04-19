@@ -137,7 +137,7 @@ namespace TypeCobol.Compiler.Parser
             else if (context.cobol2002TypeClause() != null)
             {
                 parameter.UserDefinedDataType =
-                    CobolWordsBuilder.CreateDataTypeNameReference(context.cobol2002TypeClause().dataTypeNameReference());
+                    CobolWordsBuilder.CreateQualifiedDataTypeReference(context.cobol2002TypeClause());
                 parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
             }
             //TODO#245: subphrases

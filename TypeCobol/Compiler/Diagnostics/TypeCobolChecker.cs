@@ -169,7 +169,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     if (found.Count > 1)
                         DiagnosticUtils.AddError(e, "Ambiguous reference to parameter " + callArgName);
                     if (found.Count != 1) continue;
-                    var type = found[0] as ITypedNode;
+                    var type = found[0];
                     // type check. please note:
                     // 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
                     // 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
@@ -234,7 +234,7 @@ class FunctionDeclarationChecker: NodeListener {
 
 		CheckNoGlobalOrExternal(node.Get<DataDivision>("data-division"));
 
-		CheckParameters(header.Profile, header, context);
+		CheckParameters(header.Profile, header, context, node);
 		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
 
 		CheckNoPerform(node.SymbolTable.EnclosingScope, node);
@@ -263,13 +263,13 @@ class FunctionDeclarationChecker: NodeListener {
 		}
 	}
 
-	private void CheckParameters([NotNull] ParametersProfile profile, CodeElement ce, ParserRuleContext context) {
-		foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, ce, context);
-		foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, ce, context);
-		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce, context);
-		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce, context);
+	private void CheckParameters([NotNull] ParametersProfile profile, CodeElement ce, ParserRuleContext context, Node node) {
+		foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, ce, context, node);
+		foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, ce, context, node);
+		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce, context, node);
+		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce, context, node);
 	}
-	private void CheckParameter([NotNull] ParameterDescriptionEntry parameter, CodeElement ce, ParserRuleContext context) {
+	private void CheckParameter([NotNull] ParameterDescriptionEntry parameter, CodeElement ce, ParserRuleContext context, Node node) {
 		// TCRFUN_LEVEL_88_PARAMETERS
 		if (parameter.LevelNumber.Value != 1) {
 		    DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name+"\" must be subordinate to another parameter.", context);
@@ -282,7 +282,11 @@ class FunctionDeclarationChecker: NodeListener {
                     DiagnosticUtils.AddError(ce, "Condition parameter \"" + condition.Name + "\" must be level 88.");
             }
         }
-	}
+
+        var type = parameter.DataType;
+        TypeDefinitionHelper.Check(node, type); //Check if the type exists and is not ambiguous
+
+        }
 	/// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
 	/// <param name="node">LINKAGE SECTION node</param>
 	/// <param name="profile">Parameters for original function</param>

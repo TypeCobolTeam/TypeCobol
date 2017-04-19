@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TypeCobol
 {
-    public enum ProcessingStep
+    public enum ExecutionStep
     {
         Scanner = 0,
         Preprocessor,

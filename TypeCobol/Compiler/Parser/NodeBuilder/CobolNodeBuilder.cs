@@ -47,36 +47,17 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (value != null)
                 {
-                    SymbolTable intrinsicTable = value;
-                    SymbolTable nameSpaceTable = null;
+                    SymbolTable intrinsicTable = value.GetTableFromScope(SymbolTable.Scope.Intrinsic);
+                    SymbolTable nameSpaceTable = value.GetTableFromScope(SymbolTable.Scope.Namespace);
 
-                    while (intrinsicTable.CurrentScope != SymbolTable.Scope.Intrinsic) //Make sure we are on the Intrinsic Scope. If we pass throw NameSpaceTable save it. 
-                    {
-                        if (intrinsicTable.CurrentScope == SymbolTable.Scope.Namespace)
-                            nameSpaceTable = intrinsicTable;
-
-                        intrinsicTable = intrinsicTable.EnclosingScope;
-                    }
-
-                    foreach (var values in intrinsicTable.DataEntries.Values)
-                        foreach (var data in values)
-                            TableOfIntrisic.AddVariable(data);
-                    foreach (var types in intrinsicTable.Types)
-                        foreach (var type in types.Value)
-                            TableOfIntrisic.AddType(type);
-                    foreach (var functions in intrinsicTable.Functions)
-                        foreach (var function in functions.Value)
-                            if (((FunctionDeclarationHeader)function.CodeElement).Visibility == AccessModifier.Public)
-                                TableOfIntrisic.AddFunction(function);
-
+                    TableOfIntrisic.CopyAllDataEntries(intrinsicTable.DataEntries.Values);
+                    TableOfIntrisic.CopyAllTypes(intrinsicTable.Types);
+                    TableOfIntrisic.CopyAllFunctions(intrinsicTable.Functions, AccessModifier.Public);
 
                     if(nameSpaceTable != null)
                     {
                         TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace); //Set TableOfNamespace with program if dependencies were given. (See CLI.cs runOnce2() LoadDependencies())
-
-                        foreach (var values in nameSpaceTable.Programs.Values)
-                            foreach (var program in values)
-                                TableOfNamespaces.AddProgram(program);
+                        TableOfNamespaces.CopyAllPrograms(nameSpaceTable.Programs.Values);
                     }
                    
                 }
@@ -95,7 +76,7 @@ namespace TypeCobol.Compiler.Parser
         public Node CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
         private void Enter([NotNull] Node node, ParserRuleContext context = null, SymbolTable table = null)
         {
-            node.SymbolTable = table ?? CurrentProgram.CurrentTable;
+            node.SymbolTable = table ?? Program.CurrentTable;
             Program.SyntaxTree.Enter(node, context);
         }
         private void Exit()
@@ -395,8 +376,8 @@ namespace TypeCobol.Compiler.Parser
             Enter(node);
             var table = node.SymbolTable;
             if (node.CodeElement().IsGlobal) // TCTYPE_GLOBAL_TYPEDEF
-                while (table.CurrentScope != SymbolTable.Scope.Global)
-                    table = table.EnclosingScope;
+                table = table.GetTableFromScope(SymbolTable.Scope.Global);
+                
             table.AddType(node);
         }
         // [/COBOL 2002]
@@ -406,8 +387,8 @@ namespace TypeCobol.Compiler.Parser
             if (node.IsPartOfATypeDef) return;
             var table = node.SymbolTable;
             if (node.CodeElement().IsGlobal)
-                while (table.CurrentScope != SymbolTable.Scope.Global)
-                    table = table.EnclosingScope;
+                table = table.GetTableFromScope(SymbolTable.Scope.Global);
+
             table.AddVariable(node);
         }
 
@@ -426,8 +407,8 @@ namespace TypeCobol.Compiler.Parser
                 foreach (var index in data.Indexes)
                 {
                     if (node.CodeElement().IsGlobal)
-                        while (table.CurrentScope != SymbolTable.Scope.Global)
-                            table = table.EnclosingScope;
+                        table = table.GetTableFromScope(SymbolTable.Scope.Global);
+
                     table.AddVariable(index.Name, node);
                 }
             }

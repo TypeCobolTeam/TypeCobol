@@ -1,0 +1,12 @@
+﻿--- Program ---
+PROGRAM: MainProgram common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Program
+-- DATA --------
+  DISP:T-Disp
+-- TYPES -------
+  T-Disp:T-Disp
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE

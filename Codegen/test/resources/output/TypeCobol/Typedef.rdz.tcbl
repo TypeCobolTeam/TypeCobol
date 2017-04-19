@@ -1,0 +1,34 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOZDATE.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01  typeOfDaysPublic TYPEDEF STRICT PUBLIC pic X(01) .
+      *         88 BusinessDays     VALUE 'E'.
+      *         88 WorkDays         VALUE 'A'.
+      *         88 CalendarDays     VALUE 'J'.
+
+      *01  typeOfDaysPrivate TYPEDEF STRICT pic X(01) .
+      *         88 BusinessDays     VALUE 'E'.
+      *         88 WorkDays         VALUE 'A'.
+      *         88 CalendarDays     VALUE 'J'.
+
+      *01 typeOfPriv TYPE typeOfDaysPrivate.
+       01 typeOfPriv pic X(01).
+            88 BusinessDays VALUE 'E'.
+            88 WorkDays VALUE 'A'.
+            88 CalendarDays VALUE 'J'.
+                                            
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01 typeOf TYPE TCOZDATE::typeOfDaysPublic.
+       01 typeOf pic X(01).
+            88 BusinessDays VALUE 'E'.
+            88 WorkDays VALUE 'A'.
+            88 CalendarDays VALUE 'J'.
+                                                 
+       END PROGRAM Nested.
+
+       END PROGRAM TCOZDATE.

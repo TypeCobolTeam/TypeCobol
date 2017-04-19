@@ -587,11 +587,36 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.DataName);
         }
 
-        internal SymbolReference CreateDataTypeNameReference(CodeElementsParser.DataTypeNameReferenceContext context)
+        internal SymbolReference CreateQualifiedDataTypeReference(CodeElementsParser.Cobol2002TypeClauseContext context)
         {
-            return CreateSymbolReference(context.symbolReference12(), SymbolType.DataName);
+            var pgmNameContext = context.programNameVariable(); //Get program name Context
+            var dataNameContext = context.UserDefinedWord(); //Get variable/type name Context
+            if (dataNameContext == null)
+                dataNameContext = context.DATE();
+
+            Token pgmToken, dataToken = null;
+            AlphanumericValue pgmAlph, dataAlpha = null;
+            SymbolReference pgmSymbol, dataSymbol, symbolReference = null;
+
+            dataToken = ParseTreeUtils.GetFirstToken(dataNameContext);
+            dataAlpha = new AlphanumericValue(dataToken);
+            dataSymbol = new SymbolReference(dataAlpha, SymbolType.DataName);
+
+            if (pgmNameContext != null)
+            {
+                pgmToken = ParseTreeUtils.GetFirstToken(pgmNameContext);
+                pgmAlph = new AlphanumericValue(pgmToken);
+                pgmSymbol = new SymbolReference(pgmAlph, SymbolType.ProgramName);
+
+                symbolReference = new QualifiedSymbolReference(dataSymbol, pgmSymbol);
+            }
+            else
+                symbolReference = dataSymbol;
+
+            symbolInformationForTokens[dataAlpha.Token] = symbolReference;
+            return symbolReference;
         }
-// [/COBOL 2002]
+        // [/COBOL 2002]
 
         [CanBeNull]
         internal SymbolDefinition CreateDataNameDefinition([CanBeNull] CodeElementsParser.DataNameDefinitionContext context)

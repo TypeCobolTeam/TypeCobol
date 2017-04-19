@@ -245,30 +245,30 @@ namespace TypeCobol.Test {
         {
             string fileName = "ExecToStepFile.rdz.cbl";
 
-            var compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ProcessingStep.Scanner);
+            var compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.Scanner);
             //Verify that the option hasn't change during processing and that compilation process didn't go further than defined step
-            if (compileResult.CompilerOptions.ExecToStep != ProcessingStep.Scanner 
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Scanner 
                 && compileResult.TokensLines.Count == 0 
                 && compileResult.ProcessedTokensDocumentSnapshot != null 
                 && compileResult.CodeElementsDocumentSnapshot != null 
                 && compileResult.ProgramClassDocumentSnapshot.Program != null)
                 throw new Exception("Scanner Step failled");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ProcessingStep.Preprocessor);
-            if (compileResult.CompilerOptions.ExecToStep != ProcessingStep.Preprocessor 
+            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.Preprocessor);
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor 
                 && compileResult.ProcessedTokensDocumentSnapshot == null 
                 && compileResult.CodeElementsDocumentSnapshot != null 
                 && compileResult.ProgramClassDocumentSnapshot.Program != null)
                 throw new Exception("Preprocessor Step failled");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ProcessingStep.SyntaxCheck);
-            if (compileResult.CompilerOptions.ExecToStep != ProcessingStep.SyntaxCheck 
+            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.SyntaxCheck);
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck 
                 && compileResult.CodeElementsDocumentSnapshot == null 
                 && compileResult.ProgramClassDocumentSnapshot.Program != null)
                 throw new Exception("SyntaxCheck Step failled");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ProcessingStep.SemanticCheck);
-            if (compileResult.CompilerOptions.ExecToStep != ProcessingStep.SemanticCheck 
+            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.SemanticCheck);
+            if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck 
                 && compileResult.ProgramClassDocumentSnapshot.Program == null)
                 throw new Exception("SemanticCheck Step failled");
         }

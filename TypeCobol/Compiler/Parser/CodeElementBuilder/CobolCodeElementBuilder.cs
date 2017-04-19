@@ -1027,8 +1027,10 @@ namespace TypeCobol.Compiler.Parser
                 typedef.DataTypeName = CobolWordsBuilder.CreateDataTypeNameDefinition(context.dataNameDefinition());
                 var strong = context.cobol2002TypedefClause().STRONG();
                 var strict = context.cobol2002TypedefClause().STRICT();
+           
                 typedef.Strong = new SyntaxProperty<bool>(strong != null, ParseTreeUtils.GetFirstToken(strong));
                 typedef.Strict = new SyntaxProperty<bool>(strict != null, ParseTreeUtils.GetFirstToken(strict));
+                typedef.Visibility = context.cobol2002TypedefClause().PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
                 var restrictionLevel = typedef.Strong.Value ? RestrictionLevel.STRONG 
                                         : typedef.Strict.Value ? RestrictionLevel.STRICT 
                                         : RestrictionLevel.WEAK;
@@ -1114,7 +1116,7 @@ namespace TypeCobol.Compiler.Parser
 // [COBOL 2002]
             //Variable declared with a Type
             if (context.cobol2002TypeClause() != null && context.cobol2002TypeClause().Length > 0) {
-                entry.UserDefinedDataType = CobolWordsBuilder.CreateDataTypeNameReference(context.cobol2002TypeClause()[0].dataTypeNameReference());
+                entry.UserDefinedDataType = CobolWordsBuilder.CreateQualifiedDataTypeReference(context.cobol2002TypeClause()[0]);
             }
 // [/COBOL 2002]
 
@@ -1274,7 +1276,6 @@ namespace TypeCobol.Compiler.Parser
                 if (entry.UserDefinedDataType != null)
                 {
                     //Note we can't know here, if the type is strongly/strictly typed or not. This must be done during semantic phase (Node)
-                    //use false for "isStrong" and "isStrict", because we must make a choice
                     entry.DataType = DataType.CreateCustom(entry.UserDefinedDataType.Name, RestrictionLevel.WEAK, cobolLanguageLevel: CobolLanguageLevel.Cobol2002);
                 }
                 // [/COBOL 2002]

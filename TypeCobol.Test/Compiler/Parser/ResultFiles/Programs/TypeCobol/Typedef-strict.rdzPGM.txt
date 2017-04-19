@@ -6,7 +6,6 @@ Line 64[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be s
 Line 69[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
 Line 93[40,47] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[40,47:EXTERNAL]<EXTERNAL>
 Line 99[39,46] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[39,46:EXTERNAL]<EXTERNAL>
-Line 32[8,40] <30, Error, Semantics> - Semantic error: TYPE 'TypeDefinedAfter' is not referenced
 Line 46[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
 Line 52[8,39] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
 Line 60[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
