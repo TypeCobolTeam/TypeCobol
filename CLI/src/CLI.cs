@@ -136,7 +136,7 @@ namespace TypeCobol.Server
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, false); //Make ParsingException trace back to RunOnce()
 
 
-				if (config.ExecToStep >= ExecutionStep.Generate && errors == 0)
+				if (config.ExecToStep >= ExecutionStep.Generate && allDiags.Count == 0)
                 {
                     var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
                     var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
@@ -166,8 +166,11 @@ namespace TypeCobol.Server
 			    try {
 			        parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck}, copyDocumentFormat);
 			        parser.Parse(path);
-                     
-			        foreach (var diagnostic in parser.Results.AllDiagnostics()) {
+
+                    var diagnostics = parser.Results.AllDiagnostics();
+
+
+                    foreach (var diagnostic in diagnostics) {
                         Server.AddError(writer, MessageCode.IntrinsicLoading, 
                             diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line, 
                             "Error during parsing of " + path + ": " + diagnostic, path);
