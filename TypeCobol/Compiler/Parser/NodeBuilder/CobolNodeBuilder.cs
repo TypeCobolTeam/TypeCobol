@@ -95,7 +95,7 @@ namespace TypeCobol.Compiler.Parser
         public Node CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
         private void Enter([NotNull] Node node, ParserRuleContext context = null, SymbolTable table = null)
         {
-            node.SymbolTable = table ?? CurrentProgram.CurrentTable;
+            node.SymbolTable = table ?? Program.CurrentTable;
             Program.SyntaxTree.Enter(node, context);
         }
         private void Exit()
