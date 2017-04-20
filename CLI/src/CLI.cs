@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using TypeCobol.CLI.CustomExceptions;
+using TypeCobol.CustomExceptions;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
@@ -50,7 +50,12 @@ namespace TypeCobol.Server
                 if(typeCobolException.Logged)
                     Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex, typeCobolException.LineNumber, typeCobolException.Message, typeCobolException.Path);
 
-                return ReturnCode.ParsingError;
+                if (typeCobolException is ParsingException)
+                    return ReturnCode.ParsingError;
+                if (typeCobolException is GenerationException)
+                    return ReturnCode.GenerationError;
+
+                return ReturnCode.FatalError; //Just in case..
             }
             catch (Exception e)//Catch all others exceptions
             {
@@ -136,12 +141,23 @@ namespace TypeCobol.Server
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, false); //Make ParsingException trace back to RunOnce()
 
 
-				if (config.ExecToStep >= ExecutionStep.Generate && allDiags.Count == 0)
+                if (config.ExecToStep >= ExecutionStep.Generate)
                 {
                     var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
                     var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
                     var program = parser.Results.ProgramClassDocumentSnapshot.Program;
-                    codegen.Generate(program.SyntaxTree.Root, program.SymbolTable, ColumnsLayout.CobolReferenceFormat); //TODO : Add exception management for code generation
+                    try
+                    {
+                        codegen.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat); //TODO : Add exception management for code generation
+                    }
+                    catch (Exception e)
+                    {
+                        if (e is GenerationException)
+                            throw e; //Throw the same exception to let runOnce() knows there is a problem
+                         
+                        throw new GenerationException(e.Message, null, false); //Otherwise create a new GeerationException
+                    }
+                    
                 }
             }
         }

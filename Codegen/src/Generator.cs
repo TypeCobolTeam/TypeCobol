@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Skeletons;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
+using TypeCobol.CustomExceptions;
 
 namespace TypeCobol.Codegen
 {
@@ -185,7 +188,7 @@ namespace TypeCobol.Codegen
         protected virtual void OnAfterAction(object sender, EventArgs e)
         {
             Codegen.Actions.Action action = (Codegen.Actions.Action)e;
-            //Collect erased nodes.
+             //Collect erased nodes.
             if (action is TypeCobol.Codegen.Actions.IEraseAction)
             {
                 TypeCobol.Codegen.Actions.IEraseAction erase = (TypeCobol.Codegen.Actions.IEraseAction)action;
@@ -197,24 +200,33 @@ namespace TypeCobol.Codegen
             }
         }
 
-		/// <summary>Generates code</summary>
-		/// <param name="tree">Root of a syntax tree</param>
-		/// <param name="table">Table of symbols</param>
-		/// <param name="columns">Columns layout</param>
-        public void Generate(TypeCobol.Compiler.Nodes.Root tree, TypeCobol.Compiler.CodeModel.SymbolTable table, TypeCobol.Compiler.Text.ColumnsLayout columns = TypeCobol.Compiler.Text.ColumnsLayout.FreeTextFormat)
+        /// <summary>
+        /// Generate Code
+        /// </summary>
+        /// <param name="compilationUnit"> Compilation Unit resulting from TypeCobol Parsing</param>
+        /// <param name="columns">Columns layout</param>
+        public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
+            //Check if there is any error in diags
+            if(compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
+            {
+                throw new GenerationException("Unable to generate because of error diagnostics", null, false);
+            }
+
+            var program = compilationUnit.ProgramClassDocumentSnapshot.Program;
+
             // STEP 0: Initialize the global values.
-            RootNode = tree;
-            SymTable = table;
+            RootNode = program.SyntaxTree.Root;
+            SymTable = program.SymbolTable;
             Layout = columns;
             //Create the Initial target document.
             CreateTargetDocument();
             // STEP 1: modify tree to adapt it to destination language            
             // 1.1 Run the Qualifier action on this node
-            Qualifier qualifier = new Qualifier(this, tree);
+            Qualifier qualifier = new Qualifier(this, RootNode);
             qualifier.Execute();
             // 1.2 Perform other actions
-            Actions.Perform(tree);
+            Actions.Perform(RootNode);
             // STEP 2: convert tree to destination language code
             TreeToCode();
         }

@@ -43,5 +43,6 @@ namespace TypeCobol.Compiler.Diagnostics
         ParserInit = 33,
         IntrinsicLoading = 34,
         DependenciesLoading = 35,
+        GenerationFailled  = 36,
     }
 }

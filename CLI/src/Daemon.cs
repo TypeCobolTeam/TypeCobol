@@ -161,7 +161,7 @@ namespace TypeCobol.Server {
                 else if (once) {
                     var returnCode = CLI.runOnce(config);
                     if (returnCode != ReturnCode.Success)
-                        return exit(returnCode, "Parsing Failled");
+                        return exit(returnCode, "Operation failled");
                 } else {
                     runServer(pipename);
                 }
@@ -263,5 +263,6 @@ namespace TypeCobol.Server {
         FatalError = 1, 
         OutputFileError = 2,
         ParsingError = 3,
+        GenerationError = 4,
     }
 }
