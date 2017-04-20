@@ -32,7 +32,7 @@
         /// Method to create a hash of a given lenght. You can add a node to increment a dictionary of hash and signature in order to avoid duplicate
         /// </summary>
         /// <param name="text"> The text to hash</param>
-        /// <param name="size"> The size of the hash to return</param>
+        /// <param name="size"> The size of the hash to return max value is 64</param>
         /// <param name="node"> The node in which we are going to store the hashes (we use the maximum level node ie. Root)</param>
         /// <returns></returns>
         public static string CreateCOBOLNameHash(string text, int size = 8, Node node = null)
@@ -40,6 +40,8 @@
             string hash = CreateSHA256(text);
             Regex hashRegex = new Regex(@"^[a-z\s,]*$");
             int index = 0;
+            if (size > hash.Length)
+                size = hash.Length;
 
             for (int i = 0; i < hash.Length; i++)
             {
@@ -51,6 +53,9 @@
             }
             
             string result = hash.Substring(index, System.Math.Min(size, hash.Length - index));
+
+            if(result.Length < size)
+                result += hash.Substring(0, size - result.Length);
 
             if(node != null)
             {
