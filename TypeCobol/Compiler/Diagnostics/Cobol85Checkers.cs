@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
@@ -204,32 +205,33 @@ namespace TypeCobol.Compiler.Diagnostics {
 			// TODO#249 these checks should be done during semantic phase, after symbol type resolution
 			// TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
 			//	DiagnosticUtils.AddError(statement, "CALL .. USING: <filename> only allowed in BY REFERENCE phrase", context);
-			//TODO what about special registers ?
-			string sender = input.StorageAreaOrValue!=null?input.StorageAreaOrValue.ToString():null;
-            bool isFunctionCallResult = false;
-            if(input.StorageAreaOrValue != null && input.StorageAreaOrValue.StorageArea != null)
-            {
-                isFunctionCallResult = input.StorageAreaOrValue.StorageArea is FunctionCallResult;
-            }
+            bool isFunctionCallResult = input.StorageAreaOrValue != null && input.StorageAreaOrValue.StorageArea is FunctionCallResult;
+
+            //SpecialRegister if LENGTH OF, LINAGE-COUNTER, ...
+            var specialRegister = input.StorageAreaOrValue != null ? input.StorageAreaOrValue.StorageArea as StorageAreaPropertySpecialRegister : null;
+
             if (isFunctionCallResult)
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal function identifier", context);
-			if (Is(sender, "LINAGE-COUNTER"))
+
+			if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LINAGE_COUNTER)
 				DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LINAGE-COUNTER", context);
 
-		    if (input.SharingMode != null) {
-				if (Is(sender, "LENGTH") && (input.SharingMode.Value == ParameterSharingMode.ByReference))
-					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
 
-				if (input.StorageAreaOrValue != null && input.StorageAreaOrValue.IsLiteral && input.SharingMode.Value == ParameterSharingMode.ByReference)
-					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
-				if (input.IsOmitted && input.SharingMode.Value == ParameterSharingMode.ByValue)
+		    if (input.SharingMode != null) {
+                //BY REFERENCE
+		        if (input.SharingMode.Value == ParameterSharingMode.ByReference) {
+		            if (specialRegister != null && specialRegister.SpecialRegisterName.TokenType == TokenType.LENGTH)
+		                DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal LENGTH OF in BY REFERENCE phrase", context);
+
+		            if (input.StorageAreaOrValue != null && input.StorageAreaOrValue.IsLiteral)
+		                DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal <literal> in BY REFERENCE phrase", context);
+		        }
+
+		        //BY VALUE
+		        if (input.IsOmitted && input.SharingMode.Value == ParameterSharingMode.ByValue)
 					DiagnosticUtils.AddError(statement, "CALL .. USING: Illegal OMITTED in BY VALUE phrase", context);
 			}
 		}
-	}
-	private bool Is(string sender, string something) {
-		if (sender == null) return false;
-		return sender.ToLower().EndsWith(something.ToLower());
 	}
 }
 
