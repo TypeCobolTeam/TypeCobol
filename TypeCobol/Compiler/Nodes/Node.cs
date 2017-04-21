@@ -139,7 +139,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         public virtual string Name {
-            get { return ID; }
+            get { return string.Empty; }
         }
 
         public virtual QualifiedName QualifiedName {
@@ -156,20 +156,6 @@ namespace TypeCobol.Compiler.Nodes {
             get {
                 if (ID == null) return null;
                 var puri = Parent == null ? null : Parent.URI;
-                if (puri == null) return ID;
-                return puri + '.' + ID;
-            }
-        }
-
-        /// <summary>
-        /// Node unique identifier (scope: tree this Node belongs to) This is the version used by the Generator
-        /// </summary>
-        public virtual string GenURI
-        {
-            get
-            {
-                if (ID == null) return null;
-                var puri = Parent == null ? null : Parent.GenURI;
                 if (puri == null) return ID;
                 return puri + '.' + ID;
             }
@@ -346,13 +332,13 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
         public Node GenGet(string uri)
         {
-            string gen_uri = GenURI;
+            string gen_uri = URI;
             if (gen_uri != null)
             {
                 if (uri.IndexOf('(') >= 0 && uri.IndexOf(')') > 0)
                 {//Pattern matching URI                    
                     System.Text.RegularExpressions.Regex re = new System.Text.RegularExpressions.Regex(uri);
-                    if (re.IsMatch(GenURI))
+                    if (re.IsMatch(URI))
                     {
                         return this;
                     }
@@ -431,7 +417,8 @@ namespace TypeCobol.Compiler.Nodes {
         {
             for (var c = 0; c < i; c++) str.Append("  ");
             if (Comment == true) str.Append('*');
-            if (Name != null) str.AppendLine(Name);
+            if (!string.IsNullOrEmpty(Name)) str.AppendLine(Name);
+            else if (!string.IsNullOrEmpty(ID)) str.AppendLine(ID);
             else if (CodeElement == null) str.AppendLine("?");
             else str.AppendLine(CodeElement.ToString());
             foreach (var child in Children) child.Dump(str, i + 1);
@@ -581,7 +568,19 @@ namespace TypeCobol.Compiler.Nodes {
         public Class(ClassIdentification identification) : base(identification) {}
 
         public override string ID {
-            get { return this.CodeElement().ClassName.Name; }
+            get { return "class";  }
+        }
+        public override string Name { get { return this.CodeElement().ClassName.Name; } }
+        public override QualifiedName QualifiedName
+        {
+            get
+            {
+                if (ID == null) return null;
+                var puri = Parent == null ? null : Parent.URI;
+                if (puri == null) return new URI(Name);
+
+                return new URI(puri + '.' + Name);
+            }
         }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
@@ -606,7 +605,20 @@ namespace TypeCobol.Compiler.Nodes {
         public Method(MethodIdentification identification) : base(identification) {}
 
         public override string ID {
-            get { return this.CodeElement().MethodName.Name; }
+            get { return "Method"; }
+        }
+
+        public override string Name { get { return this.CodeElement().MethodName.Name; } }
+        public override QualifiedName QualifiedName
+        {
+            get
+            {
+                if (ID == null) return null;
+                var puri = Parent == null ? null : Parent.URI;
+                if (puri == null) return new URI(Name);
+
+                return new URI(puri + '.' + Name);
+            }
         }
 
         public override bool VisitNode(IASTVisitor astVisitor)

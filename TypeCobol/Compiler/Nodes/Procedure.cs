@@ -1,8 +1,9 @@
 ﻿namespace TypeCobol.Compiler.Nodes {
 
-	using System.Collections.Generic;
-	using System.Text;
-	using TypeCobol.Compiler.CodeElements;
+    using System.Collections.Generic;
+    using System.Text;
+    using TypeCobol.Compiler.CodeElements;
+    using CodeElements.Expressions;
 
     public class ProcedureDivision: Node, CodeElementHolder<ProcedureDivisionHeader> {
 	    public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }
@@ -72,7 +73,19 @@
 
     public class Section: Node, CodeElementHolder<SectionHeader> {
 	    public Section(SectionHeader header): base(header) { }
-	    public override string ID { get { return this.CodeElement().SectionName.Name; } }
+	    public override string ID { get { return "section"; } }
+        public override string Name { get { return this.CodeElement().SectionName.Name; } }
+        public override QualifiedName QualifiedName
+        {
+            get
+            {
+                if (ID == null) return null;
+                var puri = Parent == null ? null : Parent.URI;
+                if (puri == null) return new URI(Name);
+
+                return new URI(puri + '.' + Name);
+            }
+        }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
@@ -81,18 +94,20 @@
 
     public class Paragraph: Node, CodeElementHolder<ParagraphHeader> {
 	    public Paragraph(ParagraphHeader header): base(header) { }
-	    public override string ID { get { return this.CodeElement().ParagraphName.Name; } }
+	    public override string ID { get { return "paragraph"; } }
+        public override string Name { get { return this.CodeElement().ParagraphName.Name; } }
 
-        public override string GenURI
+        public override QualifiedName QualifiedName
         {
             get
             {
-                string id = string.Intern("paragraph");
-                var puri = Parent == null ? null : Parent.GenURI;
-                if (puri == null) return id;
-                return puri + '.' + id;
+                if (ID == null) return null;
+                var puri = Parent == null ? null : Parent.URI;
+                if (puri == null) return new URI(Name);
+
+                return new URI(puri + '.' + Name);
             }
-        }  
+        } 
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
