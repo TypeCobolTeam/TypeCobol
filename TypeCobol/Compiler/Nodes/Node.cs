@@ -305,33 +305,6 @@ namespace TypeCobol.Compiler.Nodes {
         /// <param name="uri">Node unique identifier to search for</param>
         /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
         public Node Get(string uri) {
-            if (URI != null && URI.EndsWith(uri)) return this;
-            foreach (var child in Children) {
-                var found = child.Get(uri);
-                if (found != null) return found;
-            }
-            return null;
-        }
-
-        /// <summary>As <see cref="Get" /> method, but can specify the type of Node to retrieve.</summary>
-        /// <typeparam name="N"></typeparam>
-        /// <param name="uri"></param>
-        /// <returns>null if a node with the given URI is found but is not of the proper type</returns>
-        public N Get<N>(string uri) where N : Node {
-            var node = Get(uri);
-            try {
-                return (N) node;
-            } catch (InvalidCastException) {
-                return default(N);
-            }
-        }
-
-        /// <summary>GenGet this node or one of its children that has a given URI.</summary>
-        /// This the version used by the Generator.
-        /// <param name="uri">Node unique identifier to search for</param>
-        /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
-        public Node GenGet(string uri)
-        {
             string gen_uri = URI;
             if (gen_uri != null)
             {
@@ -350,20 +323,19 @@ namespace TypeCobol.Compiler.Nodes {
             }
             foreach (var child in Children)
             {
-                var found = child.GenGet(uri);
+                var found = child.Get(uri);
                 if (found != null) return found;
             }
             return null;
         }
 
-        /// <summary>As <see cref="GenGet" /> method, but can specify the type of Node to retrieve.</summary>
-        /// This the version used by the Generator
+        /// <summary>As <see cref="Get" /> method, but can specify the type of Node to retrieve.</summary>
         /// <typeparam name="N"></typeparam>
         /// <param name="uri"></param>
         /// <returns>null if a node with the given URI is found but is not of the proper type</returns>
-        public N GenGet<N>(string uri) where N : Node
+        public N Get<N>(string uri) where N : Node
         {
-            var node = GenGet(uri);
+            var node = Get(uri);
             try
             {
                 return (N)node;
@@ -373,6 +345,7 @@ namespace TypeCobol.Compiler.Nodes {
                 return default(N);
             }
         }
+
 
         public override string ToString() {
             var str = new StringBuilder();
