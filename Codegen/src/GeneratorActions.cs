@@ -257,7 +257,7 @@ namespace TypeCobol.Codegen
             if (location == null || location.ToLower().Equals("node")) 
                 return true;
             var root = CurrentProgram ?? (node.GetProgramNode() ?? node.Root);
-            var result = root.GenGet(location);
+            var result = root.Get(location);
             return result != null;
         }
 
@@ -274,7 +274,7 @@ namespace TypeCobol.Codegen
             location = NormalizeLocation(node, location, out index);
             if (location == null || location.ToLower().Equals("node")) return node;
             var root = CurrentProgram ?? (node.GetProgramNode() ?? node.Root);
-            var result = root.GenGet(location);
+            var result = root.Get(location);
             if (result != null) return result;
             result = Create(root, location);
             if (result != null) return result;
@@ -323,7 +323,7 @@ namespace TypeCobol.Codegen
             foreach (var part in parts)
             {
                 path.Append(part);
-                var current = parent.GenGet(path.ToString());
+                var current = parent.Get(path.ToString());
                 if (current == null)
                 {
                     string nextsibling;
@@ -338,7 +338,7 @@ namespace TypeCobol.Codegen
                     int index = 0;
                     if (nextsibling != null)
                     {
-                        var sibling = result.GenGet(nextsibling);
+                        var sibling = result.Get(nextsibling);
                         index = sibling.Parent.IndexOf(sibling);
                     }
                     result.Add(current, index);

@@ -1,9 +1,10 @@
 ﻿
 namespace TypeCobol.Compiler.Nodes {
 
-	using System;
-	using TypeCobol.Compiler.CodeElements;
-    
+    using System;
+    using CodeElements.Expressions;
+    using TypeCobol.Compiler.CodeElements;
+
 
 
     public class DataDivision: Node, CodeElementHolder<DataDivisionHeader>, Parent<DataSection> {
@@ -112,7 +113,19 @@ namespace TypeCobol.Compiler.Nodes {
     /// </summary>
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
         protected DataDefinition(DataDefinitionEntry entry): base(entry) { }
-        public override string ID { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
+        public override string ID { get { return "data-definition"; } }
+        public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
+        public override QualifiedName QualifiedName
+        {
+            get
+            {
+                if (ID == null) return null;
+                var puri = Parent == null ? null : Parent.URI;
+                if (puri == null) return new URI(Name);
+
+                return new URI(puri + '.' + Name);
+            }
+        }
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }

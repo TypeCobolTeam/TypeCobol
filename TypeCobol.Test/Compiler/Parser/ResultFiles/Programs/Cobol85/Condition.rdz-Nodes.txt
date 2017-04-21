@@ -3,8 +3,7 @@
   MyPGM
     data-division
       working-storage
-        [[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [31,31+:.]<PeriodSeparator>
-
+        data-definition
           ASCII-v
           EBCDIC-v
     procedure-division
