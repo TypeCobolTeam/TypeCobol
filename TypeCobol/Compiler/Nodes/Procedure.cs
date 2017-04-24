@@ -17,7 +17,7 @@
     // [TYPECOBOL]
 
     public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable {
-	    public FunctionDeclaration(FunctionDeclarationHeader header): base(header) { }
+	    public FunctionDeclaration(FunctionDeclarationHeader header): base(header) { Profile = new ParametersProfileNode(null); }
 	    public override string ID { get { return Name; } }
 	    public string Label { get; internal set; }
 
@@ -26,8 +26,8 @@
 
 	    public string Library { get; internal set; }
 	    public string Copy { get { return Library+"cpy"; } }
-	    public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
-
+	    //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
+        public ParametersProfileNode Profile{ get; set; }
 	    public string Hash {
 		    get {
 			    var hash = new StringBuilder();
@@ -39,14 +39,14 @@
 			    return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8);
 		    }
 	    }
-	    private StringBuilder encode(StringBuilder str, IList<ParameterDescriptionEntry> parameters) {
+	    private StringBuilder encode(StringBuilder str, IList<ParameterDescription> parameters) {
 		    str.Append('[');
 		    foreach(var p in parameters) str.Append(encode(p)).Append(',');
 		    if (parameters.Count > 0) str.Length -= 1;
 		    str.Append(']');
 		    return str;
 	    }
-	    private string encode(ParameterDescriptionEntry parameter) {
+	    private string encode(ParameterDescription parameter) {
 		    if (parameter == null) return "?";
 		    if (parameter.Picture != null) return parameter.Picture.ToString();
 		    if (parameter.DataType != null) return "T("+parameter.DataType.Name+")";

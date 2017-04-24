@@ -245,11 +245,35 @@ namespace TypeCobol.Compiler.Nodes {
 
     // [TYPECOBOL]
     public class ParameterDescription: TypeCobol.Compiler.Nodes.DataDescription {
-	    public ParameterDescription(ParameterDescriptionEntry entry): base(entry) { }
+
+        private ParameterDescriptionEntry _CodeElement;
+        public bool Resolved { get; set; }
+        public string LibraryName { get; set; }
+
+        public ParameterDescription(ParameterDescriptionEntry entry): base(entry) { _CodeElement = (ParameterDescriptionEntry)this.CodeElement; }
+       
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
+
+        public new DataType DataType {
+            get
+            {
+                var codeElementDataType = _CodeElement.DataType;
+                if (!Resolved)
+                    return codeElementDataType;
+
+                var codeElementDataTypeName = !string.IsNullOrEmpty(LibraryName) ? LibraryName + "." + codeElementDataType.Name : codeElementDataType.Name;
+                return new DataType(codeElementDataTypeName, codeElementDataType.RestrictionLevel, codeElementDataType.CobolLanguageLevel);
+            }
+        }
+
+        public AlphanumericValue Picture { get { return _CodeElement.Picture; } }
+        public IntegerValue LevelNumber { get { return _CodeElement.LevelNumber; } }
+        public SymbolDefinition DataName { get { return _CodeElement.DataName; } }
+
+
     }
     // [/TYPECOBOL]
 

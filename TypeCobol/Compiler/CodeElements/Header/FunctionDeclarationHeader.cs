@@ -75,13 +75,13 @@
 	    DataType ReturningParameter { get; }
     }
 
-    public class ParametersProfile: ParameterList, IVisitable {
+    public class ParametersProfile: CodeElement, ParameterList {
 	    public IList<ParameterDescriptionEntry> InputParameters { get; set; }
 	    public IList<ParameterDescriptionEntry> InoutParameters { get; set; }
 	    public IList<ParameterDescriptionEntry> OutputParameters { get; set; }
 	    public ParameterDescriptionEntry ReturningParameter { get; set; }
 
-	    public ParametersProfile() {
+	    public ParametersProfile() : base(CodeElementType.ParametersProfile) {
 		    InputParameters = new List<ParameterDescriptionEntry>();
 		    InoutParameters = new List<ParameterDescriptionEntry>();
 		    OutputParameters = new List<ParameterDescriptionEntry>();
@@ -134,7 +134,7 @@
 		    return hash;
 	    }
 
-        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+        public new bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, InputParameters,
                                                                InoutParameters,

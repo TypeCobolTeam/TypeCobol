@@ -848,25 +848,25 @@ namespace TypeCobol.Compiler.CodeModel
             if (fun != null)
             {
                 if (fun.Profile.ReturningParameter != null || fun.Profile.Parameters.Count > 0) str.AppendLine();
-                foreach (var p in fun.CodeElement().Profile.InputParameters)
+                foreach (var p in fun.Profile.InputParameters)
                 {
                     str.Append("        in: ");
-                    Dump(str, new ParameterDescription(p));
+                    Dump(str, p);
                 }
-                foreach (var p in fun.CodeElement().Profile.OutputParameters)
+                foreach (var p in fun.Profile.OutputParameters)
                 {
                     str.Append("       out: ");
-                    Dump(str, new ParameterDescription(p));
+                    Dump(str, p);
                 }
-                foreach (var p in fun.CodeElement().Profile.InoutParameters)
+                foreach (var p in fun.Profile.InoutParameters)
                 {
                     str.Append("     inout: ");
-                    Dump(str, new ParameterDescription(p));
+                    Dump(str, p);
                 }
                 if (fun.Profile.ReturningParameter != null)
                 {
                     str.Append("    return: ");
-                    Dump(str, new ParameterDescription(fun.Profile.ReturningParameter));
+                    Dump(str, fun.Profile.ReturningParameter);
                 }
                 if (fun.Profile.ReturningParameter == null && fun.Profile.Parameters.Count == 0) str.AppendLine();
             }

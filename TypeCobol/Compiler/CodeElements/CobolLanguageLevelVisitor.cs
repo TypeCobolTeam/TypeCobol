@@ -342,6 +342,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(CloseFileInstruction closeFileInstruction);
 
         bool Visit(CodeModel.Program program);
+
+        bool Visit(ParametersProfileNode profile);
     }
 
 
@@ -1345,6 +1347,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public bool Visit(Nodes.Method method)
+        {
+            return true;
+        }
+
+        public bool Visit(ParametersProfileNode profile)
         {
             return true;
         }
