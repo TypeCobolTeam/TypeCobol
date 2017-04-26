@@ -562,7 +562,7 @@ namespace TypeCobol.Compiler.CodeModel
             var program = GetProgramHelper(name.Tail); //Get the program corresponding to the given namespace
             if (program != null)
             {
-                var programTypes = program.CurrentTable.Types; //Get all types from this program
+                var programTypes = program.SymbolTable.Types; //Get all types from this program
                 programTypes = programTypes
                                     .Where(p =>
                                             p.Value.All(f => (f.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public))

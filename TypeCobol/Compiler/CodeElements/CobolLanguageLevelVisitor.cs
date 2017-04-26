@@ -1336,22 +1336,22 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public bool Visit(Program program)
+        public virtual bool Visit(Program program)
         {
             return true;
         }
 
-        public bool Visit(Nodes.Class classNode)
+        public virtual bool Visit(Nodes.Class classNode)
         {
             return true;
         }
 
-        public bool Visit(Nodes.Method method)
+        public virtual bool Visit(Nodes.Method method)
         {
             return true;
         }
 
-        public bool Visit(ParametersProfileNode profile)
+        public virtual bool Visit(ParametersProfileNode profile)
         {
             return true;
         }

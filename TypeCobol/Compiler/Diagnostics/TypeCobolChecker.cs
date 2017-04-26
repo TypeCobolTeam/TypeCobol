@@ -43,7 +43,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 }
 
 
-    class FunctionCallChecker 
+    class FunctionCallChecker
     {
 
         public static void OnNode(Node node)
@@ -137,7 +137,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     if (potentialVariables.Count == 1)
                         return; //Stop here, it's a standard Cobol call
                 }
-               
+
 
                 functionCaller.FunctionDeclaration = functionDeclarations[0];
                 //If function is not ambigous and exists, lets check the parameters
@@ -152,7 +152,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
             var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
             if (callArgsCount > parameters.Count)
             {
-                var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName , parameters.Count);
+                var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName, parameters.Count);
                 DiagnosticUtils.AddError(e, m);
             }
             for (int c = 0; c < parameters.Count; c++)
@@ -174,7 +174,17 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     // 1- if only one of [actual|expected] types is null, overriden DataType.!= operator will detect it
                     // 2- if both are null, we WANT it to break: in TypeCobol EVERYTHING should be typed,
                     // and things we cannot know their type as typed as DataType.Unknown (which is a non-null valid type).
-                    if (type != null && (type.DataType != expected.DataType || type.Length > expected.Length))
+
+                    bool typeCompare = type.DataType == expected.DataType;
+                    if(type.DataType != expected.DataType)
+                    {
+                        var callerType = GetSymbolType(type);
+                        var calleeType = GetSymbolType(expected);
+
+                        typeCompare = callerType == calleeType;
+                    }
+
+                    if (type != null && (!typeCompare || type.Length > expected.Length))
                     {
                         var m =
                             string.Format(
@@ -191,6 +201,25 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     DiagnosticUtils.AddError(e, m);
                 }
             }
+        }
+
+
+        private static TypeDefinition GetSymbolType(DataDefinition node)
+        {
+            var found = node.SymbolTable.GetType(node.DataType);
+
+            if (found == null)
+            {
+                //Generate diag no type found
+                return null;
+            }
+            if (found.Count > 1)
+            {
+                //Generate Diag multiple type possible
+                return null;
+            }
+            else
+                return found.FirstOrDefault();
         }
     }
 
