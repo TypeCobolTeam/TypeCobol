@@ -1,0 +1,1 @@
+﻿-1 -i input\FunDeclare.rdz.tcbl -o output\FunDeclare.rdz.tcbl -d output\error.txt  -s ..\skeletons.xml -e rdz

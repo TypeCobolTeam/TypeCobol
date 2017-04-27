@@ -98,6 +98,7 @@ namespace TypeCobol.Server
         /// <param name="pipe">NamedPipeServerStream</param>
         public override void execute(NamedPipeServerStream pipe)
         {
+            ReturnCode returnCode = ReturnCode.Success;
             ConfigSerializer configSerializer = new ConfigSerializer();
             byte[] messagebuffer = new byte[100];
             byte[] originalbuffer = new byte[100];
@@ -113,13 +114,22 @@ namespace TypeCobol.Server
             }
             while (!pipe.IsMessageComplete);
 
-            Config config = new Config();
-            config = configSerializer.Deserialize(originalbuffer);
-            config.Format = CLI.CreateFormat(config.EncFormat, ref config);
-
-            CLI.runOnce(config);
-            //Write a "reponse" to the client which is waiting
-            pipe.WriteByte(68);
+            try
+            {
+                Config config = new Config();
+                config = configSerializer.Deserialize(originalbuffer);
+                config.Format = CLI.CreateFormat(config.EncFormat, ref config);
+                returnCode = CLI.runOnce(config); //Try to run TypeCobol ad get status in returnCode
+            }
+            catch (Exception e)
+            {
+                returnCode = ReturnCode.FatalError; 
+            }
+            finally
+            {
+                //Write a "reponse" to the client which is waiting
+                pipe.WriteByte((byte)returnCode);
+            }
         }
     }
 }

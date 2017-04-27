@@ -36,10 +36,16 @@ namespace TypeCobol.Codegen {
             // write parsing errors
             WriteErrors(writer, document.Results.AllDiagnostics(), columns);
             // write generated code
-            var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons);
-            var program = document.Results.ProgramClassDocumentSnapshot.Program;
-
-            codegen.Generate(program == null ? null : program.SyntaxTree.Root, program == null ? null : program.SymbolTable, columns);
+            var codegen = new Generators.DefaultGenerator(document.Results, writer, skeletons);
+            try
+            {
+                codegen.Generate(document.Results, columns);
+            }
+            catch (System.Exception)
+            {
+                //Nothing to do.. we are in unit test here
+            }
+            
             // flush
             writer.Close();
 

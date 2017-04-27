@@ -1,4 +1,5 @@
 ﻿using System;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
@@ -13,9 +14,8 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// The Code Generation method.
         /// </summary>
-        /// <param name="tree">Root of a syntax tree</param>
-        /// <param name="table">Table of symbols</param>
+        /// <param name="compilationUnit">Compilation unit resulting from TypeCobol parsing</param>
         /// <param name="columns">Columns layout</param>
-        void Generate(Root tree, SymbolTable table, ColumnsLayout columns = ColumnsLayout.FreeTextFormat);
+        void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat);
     }
 }

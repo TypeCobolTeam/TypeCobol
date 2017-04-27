@@ -99,10 +99,9 @@ namespace TypeCobol.Test {
 			        var writer = new StringWriter();
                     watch.Reset();
 			        watch.Start();
-                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, null);			        
-			        var program = document.Results.ProgramClassDocumentSnapshot.Program;
+                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, null);
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
-			        generator.Generate(program.SyntaxTree.Root, program.SymbolTable, columns);
+			        generator.Generate(document.Results, columns);
 
                     //Write duration to GrammarResultFile
                     watch.Stop();
