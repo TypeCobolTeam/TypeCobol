@@ -6,7 +6,7 @@
        01  TC-DVZZDATE-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
       *DVZZDATE::currentDateString
-        01 TC-DVZZDATE-d66fbe6d PROCEDURE-POINTER EXTERNAL.
+        01 TC-DVZZDATE-b173dd7b PROCEDURE-POINTER EXTERNAL.
 
        
 
@@ -23,7 +23,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-DVZZDATE-FctList-IsLoaded
-              SET TC-DVZZDATE-d66fbe6d   TO ENTRY 'd66fbe6d'
+              SET TC-DVZZDATE-b173dd7b   TO ENTRY 'b173dd7b'
 
               SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
             END-IF
@@ -39,7 +39,7 @@
       *    RETURNING Result PIC 9(08).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d66fbe6d.
+       PROGRAM-ID. b173dd7b.
        DATA DIVISION.
        LINKAGE SECTION.
        01 Result PIC 9(08).
@@ -48,4 +48,4 @@
            .
            display "toto"
            .
-       END PROGRAM d66fbe6d.
+       END PROGRAM b173dd7b.

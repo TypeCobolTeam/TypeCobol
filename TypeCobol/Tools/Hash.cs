@@ -37,6 +37,7 @@
         /// <returns></returns>
         public static string CreateCOBOLNameHash(string text, int size = 8, Node node = null)
         {
+            text = text.ToLowerInvariant();
             string hash = CreateSHA256(text);
             Regex hashRegex = new Regex(@"^[a-z\s,]*$");
             int index = 0;
