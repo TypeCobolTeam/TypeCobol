@@ -140,7 +140,159 @@ namespace TypeCobol.Compiler.Parser
                     CobolWordsBuilder.CreateQualifiedDataTypeReference(context.cobol2002TypeClause());
                 parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
             }
-            //TODO#245: subphrases
+
+            if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)
+            {
+                var blankClauseContext = context.blankWhenZeroClause()[0];
+                Token zeroToken = null;
+                if (blankClauseContext.ZERO() != null)
+                {
+                    zeroToken = ParseTreeUtils.GetFirstToken(blankClauseContext.ZERO());
+                }
+                else if (blankClauseContext.ZEROS() != null)
+                {
+                    zeroToken = ParseTreeUtils.GetFirstToken(blankClauseContext.ZEROS());
+                }
+                else
+                {
+                    zeroToken = ParseTreeUtils.GetFirstToken(blankClauseContext.ZEROES());
+                }
+                parameter.IsBlankWhenZero = new SyntaxProperty<bool>(true, zeroToken);
+            }
+
+            if (context.justifiedClause() != null && context.justifiedClause().Length > 0)
+            {
+                var justifiedClauseContext = context.justifiedClause()[0];
+                Token justifiedToken = null;
+                if (justifiedClauseContext.JUSTIFIED() != null)
+                {
+                    justifiedToken = ParseTreeUtils.GetFirstToken(justifiedClauseContext.JUSTIFIED());
+                }
+                else
+                {
+                    justifiedToken = ParseTreeUtils.GetFirstToken(justifiedClauseContext.JUST());
+                }
+                parameter.IsJustified = new SyntaxProperty<bool>(true, justifiedToken);
+            }
+
+            if (context.synchronizedClause() != null && context.synchronizedClause().Length > 0)
+            {
+                var synchronizedClauseContext = context.synchronizedClause()[0];
+                if (synchronizedClauseContext.SYNCHRONIZED() != null)
+                {
+                    parameter.IsSynchronized = new SyntaxProperty<bool>(true,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNCHRONIZED()));
+                }
+                else
+                {
+                    parameter.IsSynchronized = new SyntaxProperty<bool>(true,
+                        ParseTreeUtils.GetFirstToken(synchronizedClauseContext.SYNC()));
+                }
+            }
+
+            if (context.groupUsageClause() != null && context.groupUsageClause().Length > 0)
+            {
+                var groupUsageClauseContext = context.groupUsageClause()[0];
+                parameter.IsJustified = new SyntaxProperty<bool>(true,
+                    ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL()));
+            }
+
+            if (context.occursClause() != null && context.occursClause().Length > 0)
+            {
+                var occursClauseContext = context.occursClause()[0];
+                if (occursClauseContext.minNumberOfOccurences != null)
+                {
+                    parameter.MinOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.minNumberOfOccurences);
+                }
+                if (occursClauseContext.maxNumberOfOccurences != null)
+                {
+                    parameter.MaxOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.maxNumberOfOccurences);
+                }
+                if (parameter.MinOccurencesCount == null && parameter.MaxOccurencesCount != null)
+                {
+                    parameter.MinOccurencesCount = parameter.MaxOccurencesCount;
+                }
+                if (occursClauseContext.UNBOUNDED() != null)
+                {
+                    parameter.HasUnboundedNumberOfOccurences = new SyntaxProperty<bool>(true,
+                        ParseTreeUtils.GetFirstToken(occursClauseContext.UNBOUNDED()));
+                }
+                if (occursClauseContext.varNumberOfOccurences != null)
+                {
+                    parameter.OccursDependingOn = CobolExpressionsBuilder.CreateNumericVariable(occursClauseContext.varNumberOfOccurences);
+                }
+                if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
+                {
+                    int keysCount = 0;
+                    foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
+                    {
+                        keysCount += tableSortingKeysContext.dataNameReference().Length;
+                    }
+                    parameter.TableSortingKeys = new TableSortingKey[keysCount];
+                    int keyIndex = 0;
+                    foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
+                    {
+                        SyntaxProperty<SortDirection> sortDirection = null;
+                        if (tableSortingKeysContext.ASCENDING() != null)
+                        {
+                            sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Ascending,
+                                ParseTreeUtils.GetFirstToken(tableSortingKeysContext.ASCENDING()));
+                        }
+                        else
+                        {
+                            sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Descending,
+                                ParseTreeUtils.GetFirstToken(tableSortingKeysContext.DESCENDING()));
+                        }
+                        foreach (var dataNameReference in tableSortingKeysContext.dataNameReference())
+                        {
+                            SymbolReference sortKey = CobolWordsBuilder.CreateDataNameReference(dataNameReference);
+                            parameter.TableSortingKeys[keyIndex] = new TableSortingKey(sortKey, sortDirection);
+                            keyIndex++;
+                        }
+                    }
+                }
+                if (occursClauseContext.indexNameDefinition() != null && occursClauseContext.indexNameDefinition().Length > 0)
+                {
+                    parameter.Indexes = new SymbolDefinition[occursClauseContext.indexNameDefinition().Length];
+                    for (int i = 0; i < occursClauseContext.indexNameDefinition().Length; i++)
+                    {
+                        var indexNameDefinition = occursClauseContext.indexNameDefinition()[i];
+                        parameter.Indexes[i] = CobolWordsBuilder.CreateIndexNameDefinition(indexNameDefinition);
+                    }
+                }
+            }
+
+            if (context.signClause() != null && context.signClause().Length > 0)
+            {
+                var signClauseContext = context.signClause()[0];
+                if (signClauseContext.LEADING() != null)
+                {
+                    parameter.SignPosition = new SyntaxProperty<SignPosition>(SignPosition.Leading,
+                        ParseTreeUtils.GetFirstToken(signClauseContext.LEADING()));
+                }
+                else
+                {
+                    parameter.SignPosition = new SyntaxProperty<SignPosition>(SignPosition.Trailing,
+                        ParseTreeUtils.GetFirstToken(signClauseContext.TRAILING()));
+                }
+                if (signClauseContext.SEPARATE() != null)
+                {
+                    parameter.SignIsSeparate = new SyntaxProperty<bool>(true,
+                        ParseTreeUtils.GetFirstToken(signClauseContext.SEPARATE()));
+                }
+            }
+
+            if (context.usageClause() != null && context.usageClause().Length > 0)
+            {
+                parameter.Usage = CreateUsageClause(context.usageClause()[0]);
+            }
+
+            if (context.valueClause() != null && context.valueClause().Length > 0)
+            {
+                var valueClauseContext = context.valueClause()[0];
+                parameter.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
+            }
+
             return parameter;
         }
 

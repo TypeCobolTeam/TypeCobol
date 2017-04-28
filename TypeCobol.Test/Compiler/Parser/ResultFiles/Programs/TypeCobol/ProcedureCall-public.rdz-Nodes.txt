@@ -16,11 +16,13 @@ Line 106[12,48] <27, Error, Syntax> - Syntax error : No function found for 'case
 Line 113[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12' is ambigous. 'case12' is defined 2 times
 Line 116[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case13'
 Line 122[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15' is ambigous. 'case15' is defined 2 times
-Line 149[12,56] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.addDaysToDate' expected parameter 'TypeOfDays' of type typeOfDays and length 1 and received 'W-WrongTypeOfDays2' of type absentPgm.typeOfDays and length 1
+Line 149[12,56] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.addDaysToDate' expected parameter 'TypeOfDays' of type typeOfDays and received 'W-WrongTypeOfDays2' of type absentPgm.typeOfDays 
 Line 161[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case2'
 Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
-Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and length 1 and received 'fakeDate' of type Alphanumeric and length 8
-Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of type Alphanumeric and length 8 and received 'myDate' of type DATE and length 1
+Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
+Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of length 1 and received 'fakeDate' of length 8
+Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of type Alphanumeric and received 'myDate' of type DATE 
+Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of length 8 and received 'myDate' of length 1
 Line 166[12,48] <27, Error, Syntax> - Syntax error : Parameter fakeD is not referenced
 Line 171[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case4'
 Line 189[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case7'
