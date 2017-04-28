@@ -75,17 +75,6 @@
 	    public Section(SectionHeader header): base(header) { }
 	    public override string ID { get { return "section"; } }
         public override string Name { get { return this.CodeElement().SectionName.Name; } }
-        public override QualifiedName QualifiedName
-        {
-            get
-            {
-                if (ID == null) return null;
-                var puri = Parent == null ? null : Parent.URI;
-                if (puri == null) return new URI(Name);
-
-                return new URI(puri + '.' + Name);
-            }
-        }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
@@ -96,18 +85,6 @@
 	    public Paragraph(ParagraphHeader header): base(header) { }
 	    public override string ID { get { return "paragraph"; } }
         public override string Name { get { return this.CodeElement().ParagraphName.Name; } }
-
-        public override QualifiedName QualifiedName
-        {
-            get
-            {
-                if (ID == null) return null;
-                var puri = Parent == null ? null : Parent.URI;
-                if (puri == null) return new URI(Name);
-
-                return new URI(puri + '.' + Name);
-            }
-        } 
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
