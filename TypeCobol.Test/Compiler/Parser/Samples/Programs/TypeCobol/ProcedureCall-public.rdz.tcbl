@@ -134,8 +134,9 @@
            CALL PublicProcedures::case4 INPUT      fakeDate myDate fakeDate
                       OUTPUT     fakeDate result
 
-      * Ok: case51 exists with no argument
-           CALL PublicProcedures::case51
+      * Ok: case51 exists with no argument, 
+      *     case insensitive test
+           CALL PUBLICProcedures::CASE51
       * Ok: case52 exists with no argument
            CALL PublicProcedures::case52
       * Ok: case53 exists with no argument

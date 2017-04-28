@@ -566,7 +566,7 @@ namespace TypeCobol.Compiler.CodeModel
                 programTypes = programTypes
                                     .Where(p =>
                                             p.Value.All(f => (f.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public))
-                                            .ToDictionary(f => f.Key, f => f.Value); //Sort types to get only the ones with public AccessModifier
+                                            .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort types to get only the ones with public AccessModifier
 
                 found = GetFromTable(name.Head, programTypes); //Check if there is a type that correspond to the given name (head)
             }
@@ -664,7 +664,7 @@ namespace TypeCobol.Compiler.CodeModel
                 programFunctions = programFunctions
                                     .Where(p =>
                                             p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
-                                            .ToDictionary(f => f.Key, f => f.Value); //Sort functions to get only the one with public AccessModifier
+                                            .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort functions to get only the one with public AccessModifier
 
                 result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
             }
