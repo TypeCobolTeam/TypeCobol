@@ -36,7 +36,7 @@
 			    encode(hash, Profile.InoutParameters).Append(':');
 			    encode(hash, Profile.OutputParameters).Append(':');
 			    hash.Append(encode(Profile.ReturningParameter));
-			    return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8);
+			    return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8, this);
 		    }
 	    }
 	    private StringBuilder encode(StringBuilder str, IList<ParameterDescriptionEntry> parameters) {

@@ -30,18 +30,18 @@
       *DECLARE FUNCTION DoesNothing PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a59b2c49.
+       PROGRAM-ID. c49a4761.
        PROCEDURE DIVISION
            .
            DISPLAY 'I DO NOTHING'
            .
-       END PROGRAM a59b2c49.
+       END PROGRAM c49a4761.
       *
       *DECLARE FUNCTION ReturnsZero PRIVATE
       *      RETURNING result PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a866b35c.
+       PROGRAM-ID. e61a1c43.
        DATA DIVISION.
        LINKAGE SECTION.
        01 result PIC 9(04).
@@ -50,13 +50,13 @@
            .
            MOVE 0 TO result.
            .
-       END PROGRAM a866b35c.
+       END PROGRAM e61a1c43.
       *
       *DECLARE FUNCTION DoesNothing PRIVATE
       *      INPUT x PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fe03398a.
+       PROGRAM-ID. cd51a7fd.
        DATA DIVISION.
        LINKAGE SECTION.
        01 x PIC 9(04).
@@ -65,7 +65,7 @@
            .
            DISPLAY 'I DO NOTHING WITH ' x
            .
-       END PROGRAM fe03398a.
+       END PROGRAM cd51a7fd.
       *
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
       *      INPUT     x      PIC 9(04)
@@ -73,7 +73,7 @@
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e3e490ae.
+       PROGRAM-ID. c498f2f1.
        DATA DIVISION.
        LINKAGE SECTION.
        01 x PIC 9(04).
@@ -87,13 +87,13 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM e3e490ae.
+       END PROGRAM c498f2f1.
       *
       *declare function UseACopy private
       *         input  x pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f6a89a72.
+       PROGRAM-ID. e7b552c0.
        data division.
        working-storage section.
        01 yoto pic X.
@@ -107,4 +107,4 @@
            display "Hello"
            COPY MyProcedureCopy.
            .
-       END PROGRAM f6a89a72.
+       END PROGRAM e7b552c0.

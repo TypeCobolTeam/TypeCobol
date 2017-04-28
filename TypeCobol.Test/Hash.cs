@@ -16,13 +16,13 @@ public class Hashes {
 	}
 	[TestMethod]
 	public void TestStringHashesCOBOL() {
-		Assert.AreEqual(Hash.CreateCOBOLNameHash("Hello, world", 14),       "ae7c3b6ac0beff");
+		Assert.AreEqual(Hash.CreateCOBOLNameHash("Hello, world", 14),       "ca7e4eaa6e8ae9");
 		Assert.AreEqual(Hash.CreateCOBOLNameHash("titi"),                   "cce66316");
 		Assert.AreEqual(Hash.CreateCOBOLNameHash("toto", 8),                "f7a65e31");
 		Assert.AreEqual(Hash.CreateCOBOLNameHash("totot", 8),               "ca0b4c05");
 		Assert.AreEqual(Hash.CreateCOBOLNameHash("whatever", 0),            "");
 		string message = "NO NOO̼O​O\n"+"   NΘ \n"+"stop the an​*̶͑̾̾​̅ͫ͏̙̤g͇̫͛͆̾ͫ̑͆l͖͉̗̩̳̟̍ͫͥͨe̠̅s";
-		Assert.AreEqual(Hash.CreateCOBOLNameHash(message, 8),               "b7b70cb1");
+		Assert.AreEqual(Hash.CreateCOBOLNameHash(message, 8),               "d2ea3387");
 		Assert.AreEqual(Hash.CreateCOBOLNameHash("TH̘Ë͖́̉ ͠P̯͍̭O̚​N̐Y̡ H̸̡̪̯ͨ͊̽̅̾̎Ȩ̬̩̾͛ͪ̈́̀́͘ ̶̧̨̱̹̭̯ͧ̾ͬC̷̙̲̝͖ͭ̏ͥͮ͟Oͮ͏̮̪̝͍M̲̖͊̒ͪͩͬ̚̚͜Ȇ̴̟̟͙̞ͩ͌͝S̨̥̫͎̭ͯ̿̔̀ͅ", 1), "e");
 	}
 }

@@ -21,11 +21,11 @@
        01 TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::MyPublicProcedure
-        01 TC-Callee-f0eabed9 PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-ebb060ea PROCEDURE-POINTER EXTERNAL.
       *Callee::check
-        01 TC-Callee-afc9521c PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-ca0ab46c PROCEDURE-POINTER EXTERNAL.
       *Callee::check2
-        01 TC-Callee-b856189b PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-d0a59141 PROCEDURE-POINTER EXTERNAL.
 
 
        PROCEDURE DIVISION.
@@ -52,7 +52,7 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL TC-Callee-f0eabed9 USING
+           CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -63,7 +63,7 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL TC-Callee-f0eabed9 USING
+           CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -76,7 +76,7 @@
       *    CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'ac997588' USING
+           CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -88,7 +88,7 @@
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'ac997588' USING
+           CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -99,25 +99,25 @@
 
       *OK  call check of PGM1
       *   call check input somedate
-          CALL 'c5ff0cee' USING
+          CALL 'a0508f35' USING
                                  somedate
            end-call
                                    
       *OK 
       *   call PGM1::check input somedate
-          CALL 'c5ff0cee' USING
+          CALL 'a0508f35' USING
                                  somedate
            end-call
                                          
       *OK 
       *   call Callee::check input somedate
-          CALL TC-Callee-afc9521c USING
+          CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
                                            
       *OK 
       *   call Callee::check2 input somedate
-          CALL TC-Callee-b856189b USING
+          CALL TC-Callee-d0a59141 USING
                                  somedate
            end-call
                                             
@@ -155,13 +155,13 @@
        01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::check
-        01 TC-Callee-afc9521c PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-ca0ab46c PROCEDURE-POINTER EXTERNAL.
       *Callee::check2
-        01 TC-Callee-b856189b PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-d0a59141 PROCEDURE-POINTER EXTERNAL.
       *Callee::check2
-        01 TC-Callee-f17c8b08 PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-e5b741a8 PROCEDURE-POINTER EXTERNAL.
       *Callee::MyPublicProcedure
-        01 TC-Callee-f0eabed9 PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-ebb060ea PROCEDURE-POINTER EXTERNAL.
 
 
        PROCEDURE DIVISION.
@@ -176,10 +176,10 @@
 
         FctList-Process-Mode.
             IF NOT TC-Callee-FctList-IsLoaded
-              SET TC-Callee-afc9521c   TO ENTRY 'afc9521c'
-              SET TC-Callee-b856189b   TO ENTRY 'b856189b'
-              SET TC-Callee-f17c8b08   TO ENTRY 'f17c8b08'
-              SET TC-Callee-f0eabed9   TO ENTRY 'f0eabed9'
+              SET TC-Callee-ca0ab46c   TO ENTRY 'ca0ab46c'
+              SET TC-Callee-d0a59141   TO ENTRY 'd0a59141'
+              SET TC-Callee-e5b741a8   TO ENTRY 'e5b741a8'
+              SET TC-Callee-ebb060ea   TO ENTRY 'ebb060ea'
 
               SET TC-Callee-FctList-IsLoaded TO TRUE
             END-IF
@@ -215,7 +215,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. afc9521c.
+       PROGRAM-ID. ca0ab46c.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -226,14 +226,14 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM afc9521c.
+       END PROGRAM ca0ab46c.
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b856189b.
+       PROGRAM-ID. d0a59141.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -244,7 +244,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM b856189b.
+       END PROGRAM d0a59141.
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
@@ -252,7 +252,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f17c8b08.
+       PROGRAM-ID. e5b741a8.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -268,7 +268,7 @@
                    BY REFERENCE myDate2
            .
            CONTINUE.
-       END PROGRAM f17c8b08.
+       END PROGRAM e5b741a8.
       *
       *DECLARE PROCEDURE MyPublicProcedure PUBLIC
       *    INPUT mydate        TYPE Date
@@ -278,7 +278,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f0eabed9.
+       PROGRAM-ID. ebb060ea.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -297,14 +297,14 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM f0eabed9.
+       END PROGRAM ebb060ea.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c5ff0cee.
+       PROGRAM-ID. a0508f35.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -315,7 +315,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM c5ff0cee.
+       END PROGRAM a0508f35.
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -325,7 +325,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ac997588.
+       PROGRAM-ID. fde394fb.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -344,4 +344,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM ac997588.
+       END PROGRAM fde394fb.
