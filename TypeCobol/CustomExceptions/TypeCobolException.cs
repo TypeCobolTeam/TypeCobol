@@ -6,6 +6,9 @@ namespace TypeCobol.CustomExceptions
     public abstract class TypeCobolException : Exception
     {
         public MessageCode MessageCode { get; set; }
+        /// <summary>
+        /// Path to the source file
+        /// </summary>
         public string Path { get; set; }
 
         public int ColumnStartIndex { get; set; }
