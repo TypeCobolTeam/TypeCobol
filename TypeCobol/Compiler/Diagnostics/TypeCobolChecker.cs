@@ -261,8 +261,6 @@ class FunctionDeclarationChecker: NodeListener {
 			        if (data == null) continue;
 			        if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
 			            DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
-			        if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL
-			            DiagnosticUtils.AddError(data, "Illegal EXTERNAL clause in function data item.");
 			}
 		}
 	}
