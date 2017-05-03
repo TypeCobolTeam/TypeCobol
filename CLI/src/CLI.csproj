@@ -87,9 +87,6 @@
     <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config\Error.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="DefaultCopies\SQLCA.cpy">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
