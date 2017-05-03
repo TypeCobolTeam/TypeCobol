@@ -131,20 +131,21 @@ namespace TypeCobol.Server
                     }
                 }
 
-                if (parser.Results.CodeElementsDocumentSnapshot == null && config.ExecToStep > ExecutionStep.Preprocessor)
-                {
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has syntactic error(s) preventing codegen (CodeElements).", path); //Make ParsingException trace back to RunOnce()
-                }
-                else if (parser.Results.ProgramClassDocumentSnapshot == null && config.ExecToStep > ExecutionStep.SyntaxCheck)
-                {
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path); //Make ParsingException trace back to RunOnce()
-                }
+
 
                 var allDiags = parser.Results.AllDiagnostics();
                 errorWriter.AddErrors(path, allDiags); //Write diags into error file
 
-                if (allDiags.Count > 0)
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, false); //Make ParsingException trace back to RunOnce()
+                if (allDiags.Count > 0) {
+                    //Make ParsingException trace back to RunOnce()
+                    throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, false);
+                }
+                if (parser.Results.CodeElementsDocumentSnapshot == null && config.ExecToStep > ExecutionStep.Preprocessor) {
+                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has syntactic error(s) preventing codegen (CodeElements).", path); //Make ParsingException trace back to RunOnce()
+                }
+                if (parser.Results.ProgramClassDocumentSnapshot == null && config.ExecToStep > ExecutionStep.SyntaxCheck) {
+                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path); //Make ParsingException trace back to RunOnce()
+                }
 
 
                 if (config.ExecToStep >= ExecutionStep.Generate)
