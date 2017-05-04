@@ -17,7 +17,7 @@ namespace TypeCobol.CustomExceptions
         public bool Logged { get; set; }    
 
 
-        public TypeCobolException(MessageCode messageCode, string message, string path, bool logged = true, int columnStartIndex = 0, int columnEndIndex = 0, int lineNumber = 1) : base (message)
+        public TypeCobolException(MessageCode messageCode, string message, string path, Exception innerException = null, bool logged = true, int columnStartIndex = 0, int columnEndIndex = 0, int lineNumber = 1) : base (message, innerException)
         {
             MessageCode = messageCode;
             //Message is set by the base constructor of Exception. 
@@ -26,6 +26,7 @@ namespace TypeCobol.CustomExceptions
             LineNumber = lineNumber;
             Path = path;
             Logged = logged;
+         
         }
     }
 }
