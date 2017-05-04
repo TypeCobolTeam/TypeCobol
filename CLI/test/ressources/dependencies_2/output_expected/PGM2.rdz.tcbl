@@ -13,10 +13,10 @@
        01  message      PIC X(80).
       *01  vect2        TYPE Vect2.
        01 vect2.
-           02 Coord2d PIC .
+           02 Coord2d.
              03 X PIC 9.
              03 Y PIC 9.
-           02 Coord3d PIC .
+           02 Coord3d.
              03 Z PIC 9.
                                    
        01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
