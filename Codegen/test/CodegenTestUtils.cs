@@ -37,17 +37,12 @@ namespace TypeCobol.Codegen {
             WriteErrors(writer, document.Results.AllDiagnostics(), columns);
             // write generated code
             var codegen = new Generators.DefaultGenerator(document.Results, writer, skeletons);
-            try
-            {
+            try {
                 codegen.Generate(document.Results, columns);
+            } finally {
+                // flush
+                writer.Close();
             }
-            catch (System.Exception)
-            {
-                //Nothing to do.. we are in unit test here
-            }
-            
-            // flush
-            writer.Close();
 
             // compare with expected result
             string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
