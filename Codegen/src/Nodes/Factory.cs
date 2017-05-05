@@ -21,6 +21,16 @@ class Factory {
 	/** Some nodes want to be created next to some others */
 	private Dictionary<string,string> Preceeds = new Dictionary<string,string> {
 			{ "data-division", "procedure-division" },
+            { "file", "working-storage" },
+            { "working-storage", "local-storage" },
+            { "local-storage", "linkage" },
+		};
+
+    private Dictionary<string, List<string> > Previous = new Dictionary<string, List<string>>{
+			{ "procedure-division", new List<string>(){"data-division" }},
+            { "working-storage", new List<string>(){"file"} },
+            { "local-storage", new List<string>(){"working-storage", "file"}  },
+            { "linkage", new List<string>(){"local-storage", "working-storage", "file"} },
 		};
 
 	private void GeneralizeName(ref string name) {
@@ -42,16 +52,24 @@ class Factory {
 		Preceeds.TryGetValue(name, out sibling);
 		return sibling;
 	}
-
-	internal Compiler.Nodes.Node Create(string name, out string nextsibling) {
+    private List<string> GetPreviousSibling(string name)
+    {
+        List<string> previous;
+        Previous.TryGetValue(name, out previous);
+        return previous;
+    }
+    internal Compiler.Nodes.Node Create(string name, out string nextsibling, out List<string> previousSibling)
+    {
 		GeneralizeName(ref name);
 		nextsibling = GetNextSibling(name);
+        previousSibling = GetPreviousSibling(name);
 		var type = GetGeneratedNode(name);
 		if (type == null) return null; // cannot generate
 		var node = (Compiler.Nodes.Node)Activator.CreateInstance(type);
 		foreach(var cname in GetGeneratedChildren(name)) {
 			string whatever;
-			var child = Create(cname, out whatever);
+            List<string> whatever2;
+            var child = Create(cname, out whatever, out whatever2);
 			if (child != null) node.Add(child);
 		}
 		return node;

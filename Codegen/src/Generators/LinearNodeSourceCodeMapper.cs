@@ -563,6 +563,9 @@ namespace TypeCobol.Codegen.Generators
                         if (InsertNodeBeforeNode(node, beforeNode))
                             return true;
                     }
+                    if (node.Parent.Children.Count > 1 && index == (node.Parent.Children.Count - 1))
+                    {
+                    }
                     else
                     {
                         //We must insert after the parent.                        

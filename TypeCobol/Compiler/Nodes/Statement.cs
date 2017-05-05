@@ -43,7 +43,17 @@
         }
 
         public FunctionDeclaration FunctionDeclaration {get; set;}
-	    
+
+        /// <summary>
+        /// True if this Procedure call in case of External call is not performed by COBOL EXTERNAL POINTER,
+        /// false otherwise.
+        /// </summary>
+        public bool IsNotByExternalPointer
+        {
+            get;
+            set;
+        }
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);

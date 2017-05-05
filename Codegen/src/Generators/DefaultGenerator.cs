@@ -137,8 +137,10 @@ namespace TypeCobol.Codegen.Generators
                     }
                     Node node = mapper.Nodes[node_index].node;
                     bool bGenerated = node is Generated;
+                    bool bForceGenerateLines = true;
                     if (!bGenerated)
                     {   //This Node is not Generated: If it removed then remove its source code otherwise do Nothing it is already in the source buffer.
+                        bForceGenerateLines = false;
                         if (mapper.Nodes[node_index].Removed)
                         {//If this node is removed
                             //var sourceLine = TargetDocument[i];
@@ -147,8 +149,12 @@ namespace TypeCobol.Codegen.Generators
                             //Delete <==> Replace with blanks
                             ReplaceByBlanks(curSourceText, from.Pos, to.Pos);
                         }
+                        else if (mapper.Nodes[node_index].node.IsFlagSet(Node.Flag.ForceGetGeneratedLines))
+                        {//As lines to generate and replace
+                            bForceGenerateLines = true;
+                        }
                     }
-                    else
+                    if (bForceGenerateLines)
                     {
                         bool bIsFunctionDecl = mapper.Nodes[node_index] is LinearNodeSourceCodeMapper.NodeFunctionData;
                         bool bFirst = true;

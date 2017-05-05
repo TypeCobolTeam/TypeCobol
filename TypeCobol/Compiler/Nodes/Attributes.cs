@@ -286,6 +286,7 @@ public class Definitions {
 	public class NList: List<Node> {
 		internal NList(): base() { }
 		public List<Node> Public  { get { return retrieve(AccessModifier.Public); } }
+        public bool PublicIsNotEmpty { get { return retrieve(AccessModifier.Public).Count > 0; } }
 		public List<Node> Private { get { return retrieve(AccessModifier.Private); } }
 		private List<Node> retrieve(AccessModifier visibility) {
 			var results = new List<Node>();
@@ -347,6 +348,26 @@ internal class LibraryCopyAttribute: Attribute {
         /// </summary>
         public string Name
         { get; internal set; }
+
+        public bool IsNotByExternalPointer
+        {
+            get
+            {
+                return ProcStyleCall.IsNotByExternalPointer;
+            }
+            set
+            {
+                ProcStyleCall.IsNotByExternalPointer = value;
+            }
+        }
+        /// <summary>
+        /// The target Procedure Style Call
+        /// </summary>
+        public ProcedureStyleCall ProcStyleCall
+        {
+            get;
+            internal set;
+        }
     }
 
     /// <summary>
@@ -461,6 +482,7 @@ internal class LibraryCopyAttribute: Attribute {
                             string item_proc_name = call.Item1[0].Name;
                             proc_imp.Name = item_proc_name;
                             proc_imp.Hash = proc_hash;
+                            proc_imp.ProcStyleCall = proc_style_call;
                             prg_imp.Procedures[proc_hash] = proc_imp;
                         }
                     }

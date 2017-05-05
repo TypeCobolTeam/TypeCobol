@@ -90,12 +90,13 @@
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" />
     </conditions>
-    <patterns>
+    <patterns>      
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
 01  TC-%programName8-FctList-Loaded PIC X(02) EXTERNAL.
     88 TC-%programName8-FctList-IsLoaded      VALUE 'OK'.
       </pattern>
-      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY">
+      <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="true">
         @{
         var items = "";
         foreach (var f in %definitions.functions.Public) {
@@ -105,8 +106,36 @@
         }
         @items
       </pattern>
+      <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL -->
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="false">
+        @{
+        var items = "";
+        if (%definitions.functions.Public.Count > 0) {
+        items += "01 TC-"+ %programName8 + "-PntTab.\n";
+        items += "    05 TC-" + %programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+%definitions.functions.Public.Count+".\n";
+        }
+        foreach (var f in %definitions.functions.Public) {
+        items += "*"+%programName8 + "::" +f.Name+'\n';
+        items += "    05 TC-"+%programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
+        items += "    05 TC-"+%programName8 + "-" + f.Hash +" PROCEDURE-POINTER.\n";
+        }
+        }
+        @items
+      </pattern>
+      <!-- CALLEE LINKAGE SECTION WITHOUT EXTERNAL -->
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_POINTER_LINKAGE" deprecated="false">
+        @{
+        var items = "";
+        if (%definitions.functions.Public.Count > 0) {
+        items += "01 PntTab-Pnt POINTER.\n";
+        }
+        }
+        @items
+      </pattern>
+
       <pattern action="expand" location="program.end"></pattern>
-      <pattern location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR">
+      <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
+      <pattern location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="true">
 *
 *    IF CallIsCopy
 *      PERFORM Copy-Process-Mode
@@ -128,8 +157,41 @@
        SET TC-%programName8-FctList-IsLoaded TO TRUE
      END-IF
         .
-
+        
       </pattern>
+
+      <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
+      <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
+*
+*    IF CallIsCopy
+*      PERFORM Copy-Process-Mode
+*    ELSE
+    PERFORM FctList-Process-Mode
+*    END-IF
+
+    GOBACK.
+        @{
+        var entries = "";
+        int c = 0;
+        foreach (var f in %definitions.functions.Public) {
+        entries += "       SET TC-"+%programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
+        }
+        }
+ FctList-Process-Mode.
+     IF NOT TC-%programName8-FctList-IsLoaded
+@entries
+       SET TC-%programName8-FctList-IsLoaded TO TRUE
+     END-IF
+        .
+        @{
+        var items = "";
+        if (%definitions.functions.Public.Count > 0) {
+        items += "     PntTab-Pnt POINTER TO ADDRESS OF TC-"+%programName8+"-PntTab\n";
+        }
+        }
+@items
+      </pattern>
+
     </patterns>
    
   </skeleton>
@@ -207,7 +269,8 @@
     </conditions>
     <patterns>
       <pattern location="NODE" action="remarks"></pattern> <!-- Remarks Directive -->
-      <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty">
+      <!-- CALLER WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
+      <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty" deprecated="true">
         @{
           var items = "";
           foreach (var pgm in %imports.Programs.Values) {
@@ -222,6 +285,45 @@
         }
         @items
       </pattern>
+
+      <!-- CALLER WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
+      <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
+        @{
+        var items = "";
+        foreach (var pgm in %imports.Programs.Values) {
+        items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n";
+        items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02).\n";
+        items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
+        }
+        }
+        @items
+      </pattern>
+
+      <!-- CALLER LINKAGE SECTION WITHOUT EXTERNAL-->
+      <pattern location="program.data-division.linkage" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
+*Common to all librairies used by the program.
+01 TC-Library-PntTab.
+   05 TC-Library-PntNbr          PIC S9(04) COMP.
+   05 TC-Library-Item OCCURS 1000
+                        DEPENDING ON TC-Library-PntNbr
+                        INDEXED   BY TC-Library-Idx.
+       10 TC-Library-Item-Idt      PIC X(08).
+       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+        @{
+          var items = "";
+          foreach (var pgm in %imports.Programs.Values) {
+            foreach (var proc in pgm.Procedures.Values) {
+              proc.IsNotByExternalPointer=true;
+              items += "*"+pgm.Name+"::" +proc.Name+'\n';
+              items += "01 TC-"+pgm.Name + "-" + proc.Hash+"-Item.\n";
+              items += "   05 TC-"+pgm.Name + "-" + proc.Hash+"-Idt PIC X(08).\n";
+              items += "   05 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER.\n";
+            }
+          }
+        }
+@items
+      </pattern>
+      
       <pattern location="program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
@@ -232,9 +334,11 @@
         clause = "*\n    PERFORM TC-Initializations\n";
         }
         }
-        @clause
+@clause
       </pattern>
-      <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty">
+
+      <!-- CALLER PROCEDURE DIVISION WITH EXTERNAL-->
+      <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="true">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>
@@ -252,8 +356,45 @@
         clause += "     .\n";
         }
         }
-        @clause
+@clause
       </pattern>
+
+      <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
+      <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="false">
+        <conditions>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+        </conditions>
+        @{
+        var clause = "";
+        if (!%imports.IsEmpty) {
+        clause += "*=================================================================\n";
+        clause += " TC-Initializations.\n";
+        clause += "*=================================================================\n";
+        foreach (var pgm in %imports.Programs.Values) {
+        clause += "    IF NOT TC-" + pgm.Name + "-FctList-IsLoaded\n";
+        clause += "        CALL 'ZCALLPGM' USING TC-"+pgm.Name+"\n";
+        clause += "        ADDRESS OF TC-Library-PntTab\n";
+        clause += "        PERFORM VARYING TC-Library-Idx FROM 1 BY 1\n";
+        clause += "        UNTIL TC-Library-Idx > TC-Library-PntNbr\n";
+        clause += "            EVALUATE TC-Library-Item-Idt (TC-Library-Idx)\n";
+        foreach (var proc in pgm.Procedures.Values) {
+        clause += "            WHEN '"+proc.Hash+"'\n";
+        clause += "                 SET ADDRESS OF\n";
+        clause += "                 TC-"+pgm.Name+"-"+proc.Hash+"-Item\n";
+        clause += "                 TO ADDRESS OF\n";
+        clause += "                 TC-Library-Item(TC-Library-Idx)\n";
+        }
+        clause += "            END-EVALUATE\n";
+        clause += "        END-PERFORM\n";
+        clause += "        SET TC-"+pgm.Name+"-FctList-IsLoaded TO TRUE\n";
+        clause += "    END-IF\n";
+        clause += "     .\n";
+        }
+        }
+        }
+@clause
+      </pattern>
+
     </patterns>
     </skeleton>
 </skeletons>
