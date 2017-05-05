@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Text;
 using SimpleMsgPack;
 using TypeCobol.Server.Serialization;
 
+
 namespace TypeCobol.Server {
 
     /// <summary>
@@ -20,6 +21,7 @@ namespace TypeCobol.Server {
     /// </summary>
     public class Config
     {
+        public string CommandLine { get; set; }
         public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
         public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
@@ -37,6 +39,8 @@ namespace TypeCobol.Server {
         public List<string> Dependencies = new List<string>();
 
         public string EncFormat = null;
+
+        public bool Telemetry { get; set; }
     }
 
     class Server {
@@ -50,6 +54,7 @@ namespace TypeCobol.Server {
 			bool once = false;
             StartClient startClient = StartClient.No;
 			var config = new Config();
+            config.CommandLine = string.Join(" ", argv);
 			var pipename = "TypeCobol.Server";
 
             var p = new OptionSet() {
@@ -89,6 +94,7 @@ namespace TypeCobol.Server {
                 { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => config.Dependencies.Add(v) },
                 { "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
+                { "t|telemetry", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => config.Telemetry = true }
             };
 
       
@@ -96,7 +102,7 @@ namespace TypeCobol.Server {
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             config.CopyFolders.Add(folder + @"\DefaultCopies\");
 
-		    try {
+            try {
                 List<string> args;
 		        try {
 

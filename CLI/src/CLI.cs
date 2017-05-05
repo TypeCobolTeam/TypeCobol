@@ -47,6 +47,9 @@ namespace TypeCobol.Server
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
+                if (config.Telemetry)
+                    MailSender.Send(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
+
                 if(typeCobolException.Logged)
                     Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex, typeCobolException.LineNumber, typeCobolException.Message, typeCobolException.Path);
 
@@ -57,8 +60,11 @@ namespace TypeCobol.Server
 
                 return ReturnCode.FatalError; //Just in case..
             }
-            catch (Exception e)//Catch all others exceptions
+            catch (Exception e)//Catch any other exception
             {
+                if (config.Telemetry)
+                    MailSender.Send(e, config.InputFiles, config.CopyFolders, config.CommandLine);
+
                 Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, e.Message, string.Empty);
                 return ReturnCode.FatalError;
             }
@@ -106,7 +112,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception ex)
                 {
-                    throw new ParsingException(MessageCode.ParserInit, ex.Message, path); //Make ParsingException trace back to RunOnce()
+                    throw new ParsingException(MessageCode.ParserInit, ex.Message, path, ex.InnerException); //Make ParsingException trace back to RunOnce()
                 }
 
                 parser.Parse(path);
@@ -125,6 +131,13 @@ namespace TypeCobol.Server
                     }
                 }
 
+                var allDiags = parser.Results.AllDiagnostics();
+                errorWriter.AddErrors(path, allDiags); //Write diags into error file
+
+                if (allDiags.Count > 0)
+                    throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, null, false); //Make ParsingException trace back to RunOnce()
+
+
                 if (parser.Results.CodeElementsDocumentSnapshot == null && config.ExecToStep > ExecutionStep.Preprocessor)
                 {
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has syntactic error(s) preventing codegen (CodeElements).", path); //Make ParsingException trace back to RunOnce()
@@ -133,13 +146,6 @@ namespace TypeCobol.Server
                 {
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path); //Make ParsingException trace back to RunOnce()
                 }
-
-                var allDiags = parser.Results.AllDiagnostics();
-                errorWriter.AddErrors(path, allDiags); //Write diags into error file
-
-                if (allDiags.Count > 0)
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, false); //Make ParsingException trace back to RunOnce()
-
 
                 if (config.ExecToStep >= ExecutionStep.Generate)
                 {
@@ -155,7 +161,7 @@ namespace TypeCobol.Server
                         if (e is GenerationException)
                             throw e; //Throw the same exception to let runOnce() knows there is a problem
                          
-                        throw new GenerationException(e.Message, null, false); //Otherwise create a new GeerationException
+                        throw new GenerationException(e.Message, null, e.InnerException, false); //Otherwise create a new GeerationException
                     }
                     
                 }
@@ -201,12 +207,9 @@ namespace TypeCobol.Server
                     }
 
                     var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
-                    foreach (var types in symbols.Types)
-                        foreach (var type in types.Value)
-                            table.AddType(type);
-                    foreach (var functions in symbols.Functions)
-                        foreach (var function in functions.Value)
-                            table.AddFunction(function);
+                    table.CopyAllTypes(symbols.Types);
+                    table.CopyAllFunctions(symbols.Functions);
+                   
                     //TODO check if types or functions are already there
                 }
                 catch (CopyLoadingException copyException)
@@ -215,7 +218,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception e)
                 {
-                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path);
+                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e.InnerException);
                 }
                
             }
@@ -235,9 +238,10 @@ namespace TypeCobol.Server
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
+            string[] extensions = { ".tcbl", ".cbl", ".cpy" };
             foreach (var path in paths)
             {
-                dependencies.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, true)); //Get File by name or search the directory for all files
+                dependencies.AddRange(Tools.FileSystem.GetFiles(path, extensions, true)); //Get File by name or search the directory for all files
             }
 
             foreach (string path in dependencies)
@@ -270,7 +274,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception e)
                 {
-                    throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path);
+                    throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e.InnerException);
                 }
             }
             return table;

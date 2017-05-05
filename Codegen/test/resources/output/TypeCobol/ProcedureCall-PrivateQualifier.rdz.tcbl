@@ -37,7 +37,7 @@
       *    CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'ac997588' USING
+           CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -49,7 +49,7 @@
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'ac997588' USING
+           CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -60,13 +60,13 @@
 
       *OK  call check of PGM1
       *   call check input somedate
-          CALL 'c5ff0cee' USING
+          CALL 'a0508f35' USING
                                  somedate
            end-call
                                    
       *OK 
       *   call PGM1::check input somedate
-          CALL 'c5ff0cee' USING
+          CALL 'a0508f35' USING
                                  somedate
            end-call
                                          
@@ -80,7 +80,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c5ff0cee.
+       PROGRAM-ID. a0508f35.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -91,7 +91,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM c5ff0cee.
+       END PROGRAM a0508f35.
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -101,7 +101,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ac997588.
+       PROGRAM-ID. fde394fb.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -120,4 +120,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM ac997588.
+       END PROGRAM fde394fb.

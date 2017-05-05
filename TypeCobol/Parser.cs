@@ -25,7 +25,7 @@ namespace TypeCobol
 		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
 		public SymbolTable CustomSymbols = null;
 
-		public string[] Extensions = { ".tcbl", ".cbl", ".cpy" };
+		public string[] Extensions = { ".cbl", ".cpy" };
 		public string[] CopyExtensions = { ".cpy" };
 
 		public Parser() {

@@ -22,9 +22,11 @@
        01  DESCRIPTION               TYPEDEF strict.
            05 Ligne-01               PIC X(32).
            05 Ligne-02               PIC X(32).
-           05 Ligne-03               PIC X(32).
-           05 Ligne-04               PIC X(32).
-           05 Ligne-05               PIC X(32).
+           05.
+              10 Ligne-03               PIC X(32).
+           05 filler.
+              10 Ligne-04               PIC X(32).
+              10 Ligne-05               PIC X(32).
            
        01  IDENTITY                  TYPEDEF strict.
            05 LastName               PIC X(32).
@@ -41,8 +43,9 @@
            
        01  PERSON                    TYPEDEF strict.
            05 UID                    PIC 9(13).
-           05 InternalRef            TYPE INTERNAL-REF.
-           05 ExternalRef            TYPE EXTERNAL-REF.
+           05 filler.
+             21 InternalRef            TYPE INTERNAL-REF.
+             21 ExternalRef            TYPE EXTERNAL-REF.
            05 Identite               TYPE IDENTITY.
            05 Description            TYPE DESCRIPTION.
        

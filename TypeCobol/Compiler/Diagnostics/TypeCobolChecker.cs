@@ -55,11 +55,13 @@ class ReadOnlyPropertiesChecker: NodeListener {
             if (functionCaller.FunctionDeclaration == null)
             {
                 //Get Funtion by name and profile (matches on precise parameters)
+                var parameterList = functionCaller.FunctionCall.AsProfile(node.SymbolTable);
                 var functionDeclarations = node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
-                    functionCaller.FunctionCall.AsProfile(node.SymbolTable), functionCaller.FunctionCall.Namespace);
+                    parameterList, functionCaller.FunctionCall.Namespace);
 
                 string message;
                 //There is one CallSite per function call
+                //This is a call to a TypeCobol function or procedure with arguments
                 if (node.CodeElement.CallSites.Count == 1 && node.CodeElement.CallSites[0].CallTarget.IsOrCanBeOnlyOfTypes(SymbolType.TCFunctionName))
                 {
                     if (functionDeclarations.Count == 1)
@@ -69,7 +71,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     }
                     //Another checker should check if function declaration is not duplicated
                     if (functionDeclarations.Count > 0) {
-                        message = string.Format("same procedure/function '{0}' declared '{1}' times", functionCaller.FunctionCall.FunctionName, functionDeclarations.Count);
+                        message = string.Format("Same function '{0}' {1} declared '{2}' times", functionCaller.FunctionCall.FunctionName, parameterList.GetSignature(), functionDeclarations.Count);
                         DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.ImplementationError);
                         return; //Do not continue the function/procedure does not exists
                     }
@@ -79,13 +81,13 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
-                        message = string.Format("No function found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        message = string.Format("Function not found '{0}' {1}", functionCaller.FunctionCall.FunctionName, parameterList.GetSignature());
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return; //Do not continue the function/procedure does not exists
                     }
                     if (otherDeclarations.Count > 1)
                     {
-                        message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        message = string.Format("No suitable function signature found for '{0}' {1}", functionCaller.FunctionCall.FunctionName, parameterList.GetSignature());
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
@@ -94,6 +96,8 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 }
                 else
                 {
+                    //call to a TypeCobol function/procedure without arguments or to a Variable
+
                     var potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
 
                     if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
@@ -108,14 +112,14 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     if (potentialVariables.Count > 1)
                     {
                         //If there is more than one variable with the same name, it's ambiguous
-                        message = string.Format("Call to '{0}' is ambigous. '{0}' is defined {1} times", functionCaller.FunctionCall.FunctionName, potentialVariables.Count + functionDeclarations.Count);
+                        message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times", functionCaller.FunctionCall.FunctionName, potentialVariables.Count + functionDeclarations.Count);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
 
                     if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
                     {
-                        message = string.Format("No suitable function signature found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        message = string.Format("No suitable function signature found for '{0}(no arguments)'", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return;
                     }
@@ -129,7 +133,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 
                     if (functionDeclarations.Count == 0 && potentialVariables.Count == 0)
                     {
-                        message = string.Format("No function found for '{0}'", functionCaller.FunctionCall.FunctionName);
+                        message = string.Format("No function or variable found for '{0}'(no arguments)", functionCaller.FunctionCall.FunctionName);
                         DiagnosticUtils.AddError(node.CodeElement, message);
                         return; //Do not continue the function/procedure does not exists
                     }
@@ -257,8 +261,6 @@ class FunctionDeclarationChecker: NodeListener {
 			        if (data == null) continue;
 			        if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
 			            DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
-			        if (data.IsExternal) // TCRFUN_DECLARATION_NO_EXTERNAL
-			            DiagnosticUtils.AddError(data, "Illegal EXTERNAL clause in function data item.");
 			}
 		}
 	}

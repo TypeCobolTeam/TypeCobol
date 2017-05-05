@@ -22,9 +22,11 @@
       *01  DESCRIPTION               TYPEDEF strict.
       *    05 Ligne-01               PIC X(32).
       *    05 Ligne-02               PIC X(32).
-      *    05 Ligne-03               PIC X(32).
-      *    05 Ligne-04               PIC X(32).
-      *    05 Ligne-05               PIC X(32).
+      *    05.
+      *       10 Ligne-03               PIC X(32).
+      *    05 filler.
+      *       10 Ligne-04               PIC X(32).
+      *       10 Ligne-05               PIC X(32).
            
       *01  IDENTITY                  TYPEDEF strict.
       *    05 LastName               PIC X(32).
@@ -41,8 +43,9 @@
            
       *01  PERSON                    TYPEDEF strict.
       *    05 UID                    PIC 9(13).
-      *    05 InternalRef            TYPE INTERNAL-REF.
-      *    05 ExternalRef            TYPE EXTERNAL-REF.
+      *    05 filler.
+      *      21 InternalRef            TYPE INTERNAL-REF.
+      *      21 ExternalRef            TYPE EXTERNAL-REF.
       *    05 Identite               TYPE IDENTITY.
       *    05 Description            TYPE DESCRIPTION.
        
@@ -55,12 +58,13 @@
       *01  PERSON-1                  TYPE PERSON.
        01 PERSON-1.
            02 UID PIC 9(13).
-           02 InternalRef.
-             03 RType PIC X(03).
-             03 RReference PIC X(13).
-           02 ExternalRef.
-             03 RType PIC X(03).
-             03 RReference PIC X(30).
+           02.
+             03 InternalRef.
+               04 RType PIC X(03).
+               04 RReference PIC X(13).
+             03 ExternalRef.
+               04 RType PIC X(03).
+               04 RReference PIC X(30).
            02 Identite.
              03 LastName PIC X(32).
              03 FirstName PIC X(25).
@@ -71,19 +75,22 @@
            02 Description.
              03 Ligne-01 PIC X(32).
              03 Ligne-02 PIC X(32).
-             03 Ligne-03 PIC X(32).
-             03 Ligne-04 PIC X(32).
-             03 Ligne-05 PIC X(32).
+             03.
+               04 Ligne-03 PIC X(32).
+             03.
+               04 Ligne-04 PIC X(32).
+               04 Ligne-05 PIC X(32).
                                                  
       *01  PERSON-2                  TYPE PERSON.
        01 PERSON-2.
            02 UID PIC 9(13).
-           02 InternalRef.
-             03 RType PIC X(03).
-             03 RReference PIC X(13).
-           02 ExternalRef.
-             03 RType PIC X(03).
-             03 RReference PIC X(30).
+           02.
+             03 InternalRef.
+               04 RType PIC X(03).
+               04 RReference PIC X(13).
+             03 ExternalRef.
+               04 RType PIC X(03).
+               04 RReference PIC X(30).
            02 Identite.
              03 LastName PIC X(32).
              03 FirstName PIC X(25).
@@ -94,9 +101,11 @@
            02 Description.
              03 Ligne-01 PIC X(32).
              03 Ligne-02 PIC X(32).
-             03 Ligne-03 PIC X(32).
-             03 Ligne-04 PIC X(32).
-             03 Ligne-05 PIC X(32).
+             03.
+               04 Ligne-03 PIC X(32).
+             03.
+               04 Ligne-04 PIC X(32).
+               04 Ligne-05 PIC X(32).
                                                  
 
 

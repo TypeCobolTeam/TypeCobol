@@ -124,9 +124,11 @@
            CALL PublicProcedures::case2 INPUT      myDate fakeDate
                       OUTPUT     result
 
-      *KO: case3 doesn't match signature: add 1st and 4th argument as extra arguments
+      *KO: case3 doesn't match signature: add 1st and 4th argument 
+      *as extra arguments
       *1 error + 1 error per wrong argument
-           CALL PublicProcedures::case3 INPUT      fakeDate myDate fakeDate
+           CALL PublicProcedures::case3 INPUT fakeDate myDate 
+                                              fakeDate
                       OUTPUT     fakeDate result
        
       *KO: case4 doesn't match signature but 2 case4 declared
@@ -134,8 +136,9 @@
            CALL PublicProcedures::case4 INPUT      fakeDate myDate fakeDate
                       OUTPUT     fakeDate result
 
-      * Ok: case51 exists with no argument
-           CALL PublicProcedures::case51
+      * Ok: case51 exists with no argument, 
+      *     case insensitive test
+           CALL PUBLICProcedures::CASE51
       * Ok: case52 exists with no argument
            CALL PublicProcedures::case52
       * Ok: case53 exists with no argument
@@ -159,7 +162,8 @@
        
       *KO: case10 doesn't match signature: procedure with no argument
       *1 error + 1 error per wrong argument
-           CALL PublicProcedures::case10 INPUT      fakeDate myDate fakeDate
+           CALL PublicProcedures::case10 INPUT      fakeDate myDate 
+                                                    fakeDate
                       OUTPUT     fakeDate result
 
       *KO: case11 doesn't match signature: procedure with no argument

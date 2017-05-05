@@ -54,6 +54,7 @@ PROCEDURE DIVISION.
 *******************
 DISPLAY 'TEST'
 MOVE faux TO num
+move 'TOTO' to TYPE
 .
 
 PARAGRAPH1.

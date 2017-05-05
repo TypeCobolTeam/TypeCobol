@@ -1,12 +1,12 @@
 ﻿--- Diagnostics ---
-Line 80[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
 Line 81[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
-Line 83[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
+Line 82[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
 Line 84[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
-Line 93[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
+Line 85[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
 Line 94[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
-Line 96[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-D2.T2-C.T2-B.T2-A is not referenced
-Line 97[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A is not referenced
+Line 95[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
+Line 97[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-D2.T2-C.T2-B.T2-A is not referenced
+Line 98[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A is not referenced
 
 --- Program ---
 PROGRAM: COLON common:False initial:False recursive:False
@@ -21,6 +21,7 @@ PROGRAM: COLON common:False initial:False recursive:False
   T2-C:Alphanumeric
   T2-D1:Alphanumeric
   T2-D2:Alphanumeric
+  T2-D2-V1:BOOL
   T3-A1:Alphanumeric
   T3-B1:Alphanumeric
   T3-B1:Alphanumeric
@@ -46,6 +47,7 @@ PROGRAM: COLON common:False initial:False recursive:False
   TEST-2
   TEST-3
   TEST-4
+  TEST-5
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
