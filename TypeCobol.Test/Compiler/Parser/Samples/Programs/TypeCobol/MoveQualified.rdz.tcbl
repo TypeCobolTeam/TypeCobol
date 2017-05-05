@@ -1,0 +1,19 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MOVEQUA.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1. 
+	       05 var2 PIC x.
+       PROCEDURE DIVISION.
+      * KO
+       move 'val' to type::var1.
+      * KO
+       move 'val' to var1::type.                                            
+      * KO 
+       move 'val' to var1::var2::type. 
+      * KO
+       move 'val' to var1::type::undefinedVar. 
+      * OK 
+       move 'val' to var1::var2. 
+       END PROGRAM MOVEQUA.
