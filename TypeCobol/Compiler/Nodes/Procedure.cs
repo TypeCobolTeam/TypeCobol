@@ -12,6 +12,48 @@
         {
             return astVisitor.Visit(this);
         }
+
+        /// <summary>
+        /// Specialization for issue: 
+        /// Codegen for procedure : remove usage of external  #519 
+        /// </summary>
+        public override IEnumerable<TypeCobol.Compiler.Text.ITextLine> Lines
+        {
+            get
+            {
+                if (!this.IsFlagSet(Node.Flag.ProcedureDivisionUsingPntTabPnt))
+                {
+                    return base.Lines;
+                }
+                var lines = new List<TypeCobol.Compiler.Text.ITextLine>();
+                if (CodeElement == null || CodeElement.ConsumedTokens == null) return lines;
+                bool bPeriodSeen = false;
+                string use = " USING PntTab-Pnt.";
+                string sep = "";
+                StringBuilder sb = new StringBuilder();                    
+                foreach (var token in CodeElement.ConsumedTokens)
+                {//JCM: Don't take in account imported token.                    
+                    if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                    {
+                        if (token.TokenType == TypeCobol.Compiler.Scanner.TokenType.PeriodSeparator)
+                        {
+                            bPeriodSeen = true;
+                            sb.Append(use);
+                        }
+                        else
+                        {
+                            sb.Append(sep);
+                            sb.Append(token.Text);
+                        }
+                        sep = " ";
+                    }
+                }
+                if (!bPeriodSeen)
+                    sb.Append(use);
+                lines.Add(new TypeCobol.Compiler.Text.TextLineSnapshot(-1, sb.ToString(), null));
+                return lines;
+            }
+        }
     }
 
     // [TYPECOBOL]
