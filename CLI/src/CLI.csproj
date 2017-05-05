@@ -100,4 +100,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TYPECOBOLCONFIG) "$(OutDir)$(TargetName)$(TargetExt).config" /Y
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>
