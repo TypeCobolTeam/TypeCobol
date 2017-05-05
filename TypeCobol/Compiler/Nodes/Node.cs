@@ -143,29 +143,20 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         public virtual QualifiedName QualifiedName {
-            get
-            {
-                return string.IsNullOrEmpty(NameURI) ? null : new URI(NameURI);
-            }
-        }
+            get {
+                if (string.IsNullOrEmpty(Name)) return null;
 
-        public string NameURI
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(Name)) return string.Empty;
-                var pNameUri = Parent == null ? null : Parent.NameURI;
-                if (string.IsNullOrEmpty(pNameUri))
+                string qn = Name;
+                var parent = this.Parent;
+                while (parent != null)
                 {
-                    var node = this;
-                    while(node.Parent != null && string.IsNullOrEmpty(pNameUri))
-                    {
-                        pNameUri = node.Parent.Name;
-                        node = node.Parent;
+                    if (!string.IsNullOrEmpty(parent.Name)) {
+                        qn = parent.Name + "." + qn;
                     }
-
+                    parent = parent.Parent;
                 }
-                return string.IsNullOrEmpty(pNameUri) ? Name : pNameUri + '.' + Name;
+                
+                return new URI(qn);
             }
         }
 
