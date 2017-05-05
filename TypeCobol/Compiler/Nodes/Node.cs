@@ -151,7 +151,21 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         public virtual QualifiedName QualifiedName {
-            get { return URI != null ? new URI(URI) : null; }
+            get {
+                if (string.IsNullOrEmpty(Name)) return null;
+
+                string qn = Name;
+                var parent = this.Parent;
+                while (parent != null)
+                {
+                    if (!string.IsNullOrEmpty(parent.Name)) {
+                        qn = parent.Name + "." + qn;
+                    }
+                    parent = parent.Parent;
+                }
+                
+                return new URI(qn);
+            }
         }
 
         /// <summary>Non-unique identifier of this node. Depends on CodeElement type and name (if applicable).</summary>
@@ -168,6 +182,8 @@ namespace TypeCobol.Compiler.Nodes {
                 return puri + '.' + ID;
             }
         }
+
+       
 
 
         /// <summary>First Node with null Parent among the parents of this Node.</summary>
@@ -560,17 +576,6 @@ namespace TypeCobol.Compiler.Nodes {
             get { return "class";  }
         }
         public override string Name { get { return this.CodeElement().ClassName.Name; } }
-        public override QualifiedName QualifiedName
-        {
-            get
-            {
-                if (ID == null) return null;
-                var puri = Parent == null ? null : Parent.URI;
-                if (puri == null) return new URI(Name);
-
-                return new URI(puri + '.' + Name);
-            }
-        }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
@@ -598,17 +603,6 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         public override string Name { get { return this.CodeElement().MethodName.Name; } }
-        public override QualifiedName QualifiedName
-        {
-            get
-            {
-                if (ID == null) return null;
-                var puri = Parent == null ? null : Parent.URI;
-                if (puri == null) return new URI(Name);
-
-                return new URI(puri + '.' + Name);
-            }
-        }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

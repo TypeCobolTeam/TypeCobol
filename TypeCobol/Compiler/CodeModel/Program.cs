@@ -33,13 +33,6 @@ namespace TypeCobol.Compiler.CodeModel
             get { return Identification != null ? Identification.ProgramName.Name : ID; }
         }
 
-        public override QualifiedName QualifiedName
-        {
-            get
-            {
-                return new URI(Identification != null ? Identification.ProgramName.Name : ID);
-            }
-        }
         //TODO: As to change in the future when implementing the full namespace functionnality.
         public string Namespace { get { return Identification != null ? Identification.ProgramName.Name : null; } }
 
