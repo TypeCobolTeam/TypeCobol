@@ -1173,10 +1173,6 @@ namespace TypeCobol.Compiler.Parser
                 {
                     entry.MaxOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.maxNumberOfOccurences);
                 }
-                if (entry.MinOccurencesCount == null && entry.MaxOccurencesCount != null)
-                {
-                    entry.MinOccurencesCount = entry.MaxOccurencesCount;
-                }
                 if (occursClauseContext.UNBOUNDED() != null)
                 {
                     entry.HasUnboundedNumberOfOccurences = new SyntaxProperty<bool>(true,
@@ -1285,6 +1281,7 @@ namespace TypeCobol.Compiler.Parser
                 }
                 else if (entry.IsTableOccurence)
                 {
+                    //TODO an array can have a Picture. DataType.Occurs should be a separate property.
                     entry.DataType = DataType.Occurs;
                 }
                 else

@@ -112,7 +112,9 @@ namespace TypeCobol.Compiler.Nodes {
     ///   IndexDefinition (TODO)
     /// </summary>
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
-        private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return (CommonDataDescriptionAndDataRedefines)this.CodeElement; } }
+
+
+        private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
         protected DataDefinition(DataDefinitionEntry entry): base(entry) {  }
         public override string ID { get { return "data-definition"; } }
         public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
@@ -135,7 +137,7 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                if (((DataDefinitionEntry)this.CodeElement) != null)
+                if (this.CodeElement != null)
                 {
                     return ((DataDefinitionEntry)this.CodeElement).DataType;
                 }
@@ -197,14 +199,16 @@ namespace TypeCobol.Compiler.Nodes {
                 return parent != null && parent.IsStrictlyTyped;
             }
         }
-
+        
         #region TypeProperties
         public AlphanumericValue Picture { get { if (_ComonDataDesc != null && _ComonDataDesc.Picture != null) return _ComonDataDesc.Picture; else return null; } }
         public bool IsJustified { get {  if(_ComonDataDesc != null && _ComonDataDesc.IsJustified != null) return _ComonDataDesc.IsJustified.Value; else return false; } }
         public DataUsage? Usage { get { if (_ComonDataDesc != null && _ComonDataDesc.Usage != null) return _ComonDataDesc.Usage.Value; else return null; } }
         public bool IsGroupUsageNational { get { if (_ComonDataDesc != null && _ComonDataDesc.IsGroupUsageNational != null) return _ComonDataDesc.IsGroupUsageNational.Value; else return false; } }
-        public IntegerValue MinOccurencesCount { get { if (_ComonDataDesc != null) return _ComonDataDesc.MinOccurencesCount; else return null; } }
-        public IntegerValue MaxOccurencesCount { get { if (_ComonDataDesc != null) return _ComonDataDesc.MaxOccurencesCount; else return null; } }
+        public long MinOccurencesCount { get { if (_ComonDataDesc != null && _ComonDataDesc.MinOccurencesCount != null) return _ComonDataDesc.MinOccurencesCount.Value; else return 1; } }
+        public long MaxOccurencesCount { get {return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1;}}
+
+
         public NumericVariable OccursDependingOn { get { if (_ComonDataDesc != null) return _ComonDataDesc.OccursDependingOn; else return null; } }
         public bool HasUnboundedNumberOfOccurences { get { if (_ComonDataDesc != null && _ComonDataDesc.HasUnboundedNumberOfOccurences != null) return _ComonDataDesc.HasUnboundedNumberOfOccurences.Value; else return false; } }
         public bool IsTableOccurence { get { if (_ComonDataDesc != null) return _ComonDataDesc.IsTableOccurence; else return false; } }
