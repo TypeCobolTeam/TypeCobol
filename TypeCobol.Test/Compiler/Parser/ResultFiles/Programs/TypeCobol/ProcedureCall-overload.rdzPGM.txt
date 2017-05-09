@@ -2,11 +2,8 @@
 Line 227[12,39] <27, Error, Syntax> - Syntax error : No function found for 'case2'
 Line 232[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' only takes 3 parameter(s)
 Line 232[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
-Line 232[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'mydate' of length 1 and received 'fakeDate' of length 8
 Line 232[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'fakeDate' of type Alphanumeric and received 'myDate' of type DATE 
-Line 232[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'fakeDate' of length 8 and received 'myDate' of length 1
 Line 232[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'result' of type BOOL and received 'fakeDate' of type Alphanumeric 
-Line 232[12,48] <27, Error, Syntax> - Syntax error : Function 'case3' expected parameter 'result' of length 1 and received 'fakeDate' of length 8
 Line 237[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'case4'
 Line 248[12,22] <27, Error, Syntax> - Syntax error : Call to 'case61' is ambigous. 'case61' is defined 3 times
 Line 250[12,22] <27, Error, Syntax> - Syntax error : Call to 'case62' is ambigous. 'case62' is defined 4 times

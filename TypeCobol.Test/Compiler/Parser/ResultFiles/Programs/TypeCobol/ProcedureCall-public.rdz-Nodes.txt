@@ -20,9 +20,7 @@ Line 149[12,56] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.
 Line 161[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case2'
 Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
 Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
-Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of length 1 and received 'fakeDate' of length 8
 Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of type Alphanumeric and received 'myDate' of type DATE 
-Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of length 8 and received 'myDate' of length 1
 Line 166[12,48] <27, Error, Syntax> - Syntax error : Parameter fakeD is not referenced
 Line 171[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case4'
 Line 189[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case7'

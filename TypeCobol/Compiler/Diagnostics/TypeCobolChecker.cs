@@ -172,6 +172,10 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     if (found.Count != 1) continue;
                     var type = found[0];
 
+                    //TODO use SubscriptExpression and ReferenceModifier of the StorageArea to correct the type
+                    //Ex: MyVar1(1:10) has a length of 10 and is of type Alphanumeric
+                    //Ex: MyArray(1) only target one element of the array, so we need to get the type of this element.
+
                     DataDefinition callerType = type;
                     DataDefinition calleeType = expected;
 
@@ -186,14 +190,17 @@ class ReadOnlyPropertiesChecker: NodeListener {
                         callerType = type;
                         calleeType = expected;
 
-                        var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                call.FunctionName, calleeType.Name, calleeType.DataType,
-                                callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
-                        DiagnosticUtils.AddError(e, m);
-                    }
-                    else if(callerType.DataType != calleeType.DataType)
+                        //Cobol 85 Type will be checked with their picture
+                        if (type.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 || expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) {
+                            var m =
+                                string.Format(
+                                    "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
+                                    call.FunctionName, calleeType.Name, calleeType.DataType,
+                                    callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
+                            DiagnosticUtils.AddError(e, m);
+                        }
+                    }//Cobol 85 data type will be tested with their picture
+                    else if((type.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 || expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) && callerType.DataType != calleeType.DataType)
                     {
                         //Diag error on type difference
                         var m =
@@ -213,15 +220,15 @@ class ReadOnlyPropertiesChecker: NodeListener {
                         DiagnosticUtils.AddError(e, m);
                     }
 
-                    if (callerType.Length != calleeType.Length)
-                    {
-                        var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' of length {2} and received '{3}' of length {4}",
-                                call.FunctionName, calleeType.Name, calleeType.Length,
-                                callArgName ?? string.Format("position {0}", c + 1), callerType.Length);
-                        DiagnosticUtils.AddError(e, m);
-                    }
+//                    if (callerType.Length != calleeType.Length)
+//                    {
+//                        var m =
+//                            string.Format(
+//                                "Function '{0}' expected parameter '{1}' of length {2} and received '{3}' of length {4}",
+//                                call.FunctionName, calleeType.Name, calleeType.Length,
+//                                callArgName ?? string.Format("position {0}", c + 1), callerType.Length);
+//                        DiagnosticUtils.AddError(e, m);
+//                    }
 
                     if (callerType.Usage != calleeType.Usage)
                     {
@@ -252,25 +259,31 @@ class ReadOnlyPropertiesChecker: NodeListener {
                                callArgName ?? string.Format("position {0}", c + 1), callerType.IsGroupUsageNational ? "national group-usage" : "non national group-usage");
                         DiagnosticUtils.AddError(e, m);
                     }
-
-                    if (callerType.MinOccurencesCount != calleeType.MinOccurencesCount)
-                    {
+                    if (callerType.IsTableOccurence != calleeType.IsTableOccurence) {
                         var m =
                            string.Format(
-                               "Function '{0}' expected parameter '{1}' to have at least {2} occurences and received '{3}' with a minimum of {4} occurences",
-                               call.FunctionName, calleeType.Name, calleeType.MinOccurencesCount,
-                               callArgName ?? string.Format("position {0}", c + 1), callerType.MinOccurencesCount);
+                               "Function '{0}' expected parameter '{1}' to {2} an array and received '{3}' which {4} an array",
+                               call.FunctionName, calleeType.Name, calleeType.IsTableOccurence ? "be" : "be NOT", callerType.Name,
+                                callerType.IsTableOccurence ? "is" : "is NOT ");
                         DiagnosticUtils.AddError(e, m);
-                    }
+                    } else if (callerType.IsTableOccurence && calleeType.IsTableOccurence) {
+                        if (callerType.MinOccurencesCount != calleeType.MinOccurencesCount) {
+                            var m =
+                                string.Format(
+                                    "Function '{0}' expected parameter '{1}' to have at least {2} occurences and received '{3}' with a minimum of {4} occurences",
+                                    call.FunctionName, calleeType.Name, calleeType.MinOccurencesCount,
+                                    callArgName ?? string.Format("position {0}", c + 1), callerType.MinOccurencesCount);
+                            DiagnosticUtils.AddError(e, m);
+                        }
 
-                    if (callerType.MaxOccurencesCount != calleeType.MaxOccurencesCount)
-                    {
-                        var m =
-                           string.Format(
-                               "Function '{0}' expected parameter '{1}' to have at most {2} occurences and received '{3}' with a maximum of {4} occurences",
-                               call.FunctionName, calleeType.Name, calleeType.MaxOccurencesCount,
-                               callArgName ?? string.Format("position {0}", c + 1), callerType.MaxOccurencesCount);
-                        DiagnosticUtils.AddError(e, m);
+                        if (callerType.MaxOccurencesCount != calleeType.MaxOccurencesCount) {
+                            var m =
+                                string.Format(
+                                    "Function '{0}' expected parameter '{1}' to have at most {2} occurences and received '{3}' with a maximum of {4} occurences",
+                                    call.FunctionName, calleeType.Name, calleeType.MaxOccurencesCount,
+                                    callArgName ?? string.Format("position {0}", c + 1), callerType.MaxOccurencesCount);
+                            DiagnosticUtils.AddError(e, m);
+                        }
                     }
 
                     if (callerType.OccursDependingOn != calleeType.OccursDependingOn)

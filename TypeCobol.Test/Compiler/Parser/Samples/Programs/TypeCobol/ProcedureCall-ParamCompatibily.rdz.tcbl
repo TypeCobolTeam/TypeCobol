@@ -1,0 +1,86 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ProcedureCall-ParamCompatibily.
+       DATA DIVISION .
+       local-STORAGE SECTION.
+      
+       01  picAlpha10       pic X(10).
+       01  picAlpha20       pic X(20).
+       01  picNum10         pic 9(10).
+       01  picNum10Comp     pic 9(10) comp.
+       01  picNum10Comp3    pic 9(10) comp-3.
+       01  picNum10Comp5    pic 9(10) comp-5.
+
+       01  tab.
+           05 tabNum5     pic 9(10) occurs 5.
+           05 tabAlpha5   pic X(10) occurs 5.
+
+       01  picNum10Sync     pic 9(10) sync.
+       01  picAlpha10Just   pic X(10) just.
+      
+       PROCEDURE DIVISION.
+
+       declare proc1 private input param1  pic 9(10).
+       end-declare.
+
+       declare proc2 private input param1  pic X(10).
+       end-declare.
+
+       declare proc3 private input param1  pic 9(10) sync.
+       end-declare.
+
+       declare proc4 private input param1  pic X(10) just.
+       end-declare.
+      
+      *    KO
+           call proc1 input picAlpha10
+      *OK
+           call proc1 input picNum10
+      *    KO
+           call proc1 input picNum10Comp
+      *    KO
+           call proc1 input picNum10Comp3
+      *    KO
+           call proc1 input picNum10Comp5
+      *    KO
+           call proc1 input tabNum5
+      *    KO
+           call proc1 input tabAlpha5
+
+
+      *OK
+           call proc2 input picAlpha10
+      *    KO
+           call proc2 input picAlpha20
+      *OK: because we only use 10caracters
+	  *TODO not working yet
+      *   call proc2 input picAlpha20(1:10)
+
+      *	   KO
+           call proc2 input picNum10
+      *    KO
+           call proc2 input picNum10Comp
+      *    KO
+           call proc2 input picNum10Comp3
+      *    KO
+           call proc2 input picNum10Comp5
+      *    KO
+           call proc1 input tabNum5
+      *    KO
+           call proc1 input tabAlpha5
+      *OK because we only target one element of the array
+	  *TODO not working yet
+      *    call proc1 input tabAlpha5(1)
+
+
+	  *KO
+	       call proc3 input picNum10
+      *OK
+	       call proc3 input picNum10Sync 
+	  *KO
+	       call proc4 input picAlpha10
+      *OK
+	       call proc4 input picAlpha10Just
+
+           .
+
+       END PROGRAM DVZF0OSM.
