@@ -8,6 +8,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
+using Analytics;
 
 namespace TypeCobol.Server
 {
@@ -47,8 +48,7 @@ namespace TypeCobol.Server
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
-                if (config.Telemetry)
-                    MailSender.Send(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
+                AnalyticsWrapper.Telemetry.SendMail(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 if(typeCobolException.Logged)
                     Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex, typeCobolException.LineNumber, typeCobolException.Message, typeCobolException.Path);
@@ -62,8 +62,7 @@ namespace TypeCobol.Server
             }
             catch (Exception e)//Catch any other exception
             {
-                if (config.Telemetry)
-                    MailSender.Send(e, config.InputFiles, config.CopyFolders, config.CommandLine);
+                AnalyticsWrapper.Telemetry.SendMail(e, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, e.Message, string.Empty);
                 return ReturnCode.FatalError;
