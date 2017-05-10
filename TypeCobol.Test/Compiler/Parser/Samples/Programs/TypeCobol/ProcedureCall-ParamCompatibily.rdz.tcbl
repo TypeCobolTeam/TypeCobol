@@ -52,10 +52,10 @@
       *    KO
            call proc2 input picAlpha20
       *OK: because we only use 10caracters
-	  *TODO not working yet
+      *TODO not working yet
       *   call proc2 input picAlpha20(1:10)
 
-      *	   KO
+      *       KO
            call proc2 input picNum10
       *    KO
            call proc2 input picNum10Comp
@@ -68,18 +68,18 @@
       *    KO
            call proc1 input tabAlpha5
       *OK because we only target one element of the array
-	  *TODO not working yet
+      *TODO not working yet
       *    call proc1 input tabAlpha5(1)
 
 
-	  *KO
-	       call proc3 input picNum10
+      *KO
+           call proc3 input picNum10
       *OK
-	       call proc3 input picNum10Sync 
-	  *KO
-	       call proc4 input picAlpha10
+           call proc3 input picNum10Sync 
+      *KO
+           call proc4 input picAlpha10
       *OK
-	       call proc4 input picAlpha10Just
+           call proc4 input picAlpha10Just
 
            .
 
