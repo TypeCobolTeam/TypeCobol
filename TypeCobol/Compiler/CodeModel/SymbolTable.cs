@@ -632,19 +632,32 @@ namespace TypeCobol.Compiler.CodeModel
 
         private bool Matches(ParameterList p1, ParameterList p2)
         {
-            //		if (p1.ReturningParameter == null && p2.ReturningParameter != null) return false;
-            //		if (p1.ReturningParameter != null && p2.ReturningParameter == null) return false;
-            //		if (p1.ReturningParameter != p2.ReturningParameter) return false;
             if (p1.InputParameters.Count != p2.InputParameters.Count) return false;
             if (p1.InoutParameters.Count != p2.InoutParameters.Count) return false;
             if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
 
             for (int c = 0; c < p1.InputParameters.Count; c++)
-                if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
+                if (!TypeCompare(p1.InputParameters[c], p2.InputParameters[c])) return false;
             for (int c = 0; c < p1.InoutParameters.Count; c++)
-                if (p1.InoutParameters[c] != p2.InoutParameters[c]) return false;
+                if (!TypeCompare(p1.InoutParameters[c], p2.InoutParameters[c])) return false;
             for (int c = 0; c < p1.OutputParameters.Count; c++)
-                if (p1.OutputParameters[c] != p2.OutputParameters[c]) return false;
+                if (!TypeCompare(p1.OutputParameters[c], p2.OutputParameters[c])) return false;
+            return true;
+        }
+
+        private bool TypeCompare(DataType p1, DataType p2)
+        {
+            var p1Types = this.GetType(p1);
+            var p2Types = this.GetType(p2);
+
+            if (p1Types.Count > 1 || p2Types.Count > 1)
+                return false; //Means that a type is declare many times. Case already handle by checker.
+            var p1Type = p1Types.FirstOrDefault();
+            var p2Type = p2Types.FirstOrDefault();
+
+            if (p1Type != p2Type)
+                return false;
+
             return true;
         }
 
