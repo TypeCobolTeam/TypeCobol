@@ -35,20 +35,31 @@
       *    10 cty                    PIC X(02).
        01  TC-DVZZDATE-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-DVZZDATE-PntTab.
+           05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 5.
       *DVZZDATE::currentDate
-        01 TC-DVZZDATE-db42865c PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-db42865c-Idt   PIC X(08) VALUE 'db42865c'.
+           05 TC-DVZZDATE-db42865c PROCEDURE-POINTER.
       *DVZZDATE::currentDateDB2
-        01 TC-DVZZDATE-fa5ee5e9 PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-fa5ee5e9-Idt   PIC X(08) VALUE 'fa5ee5e9'.
+           05 TC-DVZZDATE-fa5ee5e9 PROCEDURE-POINTER.
       *DVZZDATE::currentDateJulian
-        01 TC-DVZZDATE-cf63e86f PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-cf63e86f-Idt   PIC X(08) VALUE 'cf63e86f'.
+           05 TC-DVZZDATE-cf63e86f PROCEDURE-POINTER.
       *DVZZDATE::currentDateFreeFormat
-        01 TC-DVZZDATE-cfc290ce PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-cfc290ce-Idt   PIC X(08) VALUE 'cfc290ce'.
+           05 TC-DVZZDATE-cfc290ce PROCEDURE-POINTER.
       *DVZZDATE::currentDateString
-        01 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
+           05 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER.
+
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
 
 
       *=================================================================
-       PROCEDURE DIVISION.
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
       *
       *    IF CallIsCopy
       *      PERFORM Copy-Process-Mode
@@ -69,6 +80,9 @@
               SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
             END-IF
                .
+
+            PntTab-Pnt POINTER TO ADDRESS OF TC-DVZZDATE-PntTab
+
            .
                           
       *=================================================================

@@ -5,13 +5,20 @@
        WORKING-STORAGE SECTION.
        01  TC-DVZZDATE-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-DVZZDATE-PntTab.
+           05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 1.
       *DVZZDATE::currentDateString
-        01 TC-DVZZDATE-b173dd7b PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-b173dd7b-Idt   PIC X(08) VALUE 'b173dd7b'.
+           05 TC-DVZZDATE-b173dd7b PROCEDURE-POINTER.
 
        
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
 
       *=================================================================
-       PROCEDURE DIVISION. 
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                           
       *
       *    IF CallIsCopy
       *      PERFORM Copy-Process-Mode
@@ -28,6 +35,9 @@
               SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
             END-IF
                .
+
+            PntTab-Pnt POINTER TO ADDRESS OF TC-DVZZDATE-PntTab
+
            .
                                              
       *DECLARE FUNCTION currentDateString PUBLIC
