@@ -104,8 +104,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TYPECOBOLCONFIG) "$(OutDir)$(TargetFileName).config" /Y
-</PostBuildEvent>
+    <PostBuildEvent>echo F|xcopy $(TYPECOBOLCONFIG) "$(TargetFileName).config" /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
