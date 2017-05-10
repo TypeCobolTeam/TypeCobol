@@ -49,7 +49,7 @@ namespace TypeCobol.Server
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
                 AnalyticsWrapper.Telemetry.SendMail(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
-
+                AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
                 if(typeCobolException.Logged)
                     Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex, typeCobolException.LineNumber, typeCobolException.Message, typeCobolException.Path);
 
@@ -62,6 +62,7 @@ namespace TypeCobol.Server
             }
             catch (Exception e)//Catch any other exception
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 AnalyticsWrapper.Telemetry.SendMail(e, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, e.Message, string.Empty);
