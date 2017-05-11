@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Analytics;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
@@ -173,20 +174,24 @@ namespace TypeCobol.Compiler
             }
             else
             {
+                AnalyticsWrapper.Telemetry.TrackEvent("[TypeCobol] Scanner Step");
                 CompilationResultsForProgram.UpdateTokensLines(); //Scanner
 
                 if (!(CompilerOptions.ExecToStep > ExecutionStep.Scanner)) return;
 
+                AnalyticsWrapper.Telemetry.TrackEvent("[TypeCobol] Preprocessor Step");
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
 
                 if (!(CompilerOptions.ExecToStep > ExecutionStep.Preprocessor)) return;
                 if (CompilerOptions.HaltOnMissingCopy && CompilationProject.MissingCopys.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
-                
+
+                AnalyticsWrapper.Telemetry.TrackEvent("[TypeCobol] Syntaxic Step");
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck
 
                 if (!(CompilerOptions.ExecToStep > ExecutionStep.SyntaxCheck)) return;
 
+                AnalyticsWrapper.Telemetry.TrackEvent("[TypeCobol] Semantic Step");
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //SemanticCheck
             }
 

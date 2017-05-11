@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
+using Analytics;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
@@ -51,6 +52,8 @@ class ReadOnlyPropertiesChecker: NodeListener {
             var functionCaller = node as FunctionCaller;
             if (functionCaller == null || functionCaller.FunctionCall == null || !functionCaller.FunctionCall.NeedDeclaration)
                 return;
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[Function] Function/Procedure call to " + functionCaller.FunctionCall.FunctionName);
 
             if (functionCaller.FunctionDeclaration == null)
             {

@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
+using Analytics;
 
 namespace TypeCobol
 {
@@ -67,9 +68,9 @@ namespace TypeCobol
 
 		public void Parse(string path, TextChangedEvent e=null)
 		{
-			//if the server is restarted during Eclipse lifetime, then we need to init the parser
-			//This is useful when debugging. Perhaps it'll be deleted at the end
-			if (!Compilers.ContainsKey(path))
+            //if the server is restarted during Eclipse lifetime, then we need to init the parser
+            //This is useful when debugging. Perhaps it'll be deleted at the end
+            if (!Compilers.ContainsKey(path))
 			{
 				Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.Generate});
 			}
@@ -80,7 +81,10 @@ namespace TypeCobol
 
 			if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
 			else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
-			try { Compiler.CompileOnce(); }
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[TypeCobol] Parser Started");
+
+            try { Compiler.CompileOnce(); }
 			catch(Exception ex) {
 				Observer.OnError(ex);
 				System.Console.WriteLine(ex.ToString());
