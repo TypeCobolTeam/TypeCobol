@@ -237,6 +237,9 @@ namespace TypeCobol.Server
                     table.CopyAllTypes(symbols.Types);
                     table.CopyAllFunctions(symbols.Functions);
                    
+                    if (symbols.Types.Count == 0 && symbols.Functions.Count == 0) {
+                        Server.AddError(writer, MessageCode.Warning,  "No types and no procedures/functions found", path);
+                    }
                     //TODO check if types or functions are already there
                 }
                 catch (CopyLoadingException copyException)

@@ -20,7 +20,9 @@ namespace TypeCobol.Compiler.Diagnostics
         Tokens = 2,
         Directives = 3,
         Syntax = 4,
-        Semantics = 5
+        Semantics = 5,
+        Generation = 6,
+        General = 7
     }
 
     public class DiagnosticMessage
