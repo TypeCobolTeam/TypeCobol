@@ -53,13 +53,13 @@ namespace TypeCobol.Server
                 if (typeCobolException.Logged) {
                     Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex,
                         typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
-                        typeCobolException.Message + "\n" + typeCobolException.StackTrace, typeCobolException.Path);
+                        typeCobolException.Message + "\n" + new StackTrace(typeCobolException), typeCobolException.Path);
 
                     if(typeCobolException.InnerException != null)
                     {
                         Server.AddError(errorWriter, MessageCode.CausedBy, typeCobolException.ColumnStartIndex,
                         typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
-                        typeCobolException.InnerException.Message + "\n" + typeCobolException.InnerException.StackTrace, typeCobolException.Path);
+                        typeCobolException.InnerException.Message + "\n" + new StackTrace(typeCobolException.InnerException), typeCobolException.Path);
                     }
                 }
 

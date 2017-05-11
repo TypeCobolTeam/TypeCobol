@@ -1,4 +1,5 @@
 ﻿1 error in "input\MissingCopy.rdz.tcbl":
 Line 1[0,0] <27, Error, Syntax> - File "input\MissingCopy.rdz.tcbl" has syntactic error(s) preventing codegen (CodeElements).
-   à TypeCobol.Server.CLI.runOnce2(Config config, AbstractErrorWriter errorWriter) dans C:\Users\SMEDILOL\workspaces\TypeCobol\CLI\src\CLI.cs:ligne 153
-   à TypeCobol.Server.CLI.runOnce(Config config) dans C:\Users\SMEDILOL\workspaces\TypeCobol\CLI\src\CLI.cs:ligne 46
+   à TypeCobol.Server.CLI.runOnce2(Config config, AbstractErrorWriter errorWriter)
+   à TypeCobol.Server.CLI.runOnce(Config config)
+
