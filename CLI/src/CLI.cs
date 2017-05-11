@@ -50,8 +50,18 @@ namespace TypeCobol.Server
                 if (config.Telemetry)
                     MailSender.Send(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
 
-                if(typeCobolException.Logged)
-                    Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex, typeCobolException.LineNumber, typeCobolException.Message + "\n" + typeCobolException.StackTrace, typeCobolException.Path);
+                if (typeCobolException.Logged) {
+                    Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex,
+                        typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
+                        typeCobolException.Message + "\n" + typeCobolException.StackTrace, typeCobolException.Path);
+
+                    if(typeCobolException.InnerException != null)
+                    {
+                        Server.AddError(errorWriter, MessageCode.CausedBy, typeCobolException.ColumnStartIndex,
+                        typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
+                        typeCobolException.InnerException.Message + "\n" + typeCobolException.InnerException.StackTrace, typeCobolException.Path);
+                    }
+                }
 
                 if (typeCobolException is ParsingException)
                     return ReturnCode.ParsingError;
