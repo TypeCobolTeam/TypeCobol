@@ -155,8 +155,16 @@ namespace CLI.Test
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!targetFileContent.SequenceEqual(actualFileContent)) {
                     Console.WriteLine("File not equals: " + commonTargetFiles[i]);
-                    Console.WriteLine("Actual file content:\n_________________\n" + actualFileContent + "\n________________");
-                    Console.WriteLine("Expected file content:\n_________________\n" + targetFileContent + "\n________________");
+                    Console.WriteLine("Actual file content:\n_________________");
+                    foreach (var actual in actualFileContent) {
+                        Console.WriteLine(actual);
+                    }
+                    Console.WriteLine("________________");
+                    Console.WriteLine("Expected file content:\n_________________");
+                    foreach (var expected in targetFileContent) {
+                        Console.WriteLine(expected);
+                    }
+                    Console.WriteLine("________________");
 
                     dirIdentical = false;
                 }
