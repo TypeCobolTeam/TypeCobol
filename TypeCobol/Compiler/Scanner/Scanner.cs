@@ -1949,7 +1949,7 @@ namespace TypeCobol.Compiler.Scanner
             if (index == startIndex + 1 && !CobolChar.IsCobolWordChar(line[index])) return false;
 
             // next character must be ':'
-            if(line[index] == ':')
+            if(line.Length > index && line[index] == ':')
             {
                 patternEndIndex = index;
                 return true;

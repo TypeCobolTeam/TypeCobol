@@ -2,7 +2,7 @@
 DECLARE           fun PUBLIC.
 DECLARE FUNCTION  fun PUBLIC.
 DECLARE PROCEDURE pro PRIVATE.
-* KO: missing visibility
+* OK: whithout visibility #542
 DECLARE           NoVisibility.
 DECLARE FUNCTION  NoVisibility.
 DECLARE PROCEDURE NoVisibility.
