@@ -402,7 +402,10 @@
         }
     }
     public class Then: Node, CodeElementHolder<CodeElement>, StatementCondition {
-	    public Then(): base(null) { }
+	    public Then(): base(null) 
+        {
+            SetFlag(Node.Flag.GeneratorCanIgnoreIt, true);
+        }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
