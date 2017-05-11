@@ -151,7 +151,6 @@ namespace TypeCobol.Server
                 {
                     var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
                     var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
-                    var program = parser.Results.ProgramClassDocumentSnapshot.Program;
                     try
                     {
                         codegen.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat); //TODO : Add exception management for code generation
@@ -160,8 +159,8 @@ namespace TypeCobol.Server
                     {
                         if (e is GenerationException)
                             throw e; //Throw the same exception to let runOnce() knows there is a problem
-                         
-                        throw new GenerationException(e.Message, null, e.InnerException, false); //Otherwise create a new GeerationException
+                        
+                        throw new GenerationException(e.Message, path, e.InnerException); //Otherwise create a new GenerationException
                     }
                     
                 }
