@@ -102,6 +102,8 @@ namespace CLI.Test
             while (!process.HasExited)
                 continue;
 
+            Console.WriteLine("workingDirectory="+ workingDirectory);
+            Console.WriteLine("Return Code=" + process.ExitCode);
             //Compare outputDir with expectedOutputDir
             DirectoryInfo expectedOutputDir = new DirectoryInfo(workingDirectory + Path.DirectorySeparatorChar + "output_expected");
             bool dirIdentical = CompareDirectory(expectedOutputDir, outputDir);
