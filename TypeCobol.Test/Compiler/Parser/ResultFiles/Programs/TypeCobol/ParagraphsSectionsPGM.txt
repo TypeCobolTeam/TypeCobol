@@ -14,28 +14,28 @@ Line 48[5,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to paragr
 Line 49[5,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to paragraph P4
 Line 50[5,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to procedure P5
 Line 57[5,14] <27, Error, Syntax> - Syntax error : Symbol P0 is not referenced
-Line 58[5,14] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 59[5,14] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 60[5,14] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 60[5,14] <27, Error, Syntax> - Syntax error : Ambiguous reference to paragraph P3
-Line 61[5,14] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 61[5,14] <27, Error, Syntax> - Syntax error : Ambiguous reference to paragraph P4
-Line 62[5,14] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 62[5,14] <27, Error, Syntax> - Syntax error : Ambiguous reference to procedure P5
-Line 63[5,14] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 64[5,14] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 65[5,25] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
+Line 58[5,14] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
+Line 59[5,14] <27, Error, Syntax> - Syntax error : Symbol P2 is not referenced
+Line 60[5,14] <27, Error, Syntax> - Syntax error : Symbol P3 is not referenced
+Line 61[5,14] <27, Error, Syntax> - Syntax error : Symbol P4 is not referenced
+Line 62[5,14] <27, Error, Syntax> - Syntax error : Symbol P5 is not referenced
+Line 63[5,14] <27, Error, Syntax> - Syntax error : Symbol P6 is not referenced
+Line 64[5,14] <27, Error, Syntax> - Syntax error : Symbol P7 is not referenced
+Line 65[5,25] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
 Line 65[5,25] <27, Error, Syntax> - Syntax error : Symbol P0 is not referenced
-Line 66[5,25] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 67[5,25] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 68[5,25] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 68[5,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to paragraph P3
-Line 69[5,25] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 69[5,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to paragraph P4
-Line 70[5,25] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 70[5,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to procedure P5
-Line 71[5,25] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
-Line 72[5,25] <27, Error, Syntax> - Syntax error : TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM
+Line 66[5,25] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
+Line 67[5,25] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
+Line 67[5,25] <27, Error, Syntax> - Syntax error : Symbol P2 is not referenced
+Line 68[5,25] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
+Line 68[5,25] <27, Error, Syntax> - Syntax error : Symbol P3 is not referenced
+Line 69[5,25] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
+Line 69[5,25] <27, Error, Syntax> - Syntax error : Symbol P4 is not referenced
+Line 70[5,25] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
+Line 70[5,25] <27, Error, Syntax> - Syntax error : Symbol P5 is not referenced
+Line 71[5,25] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
+Line 71[5,25] <27, Error, Syntax> - Syntax error : Symbol P6 is not referenced
+Line 72[5,25] <27, Error, Syntax> - Syntax error : Symbol P1 is not referenced
+Line 72[5,25] <27, Error, Syntax> - Syntax error : Symbol P7 is not referenced
 
 --- Program ---
 PROGRAM: ParagraphsSections common:False initial:False recursive:False

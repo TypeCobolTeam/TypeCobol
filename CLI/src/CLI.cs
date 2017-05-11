@@ -233,8 +233,8 @@ namespace TypeCobol.Server
                         throw new CopyLoadingException("Error: Your Intrisic types/functions are not included into a program.", path);
                     }
 
-                    var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable;
-                    table.CopyAllTypes(symbols.Types);
+			        var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+			        table.CopyAllTypes(symbols.Types);
                     table.CopyAllFunctions(symbols.Functions);
                    
                     if (symbols.Types.Count == 0 && symbols.Functions.Count == 0) {

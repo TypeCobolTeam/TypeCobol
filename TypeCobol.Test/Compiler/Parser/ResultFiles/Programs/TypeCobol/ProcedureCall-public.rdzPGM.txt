@@ -38,7 +38,7 @@ Line 185[12,40] <27, Error, Syntax> - Syntax error : No suitable function signat
 --- Program ---
 PROGRAM: CallToPublicProcedure common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Program
+--- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
   myDate:DATE
   fakeDate:Alphanumeric

@@ -10,7 +10,7 @@ Line 89[1,48] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric
 --- Program ---
 PROGRAM: StrongReceivers common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Program
+--- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
   FIC-APPEL:Alphanumeric
   WorkRec:Alphanumeric
@@ -22,6 +22,7 @@ PROGRAM: StrongReceivers common:False initial:False recursive:False
   myChars:Chars
   myChars2:Chars
   varToUnstring:Alphanumeric
+--- Intrinsic:Namespace:Global:Declarations
 -- TYPES -------
   IntegerStrong:IntegerStrong
   Integer:Integer

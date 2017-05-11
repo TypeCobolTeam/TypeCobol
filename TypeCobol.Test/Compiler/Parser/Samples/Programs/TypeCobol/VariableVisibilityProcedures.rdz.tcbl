@@ -29,7 +29,8 @@
             move dataNested21 to dataNested22
       *KO dataNested1 and dataNested2 don't exist in checkMain
             move dataNested1 to dataNested2
-      *KO dataMain1 and dataMain2 don't exist in checkMain
+      *KO dataMain1 don't exist in checkMain
+      *OK for dataMain2
             move dataMain1 to dataMain2
             .
        end-declare.
@@ -46,6 +47,7 @@
             move dataNested21 to dataNested22
             move dataNested1 to dataNested2
       *KO dataMain1 is not declared as global
+      *OK for dataMain2
             move dataMain1 to dataMain2
             .
 
@@ -63,9 +65,11 @@
             move dataNestedProc21 to paramNested21
       *KO dataNested21 and dataNested22 don't exist in checkNested
             move dataNested21 to dataNested22
-      *KO dataNested1 and dataNested2 don't exist in checkNested
+      *KO dataNested1 is not declared as global
+      *OK dataNested2 is marked global
             move dataNested1 to dataNested2
-      *KO dataMain1 and dataMain2 don't exist in checkNested
+      *KO dataMain1 is not declared as global
+      *OK for dataMain2
             move dataMain1 to dataMain2
             .
        end-declare.
@@ -96,11 +100,11 @@
             move dataNestedProc1 to paramNested1
 
             move dataNestedProc21 to paramNested21
-      *KO dataNested21 and dataNested22 don't exist in checkNested2
+      *KO dataNested21 is not marked global, OK for dataNested22 marked as global
             move dataNested21 to dataNested22
-      *KO dataNested1 and dataNested2 don't exist in checkNested2
+      *KO dataNested1 is not global, OK for dataNested2 which is global
             move dataNested1 to dataNested2
-      *KO dataMain1 and dataMain2 don't exist in checkNested2
+      *KO dataMain1 is not global, OK for dataMain2 which is global
             move dataMain1 to dataMain2
             .
        end-declare.

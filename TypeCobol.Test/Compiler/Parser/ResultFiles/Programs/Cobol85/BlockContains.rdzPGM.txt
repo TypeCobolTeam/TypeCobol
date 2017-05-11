@@ -4,7 +4,7 @@ Line 11[11,24] <28, Error, Directives> - Failed to load the text document refere
 --- Program ---
 PROGRAM: MYPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Program
+--- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
   ENT002-REC:Alphanumeric
 --- Intrinsic
