@@ -27,7 +27,8 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 	}
 
 	protected List<Diagnostic> GetErrors(string key) {
-		List<Diagnostic> list;
+	    key = GetDefaultKeyIfNull(key);
+        List<Diagnostic> list;
 		try { list = Errors[key]; }
 		catch(KeyNotFoundException) {
 			list = new List<Diagnostic>();
@@ -38,11 +39,17 @@ public abstract class AbstractErrorWriter: ErrorWriter {
 	}
 
 	public void AddErrors(string key, IEnumerable<Diagnostic> errors) {
-		GetErrors(key).AddRange(errors);
+            key = GetDefaultKeyIfNull(key);
+            GetErrors(key).AddRange(errors);
 	}
 
+    public string GetDefaultKeyIfNull(string key) {
+        return key ?? @"_DEFAULT_";
+    }
+
     public void AddErrors(string key, Diagnostic error) {
-		GetErrors(key).Add(error);
+            key = GetDefaultKeyIfNull(key);
+            GetErrors(key).Add(error);
 	}
 
 	private int count = 1;
@@ -96,7 +103,7 @@ public class XMLWriter: AbstractErrorWriter {
             writer.WriteStartElement("STATEMENTTABLE");
             writer.WriteString("\n(2,1,2,1);\n");
             writer.WriteEndElement();// STATEMENTTABLE
-        }
+    }
 
 	private void writeInputs() {
             writer.WriteStartElement("FILEREFERENCETABLE");
