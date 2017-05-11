@@ -81,7 +81,7 @@ userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparato
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
 functionDeclarationHeader:
-	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC) inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
+	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  parameterDescription+;
