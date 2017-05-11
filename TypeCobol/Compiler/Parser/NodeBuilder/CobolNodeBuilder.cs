@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Tools;
+using Analytics;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -379,6 +380,8 @@ namespace TypeCobol.Compiler.Parser
                 table = table.GetTableFromScope(SymbolTable.Scope.Global);
                 
             table.AddType(node);
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[TypeDef] TypeDef declared : " + node.Name);
         }
         // [/COBOL 2002]
 

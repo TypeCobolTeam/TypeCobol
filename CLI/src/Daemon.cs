@@ -119,9 +119,9 @@ namespace TypeCobol.Server {
 		            Console.WriteLine(PROGVERSION);
 		            return 0;
 		        }
-                if(!config.Telemetry)
+                if(config.Telemetry)
                 {
-                    AnalyticsWrapper.Telemetry.DisableTelemetry = true; //If telemetry arg is not passed disable telemetry
+                    AnalyticsWrapper.Telemetry.DisableTelemetry = false; //If telemetry arg is passed enable telemetry
                 }
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
@@ -266,6 +266,7 @@ namespace TypeCobol.Server {
 			Console.WriteLine(errmsg);
 
             AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[{0}] : {1}", code.ToString(), message));
+            AnalyticsWrapper.Telemetry.EndSession(); //End Telemetry session and force data sending
             return (int)code;
 		}
 

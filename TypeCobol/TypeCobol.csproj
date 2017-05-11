@@ -187,6 +187,10 @@
     <EmbeddedResource Include="LanguageServices\CodeAnalysis\Statistics\LanguageModel.Program.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Analytics\Analytics.csproj">
+      <Project>{07445710-6b27-443e-9fe8-54b1476bc629}</Project>
+      <Name>Analytics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TypeCobol.Grammar\TypeCobol.Grammar.csproj">
       <Project>{6e707761-8f1d-409a-8e5b-03953282e435}</Project>
       <Name>TypeCobol.Grammar</Name>

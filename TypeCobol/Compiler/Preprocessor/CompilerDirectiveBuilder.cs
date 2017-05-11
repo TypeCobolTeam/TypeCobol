@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Preprocessor.Generated;
 using TypeCobol.Compiler.Scanner;
 using Antlr4.Runtime.Misc;
 using TypeCobol.Tools;
+using Analytics;
 
 namespace TypeCobol.Compiler.Preprocessor
 {
@@ -156,13 +157,15 @@ namespace TypeCobol.Compiler.Preprocessor
                     var variations = CopyTextNameVariations;
                     if (TypeCobolOptions.AutoRemarksEnable && (variations == null || !variations.Any(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase)))) //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
 				    {
-				        variations = new List<RemarksDirective.TextNameVariation>
+                        AnalyticsWrapper.Telemetry.TrackEvent("[TypeCobol] Missing copy detected");
+
+                        variations = new List<RemarksDirective.TextNameVariation>
 				        {
 				            new RemarksDirective.TextNameVariation(copy.TextName)
 				        };
 
                        CopyTextNameVariations.AddRange(variations);
-				    }
+                    }
 
 				    if (variations != null)
 				    {

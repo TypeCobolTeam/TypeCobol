@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using System.Net.Mail;
 using System.IO;
 using System.Diagnostics;
 using System.DirectoryServices.AccountManagement;
+using System.Reflection;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace Analytics
 {
@@ -19,11 +19,13 @@ namespace Analytics
     public sealed class AnalyticsWrapper
     {
         private static readonly Lazy<AnalyticsWrapper> _LazyAccess = new Lazy<AnalyticsWrapper>(() => new AnalyticsWrapper()); //Singleton pattern
-        private static bool _DisableTelemetry = false;
+        private static bool _DisableTelemetry = true; //By default telemetry needs to be disable. It will only be enable by the first caller.
         private static TelemetryClient _TelemetryClient;
+        private Configuration _AppConfig; 
         private AnalyticsWrapper()
         {
-            var appKey = ConfigurationManager.AppSettings["AppInsightKey"];//Get API Key CLI project config file
+            _AppConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location); //Load custom app.config for this assembly
+            var appKey = _AppConfig.AppSettings.Settings["AppInsightKey"].Value;//Get API Key CLI project config file
 
             // ----- Initiliaze AppInsights Telemetry Client -------//
             _TelemetryClient = new TelemetryClient(new TelemetryConfiguration(appKey));
@@ -51,17 +53,6 @@ namespace Analytics
         {
             if (_DisableTelemetry) return;
             _TelemetryClient.TrackEvent(eventName);
-            _TelemetryClient.Flush();
-        }
-
-        /// <summary>
-        /// Async Track a new event into analytics collector
-        /// </summary>
-        /// <param name="eventName">Event name to store</param>
-        public async Task TrackEventAsync(string eventName)
-        {
-            if (_DisableTelemetry) return;
-            await Task.Run(() => { _TelemetryClient.TrackEvent(eventName); _TelemetryClient.Flush(); });
         }
 
         /// <summary>
@@ -72,39 +63,36 @@ namespace Analytics
         {
             if (_DisableTelemetry) return;
             _TelemetryClient.TrackException(exception);
-            _TelemetryClient.Flush();
         }
 
         /// <summary>
-        /// Async Track a new exception into analytics collector
+        /// Method to end the current Telemetry session. It will also force data sending to Application Inshights.
         /// </summary>
-        /// <param name="exception">Exception raised to store</param>
-        public async Task TrackExceptionAsync(Exception exception)
+        public void EndSession()
         {
-            if (_DisableTelemetry) return;
-            await Task.Run(() => { _TelemetryClient.TrackException(exception); _TelemetryClient.Flush(); });
+            _TelemetryClient.Flush();
         }
 
 
         public void SendMail(Exception exception, List<string> sourceFilePaths, List<string> CopyFolders, string config)
         {
             if (_DisableTelemetry) return;
-            
+
             var currentUserMail = UserPrincipal.Current.EmailAddress;
             var mail = new MailMessage();
             var smtpClient = new SmtpClient();
             var errorPagePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + @"\Templates\ErrorMailTemplate.html";
             string errorTemplate = "<h3>Oh.. template not found..</h3>";
 
-            smtpClient.Host = ConfigurationManager.AppSettings["SmtpServer"];
-            smtpClient.Port = int.Parse(ConfigurationManager.AppSettings["SmtpPort"]);
-            smtpClient.UseDefaultCredentials = bool.Parse(ConfigurationManager.AppSettings["SmtpUseDefaultCredential"]);
+            smtpClient.Host = _AppConfig.AppSettings.Settings["SmtpServer"].Value;
+            smtpClient.Port = int.Parse(_AppConfig.AppSettings.Settings["SmtpPort"].Value);
+            smtpClient.UseDefaultCredentials = bool.Parse(_AppConfig.AppSettings.Settings["SmtpUseDefaultCredential"].Value);
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
 
-            var receiver = ConfigurationManager.AppSettings["MailReceiver"];
+            var receiver = _AppConfig.AppSettings.Settings["MailReceiver"].Value;
             mail.To.Add(new MailAddress(receiver));
             mail.From = new MailAddress(currentUserMail);
-            mail.Subject = ConfigurationManager.AppSettings["MailSubject"];
+            mail.Subject = _AppConfig.AppSettings.Settings["MailSubject"].Value;
 
             if(File.Exists(errorPagePath))
             {
@@ -112,7 +100,7 @@ namespace Analytics
                 errorTemplate = errorTemplate.Replace("{DateTime}", DateTime.Now.ToString());
 
                 errorTemplate = errorTemplate.Replace("{User}", currentUserMail.Split('@')[0].Replace('.', ' '));
-                errorTemplate = errorTemplate.Replace("{TypeCobolVersion}", ConfigurationManager.AppSettings["TypeCobolVersion"]);
+                errorTemplate = errorTemplate.Replace("{TypeCobolVersion}", _AppConfig.AppSettings.Settings["TypeCobolVersion"].Value);
                 errorTemplate = errorTemplate.Replace("{Source}", exception.Source);
 
                 errorTemplate = errorTemplate.Replace("{Config}", config);

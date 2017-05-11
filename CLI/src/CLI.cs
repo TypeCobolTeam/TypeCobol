@@ -135,8 +135,10 @@ namespace TypeCobol.Server
                 errorWriter.AddErrors(path, allDiags); //Write diags into error file
 
                 if (allDiags.Count > 0)
+                {
+                    AnalyticsWrapper.Telemetry.TrackEvent("[CLI] Diagnostics Detected");
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, null, false); //Make ParsingException trace back to RunOnce()
-
+                }
 
                 if (parser.Results.CodeElementsDocumentSnapshot == null && config.ExecToStep > ExecutionStep.Preprocessor)
                 {
@@ -177,6 +179,7 @@ namespace TypeCobol.Server
         /// <returns>SymbolTable</returns>
         private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths, DocumentFormat copyDocumentFormat)
         {
+            AnalyticsWrapper.Telemetry.TrackEvent("[CLI] Load Copies");
             var parser = new Parser();
 
 			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
@@ -234,6 +237,7 @@ namespace TypeCobol.Server
         /// <returns>SymbolTable</returns>
         private static SymbolTable LoadDependencies(AbstractErrorWriter writer, List<string> paths, DocumentFormat format, SymbolTable intrinsicTable)
         {
+            AnalyticsWrapper.Telemetry.TrackEvent("[CLI] Load Dependencies");
             var parser = new Parser(intrinsicTable);
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
