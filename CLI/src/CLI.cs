@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
@@ -47,9 +49,17 @@ namespace TypeCobol.Server
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
+                
+                //As we currently have error message in english, we will log exception message and its stacktrace in InvariantCulture
+                var CurrentCulture = Thread.CurrentThread.CurrentCulture;
+                var CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
+
+
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
                 if (config.Telemetry)
                     MailSender.Send(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
-
                 if (typeCobolException.Logged) {
                     Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex,
                         typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
@@ -62,6 +72,10 @@ namespace TypeCobol.Server
                         typeCobolException.InnerException.Message + "\n" + new StackTrace(typeCobolException.InnerException), typeCobolException.Path);
                     }
                 }
+
+                //set back the correct culture
+                Thread.CurrentThread.CurrentCulture = CurrentCulture;
+                Thread.CurrentThread.CurrentUICulture = CurrentUICulture;
 
                 if (typeCobolException is ParsingException)
                     return ReturnCode.ParsingError;
