@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
@@ -48,10 +50,33 @@ namespace TypeCobol.Server
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
+                //As we currently have error message in english, we will log exception message and its stacktrace in InvariantCulture
+                var CurrentCulture = Thread.CurrentThread.CurrentCulture;
+                var CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
+
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
                 AnalyticsWrapper.Telemetry.SendMail(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
-                if(typeCobolException.Logged)
-                    Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex, typeCobolException.ColumnEndIndex, typeCobolException.LineNumber, typeCobolException.Message, typeCobolException.Path);
+
+                if (typeCobolException.Logged)
+                {
+                    Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex,
+                        typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
+                        typeCobolException.Message + "\n" + new StackTrace(typeCobolException), typeCobolException.Path);
+
+                    if (typeCobolException.InnerException != null)
+                    {
+                        Server.AddError(errorWriter, MessageCode.CausedBy, typeCobolException.ColumnStartIndex,
+                        typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
+                        typeCobolException.InnerException.Message + "\n" + new StackTrace(typeCobolException.InnerException), typeCobolException.Path);
+                    }
+                }
+
+                //set back the correct culture
+                Thread.CurrentThread.CurrentCulture = CurrentCulture;
+                Thread.CurrentThread.CurrentUICulture = CurrentUICulture;
 
                 if (typeCobolException is ParsingException)
                     return ReturnCode.ParsingError;
@@ -153,7 +178,6 @@ namespace TypeCobol.Server
                 {
                     var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
                     var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
-                    var program = parser.Results.ProgramClassDocumentSnapshot.Program;
                     try
                     {
                         codegen.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat); //TODO : Add exception management for code generation
@@ -162,8 +186,8 @@ namespace TypeCobol.Server
                     {
                         if (e is GenerationException)
                             throw e; //Throw the same exception to let runOnce() knows there is a problem
-                         
-                        throw new GenerationException(e.Message, null, e.InnerException, false); //Otherwise create a new GeerationException
+                        
+                        throw new GenerationException(e.Message, path, e.InnerException); //Otherwise create a new GenerationException
                     }
                     
                 }

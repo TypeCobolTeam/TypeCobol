@@ -258,6 +258,41 @@ namespace TypeCobol.Codegen.Actions
                 return -1;
             }
 
+
+            /// <summary>
+            /// Collect following tokens between parenthesis
+            /// </summary>
+            /// <param name="nodeTokens">The following tokens</param>
+            /// <param name="i">The start index in the following token, Out the next tokebn after the last parenthesis</param>
+            /// <returns></returns>
+            private List<TypeCobol.Compiler.Scanner.Token> ScanReferenceModifierTokens(IList<TypeCobol.Compiler.Scanner.Token> nodeTokens, ref int i)
+            {                
+                List<TypeCobol.Compiler.Scanner.Token> tokens = new List<TypeCobol.Compiler.Scanner.Token>();
+                tokens.Add(nodeTokens[i++]);
+                int save_i = i;
+                int parenCount = 0;
+                if (i >= nodeTokens.Count)
+                    return tokens;
+                if (nodeTokens[i].TokenType != Compiler.Scanner.TokenType.LeftParenthesisSeparator)
+                    return tokens;
+                do
+                {
+                    tokens.Add(nodeTokens[i]);
+                    if (nodeTokens[i].TokenType == Compiler.Scanner.TokenType.LeftParenthesisSeparator)
+                        parenCount++;
+                    else if (nodeTokens[i].TokenType == Compiler.Scanner.TokenType.RightParenthesisSeparator)
+                        parenCount--;
+                    i++;
+                } while (i < nodeTokens.Count && parenCount != 0);
+                if (parenCount != 0)
+                {
+                    tokens.Clear();
+                    tokens.Add(nodeTokens[save_i - 1]);
+                    i = save_i;
+                }
+                return tokens;
+            }
+
             /// <summary>
             /// Perform the qualification action
             /// </summary>
@@ -279,8 +314,6 @@ namespace TypeCobol.Codegen.Actions
                     string hashFunction;
                     bool bProcCall = IsProcedureStyleCallItems(items, out hashFunction);
                     Tuple<int, int> range = boundaries[b++];
-                    Items = items;
-                    int i = range.Item1;                    
                     if (bProcCall)
                     {   //----------------------------------------------------------------------------------------------
                         // This is for a procedure call.
@@ -311,6 +344,9 @@ namespace TypeCobol.Codegen.Actions
                         bWasProcCall = true;//Remember that we have a Procedure Style Call Node.
                         continue;//Continue
                     }
+                    Items = items;
+                    GenerateQualifierToken[,] gqts = new GenerateQualifierToken[items.Count, 2];
+                    int i = range.Item1;                    
                     for (int j = 0; j < Items.Count; j++)
                     {
                         SymbolReference sr = Items[Items.Count - j - 1];
@@ -318,9 +354,10 @@ namespace TypeCobol.Codegen.Actions
                         {
                             if (nodeTokens[i] == sr.NameLiteral.Token)
                             {
+                                List<TypeCobol.Compiler.Scanner.Token> refModTokens = ScanReferenceModifierTokens(nodeTokens, ref i);
                                 TypeCobol.Compiler.Scanner.Token tokenColonColon = null;
                                 //Look for the corresponding ::
-                                for (++i; i <= range.Item2; i++)
+                                for (; i <= range.Item2; i++)
                                 {
                                     if (!(nodeTokens[i] is TypeCobol.Compiler.Preprocessor.ImportedToken))
                                     {
@@ -329,13 +366,15 @@ namespace TypeCobol.Codegen.Actions
                                             tokenColonColon = nodeTokens[i];
                                             i++;
                                             break;
-                                        }                                        
+                                        }
                                     }
                                 }
                                 //We got It ==> Create our Generate Nodes
                                 GenerateQualifierToken item = new GenerateQualifierToken(
-                                    new QualifierTokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
+                                    new QualifierTokenCodeElement(refModTokens), Items[j].ToString(),
                                     sourcePositions);
+                                gqts[Items.Count - j - 1, 1] = item;
+                                gqts[j, 0] = item;
                                 item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                                 sourceNode.Add(item);
                                 if (tokenColonColon != null)
@@ -349,6 +388,16 @@ namespace TypeCobol.Codegen.Actions
                             }
                         }
                     }
+                    //Compelte with ReferenceModifierString
+                    for(int k = 0; k < gqts.Rank; k++)
+                    {
+                        GenerateQualifierToken item = gqts[k, 0];
+                        GenerateQualifierToken rm_item = gqts[k, 1];
+                        QualifierTokenCodeElement qtce = (QualifierTokenCodeElement)rm_item.CodeElement;
+                        string refMod = qtce.ReferenceModifierString;
+                        if (refMod.Length > 0)
+                            item.ReplaceCode += refMod;
+                    }
                 }
                 //Now Comment the Source Node, only and only if it was not a Procedure Style Call,
                 //Because the Qualifier action is the first action performed, before any Expand action.
@@ -356,7 +405,6 @@ namespace TypeCobol.Codegen.Actions
                 if (!bWasProcCall)
                     sourceNode.Comment = true;
             }
-
         }
 
         /// <summary>
@@ -373,6 +421,21 @@ namespace TypeCobol.Codegen.Actions
                 : base((CodeElementType)0)
             {
                 base.ConsumedTokens = consumedTokens;
+            }
+            /// <summary>
+            /// Get the Corresponding reference
+            /// </summary>
+            public string ReferenceModifierString
+            {
+                get
+                {
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    for (int i = 1; i < base.ConsumedTokens.Count; i++)
+                    {
+                        sb.Append(base.ConsumedTokens[i].Text);
+                    }
+                    return sb.ToString();
+                }
             }
         }
 
@@ -406,7 +469,7 @@ namespace TypeCobol.Codegen.Actions
             public string ReplaceCode
             {
                 get;
-                private set;
+                internal set;
             }
 
 

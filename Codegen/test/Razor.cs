@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using TypeCobol.Codegen.Skeletons.Templates;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Codegen;
@@ -43,7 +45,10 @@ namespace TypeCobol.Codegen.Config {
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ReplaceVariablesButOneIsMissing() {
-			Dictionary<string,object> variables;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
+            Dictionary<string,object> variables;
 			string input = "%LEVEL  %NAME-value PIC X VALUE LOW-VALUE.\n  88  %NAME       VALUE 'T'.\n  88  %NAME-false VALUE 'F'.";
 			variables = new Dictionary<string,object> { {"NAME", "var"} };
 			try { new RazorEngine().Replace(input, variables); }
@@ -57,7 +62,9 @@ namespace TypeCobol.Codegen.Config {
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ReplaceVariablesButBothAreMissing() {
-			string input;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            string input;
 			input = "%LEVEL  %NAME-value PIC X VALUE LOW-VALUE.\n  88  %NAME       VALUE 'T'.\n  88  %NAME-false VALUE 'F'.";
 			try { new RazorEngine().Replace(input); }
 			catch (System.ArgumentException ex) { Assert.AreEqual("Variable \"LEVEL\" undefined", ex.Message); }

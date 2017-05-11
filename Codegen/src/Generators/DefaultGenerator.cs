@@ -121,7 +121,7 @@ namespace TypeCobol.Codegen.Generators
                 line_nodes = mapper.LineData[i].LineNodes;
                 foreach (int node_index in line_nodes)
                 {
-                    if (node_index == -1)
+                    if (node_index == -1 || mapper.Nodes[node_index].node.IsFlagSet(Node.Flag.GeneratorCanIgnoreIt))
                     {//bad Node
                         continue;
                     }
