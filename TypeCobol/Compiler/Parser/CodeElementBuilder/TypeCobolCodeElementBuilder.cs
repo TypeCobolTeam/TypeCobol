@@ -32,6 +32,9 @@ namespace TypeCobol.Compiler.Parser
             if (context.PROCEDURE() != null) type = FunctionType.Procedure;
             if (context.FUNCTION() != null) type = FunctionType.Function;
 
+            //TCRFUN_DEFAULT_ACCESS_MODIFIER  rule is respected here. 
+            //By default a function or procedure is private even if PRIVATE keyword is not given. 
+            //If PUBLIC keyword is set, the function/procedure as to be set PUBLIC. 
             var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
 
             SymbolDefinition name = null;
