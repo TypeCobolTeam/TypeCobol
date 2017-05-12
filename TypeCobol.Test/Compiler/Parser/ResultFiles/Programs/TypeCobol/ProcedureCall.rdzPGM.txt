@@ -2,7 +2,7 @@
 Line 145[18,21] <27, Error, Syntax> - Syntax error : no viable alternative at input 'var1' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[18,21:var1]<UserDefinedWord>
 Line 92[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:declare]<DECLARE>
 Line 96[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:declare]<DECLARE>
-Line 113[12,50] <27, Error, Syntax> - Syntax error : No function found for 'ValidateDatFormatt'
+Line 113[12,50] <27, Error, Syntax> - Syntax error : Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Alphanumeric)
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
@@ -20,13 +20,13 @@ Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateForma
 Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 8
 Line 190[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
 Line 199[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
-Line 202[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD'
+Line 202[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD' input(DATE)
 Line 211[8,42] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not referenced
 
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Program
+--- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
   somedate:DATE
   someformat:Alphanumeric
@@ -37,6 +37,7 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
   MyToto:Toto
 -- PARAGRAPHS --
   TRAITEMENT
+--- Intrinsic:Namespace:Global:Declarations
 -- TYPES -------
   Toto:Toto
 -- FUNCTIONS ---

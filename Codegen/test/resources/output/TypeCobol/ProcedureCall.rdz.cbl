@@ -64,7 +64,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'c5875eec' USING
+           CALL 'df9b9795' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -75,7 +75,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
-           CALL 'c5875eec' USING
+           CALL 'df9b9795' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -87,14 +87,14 @@
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
       *    CALL ValidateDateFormat END-CALL
-           CALL 'd5130bbc'
+           CALL 'f0da699b'
                                    END-CALL
       * __________________________________________________
       * OK with INPUT on the same line as call
       *    CALL ValidateDateFormat INPUT      somedate
       *                                       by content 'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'c5875eec' USING
+           CALL 'df9b9795' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -107,7 +107,7 @@
       *    CALL ValidateDateFormat INPUT     by content somedate
       *                                        'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'c5875eec' USING
+           CALL 'df9b9795' USING
                     by content   somedate
                                  'YYYYMMDD'
                     by reference flag-value
@@ -122,7 +122,7 @@
       *                                      myDate2
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
-           CALL 'd5ec4efc' USING
+           CALL 'f98cef23' USING
                     by content   somedate
                                  'YYYYMMDD'
                                  myDate2
@@ -141,7 +141,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'd5ec4efc' USING
+           CALL 'f98cef23' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -158,8 +158,8 @@
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d5130bbc.
-       END PROGRAM d5130bbc.
+       PROGRAM-ID. f0da699b.
+       END PROGRAM f0da699b.
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -169,7 +169,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c5875eec.
+       PROGRAM-ID. df9b9795.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -188,7 +188,7 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM c5875eec.
+       END PROGRAM df9b9795.
       *
       *DECLARE PROCEDURE myProc PRIVATE
       *   INPUT  mydate        TYPE Date
@@ -201,7 +201,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d5ec4efc.
+       PROGRAM-ID. f98cef23.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -235,4 +235,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM d5ec4efc.
+       END PROGRAM f98cef23.

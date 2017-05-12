@@ -81,7 +81,7 @@ userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparato
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
 functionDeclarationHeader:
-	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC) inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
+	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  parameterDescription+;
@@ -143,5 +143,5 @@ callOutputParameter: sharedStorageArea1; // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFE
 typeNameReference: (UserDefinedWord | DATE);
 
 // When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
-cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? PUBLIC?;
+cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? (PRIVATE | PUBLIC)?;
 cobol2002TypeClause:    TYPE (programNameReference3 QualifiedNameSeparator)? typeNameReference;

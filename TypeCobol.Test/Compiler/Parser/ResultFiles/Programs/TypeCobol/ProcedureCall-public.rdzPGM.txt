@@ -1,47 +1,47 @@
 ﻿--- Diagnostics ---
 Line 17[12,53] <30, Error, Semantics> - Semantic error: TYPE 'typeOfDays' is not referenced
 Line 18[12,64] <30, Error, Semantics> - Semantic error: TYPE 'absentPgm.typeOfDays' is not referenced
-Line 71[12,39] <27, Error, Syntax> - Syntax error : No function found for 'case1'
-Line 74[12,39] <27, Error, Syntax> - Syntax error : No function found for 'case2'
-Line 77[12,48] <27, Error, Syntax> - Syntax error : No function found for 'case3'
-Line 80[12,48] <27, Error, Syntax> - Syntax error : No function found for 'case4'
-Line 83[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case51'
-Line 85[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case52'
-Line 87[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case53'
-Line 90[12,22] <27, Error, Syntax> - Syntax error : Call to 'case61' is ambigous. 'case61' is defined 2 times
-Line 92[12,22] <27, Error, Syntax> - Syntax error : Call to 'case62' is ambigous. 'case62' is defined 2 times
-Line 94[12,22] <27, Error, Syntax> - Syntax error : Call to 'case63' is ambigous. 'case63' is defined 2 times
-Line 97[12,21] <27, Error, Syntax> - Syntax error : No function found for 'case7'
-Line 103[12,21] <27, Error, Syntax> - Syntax error : Call to 'case9' is ambigous. 'case9' is defined 2 times
-Line 106[12,48] <27, Error, Syntax> - Syntax error : No function found for 'case10'
-Line 113[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12' is ambigous. 'case12' is defined 2 times
-Line 116[12,22] <27, Error, Syntax> - Syntax error : No function found for 'case13'
-Line 122[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15' is ambigous. 'case15' is defined 2 times
+Line 71[12,39] <27, Error, Syntax> - Syntax error : Function not found 'case1' input(DATE, Alphanumeric) output(BOOL)
+Line 74[12,39] <27, Error, Syntax> - Syntax error : Function not found 'case2' input(DATE, Alphanumeric) output(BOOL)
+Line 77[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case3' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Line 80[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case4' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Line 83[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case51'(no arguments)
+Line 85[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case52'(no arguments)
+Line 87[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case53'(no arguments)
+Line 90[12,22] <27, Error, Syntax> - Syntax error : Call to 'case61'(no arguments) is ambigous. 'case61' is defined 2 times
+Line 92[12,22] <27, Error, Syntax> - Syntax error : Call to 'case62'(no arguments) is ambigous. 'case62' is defined 2 times
+Line 94[12,22] <27, Error, Syntax> - Syntax error : Call to 'case63'(no arguments) is ambigous. 'case63' is defined 2 times
+Line 97[12,21] <27, Error, Syntax> - Syntax error : No function or variable found for 'case7'(no arguments)
+Line 103[12,21] <27, Error, Syntax> - Syntax error : Call to 'case9'(no arguments) is ambigous. 'case9' is defined 2 times
+Line 106[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case10' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Line 113[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12'(no arguments) is ambigous. 'case12' is defined 2 times
+Line 116[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case13'(no arguments)
+Line 122[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15'(no arguments) is ambigous. 'case15' is defined 2 times
 Line 149[12,56] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.addDaysToDate' expected parameter 'TypeOfDays' of type typeOfDays and received 'W-WrongTypeOfDays2' of type absentPgm.typeOfDays 
-Line 161[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case2'
-Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
-Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
-Line 166[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of type Alphanumeric and received 'myDate' of type DATE 
-Line 166[12,48] <27, Error, Syntax> - Syntax error : Parameter fakeD is not referenced
-Line 171[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case4'
-Line 189[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case7'
-Line 192[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case8'
-Line 195[12,39] <27, Error, Syntax> - Syntax error : No function found for 'PublicProcedures.case9'
-Line 199[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case10' only takes 0 parameter(s)
-Line 204[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'mydate' of type DATE and length 1
-Line 204[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'fakeDate' of type Alphanumeric and length 8
-Line 204[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'result' of type BOOL and length 1
-Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'mydate' of type DATE and length 1
-Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'fakeDate' of type Alphanumeric and length 8
-Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'result' of type BOOL and length 1
-Line 211[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case13'
-Line 215[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case14'
-Line 218[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case15'
+Line 161[12,39] <27, Error, Syntax> - Syntax error : Function not found 'PublicProcedures.case2' input(DATE, Alphanumeric) output(BOOL)
+Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
+Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
+Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of type Alphanumeric and received 'myDate' of type DATE 
+Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'result' of type BOOL and received 'fakeDate' of type Alphanumeric 
+Line 173[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case4' input(Alphanumeric, DATE, ?) output(Alphanumeric, BOOL)
+Line 192[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case7'(no arguments)
+Line 195[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case8'(no arguments)
+Line 198[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case9'(no arguments)
+Line 202[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case10' only takes 0 parameter(s)
+Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'mydate' of type DATE and length 1
+Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'fakeDate' of type Alphanumeric and length 8
+Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'result' of type BOOL and length 1
+Line 212[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'mydate' of type DATE and length 1
+Line 212[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'fakeDate' of type Alphanumeric and length 8
+Line 212[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'result' of type BOOL and length 1
+Line 215[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case13(no arguments)'
+Line 219[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case14(no arguments)'
+Line 222[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case15(no arguments)'
 
 --- Program ---
 PROGRAM: CallToPublicProcedure common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Program
+--- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
   myDate:DATE
   fakeDate:Alphanumeric

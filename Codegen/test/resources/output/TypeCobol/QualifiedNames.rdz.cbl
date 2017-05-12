@@ -10,6 +10,7 @@
       *01 Vector TYPEDEF strict.
       *    05 x PIC 9.
       *    05 y PIC 9.
+      *        88 toto value 1.
       *    05 z PIC 9.
        
       *01 Point TYPEDEF strict.
@@ -24,10 +25,12 @@
            06 Location.
              07 x PIC 9.
              07 y PIC 9.
+                88 toto value 1.
              07 z PIC 9.
            06 Movment.
              07 x PIC 9.
              07 y PIC 9.
+                88 toto value 1.
              07 z PIC 9.
                            
       *    05 q TYPE POINT.
@@ -35,10 +38,12 @@
            06 Location.
              07 x PIC 9.
              07 y PIC 9.
+                88 toto value 1.
              07 z PIC 9.
            06 Movment.
              07 x PIC 9.
              07 y PIC 9.
+                88 toto value 1.
              07 z PIC 9.
                            
        
@@ -54,7 +59,8 @@
            MOVE   1   TO x OF Location OF p
       *    MOVE 1 TO p :: Location ::    y z OF Location IN p
            MOVE 1 TO y  OF  Location  OF     p z OF Location IN p
-
+      *    set Segment::p::Location::y::Toto to true
+           set Toto OF y OF Location OF p OF Segment to true
       *    MOVE p :: Location :: y TO p :: location :: y
            MOVE y  OF  Location  OF  p TO y  OF  location  OF  p
       *    move p::location::y to p::location::y

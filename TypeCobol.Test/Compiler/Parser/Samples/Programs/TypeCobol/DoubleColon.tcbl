@@ -29,6 +29,7 @@ WORKING-STORAGE SECTION.
     10  T2-C.
       15  T2-D1      PIC X.
       15  T2-D2      PIC X.
+         88 T2-D2-V1  value 'A'.
 
 01  T3-A1.
   05  T3-B1.
@@ -116,4 +117,10 @@ TEST-4.
     MOVE SPACE TO T4-B1 OF T4-A1 ( 2 3 )
 * TODO operator '::' specification is insufficient regarding subscripts
 *    MOVE SPACE TO T4-A1 ( 2 ) :: T4-B1 ( 3 )
+    .
+
+*Condition name
+TEST-5.
+    set T2-D2-V1 of T2-C of T2-B of T2-A to true
+    set T2-A::T2-B::T2-C::T2-D2::T2-D2-V1 to true
     .

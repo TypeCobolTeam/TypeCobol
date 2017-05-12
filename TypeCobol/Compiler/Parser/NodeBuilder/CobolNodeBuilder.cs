@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Tools;
+using Analytics;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -374,11 +375,14 @@ namespace TypeCobol.Compiler.Parser
             SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
             var node = new TypeDefinition(typedef);
             Enter(node);
-            var table = node.SymbolTable;
+            SymbolTable table;
             if (node.CodeElement().IsGlobal) // TCTYPE_GLOBAL_TYPEDEF
-                table = table.GetTableFromScope(SymbolTable.Scope.Global);
-                
+                table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+            else
+                table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
             table.AddType(node);
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[TypeDef] TypeDef declared : " + node.Name);
         }
         // [/COBOL 2002]
 
@@ -521,9 +525,11 @@ namespace TypeCobol.Compiler.Parser
             var node = new FunctionDeclaration(header);
             node.Label = uidfactory.FromOriginal(header.FunctionName.Name);
             node.Library = CurrentProgram.Identification.ProgramName.Name;
-            CurrentProgram.CurrentTable.AddFunction(node);
 
-            Enter(node, context, new SymbolTable(CurrentProgram.CurrentTable, SymbolTable.Scope.Function)); //Add function and enter FunctionDeclaration Node
+            //Function must be added to Declarations scope
+            var declarationSymbolTable = CurrentProgram.CurrentTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+            declarationSymbolTable.AddFunction(node);
+            Enter(node, context, new SymbolTable(declarationSymbolTable, SymbolTable.Scope.Function));
 
             var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
             var funcProfile = ((FunctionDeclaration)CurrentNode).Profile; //Get functionprofile to set parameters
@@ -566,6 +572,8 @@ namespace TypeCobol.Compiler.Parser
             Exit();
             Exit();// exit DECLARE FUNCTION
         }
+
+       
         /// <summary>Parent node: DECLARE FUNCTION</summary>
         /// <param name="context">PROCEDURE DIVISION</param>
         public override void EnterFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context)
@@ -573,23 +581,6 @@ namespace TypeCobol.Compiler.Parser
             var header = (ProcedureDivisionHeader)context.ProcedureDivisionHeader().Symbol;
             if (header.UsingParameters != null && header.UsingParameters.Count > 0)
                 DiagnosticUtils.AddError(header, "TCRFUN_DECLARATION_NO_USING");//TODO#249
-
-
-            //TODO: Issue #313 (commented code, waiting to clarify)
-            //var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
-
-            //if (header.ReturningParameter != null)
-            //{
-            //    // we might have a RETURNING parameter to convert, but only if there is neither
-            //    // PICTURE nor TYPE clause for the returning parameter in the function declaration.
-            //    // however, this is as syntax error.
-            //    var pentry = new ParameterDescriptionEntry();
-            //    var data = header.ReturningParameter.StorageArea as DataOrConditionStorageArea;
-            //    if (data != null) pentry.DataName = new SymbolDefinition(data.SymbolReference.NameLiteral, data.SymbolReference.Type);
-            //    // pentry.Picture will remain empty, we can't do anything about it
-            //    pentry.DataType = DataType.Unknown;
-            //    declaration.Profile.ReturningParameter = pentry;
-            //}
 
             Enter(new ProcedureDivision(header), context);
         }

@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
 using SimpleMsgPack;
 using TypeCobol.Server.Serialization;
+using Analytics;
 
 namespace TypeCobol.Server {
 
@@ -20,6 +21,7 @@ namespace TypeCobol.Server {
     /// </summary>
     public class Config
     {
+        public string CommandLine { get; set; }
         public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
         public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
@@ -37,6 +39,8 @@ namespace TypeCobol.Server {
         public List<string> Dependencies = new List<string>();
 
         public string EncFormat = null;
+
+        public bool Telemetry { get; set; }
     }
 
     class Server {
@@ -45,11 +49,12 @@ namespace TypeCobol.Server {
             No, HiddenWindow, NormalWindow
         }
         static int Main(string[] argv) {
-			bool help = false;
+            bool help = false;
 			bool version = false;
 			bool once = false;
             StartClient startClient = StartClient.No;
 			var config = new Config();
+            config.CommandLine = string.Join(" ", argv);
 			var pipename = "TypeCobol.Server";
 
             var p = new OptionSet() {
@@ -89,6 +94,7 @@ namespace TypeCobol.Server {
                 { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => config.Dependencies.Add(v) },
                 { "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
                 { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
+                { "t|telemetry", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => config.Telemetry = true }
             };
 
       
@@ -96,7 +102,7 @@ namespace TypeCobol.Server {
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             config.CopyFolders.Add(folder + @"\DefaultCopies\");
 
-		    try {
+            try {
                 List<string> args;
 		        try {
 
@@ -113,6 +119,11 @@ namespace TypeCobol.Server {
 		            Console.WriteLine(PROGVERSION);
 		            return 0;
 		        }
+                if(config.Telemetry)
+                {
+                    AnalyticsWrapper.Telemetry.DisableTelemetry = false; //If telemetry arg is passed enable telemetry
+                }
+
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
                     config.ExecToStep = ExecutionStep.SemanticCheck; //If there is no given output file, we can't run generation, fallback to SemanticCheck
 
@@ -167,6 +178,7 @@ namespace TypeCobol.Server {
                 }
 			}
             catch (Exception e) {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 return exit(ReturnCode.FatalError, e.Message);
 			}
 
@@ -252,7 +264,10 @@ namespace TypeCobol.Server {
 			string errmsg = PROGNAME+": "+message+"\n";
 			errmsg += "Try "+PROGNAME+" --help for usage information.";
 			Console.WriteLine(errmsg);
-			return (int)code;
+
+            AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[{0}] : {1}", code.ToString(), message));
+            AnalyticsWrapper.Telemetry.EndSession(); //End Telemetry session and force data sending
+            return (int)code;
 		}
 
 	}

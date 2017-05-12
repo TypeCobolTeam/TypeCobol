@@ -35,7 +35,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ad9bc8ae.
+       PROGRAM-ID. c40368dd.
        DATA DIVISION.
        LINKAGE SECTION.
        01 x PIC 9(05).
@@ -47,4 +47,4 @@
                    BY REFERENCE result
            .
            CONTINUE.
-       END PROGRAM ad9bc8ae.
+       END PROGRAM c40368dd.

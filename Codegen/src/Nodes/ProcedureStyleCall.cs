@@ -25,6 +25,15 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
     };
 
     /// <summary>
+    /// If imported public function are call with EXTERNA POINTER or Not.
+    /// </summary>
+    public static bool IsNotByExternalPointer
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="node">The AST Node of Procedure Call</param>
@@ -64,11 +73,35 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 				var hash = Node.FunctionDeclaration.Hash;
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
                 TypeCobol.Compiler.Nodes.FunctionDeclaration fun_decl = this.Node.FunctionDeclaration;
-                var callString = ((FunctionDeclarationHeader)fun_decl.CodeElement).Visibility == AccessModifier.Public
-                    ? string.Format("CALL TC-{0}-{1}{2}", fun_decl.Library, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING")
-                    : string.Format("CALL '{0}'{1}", hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
-				var callTextLine = new TextLineSnapshot(-1, callString, null);
-				_cache.Add(callTextLine);
+                string callString = null;
+                bool bNeedEndIf = false;
+                if (((FunctionDeclarationHeader)fun_decl.CodeElement).Visibility == AccessModifier.Public)
+                {
+                    if (this.Node.IsNotByExternalPointer || IsNotByExternalPointer)
+                    {
+                        IsNotByExternalPointer = true;
+                        string guard = string.Format("IF TC-{0}-{1} = '{2}'", fun_decl.Library, hash, hash);
+                        var guardTextLine = new TextLineSnapshot(-1, guard, null);
+                        _cache.Add(guardTextLine);
+                        callString = string.Format("        CALL TC-{0}-{1}{2}", fun_decl.Library, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                        var callTextLine = new TextLineSnapshot(-1, callString, null);
+                        _cache.Add(callTextLine);
+                        bNeedEndIf = true;
+                    }
+                    else
+                    {
+                        callString = string.Format("CALL TC-{0}-{1}{2}", fun_decl.Library, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                        var callTextLine = new TextLineSnapshot(-1, callString, null);
+                        _cache.Add(callTextLine);
+                    }
+                }
+                else
+                {
+                     callString = string.Format("CALL '{0}'{1}", hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                     var callTextLine = new TextLineSnapshot(-1, callString, null);
+                     _cache.Add(callTextLine);
+
+                }
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL_PARAMS
 				var indent = new string(' ', 13);
                 //Hanle Input parameters
@@ -107,9 +140,15 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
                 if (!HasCallEnd)
                 {
                     //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
-                    var call_end = new TextLineSnapshot(-1, "    end-call ", null);
+                    var call_end = new TextLineSnapshot(-1, !bNeedEndIf ? "    end-call " : "        end-call ", null);
                     _cache.Add(call_end);
                 }
+                if (bNeedEndIf)
+                {
+                    var end_guardTextLine = new TextLineSnapshot(-1, "    END-IF", null);
+                    _cache.Add(end_guardTextLine);
+                }
+
 			}
 			return _cache;
 		}

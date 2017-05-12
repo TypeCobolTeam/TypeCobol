@@ -149,10 +149,11 @@ internal class TypedDataNode: DataDescription, Generated {
             if (!isCustomType)
             {
                 string text = ExtractPicTokensValues(data, out bHasPeriod);
-                if (text.Length > 0)
+                if (text.Length > 0) {
                     line.Append(text);
-                else
+                } else if (data.Picture !=null && !string.IsNullOrEmpty(data.Picture.ToString())) {
                     line.Append(" PIC ").Append(data.Picture);
+                }
             }
             else if (customtype != null)
             {   //This variable will have no subtypes as children at all

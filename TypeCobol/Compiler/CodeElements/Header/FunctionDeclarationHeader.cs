@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using JetBrains.Annotations;
+
+namespace TypeCobol.Compiler.CodeElements {
 
 	using System.Collections.Generic;
 
@@ -75,7 +77,46 @@
 	    DataType ReturningParameter { get; }
     }
 
-    public class ParametersProfile: CodeElement, ParameterList {
+
+    public static class ParameterListHelper
+    {
+        /// <summary>
+        /// Get the signature of the ParameterList as string.
+        /// This string is intended to be displayed to the user.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetSignature([NotNull] this ParameterList parameterList)
+        {
+            var str = new System.Text.StringBuilder();
+
+            if (parameterList.InputParameters.Count > 0)
+            {
+                str.Append("input(");
+                foreach (var p in parameterList.InputParameters) str.Append(p).Append(", ");
+                str.Length -= 2;
+                str.Append(")");
+            }
+            if (parameterList.InoutParameters.Count > 0)
+            {
+                str.Append(" in-out(");
+                foreach (var p in parameterList.InoutParameters) str.Append(p).Append(", ");
+                str.Length -= 2;
+                str.Append(")");
+            }
+            if (parameterList.OutputParameters.Count > 0)
+            {
+                str.Append(" output(");
+                foreach (var p in parameterList.OutputParameters) str.Append(p).Append(", ");
+                str.Length -= 2;
+                str.Append(")");
+            }
+            if (parameterList.ReturningParameter != null) str.Append(" : ").Append(parameterList.ReturningParameter);
+            return str.ToString();
+        }
+    }
+
+    public class ParametersProfile: CodeElement, ParameterList, IVisitable
+    {
 	    public IList<ParameterDescriptionEntry> InputParameters { get; set; }
 	    public IList<ParameterDescriptionEntry> InoutParameters { get; set; }
 	    public IList<ParameterDescriptionEntry> OutputParameters { get; set; }
@@ -142,7 +183,8 @@
                        && this.ContinueVisitToChildren(astVisitor, ReturningParameter);
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
 		    var str = new System.Text.StringBuilder();
 		    str.Append('(');
 		    foreach (var p in InputParameters) str.Append(p.Name).Append(':').Append(p.DataType).Append(", ");

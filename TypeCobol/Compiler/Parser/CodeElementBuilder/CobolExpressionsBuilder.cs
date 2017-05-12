@@ -72,7 +72,9 @@ namespace TypeCobol.Compiler.Parser
 		internal DataOrConditionStorageArea CreateDataItemReferenceOrConditionReference(CodeElementsParser.DataItemReferenceOrConditionReferenceContext context)
 		{
 			SymbolReference qualifiedDataNameOrQualifiedConditionName = CobolWordsBuilder.CreateQualifiedDataNameOrQualifiedConditionName(context.qualifiedDataNameOrQualifiedConditionName());
-			if (context.subscript() == null || context.subscript().Length == 0)
+            if (qualifiedDataNameOrQualifiedConditionName == null)
+                return null;
+            if (context.subscript() == null || context.subscript().Length == 0)
 			{
 				return new DataOrConditionStorageArea(qualifiedDataNameOrQualifiedConditionName);
 			}

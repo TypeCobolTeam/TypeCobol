@@ -67,7 +67,8 @@ namespace TypeCobol.Server.Serialization
             msgpack.ForcePathObject("EncFormat").AsString = string.IsNullOrEmpty(data.EncFormat) ? string.Empty : data.EncFormat;
             msgpack.ForcePathObject("HaltOnMissingCopyFilePath").AsString = string.IsNullOrEmpty(data.HaltOnMissingCopyFilePath) ? string.Empty : data.HaltOnMissingCopyFilePath;
             msgpack.ForcePathObject("AutoRmarks").AsString = Convert.ToString(data.AutoRemarks);
-            
+            msgpack.ForcePathObject("Telemetry").AsString = Convert.ToString(data.Telemetry);
+
 
 
 
@@ -136,7 +137,8 @@ namespace TypeCobol.Server.Serialization
             config.EncFormat = msgpack.ForcePathObject("EncFormat").AsString;
             config.HaltOnMissingCopyFilePath = msgpack.ForcePathObject("HaltOnMissingCopyFilePath").AsString;
             config.AutoRemarks = msgpack.ForcePathObject("AutoRmarks").AsString.Equals("True", StringComparison.InvariantCultureIgnoreCase);
-       
+            config.Telemetry = msgpack.ForcePathObject("Telemetry").AsString.Equals("True", StringComparison.InvariantCultureIgnoreCase);
+
             List<string> InputFiles = new List<string>();
             foreach (MsgPack item in msgpack.ForcePathObject("InputFiles"))
             {

@@ -29,6 +29,10 @@ namespace TypeCobol.Codegen.Skeletons {
         /// A property must be of the form var.Property        
         /// </summary>
         public string BooleanProperty { get; internal set; }
+        /// <summary>
+        /// A flag for a deprecated pattern which will no longer be applied.
+        /// </summary>
+        public string Deprecated { get; internal set; }
 
         public int? Position { get; internal set; }
 
@@ -44,6 +48,7 @@ namespace TypeCobol.Codegen.Skeletons {
             if (Action != null) str.Append(" action:").Append(Action);
             str.Append(" newline:").Append(NewLine);
             if (BooleanProperty != null) str.Append(" boolean_property:").Append(BooleanProperty);
+            if (Deprecated != null) str.Append(" deprecated:").Append(Deprecated);
 			if (Variables.Count > 0) {
 				str.Append(" variables: {");
 				foreach(var kv in Variables)
@@ -54,6 +59,19 @@ namespace TypeCobol.Codegen.Skeletons {
 			if (Template != null) str.Append(" template: \"").Append(Template).Append('"');
 			return str.ToString();
 		}
+
+        /// <summary>
+        /// Is this pattern deprecated.
+        /// </summary>
+        public bool IsDeprecated
+        {
+            get
+            {
+                if (Deprecated == null)
+                    return false;
+                return Deprecated.Equals("true");
+            }
+        }
 
         /// <summary>
         /// Eval any boolean property
@@ -67,14 +85,25 @@ namespace TypeCobol.Codegen.Skeletons {
             if (properties == null)
                 return false;
             string[] items = BooleanProperty.Split(new char[]{'.'});
-            if (items.Length != 2)
+            if (items.Length < 2)
                 return false;
-            string key = items[0];
-            string prop_name = items[1];
             object value;
+            string key = items[0];
+            string prop_name = items[items.Length - 1];
             if (!properties.TryGetValue(key, out value))
                 return false;
-            System.Type type = value.GetType();
+            int i = 0;
+            System.Type type = null;
+            while(++i != items.Length - 1)
+            {
+                string field_name = items[i];
+                type = value.GetType();
+                var field = type.GetField(field_name);
+                if (field == null)
+                    return false;
+                value = field.GetValue(value);
+            }
+            type = value.GetType();
             try
             {
                 var prop = type.GetProperty(prop_name);

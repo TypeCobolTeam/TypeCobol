@@ -1,0 +1,26 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPEPGM.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  typeOfDays TYPEDEF STRICT PUBLIC pic X(01).
+       01  typeOfDaysPrivate TYPEDEF STRICT PRIVATE pic X(01).
+       01  typeOfDaysNoModifier TYPEDEF STRICT pic X(01).
+       PROCEDURE DIVISION.                                        
+           GOBACK. 
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Tester.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  var1 Type TYPEPGM::typeOfDays.
+       01  var1 Type TYPEpgm::typeOFDAYS.
+       01  var1 Type typepgm::typeofdays.
+
+      *KO : private typedef not accessible
+       01 var2 Type typepgm::typeOfDaysPrivate.
+       01 var3 Type typepgm::typeOfDaysNoModifier.
+
+       END PROGRAM Tester.
+
+       END PROGRAM TYPEPGM.

@@ -1,6 +1,6 @@
-﻿Line 66[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2PrivateValidateDateFormat'
-Line 71[12,50] <27, Error, Syntax> - Syntax error : No function found for 'PGM2.Pgm2PrivateValidateDateFormat'
-Line 76[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2.Pgm2PrivateValidateDateFormat'
+﻿Line 66[12,50] <27, Error, Syntax> - Syntax error : Function not found 'Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
+Line 71[12,50] <27, Error, Syntax> - Syntax error : Function not found 'PGM2.Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
+Line 76[12,50] <27, Error, Syntax> - Syntax error : Function not found 'Pgm2.Pgm2PrivateValidateDateFormat' input(DATE, Alphanumeric) output(BOOL, Alphanumeric)
 --- Nodes ---
 ?
   PGM1
@@ -55,12 +55,6 @@ Line 76[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2.
 
           end
     PGM2
-      data-division
-        local-storage
-          somedate
-          someformat
-          flag
-          realformat
       procedure-division
         check
           procedure-division
@@ -84,6 +78,12 @@ Line 76[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2.
               end
           function-end
         Pgm2PrivateValidateDateFormat
+          data-division
+            local-storage
+              somedate
+              someformat
+              flag
+              realformat
           procedure-division
             sentence-0
               [[ProcedureStyleCall]] [13,16:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
@@ -99,14 +99,14 @@ Line 76[12,50] <27, Error, Syntax> - Syntax error : No function found for 'Pgm2.
           function-end
       end
     PGM3
-      data-division
-        local-storage
-          somedate
-          someformat
-          flag
-          realformat
       procedure-division
         PrivateProc
+          data-division
+            local-storage
+              somedate
+              someformat
+              flag
+              realformat
           procedure-division
             sentence-0
               [[ProcedureStyleCall]] [13,16:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>

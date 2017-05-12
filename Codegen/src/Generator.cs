@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Analytics;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
@@ -210,9 +211,12 @@ namespace TypeCobol.Codegen
             //Check if there is any error in diags
             if(compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
-                throw new GenerationException("Unable to generate because of error diagnostics", null, false);
+                AnalyticsWrapper.Telemetry.TrackEvent("[CodeGen] Diagnostics Detected");
+                throw new GenerationException("Unable to generate because of error diagnostics", null, null, false);
             }
 
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[CodeGen] Generation Started");
             var program = compilationUnit.ProgramClassDocumentSnapshot.Program;
 
             // STEP 0: Initialize the global values.
@@ -229,6 +233,8 @@ namespace TypeCobol.Codegen
             Actions.Perform(RootNode);
             // STEP 2: convert tree to destination language code
             TreeToCode();
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[CodeGen] Generation Done");
         }
 
         /// <summary>

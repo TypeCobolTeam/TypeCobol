@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler.CodeElements.Expressions;
+﻿using System;
+using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.Compiler.CodeElements {
 
@@ -81,13 +82,16 @@ namespace TypeCobol.Compiler.CodeElements {
 			    var sending = SendingItem as QualifiedName;
 			    if (sending != null) variables.Add(sending, null);
 
-                foreach(var item in StorageAreaWrites) {
-                    var name = new URI(item.StorageArea.SymbolReference.Name);
-                    if (variables.ContainsKey(name))
-                        if (item.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
-                        else throw new System.ArgumentException(name+" already written, but not subscripted?");
-                    else variables.Add(name, SendingItem);
-                }
+		        if (StorageAreaWrites != null) {
+		            foreach (var item in StorageAreaWrites) {
+		                var name = new URI(item.StorageArea.SymbolReference.Name);
+		                if (variables.ContainsKey(name))
+		                    if (item.StorageArea is DataOrConditionStorageArea)
+		                        continue; // same variable with (presumably) different subscript
+		                    else throw new ArgumentException(name+" already written, but not subscripted?");
+		                else variables.Add(name, SendingItem);
+		            }
+		        }
 
                 return variables;
 		    }

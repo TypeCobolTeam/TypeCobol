@@ -18,7 +18,7 @@ namespace TypeCobol.Compiler.CodeModel
         public Scope CurrentScope { get; internal set; }
         public SymbolTable EnclosingScope { get; internal set; }
 
-        public SymbolTable(SymbolTable enclosing = null, Scope current = Scope.Program)
+        public SymbolTable(SymbolTable enclosing, Scope current)
         {
             CurrentScope = current;
             EnclosingScope = enclosing;
@@ -562,17 +562,31 @@ namespace TypeCobol.Compiler.CodeModel
             var program = GetProgramHelper(name.Tail); //Get the program corresponding to the given namespace
             if (program != null)
             {
-                var programTypes = program.SymbolTable.Types; //Get all types from this program
-                programTypes = programTypes
-                                    .Where(p =>
-                                            p.Value.All(f => (f.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public))
-                                            .ToDictionary(f => f.Key, f => f.Value); //Sort types to get only the ones with public AccessModifier
+                //Get all TYPEDEF PUBLIC from this program
+                var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Declarations).Types); 
 
                 found = GetFromTable(name.Head, programTypes); //Check if there is a type that correspond to the given name (head)
+
+                //Get all GLOBAL TYPEDEF PUBLIC from this program
+                var globalTypedef = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Global).Types);
+
+                found.AddRange(GetFromTable(name.Head, globalTypedef)); //Check if there is a type that correspond to the given name (head)
             }
 
 
             return found;
+        }
+
+        /// <summary>
+        /// Get all Public TYPEDEF from the specified SymbolTable
+        /// </summary>
+        /// <param name="programTypes"></param>
+        /// <returns></returns>
+        private static Dictionary<string, List<TypeDefinition>> GetPublicTypes(IDictionary<string, List<TypeDefinition>> programTypes) {
+            return programTypes
+                .Where(p =>
+                    p.Value.All(f => (f.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public)) 
+                .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort types to get only the ones with public AccessModifier
         }
 
         private List<TypeDefinition> GetType(string name)
@@ -673,11 +687,11 @@ namespace TypeCobol.Compiler.CodeModel
             var program = GetProgramHelper(nameSpace); //Get the program corresponding to the given namespace
             if(program != null)
             {
-                var programFunctions = program.CurrentTable.Functions; //Get all function from this program
+                var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Declarations).Functions; //Get all function from this program
                 programFunctions = programFunctions
                                     .Where(p =>
                                             p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
-                                            .ToDictionary(f => f.Key, f => f.Value); //Sort functions to get only the one with public AccessModifier
+                                            .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort functions to get only the one with public AccessModifier
 
                 result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
             }
@@ -767,13 +781,20 @@ namespace TypeCobol.Compiler.CodeModel
             Namespace,
 
             /// <summary>
-            /// Variables declared in WORKING STORAGE as GLOBAL are visible
+            /// Variables and TYPEDEF declared in DATA DIVISION as GLOBAL are visible
             /// to the entire program in which they are declared and
             /// in all nested subprograms contained in that program.
             /// </summary>
             Global,
 
             /// <summary>
+            /// Declaration of PROCEDURES/FUNCTIONS and TYPEDEF (not marked as Global).
+            /// </summary>
+            Declarations,
+
+            /// <summary>
+            /// Contains variables declared in DATA DIVISION.
+            /// 
             /// Variables declared in WORKING STORAGE are visible
             /// to the entire program in which they are declared.
             /// Variables declared in LOCAL STORAGE are visible
@@ -782,7 +803,6 @@ namespace TypeCobol.Compiler.CodeModel
             /// An infinite number of programs can be contained within a program,
             /// and the variables of each are visible only within the scope
             /// of that individual program.
-            /// Cobol does not distinguish between programs and functions/procedures.
             /// </summary>
             Program,
             // [TYPECOBOL]

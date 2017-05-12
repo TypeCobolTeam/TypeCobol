@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Antlr4.Runtime.Tree;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
@@ -789,16 +790,18 @@ namespace TypeCobol.Compiler.Parser
 			var c = context.cobolQualifiedConditionName();
 			if (c != null) return CreateQualifiedConditionName(c.conditionNameReferenceOrConditionForUPSISwitchNameReference(), c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 			var tc = context.tcQualifiedConditionName();
-			return CreateQualifiedConditionName(tc.conditionNameReferenceOrConditionForUPSISwitchNameReference(), tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(), false);
+            var tail = tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference();
+            Array.Reverse(tail);
+            return CreateQualifiedConditionName(tc.conditionNameReferenceOrConditionForUPSISwitchNameReference(), tail, false);
 		}
 
 		private SymbolReference CreateQualifiedConditionName(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head, CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail, bool isCOBOL = true) {
 			SymbolReference qname = CreateConditionNameReferenceOrConditionForUPSISwitchNameReference(head);
 			if (tail != null) {
-				foreach(var context in tail) {
-					var part = CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(context);
-					qname = CreateQualifiedSymbolReference(qname, part, isCOBOL);
-				}
+			    foreach(var context in tail) {
+			        var part = CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(context);
+			        qname = CreateQualifiedSymbolReference(qname, part, isCOBOL);
+			    }
 			}
 			symbolInformationForTokens[qname.NameLiteral.Token] = qname;
 			return qname;
@@ -843,12 +846,17 @@ namespace TypeCobol.Compiler.Parser
 		var c = context.cobolQualifiedDataNameOrQualifiedConditionName1();
 		if (c != null) return CreateQualifiedDataNameOrQualifiedConditionName1(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 		var tc = context.tcQualifiedDataNameOrQualifiedConditionName1();
-		var tail = tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference();
+        if (tc.children.Any(x => x.Payload is Token && ((Token)x.Payload).TokenFamily == TokenFamily.SyntaxKeyword)) 
+            return null; //If a SyntaxKeywords is detected retrun null, we can't create the QualifiedReference properly.
+
+        var tail = tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference();
 		Array.Reverse(tail);
 		return CreateQualifiedDataNameOrQualifiedConditionName1(tc.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), tail, false);
 	}
 	private SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head,CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail, bool isCOBOL = true) {
-		var reference = CreateQualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]), isCOBOL);
+        if (head == null)
+            return null;
+        var reference = CreateQualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]), isCOBOL);
 		for(int c=1; c<tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[c]), isCOBOL);
 		symbolInformationForTokens[reference.NameLiteral.Token] = reference;
 		return reference;

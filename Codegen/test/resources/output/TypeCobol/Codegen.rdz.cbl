@@ -53,7 +53,7 @@
       *                 RETURNING result PIC 9(32).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b008705d.
+       PROGRAM-ID. c0ca92c2.
        DATA DIVISION.
        LINKAGE SECTION.
        01 ikey PIC X(04).
@@ -70,4 +70,4 @@
 000170                                                                  000170
 000180     display "test codegen"
 000180     CONTINUE.                                                    000180
-       END PROGRAM b008705d.
+       END PROGRAM c0ca92c2.

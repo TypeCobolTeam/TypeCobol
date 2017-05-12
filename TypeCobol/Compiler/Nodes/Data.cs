@@ -118,17 +118,7 @@ namespace TypeCobol.Compiler.Nodes {
         protected DataDefinition(DataDefinitionEntry entry): base(entry) {  }
         public override string ID { get { return "data-definition"; } }
         public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
-        public override QualifiedName QualifiedName
-        {
-            get
-            {
-                if (ID == null) return null;
-                var puri = Parent == null ? null : Parent.URI;
-                if (puri == null) return new URI(Name);
 
-                return new URI(puri + '.' + Name);
-            }
-        }
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }

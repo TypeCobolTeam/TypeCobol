@@ -35,20 +35,31 @@
       *    10 cty                    PIC X(02).
        01  TC-DVZZDATE-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-DVZZDATE-PntTab.
+           05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 5.
       *DVZZDATE::currentDate
-        01 TC-DVZZDATE-e5f209fa PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-db42865c-Idt   PIC X(08) VALUE 'db42865c'.
+           05 TC-DVZZDATE-db42865c PROCEDURE-POINTER.
       *DVZZDATE::currentDateDB2
-        01 TC-DVZZDATE-b8ac0397 PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-fa5ee5e9-Idt   PIC X(08) VALUE 'fa5ee5e9'.
+           05 TC-DVZZDATE-fa5ee5e9 PROCEDURE-POINTER.
       *DVZZDATE::currentDateJulian
-        01 TC-DVZZDATE-c4e76b45 PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-cf63e86f-Idt   PIC X(08) VALUE 'cf63e86f'.
+           05 TC-DVZZDATE-cf63e86f PROCEDURE-POINTER.
       *DVZZDATE::currentDateFreeFormat
-        01 TC-DVZZDATE-d55b3ea7 PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-cfc290ce-Idt   PIC X(08) VALUE 'cfc290ce'.
+           05 TC-DVZZDATE-cfc290ce PROCEDURE-POINTER.
       *DVZZDATE::currentDateString
-        01 TC-DVZZDATE-bfb0fa9b PROCEDURE-POINTER EXTERNAL.
+           05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
+           05 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER.
+
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
 
 
       *=================================================================
-       PROCEDURE DIVISION.
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
       *
       *    IF CallIsCopy
       *      PERFORM Copy-Process-Mode
@@ -60,15 +71,18 @@
 
         FctList-Process-Mode.
             IF NOT TC-DVZZDATE-FctList-IsLoaded
-              SET TC-DVZZDATE-e5f209fa   TO ENTRY 'e5f209fa'
-              SET TC-DVZZDATE-b8ac0397   TO ENTRY 'b8ac0397'
-              SET TC-DVZZDATE-c4e76b45   TO ENTRY 'c4e76b45'
-              SET TC-DVZZDATE-d55b3ea7   TO ENTRY 'd55b3ea7'
-              SET TC-DVZZDATE-bfb0fa9b   TO ENTRY 'bfb0fa9b'
+              SET TC-DVZZDATE-db42865c   TO ENTRY 'db42865c'
+              SET TC-DVZZDATE-fa5ee5e9   TO ENTRY 'fa5ee5e9'
+              SET TC-DVZZDATE-cf63e86f   TO ENTRY 'cf63e86f'
+              SET TC-DVZZDATE-cfc290ce   TO ENTRY 'cfc290ce'
+              SET TC-DVZZDATE-b8721d20   TO ENTRY 'b8721d20'
 
               SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
             END-IF
                .
+
+            PntTab-Pnt POINTER TO ADDRESS OF TC-DVZZDATE-PntTab
+
            .
                           
       *=================================================================
@@ -103,7 +117,7 @@
       *    RETURNING Result TYPE date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e5f209fa.
+       PROGRAM-ID. db42865c.
        DATA DIVISION.
        LINKAGE SECTION.
        01 Result.
@@ -115,13 +129,13 @@
            .
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM e5f209fa.
+       END PROGRAM db42865c.
       *
       *DECLARE FUNCTION currentDateDB2 PUBLIC
       *    RETURNING Result Type dateDB2.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b8ac0397.
+       PROGRAM-ID. fa5ee5e9.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.
@@ -153,14 +167,14 @@
       *    move '-'                 to Result(8:1)
            
            .
-       END PROGRAM b8ac0397.
+       END PROGRAM fa5ee5e9.
       *
       *DECLARE FUNCTION currentDateJulian PUBLIC
       * my comment
       *    RETURNING Result Type dateJulian.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c4e76b45.
+       PROGRAM-ID. cf63e86f.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.
@@ -183,7 +197,7 @@
            move        W-Dat to Result
                                       
            .
-       END PROGRAM c4e76b45.
+       END PROGRAM cf63e86f.
       *
       *DECLARE FUNCTION currentDateFreeFormat PUBLIC
       *                   INPUT dateType   PIC X(01)
@@ -194,7 +208,7 @@
       *                   RETURNING Result PIC X(40).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d55b3ea7.
+       PROGRAM-ID. cfc290ce.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.
@@ -224,13 +238,13 @@
 
            continue
            .
-       END PROGRAM d55b3ea7.
+       END PROGRAM cfc290ce.
       *
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bfb0fa9b.
+       PROGRAM-ID. b8721d20.
        DATA DIVISION.
        LINKAGE SECTION.
        01 Result PIC 9(08).
@@ -239,4 +253,4 @@
            .
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM bfb0fa9b.
+       END PROGRAM b8721d20.
