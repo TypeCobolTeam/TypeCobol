@@ -854,7 +854,9 @@ namespace TypeCobol.Compiler.Parser
 		return CreateQualifiedDataNameOrQualifiedConditionName1(tc.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), tail, false);
 	}
 	private SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head,CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail, bool isCOBOL = true) {
-		var reference = CreateQualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]), isCOBOL);
+        if (head == null)
+            return null;
+        var reference = CreateQualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]), isCOBOL);
 		for(int c=1; c<tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[c]), isCOBOL);
 		symbolInformationForTokens[reference.NameLiteral.Token] = reference;
 		return reference;
