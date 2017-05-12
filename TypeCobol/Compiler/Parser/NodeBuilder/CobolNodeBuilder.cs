@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Tools;
+using Analytics;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -374,11 +375,14 @@ namespace TypeCobol.Compiler.Parser
             SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
             var node = new TypeDefinition(typedef);
             Enter(node);
-            var table = node.SymbolTable;
+            SymbolTable table;
             if (node.CodeElement().IsGlobal) // TCTYPE_GLOBAL_TYPEDEF
-                table = table.GetTableFromScope(SymbolTable.Scope.Global);
-                
+                table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+            else
+                table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
             table.AddType(node);
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[TypeDef] TypeDef declared : " + node.Name);
         }
         // [/COBOL 2002]
 
@@ -521,8 +525,10 @@ namespace TypeCobol.Compiler.Parser
             var node = new FunctionDeclaration(header);
             node.Label = uidfactory.FromOriginal(header.FunctionName.Name);
             node.Library = CurrentProgram.Identification.ProgramName.Name;
-            CurrentProgram.CurrentTable.AddFunction(node);
-            Enter(node, context, new SymbolTable(CurrentProgram.CurrentTable, SymbolTable.Scope.Function));
+            //Function must be added to Declarations scope
+            var declarationSymbolTable = CurrentProgram.CurrentTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+            declarationSymbolTable.AddFunction(node);
+            Enter(node, context, new SymbolTable(declarationSymbolTable, SymbolTable.Scope.Function));
         }
         public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context)
         {

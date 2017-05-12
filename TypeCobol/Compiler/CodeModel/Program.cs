@@ -123,7 +123,7 @@ namespace TypeCobol.Compiler.CodeModel
 		public SourceProgram(SymbolTable EnclosingScope, CodeElement codeElement) : base(codeElement)
 		{
 			IsNested = false;
-			SymbolTable = new SymbolTable(EnclosingScope);
+			SymbolTable = new SymbolTable(new SymbolTable(EnclosingScope, SymbolTable.Scope.Declarations), SymbolTable.Scope.Program);
 			SyntaxTree.Root.SymbolTable = SymbolTable;
         }
 
@@ -184,8 +184,9 @@ namespace TypeCobol.Compiler.CodeModel
             var globalNestedSymbolTable = new SymbolTable(globalTable, SymbolTable.Scope.Global); //Create a new Global symbol table for this nested program and his childrens programs
             //It allows to goes down with global variable and ensure that nested global variables and types are not accessible to parent program. 
 
-            SymbolTable = new SymbolTable(globalNestedSymbolTable);
-			SyntaxTree.Root.SymbolTable = SymbolTable;
+            SymbolTable = new SymbolTable(globalNestedSymbolTable, SymbolTable.Scope.Declarations);
+            SymbolTable = new SymbolTable(SymbolTable, SymbolTable.Scope.Program);
+            SyntaxTree.Root.SymbolTable = SymbolTable;
 		}
 
         /// <summary>A nested program is a program that is contained in another program.</summary>

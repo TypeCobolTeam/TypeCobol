@@ -1,5 +1,7 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 using System.Collections.Generic;
+using System.IO;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Tools;
 
@@ -74,7 +76,7 @@ public class XMLWriter: AbstractErrorWriter {
 
 	public override void Write() {
 		writeHead();
-		writeInputs();
+	     writeInputs();
 		foreach(var key in Errors.Keys) {
 			foreach(var error in Errors[key])
 				writeMessage(Inputs[key], error);
@@ -108,9 +110,16 @@ public class XMLWriter: AbstractErrorWriter {
 	private void writeInputs() {
             writer.WriteStartElement("FILEREFERENCETABLE");
             writer.WriteElementString("FILECOUNT", Inputs.Count.ToString());
-            foreach(var path in Inputs.Keys)
-			    writeFile(Inputs[path], new System.IO.FileInfo(path).FullName);
-            writer.WriteEndElement();// FILEREFERENCETABLE
+            foreach(var path in Inputs.Keys) {
+                string fileName;
+                try {
+                    fileName = new FileInfo(path).FullName;
+                } catch (Exception) {
+                    fileName = path;
+                }
+                writeFile(Inputs[path], fileName);
+            }
+	    writer.WriteEndElement();// FILEREFERENCETABLE
         }
 
 	private void writeOutputs() {

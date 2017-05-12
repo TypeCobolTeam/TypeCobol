@@ -89,14 +89,6 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
 
-       DATA DIVISION.
-       LOCAL-STORAGE SECTION.
-
-       01  somedate     TYPE Date.
-       01  someformat   PIC X(08).
-       01  flag         TYPE Bool.
-       01  realformat   PIC X(08).
-
        PROCEDURE DIVISION.
        
        declare procedure check public
@@ -121,6 +113,13 @@
        END-DECLARE.
 
        DECLARE PROCEDURE Pgm2PrivateValidateDateFormat PRIVATE.
+       DATA DIVISION.
+       LOCAL-STORAGE SECTION.
+
+       01  somedate     TYPE Date.
+       01  someformat   PIC X(08).
+       01  flag         TYPE Bool.
+       01  realformat   PIC X(08).
        PROCEDURE DIVISION.
             CALL PGM2::MyPublicProcedure
                     INPUT      somedate someformat
@@ -142,6 +141,9 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM3.
 
+       PROCEDURE DIVISION.
+       
+       DECLARE PROCEDURE PrivateProc PRIVATE.
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
 
@@ -149,10 +151,6 @@
        01  someformat   PIC X(08).
        01  flag         TYPE Bool.
        01  realformat   PIC X(08).
-
-       PROCEDURE DIVISION.
-       
-       DECLARE PROCEDURE PrivateProc PRIVATE.
        PROCEDURE DIVISION.
             CALL MyPublicProcedure
                     INPUT      somedate someformat

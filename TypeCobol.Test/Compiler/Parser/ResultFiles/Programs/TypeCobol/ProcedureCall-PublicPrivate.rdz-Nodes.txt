@@ -55,12 +55,6 @@ Line 76[12,50] <27, Error, Syntax> - Syntax error : Function not found 'Pgm2.Pgm
 
           end
     PGM2
-      data-division
-        local-storage
-          somedate
-          someformat
-          flag
-          realformat
       procedure-division
         check
           procedure-division
@@ -84,6 +78,12 @@ Line 76[12,50] <27, Error, Syntax> - Syntax error : Function not found 'Pgm2.Pgm
               end
           function-end
         Pgm2PrivateValidateDateFormat
+          data-division
+            local-storage
+              somedate
+              someformat
+              flag
+              realformat
           procedure-division
             sentence-0
               [[ProcedureStyleCall]] [13,16:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>
@@ -99,14 +99,14 @@ Line 76[12,50] <27, Error, Syntax> - Syntax error : Function not found 'Pgm2.Pgm
           function-end
       end
     PGM3
-      data-division
-        local-storage
-          somedate
-          someformat
-          flag
-          realformat
       procedure-division
         PrivateProc
+          data-division
+            local-storage
+              somedate
+              someformat
+              flag
+              realformat
           procedure-division
             sentence-0
               [[ProcedureStyleCall]] [13,16:CALL]<CALL> --> [41,50:realformat]<UserDefinedWord>

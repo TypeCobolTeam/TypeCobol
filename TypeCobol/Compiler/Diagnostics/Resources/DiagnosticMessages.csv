@@ -36,3 +36,4 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 5;35;1;Error during parsing dependency file: {0};0;0;Page
 5;36;1;Error during Cobol generation;0;0;Page
 5;37;1;Caused by {0};0;0;
+7;38;2;Warning: {0};0;0;

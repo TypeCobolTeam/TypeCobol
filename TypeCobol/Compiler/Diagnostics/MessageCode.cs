@@ -45,5 +45,6 @@ namespace TypeCobol.Compiler.Diagnostics
         DependenciesLoading = 35,
         GenerationFailled  = 36,
         CausedBy  = 37,
+        Warning = 38,
     }
 }

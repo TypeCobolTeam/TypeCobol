@@ -6,7 +6,7 @@ Line 47[8,35] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources
 --- Program ---
 PROGRAM: TCRFUN_NO_COPY_IN_PARAMETERS common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Program
+--- Intrinsic:Namespace:Global:Declarations
 -- TYPES -------
   DateJulian:DateJulian
   DateDB2:DateDB2
