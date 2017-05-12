@@ -86,6 +86,15 @@ namespace TypeCobol.Codegen {
 			CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl", skeletons);
 		}
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TypedefInnerBool()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefInnerBool") + ".rdz.cbl", skeletons);
+        }
+
 		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]

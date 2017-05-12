@@ -195,7 +195,11 @@ namespace TypeCobol.Codegen
                 IList<Node> nodes = erase.ErasedNodes;
                 if (nodes != null)
                 {
-                    ErasedNodes.AddRange(nodes);
+                    foreach (Node node in nodes)
+                    {
+                        node.SetFlag(Node.Flag.GeneratorErasedNode, true);
+                        ErasedNodes.Add(node);
+                    }                    
                 }
             }
         }

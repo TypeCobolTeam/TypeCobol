@@ -196,10 +196,39 @@ internal class TypedDataNode: DataDescription, Generated {
 		return str;
 	}
 
+    private readonly static string[] BoolTypeTemplate = {
+        " {2}{1}  {0}-value PIC X VALUE LOW-VALUE.",
+        " {2}    88  {0}       VALUE 'T'.",
+        " {2}    88  {0}-false VALUE 'F'.",
+    };
 	public static List<ITextLine> InsertChildren(SymbolTable table, DataDefinition type, int level, int indent) {
 		var lines = new List<ITextLine>();
 		foreach(var child in type.Children) {
 			if (child is TypedDataNode) continue;
+            //Special case type BOOL
+            if (child is TypeCobol.Compiler.Nodes.DataDescription)
+            {
+                string attr_type = (string)child["type"];
+                if (attr_type != null)
+                {
+                    if (attr_type.ToUpper().Equals("BOOL"))
+                    {
+                        string attr_name = (string)child["name"];
+                        string margin = "";
+                        for (int i = 0; i < indent; i++)
+                            margin += "  ";
+                        string slevel = level.ToString("00");
+                        foreach (string str in BoolTypeTemplate)
+                        {
+                            string sline = string.Format(str, attr_name, slevel, margin);
+                            TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
+                            lines.Add(line);
+                        }
+                        continue;
+                    }
+                }
+            }
+
 			var typed = (ITypedNode)child;
 			var types = table.GetType(typed.DataType);
 			bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
@@ -215,7 +244,6 @@ internal class TypedDataNode: DataDescription, Generated {
                 lines.AddRange(InsertChildren(table, types[0], level + 1, indent + 1));
             else
                 lines.AddRange(InsertChildren(table, child as DataDefinition, level + 1, indent + 1));
-
 		}
 		return lines;
 	}

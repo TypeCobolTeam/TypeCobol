@@ -112,6 +112,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// A Node that can be ignored by the generaror
             /// </summary>
             GeneratorCanIgnoreIt = 0x01 << 10,
+            /// <summary>
+            /// This node has been marked has erased by the generator
+            /// </summary>
+            GeneratorErasedNode = 0x01 << 11,
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node

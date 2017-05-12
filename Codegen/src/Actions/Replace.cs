@@ -38,17 +38,21 @@ namespace TypeCobol.Codegen.Actions
         /// </summary>
         public void Execute()
         {
-            // transfer Old's children to New
-            for (int i = Old.Children.Count - 1; i >= 0; --i)
+            //No need to replace an erased node.
+            if (!Old.IsFlagSet(Node.Flag.GeneratorErasedNode))
             {
-                var child = Old.Children[i];
-                Old.Remove(child);
-                New.Add(child, 0);
+                // transfer Old's children to New
+                for (int i = Old.Children.Count - 1; i >= 0; --i)
+                {
+                    var child = Old.Children[i];
+                    Old.Remove(child);
+                    New.Add(child, 0);
+                }
+                Old.Comment = true;
+                var parent = Old.Parent;
+                int index = parent.IndexOf(Old);
+                parent.Add(New, index + 1);
             }
-            Old.Comment = true;
-            var parent = Old.Parent;
-            int index = parent.IndexOf(Old);
-            parent.Add(New, index + 1);
         }
     }
 }
