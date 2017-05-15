@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
 using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.CustomExceptions
@@ -14,10 +17,38 @@ namespace TypeCobol.CustomExceptions
         public int ColumnStartIndex { get; set; }
         public int ColumnEndIndex { get; set; }
         public int LineNumber { get; set; }
-        public bool Logged { get; set; }    
+        public bool Logged { get; set; }
+        public bool NeedMail { get; set; }
+        public override string StackTrace
+        {
+            get
+            {
+                //As we currently have error message in english, we will log exception message and its stacktrace in InvariantCulture
+                var CurrentCulture = Thread.CurrentThread.CurrentCulture;
+                var CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
+
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
+                var ex = this as Exception;
+                var stackTrace = new StackTrace(ex).ToString();
+
+                while (ex.InnerException != null)
+                {
+                    stackTrace = stackTrace + "\n\n" + new StackTrace(ex.InnerException).ToString();
+                    ex = ex.InnerException;
+                }
+
+                //set back the correct culture
+                Thread.CurrentThread.CurrentCulture = CurrentCulture;
+                Thread.CurrentThread.CurrentUICulture = CurrentUICulture;
+
+                return stackTrace;
+            }
+        }
 
 
-        public TypeCobolException(MessageCode messageCode, string message, string path, Exception innerException = null, bool logged = true, int columnStartIndex = 0, int columnEndIndex = 0, int lineNumber = 1) : base (message, innerException)
+        public TypeCobolException(MessageCode messageCode, string message, string path, Exception innerException = null, bool logged = true, bool needMail = true, int columnStartIndex = 0, int columnEndIndex = 0, int lineNumber = 1) : base (message, innerException)
         {
             MessageCode = messageCode;
             //Message is set by the base constructor of Exception. 
@@ -26,7 +57,7 @@ namespace TypeCobol.CustomExceptions
             LineNumber = lineNumber;
             Path = path;
             Logged = logged;
-         
+            NeedMail = needMail;
         }
     }
 }

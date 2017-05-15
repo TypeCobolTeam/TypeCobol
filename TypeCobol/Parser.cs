@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.CodeModel;
 using Analytics;
+using TypeCobol.CustomExceptions;
 
 namespace TypeCobol
 {
@@ -88,6 +89,8 @@ namespace TypeCobol
 			catch(Exception ex) {
 				Observer.OnError(ex);
 				System.Console.WriteLine(ex.ToString());
+
+                throw new ParsingException(MessageCode.SyntaxErrorInParser, ex.Message, null, ex, false);
 			}
 
 		    MissingCopys = Compiler.CompilationProject.MissingCopys;

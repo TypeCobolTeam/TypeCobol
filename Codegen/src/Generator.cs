@@ -216,7 +216,7 @@ namespace TypeCobol.Codegen
             if(compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
                 AnalyticsWrapper.Telemetry.TrackEvent("[CodeGen] Diagnostics Detected");
-                throw new GenerationException("Unable to generate because of error diagnostics", null, null, false);
+                throw new GenerationException("Unable to generate because of error diagnostics", null, null, false, false);
             }
 
 

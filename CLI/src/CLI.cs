@@ -50,33 +50,18 @@ namespace TypeCobol.Server
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
-                //As we currently have error message in english, we will log exception message and its stacktrace in InvariantCulture
-                var CurrentCulture = Thread.CurrentThread.CurrentCulture;
-                var CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
-
-                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-                AnalyticsWrapper.Telemetry.SendMail(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
 
-                //set back the correct culture
-                Thread.CurrentThread.CurrentCulture = CurrentCulture;
-                Thread.CurrentThread.CurrentUICulture = CurrentUICulture;
+                if (typeCobolException.NeedMail)
+                    AnalyticsWrapper.Telemetry.SendMail(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 if (typeCobolException.Logged)
                 {
                     Server.AddError(errorWriter, typeCobolException.MessageCode, typeCobolException.ColumnStartIndex,
                         typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
-                        GetStackTraceCultureInvariant(typeCobolException), typeCobolException.Path);
-
-                    if (typeCobolException.InnerException != null)
-                    {
-                        Server.AddError(errorWriter, MessageCode.CausedBy, typeCobolException.ColumnStartIndex,
-                        typeCobolException.ColumnEndIndex, typeCobolException.LineNumber,
-                        GetStackTraceCultureInvariant(typeCobolException.InnerException), typeCobolException.Path);
-                    }
+                        typeCobolException.Message + "\n" + typeCobolException.StackTrace, typeCobolException.Path);
                 }
+               
 
                 if (typeCobolException is ParsingException)
                     return ReturnCode.ParsingError;
@@ -87,10 +72,10 @@ namespace TypeCobol.Server
             }
             catch (Exception e)//Catch any other exception
             {
-                    AnalyticsWrapper.Telemetry.TrackException(e);
-                    AnalyticsWrapper.Telemetry.SendMail(e, config.InputFiles, config.CopyFolders, config.CommandLine);
-                
-                Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, GetStackTraceCultureInvariant(e), string.Empty);
+                AnalyticsWrapper.Telemetry.TrackException(e);
+                AnalyticsWrapper.Telemetry.SendMail(e, config.InputFiles, config.CopyFolders, config.CommandLine);
+
+                Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, e.Message + e.StackTrace, string.Empty);
                 return ReturnCode.FatalError;
             }
             finally
@@ -108,28 +93,6 @@ namespace TypeCobol.Server
             }
 
             return ReturnCode.Success;
-        }
-
-
-        /// <summary>
-        /// Get StackTrace without path
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        public static string GetStackTraceCultureInvariant(Exception e) {
-            var CurrentCulture = Thread.CurrentThread.CurrentCulture;
-            var CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
-
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-            string s = e.Message + "\n" + new StackTrace(e);
-
-            //set back the correct culture
-            Thread.CurrentThread.CurrentCulture = CurrentCulture;
-            Thread.CurrentThread.CurrentUICulture = CurrentUICulture;
-
-            return s;
         }
 
         private static void runOnce2(Config config, AbstractErrorWriter errorWriter)
@@ -159,7 +122,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception ex)
                 {
-                    throw new ParsingException(MessageCode.ParserInit, ex.Message, path, ex.InnerException); //Make ParsingException trace back to RunOnce()
+                    throw new ParsingException(MessageCode.ParserInit, ex.Message, path, ex); //Make ParsingException trace back to RunOnce()
                 }
 
                 parser.Parse(path);
@@ -183,8 +146,18 @@ namespace TypeCobol.Server
 
                 if (allDiags.Count > 0)
                 {
+                    foreach (var diag in allDiags)
+                    {
+                        if(diag.CatchedException != null)
+                        {
+                            AnalyticsWrapper.Telemetry.TrackException(diag.CatchedException);
+                            AnalyticsWrapper.Telemetry.SendMail(diag.CatchedException, config.InputFiles, config.CopyFolders, config.CommandLine);
+                        }
+
+                    }
+
                     AnalyticsWrapper.Telemetry.TrackEvent("[CLI] Diagnostics Detected");
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, null, null, null, false); //Make ParsingException trace back to RunOnce()
+                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "Diagnostics Detected", null, null, false, false); //Make ParsingException trace back to RunOnce()
                 }
 
                 if (parser.Results.CodeElementsDocumentSnapshot == null && config.ExecToStep > ExecutionStep.Preprocessor)
@@ -209,7 +182,7 @@ namespace TypeCobol.Server
                         if (e is GenerationException)
                             throw e; //Throw the same exception to let runOnce() knows there is a problem
                         
-                        throw new GenerationException(e.Message, path, e.InnerException); //Otherwise create a new GenerationException
+                        throw new GenerationException(e.Message, path, e); //Otherwise create a new GenerationException
                     }
 
                 }
@@ -247,12 +220,12 @@ namespace TypeCobol.Server
                             "Error during parsing of " + path + ": " + diagnostic, path);
                     }
                     if (diagnostics.Count > 0)
-                        throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", path);
+                        throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", path, null, true, false);
 
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
                     {
-                        throw new CopyLoadingException("Error: Your Intrisic types/functions are not included into a program.", path);
+                        throw new CopyLoadingException("Error: Your Intrisic types/functions are not included into a program.", path, null, true, false);
                     }
 
 			        var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
@@ -270,7 +243,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception e)
                 {
-                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e.InnerException);
+                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e);
                 }
                
             }
@@ -312,11 +285,11 @@ namespace TypeCobol.Server
                             "Error while parsing " + path + ": " + diagnostic, path);
                     }
                     if (diagnostics.Count > 0)
-                        throw new DepedenciesLoadingException("Diagnostics detected while parsing dependency file", path, null, false);
+                        throw new DepedenciesLoadingException("Diagnostics detected while parsing dependency file", path, null, true, false);
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
                     {
-                        throw new DepedenciesLoadingException("Error: Your dependency file is not included into a program", path);
+                        throw new DepedenciesLoadingException("Error: Your dependency file is not included into a program", path, null, true, false);
                     }
 
                     table.AddProgram(parser.Results.ProgramClassDocumentSnapshot.Program); //Add program to Namespace symbol table
@@ -327,7 +300,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception e)
                 {
-                    throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e.InnerException);
+                    throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e);
                 }
             }
             return table;

@@ -44,7 +44,6 @@ namespace TypeCobol.Compiler.Diagnostics
         IntrinsicLoading = 34,
         DependenciesLoading = 35,
         GenerationFailled  = 36,
-        CausedBy  = 37,
-        Warning = 38,
+        Warning = 37,
     }
 }

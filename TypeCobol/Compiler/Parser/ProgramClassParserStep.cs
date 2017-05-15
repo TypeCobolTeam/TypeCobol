@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler.Parser
             catch (Exception ex)
             {
                 var code = Diagnostics.MessageCode.ImplementationError;
-                programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code);
+                programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
             }
 
             //Complete some information on Node and run checker that need a full AST

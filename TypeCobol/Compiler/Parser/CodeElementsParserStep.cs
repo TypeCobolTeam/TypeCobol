@@ -183,7 +183,7 @@ namespace TypeCobol.Compiler.Parser
                                     start = codeElementsLine.SourceTokens[0].StartIndex;
                                     stop = codeElementsLine.SourceTokens[codeElementsLine.SourceTokens.Count - 1].StopIndex;
                                 }
-                                codeElementsLine.AddParserDiagnostic(new ParserDiagnostic(ex.ToString(), start, stop, line, null, code));
+                                codeElementsLine.AddParserDiagnostic(new ParserDiagnostic(ex.ToString(), start, stop, line, null, code, ex));
                             }
                             CodeElement codeElement = codeElementBuilder.CodeElement;
                             if (codeElement != null)
