@@ -11,6 +11,7 @@ using System.Reflection;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using NLog;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Analytics
 {
@@ -40,11 +41,8 @@ namespace Analytics
                 _TelemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
                 // --------------------------------------- //
             }
-            catch (Exception e)
-            {
-                logger.Fatal(e);
-            }
-            
+            catch (Exception e) { logger.Fatal(e); }
+
         }
 
         /// <summary>
@@ -60,18 +58,31 @@ namespace Analytics
         /// <summary>
         /// Track a new event into analytics collector
         /// </summary>
-        /// <param name="eventName">Event name to store</param>
-        public void TrackEvent(string eventName)
+        /// <param name="eventName">Text name of the event</param>
+        /// <param name="properties">Named string values you can use to search and classify events.</param>
+        /// <param name="metrics">Measurements associated with this event.</param>
+        public void TrackEvent(string eventName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
             try
             {
                 if (_DisableTelemetry) return;
-                _TelemetryClient.TrackEvent(eventName);
+                _TelemetryClient.TrackEvent(eventName, properties, metrics);
             }
-            catch (Exception e)
+            catch (Exception e) { logger.Fatal(e); }
+        }
+
+        /// <summary>
+        /// Track a log information. By default the severity level of a trace is set to Error. 
+        /// </summary>
+        /// <param name="logMessage">Text to log</param>
+        public void TrackTrace(string logMessage)
+        {
+            try
             {
-                logger.Fatal(e);
+                if (_DisableTelemetry) return;
+                _TelemetryClient.TrackTrace(new TraceTelemetry(logMessage, SeverityLevel.Error));
             }
+            catch (Exception e) { logger.Fatal(e); }
         }
 
         /// <summary>
@@ -85,10 +96,7 @@ namespace Analytics
                 if (_DisableTelemetry) return;
                 _TelemetryClient.TrackException(exception);
             }
-            catch (Exception e)
-            {
-                logger.Fatal(e);
-            }
+            catch (Exception e) { logger.Fatal(e); }
         }
 
         /// <summary>
@@ -100,10 +108,7 @@ namespace Analytics
             {
                 _TelemetryClient.Flush();
             }
-            catch (Exception e)
-            {
-                logger.Fatal(e);
-            }
+            catch (Exception e) { logger.Fatal(e); }
         }
 
 
@@ -175,10 +180,7 @@ namespace Analytics
             smtpClient.Send(mail);
 #endif
             }
-            catch (Exception e)
-            {
-                logger.Fatal(e);
-            } 
+            catch (Exception e) { logger.Fatal(e); }
         }
     }
 }

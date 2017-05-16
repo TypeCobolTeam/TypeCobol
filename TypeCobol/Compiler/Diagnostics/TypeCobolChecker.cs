@@ -53,7 +53,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
             if (functionCaller == null || functionCaller.FunctionCall == null || !functionCaller.FunctionCall.NeedDeclaration)
                 return;
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function] Function/Procedure call to " + functionCaller.FunctionCall.FunctionName);
+            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Call] " + functionCaller.FunctionCall.FunctionName);
 
             if (functionCaller.FunctionDeclaration == null)
             {

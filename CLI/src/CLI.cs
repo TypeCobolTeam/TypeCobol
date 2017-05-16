@@ -90,6 +90,10 @@ namespace TypeCobol.Server
                 debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
                 File.AppendAllText("TypeCobol.CLI.log", debugLine);
                 Console.WriteLine(debugLine);
+
+                AnalyticsWrapper.Telemetry.TrackEvent("[Duration] Execution Time",
+                                                        new Dictionary<string, string> { { "Duration", "Duration"} }, //Custom properties for metrics
+                                                        new Dictionary<string, double> { { "ExecutionTime", stopWatch.Elapsed.Milliseconds} }); //Metrics fo duration
             }
 
             return ReturnCode.Success;
@@ -156,7 +160,7 @@ namespace TypeCobol.Server
 
                     }
 
-                    AnalyticsWrapper.Telemetry.TrackEvent("[CLI] Diagnostics Detected");
+                    AnalyticsWrapper.Telemetry.TrackEvent("[Diagnostics] Detected");
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, "Diagnostics Detected", null, null, false, false); //Make ParsingException trace back to RunOnce()
                 }
 
@@ -198,7 +202,6 @@ namespace TypeCobol.Server
         /// <returns>SymbolTable</returns>
         private static SymbolTable LoadCopies(AbstractErrorWriter writer, List<string> paths, DocumentFormat copyDocumentFormat)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[CLI] Load Copies");
             var parser = new Parser();
 
 			var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
@@ -259,7 +262,6 @@ namespace TypeCobol.Server
         /// <returns>SymbolTable</returns>
         private static SymbolTable LoadDependencies(AbstractErrorWriter writer, List<string> paths, DocumentFormat format, SymbolTable intrinsicTable)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[CLI] Load Dependencies");
             var parser = new Parser(intrinsicTable);
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 

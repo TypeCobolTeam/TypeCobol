@@ -83,7 +83,7 @@ namespace TypeCobol
 			if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
 			else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[TypeCobol] Parser Started");
+            AnalyticsWrapper.Telemetry.TrackEvent("[Parser] Started");
 
             try { Compiler.CompileOnce(); }
 			catch(Exception ex) {

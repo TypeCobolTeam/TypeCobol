@@ -265,7 +265,7 @@ namespace TypeCobol.Server {
 			errmsg += "Try "+PROGNAME+" --help for usage information.";
 			Console.WriteLine(errmsg);
 
-            AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[{0}] : {1}", code.ToString(), message));
+            AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[ReturnCode] {0} : {1}", code.ToString(), message));
             AnalyticsWrapper.Telemetry.EndSession(); //End Telemetry session and force data sending
             return (int)code;
 		}

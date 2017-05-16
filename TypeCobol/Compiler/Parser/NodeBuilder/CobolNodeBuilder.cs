@@ -382,7 +382,7 @@ namespace TypeCobol.Compiler.Parser
                 table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
             table.AddType(node);
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[TypeDef] TypeDef declared : " + node.Name);
+            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Declared] " + node.Name);
         }
         // [/COBOL 2002]
 
@@ -584,6 +584,8 @@ namespace TypeCobol.Compiler.Parser
                 declaration.Profile.ReturningParameter = pentry;
             }
             Enter(new ProcedureDivision(header), context);
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName);
         }
         public override void ExitFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context)
         {
