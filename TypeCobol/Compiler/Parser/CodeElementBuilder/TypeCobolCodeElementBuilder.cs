@@ -196,70 +196,72 @@ namespace TypeCobol.Compiler.Parser
                     ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL()));
             }
 
-            if (context.occursClause() != null && context.occursClause().Length > 0)
-            {
-                var occursClauseContext = context.occursClause()[0];
-                if (occursClauseContext.minNumberOfOccurences != null)
-                {
-                    parameter.MinOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.minNumberOfOccurences);
-                }
-                if (occursClauseContext.maxNumberOfOccurences != null)
-                {
-                    parameter.MaxOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.maxNumberOfOccurences);
-                }
-                if (parameter.MinOccurencesCount == null && parameter.MaxOccurencesCount != null)
-                {
-                    parameter.MinOccurencesCount = parameter.MaxOccurencesCount;
-                }
-                if (occursClauseContext.UNBOUNDED() != null)
-                {
-                    parameter.HasUnboundedNumberOfOccurences = new SyntaxProperty<bool>(true,
-                        ParseTreeUtils.GetFirstToken(occursClauseContext.UNBOUNDED()));
-                }
-                if (occursClauseContext.varNumberOfOccurences != null)
-                {
-                    parameter.OccursDependingOn = CobolExpressionsBuilder.CreateNumericVariable(occursClauseContext.varNumberOfOccurences);
-                }
-                if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
-                {
-                    int keysCount = 0;
-                    foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
-                    {
-                        keysCount += tableSortingKeysContext.dataNameReference().Length;
-                    }
-                    parameter.TableSortingKeys = new TableSortingKey[keysCount];
-                    int keyIndex = 0;
-                    foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
-                    {
-                        SyntaxProperty<SortDirection> sortDirection = null;
-                        if (tableSortingKeysContext.ASCENDING() != null)
-                        {
-                            sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Ascending,
-                                ParseTreeUtils.GetFirstToken(tableSortingKeysContext.ASCENDING()));
-                        }
-                        else
-                        {
-                            sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Descending,
-                                ParseTreeUtils.GetFirstToken(tableSortingKeysContext.DESCENDING()));
-                        }
-                        foreach (var dataNameReference in tableSortingKeysContext.dataNameReference())
-                        {
-                            SymbolReference sortKey = CobolWordsBuilder.CreateDataNameReference(dataNameReference);
-                            parameter.TableSortingKeys[keyIndex] = new TableSortingKey(sortKey, sortDirection);
-                            keyIndex++;
-                        }
-                    }
-                }
-                if (occursClauseContext.indexNameDefinition() != null && occursClauseContext.indexNameDefinition().Length > 0)
-                {
-                    parameter.Indexes = new SymbolDefinition[occursClauseContext.indexNameDefinition().Length];
-                    for (int i = 0; i < occursClauseContext.indexNameDefinition().Length; i++)
-                    {
-                        var indexNameDefinition = occursClauseContext.indexNameDefinition()[i];
-                        parameter.Indexes[i] = CobolWordsBuilder.CreateIndexNameDefinition(indexNameDefinition);
-                    }
-                }
-            }
+            //No occurs clause because we only allow level 01
+
+//            if (context.occursClause() != null && context.occursClause().Length > 0)
+//            {
+//                var occursClauseContext = context.occursClause()[0];
+//                if (occursClauseContext.minNumberOfOccurences != null)
+//                {
+//                    parameter.MinOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.minNumberOfOccurences);
+//                }
+//                if (occursClauseContext.maxNumberOfOccurences != null)
+//                {
+//                    parameter.MaxOccurencesCount = CobolWordsBuilder.CreateIntegerValue(occursClauseContext.maxNumberOfOccurences);
+//                }
+//                if (parameter.MinOccurencesCount == null && parameter.MaxOccurencesCount != null)
+//                {
+//                    parameter.MinOccurencesCount = parameter.MaxOccurencesCount;
+//                }
+//                if (occursClauseContext.UNBOUNDED() != null)
+//                {
+//                    parameter.HasUnboundedNumberOfOccurences = new SyntaxProperty<bool>(true,
+//                        ParseTreeUtils.GetFirstToken(occursClauseContext.UNBOUNDED()));
+//                }
+//                if (occursClauseContext.varNumberOfOccurences != null)
+//                {
+//                    parameter.OccursDependingOn = CobolExpressionsBuilder.CreateNumericVariable(occursClauseContext.varNumberOfOccurences);
+//                }
+//                if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
+//                {
+//                    int keysCount = 0;
+//                    foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
+//                    {
+//                        keysCount += tableSortingKeysContext.dataNameReference().Length;
+//                    }
+//                    parameter.TableSortingKeys = new TableSortingKey[keysCount];
+//                    int keyIndex = 0;
+//                    foreach (var tableSortingKeysContext in occursClauseContext.tableSortingKeys())
+//                    {
+//                        SyntaxProperty<SortDirection> sortDirection = null;
+//                        if (tableSortingKeysContext.ASCENDING() != null)
+//                        {
+//                            sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Ascending,
+//                                ParseTreeUtils.GetFirstToken(tableSortingKeysContext.ASCENDING()));
+//                        }
+//                        else
+//                        {
+//                            sortDirection = new SyntaxProperty<SortDirection>(SortDirection.Descending,
+//                                ParseTreeUtils.GetFirstToken(tableSortingKeysContext.DESCENDING()));
+//                        }
+//                        foreach (var dataNameReference in tableSortingKeysContext.dataNameReference())
+//                        {
+//                            SymbolReference sortKey = CobolWordsBuilder.CreateDataNameReference(dataNameReference);
+//                            parameter.TableSortingKeys[keyIndex] = new TableSortingKey(sortKey, sortDirection);
+//                            keyIndex++;
+//                        }
+//                    }
+//                }
+//                if (occursClauseContext.indexNameDefinition() != null && occursClauseContext.indexNameDefinition().Length > 0)
+//                {
+//                    parameter.Indexes = new SymbolDefinition[occursClauseContext.indexNameDefinition().Length];
+//                    for (int i = 0; i < occursClauseContext.indexNameDefinition().Length; i++)
+//                    {
+//                        var indexNameDefinition = occursClauseContext.indexNameDefinition()[i];
+//                        parameter.Indexes[i] = CobolWordsBuilder.CreateIndexNameDefinition(indexNameDefinition);
+//                    }
+//                }
+//            }
 
             if (context.signClause() != null && context.signClause().Length > 0)
             {
