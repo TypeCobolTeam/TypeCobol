@@ -233,6 +233,12 @@
        DECLARE PROCEDURE addDaysToDate PUBLIC
                INPUT  Dat        TYPE date
                       NbrOfDays  PIC S9(06)
+               OUTPUT Result     TYPE date
+                      RtnCode    TYPE ReturnCode.
+       END-DECLARE.
+       DECLARE PROCEDURE addDaysToDate PUBLIC
+               INPUT  Dat        TYPE date
+                      NbrOfDays  PIC S9(06)
                       TypeOfDays TYPE typeOfDays 
                OUTPUT Result     TYPE date
                       RtnCode    TYPE ReturnCode.
