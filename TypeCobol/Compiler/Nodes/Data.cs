@@ -146,7 +146,7 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                if (((DataDefinitionEntry)this.CodeElement) != null)
+                if (this.CodeElement != null)
                 {
                     return ((DataDefinitionEntry)this.CodeElement).Length;
                 }
@@ -189,9 +189,9 @@ namespace TypeCobol.Compiler.Nodes {
                 return parent != null && parent.IsStrictlyTyped;
             }
         }
-        
+
         #region TypeProperties
-        public AlphanumericValue Picture { get { if (_ComonDataDesc != null && _ComonDataDesc.Picture != null) return _ComonDataDesc.Picture; else return null; } }
+        public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
         public bool IsJustified { get {  if(_ComonDataDesc != null && _ComonDataDesc.IsJustified != null) return _ComonDataDesc.IsJustified.Value; else return false; } }
         public DataUsage? Usage { get { if (_ComonDataDesc != null && _ComonDataDesc.Usage != null) return _ComonDataDesc.Usage.Value; else return null; } }
         public bool IsGroupUsageNational { get { if (_ComonDataDesc != null && _ComonDataDesc.IsGroupUsageNational != null) return _ComonDataDesc.IsGroupUsageNational.Value; else return false; } }
@@ -199,7 +199,7 @@ namespace TypeCobol.Compiler.Nodes {
         public long MaxOccurencesCount { get {return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1;}}
 
 
-        public NumericVariable OccursDependingOn { get { if (_ComonDataDesc != null) return _ComonDataDesc.OccursDependingOn; else return null; } }
+        public NumericVariable OccursDependingOn { get {return _ComonDataDesc != null ? _ComonDataDesc.OccursDependingOn : null;}}
         public bool HasUnboundedNumberOfOccurences { get { if (_ComonDataDesc != null && _ComonDataDesc.HasUnboundedNumberOfOccurences != null) return _ComonDataDesc.HasUnboundedNumberOfOccurences.Value; else return false; } }
         public bool IsTableOccurence { get { if (_ComonDataDesc != null) return _ComonDataDesc.IsTableOccurence; else return false; } }
         public CodeElementType? Type { get { if (_ComonDataDesc != null) return _ComonDataDesc.Type; else return null; } }
@@ -254,11 +254,9 @@ namespace TypeCobol.Compiler.Nodes {
     // [/COBOL 2002]
 
     // [TYPECOBOL]
-    public class ParameterDescription: TypeCobol.Compiler.Nodes.DataDescription {
+    public class ParameterDescription: TypeCobol.Compiler.Nodes.DataDescription, CodeElementHolder<ParameterDescriptionEntry>, Parent<ParametersProfileNode> {
 
-        private ParameterDescriptionEntry _CodeElement;
-        public bool Resolved { get; set; }
-        public string LibraryName { get; set; }
+        private readonly ParameterDescriptionEntry _CodeElement;
 
         public ParameterDescription(ParameterDescriptionEntry entry): base(entry) { _CodeElement = (ParameterDescriptionEntry)this.CodeElement; }
        
@@ -270,12 +268,7 @@ namespace TypeCobol.Compiler.Nodes {
         public new DataType DataType {
             get
             {
-                var codeElementDataType = _CodeElement.DataType;
-                if (!Resolved)
-                    return codeElementDataType;
-
-                var codeElementDataTypeName = !string.IsNullOrEmpty(LibraryName) ? LibraryName + "." + codeElementDataType.Name : codeElementDataType.Name;
-                return new DataType(codeElementDataTypeName, codeElementDataType.RestrictionLevel, codeElementDataType.CobolLanguageLevel);
+                return _CodeElement.DataType;
             }
         }
 
