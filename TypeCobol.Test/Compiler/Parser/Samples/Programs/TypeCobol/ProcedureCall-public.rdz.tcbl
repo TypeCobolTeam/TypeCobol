@@ -136,7 +136,7 @@
                                                W-TypeOfDays
                                         OUTPUT W-Date1
                                                W-RtnCode
-      *OK for parameters type matching 
+      *KO for parameters type matching 
       *KO for W-WrongTypeOfDays reference not found
            CALL PublicProcedures::addDaysToDate INPUT  W-Dat
                                                W-NbOfDays

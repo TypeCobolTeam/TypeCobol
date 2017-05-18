@@ -16,7 +16,8 @@ Line 106[12,48] <27, Error, Syntax> - Syntax error : Function not found 'case10'
 Line 113[12,22] <27, Error, Syntax> - Syntax error : Call to 'case12'(no arguments) is ambigous. 'case12' is defined 2 times
 Line 116[12,22] <27, Error, Syntax> - Syntax error : No function or variable found for 'case13'(no arguments)
 Line 122[12,22] <27, Error, Syntax> - Syntax error : Call to 'case15'(no arguments) is ambigous. 'case15' is defined 2 times
-Line 149[12,56] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.addDaysToDate' expected parameter 'TypeOfDays' of type typeOfDays and received 'W-WrongTypeOfDays2' of type absentPgm.typeOfDays 
+Line 141[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, typeOfDays) output(DATE, returnCode)
+Line 149[12,56] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.addDaysToDate' input(DATE, Numeric, absentPgm.typeOfDays) output(DATE, returnCode)
 Line 161[12,39] <27, Error, Syntax> - Syntax error : Function not found 'PublicProcedures.case2' input(DATE, Alphanumeric) output(BOOL)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' only takes 3 parameter(s)
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
@@ -173,6 +174,8 @@ Line 222[12,40] <27, Error, Syntax> - Syntax error : No suitable function signat
         working-storage
           typeOfDays
       procedure-division
+        addDaysToDate
+          function-end
         addDaysToDate
           function-end
         case1

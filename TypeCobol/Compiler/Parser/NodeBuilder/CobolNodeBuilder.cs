@@ -524,7 +524,8 @@ namespace TypeCobol.Compiler.Parser
             if (header != null) header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
             var node = new FunctionDeclaration(header);
             node.Label = uidfactory.FromOriginal(header.FunctionName.Name);
-            node.Library = CurrentProgram.Identification.ProgramName.Name;
+            node.Library = CurrentProgram.Identification.ProgramName.Name; //DO NOT change this without checking all references of Library. 
+                                                                           // (SymbolTable - function, type finding could be impacted) 
 
             //Function must be added to Declarations scope
             var declarationSymbolTable = CurrentProgram.CurrentTable.GetTableFromScope(SymbolTable.Scope.Declarations);
