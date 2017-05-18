@@ -178,178 +178,172 @@ class ReadOnlyPropertiesChecker: NodeListener {
                     if (found.Count > 1)
                         DiagnosticUtils.AddError(e, "Ambiguous reference to parameter " + callArgName);
                     if (found.Count != 1) continue;
-                    var type = found[0];
+                    var actualDataDefinition = found[0];
 
                     //TODO use SubscriptExpression and ReferenceModifier of the StorageArea to correct the type
                     //Ex: MyVar1(1:10) has a length of 10 and is of type Alphanumeric
                     //Ex: MyArray(1) only target one element of the array, so we need to get the type of this element.
 
-                    DataDefinition callerType = type;
-                    DataDefinition calleeType = expected;
 
-                    if (type.DataType != expected.DataType)
+                    //Cobol 85 Type will be checked with their picture
+                    if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 || expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                     {
-                        callerType = GetSymbolType(type);
-                        calleeType = GetSymbolType(expected);
-                    }
-
-                    if (callerType == null || calleeType == null)
-                    {
-                        callerType = type;
-                        calleeType = expected;
-
-                        //Cobol 85 Type will be checked with their picture
-                        if (type.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 || expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) {
-                            var m =
-                                string.Format(
+                        if (actualDataDefinition.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85 ||
+                            expected.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85) {
+                            var m = string.Format(
                                     "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                    call.FunctionName, calleeType.Name, calleeType.DataType,
-                                    callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
+                                    call.FunctionName, expected.Name, expected.DataType,
+                                    callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.DataType);
                             DiagnosticUtils.AddError(e, m);
+
+                            
+                        } else if (actualDataDefinition.DataType != expected.DataType) {
+                            DataDefinition callerType = GetSymbolType(actualDataDefinition);
+                            DataDefinition calleeType = GetSymbolType(expected);
+                            if (callerType == null || calleeType == null) {
+                                //Ignore, it's an unknown DataType. It's already checked
+                            } else if (!Equals(callerType.QualifiedName, calleeType.QualifiedName)) {
+                                var m = string.Format(
+                                        "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
+                                        call.FunctionName, calleeType.Name, calleeType.DataType,
+                                        callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
+                                DiagnosticUtils.AddError(e, m);
+                            }
                         }
-                    }//Cobol 85 data type will be tested with their picture
-                    else if((type.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 || expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) && callerType.DataType != calleeType.DataType)
-                    {
-                        //Diag error on type difference
-                        var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                call.FunctionName, calleeType.Name, calleeType.DataType,
-                                callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
-                        DiagnosticUtils.AddError(e, m);
                     }
-                    if(callerType.Picture != null && calleeType.Picture != null && callerType.Picture.Value != calleeType.Picture.Value)
+
+                    if(actualDataDefinition.Picture != null && expected.Picture != null && actualDataDefinition.Picture.Value != expected.Picture.Value)
                     {
                         var m =
                             string.Format(
                                 "Function '{0}' expected parameter '{1}' with picture {2} and received '{3}' with picture {4}",
-                                call.FunctionName, calleeType.Name, calleeType.Picture.Value,
-                                callArgName ?? string.Format("position {0}", c + 1), callerType.Picture.Value);
+                                call.FunctionName, expected.Name, expected.Picture.Value,
+                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.Picture.Value);
                         DiagnosticUtils.AddError(e, m);
                     }
 
-//                    if (callerType.Length != calleeType.Length)
+//                    if (dataDefinitionOfActual.Length != expectedParameter.Length)
 //                    {
 //                        var m =
 //                            string.Format(
 //                                "Function '{0}' expected parameter '{1}' of length {2} and received '{3}' of length {4}",
-//                                call.FunctionName, calleeType.Name, calleeType.Length,
-//                                callArgName ?? string.Format("position {0}", c + 1), callerType.Length);
+//                                call.FunctionName, expectedParameter.Name, expectedParameter.Length,
+//                                callArgName ?? string.Format("position {0}", c + 1), dataDefinitionOfActual.Length);
 //                        DiagnosticUtils.AddError(e, m);
 //                    }
 
-                    if (callerType.Usage != calleeType.Usage)
+                    if (actualDataDefinition.Usage != expected.Usage)
                     {
                         var m =
                             string.Format(
                                 "Function '{0}' expected parameter '{1}' of usage {2} and received '{3}' of usage {4}",
-                                call.FunctionName, calleeType.Name, calleeType.Usage,
-                                callArgName ?? string.Format("position {0}", c + 1), callerType.Usage);
+                                call.FunctionName, expected.Name, expected.Usage,
+                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.Usage);
                         DiagnosticUtils.AddError(e, m);
                     }
 
-                    if (callerType.IsJustified != calleeType.IsJustified)
+                    if (actualDataDefinition.IsJustified != expected.IsJustified)
                     {
                         var m =
                             string.Format(
                                 "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                                call.FunctionName, calleeType.Name, calleeType.IsJustified ? "justified" : "non-justified",
-                                callArgName ?? string.Format("position {0}", c + 1), callerType.IsJustified ? "justified" : "non-justified");
+                                call.FunctionName, expected.Name, expected.IsJustified ? "justified" : "non-justified",
+                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.IsJustified ? "justified" : "non-justified");
                         DiagnosticUtils.AddError(e, m);
                     }
 
-                    if (callerType.IsGroupUsageNational != calleeType.IsGroupUsageNational)
+                    if (actualDataDefinition.IsGroupUsageNational != expected.IsGroupUsageNational)
                     {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                               call.FunctionName, calleeType.Name, calleeType.IsGroupUsageNational ? "national group-usage" : "non national group-usage",
-                               callArgName ?? string.Format("position {0}", c + 1), callerType.IsGroupUsageNational ? "national group-usage" : "non national group-usage");
+                               call.FunctionName, expected.Name, expected.IsGroupUsageNational ? "national group-usage" : "non national group-usage",
+                               callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.IsGroupUsageNational ? "national group-usage" : "non national group-usage");
                         DiagnosticUtils.AddError(e, m);
                     }
-                    if (callerType.IsTableOccurence != calleeType.IsTableOccurence) {
+                    if (actualDataDefinition.IsTableOccurence != expected.IsTableOccurence) {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' to {2} an array and received '{3}' which {4} an array",
-                               call.FunctionName, calleeType.Name, calleeType.IsTableOccurence ? "be" : "be NOT", callerType.Name,
-                                callerType.IsTableOccurence ? "is" : "is NOT ");
+                               call.FunctionName, expected.Name, expected.IsTableOccurence ? "be" : "be NOT", actualDataDefinition.Name,
+                                actualDataDefinition.IsTableOccurence ? "is" : "is NOT ");
                         DiagnosticUtils.AddError(e, m);
-                    } else if (callerType.IsTableOccurence && calleeType.IsTableOccurence) {
-                        if (callerType.MinOccurencesCount != calleeType.MinOccurencesCount) {
+                    } else if (actualDataDefinition.IsTableOccurence && expected.IsTableOccurence) {
+                        if (actualDataDefinition.MinOccurencesCount != expected.MinOccurencesCount) {
                             var m =
                                 string.Format(
                                     "Function '{0}' expected parameter '{1}' to have at least {2} occurences and received '{3}' with a minimum of {4} occurences",
-                                    call.FunctionName, calleeType.Name, calleeType.MinOccurencesCount,
-                                    callArgName ?? string.Format("position {0}", c + 1), callerType.MinOccurencesCount);
+                                    call.FunctionName, expected.Name, expected.MinOccurencesCount,
+                                    callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.MinOccurencesCount);
                             DiagnosticUtils.AddError(e, m);
                         }
 
-                        if (callerType.MaxOccurencesCount != calleeType.MaxOccurencesCount) {
+                        if (actualDataDefinition.MaxOccurencesCount != expected.MaxOccurencesCount) {
                             var m =
                                 string.Format(
                                     "Function '{0}' expected parameter '{1}' to have at most {2} occurences and received '{3}' with a maximum of {4} occurences",
-                                    call.FunctionName, calleeType.Name, calleeType.MaxOccurencesCount,
-                                    callArgName ?? string.Format("position {0}", c + 1), callerType.MaxOccurencesCount);
+                                    call.FunctionName, expected.Name, expected.MaxOccurencesCount,
+                                    callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.MaxOccurencesCount);
                             DiagnosticUtils.AddError(e, m);
                         }
                     }
 
-                    if (callerType.OccursDependingOn != calleeType.OccursDependingOn)
+                    if (actualDataDefinition.OccursDependingOn != expected.OccursDependingOn)
                     {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' occurs depending on ({2}) occurences and received '{3}' occurs depending on ({4})",
-                               call.FunctionName, calleeType.Name, calleeType.OccursDependingOn,
-                               callArgName ?? string.Format("position {0}", c + 1), callerType.OccursDependingOn);
+                               call.FunctionName, expected.Name, expected.OccursDependingOn,
+                               callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.OccursDependingOn);
                         DiagnosticUtils.AddError(e, m);
                     }
 
-                    if (callerType.HasUnboundedNumberOfOccurences != calleeType.HasUnboundedNumberOfOccurences)
+                    if (actualDataDefinition.HasUnboundedNumberOfOccurences != expected.HasUnboundedNumberOfOccurences)
                     {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                               call.FunctionName, calleeType.Name, calleeType.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences",
-                               callArgName ?? string.Format("position {0}", c + 1), callerType.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences");
+                               call.FunctionName, expected.Name, expected.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences",
+                               callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences");
                         DiagnosticUtils.AddError(e, m);
                     }
 
-                    if (callerType.SignIsSeparate != calleeType.SignIsSeparate)
+                    if (actualDataDefinition.SignIsSeparate != expected.SignIsSeparate)
                     {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                               call.FunctionName, calleeType.Name, calleeType.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences",
-                               callArgName ?? string.Format("position {0}", c + 1), callerType.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences");
+                               call.FunctionName, expected.Name, expected.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences",
+                               callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences");
                         DiagnosticUtils.AddError(e, m);
                     }
 
-                    if (callerType.SignPosition != calleeType.SignPosition)
+                    if (actualDataDefinition.SignPosition != expected.SignPosition)
                     {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' with sign position {2} and received '{3}' with sign position {4}",
-                               call.FunctionName, calleeType.Name, calleeType.SignPosition == null ? "empty" : calleeType.SignPosition.ToString(),
-                               callArgName ?? string.Format("position {0}", c + 1), callerType.SignPosition == null ? "empty" : callerType.SignPosition.ToString());
+                               call.FunctionName, expected.Name, expected.SignPosition == null ? "empty" : expected.SignPosition.ToString(),
+                               callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.SignPosition == null ? "empty" : actualDataDefinition.SignPosition.ToString());
                         DiagnosticUtils.AddError(e, m);
                     }
 
-                    if (callerType.IsSynchronized != calleeType.IsSynchronized)
+                    if (actualDataDefinition.IsSynchronized != expected.IsSynchronized)
                     {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                               call.FunctionName, calleeType.Name, calleeType.IsSynchronized ? "synchonized" : "not synchronized",
-                               callArgName ?? string.Format("position {0}", c + 1), callerType.IsSynchronized ? "synchonized" : "not synchronized");
+                               call.FunctionName, expected.Name, expected.IsSynchronized ? "synchonized" : "not synchronized",
+                               callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.IsSynchronized ? "synchonized" : "not synchronized");
                         DiagnosticUtils.AddError(e, m);
                     }
 
-                    if (callerType.ObjectReferenceClass != calleeType.ObjectReferenceClass)
+                    if (actualDataDefinition.ObjectReferenceClass != expected.ObjectReferenceClass)
                     {
                         var m =
                           string.Format(
                               "Function '{0}' expected parameter '{1}' and received '{2}' with wrong object reference.",
-                              call.FunctionName, calleeType.Name, callArgName ?? string.Format("position {0}", c + 1));
+                              call.FunctionName, expected.Name, callArgName ?? string.Format("position {0}", c + 1));
                         DiagnosticUtils.AddError(e, m);
                     }
                 }
@@ -363,7 +357,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
         }
 
 
-        private static DataDefinition GetSymbolType(DataDefinition node)
+        private static TypeDefinition GetSymbolType(DataDefinition node)
         {
             var found = node.SymbolTable.GetType(node.DataType);
 
@@ -406,7 +400,9 @@ class FunctionDeclarationChecker: NodeListener {
 		return new List<Type> { typeof(FunctionDeclaration), };
 	}
 	public void OnNode([NotNull] Node node, ParserRuleContext context, CodeModel.Program program) {
-		var header = node.CodeElement as FunctionDeclarationHeader;
+            FunctionDeclaration functionDeclaration = node as FunctionDeclaration;
+            if (functionDeclaration == null) return; //not my job
+            var header = node.CodeElement as FunctionDeclarationHeader;
 	    if (header == null) return; //not my job
 		var filesection = node.Get<FileSection>("file");
 		if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
@@ -420,7 +416,7 @@ class FunctionDeclarationChecker: NodeListener {
 		CheckNoPerform(node.SymbolTable.EnclosingScope, node);
 
 	    var headerNameURI = new URI(header.Name);
-	    var functions = node.SymbolTable.GetFunction(headerNameURI, header.Profile);
+	    var functions = node.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
 		if (functions.Count > 1)
 			DiagnosticUtils.AddError(header, "A function \""+headerNameURI.Head+"\" with the same profile already exists in namespace \""+headerNameURI.Tail+"\".", context);
 //		foreach(var function in functions) {
