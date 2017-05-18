@@ -12,6 +12,8 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using NLog;
 using Microsoft.ApplicationInsights.DataContracts;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace Analytics
 {
@@ -33,12 +35,18 @@ namespace Analytics
             {
                 _AppConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location); //Load custom app.config for this assembly
                 var appKey = _AppConfig.AppSettings.Settings["AppInsightKey"].Value;//Get API Key CLI project config file
+                var typeCobolVersion = _AppConfig.AppSettings.Settings["TypeCobolVersion"].Value; 
 
                 // ----- Initiliaze AppInsights Telemetry Client -------//
                 _TelemetryClient = new TelemetryClient(new TelemetryConfiguration(appKey));
-                _TelemetryClient.Context.User.Id = Environment.UserName;
+                _TelemetryClient.Context.User.Id = CreateSHA256(Environment.UserName);
                 _TelemetryClient.Context.Session.Id = Guid.NewGuid().ToString();
-                _TelemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
+                _TelemetryClient.Context.Component.Version = typeCobolVersion;
+                _TelemetryClient.Context.Device.OperatingSystem = "N/A";
+                _TelemetryClient.Context.Location.Ip = "N/A";
+                _TelemetryClient.Context.Cloud.RoleInstance = "N/A";
+                _TelemetryClient.Context.Cloud.RoleName = "N/A";
+                _TelemetryClient.Context.Device.Type = "N/A";
                 // --------------------------------------- //
             }
             catch (Exception e) { logger.Fatal(e); }
@@ -106,6 +114,7 @@ namespace Analytics
         {
             try
             {
+                if (_DisableTelemetry) return;
                 _TelemetryClient.Flush();
             }
             catch (Exception e) { logger.Fatal(e); }
@@ -181,6 +190,16 @@ namespace Analytics
 #endif
             }
             catch (Exception e) { logger.Fatal(e); }
+        }
+
+        private static string CreateSHA256(string text)
+        {
+            byte[] input = Encoding.UTF8.GetBytes(text.TrimEnd('\0'));
+            byte[] hash = new SHA256Managed().ComputeHash(input);
+            var result = new StringBuilder();
+            foreach (byte b in hash)
+                result.Append(System.String.Format("{0:x2}", b));
+            return result.ToString();
         }
     }
 }
