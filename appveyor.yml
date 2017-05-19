@@ -15,6 +15,26 @@ before_build:
     - nuget restore      #install missing nuget packages
     - '"%ProgramFiles(x86)%\Microsoft SDKs\F#\4.0\Framework\v4.0\Fsi.exe" build\TweakAntlr.fsscript packages\Antlr4.4.5.3\build\Antlr4.targets'    #fsharp script fixing Antlr4.targets file
     
+before_package:
+    - BuildScript.bat
+
 build:
   project: TypeCobol.core.sln
   verbosity: minimal
+  
+artifacts: 
+  - path: bin\ReleasePackage
+    name: EIReleasePackage
+
+deploy:
+  description: 'Automated TypeCobol Release'
+  provider: GitHub
+  auth_token: oX7Ck0VMD2HvWjA2Itqc+95Azad6jIkr6C0uMLoq0gK9kKfK+UIXWvwqM6oenhkG
+    secure: 
+  artifact: EIReleasePackage
+  draft: false
+  prerelease: false
+  force_update: true
+  on:
+    appveyor_repo_tag: true        # deploy on tag push only
+
