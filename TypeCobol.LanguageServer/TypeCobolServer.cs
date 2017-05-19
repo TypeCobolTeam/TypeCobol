@@ -30,7 +30,7 @@ namespace TypeCobol.LanguageServer
             // TO DO : receive all these configuration properties from the client
             var rootDirectory = new DirectoryInfo(parameters.rootPath);
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
-            typeCobolWorkspace = new Workspace(workspaceName, rootDirectory.FullName, new string[] { "*.cbl", "*.pgm", "*.cpy", "*.txt", },
+            typeCobolWorkspace = new Workspace(workspaceName, rootDirectory.FullName, new string[] { ".cbl", ".pgm", ".cpy", ".txt", },
                 Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat, 
                 new TypeCobolOptions());
 
