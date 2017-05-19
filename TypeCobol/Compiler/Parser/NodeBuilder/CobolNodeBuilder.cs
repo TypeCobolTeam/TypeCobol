@@ -564,6 +564,8 @@ namespace TypeCobol.Compiler.Parser
                 ((FunctionDeclaration)CurrentNode).Profile.ReturningParameter = paramNode;
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
+
+            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName);
         }
         public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context)
         {
@@ -584,8 +586,6 @@ namespace TypeCobol.Compiler.Parser
                 DiagnosticUtils.AddError(header, "TCRFUN_DECLARATION_NO_USING");//TODO#249
 
             Enter(new ProcedureDivision(header), context);
-
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName);
         }
         public override void ExitFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context)
         {
