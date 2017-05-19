@@ -178,11 +178,11 @@ internal class FunctionUserAttribute: Attribute {
 		}
 		return result;
 	}
-	private static CallParameter Create(ParameterDescriptionEntry pAsDefined, CallParameter pAsUsed) {
-		if (pAsUsed != null) return pAsUsed;
+	private static CallParameter Create(ParameterDescription pAsDefined, CallParameter pAsUsed) {
+		if (pAsUsed != null) return pAsUsed; //Code is strange here..
 		return new EmptyCallParameter();
 	}
-	private static ParameterDescriptionEntry GetParameter(int index, FunctionDeclaration function) {
+	private static ParameterDescription GetParameter(int index, FunctionDeclaration function) {
 		int offset = 0;
 		if (index - offset < function.Profile.InputParameters.Count) return function.Profile.InputParameters[index-offset];
 		offset += function.Profile.InputParameters.Count;

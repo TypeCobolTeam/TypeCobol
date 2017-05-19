@@ -112,7 +112,10 @@ namespace TypeCobol.Compiler.Nodes {
     ///   IndexDefinition (TODO)
     /// </summary>
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
-        protected DataDefinition(DataDefinitionEntry entry): base(entry) { }
+
+
+        private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
+        protected DataDefinition(DataDefinitionEntry entry): base(entry) {  }
         public override string ID { get { return "data-definition"; } }
         public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 
@@ -124,10 +127,9 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                var dataDefinitionEntry = this.CodeElement as DataDefinitionEntry;
-                if (dataDefinitionEntry != null)
+                if (this.CodeElement != null)
                 {
-                    return dataDefinitionEntry.DataType;
+                    return ((DataDefinitionEntry)this.CodeElement).DataType;
                 }
                 return DataType.Unknown;
             }
@@ -144,10 +146,9 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                var dataDefinitionEntry = this.CodeElement as DataDefinitionEntry;
-                if (dataDefinitionEntry != null)
+                if (this.CodeElement != null)
                 {
-                    return dataDefinitionEntry.Length;
+                    return ((DataDefinitionEntry)this.CodeElement).Length;
                 }
                 return 0;
             }
@@ -188,6 +189,25 @@ namespace TypeCobol.Compiler.Nodes {
                 return parent != null && parent.IsStrictlyTyped;
             }
         }
+
+        #region TypeProperties
+        public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
+        public bool IsJustified { get {  if(_ComonDataDesc != null && _ComonDataDesc.IsJustified != null) return _ComonDataDesc.IsJustified.Value; else return false; } }
+        public DataUsage? Usage { get { if (_ComonDataDesc != null && _ComonDataDesc.Usage != null) return _ComonDataDesc.Usage.Value; else return null; } }
+        public bool IsGroupUsageNational { get { if (_ComonDataDesc != null && _ComonDataDesc.IsGroupUsageNational != null) return _ComonDataDesc.IsGroupUsageNational.Value; else return false; } }
+        public long MinOccurencesCount { get { if (_ComonDataDesc != null && _ComonDataDesc.MinOccurencesCount != null) return _ComonDataDesc.MinOccurencesCount.Value; else return 1; } }
+        public long MaxOccurencesCount { get {return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1;}}
+
+
+        public NumericVariable OccursDependingOn { get {return _ComonDataDesc != null ? _ComonDataDesc.OccursDependingOn : null;}}
+        public bool HasUnboundedNumberOfOccurences { get { if (_ComonDataDesc != null && _ComonDataDesc.HasUnboundedNumberOfOccurences != null) return _ComonDataDesc.HasUnboundedNumberOfOccurences.Value; else return false; } }
+        public bool IsTableOccurence { get { if (_ComonDataDesc != null) return _ComonDataDesc.IsTableOccurence; else return false; } }
+        public CodeElementType? Type { get { if (_ComonDataDesc != null) return _ComonDataDesc.Type; else return null; } }
+        public bool SignIsSeparate { get { if (_ComonDataDesc != null && _ComonDataDesc.SignIsSeparate != null) return _ComonDataDesc.SignIsSeparate.Value; else return false;  } }
+        public SignPosition? SignPosition { get { if (_ComonDataDesc != null && _ComonDataDesc.SignPosition != null) return _ComonDataDesc.SignPosition.Value; else return null; } }
+        public bool IsSynchronized { get { if (_ComonDataDesc != null && _ComonDataDesc.IsSynchronized != null) return _ComonDataDesc.IsSynchronized.Value; else return false;  } }
+        public SymbolReference ObjectReferenceClass { get { if (_ComonDataDesc != null) return _ComonDataDesc.ObjectReferenceClass; else return null; } }
+        #endregion
     }
 
     public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>{
@@ -234,12 +254,29 @@ namespace TypeCobol.Compiler.Nodes {
     // [/COBOL 2002]
 
     // [TYPECOBOL]
-    public class ParameterDescription: TypeCobol.Compiler.Nodes.DataDescription {
-	    public ParameterDescription(ParameterDescriptionEntry entry): base(entry) { }
+    public class ParameterDescription: TypeCobol.Compiler.Nodes.DataDescription, CodeElementHolder<ParameterDescriptionEntry>, Parent<ParametersProfileNode> {
+
+        private readonly ParameterDescriptionEntry _CodeElement;
+
+        public ParameterDescription(ParameterDescriptionEntry entry): base(entry) { _CodeElement = (ParameterDescriptionEntry)this.CodeElement; }
+       
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
+
+        public new DataType DataType {
+            get
+            {
+                return _CodeElement.DataType;
+            }
+        }
+
+        public AlphanumericValue Picture { get { return _CodeElement.Picture; } }
+        public IntegerValue LevelNumber { get { return _CodeElement.LevelNumber; } }
+        public SymbolDefinition DataName { get { return _CodeElement.DataName; } }
+
+
     }
     // [/TYPECOBOL]
 

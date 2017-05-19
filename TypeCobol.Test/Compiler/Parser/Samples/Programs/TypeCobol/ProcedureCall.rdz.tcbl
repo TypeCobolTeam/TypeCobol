@@ -12,6 +12,10 @@
       *01  varB         PIC X(8).
        01  varC         PIC X(8).
 
+       01 Toto typedef strict public.
+           05 varTo pic X.
+       01 MyToto Type Toto.
+
        PROCEDURE DIVISION.
        
        DECLARE PROCEDURE ValidateDateFormat PRIVATE
@@ -70,6 +74,28 @@
            INPUT  mydate        TYPE Date
            OUTPUT okay          TYPE Bool.
        END-DECLARE.
+
+       declare proc1 private input  param1 type ProcedureCall::Toto
+                             output paramOut type ProcedureCall::Toto.
+       end-declare.
+
+       declare proc1 private input  param1 type ProcedureCall::Toto
+                                    param2 pic X
+                             output paramOut type ProcedureCall::Toto.
+       end-declare.
+
+
+       declare proc2 private input  param1  type Toto
+                             output paramOut type Toto.
+       end-declare.
+      *KO proc2 is already declared with same signature
+       declare proc2 private input  param1  type Toto
+                             output paramOut type Toto.
+       end-declare.
+      *KO proc2 is already declared with same signature
+       declare proc2 private input  param1  type ProcedureCall::Toto
+                             output paramOut type ProcedureCall::Toto.
+       end-declare.
 
        TRAITEMENT.
       * __________________________________________________
@@ -176,6 +202,10 @@
            CALL varD
                     INPUT      somedate
            .
+
+      *OK
+       call proc1 input  MyToto
+                  output MyToto.
 
       * KO contains an unknown Type
        DECLARE PROCEDURE MyProc3 PRIVATE

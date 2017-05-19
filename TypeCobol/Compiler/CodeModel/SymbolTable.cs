@@ -545,13 +545,25 @@ namespace TypeCobol.Compiler.CodeModel
         {
             return GetType(symbolReference.URI);
         }
-
-        public List<TypeDefinition> GetType(DataType dataType)
+       
+        public List<TypeDefinition> GetType(DataType dataType, string pgmName = null)
         {
             var uri = new URI(dataType.Name);
-            return GetType(uri);
+            var types = GetType(uri);
+            if (types.Count > 0)
+                return types; //If Types found return it
+
+            if (!string.IsNullOrEmpty(pgmName)) //If Program is specified seek type into given program
+                types = GetType(uri, pgmName); //Try to find the types in specific program
+
+            return types;
         }
 
+        /// <summary>
+        /// Get type for the current program, then check in other program by using QualifiedName Tail propertie
+        /// </summary>
+        /// <param name="name">Qualified name of the wated type</param>
+        /// <returns></returns>
         public List<TypeDefinition> GetType(QualifiedName name)
         {
             var found = GetType(name.Head);
@@ -559,21 +571,33 @@ namespace TypeCobol.Compiler.CodeModel
             if (string.IsNullOrEmpty(name.Tail) || found.Any(f => string.Compare(f.QualifiedName.Tail, name.Tail, StringComparison.InvariantCultureIgnoreCase) == 0))
                 return Get(found, name);
 
-            var program = GetProgramHelper(name.Tail); //Get the program corresponding to the given namespace
+            found = GetType(name, name.Tail, found); //Pass name.Tail as a program name 
+
+            return found;
+        }
+
+        /// <summary>
+        /// Get type into a specific program by giving program name
+        /// </summary>
+        /// <param name="name">Qualified name of the wated type</param>
+        /// <param name="pgmName">Name of the program tha tmay contains the type</param>
+        /// <returns></returns>
+        public List<TypeDefinition> GetType(QualifiedName name, string pgmName, List<TypeDefinition> found = null)
+        {
+            found = found ?? new List<TypeDefinition>();
+            var program = GetProgramHelper(pgmName); //Get the program corresponding to the given namespace
             if (program != null)
             {
                 //Get all TYPEDEF PUBLIC from this program
-                var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Declarations).Types); 
+                var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Declarations).Types);
 
                 found = GetFromTable(name.Head, programTypes); //Check if there is a type that correspond to the given name (head)
-
 
                 //Get all GLOBAL TYPEDEF PUBLIC from this program
                 var globalTypedef = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Global).Types);
 
                 found.AddRange(GetFromTable(name.Head, globalTypedef)); //Check if there is a type that correspond to the given name (head)
             }
-
 
             return found;
         }
@@ -637,7 +661,7 @@ namespace TypeCobol.Compiler.CodeModel
                 var filtered = new List<FunctionDeclaration>();
                 foreach (var function in found)
                 {
-                    if (Matches(function.Profile, profile))
+                    if (Matches(function.Profile, profile, function.Library))
                         filtered.Add(function);
                 }
                 found = filtered;
@@ -645,21 +669,40 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        private bool Matches(ParameterList p1, ParameterList p2)
+        private bool Matches(ParameterList p1, ParameterList p2, string pgmName)
         {
-            //		if (p1.ReturningParameter == null && p2.ReturningParameter != null) return false;
-            //		if (p1.ReturningParameter != null && p2.ReturningParameter == null) return false;
-            //		if (p1.ReturningParameter != p2.ReturningParameter) return false;
             if (p1.InputParameters.Count != p2.InputParameters.Count) return false;
             if (p1.InoutParameters.Count != p2.InoutParameters.Count) return false;
             if (p1.OutputParameters.Count != p2.OutputParameters.Count) return false;
 
             for (int c = 0; c < p1.InputParameters.Count; c++)
-                if (p1.InputParameters[c] != p2.InputParameters[c]) return false;
+                if (!TypeCompare(p1.InputParameters[c], p2.InputParameters[c], pgmName)) return false;
             for (int c = 0; c < p1.InoutParameters.Count; c++)
-                if (p1.InoutParameters[c] != p2.InoutParameters[c]) return false;
+                if (!TypeCompare(p1.InoutParameters[c], p2.InoutParameters[c], pgmName)) return false;
             for (int c = 0; c < p1.OutputParameters.Count; c++)
-                if (p1.OutputParameters[c] != p2.OutputParameters[c]) return false;
+                if (!TypeCompare(p1.OutputParameters[c], p2.OutputParameters[c], pgmName)) return false;
+            return true;
+        }
+        /// <summary>
+        /// Type comparaison
+        /// </summary>
+        /// <param name="p1">Represent the DataType from the called function/procedure</param>
+        /// <param name="p2">Represent the DataType from the caller function/procedure</param>
+        /// <param name="pgmName">Corresponds to the progam containing the called function/procedure</param>
+        /// <returns></returns>
+        private bool TypeCompare(DataType p1, DataType p2, string pgmName)
+        {
+            var p1Types = p1.Name.Contains(".") ? this.GetType(p1) : this.GetType(p1, pgmName);
+            var p2Types = this.GetType(p2);
+
+            if (p1Types.Count > 1 || p2Types.Count > 1)
+                return false; //Means that a type is declare many times. Case already handle by checker.
+            var p1Type = p1Types.FirstOrDefault();
+            var p2Type = p2Types.FirstOrDefault();
+
+            if (p1Type != p2Type)
+                return false;
+
             return true;
         }
 
@@ -869,25 +912,25 @@ namespace TypeCobol.Compiler.CodeModel
             if (fun != null)
             {
                 if (fun.Profile.ReturningParameter != null || fun.Profile.Parameters.Count > 0) str.AppendLine();
-                foreach (var p in fun.CodeElement().Profile.InputParameters)
+                foreach (var p in fun.Profile.InputParameters)
                 {
                     str.Append("        in: ");
-                    Dump(str, new ParameterDescription(p));
+                    Dump(str, p);
                 }
-                foreach (var p in fun.CodeElement().Profile.OutputParameters)
+                foreach (var p in fun.Profile.OutputParameters)
                 {
                     str.Append("       out: ");
-                    Dump(str, new ParameterDescription(p));
+                    Dump(str, p);
                 }
-                foreach (var p in fun.CodeElement().Profile.InoutParameters)
+                foreach (var p in fun.Profile.InoutParameters)
                 {
                     str.Append("     inout: ");
-                    Dump(str, new ParameterDescription(p));
+                    Dump(str, p);
                 }
                 if (fun.Profile.ReturningParameter != null)
                 {
                     str.Append("    return: ");
-                    Dump(str, new ParameterDescription(fun.Profile.ReturningParameter));
+                    Dump(str, fun.Profile.ReturningParameter);
                 }
                 if (fun.Profile.ReturningParameter == null && fun.Profile.Parameters.Count == 0) str.AppendLine();
             }

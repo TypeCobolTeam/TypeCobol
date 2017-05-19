@@ -846,8 +846,9 @@ namespace TypeCobol.Compiler.Parser
 		var c = context.cobolQualifiedDataNameOrQualifiedConditionName1();
 		if (c != null) return CreateQualifiedDataNameOrQualifiedConditionName1(c.dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(), c.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference());
 		var tc = context.tcQualifiedDataNameOrQualifiedConditionName1();
-        if (tc.children.Any(x => x.Payload is Token && ((Token)x.Payload).TokenFamily == TokenFamily.SyntaxKeyword)) 
-            return null; //If a SyntaxKeywords is detected retrun null, we can't create the QualifiedReference properly.
+
+        if (tc.children.Any(x => x.Payload is Token && ((Token)x.Payload).TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
+                return null; //If not UserDefiedWord or QualifiedSeprator it's a mistake. 
 
         var tail = tc.dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference();
 		Array.Reverse(tail);
@@ -855,7 +856,7 @@ namespace TypeCobol.Compiler.Parser
 	}
 	private SymbolReference CreateQualifiedDataNameOrQualifiedConditionName1(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext head,CodeElementsParser.DataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReferenceContext[] tail, bool isCOBOL = true) {
         if (head == null)
-            return null;
+            return null; //If head is null -> retrun null, we can't create the QualifiedReference properly.
         var reference = CreateQualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]), isCOBOL);
 		for(int c=1; c<tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[c]), isCOBOL);
 		symbolInformationForTokens[reference.NameLiteral.Token] = reference;

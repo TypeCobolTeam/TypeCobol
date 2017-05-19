@@ -19,8 +19,8 @@ namespace TypeCobol.Compiler.Diagnostics
             ColumnEnd   = Math.Max(columnEnd,   0);
 
             Line = lineNumber;
-
             Message = String.Format(Info.MessageTemplate, messageArgs ?? new object[0]);
+            CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
             MessageArgs = messageArgs;
         }
 
@@ -33,6 +33,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public string Message { get; set; }
         internal object[] MessageArgs { get; set; }
+        public Exception CatchedException { get; private set; }
 
          /// <summary>
         /// Text representation of a token for debugging or test purposes

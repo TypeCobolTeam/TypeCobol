@@ -215,12 +215,12 @@ namespace TypeCobol.Codegen
             //Check if there is any error in diags
             if(compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
-                AnalyticsWrapper.Telemetry.TrackEvent("[CodeGen] Diagnostics Detected");
-                throw new GenerationException("Unable to generate because of error diagnostics", null, null, false);
+                AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Diagnostics Detected");
+                throw new GenerationException("Unable to generate because of error diagnostics", null, null, false, false);
             }
 
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[CodeGen] Generation Started");
+            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Started");
             var program = compilationUnit.ProgramClassDocumentSnapshot.Program;
 
             // STEP 0: Initialize the global values.
@@ -238,7 +238,7 @@ namespace TypeCobol.Codegen
             // STEP 2: convert tree to destination language code
             TreeToCode();
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[CodeGen] Generation Done");
+            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Ended");
         }
 
         /// <summary>

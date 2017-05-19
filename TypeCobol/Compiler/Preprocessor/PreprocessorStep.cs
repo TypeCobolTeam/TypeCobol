@@ -263,7 +263,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             Diagnostic diag = new Diagnostic(
                                 MessageCode.FailedToLoadTextDocumentReferencedByCopyDirective,
                                 failedDirectiveToken.Column, failedDirectiveToken.EndColumn,
-                                failedDirectiveToken.Line, e.Message);
+                                failedDirectiveToken.Line, e.Message, e);
 
                             tokensLineWithCopyDirective.AddDiagnostic(diag);
                         }

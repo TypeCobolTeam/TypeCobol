@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Analytics;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -713,6 +714,7 @@ namespace TypeCobol.Compiler.Scanner
                     if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
                     {
                         // consume two :: chars
+                        AnalyticsWrapper.Telemetry.TrackEvent("[Operator-Used] ::");
                         currentIndex += 2;
                         return new Token(TokenType.QualifiedNameSeparator, startIndex, startIndex + 1, tokensLine);
                     }

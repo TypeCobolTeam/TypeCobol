@@ -83,6 +83,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new RPNName(),
                 new NYName(),
                 new PGMName(),
+                new MixDiagIntoSourceName(),
                 new MemoryName(),
                 new NodeName(),
                 new TokenName(),
@@ -92,6 +93,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new EIRPNName(),
                 new EINYName(),
                 new EIPGMName(),
+                new EIMixDiagIntoSourceName(),
                 new EIMemoryName(),
                 new EINodeName(),
                 new EITokenName(),
@@ -384,6 +386,54 @@ namespace TypeCobol.Test.Compiler.Parser
         }
     }
 
+    /// <summary>
+    /// Create a result file which contains:
+    /// The original source file with all diagnostics inserted at corresponding lines
+    /// </summary>
+    internal class ProgramsComparator2 : FilesComparator
+    {
+        public ProgramsComparator2(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        {
+            var sortedDiags = compilationUnit.AllDiagnostics().OrderBy(d => d.Line).GetEnumerator();
+            
+
+            //Create result file
+            
+            //Read original source file
+            StreamReader sourceReader = new StreamReader(new FileStream(paths.SamplePath , FileMode.Open));
+
+
+            StringBuilder resultBuilder = new StringBuilder();
+            int linePos = 0;
+
+            Diagnostic nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
+            while (!sourceReader.EndOfStream) {
+                string line = sourceReader.ReadLine();
+                linePos++;
+
+
+                while (nextDiag != null && nextDiag.Line <= linePos) {
+                    resultBuilder.Append(nextDiag).Append("\n");
+                    nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
+                }
+                resultBuilder.Append(line).Append("\n");
+            }
+
+            //Print all remaining diags
+            while (nextDiag != null){
+                resultBuilder.Append(nextDiag).Append("\n");
+                nextDiag = sortedDiags.MoveNext() ? sortedDiags.Current : null;
+            }
+
+
+            string result = resultBuilder.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+        }
+    }
+
     internal class NodeComparator : FilesComparator
     {
         public NodeComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
@@ -515,6 +565,22 @@ namespace TypeCobol.Test.Compiler.Parser
         bool IsEI();
     }
 
+    internal abstract class AbstractNames : Names {
+        public abstract string CreateName(string name);
+        public abstract Type GetComparatorType();
+
+        public virtual bool IsEI() {
+            return false;
+        }
+    }
+
+    internal abstract class AbstractEINames : AbstractNames
+    {
+        public override bool IsEI() {
+            return true;
+        }
+    }
+
     #region DefaultNames
     internal class EmptyName : Names
     {
@@ -549,6 +615,11 @@ namespace TypeCobol.Test.Compiler.Parser
         public string CreateName(string name) { return name + "PGM"; }
         public Type GetComparatorType() { return typeof(ProgramsComparator); }
         public bool IsEI() { return false; }
+    }
+    internal class MixDiagIntoSourceName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + "Mix"; }
+        public override Type GetComparatorType() { return typeof(ProgramsComparator2); }
     }
 
     internal class NodeName : Names
@@ -608,6 +679,11 @@ namespace TypeCobol.Test.Compiler.Parser
         public string CreateName(string name) { return name + "PGM-EI"; }
         public Type GetComparatorType() { return typeof(ProgramsComparator); }
         public bool IsEI() { return true; }
+    }
+    internal class EIMixDiagIntoSourceName : AbstractEINames
+    {
+        public override string CreateName(string name) { return name + "Mix-EI"; }
+        public override Type GetComparatorType() { return typeof(ProgramsComparator2); }
     }
 
     internal class EINodeName : Names

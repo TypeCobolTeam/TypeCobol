@@ -166,5 +166,6 @@ namespace TypeCobol.Compiler.CodeElements
 
 
         Program,
+        ParametersProfile,
     }
 }

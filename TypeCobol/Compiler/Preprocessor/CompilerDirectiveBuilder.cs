@@ -157,7 +157,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     var variations = CopyTextNameVariations;
                     if (TypeCobolOptions.AutoRemarksEnable && (variations == null || !variations.Any(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase)))) //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
 				    {
-                        AnalyticsWrapper.Telemetry.TrackEvent("[TypeCobol] Missing copy detected");
+                        AnalyticsWrapper.Telemetry.TrackEvent("[Copy-Missing] " + copy.TextName);
 
                         variations = new List<RemarksDirective.TextNameVariation>
 				        {

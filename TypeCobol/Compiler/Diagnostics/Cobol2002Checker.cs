@@ -9,6 +9,7 @@
     using TypeCobol.Compiler.Parser;
     using TypeCobol.Compiler.Parser.Generated;
     using TypeCobol.Compiler.Nodes;
+    using Analytics;
 
     class TypeDefinitionEntryChecker: CodeElementListener {
 
@@ -76,6 +77,8 @@
     class TypeDefinitionChecker {
 
         public static void CheckTypeDefinition(TypeDefinition typeDefinition) {
+            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name);
+
             if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1) {
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
                 DiagnosticUtils.AddError(typeDefinition.CodeElement, message, MessageCode.SemanticTCErrorInParser);
