@@ -100,10 +100,10 @@ functionDataParameter:
 		| justifiedClause
 		| synchronizedClause
 		| groupUsageClause
-		| occursClause
 		| signClause
 		| usageClause
 		| valueClause
+		//No OccursClause because we only allow Level 01
 		)*;
 
 functionConditionParameter:

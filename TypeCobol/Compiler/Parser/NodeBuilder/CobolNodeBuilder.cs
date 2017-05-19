@@ -524,11 +524,46 @@ namespace TypeCobol.Compiler.Parser
             if (header != null) header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
             var node = new FunctionDeclaration(header);
             node.Label = uidfactory.FromOriginal(header.FunctionName.Name);
-            node.Library = CurrentProgram.Identification.ProgramName.Name;
+            node.Library = CurrentProgram.Identification.ProgramName.Name; //DO NOT change this without checking all references of Library. 
+                                                                           // (SymbolTable - function, type finding could be impacted) 
+
             //Function must be added to Declarations scope
             var declarationSymbolTable = CurrentProgram.CurrentTable.GetTableFromScope(SymbolTable.Scope.Declarations);
             declarationSymbolTable.AddFunction(node);
             Enter(node, context, new SymbolTable(declarationSymbolTable, SymbolTable.Scope.Function));
+
+            var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
+            var funcProfile = ((FunctionDeclaration)CurrentNode).Profile; //Get functionprofile to set parameters
+
+            foreach (var parameter in declaration.Profile.InputParameters) //Set Input Parameters
+            {
+                var paramNode = new ParameterDescription(parameter);
+                paramNode.SymbolTable = CurrentNode.SymbolTable;
+                funcProfile.InputParameters.Add(paramNode);
+                CurrentNode.SymbolTable.AddVariable(paramNode);
+            }
+            foreach (var parameter in declaration.Profile.OutputParameters) //Set Output Parameters
+            {
+                var paramNode = new ParameterDescription(parameter);
+                paramNode.SymbolTable = CurrentNode.SymbolTable;
+                funcProfile.OutputParameters.Add(paramNode);
+                CurrentNode.SymbolTable.AddVariable(paramNode);
+            }
+            foreach (var parameter in declaration.Profile.InoutParameters) //Set Inout Parameters
+            {
+                var paramNode = new ParameterDescription(parameter);
+                paramNode.SymbolTable = CurrentNode.SymbolTable;
+                funcProfile.InoutParameters.Add(paramNode);
+                CurrentNode.SymbolTable.AddVariable(paramNode);
+            }
+
+            if (declaration.Profile.ReturningParameter != null) //Set Returning Parameters
+            {
+                var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
+                paramNode.SymbolTable = CurrentNode.SymbolTable;
+                ((FunctionDeclaration)CurrentNode).Profile.ReturningParameter = paramNode;
+                CurrentNode.SymbolTable.AddVariable(paramNode);
+            }
         }
         public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context)
         {
@@ -538,6 +573,8 @@ namespace TypeCobol.Compiler.Parser
             Exit();
             Exit();// exit DECLARE FUNCTION
         }
+
+       
         /// <summary>Parent node: DECLARE FUNCTION</summary>
         /// <param name="context">PROCEDURE DIVISION</param>
         public override void EnterFunctionProcedureDivision(ProgramClassParser.FunctionProcedureDivisionContext context)
@@ -545,44 +582,7 @@ namespace TypeCobol.Compiler.Parser
             var header = (ProcedureDivisionHeader)context.ProcedureDivisionHeader().Symbol;
             if (header.UsingParameters != null && header.UsingParameters.Count > 0)
                 DiagnosticUtils.AddError(header, "TCRFUN_DECLARATION_NO_USING");//TODO#249
-            var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
-            foreach (var parameter in declaration.Profile.InputParameters)
-            {
-                var paramNode = new ParameterDescription(parameter);
-                paramNode.SymbolTable = CurrentNode.SymbolTable;
-                CurrentNode.SymbolTable.AddVariable(paramNode);
-            }
-            foreach (var parameter in declaration.Profile.OutputParameters)
-            {
-                var paramNode = new ParameterDescription(parameter);
-                paramNode.SymbolTable = CurrentNode.SymbolTable;
-                CurrentNode.SymbolTable.AddVariable(paramNode);
-            }
-            foreach (var parameter in declaration.Profile.InoutParameters)
-            {
-                var paramNode = new ParameterDescription(parameter);
-                paramNode.SymbolTable = CurrentNode.SymbolTable;
-                CurrentNode.SymbolTable.AddVariable(paramNode);
-            }
-            if (declaration.Profile.ReturningParameter != null)
-            {
-                var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
-                paramNode.SymbolTable = CurrentNode.SymbolTable;
-                CurrentNode.SymbolTable.AddVariable(paramNode);
-            }
-            else
-            if (header.ReturningParameter != null)
-            {
-                // we might have a RETURNING parameter to convert, but only if there is neither
-                // PICTURE nor TYPE clause for the returning parameter in the function declaration.
-                // however, this is as syntax error.
-                var pentry = new ParameterDescriptionEntry();
-                var data = header.ReturningParameter.StorageArea as DataOrConditionStorageArea;
-                if (data != null) pentry.DataName = new SymbolDefinition(data.SymbolReference.NameLiteral, data.SymbolReference.Type);
-                // pentry.Picture will remain empty, we can't do anything about it
-                pentry.DataType = DataType.Unknown;
-                declaration.Profile.ReturningParameter = pentry;
-            }
+
             Enter(new ProcedureDivision(header), context);
 
             AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName);

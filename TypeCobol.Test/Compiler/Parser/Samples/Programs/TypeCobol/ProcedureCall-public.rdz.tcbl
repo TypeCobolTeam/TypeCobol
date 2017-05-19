@@ -9,6 +9,19 @@
        01  result         TYPE Bool.
        01  realfakeDate   PIC X(08).
 
+       01  W-DATA-DateLibrary.
+           05  W-Dat                 TYPE date.
+           05  W-Date1               TYPE date.
+           05  W-NbOfDays            PIC S9(06).
+           05  W-typeOfDays          TYPE PublicProcedures::typeOfDays.
+           05  W-WrongTypeOfDays     TYPE typeOfDays.
+           05  W-WrongTypeOfDays2    TYPE absentPgm::typeOfDays.
+           05  W-RtnCode             TYPE returnCode.
+
+       01 ReturnCode TYPEDEF strict global.
+         05 PrmCod pic X(04).
+         05 ScdCod pic X(04).
+
        01 case1 pic X.
        01 case2 pic X.
        01 case3 pic X.
@@ -111,9 +124,33 @@
 
 
 
+
+
       *----------------------
       * Now with Pgm prefix
       *----------------------
+
+      *Ok Test if parameters comparaison is correct
+           CALL PublicProcedures::addDaysToDate INPUT  W-Dat
+                                               W-NbOfDays
+                                               W-TypeOfDays
+                                        OUTPUT W-Date1
+                                               W-RtnCode
+      *KO for parameters type matching 
+      *KO for W-WrongTypeOfDays reference not found
+           CALL PublicProcedures::addDaysToDate INPUT  W-Dat
+                                               W-NbOfDays
+                                               W-WrongTypeOfDays
+                                        OUTPUT W-Date1
+                                               W-RtnCode
+
+      *KO for parameters type matching 
+      *KO for W-WrongTypeOfDays2 reference not found
+           CALL PublicProcedures::addDaysToDate INPUT  W-Dat
+                                               W-NbOfDays
+                                               W-WrongTypeOfDays2
+                                        OUTPUT W-Date1
+                                               W-RtnCode
 
       *OK: match with full signature
            CALL PublicProcedures::case1 INPUT      myDate fakeDate
@@ -189,7 +226,23 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PublicProcedures.
        DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  typeOfDays       TYPEDEF STRICT PUBLIC pic X(01).
        procedure division.
+
+       DECLARE PROCEDURE addDaysToDate PUBLIC
+               INPUT  Dat        TYPE date
+                      NbrOfDays  PIC S9(06)
+               OUTPUT Result     TYPE date
+                      RtnCode    TYPE ReturnCode.
+       END-DECLARE.
+       DECLARE PROCEDURE addDaysToDate PUBLIC
+               INPUT  Dat        TYPE date
+                      NbrOfDays  PIC S9(06)
+                      TypeOfDays TYPE typeOfDays 
+               OUTPUT Result     TYPE date
+                      RtnCode    TYPE ReturnCode.
+       END-DECLARE.
 
        DECLARE PROCEDURE case1 PUBLIC
            INPUT mydate        TYPE Date

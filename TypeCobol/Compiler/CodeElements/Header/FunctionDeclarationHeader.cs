@@ -77,9 +77,9 @@ namespace TypeCobol.Compiler.CodeElements {
 	    DataType ReturningParameter { get; }
     }
 
-    public static class ParameterListHelper {
-        
 
+    public static class ParameterListHelper
+    {
         /// <summary>
         /// Get the signature of the ParameterList as string.
         /// This string is intended to be displayed to the user.
@@ -115,13 +115,14 @@ namespace TypeCobol.Compiler.CodeElements {
         }
     }
 
-    public class ParametersProfile: ParameterList, IVisitable {
+    public class ParametersProfile: CodeElement, ParameterList, IVisitable
+    {
 	    public IList<ParameterDescriptionEntry> InputParameters { get; set; }
 	    public IList<ParameterDescriptionEntry> InoutParameters { get; set; }
 	    public IList<ParameterDescriptionEntry> OutputParameters { get; set; }
 	    public ParameterDescriptionEntry ReturningParameter { get; set; }
 
-	    public ParametersProfile() {
+	    public ParametersProfile() : base(CodeElementType.ParametersProfile) {
 		    InputParameters = new List<ParameterDescriptionEntry>();
 		    InoutParameters = new List<ParameterDescriptionEntry>();
 		    OutputParameters = new List<ParameterDescriptionEntry>();
@@ -174,7 +175,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		    return hash;
 	    }
 
-        public bool AcceptASTVisitor(IASTVisitor astVisitor) {
+        public new bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, InputParameters,
                                                                InoutParameters,
@@ -182,7 +183,8 @@ namespace TypeCobol.Compiler.CodeElements {
                        && this.ContinueVisitToChildren(astVisitor, ReturningParameter);
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
 		    var str = new System.Text.StringBuilder();
 		    str.Append('(');
 		    foreach (var p in InputParameters) str.Append(p.Name).Append(':').Append(p.DataType).Append(", ");
