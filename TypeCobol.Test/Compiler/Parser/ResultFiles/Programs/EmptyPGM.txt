@@ -1,3 +1,1 @@
-﻿--- Diagnostics ---
-Line 0[1,0] <27, Error, Syntax> - Syntax error : no viable alternative at input '<EOF>' RuleStack=cobolCompilationUnit,  OffendingSymbol=[1,0:]<EndOfFile>
-
+﻿

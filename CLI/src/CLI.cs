@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
 using Analytics;
+using System.Linq;
 
 namespace TypeCobol.Server
 {
@@ -226,19 +227,25 @@ namespace TypeCobol.Server
                         throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", path, null, true, false);
 
 
-                    if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
+                    if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
                     {
                         throw new CopyLoadingException("Error: Your Intrisic types/functions are not included into a program.", path, null, true, false);
                     }
 
-			        var symbols = parser.Results.ProgramClassDocumentSnapshot.Program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
-			        table.CopyAllTypes(symbols.Types);
-                    table.CopyAllFunctions(symbols.Functions);
+                    foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
+                    {
+                        var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
 
-                    if (symbols.Types.Count == 0 && symbols.Functions.Count == 0) {
-                        Server.AddError(writer, MessageCode.Warning,  "No types and no procedures/functions found", path);
+                        if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
+                        {
+                            Server.AddError(writer, MessageCode.Warning, "No types and no procedures/functions found", path);
+                            continue;
+                        }
+
+                        //TODO check if types or functions are already there
+                        table.CopyAllTypes(symbols.Types);
+                        table.CopyAllFunctions(symbols.Functions);
                     }
-                    //TODO check if types or functions are already there
                 }
                 catch (CopyLoadingException copyException)
                 {
@@ -289,12 +296,16 @@ namespace TypeCobol.Server
                     if (diagnostics.Count > 0)
                         throw new DepedenciesLoadingException("Diagnostics detected while parsing dependency file", path, null, true, false);
 
-                    if (parser.Results.ProgramClassDocumentSnapshot.Program == null)
+                    if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
                     {
                         throw new DepedenciesLoadingException("Error: Your dependency file is not included into a program", path, null, true, false);
                     }
 
-                    table.AddProgram(parser.Results.ProgramClassDocumentSnapshot.Program); //Add program to Namespace symbol table
+                    foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
+                    {
+                        table.AddProgram(program); //Add program to Namespace symbol table
+                    }
+                   
                 }
                 catch (DepedenciesLoadingException)
                 {

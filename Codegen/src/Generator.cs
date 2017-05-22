@@ -57,9 +57,9 @@ namespace TypeCobol.Codegen
         }
 
         /// <summary>
-        /// The Generator Current Root Node
+        /// The Generator Current SourceFile Node
         /// </summary>
-        public Root RootNode
+        public SourceFile RootNode
         {
             get;
             private set;
@@ -219,13 +219,11 @@ namespace TypeCobol.Codegen
                 throw new GenerationException("Unable to generate because of error diagnostics", null, null, false, false);
             }
 
-
             AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Started");
-            var program = compilationUnit.ProgramClassDocumentSnapshot.Program;
-
+           
             // STEP 0: Initialize the global values.
-            RootNode = program.SyntaxTree.Root;
-            SymTable = program.SymbolTable;
+            RootNode = compilationUnit.ProgramClassDocumentSnapshot.Root;
+            SymTable = compilationUnit.ProgramClassDocumentSnapshot.Root.SymbolTable;
             Layout = columns;
             //Create the Initial target document.
             CreateTargetDocument();
@@ -237,7 +235,7 @@ namespace TypeCobol.Codegen
             Actions.Perform(RootNode);
             // STEP 2: convert tree to destination language code
             TreeToCode();
-
+      
             AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Ended");
         }
 

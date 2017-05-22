@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
 
@@ -13,13 +14,12 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     public class ProgramClassDocument
     {
-        public ProgramClassDocument(CodeElementsDocument previousStepSnapshot, int programClassVersion, Program program, Class classObj, IList<ParserDiagnostic> diagnostics)
+        public ProgramClassDocument(CodeElementsDocument previousStepSnapshot, int programClassVersion, SourceFile root, IList<ParserDiagnostic> diagnostics)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;
             CurrentVersion = programClassVersion;
-            Program = program;
-            Class = classObj;
+            Root = root;
             Diagnostics = diagnostics;
         }
 
@@ -38,17 +38,8 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         public int CurrentVersion { get; private set; }
 
-        /// <summary>
-        /// Object model of a Cobol program built after parsing the code elements.
-        /// Only one of the two properties Program or Class can be not null.
-        /// </summary> 
-        public Program Program { get; private set; }
+        public SourceFile Root { get; private set; }
 
-        /// <summary>
-        /// Object model of a Cobol class built after parsing the code elements.
-        /// Only one of the two properties Program or Class can be not null.
-        /// </summary> 
-        public Class Class { get; private set; }
 
         /// <summary>
         /// Errors found while parsing Program or Class

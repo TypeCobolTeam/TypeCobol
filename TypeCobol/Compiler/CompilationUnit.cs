@@ -5,6 +5,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
@@ -143,16 +144,15 @@ namespace TypeCobol.Compiler
                     PerfStatsForProgramClassParser.OnStartRefresh();
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
-                    Program newProgram;
-                    Class newClass;
+                    SourceFile root;
                     IList<ParserDiagnostic> newDiagnostics;
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, out newProgram, out newClass, out newDiagnostics);
+                    ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, out root, out newDiagnostics);
 
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
                         codeElementsDocument, ProgramClassDocumentSnapshot == null ? 0 : ProgramClassDocumentSnapshot.CurrentVersion +1,
-                        newProgram, newClass, newDiagnostics);
+                        root, newDiagnostics);
                     snapshotWasUpdated = true;
 
                     // Stop perf measurement

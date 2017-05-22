@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -19,7 +20,7 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     static class ProgramClassParserStep
     {
-        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, out Program newProgram, out Class newClass, out IList<ParserDiagnostic> diagnostics)
+        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, out SourceFile root, out IList<ParserDiagnostic> diagnostics)
         {
             // Create an Antlr compatible token source on top a the token iterator
             CodeElementsLinesTokenSource tokenSource = new CodeElementsLinesTokenSource(
@@ -43,6 +44,7 @@ namespace TypeCobol.Compiler.Parser
             // Visit the parse tree to build a first class object representing a Cobol program or class
             ParseTreeWalker walker = new ParseTreeWalker();
             CobolNodeBuilder programClassBuilder = new CobolNodeBuilder();
+            programClassBuilder.SyntaxTree = new SyntaxTree(); //Initializie SyntaxTree for the current source file
 			programClassBuilder.CustomSymbols = customSymbols;
             programClassBuilder.Dispatcher = new NodeDispatcher();
             programClassBuilder.Dispatcher.CreateListeners();
@@ -56,14 +58,13 @@ namespace TypeCobol.Compiler.Parser
             }
 
             //Complete some information on Node and run checker that need a full AST
-            if (programClassBuilder.Program != null) {
-                programClassBuilder.Program.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
-            }
-
+            programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
+              
+           
             // Register compiler results
-            newProgram = programClassBuilder.Program;
-            newClass = programClassBuilder.Class;
+            root = programClassBuilder.SyntaxTree.Root; //Set output root node
             diagnostics = programClassBuilder.GetDiagnostics(programClassParseTree);
+
             if(programClassBuilderError != null)
             {
                 if (diagnostics == null) diagnostics = new List<ParserDiagnostic>();

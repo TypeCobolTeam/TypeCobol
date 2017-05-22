@@ -9,6 +9,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 
@@ -375,12 +376,12 @@ namespace TypeCobol.Test.Compiler.Parser
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             
-            Compare(pcd.Program, pcd.Class, diagnostics, reader);
+            Compare(pcd.Root.Programs, pcd.Root.Clasees, diagnostics, reader);
         }
 
-        internal void Compare(Program program, Class cls, IList<Diagnostic> diagnostics, StreamReader expected)
+        internal void Compare(IEnumerable<Program> programs, IEnumerable<TypeCobol.Compiler.Nodes.Class> classes, IList<Diagnostic> diagnostics, StreamReader expected)
         {
-            string result = ParserUtils.DumpResult(program, cls, diagnostics);
+            string result = ParserUtils.DumpResult(programs, classes, diagnostics);
             if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
         }
@@ -446,9 +447,9 @@ namespace TypeCobol.Test.Compiler.Parser
             foreach (var diagnostic in diagnostics) {
                 sb.AppendLine(diagnostic.ToString());
             }
-
+           
             sb.AppendLine("--- Nodes ---");
-            sb.Append(pcd.Program.SyntaxTree);
+            sb.Append(pcd.Root);
 
             string result = sb.ToString();
             if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
@@ -491,25 +492,34 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public override void Compare(CompilationUnit result, StreamReader reader) {
 			ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
-			Compare(pcd.Program.SymbolTable, reader);
+            var symbolTables = new List<SymbolTable>();
+            symbolTables.Add(pcd.Root.SymbolTable);
+
+			Compare(symbolTables, reader);
 		}
 
-		internal void Compare(SymbolTable table, StreamReader expected) {
-			string result = Dump(table);
+		internal void Compare(List<SymbolTable> tables, StreamReader expected) {
+			string result = Dump(tables);
 			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
 			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
 		}
 
-		private string Dump(SymbolTable table) {
+		private string Dump(List<SymbolTable> tables) {
 			var str = new StringBuilder();
 			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
-			foreach(var line in table.DataEntries) {
-				foreach(var data in line.Value) {
-//TODO#249 print memory representation
-//					if (data is DataDefinition && ((DataDefinition)data).CodeElement().LevelNumber.Value == 1)
-//					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
-				}
-			}
+            foreach (var table in tables)
+            {
+                foreach (var line in table.DataEntries)
+                {
+                    foreach (var data in line.Value)
+                    {
+                        //TODO#249 print memory representation
+                        //					if (data is DataDefinition && ((DataDefinition)data).CodeElement().LevelNumber.Value == 1)
+                        //					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
+                    }
+                }
+            }
+			
 			return str.ToString();
 		}
 		private void Dump(StringBuilder str, object data, int indent, string indexes = "", int baseaddress = 1) {
@@ -538,7 +548,7 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 		private void BeginFirstColumn(StringBuilder str, int indent, long level, string name) {
 			for(int i=0; i<indent; i++) str.Append("  ");
-			if (level > 1) str.Append(String.Format("{0,2} ", level));
+			if (level > 1) str.Append(System.String.Format("{0,2} ", level));
 			str.Append(name);
 		}
 		private void EndFirstColumn(StringBuilder str, string strprefix, int index, int max) {
@@ -548,9 +558,9 @@ namespace TypeCobol.Test.Compiler.Parser
 			while(str.Length < 36) str.Append(' ');
 		}
 		private void EndLine(StringBuilder str, int offset, int size, int baseaddress = 1) {
-			str.Append(String.Format(" {0,6:0} ", baseaddress + offset));//start
-			str.Append(String.Format(" {0,6:0} ", offset + size));//end
-			str.Append(String.Format(" {0,6:0} ", size));//length
+			str.Append(System.String.Format(" {0,6:0} ", baseaddress + offset));//start
+			str.Append(System.String.Format(" {0,6:0} ", offset + size));//end
+			str.Append(System.String.Format(" {0,6:0} ", size));//length
 		}
 		private string CreateIndexes(string prefix, int index) {
 			return prefix + (index >= 0?((prefix.Length > 0?",":"")+(index+1)):"");

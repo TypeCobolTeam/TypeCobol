@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -204,9 +205,9 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
-        ///     How far removed from Root is this Node?
-        ///     Values are 0 if Root is this, 1 of Root is this.Parent,
-        ///     2 if Root is this.Parent.Parent, and so on.
+        ///     How far removed from SourceFile is this Node?
+        ///     Values are 0 if SourceFile is this, 1 of SourceFile is this.Parent,
+        ///     2 if SourceFile is this.Parent.Parent, and so on.
         /// </summary>
         public int Generation {
             get {
@@ -547,9 +548,9 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
 
-    /// <summary>Root of any Node tree, with null CodeElement.</summary>
-    public class Root : Node, CodeElementHolder<CodeElement> {
-        public Root() : base(null)
+    /// <summary>SourceFile of any Node tree, with null CodeElement.</summary>
+    public class SourceFile : Node, CodeElementHolder<CodeElement> {
+        public SourceFile() : base(null)
         {
             GeneratedCobolHashes = new Dictionary<string, string>();
         }
@@ -562,6 +563,33 @@ namespace TypeCobol.Compiler.Nodes {
         /// Dictionary of hashes and signatures for the different function and procedure. Allows to avoid duplicates. 
         /// </summary>
         public Dictionary<string, string> GeneratedCobolHashes { get; set; }
+
+
+        public IEnumerable<Program> Programs {
+            get
+            {
+                return this.children.Where(c => c is Program && !((Program)c).IsNested).Select(c => c as Program);
+            }
+        }
+
+        public IEnumerable<Class> Clasees
+        {
+            get
+            {
+                return this.children.Where(c => c is Class).Select(c => c as Class);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
 
     public class LibraryCopy : Node, CodeElementHolder<LibraryCopyCodeElement>, Child<Program> {
