@@ -17,71 +17,61 @@ namespace CLI.Test
             //Check that the actual "output" folder (the one created by the CLI) match the content of the expected "output" folder
             //the one on Git.
             //The number of files and the content of the files must be identical
-            CLITestHelper.Test("parse_1");
+            CLITestHelper.Test("parse_1", ReturnCode.Success);
         }
 
         [TestMethod]
         public void TestExecToStep_1() {
-            CLITestHelper.Test("execToStep_1");
+            CLITestHelper.Test("execToStep_1", ReturnCode.Success);
         }
 
         [TestMethod]
         public void TestEmptyFile_1()
         {
             #if DEBUG
-                CLITestHelper.Test("emptyFile_1_debug");
+                CLITestHelper.Test("emptyFile_1_debug", ReturnCode.FatalError);
             #else
-                CLITestHelper.Test("emptyFile_1_release");
+                CLITestHelper.Test("emptyFile_1_release", ReturnCode.FatalError);
             #endif
         }
 
         [TestMethod]
         public void TestGenerate_1() {
-            CLITestHelper.Test("generate_1");
+            CLITestHelper.Test("generate_1", ReturnCode.Success);
         }
 
         [TestMethod]
-       
         public void TestDependencies() {
-            CLITestHelper.Test("dependencies_1");
-            CLITestHelper.Test("dependencies_2");
-            CLITestHelper.Test("dependencies_3");
+            CLITestHelper.Test("dependencies_1", ReturnCode.Success);
+            CLITestHelper.Test("dependencies_2", ReturnCode.Success);
+            CLITestHelper.Test("dependencies_3", ReturnCode.ParsingError);
         }
 
         [TestMethod]
-        public void TestHaltOnMissingCopy_1()
-        {
-            CLITestHelper.Test("haltOnMissingCopy_1");
+        public void TestHaltOnMissingCopy_1() {
+            CLITestHelper.Test("haltOnMissingCopy_1", ReturnCode.ParsingError);
         }
 
         [TestMethod]
-        public void TestReturnCode()
-        {
-            if(CLITestHelper.Test("return_code_0") != ReturnCode.Success)
-                throw new Exception("Wrong return code detected 'return_code_0'");
-
-            if (CLITestHelper.Test("return_code_1") != ReturnCode.FatalError)
-                throw new Exception("Wrong return code detected 'return_code_1'"); 
-
-            if (CLITestHelper.Test("return_code_2") != ReturnCode.OutputFileError)
-                throw new Exception("Wrong return code detected 'return_code_2'");
-
-            if (CLITestHelper.Test("return_code_3") != ReturnCode.ParsingError)
-                throw new Exception("Wrong return code detected 'return_code_3'");
+        public void TestReturnCode() {
+            CLITestHelper.Test("return_code_0", ReturnCode.Success);
+            CLITestHelper.Test("return_code_1", ReturnCode.FatalError);
+            CLITestHelper.Test("return_code_2", ReturnCode.OutputFileError);
+            CLITestHelper.Test("return_code_3", ReturnCode.ParsingError);
         }
 
     }
 
     class CLITestHelper {
 
-        internal static ReturnCode Test(string testFolderName)
+        internal static ReturnCode Test(string testFolderName, ReturnCode expectedReturnCode)
         {
             var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
             string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
-            return Test(workingDirectory, arguments);
+            return Test(workingDirectory, arguments, expectedReturnCode);
         }
 
-        internal static ReturnCode Test(string workingDirectory, string arguments)
+        internal static ReturnCode Test(string workingDirectory, string arguments, ReturnCode expectedReturnCode)
         {
             //
             //Create output folder because CLI will not create it
@@ -121,15 +111,19 @@ namespace CLI.Test
                 throw new Exception("directory not equals");
             }
 
-            return (ReturnCode)process.ExitCode;
+            var returnCode = (ReturnCode)process.ExitCode;
+            if (expectedReturnCode != returnCode)
+                throw new Exception(string.Format("Wrong return code detected: {0} instead of {1}", returnCode, expectedReturnCode));
+
+            return returnCode;
         }
 
         internal static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir)
         {
-            bool dirIdentical = true;
-
-            if (!targetDir.Exists)
-                return dirIdentical; //If the output_expected does not exist it means that the test doesn't have any expected output. 
+            if (!targetDir.Exists) {
+                Console.WriteLine("No Output folders comparison");
+                return true; //If the output_expected does not exist it means that the test doesn't have any expected output. 
+            }
 
             // Take a snapshot of the file system.  
             var targetFiles = targetDir.GetFiles("*.*", System.IO.SearchOption.AllDirectories).ToList();
@@ -162,17 +156,19 @@ namespace CLI.Test
             if (commonTargetFiles.Count != commonActualFiles.Count) {
                 throw new InvalidOperationException();
             }
+
+            bool dirIdentical = true;
             for (int i = 0; i < commonTargetFiles.Count; i++) {
                 var targetFileContent = File.ReadAllLines(commonTargetFiles[i].FullName);
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!targetFileContent.SequenceEqual(actualFileContent)) {
                     Console.WriteLine("File not equals: " + commonTargetFiles[i]);
-                    Console.WriteLine("Actual file content:\n_________________");
+                    Console.WriteLine("___Actual file content___:\n");
                     foreach (var actual in actualFileContent) {
                         Console.WriteLine(actual);
                     }
-                    Console.WriteLine("________________");
-                    Console.WriteLine("Expected file content:\n_________________");
+                    Console.WriteLine("\n________________\n");
+                    Console.WriteLine("___Expected file content___:\n");
                     foreach (var expected in targetFileContent) {
                         Console.WriteLine(expected);
                     }
