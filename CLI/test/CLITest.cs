@@ -26,6 +26,12 @@ namespace CLI.Test
         }
 
         [TestMethod]
+        public void TestEmptyFile_1()
+        {
+            CLITestHelper.Test("emptyFile_1");
+        }
+
+        [TestMethod]
         public void TestGenerate_1() {
             CLITestHelper.Test("generate_1");
         }

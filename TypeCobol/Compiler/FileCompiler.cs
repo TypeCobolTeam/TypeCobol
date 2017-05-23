@@ -144,8 +144,13 @@ namespace TypeCobol.Compiler
                 TextDocument = textDocument;
             }
 
-			// 3. Prepare the data structures used by the different steps of the compiler
-			if (isCopyFile) {
+            if (TextDocument != null && TextDocument.LineCount == 0)
+            {
+                throw new Exception(string.Format("Source file {0} is empty", fileName));
+            }
+
+            // 3. Prepare the data structures used by the different steps of the compiler
+            if (isCopyFile) {
 				CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
 				CompilationResultsForCopy.CustomSymbols = customSymbols;
 			} else {
