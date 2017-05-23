@@ -245,7 +245,7 @@ namespace TypeCobol.Compiler.Preprocessor
                                     copyDirective.TextName,
                                     tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken], copyTextNameVariations);
 
-                            // Store it on the current line after appying the REPLACING directive
+                            // Store it on the current line after applying the REPLACING directive
                             ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
                                 importedDocumentSource);
                             tokensLineWithCopyDirective.ImportedDocuments[copyDirective] = importedDocument;

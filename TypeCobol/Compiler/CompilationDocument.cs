@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
@@ -654,5 +655,26 @@ namespace TypeCobol.Compiler
             }
         }
         #endregion
+
+
+        /// <summary>
+        /// Return all diagnostics from all snaphost
+        /// </summary>
+        /// <returns></returns>
+        public virtual IList<Diagnostic> AllDiagnostics()
+        {
+            var allDiagnostics = new List<Diagnostic>();
+
+            if (TokensDocumentSnapshot != null)
+            {
+                allDiagnostics.AddRange(TokensDocumentSnapshot.AllDiagnostics);
+            }
+            if (ProcessedTokensDocumentSnapshot != null && ProcessedTokensDocumentSnapshot.AllDiagnostics != null)
+            {
+                allDiagnostics.AddRange(ProcessedTokensDocumentSnapshot.AllDiagnostics);
+            }
+
+            return allDiagnostics;
+        }
     }
 }

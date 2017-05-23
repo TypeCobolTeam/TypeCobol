@@ -175,8 +175,14 @@ namespace TypeCobol.Compiler
         /// </summary> 
         public ProgramClassDocument ProgramClassDocumentSnapshot { get; private set; }
 
-        public IList<Diagnostic> AllDiagnostics() {
-            var allDiagnostics = new List<Diagnostic>();
+
+        /// <summary>
+        /// Return all diagnostics from all snaphost
+        /// </summary>
+        /// <returns></returns>
+        public override IList<Diagnostic> AllDiagnostics() {
+            var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
+
             if (CodeElementsDocumentSnapshot != null && CodeElementsDocumentSnapshot.ParserDiagnostics != null) {
                 allDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
             }

@@ -1,5 +1,3 @@
-﻿1 error in "input\MissingCopy.rdz.tcbl":
-Line 1[0,0] <27, Error, Syntax> - File "input\MissingCopy.rdz.tcbl" has syntactic error(s) preventing codegen (CodeElements).
-   at TypeCobol.Server.CLI.runOnce2(Config config, AbstractErrorWriter errorWriter)
-   at TypeCobol.Server.CLI.runOnce(Config config)
-
+﻿2 errors in "input\MissingCopy.rdz.tcbl":
+Line 8[23,38] <28, Error, Directives> - Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named YPRTD20L in 
+Line 9[23,38] <28, Error, Directives> - Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named YCONVEAL in 
