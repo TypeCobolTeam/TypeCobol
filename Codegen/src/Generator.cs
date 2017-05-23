@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Codegen
 {
@@ -87,6 +88,12 @@ namespace TypeCobol.Codegen
         /// Lines of Erased Nodes.
         /// </summary>
         public List<Node> ErasedNodes
+        {
+            get;
+            private set;
+        }
+
+        public List<Diagnostic> Diagnostics
         {
             get;
             private set;
@@ -279,6 +286,17 @@ namespace TypeCobol.Codegen
                 foreach (var child in node.Children)
                     child.Accept(this);
             }
+        }
+
+        /// <summary>
+        /// Add an error diagnostic.
+        /// </summary>
+        /// <param name="diag"></param>
+        public void AddDiagnostic(Diagnostic diag) 
+        {
+            if(Diagnostics == null)
+                Diagnostics = new List<Diagnostic> ();
+            Diagnostics.Add(diag);
         }
 
         /// <summary>

@@ -180,6 +180,10 @@ namespace TypeCobol.Server
                     try
                     {
                         codegen.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat); //TODO : Add exception management for code generation
+                        if (codegen.Diagnostics != null)
+                        {
+                            errorWriter.AddErrors(path, codegen.Diagnostics); //Write diags into error file
+                        }
                     }
                     catch (Exception e)
                     {

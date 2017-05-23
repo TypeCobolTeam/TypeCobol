@@ -8,6 +8,7 @@ using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -16,6 +17,13 @@ namespace TypeCobol.Codegen.Generators
     /// </summary>
     public class DefaultGenerator : Generator
     {
+        const int MAX_COBOL_LINE_LENGTH = 80;
+        const int LEGAL_COBOL_LINE_LENGTH = 72;
+        /// <summary>
+        /// Flag to indicate that the buffer has alreday been in line overflow states.
+        /// </summary>
+        const int ALREADY_LINE_OVERFLOW = 0x01 << 0;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -53,7 +61,7 @@ namespace TypeCobol.Codegen.Generators
         /// <returns>The Generated Source Document</returns>
         /// </summary>
         private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
-        {
+        {            
             SourceText targetSourceText = new GapSourceText();
             //Stack Used to save current generation buffer when switching in a function declaration generation.
             //Beacuse a function declartion has its own buffer.
@@ -73,7 +81,7 @@ namespace TypeCobol.Codegen.Generators
                     if (previousBuffer != null)
                     {
                         if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
-                            targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                            AppendBufferContent(targetSourceText, previousBuffer);
                         previousBuffer = null;
                     }
                     string text = Input[i].Text;
@@ -97,7 +105,7 @@ namespace TypeCobol.Codegen.Generators
                 if (previousBuffer != null && mapper.CommentedLines[i])
                 {
                     if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
-                        targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                        AppendBufferContent(targetSourceText, previousBuffer);
                     previousBuffer = null;
                 }
                 for (int j = i; mapper.CommentedLines[j]; j++)
@@ -132,7 +140,7 @@ namespace TypeCobol.Codegen.Generators
                     if (curSourceText != previousBuffer && previousBuffer != null)
                     {//Flush previous buffer
                         if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
-                            targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                            AppendBufferContent(targetSourceText, previousBuffer);
                         previousBuffer = null;
                     }
                     Node node = mapper.Nodes[node_index].node;
@@ -162,9 +170,9 @@ namespace TypeCobol.Codegen.Generators
                         Position to = mapper.Nodes[node_index].To;
                         bool bIsGenerateAndReplace = node is GeneratedAndReplace;
                         if (bIsGenerateAndReplace)
-                        {//The node has a source code that must be replace
+                        {//The node has a source code that must be replaced
                             string code = (node as GeneratedAndReplace).ReplaceCode;
-                            curSourceText.Insert(code, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                            GenerateIntoBufferCheckLineExceed(from, to, curSourceText, code, i + 1);
                         }
                         else foreach (var line in NodeLines(node, generated_node))
                         {
@@ -235,7 +243,7 @@ namespace TypeCobol.Codegen.Generators
                         if (previousBuffer != null)
                         {
                             if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
-                                targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                                AppendBufferContent(targetSourceText, previousBuffer);
                             previousBuffer = null;
                         }
                         targetSourceText = stackOuterBuffer.Pop();
@@ -253,7 +261,7 @@ namespace TypeCobol.Codegen.Generators
             if (previousBuffer != null)
             {
                 if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
-                    targetSourceText.Insert(previousBuffer, targetSourceText.Size, targetSourceText.Size);
+                    AppendBufferContent(targetSourceText, previousBuffer);
                 previousBuffer = null;
             }
             //--------------------------------------------------------------------------------------------------------------
@@ -261,9 +269,68 @@ namespace TypeCobol.Codegen.Generators
             foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
             {
                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                targetSourceText.Insert(funData.FunctionDeclBuffer, targetSourceText.Size, targetSourceText.Size);
+                AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
             }            
             return targetSourceText;
+        }
+
+        /// <summary>
+        /// Append a source buffer at the end of a target buffer
+        /// </summary>
+        /// <param name="dstBuffer"></param>
+        /// <param name="srcBuffer"></param>
+        private static void AppendBufferContent(SourceText dstBuffer, SourceText srcBuffer)
+        {
+            int pos = dstBuffer.Size;
+            dstBuffer.Insert(srcBuffer, pos, pos);
+        }
+
+        /// <summary>
+        /// Insert a code in a buffer at given position, and check if line exceed int Cobol ReferenceFormat
+        /// </summary>
+        /// <param name="from">The from position int the buffer</param>
+        /// <param name="to">The to position in the buffer</param>
+        /// <param name="buffer">The target buffer</param>
+        /// <param name="code">The code to insert</param>
+        /// <param name="lineNumber">The current lien number</param>
+        private void GenerateIntoBufferCheckLineExceed(Position from, Position to, SourceText buffer, string code, int lineNumber)
+        {
+            int lineLen = -1;
+            int lineStartOffset = -1;
+            int lineEndOffset = -1;
+            bool has73Chars = false;
+            int start = Math.Min(from.Pos, buffer.Size);
+            int end = Math.Min(to.Pos, buffer.Size);
+            if (Layout == ColumnsLayout.CobolReferenceFormat && !buffer.IsFlagSet(ALREADY_LINE_OVERFLOW))
+            {
+                lineLen = buffer.GetLineInfo(start, out lineStartOffset, out lineEndOffset);
+                if (lineLen > LEGAL_COBOL_LINE_LENGTH)
+                {
+                    for (int k = LEGAL_COBOL_LINE_LENGTH; k < lineLen & !has73Chars; k++)
+                        has73Chars = !Char.IsWhiteSpace(buffer[lineStartOffset + k]);
+                }
+            }
+            buffer.Insert(code, start, end);
+            if (Layout == ColumnsLayout.CobolReferenceFormat && !buffer.IsFlagSet(ALREADY_LINE_OVERFLOW))
+            {
+                int delta = -(end - start) + code.Length;
+                int newLineLen = lineLen + delta;
+                bool newHas73Chars = false;
+                if (newLineLen > LEGAL_COBOL_LINE_LENGTH)
+                {
+                    for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++)
+                        newHas73Chars = !Char.IsWhiteSpace(buffer[lineStartOffset + k]);
+                    //Error
+                    //Emit an error.
+                    if ((newLineLen > MAX_COBOL_LINE_LENGTH) || !has73Chars && newHas73Chars)
+                    {
+                        //GenerationErrorLineExceed
+                        Diagnostic diag = new Diagnostic(MessageCode.GenerationErrorLineExceed, 0, 0, lineNumber);
+                        AddDiagnostic(diag);
+                        buffer.SetCustomFlag(ALREADY_LINE_OVERFLOW, true);
+                    }
+                }
+            }
         }
 
         /// <summary>

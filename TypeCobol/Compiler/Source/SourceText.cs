@@ -114,6 +114,40 @@ namespace TypeCobol.Compiler.Source
             get;
             set;
         }
+
+        /// <summary>
+        /// Allow to associate a Custom Flag to this buffer?
+        /// </summary>
+        public uint CustomFlags
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Set the Value of a Custom flag.
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="value"></param>
+        /// 
+        public void SetCustomFlag(uint flag, bool value)
+        {
+            if (value)
+                CustomFlags |= flag;
+            else
+                CustomFlags &= ~flag;
+        }
+
+        /// <summary>
+        /// Check if a given flag is set.
+        /// </summary>
+        /// <param name="flag">The glag to check</param>
+        /// <returns>true if yes, false otherwise.</returns>
+        public bool IsFlagSet(int flag)
+        {
+            return (CustomFlags & flag) != 0;
+        }
+
         /// <summary>
         /// Empty constructor
         /// </summary>
@@ -363,6 +397,105 @@ namespace TypeCobol.Compiler.Source
 	            break; 
             }
             end= Math.Min(Size, i+1);
+        }
+
+        /// <summary>
+        /// Get the boundaries of a line  at a given position, in fact the boudaries of the line
+        /// that contains the given position.
+        /// </summary>
+        /// <param name="at">The line's position to be gotten the boundaries</param>
+        /// <param name="start">Output of teh start offset of teh boundarry</param>
+        /// <param name="end">Output the end offset of the boundary</param>
+        /// <exception cref="InvalidPositionException">thrown if the at argument is invalid</exception>
+        public void GetLineBoundaries(int at, out int start, out int end)
+        {
+            int i, ch;
+
+            if (!CheckRange(Size, at, at))
+            {
+                throw new InvalidPositionException("GetParagraphBoundaries", at, 0);
+            }
+
+            for (i = at - 1; i >= 0; i--)
+            {
+                ch = this[i];
+                if (ch == '\n')
+                    break;
+            }
+            start = i + 1;
+            for (i = at; i < Size; i++)
+            {
+                ch = this[i];
+                if (ch == '\n')
+                    break;
+            }
+            end = Math.Min(Size, i + 1);
+        }
+
+        /// <summary>
+        /// Compute the position of all lines from a start position to an end position.
+        /// </summary>
+        /// <param name="start">The start position</param>
+        /// <param name="end">The end position</param>
+        /// <returns>An array of dimension [n,2] where n is the count of line encountered,
+        /// [i,0] will be teh start postion of line i, and [i,1] will be the end position of line i.</returns>
+        public int[,] ComputeLinePositions(int start, int end)
+        {
+            List<int> lineStart = new List<int>();
+            List<int> lineEnd = new List<int>();
+            do
+            {
+                int bstart, bend;
+                GetLineBoundaries(start, out bstart, out bend);
+                lineStart.Add(bstart);
+                lineEnd.Add(bend);
+                start = bend;
+            } while (start < end);
+            int n = lineStart.Count;
+            int[,] positions = new int[n, 2];
+            for (int i = 0; i < n; i++)
+            {
+                positions[i, 0] = lineStart[i];
+                positions[i, 1] = lineEnd[i];
+            }
+            return positions;
+        }
+
+        /// <summary>
+        /// Get the line infiormation of a length that contains a given position, the length does not take in account any \r or \n  characters.
+        /// </summary>
+        /// <param name="at">The Position to get the line of the length which conatins it.</param>
+        /// <param name="start">Output of teh start offset of the line</param>
+        /// <param name="end">Output the end offset of the line</param>
+        /// <returns>The line length, the length does not take in account any \r or \n  characters</returns>
+        public int GetLineInfo(int at, out int start, out int end)
+        {
+            int i, ch;
+
+            if (!CheckRange(Size, at, at))
+            {
+                throw new InvalidPositionException("GetLineInfo", at, 0);
+            }
+
+            for (i = at - 1; i >= 0; i--)
+            {
+                ch = this[i];
+                if (ch == '\n')
+                    break;
+            }
+            bool bHasCr = false;
+            start = i + 1;
+            for (i = at; i < Size; i++)
+            {
+                ch = this[i];
+                if (ch == '\r')
+                    bHasCr = true;
+                if (ch == '\n')
+                    break;
+            }
+            end = Math.Min(Size, i + 1);
+            int len = (i - start) - (bHasCr ? 1 : 0);
+            return len;
         }
 
         /// <summary>

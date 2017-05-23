@@ -39,6 +39,8 @@ namespace TypeCobol.Codegen {
             var codegen = new Generators.DefaultGenerator(document.Results, writer, skeletons);
             try {
                 codegen.Generate(document.Results, columns);
+                if (codegen.Diagnostics != null)
+                    WriteErrors(writer, codegen.Diagnostics, columns);
             } finally {
                 // flush
                 writer.Close();
