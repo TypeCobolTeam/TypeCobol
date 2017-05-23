@@ -44,12 +44,12 @@ namespace CLI.Test
         public void TestDependencies() {
             CLITestHelper.Test("dependencies_1", ReturnCode.Success);
             CLITestHelper.Test("dependencies_2", ReturnCode.Success);
-            CLITestHelper.Test("dependencies_3", ReturnCode.ParsingError);
+            CLITestHelper.Test("dependencies_3", ReturnCode.ParsingDiagnostics);
         }
 
         [TestMethod]
         public void TestHaltOnMissingCopy_1() {
-            CLITestHelper.Test("haltOnMissingCopy_1", ReturnCode.ParsingError);
+            CLITestHelper.Test("haltOnMissingCopy_1", ReturnCode.MissingCopy);
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace CLI.Test
             CLITestHelper.Test("return_code_0", ReturnCode.Success);
             CLITestHelper.Test("return_code_1", ReturnCode.FatalError);
             CLITestHelper.Test("return_code_2", ReturnCode.OutputFileError);
-            CLITestHelper.Test("return_code_3", ReturnCode.ParsingError);
+            CLITestHelper.Test("return_code_3", ReturnCode.ParsingDiagnostics);
         }
 
     }

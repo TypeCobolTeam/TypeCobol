@@ -48,7 +48,7 @@ namespace TypeCobol.CustomExceptions
         }
 
 
-        public TypeCobolException(MessageCode messageCode, string message, string path, Exception innerException = null, bool logged = true, bool needMail = true, int columnStartIndex = 0, int columnEndIndex = 0, int lineNumber = 1) : base (message, innerException)
+        protected TypeCobolException(MessageCode messageCode, string message, string path, Exception innerException = null, bool logged = true, bool needMail = true, int columnStartIndex = 0, int columnEndIndex = 0, int lineNumber = 1) : base (message, innerException)
         {
             MessageCode = messageCode;
             //Message is set by the base constructor of Exception. 

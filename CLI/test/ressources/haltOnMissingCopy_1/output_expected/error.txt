@@ -1,3 +1,3 @@
 ﻿2 errors in "input\MissingCopy.rdz.tcbl":
-Line 8[23,38] <28, Error, Directives> - Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named YPRTD20L in 
-Line 9[23,38] <28, Error, Directives> - Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named YCONVEAL in 
+Line 8[23,38] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YPRTD20L
+Line 9[23,38] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: YCONVEAL

@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
 using Analytics;
+using TypeCobol.CLI.CustomExceptions;
 using System.Linq;
 
 namespace TypeCobol.Server
@@ -64,10 +65,14 @@ namespace TypeCobol.Server
                 }
                
 
+                if (typeCobolException is PresenceOfDiagnostics)
+                    return ReturnCode.ParsingDiagnostics;
                 if (typeCobolException is ParsingException)
-                    return ReturnCode.ParsingError;
+                    return ReturnCode.FatalError;
                 if (typeCobolException is GenerationException)
                     return ReturnCode.GenerationError;
+                if (typeCobolException is MissingCopyException)
+                    return ReturnCode.MissingCopy;
 
                 return ReturnCode.FatalError; //Just in case..
             }
@@ -132,12 +137,15 @@ namespace TypeCobol.Server
 
                 parser.Parse(path);
 
+
+                bool copyAreMissing = false;
                 if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
                 {
                     if (parser.MissingCopys.Count > 0)
                     {
                         //Write in the specified file all the absent copys detected
                         File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
+                        copyAreMissing = true;
                     }
                     else
                     {
@@ -158,11 +166,18 @@ namespace TypeCobol.Server
                             AnalyticsWrapper.Telemetry.TrackException(diag.CatchedException);
                             AnalyticsWrapper.Telemetry.SendMail(diag.CatchedException, config.InputFiles, config.CopyFolders, config.CommandLine);
                         }
-
                     }
 
                     AnalyticsWrapper.Telemetry.TrackEvent("[Diagnostics] Detected");
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "Diagnostics Detected", null, null, false, false); //Make ParsingException trace back to RunOnce()
+                    //Exception is thrown just below
+                    }
+
+
+                //Copy missing is more important than diagnostics
+                if (copyAreMissing) {
+                    throw new MissingCopyException("Some copy are missing", path, null, logged: false, needMail: false);
+                } else if (allDiags.Count > 0) {
+                    throw new PresenceOfDiagnostics("Diagnostics Detected"); //Make ParsingException trace back to RunOnce()
                 }
 
                 if (parser.Results.CodeElementsDocumentSnapshot == null && config.ExecToStep > ExecutionStep.Preprocessor)
@@ -225,15 +240,15 @@ namespace TypeCobol.Server
                     foreach (var diagnostic in diagnostics) {
                         Server.AddError(writer, MessageCode.IntrinsicLoading, 
                             diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line, 
-                            "Error during parsing of " + path + ": " + diagnostic, path);
+                            "Error while parsing " + path + ": " + diagnostic, path);
                     }
                     if (diagnostics.Count > 0)
-                        throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", path, null, true, false);
+                        throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", path, null, logged: false, needMail: false);
 
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
                     {
-                        throw new CopyLoadingException("Error: Your Intrisic types/functions are not included into a program.", path, null, true, false);
+                        throw new CopyLoadingException("Your Intrisic types/functions are not included into a program.", path, null, logged: true, needMail: false);
                     }
 
                     foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
@@ -247,8 +262,8 @@ namespace TypeCobol.Server
                         }
 
                         //TODO check if types or functions are already there
-                        table.CopyAllTypes(symbols.Types);
-                        table.CopyAllFunctions(symbols.Functions);
+			        table.CopyAllTypes(symbols.Types);
+                    table.CopyAllFunctions(symbols.Functions);
                     }
                 }
                 catch (CopyLoadingException copyException)
@@ -257,7 +272,7 @@ namespace TypeCobol.Server
                 }
                 catch (Exception e)
                 {
-                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e);
+                    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e, logged: true, needMail: true);
                 }
                
             }
@@ -298,11 +313,11 @@ namespace TypeCobol.Server
                             "Error while parsing " + path + ": " + diagnostic, path);
                     }
                     if (diagnostics.Count > 0)
-                        throw new DepedenciesLoadingException("Diagnostics detected while parsing dependency file", path, null, true, false);
+                        throw new DepedenciesLoadingException("Diagnostics detected while parsing dependency file", path, null, logged: false, needMail: false);
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
                     {
-                        throw new DepedenciesLoadingException("Error: Your dependency file is not included into a program", path, null, true, false);
+                        throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
                     }
 
                     foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)

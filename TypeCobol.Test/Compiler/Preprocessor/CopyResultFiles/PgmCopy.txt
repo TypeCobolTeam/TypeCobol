@@ -61,4 +61,4 @@
 
 ++ Preprocessor diagnostics ++
 -- Line 6 --
-Line 6[8,21] <28, Error, Directives> - Failed to load the text document referenced by a COPY directive : Could not find a Cobol source file named UNKNOWN in 
+Line 6[8,21] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: UNKNOWN

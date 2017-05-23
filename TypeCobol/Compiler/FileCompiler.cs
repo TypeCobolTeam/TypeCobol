@@ -115,7 +115,9 @@ namespace TypeCobol.Compiler
                     if(isCopyFile)
                         compilationProject.MissingCopys.Add(fileName);
 
-                    throw new Exception(string.Format("Could not find a Cobol source file named {0} in {1}", fileName, libraryName));
+                    var message = string.IsNullOrEmpty(libraryName) ? string.Format("Cobol source file not found: {0}", fileName) 
+                                                                    : string.Format("Cobol source file not found: {0} in {1}", fileName, libraryName);
+                    throw new Exception(message);
                 }
               
             }

@@ -270,14 +270,32 @@ namespace TypeCobol.Server {
             return (int)code;
 		}
 
-	}
+    }
 
+    /// <summary>
+    /// Categories of ReturnCode:
+    /// * 0000 : Everything is ok
+    ///         Output files are generated
+    /// * 0001 to 0999 : Ok but there are warnings.
+    ///         Output files are generated
+    ///         Diagnostic file should contains warnings
+    /// * >= 1000 : Errors
+    ///         Output files are NOT generated
+    ///         Diagnostic file should contains errors and warnings
+    /// </summary>
     public enum ReturnCode
     {
         Success = 0,
-        FatalError = 1, 
-        OutputFileError = 2,
-        ParsingError = 3,
-        GenerationError = 4,
+        
+        //Warnings
+        Warning = 0,            //Warning(s) issued during parsing of input file
+
+
+        //Errors
+        ParsingDiagnostics = 1000,  //Syntax or semantic error in one or more input file
+        OutputFileError = 1001,     //CLI parameters error
+        MissingCopy = 1002,         //Use of option --hastonmissingcopy and at least one COPY is missing
+        GenerationError = 1003,     //Error during Code generation
+        FatalError = 1004,          //Not managed exception
     }
 }

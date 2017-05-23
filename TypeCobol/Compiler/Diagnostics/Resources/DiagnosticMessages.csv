@@ -26,7 +26,7 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 3;25;1;Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses;1;528;options-list : a series of one or more compiler options, each one separated by a comma or a space. 
 3;26;1;Invalid option specified for *CONTROL or *CBL compiler directive, expecting : SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP;1;528;With the *CONTROL (or *CBL) statement, you can selectively display or suppress the listing of source code, object code, and storage maps throughout the source text.
 4;27;1;Syntax error : {0};1;0;Find the syntax diagram describing the statement in error in the language reference
-3;28;1;Failed to load the text document referenced by a COPY directive : {0};1;531;text-name identifies the copy text. library-name identifies where the copy text exists
+3;28;1;Failed to load COPY : {0};1;531;text-name identifies the copy text. library-name identifies where the copy text exists
 5;29;2;Warning: {0};1;0;Find the corresponding rule in the good practice document
 5;30;1;Semantic error: {0};4;0;Page
 5;31;1;Runtime error: {0};5;0;Page
