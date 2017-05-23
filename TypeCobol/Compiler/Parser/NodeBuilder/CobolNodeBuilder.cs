@@ -22,7 +22,8 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Program object resulting of the visit the parse tree
         /// </summary>
-        public Program Program { get; private set; }
+        private Program Program { get; set; }
+        public SyntaxTree SyntaxTree { get; set; }
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -74,18 +75,18 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        public Node CurrentNode { get { return Program.SyntaxTree.CurrentNode; } }
+        public Node CurrentNode { get { return SyntaxTree.CurrentNode; } }
         private void Enter([NotNull] Node node, ParserRuleContext context = null, SymbolTable table = null)
         {
-            node.SymbolTable = table ?? Program.CurrentTable;
-            Program.SyntaxTree.Enter(node, context);
+            node.SymbolTable = table ?? SyntaxTree.CurrentNode.SymbolTable;
+            SyntaxTree.Enter(node, context);
         }
         private void Exit()
         {
-            var node = Program.SyntaxTree.CurrentNode;
-            var context = Program.SyntaxTree.CurrentContext;
+            var node = SyntaxTree.CurrentNode;
+            var context = SyntaxTree.CurrentContext;
             Dispatcher.OnNode(node, context, CurrentProgram);
-            Program.SyntaxTree.Exit();
+            SyntaxTree.Exit();
         }
 
         public IList<ParserDiagnostic> GetDiagnostics(ProgramClassParser.CobolCompilationUnitContext context)
@@ -134,7 +135,8 @@ namespace TypeCobol.Compiler.Parser
 
             TableOfGlobals = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.Global);
             Program = null;
-            Class = null;
+           
+            SyntaxTree.Root.SymbolTable = TableOfNamespaces; //Set SymbolTable of SourceFile Node, Limited to NameSpace and Intrinsic scopes
         }
 
         public override void EnterCobolProgram(ProgramClassParser.CobolProgramContext context)
@@ -173,6 +175,12 @@ namespace TypeCobol.Compiler.Parser
             AttachEndIfExists(context.ProgramEnd());
             Exit();
             programsStack.Pop();
+
+            if (programsStack.Count == 0) //Means that we ended a main program, reset Table and program in case of a new program declaration before EOF. 
+            {
+                TableOfGlobals = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.Global);
+                Program = null;
+            }
         }
 
         public override void EnterEnvironmentDivision(ProgramClassParser.EnvironmentDivisionContext context)
@@ -220,7 +228,7 @@ namespace TypeCobol.Compiler.Parser
         private char[] GetCurrencies()
         {
             IDictionary<AlphanumericValue, CharacterValue> currencies = null;
-            var special = CurrentProgram.SyntaxTree.Root.Get<SpecialNames>("special-names");
+            var special = SyntaxTree.Root.Get<SpecialNames>("special-names");
             if (special != null) currencies = special.CodeElement().CurrencySymbols;
             if (currencies == null || currencies.Count < 1) return new[] { '$' };
             var chars = new List<char>();
@@ -528,7 +536,7 @@ namespace TypeCobol.Compiler.Parser
                                                                            // (SymbolTable - function, type finding could be impacted) 
 
             //Function must be added to Declarations scope
-            var declarationSymbolTable = CurrentProgram.CurrentTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+            var declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
             declarationSymbolTable.AddFunction(node);
             Enter(node, context, new SymbolTable(declarationSymbolTable, SymbolTable.Scope.Function));
 
@@ -627,7 +635,7 @@ namespace TypeCobol.Compiler.Parser
         }
         public override void ExitParagraph(ProgramClassParser.ParagraphContext context)
         {
-            if (Program.SyntaxTree.CurrentNode is Paragraph) Exit();
+            if (SyntaxTree.CurrentNode is Paragraph) Exit();
         }
 
         public override void EnterSentence(ProgramClassParser.SentenceContext context)

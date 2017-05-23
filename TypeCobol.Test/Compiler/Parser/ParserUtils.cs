@@ -134,19 +134,25 @@ namespace TypeCobol.Test.Compiler.Parser
 			}
 		}
 
-        internal static string DumpResult(Program program, Class cls, IList<Diagnostic> diagnostics)
+        internal static string DumpResult(IEnumerable<Program> programs, IEnumerable<TypeCobol.Compiler.Nodes.Class> classes, IList<Diagnostic> diagnostics)
         {
             StringBuilder builder = new StringBuilder();
             if (diagnostics != null && diagnostics.Count > 0) {
                 builder.AppendLine(DiagnosticsToString(diagnostics));
             }
-            if (program != null) {
-                builder.AppendLine("--- Program ---");
-                Dump(builder, program);
+            if (programs != null && programs.Any()) {
+                foreach (var program in programs)
+                {
+                    builder.AppendLine("--- Program ---");
+                    Dump(builder, program);
+                }
             }
-            if (cls != null) {
-                builder.AppendLine("--- Class ---");
-                Dump(builder, cls);
+            if (classes != null && classes.Any()) {
+                foreach (var cls in classes)
+                {
+                    builder.AppendLine("--- Class ---");
+                    Dump(builder, cls);
+                }
             }
             return builder.ToString();
         }
@@ -214,7 +220,7 @@ namespace TypeCobol.Test.Compiler.Parser
             return str;
         }
 
-        internal static StringBuilder Dump(StringBuilder builder, Class cls)
+        internal static StringBuilder Dump(StringBuilder builder, TypeCobol.Compiler.Nodes.Class cls)
         {
             throw new NotImplementedException("TODO");
         }

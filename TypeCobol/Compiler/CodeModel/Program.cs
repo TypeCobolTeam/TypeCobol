@@ -14,10 +14,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
     public class Program : Node, CodeElementHolder<ProgramIdentification>
     {
-        public Program(CodeElement codeElement) : base(codeElement)
-        {
-            SyntaxTree = new SyntaxTree();
-        }
+        public Program(CodeElement codeElement) : base(codeElement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -94,15 +91,6 @@ namespace TypeCobol.Compiler.CodeModel
             set;
         }
 
-		public SymbolTable CurrentTable {
-			get { return SyntaxTree.CurrentNode.SymbolTable; }
-		}
-
-        /// <summary>
-        /// Abstract Syntax Tree of this program.
-        /// Syntax trees of nested programs (if any) are nodes/subtrees of this one.
-        /// </summary>
-        public SyntaxTree SyntaxTree;
 
         // -- PROCEDURE DIVISION --
 
@@ -124,7 +112,6 @@ namespace TypeCobol.Compiler.CodeModel
 		{
 			IsNested = false;
 			SymbolTable = new SymbolTable(new SymbolTable(EnclosingScope, SymbolTable.Scope.Declarations), SymbolTable.Scope.Program);
-			SyntaxTree.Root.SymbolTable = SymbolTable;
         }
 
         // -- ENVIRONMENT DIVISION --
@@ -186,7 +173,6 @@ namespace TypeCobol.Compiler.CodeModel
 
             SymbolTable = new SymbolTable(globalNestedSymbolTable, SymbolTable.Scope.Declarations);
             SymbolTable = new SymbolTable(SymbolTable, SymbolTable.Scope.Program);
-            SyntaxTree.Root.SymbolTable = SymbolTable;
 		}
 
         /// <summary>A nested program is a program that is contained in another program.</summary>

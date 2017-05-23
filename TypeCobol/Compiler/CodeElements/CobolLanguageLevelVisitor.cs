@@ -239,7 +239,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit(Paragraph paragraph);
         bool Visit(Perform perform);
         bool Visit(PerformProcedure performProcedure);
-        bool Visit(Root root);
+        bool Visit(SourceFile root);
         bool Visit(LibraryCopy libraryCopy);
         bool Visit(Nodes.Class classNode);
         bool Visit(Factory factory);
@@ -957,7 +957,7 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public virtual bool Visit(Root root) {
+        public virtual bool Visit(SourceFile root) {
             return true;
         }
 

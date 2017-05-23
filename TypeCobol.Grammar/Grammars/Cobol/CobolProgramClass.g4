@@ -174,7 +174,7 @@ tokens
 // compile.
 
 cobolCompilationUnit : 
-	(cobolProgram | cobolClass) EOF;
+	(cobolProgram | cobolClass)* EOF;
 
 // --- COBOL PROGRAM ---
 
