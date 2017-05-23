@@ -28,7 +28,11 @@ namespace CLI.Test
         [TestMethod]
         public void TestEmptyFile_1()
         {
-            CLITestHelper.Test("emptyFile_1");
+            #if DEBUG
+                CLITestHelper.Test("emptyFile_1_debug");
+            #else
+                CLITestHelper.Test("emptyFile_1_release");
+            #endif
         }
 
         [TestMethod]
