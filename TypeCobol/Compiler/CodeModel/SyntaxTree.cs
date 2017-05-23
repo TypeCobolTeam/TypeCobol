@@ -10,13 +10,13 @@
 
 	public class SyntaxTree {
 		/// <summary>Tree root</summary>
-		public Root Root { get; private set; }
+		public SourceFile Root { get; private set; }
 		/// <summary>Branch currently in construction</summary>
 		private Stack<Tuple<Node,ParserRuleContext>> Branch;
 
-		public SyntaxTree(): this(new Root(), null) { }
-		public SyntaxTree(Root root, ParserRuleContext context) {
-			this.Root = root ?? new Root();
+		public SyntaxTree(): this(new SourceFile(), null) { }
+		public SyntaxTree(SourceFile root, ParserRuleContext context) {
+			this.Root = root ?? new SourceFile();
 			Branch = new Stack<Tuple<Node,ParserRuleContext>>();
 			Branch.Push(new Tuple<Node,ParserRuleContext>(Root, context));
 		}

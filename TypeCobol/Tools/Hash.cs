@@ -33,7 +33,7 @@
         /// </summary>
         /// <param name="text"> The text to hash</param>
         /// <param name="size"> The size of the hash to return max value is 64</param>
-        /// <param name="node"> The node in which we are going to store the hashes (we use the maximum level node ie. Root)</param>
+        /// <param name="node"> The node in which we are going to store the hashes (we use the maximum level node ie. SourceFile)</param>
         /// <returns></returns>
         public static string CreateCOBOLNameHash(string text, int size = 8, Node node = null)
         {
@@ -60,7 +60,7 @@
 
             if(node != null)
             {
-                var RootNode = (Root)node.Root;
+                var RootNode = (SourceFile)node.Root;
                 if (RootNode != null && RootNode.GeneratedCobolHashes.Any(v => v.Key == result && v.Value != text))
                     DiagnosticUtils.AddError(node.CodeElement, "Duplicated hash detected. Please contact TypeCobol support team.", MessageCode.ImplementationError);
                 else if (RootNode != null && !RootNode.GeneratedCobolHashes.Any(v => v.Key == result))

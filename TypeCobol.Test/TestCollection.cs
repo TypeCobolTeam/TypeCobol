@@ -251,26 +251,29 @@ namespace TypeCobol.Test {
                 && compileResult.TokensLines.Count == 0 
                 && compileResult.ProcessedTokensDocumentSnapshot != null 
                 && compileResult.CodeElementsDocumentSnapshot != null 
-                && compileResult.ProgramClassDocumentSnapshot.Program != null)
+                && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Scanner Step failled");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.Preprocessor);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor 
                 && compileResult.ProcessedTokensDocumentSnapshot == null 
                 && compileResult.CodeElementsDocumentSnapshot != null 
-                && compileResult.ProgramClassDocumentSnapshot.Program != null)
+                && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Preprocessor Step failled");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.SyntaxCheck);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck 
                 && compileResult.CodeElementsDocumentSnapshot == null 
-                && compileResult.ProgramClassDocumentSnapshot.Program != null)
+                && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SyntaxCheck Step failled");
 
             compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.SemanticCheck);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck 
-                && compileResult.ProgramClassDocumentSnapshot.Program == null)
+                && !compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SemanticCheck Step failled");
         }
+
+       
+
     }
 }
