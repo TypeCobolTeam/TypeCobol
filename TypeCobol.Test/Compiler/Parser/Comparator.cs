@@ -376,7 +376,7 @@ namespace TypeCobol.Test.Compiler.Parser
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             
-            Compare(pcd.Root.Programs, pcd.Root.Clasees, diagnostics, reader);
+            Compare(pcd.Root.Programs, pcd.Root.Classes, diagnostics, reader);
         }
 
         internal void Compare(IEnumerable<Program> programs, IEnumerable<TypeCobol.Compiler.Nodes.Class> classes, IList<Diagnostic> diagnostics, StreamReader expected)

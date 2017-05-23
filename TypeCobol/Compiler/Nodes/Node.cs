@@ -572,7 +572,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public IEnumerable<Class> Clasees
+        public IEnumerable<Class> Classes
         {
             get
             {

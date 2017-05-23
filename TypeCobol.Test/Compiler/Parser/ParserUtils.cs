@@ -140,14 +140,14 @@ namespace TypeCobol.Test.Compiler.Parser
             if (diagnostics != null && diagnostics.Count > 0) {
                 builder.AppendLine(DiagnosticsToString(diagnostics));
             }
-            if (programs != null && programs.Count() > 0) {
+            if (programs != null && programs.Any()) {
                 foreach (var program in programs)
                 {
                     builder.AppendLine("--- Program ---");
                     Dump(builder, program);
                 }
             }
-            if (classes != null && classes.Count() > 0) {
+            if (classes != null && classes.Any()) {
                 foreach (var cls in classes)
                 {
                     builder.AppendLine("--- Class ---");
