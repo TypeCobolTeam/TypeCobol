@@ -46,3 +46,5 @@
              CONTINUE
           END-IF.
        END PROGRAM TypeDefLevel88.
+      * 1 errors
+      * Line 29[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns
