@@ -22,6 +22,9 @@ files = [
       'TypeCobol.exe',
         'Antlr4.Runtime.dll',
       'TypeCobol.Transform.exe',
+      'TypeCobol.Analytics.dll',
+        'Microsoft.ApplicationInsights.dll',
+	'NLog.dll',
     # resource files
     os.path.join('config','skeletons.xml'),
     ]
