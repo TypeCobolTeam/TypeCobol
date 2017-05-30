@@ -125,7 +125,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions {
 		public override string ToString() { return Value; }
 
 		public override string Head { get { return parts[parts.Length-1]; } }
-		public override QualifiedName Parent { get { return new URI(Value.Remove(Value.Length-1-Head.Length), Separator); } }
+		public override QualifiedName Parent { get { if (Value.Length > Head.Length) return new URI(Value.Remove(Value.Length - 1 - Head.Length), Separator); else return null; } }
 
 		public override IEnumerator<string> GetEnumerator() {
 			foreach(string part in parts) yield return part;

@@ -57,6 +57,9 @@ namespace TypeCobol.Compiler.Parser
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
             }
 
+            //Create link between datas
+            programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new TypeCobolLinker());
+
             //Complete some information on Node and run checker that need a full AST
             programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
               

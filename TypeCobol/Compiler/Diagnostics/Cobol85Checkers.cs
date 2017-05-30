@@ -36,6 +36,8 @@ namespace TypeCobol.Compiler.Diagnostics {
 
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
+            RenamesChecker.OnNode(node);
+            ReadOnlyPropertiesChecker.OnNode(node);
             return base.BeginNode(node);
         }
 

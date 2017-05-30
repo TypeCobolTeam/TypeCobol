@@ -2,6 +2,7 @@
 namespace TypeCobol.Compiler.Nodes {
 
     using System;
+    using System.Collections.Generic;
     using CodeElements.Expressions;
     using TypeCobol.Compiler.CodeElements;
 
@@ -113,12 +114,12 @@ namespace TypeCobol.Compiler.Nodes {
     /// </summary>
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
 
-
         private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
-        protected DataDefinition(DataDefinitionEntry entry): base(entry) {  }
+        protected DataDefinition(DataDefinitionEntry entry): base(entry) { References = new List<Node>(); }
         public override string ID { get { return "data-definition"; } }
         public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 
+        public List<Node> References { get; set; }
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }

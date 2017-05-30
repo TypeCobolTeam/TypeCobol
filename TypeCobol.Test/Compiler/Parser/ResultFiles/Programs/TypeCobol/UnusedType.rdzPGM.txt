@@ -1,0 +1,20 @@
+﻿--- Diagnostics ---
+Line 19[12,55] <27, Error, Syntax> - Syntax error : Symbol var1.type2.var2.type3.var3 is not referenced
+Line 19[12,55] <27, Error, Syntax> - Syntax error : Symbol var3 is not referenced
+Line 20[12,36] <27, Error, Syntax> - Syntax error : Symbol type3.var3 is not referenced
+Line 20[12,36] <27, Error, Syntax> - Syntax error : Symbol var3 is not referenced
+Line 21[12,29] <27, Error, Syntax> - Syntax error : Symbol var2 is not referenced
+Line 22[12,29] <27, Error, Syntax> - Syntax error : Symbol var1 is not referenced
+
+--- Program ---
+PROGRAM: MyPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  Type3:Type3
+  Type2:Type2
+  Type1:Type1
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE

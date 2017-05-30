@@ -188,7 +188,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public List<DataDefinition> GetVariable(QualifiedName name)
         {
-            return new List<DataDefinition>(GetVariableExplicit(name).Keys.Cast<DataDefinition>());
+            return new List<DataDefinition>(GetVariableExplicit(name).Cast<DataDefinition>());
         }
 
         private IList<DataDefinition> GetVariable(string name)
@@ -201,128 +201,95 @@ namespace TypeCobol.Compiler.CodeModel
             return symbolTable.DataEntries;
         }
 
-        public Dictionary<Node, List<LinkedList<Node>>> GetVariableExplicit(QualifiedName name)
+        public List<Node> GetVariableExplicit(QualifiedName name)
         {
+            var found = new List<Node>();
             var candidates = new List<Node>();
-            candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
-            candidates.AddRange(GetVariable(name.Head));
-            //TODO candidates.AddRange(GetFunction(name.Head));
+            candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head)); //Get variable name declared into typedef declaration
+            candidates.AddRange(GetVariable(name.Head)); //Get all varaibles that corresponds to the given head of QualifiedName
 
-            var map = new Dictionary<Node, List<LinkedList<Node>>>();
-            foreach (var candidate in candidates)
+            foreach (var candidate in candidates) 
             {
-                var link = new LinkedList<Node>();
-                link.AddFirst(new LinkedListNode<Node>(candidate));
-                map.Add(candidate, new List<LinkedList<Node>> {link});
-            }
-
-            for (int i = name.Count - 2; i >= 0; --i)
-            {
-                var winners = new Dictionary<Node, List<LinkedList<Node>>>();
-                foreach (var original in map.Keys)
+                if ((candidate as DataDefinition).IsPartOfATypeDef) //Check if candidate is inside a typedef declaration
                 {
-                    // for each original node
-                    var toplevels = new List<LinkedList<Node>>();
-                    foreach (var link in map[original])
+                    var typeDefinitionLevel = candidate.Parent;
+                    while ((typeDefinitionLevel as DataDefinition).IsPartOfATypeDef)
                     {
-                        var node = link.First.Value;
-                        var ancestors = GetTopLevel(node, name[i]);
-                        foreach (var ancestor in ancestors) MergeLink(ancestor, link);
-                        toplevels.AddRange(ancestors);
+                        typeDefinitionLevel = typeDefinitionLevel.Parent;
+                    } //Find the top level of the typedef declaration so we can get all the references that use this type
+
+                    var tempParentTypeReferences = (typeDefinitionLevel as TypeDefinition).References; //Get type's references
+                    var parentTypeReferences = new List<Node>();
+
+                    foreach (var dataEntry in this.DataEntries) //Filter on DataEntries of the current SymbolTable
+                    {
+                        foreach (var value in dataEntry.Value)
+                        {
+                            parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => r == value)); //Filter the references for the current scope (usefull for Proc/Func)
+                        }
                     }
-                    toplevels = new List<LinkedList<Node>>(new HashSet<LinkedList<Node>>(toplevels));
-                        // remove duplicates
-                    if (toplevels.Count > 0) winners.Add(original, toplevels);
-                }
-                map.Clear();
-                if (winners.Count < 1) break; // early exit
-                foreach (var winner in winners) map.Add(winner.Key, winner.Value);
-            }
 
-            foreach (var winner in map)
-            {
-                if (winner.Value.Count != 1)
-                {
-                    var str =
-                        new StringBuilder().Append(winner.Key.QualifiedName).Append(" expected:1-sized list, got: [");
-                    foreach (var v in winner.Value) str.Append(' ').Append(ToString(v)).Append(',');
-                    if (winner.Value.Count > 0) str.Length -= 1;
-                    throw new NotImplementedException(str.Append(" ]").ToString());
-                }
-            }
+                    parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => (r as DataDefinition).IsPartOfATypeDef)); //Get back the references which are defined in Typedef and not present in DataEtries SymbolTable
 
-            return map;
-        }
+                    if (parentTypeReferences.Count == 0)
+                        continue; //If no references found it means the type is not used so the seeked variable is not accessible
 
-        /// <summary>Merges second LinkedList with first LinkedList.
-        /// If last items in first LinkedList are equal to first items in second LinkedList, these common items are not duplicated.
-        /// </summary>
-        /// <param name="begin"></param>
-        /// <param name="end"></param>
-        private void MergeLink(LinkedList<Node> first, LinkedList<Node> second)
-        {
-            foreach (var item in second) if (item != first.Last.Value) first.AddLast(item);
-        }
-
-        public static string ToString(IEnumerable<Node> names)
-        {
-            var str = new System.Text.StringBuilder().Append('[');
-            foreach (var name in names) str.Append(' ').Append(name.Name).Append(',');
-            if (str.Length > 1) str.Length -= 1;
-            return str.Append(' ').Append(']').ToString();
-        }
-
-        /// <summary>Gets direct or indirect toplevel item for a node.</summary>
-        /// <param name="node">We want the toplevel item for this node</param>
-        /// <param name="name">We want a toplevel item named like that</param>
-        /// <returns>List of LinkedLists of items ; last item of each LinkedList is always node</returns>
-        private List<LinkedList<Node>> GetTopLevel(Node node, string name)
-        {
-            var toplevel = new List<LinkedList<Node>>();
-            if (node.Parent == null) return toplevel;
-            var typedef = node.Parent as TypeDefinition;
-            if (typedef != null)
-            {
-                var vars = GetVariablesTyped(typedef.QualifiedName);
-                var typs = GetCustomTypesSubordinatesTyped(typedef.QualifiedName);
-                foreach (var item in vars)
-                {
-                    if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase))
+                    foreach (var reference in parentTypeReferences)
                     {
-                        var link = CreateLinkedList(node);
-                        link.AddFirst(item);
-                        toplevel.Add(link);
+                        if (!(reference as DataDefinition).IsPartOfATypeDef && ((name.Parent != null && reference.Name.Equals(name.Parent.Head, StringComparison.InvariantCultureIgnoreCase)) || name.Parent == null))
+                            found.Add(candidate); //If the reference is not declared in a typedef and the reference name is equals to the qualified name.Parent so we get a match
+                        else if (name.Parent != null && name.Parent.Any(p => p.Equals(reference.Name, StringComparison.InvariantCultureIgnoreCase))) 
+                        {
+                            // If it's correponds between parent name and reference name it's a match but we have to go deeper because it's a typedef variable reference
+                            var parentFound = GetVariableExplicit(name.Parent); //Try to search deeper in qualifiedName parent
+                            if (parentFound.Count > 0) //If something is found, it's a match
+                                found.Add(candidate);
+                        }
                     }
                 }
-                foreach (var item in typs)
+                //Data manipulation for non Typedef Data Defintion
+                else if (name.Parent != null)
                 {
-                    if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase))
+                    var tempParent = candidate; 
+                    int i = name.Count - 1; //Index to reverse count the QualifiedName parts
+                    while (tempParent.Parent != null) //Loop on candidate parent to see if the chain match the qualified name
                     {
-                        var link = CreateLinkedList(node);
-                        link.AddFirst(item);
-                        toplevel.Add(link);
+                        if (i < 0 || !tempParent.Name.Equals(name[i].ToString(), StringComparison.InvariantCultureIgnoreCase)) 
+                        {
+                            bool parentFound = false;
+                            var secondTempParent = tempParent;
+                            while (secondTempParent.Parent != null) //If it doesn't match between name and parent name try to see deeper if there is no jump in gven QualifiedName
+                            {
+                                if (secondTempParent.Name.Equals(name[i].ToString(), StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    parentFound = true;
+                                    tempParent = secondTempParent; //If we found a parent it means that there were jumps in QualifiedName 
+                                }
+                                secondTempParent = secondTempParent.Parent;
+                            }
+
+                            if (!parentFound)
+                                break;
+                        }
+
+                        if (tempParent.Name.Equals(name[i].ToString(), StringComparison.InvariantCultureIgnoreCase) && i == 0)
+                        {
+                            found.Add(candidate); //Everythin correpond, let's add this candidate
+                            break;
+                        }
+
+                        tempParent = tempParent.Parent; //Go deeper in canddiate parent
+                        i--; //Decrease the index for the QualifiedName recognition
                     }
                 }
-                return toplevel;
+                //It's a simple variable 
+                else if (name.Parent == null)
+                {
+                    found.Add(candidate);
+                }
             }
-            if (name.Equals(node.Parent.Name))
-            {
-                var link = CreateLinkedList(node);
-                link.AddFirst(node.Parent);
-                toplevel.Add(link);
-            }
-            // as name can be implicit, don't stop at first properly named parent encountered
-            var other = GetTopLevel(node.Parent, name);
-            foreach (var o in other) o.AddLast(node);
-            toplevel.AddRange(other);
-            return toplevel;
-        }
 
-        private LinkedList<N> CreateLinkedList<N>(N item)
-        {
-            var link = new LinkedList<N>();
-            link.AddFirst(new LinkedListNode<N>(item));
-            return link;
+            return found;
         }
 
         /// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
@@ -343,27 +310,7 @@ namespace TypeCobol.Compiler.CodeModel
             
             return subs;
         }
-
-        /// <summary>Get all items of a specific type that are subordinates of a custom type</summary>
-        /// <param name="name">Type name we search for</param>
-        /// <returns>Direct or indirect subordinates of a custom type</returns>
-        private List<Node> GetCustomTypesSubordinatesTyped(QualifiedName typename)
-        {
-            var types = new List<Node>();
-            var scope = this;
-            while (scope != null)
-            {
-                foreach (var type in scope.Types) types.AddRange(type.Value);
-                scope = scope.EnclosingScope;
-            }
-            var subs = new List<Node>();
-            foreach (var type in types)
-            {
-                subs.AddRange(GetChildrenOfDataType(type, typename, true));
-            }
-            return subs;
-        }
-
+        
         /// <summary>Searches all children of a given node that are of a given type</summary>
         /// <param name="node">We search among this Node's children</param>
         /// <param name="typename">Name of the type we want</param>

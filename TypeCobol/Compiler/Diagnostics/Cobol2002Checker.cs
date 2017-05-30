@@ -129,8 +129,8 @@
         }
     }
 
-class RenamesChecker: NodeListener {
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+class RenamesChecker {
+	public static void OnNode(Node node) {
 		var renames = node as DataRenames;
 	    if (renames == null) {
 	        return; //not my job
@@ -138,7 +138,7 @@ class RenamesChecker: NodeListener {
 	    Check(renames.CodeElement().RenamesFromDataName, renames);
 	    Check(renames.CodeElement().RenamesToDataName, renames);
 	}
-	private void Check(SymbolReference renames, Node node) {
+	private static void Check(SymbolReference renames, Node node) {
 		var found = node.SymbolTable.GetVariable(renames);
 		if (found.Count > 1) {
 			string message = "Illegal RENAMES: Ambiguous reference to symbol \'"+renames+"\'";

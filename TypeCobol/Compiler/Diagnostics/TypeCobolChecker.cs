@@ -14,17 +14,17 @@ using Analytics;
 namespace TypeCobol.Compiler.Diagnostics {
 
 
-class ReadOnlyPropertiesChecker: NodeListener {
+class ReadOnlyPropertiesChecker {
 
 	private static string[] READONLY_DATATYPES = { "DATE", };
 
-	public void OnNode([NotNull] Node node, ParserRuleContext context, [NotNull] CodeModel.Program program) {
+	public static void OnNode([NotNull] Node node) {
 	    VariableWriter variableWriter = node as VariableWriter;
 	    if (variableWriter == null) {
 	        return; //not our job
 	    }
         var element = node.CodeElement as VariableWriter;
-		var table = program.SymbolTable;
+		var table = node.SymbolTable;
 		foreach (var pair in element.VariablesWritten) {
 			if (pair.Key == null) continue; // no receiving item
 			var lr = table.GetVariable(pair.Key);
@@ -33,7 +33,7 @@ class ReadOnlyPropertiesChecker: NodeListener {
 			checkReadOnly(node.CodeElement, receiving);
 		}
 	}
-	private void checkReadOnly(CodeElement ce, [NotNull] Node receiving) {
+	private static void checkReadOnly(CodeElement ce, [NotNull] Node receiving) {
 		var rtype = receiving.Parent as ITypedNode;
 		if (rtype == null) return;
 		foreach(var type in READONLY_DATATYPES) {

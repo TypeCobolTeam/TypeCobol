@@ -20,6 +20,12 @@ Line 134[11,68] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE
 Line 144[12,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRICT-PART3' is not referenced
 Line 163[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART1 IN usestrictType1' is strictly-typed
 Line 163[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART2 IN usestrictType1' is strictly-typed
+Line 170[12,59] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Movment2d.Accel2d.Coord2d.X
+Line 170[12,59] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Movment2d.Speed2d.Coord2d.X
+Line 172[12,38] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Position2d.Y
+Line 172[12,38] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Position2d.Z
+Line 174[12,35] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Accel2d.Z
+Line 174[12,35] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Speed2d.Y
 Line 183[12,43] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable varCanBeStrict:canBeStrict.
 Line 185[12,40] <30, Error, Semantics> - Semantic error: Cannot write canBeStrict to strictly typed variable Point2:Vect2.
 Line 187[12,40] <30, Error, Semantics> - Semantic error: Cannot write Vect2 to strictly typed variable varCanBeStrict:canBeStrict.
