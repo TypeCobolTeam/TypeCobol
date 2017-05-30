@@ -41,6 +41,11 @@ namespace TypeCobol.LanguageServer
             var initializeResult = base.OnInitialize(parameters);
             initializeResult.capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
             initializeResult.capabilities.hoverProvider = true;
+            CompletionOptions completionOptions = new CompletionOptions();
+            completionOptions.resolveProvider = false;
+            completionOptions.triggerCharacters = new String[]{"::"};
+            initializeResult.capabilities.completionProvider = completionOptions;
+
             return initializeResult;
         }
 
