@@ -4,23 +4,23 @@ PROGRAM: MYPGM common:False initial:False recursive:False
 --- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
   PRTD20L:Alphanumeric
-  PRTD20L-RECH:Alphanumeric
-  PRTD20L-VIDE:BOOL
-  PRTD20L-I:Alphanumeric
+  PRTD20-RECH:Alphanumeric
+  PRTD20-VIDE:BOOL
+  PRTD20-I:Alphanumeric
   LDO-NO-DOSSIER:Numeric
   LDO-CD-ETA:Alphanumeric
   LDO-CD-ETA-SAI:BOOL
   LDO-CD-ETA-VAL:BOOL
   CONVEAL:Alphanumeric
-  CONVEAL-VEAL-VEAL-OUT-VEA:Alphanumeric
-  CONVEAL-VEAL-VEAL-OUT-VEAL-2:Alphanumeric
+  CONVEA-VEA-VEA-OUT-VEA:Alphanumeric
+  CONVEA-VEA-VEA-OUT-VEA-2:Alphanumeric
   CONVEA:Alphanumeric
-  CONVEAL-VEA:Alphanumeric
+  CONVEA-VEA:Alphanumeric
   ANOTHER-DATA:Alphanumeric
-  CONVEAL-VEATEST:Alphanumeric
-  CONVEAL-TESTVEA:Alphanumeric
-  CONVEAL-TESTVEAL-TEST:Alphanumeric
-  CONVEAL-TESTVEATEST:Alphanumeric
+  CONVEA-VEATEST:Alphanumeric
+  CONVEA-TESTVEA:Alphanumeric
+  CONVEA-TESTVEA-TEST:Alphanumeric
+  CONVEA-TESTVEATEST:Alphanumeric
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
