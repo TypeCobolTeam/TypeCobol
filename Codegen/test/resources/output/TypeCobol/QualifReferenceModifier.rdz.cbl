@@ -13,7 +13,7 @@
        PROCEDURE DIVISION.
 
       *    if Var1::JobName(1:2) = 'ET'
-           if JobName(1:2) OF Var1 = 'ET'
+           if JobName OF Var1(1:2) = 'ET'
                display "case 1"
            end-if
 
@@ -25,8 +25,8 @@
       *    if Var1::JobName(1:2) = 'ET'
       *      or Var1::JobName(1:4) = 'PSAT'
       *      or Var1::Site::SiteTest
-           if JobName(1:2) OF Var1 = 'ET'
-             or JobName(1:4) OF Var1 = 'PSAT'
+           if JobName OF Var1(1:2) = 'ET'
+             or JobName OF Var1(1:4) = 'PSAT'
              or SiteTest OF Site OF Var1
                           display "case 3"
            end-if
