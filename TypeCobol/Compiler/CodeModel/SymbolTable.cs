@@ -511,6 +511,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         /// <param name="name">Qualified name of the wated type</param>
         /// <returns></returns>
+        [NotNull]
         public List<TypeDefinition> GetType(QualifiedName name)
         {
             var found = GetType(name.Head);

@@ -44,11 +44,11 @@ namespace TypeCobol.Compiler.Diagnostics
         private void TypeReferencer(DataDescription dataEntry)
         {
             //Check SymbolTable for dataEntry DataType.Name
-            var types = dataEntry.SymbolTable.GetType(new URI(dataEntry.DataType.Name));
-            if (types != null && types.Count != 1) return;
+            var types = dataEntry.SymbolTable.GetType(dataEntry.DataType);
+            if (types.Count != 1) return;
 
             //Add this dataEntry to type references
-            var typeToUpdate = types.FirstOrDefault();
+            var typeToUpdate = types.First();
             if (typeToUpdate == null) return;
 
             typeToUpdate.References.Add(dataEntry);
