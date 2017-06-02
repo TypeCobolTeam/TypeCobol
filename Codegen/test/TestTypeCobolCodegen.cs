@@ -220,6 +220,15 @@ namespace TypeCobol.Codegen {
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]
+        public void ParseTypedefNoPic()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefNoPic") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
         public void ParseLineExceed()
         {
             var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
