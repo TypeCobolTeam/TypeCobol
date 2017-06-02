@@ -12,6 +12,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     {
         public ReferenceContext context { get; set; }
 
-        public ReferenceParams(string uri, Position position) : base(uri, position) { }
+        public ReferenceParams(TextDocumentIdentifier textDocument, string uri, Position position) : base(textDocument, uri, position) { }
     }
 }

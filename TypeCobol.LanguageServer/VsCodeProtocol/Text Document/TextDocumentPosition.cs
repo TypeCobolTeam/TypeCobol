@@ -8,8 +8,18 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// <summary>
     /// A literal to define the position in a text document.
     /// </summary>
-    public class TextDocumentPosition : TextDocumentIdentifier
+    public class TextDocumentPosition
     {
+        /// <summary>
+        /// The Text Document
+        /// </summary>
+        public TextDocumentIdentifier textDocument { get; set; }
+
+        /// <summary>
+        /// Legacy property to support protocol version 1.0 requests.
+        /// </summary>
+        public string uri {get; set;}
+
         /// <summary>
         /// The position inside the text document.
         /// </summary>
@@ -20,8 +30,10 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// @param uri The document's uri.
         /// @param position The position inside the document.
         /// </summary>
-        public TextDocumentPosition(string uri, Position position) : base(uri)
+        public TextDocumentPosition(TextDocumentIdentifier textDocument, string uri, Position position)
         {
+            this.textDocument = textDocument;
+            this.uri = uri;
             this.position = position;
         }
     }
