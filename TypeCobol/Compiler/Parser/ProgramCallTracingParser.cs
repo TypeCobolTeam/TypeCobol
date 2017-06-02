@@ -6,16 +6,16 @@ namespace TypeCobol.Compiler.Parser
     /// <summary>
     /// Utility class only used to profile Antlr performance
     /// </summary>
-    internal class CodeElementsTracingParser : CodeElementsParser
+    internal class ProgramClassTracingParser : ProgramClassParser
     {
-        public CodeElementsTracingParser(ITokenStream input) : base(input)
+        public ProgramClassTracingParser(ITokenStream input) : base(input)
         {
             Profile = true;
         }
 
         public override void EnterRule(ParserRuleContext localctx, int state, int ruleIndex)
         {
-            CodeElementsParserStep.AntlrPerformanceProfiler.EnterParserRule(localctx, ruleIndex);
+            ProgramClassParserStep.AntlrPerformanceProfiler.EnterParserRule(localctx, ruleIndex);
             base.EnterRule(localctx, state, ruleIndex);
         }
     }

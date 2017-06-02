@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Parser
 	internal static class DiagnosticUtils
 	{
 		internal static void AddError(CodeElement e, string message, Antlr4.Runtime.RuleContext context, MessageCode code = MessageCode.SyntaxErrorInParser) {
-			AddError(e, message, ParseTreeUtils.GetFirstToken(context), new RuleStackBuilder().GetRuleStack(context), code);
+			AddError(e, message, ParseTreeUtils.GetFirstToken(context), RuleStackBuilder.GetRuleStack(context), code);
 		}
 		internal static void AddError(CodeElement e, string message, MessageCode code = MessageCode.SyntaxErrorInParser) {
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
