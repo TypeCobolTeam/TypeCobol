@@ -58,6 +58,7 @@ namespace CLI.Test
             CLITestHelper.Test("return_code_1", ReturnCode.FatalError);
             CLITestHelper.Test("return_code_2", ReturnCode.OutputFileError);
             CLITestHelper.Test("return_code_3", ReturnCode.ParsingDiagnostics);
+            CLITestHelper.Test("return_code_4", ReturnCode.Warning);
         }
 
     }
