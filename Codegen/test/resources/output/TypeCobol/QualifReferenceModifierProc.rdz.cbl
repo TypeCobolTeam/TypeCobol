@@ -42,7 +42,7 @@
             END-IF
                .
 
-            PntTab-Pnt POINTER TO ADDRESS OF TC-DVZZOSM7-PntTab
+            set PntTab-Pnt TO ADDRESS OF TC-DVZZOSM7-PntTab
 
            .
                           
@@ -68,14 +68,14 @@
            .
       *    if Var2::JobName(1:2) = 'ET'
       *       or Var2::JobName(1:4) = 'PSAT'
-           if JobName(1:2) OF Var2 = 'ET'
-              or JobName(1:4) OF Var2 = 'PSAT'
+           if JobName OF Var2(1:2) = 'ET'
+              or JobName OF Var2(1:4) = 'PSAT'
               display "case 6"
            end-if
       
       *    if Var2::JobName(1:2) = 'ET'
       *       or Var2::Site::SiteTest
-           if JobName(1:2) OF Var2 = 'ET'
+           if JobName OF Var2(1:2) = 'ET'
               or SiteTest OF Site OF Var2
               display "case 7"
            end-if
@@ -83,8 +83,8 @@
       *    if Var2::JobName(1:2) = 'ET'
       *       or Var2::JobName(1:4) = 'PSAT'
       *       or Var2::Site::SiteTest
-           if JobName(1:2) OF Var2 = 'ET'
-              or JobName(1:4) OF Var2 = 'PSAT'
+           if JobName OF Var2(1:2) = 'ET'
+              or JobName OF Var2(1:4) = 'PSAT'
               or SiteTest OF Site OF Var2
               display "case 8"
            end-if

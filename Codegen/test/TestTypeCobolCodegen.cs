@@ -115,19 +115,19 @@ namespace TypeCobol.Codegen {
 		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
-        public void ParseQualifSubscript()
+        public void ParseQualifReferenceModifier()
         {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "QualifSubscript") + ".rdz.cbl", skeletons);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "QualifReferenceModifier") + ".rdz.cbl", skeletons);
 		}
 
 		[TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
-        public void ParseQualifSubscriptProc()
+        public void ParseQualifReferenceModifierProc()
         {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "QualifSubscriptProc") + ".rdz.cbl", skeletons);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "QualifReferenceModifierProc") + ".rdz.cbl", skeletons);
 		}        
 
 		[TestMethod]
