@@ -42,7 +42,7 @@
             END-IF
                .
 
-            PntTab-Pnt POINTER TO ADDRESS OF TC-DVZZOSM7-PntTab
+            set PntTab-Pnt TO ADDRESS OF TC-DVZZOSM7-PntTab
 
            .
                           

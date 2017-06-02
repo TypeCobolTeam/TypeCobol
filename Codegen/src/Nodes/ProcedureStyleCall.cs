@@ -74,19 +74,26 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
                 TypeCobol.Compiler.Nodes.FunctionDeclaration fun_decl = this.Node.FunctionDeclaration;
                 string callString = null;
+
+                //We don't need end-if anymore, but I let it for now. Because this generated code still need to be tested on production
                 bool bNeedEndIf = false;
                 if (((FunctionDeclarationHeader)fun_decl.CodeElement).Visibility == AccessModifier.Public)
                 {
                     if (this.Node.IsNotByExternalPointer || IsNotByExternalPointer)
                     {
                         IsNotByExternalPointer = true;
-                        string guard = string.Format("IF TC-{0}-{1} = '{2}'", fun_decl.Library, hash, hash);
+                        string guard = string.Format("IF TC-{0}-{1}-Idt not = '{2}'", fun_decl.Library, hash, hash);
                         var guardTextLine = new TextLineSnapshot(-1, guard, null);
                         _cache.Add(guardTextLine);
-                        callString = string.Format("        CALL TC-{0}-{1}{2}", fun_decl.Library, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                        string loadPointer = string.Format("        PERFORM TC-LOAD-POINTERS-{0}", fun_decl.Library);
+                        _cache.Add(new TextLineSnapshot(-1, loadPointer, null));
+                        string endIf = "    END-IF";
+                        _cache.Add(new TextLineSnapshot(-1, endIf, null));
+
+
+                        callString = string.Format("    CALL TC-{0}-{1}{2}", fun_decl.Library, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
                         var callTextLine = new TextLineSnapshot(-1, callString, null);
                         _cache.Add(callTextLine);
-                        bNeedEndIf = true;
                     }
                     else
                     {
@@ -143,6 +150,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
                     var call_end = new TextLineSnapshot(-1, !bNeedEndIf ? "    end-call " : "        end-call ", null);
                     _cache.Add(call_end);
                 }
+                //We don't need end-if anymore, but I let it for now. Because this generated code still need to be tested on production
                 if (bNeedEndIf)
                 {
                     var end_guardTextLine = new TextLineSnapshot(-1, "    END-IF", null);

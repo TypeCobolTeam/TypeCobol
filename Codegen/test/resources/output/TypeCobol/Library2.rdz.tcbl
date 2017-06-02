@@ -37,7 +37,7 @@
             END-IF
                .
 
-            PntTab-Pnt POINTER TO ADDRESS OF TC-DVZZDATE-PntTab
+            set PntTab-Pnt TO ADDRESS OF TC-DVZZDATE-PntTab
 
            .
                                              

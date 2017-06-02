@@ -141,6 +141,7 @@
 *      PERFORM Copy-Process-Mode
 *    ELSE
     PERFORM FctList-Process-Mode
+    perform INIT-LIBRARY
 *    END-IF
 
     GOBACK.
@@ -186,7 +187,7 @@
         @{
         var items = "";
         if (%definitions.functions.Public.Count > 0) {
-        items += "     PntTab-Pnt POINTER TO ADDRESS OF TC-"+%programName8+"-PntTab\n";
+        items += "     set PntTab-Pnt TO ADDRESS OF TC-"+%programName8+"-PntTab\n";
         }
         }
 @items
@@ -337,6 +338,17 @@
 @clause
       </pattern>
 
+      <!-- TC-Initializations-->
+      <pattern location="program.procedure-division.end" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
+        <conditions>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+        </conditions>
+*=================================================================
+ TC-Initializations.
+*=================================================================
+     .
+      </pattern>
+      
       <!-- CALLER PROCEDURE DIVISION WITH EXTERNAL-->
       <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="true">
         <conditions>
@@ -356,7 +368,7 @@
         clause += "     .\n";
         }
         }
-@clause
+        @clause
       </pattern>
 
       <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
@@ -367,28 +379,26 @@
         @{
         var clause = "";
         if (!%imports.IsEmpty) {
-        clause += "*=================================================================\n";
-        clause += " TC-Initializations.\n";
-        clause += "*=================================================================\n";
         foreach (var pgm in %imports.Programs.Values) {
-        clause += "    IF NOT TC-" + pgm.Name + "-FctList-IsLoaded\n";
-        clause += "        CALL 'ZCALLPGM' USING TC-"+pgm.Name+"\n";
-        clause += "        ADDRESS OF TC-Library-PntTab\n";
-        clause += "        PERFORM VARYING TC-Library-Idx FROM 1 BY 1\n";
-        clause += "        UNTIL TC-Library-Idx > TC-Library-PntNbr\n";
-        clause += "            EVALUATE TC-Library-Item-Idt (TC-Library-Idx)\n";
-        foreach (var proc in pgm.Procedures.Values) {
-        clause += "            WHEN '"+proc.Hash+"'\n";
-        clause += "                 SET ADDRESS OF\n";
-        clause += "                 TC-"+pgm.Name+"-"+proc.Hash+"-Item\n";
-        clause += "                 TO ADDRESS OF\n";
-        clause += "                 TC-Library-Item(TC-Library-Idx)\n";
-        }
-        clause += "            END-EVALUATE\n";
-        clause += "        END-PERFORM\n";
-        clause += "        SET TC-"+pgm.Name+"-FctList-IsLoaded TO TRUE\n";
-        clause += "    END-IF\n";
-        clause += "     .\n";
+          clause += "*=================================================================\n";
+          clause += " TC-LOAD-POINTERS-" + pgm.Name + ".\n";
+          clause += "*=================================================================\n";
+          clause += "     CALL 'ZCALLPGM' USING TC-"+pgm.Name+"\n";
+          clause += "     ADDRESS OF TC-Library-PntTab\n";
+          clause += "     PERFORM VARYING TC-Library-Idx FROM 1 BY 1\n";
+          clause += "     UNTIL TC-Library-Idx > TC-Library-PntNbr\n";
+          clause += "         EVALUATE TC-Library-Item-Idt (TC-Library-Idx)\n";
+          foreach (var proc in pgm.Procedures.Values) {
+            clause += "         WHEN '"+proc.Hash+"'\n";
+            clause += "              SET ADDRESS OF\n";
+            clause += "              TC-"+pgm.Name+"-"+proc.Hash+"-Item\n";
+            clause += "              TO ADDRESS OF\n";
+            clause += "              TC-Library-Item(TC-Library-Idx)\n";
+          }
+          clause += "         END-EVALUATE\n";
+          clause += "     END-PERFORM\n";
+          clause += "     SET TC-"+pgm.Name+"-FctList-IsLoaded TO TRUE\n";
+          clause += "     .\n";
         }
         }
         }

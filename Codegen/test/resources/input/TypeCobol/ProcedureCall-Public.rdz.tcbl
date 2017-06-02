@@ -9,6 +9,9 @@
        01  flag         TYPE Bool.
        01  realformat   PIC X(08).
 
+       01 person1Id  pic 9(10).
+       01 MyPerson   type PersonService::Person.
+
        PROCEDURE DIVISION.
 
        declare procedure check private
@@ -44,6 +47,9 @@
            CALL Pgm1PrivateValidateDateFormat
                     INPUT      somedate someformat
                     OUTPUT     flag     realformat
+      *
+           call PersonService::GetPersonById input  person1Id
+                                             output MyPerson
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PRIVATE_ONLY_SAME_PGM)
            CALL PGM1::Pgm1PrivateValidateDateFormat
@@ -105,6 +111,28 @@
            CONTINUE.
        END-DECLARE.
        END PROGRAM Callee.
+
+      *PersonService contains public procedure
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PersonService.
+
+       DATA DIVISION.
+       working-storage section.
+       01 Person TYPEDEF STRICT PUBLIC.
+           05 PersonId   pic 9(10).
+           05 LastName   pic X(30).
+           05 FirstName  pic X(30).
+       PROCEDURE DIVISION.
+       
+       declare procedure GetPersonById public
+          input  personId  pic 9(10)
+          output person    type Person
+         .
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       END PROGRAM PersonService.
+
 
        END PROGRAM PGM1.
 
