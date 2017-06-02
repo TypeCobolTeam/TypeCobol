@@ -220,14 +220,9 @@ namespace TypeCobol.Codegen
         public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
             //Check if there is any error in diags
-            IEnumerable<Diagnostic> errorDiagnostics = compilationUnit.AllDiagnostics().Where(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error);
-            if (errorDiagnostics.Any())
+            if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
                 AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Diagnostics Detected");
-                Console.WriteLine("Diagnostics:");
-                foreach (var errorDiagnostic in errorDiagnostics) {
-                    Console.WriteLine(errorDiagnostic);
-                }
                 throw new GenerationException("Unable to generate because of error diagnostics", null, null, false, false);
             }
 
