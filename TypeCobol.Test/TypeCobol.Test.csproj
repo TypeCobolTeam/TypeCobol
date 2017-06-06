@@ -91,15 +91,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="*.cs" />
-    <Compile Include="Compiler\File\*.cs" />
-    <Compile Include="Compiler\Parser\*.cs" />
-    <Compile Include="Compiler\Pipeline\*.cs" />
-    <Compile Include="Compiler\Preprocessor\*.cs" />
-    <Compile Include="Compiler\Scanner\*.cs" />
-    <Compile Include="Compiler\Text\*.cs" />
+    <Compile Include="**\*.cs" />
     <Content Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
     <Content Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
     <Content Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
