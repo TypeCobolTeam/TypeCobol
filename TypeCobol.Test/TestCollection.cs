@@ -273,7 +273,12 @@ namespace TypeCobol.Test {
                 throw new Exception("SemanticCheck Step failled");
         }
 
-       
-
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void AntlrPerformanceProfilerTest()
+        {
+            TestParser.AntlrPerformanceProfiler();
+        }
     }
 }

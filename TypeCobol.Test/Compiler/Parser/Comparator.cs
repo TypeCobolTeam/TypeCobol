@@ -27,7 +27,7 @@ namespace TypeCobol.Test.Compiler.Parser
             Observer = new TestObserver();
         }
 
-        public void Init(string[] extensions = null, bool autoRemarks = false)
+        public void Init(string[] extensions = null, bool autoRemarks = false, bool AntlrProfiler = false)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator.paths.SamplePath));
             DocumentFormat format = Comparator.getSampleFormat();
@@ -42,6 +42,12 @@ namespace TypeCobol.Test.Compiler.Parser
                 format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength, format.ColumnsLayout, options);
             string filename = Comparator.paths.SampleName;
             Compiler = new FileCompiler(null, filename, project.SourceFileProvider, project, format.ColumnsLayout, options, null, false, project);
+
+            if(AntlrProfiler)
+            {
+                Compiler.CompilationResultsForProgram.PerfStatsForCodeElementsParser.ActivateDetailedAntlrPofiling = true;
+                Compiler.CompilationResultsForProgram.PerfStatsForProgramClassParser.ActivateDetailedAntlrPofiling = true;
+            }
         }
 
 		public void Parse() {
@@ -57,8 +63,18 @@ namespace TypeCobol.Test.Compiler.Parser
             
             using (StreamReader reader = new StreamReader(new FileStream(Comparator.paths.Result, FileMode.Open))) {
 				Comparator.Compare(Compiler.CompilationResultsForProgram, reader);
-			}
+            }
 		}
+
+        public void Compare(string parsingResult)
+        {
+            using (StreamReader reader = new StreamReader(new FileStream(Comparator.paths.Result, FileMode.Open)))
+            {
+                ParserUtils.CheckWithResultReader(Comparator.paths.SamplePath, parsingResult, reader);
+            }
+        }
+
+       
     }
 
     internal class TestObserver
@@ -88,6 +104,7 @@ namespace TypeCobol.Test.Compiler.Parser
                 new MemoryName(),
                 new NodeName(),
                 new TokenName(),
+                new AntlrName(),
 #if EUROINFO_RULES
                 new EIEmptyName(),
                 new EICodeElementName(),
@@ -567,6 +584,22 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 	}
 
+    internal class AntlrComparator : FilesComparator
+    {
+        public AntlrComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
+
+        public override void Compare(CompilationUnit result, StreamReader reader)
+        {
+            Compare(result.AntlrResult, reader);
+        }
+
+        internal void Compare(string AntlrResult, StreamReader reader)
+        {
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + AntlrResult);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, AntlrResult, reader);
+        }
+
+    }
 
     internal interface Names
     {
@@ -650,6 +683,13 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         public string CreateName(string name) { return name + "MEM"; }
         public Type GetComparatorType() { return typeof(MemoryComparator); }
+        public bool IsEI() { return false; }
+    }
+
+    internal class AntlrName : Names
+    {
+        public string CreateName(string name) { return name + "ANTLR"; }
+        public Type GetComparatorType() { return typeof(AntlrComparator); }
         public bool IsEI() { return false; }
     }
     #endregion

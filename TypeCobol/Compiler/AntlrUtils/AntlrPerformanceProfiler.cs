@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Text;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.Scanner;
 using System.Diagnostics;
+using System.Text;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
@@ -149,12 +150,14 @@ namespace TypeCobol.Compiler.AntlrUtils
             AggregatedPerfInfo.AggregateOtherFileInfo(CurrentFileInfo);
         }
 
-        public void WriteInfoToResultFile(StreamWriter sw)
+        public string WriteInfoToString()
         {
-            sw.WriteLine("---------------------");
-            sw.WriteLine("Top rules invocations");
-            sw.WriteLine("---------------------");
-            sw.WriteLine("");
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine("---------------------");
+            builder.AppendLine("Top rules invocations");
+            builder.AppendLine("---------------------");
+            builder.AppendLine("");
 
             IDictionary<string, int> ruleInvocations = new Dictionary<string, int>();
             for (int i = 0; i < AggregatedPerfInfo.RuleInvocations.Length; i++)
@@ -163,24 +166,25 @@ namespace TypeCobol.Compiler.AntlrUtils
             }
             foreach (var ruleStat in ruleInvocations.OrderByDescending(p => p.Value).Take(30))
             {
-                sw.WriteLine(ruleStat.Value + "\t" + ruleStat.Key);
+                builder.AppendLine(ruleStat.Value + "\t" + ruleStat.Key);
             }
 
-            sw.WriteLine("");
-            sw.WriteLine("---------------------");
-            sw.WriteLine("Costly decisions info");
-            sw.WriteLine("---------------------");
-            sw.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("---------------------");
+            Console.WriteLine("Costly decisions info");
+            Console.WriteLine("---------------------");
+            Console.WriteLine("");
 
             foreach (var decisionInfo in AggregatedPerfInfo.DecisionInfos.Where(di => di.invocations > 0).OrderByDescending(di => di.timeInPrediction).Take(30))
             {
-                sw.WriteLine(decisionInfo.decision + " : " + decisionInfo.invocations + " invocations, " + decisionInfo.timeInPrediction / 1000 / decisionInfo.invocations + " µs per decision, " + decisionInfo.timeInPrediction / 1000000 + " ms in prediction");
+                if (decisionInfo.invocations > 0)
+                    Console.WriteLine(decisionInfo.decision + " : " + decisionInfo.invocations + " invocations, " + decisionInfo.timeInPrediction / 1000 / decisionInfo.invocations + " µs per decision, " + decisionInfo.timeInPrediction / 1000000 + " ms in prediction");
             }
 
-            sw.WriteLine("");
-            sw.WriteLine("---------------------");
-            sw.WriteLine("Rules invocation info");
-            sw.WriteLine("---------------------");
+            builder.AppendLine("");
+            builder.AppendLine("---------------------");
+            builder.AppendLine("Rules invocation info");
+            builder.AppendLine("---------------------");
 
             int depth = 2;
             for (;;)
@@ -192,32 +196,34 @@ namespace TypeCobol.Compiler.AntlrUtils
                     string curstack = LimitToDepth(ruleStackPair.Key, depth);
                     if (prevstack != curstack)
                     {
-                        sw.WriteLine();
-                        sw.WriteLine(curstack);
+                        builder.AppendLine();
+                        builder.AppendLine(curstack);
                         prevstack = curstack;
                     }
-                    sw.WriteLine("\t" + ruleStackPair.Value + "\t" + ruleStackPair.Key);
+                    builder.AppendLine("\t" + ruleStackPair.Value + "\t" + ruleStackPair.Key);
                     count++;
                 }
-                sw.WriteLine();
-                sw.WriteLine();
+                builder.AppendLine("\n\n");
                 if (count == 0) break;
                 depth++;
             }
 
-            sw.WriteLine("");
-            sw.WriteLine("-------------------");
-            sw.WriteLine("Detailed file infos");
-            sw.WriteLine("-------------------");
-            sw.WriteLine("");
+            builder.AppendLine("");
+            builder.AppendLine("-------------------");
+            builder.AppendLine("Detailed file infos");
+            builder.AppendLine("-------------------");
+            builder.AppendLine("");
 
             foreach (var fileInfo in ParsedFilesInfos)
             {
-                sw.WriteLine(fileInfo.Name);
-                sw.WriteLine("\t" + fileInfo.LinesCount + " lines, " + fileInfo.TokensCount + " tokens, " + fileInfo.CodeElementsCount + " code elements");
-                sw.WriteLine("\t" + fileInfo.ParseTimeMs + " ms parsing, " + fileInfo.DecisionTimeMs + " ms decision / " + fileInfo.RuleInvocations.Sum() + " rule invocations");
-                sw.WriteLine("\t" + fileInfo.LinesCount * 1000 / fileInfo.ParseTimeMs + " lines/sec, " + fileInfo.TokensCount * 1000 / fileInfo.ParseTimeMs + " tokens/sec, " + fileInfo.CodeElementsCount * 1000 / fileInfo.ParseTimeMs + " code elements/sec");
+                builder.AppendLine(fileInfo.Name);
+                builder.AppendLine("\t" + fileInfo.LinesCount + " lines, " + fileInfo.TokensCount + " tokens, " + fileInfo.CodeElementsCount + " code elements");
+                Console.WriteLine("\t" + fileInfo.ParseTimeMs + " ms parsing, " + fileInfo.DecisionTimeMs + " ms decision / " + fileInfo.RuleInvocations.Sum() + " rule invocations");
+                if(fileInfo.ParseTimeMs > 0)
+                    Console.WriteLine("\t" + fileInfo.LinesCount * 1000 / fileInfo.ParseTimeMs + " lines/sec, " + fileInfo.TokensCount * 1000 / fileInfo.ParseTimeMs + " tokens/sec, " + fileInfo.CodeElementsCount * 1000 / fileInfo.ParseTimeMs + " code elements/sec");
             }
+
+            return builder.ToString();
         }
 
         private static string LimitToDepth(string key, int depth)
