@@ -188,7 +188,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public List<DataDefinition> GetVariable(QualifiedName name)
         {
-            return new List<DataDefinition>(GetVariableExplicit(name).Cast<DataDefinition>());
+            return GetVariableExplicit(name);
         }
 
         private IList<DataDefinition> GetVariable(string name)
@@ -201,25 +201,21 @@ namespace TypeCobol.Compiler.CodeModel
             return symbolTable.DataEntries;
         }
 
-        public List<Node> GetVariableExplicit(QualifiedName name)
+        public List<DataDefinition> GetVariableExplicit(QualifiedName name)
         {
-            var found = new List<Node>();
-            var candidates = new List<Node>();
-            candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head)); //Get variable name declared into typedef declaration
-            candidates.AddRange(GetVariable(name.Head)); //Get all varaibles that corresponds to the given head of QualifiedName
-
+            var found = new List<DataDefinition>();
+            var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
+            
             foreach (var candidate in candidates) 
             {
-                if ((candidate as DataDefinition).IsPartOfATypeDef) //Check if candidate is inside a typedef declaration
-                {
-                    var typeDefinitionLevel = candidate.Parent;
-                    while ((typeDefinitionLevel as DataDefinition).IsPartOfATypeDef)
-                    {
-                        typeDefinitionLevel = typeDefinitionLevel.Parent;
-                    } //Find the top level of the typedef declaration so we can get all the references that use this type
+                //Find the top level of the typedef declaration so we can get all the references that use this type
+                var typeDefinitionLevel = candidate.GetParentTypeDefinition;
 
-                    var tempParentTypeReferences = (typeDefinitionLevel as TypeDefinition).References; //Get type's references
-                    var parentTypeReferences = new List<Node>();
+                if (typeDefinitionLevel != null) //Check if candidate is inside a typedef declaration
+                {
+                    var tempParentTypeReferences = typeDefinitionLevel.References;
+                        //Get type's references
+                    var parentTypeReferences = new List<DataDefinition>();
 
                     foreach (var dataEntry in this.DataEntries) //Filter on DataEntries of the current SymbolTable
                     {
@@ -229,16 +225,16 @@ namespace TypeCobol.Compiler.CodeModel
                         }
                     }
 
-                    parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => (r as DataDefinition).IsPartOfATypeDef)); //Get back the references which are defined in Typedef and not present in DataEtries SymbolTable
+                    parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => r.IsPartOfATypeDef)); //Get back the references which are defined in Typedef and not present in DataEtries SymbolTable
 
                     if (parentTypeReferences.Count == 0)
                         continue; //If no references found it means the type is not used so the seeked variable is not accessible
 
                     foreach (var reference in parentTypeReferences)
                     {
-                        if (!(reference as DataDefinition).IsPartOfATypeDef && ((name.Parent != null && reference.Name.Equals(name.Parent.Head, StringComparison.InvariantCultureIgnoreCase)) || name.Parent == null))
+                        if (!reference.IsPartOfATypeDef && ((name.Parent != null && reference.Name.Equals(name.Parent.Head, StringComparison.InvariantCultureIgnoreCase)) || name.Parent == null))
                             found.Add(candidate); //If the reference is not declared in a typedef and the reference name is equals to the qualified name.Parent so we get a match
-                        else if (name.Parent != null && name.Parent.Any(p => p.Equals(reference.Name, StringComparison.InvariantCultureIgnoreCase))) 
+                        else if (name.Parent != null && name.Parent.Any(p => p.Equals(reference.Name, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             // If it's correponds between parent name and reference name it's a match but we have to go deeper because it's a typedef variable reference
                             var parentFound = GetVariableExplicit(name.Parent); //Try to search deeper in qualifiedName parent
@@ -246,11 +242,19 @@ namespace TypeCobol.Compiler.CodeModel
                                 found.Add(candidate);
                         }
                     }
+                } else {
+                    throw new SystemException("we expect data definition part of Typedef");
                 }
+            }
+
+
+            var candidates2 = GetVariable(name.Head); //Get all variables that corresponds to the given head of QualifiedName
+            foreach (var candidate in candidates2) 
+            {
                 //Data manipulation for non Typedef Data Defintion
-                else if (name.Parent != null)
+                if (name.Parent != null)
                 {
-                    var tempParent = candidate; 
+                    Node tempParent = candidate; 
                     int i = name.Count - 1; //Index to reverse count the QualifiedName parts
                     while (tempParent.Parent != null) //Loop on candidate parent to see if the chain match the qualified name
                     {
@@ -272,7 +276,7 @@ namespace TypeCobol.Compiler.CodeModel
                                 break;
                         }
 
-                        if (tempParent.Name.Equals(name[i].ToString(), StringComparison.InvariantCultureIgnoreCase) && i == 0)
+                        if (tempParent.Name.Equals(name[i], StringComparison.InvariantCultureIgnoreCase) && i == 0)
                         {
                             found.Add(candidate); //Everythin correpond, let's add this candidate
                             break;
@@ -283,8 +287,7 @@ namespace TypeCobol.Compiler.CodeModel
                     }
                 }
                 //It's a simple variable 
-                else if (name.Parent == null)
-                {
+                else { // name.Parent == null
                     found.Add(candidate);
                 }
             }
@@ -295,41 +298,20 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
         /// <param name="name">Name of items we search for</param>
         /// <returns>Direct or indirect subordinates of a custom type</returns>
-        private List<Node> GetCustomTypesSubordinatesNamed(string name)
+        private List<DataDefinition> GetCustomTypesSubordinatesNamed(string name)
         {
-            var subs = new List<Node>();
+            var subs = new List<DataDefinition>();
             var scope = this;
             while (scope != null) {
                 foreach (var type in scope.Types) {
                     foreach (var type2 in type.Value) {
-                        subs.AddRange(type2.GetChildren(name, true));
+                        subs.AddRange(type2.GetChildren<DataDefinition>(name, true));
                     }
                 }
                 scope = scope.EnclosingScope;
             }
             
             return subs;
-        }
-        
-        /// <summary>Searches all children of a given node that are of a given type</summary>
-        /// <param name="node">We search among this Node's children</param>
-        /// <param name="typename">Name of the type we want</param>
-        /// <param name="deep">True for deep search, false for shallow search</param>
-        /// <returns>All children of a given type</returns>
-        private List<Node> GetChildrenOfDataType(Node node, QualifiedName typename, bool deep)
-        {
-            var results = new List<Node>();
-            foreach (var child in node.Children)
-            {
-                var typed = child as ITypedNode;
-                if (typed != null)
-                {
-                    if (typename.Head.Equals(typed.DataType.Name, System.StringComparison.InvariantCultureIgnoreCase))
-                        results.Add(child);
-                }
-                if (deep) results.AddRange(GetChildrenOfDataType(child, typename, true));
-            }
-            return results;
         }
 
         /// <summary>Gets all data items of a specific type, accross all scopes.</summary>
