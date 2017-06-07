@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
@@ -50,6 +51,9 @@ namespace TypeCobol.LanguageServices.Editor
         {
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, compilationProject.Encoding, compilationProject.ColumnsLayout, sourceText);
             FileCompiler fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, false, compilationProject);
+            //Create our own empty Symbol table.
+            SymbolTable table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
+            fileCompiler.CompilationResultsForProgram.CustomSymbols = table;
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
             lock (OpenedFileCompilers)
             {

@@ -164,6 +164,7 @@
     <Compile Include="VsCodeProtocol\Text Document\Position.cs" />
     <Compile Include="VsCodeProtocol\Text Document\Range.cs" />
     <Compile Include="VsCodeProtocol\Text Document\TextDocumentIdentifier.cs" />
+    <Compile Include="VsCodeProtocol\Text Document\TextDocumentItem.cs" />
     <Compile Include="VsCodeProtocol\Text Document\TextDocumentPosition.cs" />
     <Compile Include="VsCodeProtocol\Text Document\TextEdit.cs" />
     <Compile Include="VsCodeProtocol\Workspace Changes\TextEditChange.cs" />

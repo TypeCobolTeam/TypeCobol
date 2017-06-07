@@ -53,11 +53,11 @@ namespace TypeCobol.LanguageServer
 
         public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
-            Uri objUri = new Uri(parameters.uri);
+            Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
             {
                 string fileName = Path.GetFileName(objUri.LocalPath);
-                typeCobolWorkspace.OpenSourceFile(fileName, parameters.text);
+                typeCobolWorkspace.OpenSourceFile(fileName, parameters.text != null ? parameters.text : parameters.textDocument.text);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + fileName);

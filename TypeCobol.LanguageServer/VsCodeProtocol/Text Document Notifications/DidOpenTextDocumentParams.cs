@@ -8,13 +8,27 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// <summary>
     /// The parameters send in a open text document notification
     /// </summary>
-    public class DidOpenTextDocumentParams : TextDocumentIdentifier
+    public class DidOpenTextDocumentParams
     {
         /// <summary>
-        /// The content of the opened  text document.
+        /// The document that was opened.
+        /// </summary>
+        public TextDocumentItem textDocument;
+
+        /// <summary>
+        /// Legacy property to support protocol version 1.0 requests.
         /// </summary>
         public string text { get; set; }
 
-        public DidOpenTextDocumentParams(string uri) : base(uri) { }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="textDocument"></param>
+        /// <param name="text"></param>
+        public DidOpenTextDocumentParams(TextDocumentItem textDocument, string text)
+        {
+            this.textDocument = textDocument;
+            this.text = text;
+        }
     }
 }
