@@ -483,7 +483,7 @@ namespace TypeCobol.Compiler.CodeModel
         public IList<TypeDefinition> GetTypes(ITypedNode symbol)
         {
             var types = new List<TypeDefinition>();
-            var list = GetType(symbol.DataType.Name);
+            var list = GetType(symbol.DataType);
             foreach (var type in list) types.Add(type);
             return types;
         }
