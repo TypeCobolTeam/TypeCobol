@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
@@ -29,8 +30,7 @@ namespace TypeCobol.Compiler
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
             PerfStatsForProgramClassParser = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
 
-            //PerfStatsForCodeElementsParser.ActivateDetailedAntlrPofiling = true; //Uncomment to active Antlr performance counter on CodeElement
-            //PerfStatsForProgramClassParser.ActivateDetailedAntlrPofiling = true; //Uncomment to active Antlr performance counter on ProgramClass
+            
         }
 
         /// <summary>
@@ -126,6 +126,27 @@ namespace TypeCobol.Compiler
         /// </summary>
         public PerfStatsForParsingStep PerfStatsForCodeElementsParser { get; private set; }
 
+        public string AntlrResult {
+            get
+            {
+                StringBuilder builder = new StringBuilder();
+
+                if (CodeElementsParserStep.AntlrPerformanceProfiler != null && PerfStatsForCodeElementsParser.ActivateDetailedAntlrPofiling)
+                {
+                    builder.Append("---CODE ELEMENT PARSER STEP---\n");
+                    builder.Append(CodeElementsParserStep.AntlrPerformanceProfiler.WriteInfoToString());
+                }
+
+                if (ProgramClassParserStep.AntlrPerformanceProfiler != null && PerfStatsForProgramClassParser.ActivateDetailedAntlrPofiling)
+                {
+                    builder.Append("\n\n---PROGRAM CLASS PARSER STEP---\n");
+                    builder.Append(ProgramClassParserStep.AntlrPerformanceProfiler.WriteInfoToString());
+                }
+
+                return builder.ToString();
+            }
+        }
+
         /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
         /// (if the code elements lines changed since the last time this method was called)
@@ -151,7 +172,7 @@ namespace TypeCobol.Compiler
                     IList<ParserDiagnostic> newDiagnostics;
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics);
-
+                
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
                         codeElementsDocument, ProgramClassDocumentSnapshot == null ? 0 : ProgramClassDocumentSnapshot.CurrentVersion + 1,

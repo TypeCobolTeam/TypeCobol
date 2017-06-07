@@ -111,6 +111,7 @@
     <Content Include="**\*Preprocessor\**" />
     <Content Include="**\ResultFiles\**" />
     <Content Include="ThirdParty\**" />
+    <Content Include="**\Antlr\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">

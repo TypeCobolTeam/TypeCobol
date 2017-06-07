@@ -69,6 +69,17 @@ namespace TypeCobol.Test.Compiler.Parser
             unit.Compare();//with Simple.3.txt
         }
 
+        public static void AntlrPerformanceProfiler()
+        {
+            var AntlrFolder = root + Path.DirectorySeparatorChar + "Antlr";
+            Paths paths = new Paths(AntlrFolder, AntlrFolder, AntlrFolder + Path.DirectorySeparatorChar + "AntlrTest.pgm", new AntlrName());
+            TestUnit unit = new TestUnit(new Multipass(paths));
+            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            unit.Parse();
+          
+            unit.Compare(unit.Compiler.CompilationResultsForProgram.AntlrResult);
+        }
+
         private static TextChangedEvent updateLine(TextChangeType type, int line, string text, TextChangedEvent e = null) {
             if (e==null) e = new TextChangedEvent();
             ITextLine snapshot = new TextLineSnapshot(line, text, null);
