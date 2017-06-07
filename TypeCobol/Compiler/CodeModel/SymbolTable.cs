@@ -254,13 +254,13 @@ namespace TypeCobol.Compiler.CodeModel
                     int i = name.Count - 1; //Index to reverse count the QualifiedName parts
                     while (tempParent.Parent != null) //Loop on candidate parent to see if the chain match the qualified name
                     {
-                        if (i < 0 || !tempParent.Name.Equals(name[i].ToString(), StringComparison.InvariantCultureIgnoreCase)) 
+                        if (i < 0 || !name[i].Equals(tempParent.Name, StringComparison.InvariantCultureIgnoreCase)) 
                         {
                             bool parentFound = false;
                             var secondTempParent = tempParent;
                             while (secondTempParent.Parent != null) //If it doesn't match between name and parent name try to see deeper if there is no jump in gven QualifiedName
                             {
-                                if (secondTempParent.Name.Equals(name[i].ToString(), StringComparison.InvariantCultureIgnoreCase))
+                                if (name[i].Equals(secondTempParent.Name, StringComparison.InvariantCultureIgnoreCase))
                                 {
                                     parentFound = true;
                                     tempParent = secondTempParent; //If we found a parent it means that there were jumps in QualifiedName 
