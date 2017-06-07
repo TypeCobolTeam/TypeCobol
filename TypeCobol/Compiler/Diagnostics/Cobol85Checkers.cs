@@ -537,7 +537,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
         ITypedNode typed = symbol as ITypedNode;
 		if (typed == null) return null;// symbol untyped
-		var types = table.GetTypes(typed);
+		var types = table.GetType(typed);
 		if (types.Count != 1) return null;// symbol type not found or ambiguous
 		return types[0].DataType;
 	}
