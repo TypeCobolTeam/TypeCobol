@@ -74,11 +74,14 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    // Parse the whole document for the first time
-                    CodeElementsParserStep.ParseDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines), CompilerOptions, perfStatsForParserInvocation);
+                    if (processedTokensDocument != null)
+                    {
+                        // Parse the whole document for the first time
+                        CodeElementsParserStep.ParseDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines), CompilerOptions, perfStatsForParserInvocation);
 
-                    // Create the first code elements document snapshot
-                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
+                        // Create the first code elements document snapshot
+                        CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
+                    }
                 }
                 else
                 {
@@ -141,7 +144,7 @@ namespace TypeCobol.Compiler
                 CodeElementsDocument codeElementsDocument = CodeElementsDocumentSnapshot;
 
                 // Check if an update is necessary and compute changes to apply since last version
-                if (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != codeElementsDocument.CurrentVersion)
+                if ((CodeElementsDocumentSnapshot != null) && (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != codeElementsDocument.CurrentVersion))
                 {
                     // Start perf measurement
                     var perfStatsForParserInvocation = PerfStatsForProgramClassParser.OnStartRefreshParsingStep();

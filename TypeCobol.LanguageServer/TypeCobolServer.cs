@@ -192,9 +192,9 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        public override void OnDidCloseTextDocument(TextDocumentIdentifier parameters)
+        public override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
         {
-            Uri objUri = new Uri(parameters.uri);
+            Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
             {
                 string fileName = Path.GetFileName(objUri.LocalPath);

@@ -88,9 +88,9 @@ namespace TypeCobol.LanguageServices.Editor
                 {
                     fileCompilerToClose = OpenedFileCompilers[fileName];
                     OpenedFileCompilers.Remove(fileName);
+                    fileCompilerToClose.StopContinuousBackgroundCompilation();
                 }
-            }
-            fileCompilerToClose.StopContinuousBackgroundCompilation();
+            }            
         }
     }
 }
