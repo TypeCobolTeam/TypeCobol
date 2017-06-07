@@ -37,12 +37,6 @@ Line 132[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-
 Line 145[6,66] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
 Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
 Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
-Line 165[1,99] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Movment2d.Accel2d.Coord2d.X
-Line 165[1,99] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Movment2d.Speed2d.Coord2d.X
-Line 166[1,78] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Position2d.Y
-Line 166[1,78] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Position2d.Z
-Line 167[1,75] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Accel2d.Z
-Line 167[1,75] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Speed2d.Y
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -52,17 +46,17 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   Equipment:Alphanumeric
   Equipment-id:Array
   Feature-list:Feature
-  Point:Alphanumeric
+  Point2:Alphanumeric
+  Position2d:Vect2
+  Movment2d:Alphanumeric
+  Accel2d:Vect2
+  Speed2d:Vect2
   Point:VECT2
   Point:VeCt2
   Point:VECT2
   Point:VECT2
   Point:VEcT2
   Point:vECT2
-  Position2d:Vect2
-  Movment2d:Alphanumeric
-  Accel2d:Vect2
-  Speed2d:Vect2
   unknown:TypeNotDefined
   unknown:TypeDefinedAfter
   LevelKOGroup:Alphanumeric

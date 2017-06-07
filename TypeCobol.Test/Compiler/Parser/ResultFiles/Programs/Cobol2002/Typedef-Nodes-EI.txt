@@ -59,12 +59,6 @@ Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPED
 Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
 Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
-Line 165[1,99] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Movment2d.Accel2d.Coord2d.X
-Line 165[1,99] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Movment2d.Speed2d.Coord2d.X
-Line 166[1,78] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Position2d.Y
-Line 166[1,78] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Position2d.Z
-Line 167[1,75] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Accel2d.Z
-Line 167[1,75] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Point.Speed2d.Y
 --- Nodes ---
 ?
   TypeCobol
@@ -81,7 +75,7 @@ Line 167[1,75] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbo
             Y
           Coord3d
             Z
-        Point
+        Point2
           Position2d
           Movment2d
             Accel2d
@@ -159,10 +153,10 @@ Line 167[1,75] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbo
           TYPE-GRP-STRONG-REN
     procedure-division
       sentence-0
-        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [95,99:Point]<UserDefinedWord>
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [46,51:Point2]<UserDefinedWord>
 
-        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [74,78:Point]<UserDefinedWord>
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [60,65:Point2]<UserDefinedWord>
 
-        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [71,75:Point]<UserDefinedWord>
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [57,62:Point2]<UserDefinedWord>
 
         end

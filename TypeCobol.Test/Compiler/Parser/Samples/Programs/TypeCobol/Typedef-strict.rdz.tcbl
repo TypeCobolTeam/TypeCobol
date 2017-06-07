@@ -12,7 +12,7 @@
           12 Y PIC 9.
         05 Coord3d.
           10 Z PIC 9.
-       01 Point.
+       01 PointA.
         05 Position2d TYPE Vect2.
         05 Movment2d.
           14 Accel2d  TYPE Vect2.
@@ -167,12 +167,12 @@
       
        PROCEDURE DIVISION.
       
-           move X OF Coord2d OF Accel2d OF Movment2d OF Point 
-           TO X OF Coord2d OF Speed2d OF Movment2d OF Point
-           move Y OF Position2d OF Point                      
-           TO Z OF Position2d OF Point
-           move Z In Accel2d OF Point                         
-           TO Y of Speed2d In Point
+           move X OF Coord2d OF Accel2d OF Movment2d OF PointA
+           TO X OF Coord2d OF Speed2d OF Movment2d OF PointA
+           move Y OF Position2d OF PointA 
+           TO Z OF Position2d OF PointA
+           move Z In Accel2d OF PointA 
+           TO Y of Speed2d In PointA
       
       *OK same type
            move Point2 to Point3
