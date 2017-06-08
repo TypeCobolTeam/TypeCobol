@@ -233,5 +233,97 @@ namespace TypeCobol.LanguageServer
             }
             return null;
         }
+
+        
+        /// <summary>
+        /// Get the paragraph that can be associated to PERFORM Completion token.
+        /// </summary>
+        /// <param name="fileCompiler">The target FileCompiler instance</param>
+        /// <param name="performToken">The PERFORM token</param>
+        /// <returns></returns>
+        private ICollection<string> GetCompletionPerformParagraph(TypeCobol.Compiler.FileCompiler fileCompiler, TypeCobol.Compiler.Scanner.Token performToken)
+        {
+            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null)
+            {
+                if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root != null)
+                {
+                    System.Collections.Generic.Stack<TypeCobol.Compiler.Nodes.Node> nodeStack = new System.Collections.Generic.Stack<TypeCobol.Compiler.Nodes.Node>();
+                    nodeStack.Push(fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root);
+                    while (nodeStack.Count > 0)
+                    {
+                        TypeCobol.Compiler.Nodes.Node node = nodeStack.Pop();
+                        if (node.CodeElement != null && node.CodeElement.ConsumedTokens != null)
+                        {
+                            if (node.CodeElement.ConsumedTokens.Contains(performToken))
+                            {//We got it
+                                if (node.SymbolTable != null)
+                                {
+                                    ICollection<string> pargraphs = node.SymbolTable.GetParagraphNames();
+                                    return pargraphs;
+                                }
+                                else
+                                {
+                                    return null;
+                                }
+                            }
+                        }
+                        //push all children
+                        var children = node.Children;
+                        foreach(var child in children)
+                            nodeStack.Push(child);
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Request to request completion at a given text document position. The request's
+        /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
+        /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
+        /// </summary>
+        public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
+        {
+            Uri objUri = new Uri(parameters.uri);
+            if (objUri.IsFile)
+            {
+                // Get compilation info for the current file
+                string fileName = Path.GetFileName(objUri.LocalPath);
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
+
+                if (fileCompiler.CompilationResultsForProgram != null)
+                {
+                    // Find the token located below the mouse pointer
+                    var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
+                    TypeCobol.Compiler.Scanner.Token prevNonWhitespaceToken = null;
+                    var hoveredToken = tokensLine.TokensWithCompilerDirectives.First(
+                        token => {
+                            if (token.TokenFamily != Compiler.Scanner.TokenFamily.Whitespace)
+                                prevNonWhitespaceToken = token;
+                                    return token.StartIndex <= parameters.position.character && token.StopIndex >= parameters.position.character; 
+                                 }
+                        );
+
+                    //Ignore Whitespace tokens.
+                    // Return a text describing this token
+                    if (prevNonWhitespaceToken != null && prevNonWhitespaceToken.TokenType == Compiler.Scanner.TokenType.PERFORM)
+                    {
+                        List<CompletionItem> items = new List<CompletionItem>();
+                        ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, prevNonWhitespaceToken);
+                        if (paragraphs != null)
+                        {
+                            foreach (String p in paragraphs)
+                            {
+                                CompletionItem item = new CompletionItem(p);
+                                items.Add(item);
+                            }
+                        }
+                        return items;
+                    }
+                }
+            }
+            return null;
+        }
+
     }
 }
