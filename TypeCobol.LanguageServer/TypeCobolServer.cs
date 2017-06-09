@@ -295,6 +295,7 @@ namespace TypeCobol.LanguageServer
                 {
                     // Find the token located below the mouse pointer
                     var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
+                    //Used to store the previous token before any whitespace token
                     TypeCobol.Compiler.Scanner.Token prevNonWhitespaceToken = null;
                     var hoveredToken = tokensLine.TokensWithCompilerDirectives.First(
                         token => {
@@ -304,10 +305,8 @@ namespace TypeCobol.LanguageServer
                                  }
                         );
 
-                    //Ignore Whitespace tokens.
-                    // Return a text describing this token
                     if (prevNonWhitespaceToken != null && prevNonWhitespaceToken.TokenType == Compiler.Scanner.TokenType.PERFORM)
-                    {
+                    {//We got a perform Token
                         List<CompletionItem> items = new List<CompletionItem>();
                         ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, prevNonWhitespaceToken);
                         if (paragraphs != null)
