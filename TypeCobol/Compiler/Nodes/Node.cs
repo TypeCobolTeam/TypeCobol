@@ -405,10 +405,11 @@ namespace TypeCobol.Compiler.Nodes {
                 Node[] childrenNodes = children.ToArray();
                 foreach (Node child in childrenNodes)
                 {
-                    if (!continueVisit) {
+                    if (!continueVisit && astVisitor.IsStopVisitingChildren)
+                    {
                         break;
                     }
-                    continueVisit = child.AcceptASTVisitor(astVisitor);
+                    continueVisit = child.AcceptASTVisitor(astVisitor);                    
                 }
             }
 

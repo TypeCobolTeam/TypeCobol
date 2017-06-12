@@ -72,6 +72,15 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get;
         }
+
+        /// <summary>
+        /// Is this Visitor Stop visiting Children when one children has asked to stop ?
+        /// </summary>
+        bool IsStopVisitingChildren
+        {
+            get;
+        }
+
         bool BeginNode([NotNull] Node node);
         void EndNode([NotNull] Node node);
 
@@ -350,6 +359,14 @@ namespace TypeCobol.Compiler.CodeElements
 
     public abstract class AbstractAstVisitor : IASTVisitor {
         public virtual bool IsSymbolInformationForTokensEnabled
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public virtual bool IsStopVisitingChildren
         {
             get
             {

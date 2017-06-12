@@ -8,6 +8,7 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
+using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.LanguageServices.Editor;
 
@@ -247,34 +248,74 @@ namespace TypeCobol.LanguageServer
             {
                 if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root != null)
                 {
-                    System.Collections.Generic.Stack<TypeCobol.Compiler.Nodes.Node> nodeStack = new System.Collections.Generic.Stack<TypeCobol.Compiler.Nodes.Node>();
-                    nodeStack.Push(fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root);
-                    while (nodeStack.Count > 0)
+                    CompletionNodeMatcher matcher = new CompletionNodeMatcher(CompletionNodeMatcher.CompletionMode.Perform, performToken);
+                    fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(matcher);
+                    if (matcher.MatchingNode != null)
                     {
-                        TypeCobol.Compiler.Nodes.Node node = nodeStack.Pop();
-                        if (node.CodeElement != null && node.CodeElement.ConsumedTokens != null)
+                        if (matcher.MatchingNode.SymbolTable != null)
                         {
-                            if (node.CodeElement.ConsumedTokens.Contains(performToken))
-                            {//We got it
-                                if (node.SymbolTable != null)
-                                {
-                                    ICollection<string> pargraphs = node.SymbolTable.GetParagraphNames();
-                                    return pargraphs;
-                                }
-                                else
-                                {
-                                    return null;
-                                }
-                            }
+                            ICollection<string> pargraphs = matcher.MatchingNode.SymbolTable.GetParagraphNames();
+                            return pargraphs;
                         }
-                        //push all children
-                        var children = node.Children;
-                        foreach(var child in children)
-                            nodeStack.Push(child);
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Tries to math a token at a given position in a list of Tokens.
+        /// </summary>
+        /// <param name="tokenType">The Token type</param>
+        /// <param name="position">The Position to match the token</param>
+        /// <param name="tokens">The list of tokens</param>
+        /// <returns></returns>
+        private static TypeCobol.Compiler.Scanner.Token MatchTokenPosition(TypeCobol.Compiler.Scanner.TokenType tokenType, Position position, System.Collections.Generic.IList<TypeCobol.Compiler.Scanner.Token> tokens)
+        {
+            int count = tokens.Count;
+            TypeCobol.Compiler.Scanner.Token lastToken = null;
+            for (int i = 0; i < count; i++)
+            {
+                //Skip Whitespace
+                int j = i;
+                TypeCobol.Compiler.Scanner.Token token = null;
+                for (j = i; j < count; j++)
+                {
+                    token = tokens[j];
+                    if (token.TokenFamily != Compiler.Scanner.TokenFamily.Whitespace)
+                    {
+                        break;
+                    }
+                    else if (token.Column <= position.character && token.EndColumn >= position.character)
+                    {
+                        if (lastToken != null)
+                            return lastToken;
+                    }
+                }
+                i = j;
+                if (i >= count)
+                    break;
+                token = tokens[i];
+                if (token.TokenType == tokenType)
+                    lastToken = token;
+
+                if (token.Column <= position.character && token.EndColumn >= position.character)
+                {
+                    if (token.TokenType != Compiler.Scanner.TokenType.PERFORM && token.Column != position.character)
+                    {   //We are on a token which is not a PERFORM token and the the cursor position is not at the
+                        //beginning of the character ==> cancel the previous PERFORM token
+                        lastToken = null;
+                    }
+                    break;
+                }
+                if (token.TokenType != tokenType)
+                    lastToken = null;
+            }
+            return lastToken;
         }
 
         /// <summary>
@@ -291,24 +332,17 @@ namespace TypeCobol.LanguageServer
                 string fileName = Path.GetFileName(objUri.LocalPath);
                 var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
 
-                if (fileCompiler.CompilationResultsForProgram != null)
+                //Compiler.Scanner.TokenType.PERFORM
+                if (fileCompiler.CompilationResultsForProgram != null && fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
                 {
                     // Find the token located below the mouse pointer
                     var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
-                    //Used to store the previous token before any whitespace token
-                    TypeCobol.Compiler.Scanner.Token prevNonWhitespaceToken = null;
-                    var hoveredToken = tokensLine.TokensWithCompilerDirectives.First(
-                        token => {
-                            if (token.TokenFamily != Compiler.Scanner.TokenFamily.Whitespace)
-                                prevNonWhitespaceToken = token;
-                                    return token.StartIndex <= parameters.position.character && token.StopIndex >= parameters.position.character; 
-                                 }
-                        );
-
-                    if (prevNonWhitespaceToken != null && prevNonWhitespaceToken.TokenType == Compiler.Scanner.TokenType.PERFORM)
+                    var tokens = tokensLine.TokensWithCompilerDirectives;
+                    TypeCobol.Compiler.Scanner.Token performToken = MatchTokenPosition(Compiler.Scanner.TokenType.PERFORM, parameters.position, tokens);
+                    if (performToken != null)
                     {//We got a perform Token
                         List<CompletionItem> items = new List<CompletionItem>();
-                        ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, prevNonWhitespaceToken);
+                        ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, performToken);
                         if (paragraphs != null)
                         {
                             foreach (String p in paragraphs)
@@ -321,8 +355,7 @@ namespace TypeCobol.LanguageServer
                     }
                 }
             }
-            return null;
+            return new List<CompletionItem>();
         }
-
     }
 }
