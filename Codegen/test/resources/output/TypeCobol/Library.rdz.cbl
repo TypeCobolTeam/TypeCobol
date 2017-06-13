@@ -65,6 +65,7 @@
       *      PERFORM Copy-Process-Mode
       *    ELSE
            PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
       *    END-IF
 
            GOBACK.

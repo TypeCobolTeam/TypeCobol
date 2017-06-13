@@ -168,6 +168,7 @@
 *      PERFORM Copy-Process-Mode
 *    ELSE
     PERFORM FctList-Process-Mode
+    perform INIT-LIBRARY
 *    END-IF
 
     GOBACK.
@@ -205,6 +206,8 @@
       <pattern action="expand" location="program.end"></pattern>
     </patterns>
   </skeleton>
+
+
 
   <!-- replace function invocation by a CALL and create utility variables -->
   <skeleton name="FUN.CALL" var=" function  ,receiver ">
@@ -245,7 +248,7 @@
       </pattern>
     </patterns>
   </skeleton>
-
+  
   <!-- replace procedure-style invocation by a standard COBOL CALL -->
   <skeleton name="TYPE">
     <conditions>
@@ -255,10 +258,10 @@
       <pattern location="NODE" action="expand"></pattern>
     </patterns>
   </skeleton>
-
+  
   <!-- replace "::" qualification by "OF" inverse qualification -->
   <skeleton name="QUALIFICATION">
-    
+
     <patterns>
       <pattern action="expand" location="NODE"></pattern>
     </patterns>
