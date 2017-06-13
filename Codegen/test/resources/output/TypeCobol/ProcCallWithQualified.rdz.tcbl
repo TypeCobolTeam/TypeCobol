@@ -1,0 +1,34 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZOSM5.
+       data division.
+       local-storage section.
+     
+       01  Disp.
+             10 LIG-DET                  pic X(50).
+
+       procedure division.
+      *    call DVZZOSM5::DisplayCounter
+      *             input Disp::LIG-DET
+           CALL 'e08dc03a' USING
+                                 LIG-DET IN Disp
+           end-call
+                                       
+                                     
+      *    call DisplayCounter
+      *             input Disp::LIG-DET
+           CALL 'e08dc03a' USING
+                                 LIG-DET IN Disp
+           end-call
+                                       
+      
+           .
+      *declare procedure DisplayCounter private
+      *         input LineDetail pic X(50).
+       END PROGRAM DVZZOSM5.
+      *
+      *declare procedure DisplayCounter private
+      *         input LineDetail pic X(50).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. e08dc03a.
+       END PROGRAM e08dc03a.

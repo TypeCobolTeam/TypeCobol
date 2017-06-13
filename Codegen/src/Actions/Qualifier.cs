@@ -92,6 +92,16 @@ namespace TypeCobol.Codegen.Actions
             }
 
             /// <summary>
+            /// Detecting call site parameter
+            /// </summary>
+            /// <param name="callSiteParameter"></param>
+            /// <returns></returns>
+            public override bool Visit(CallSiteParameter callSiteParameter)
+            {
+                return false;
+            }
+
+            /// <summary>
             /// Checks if the current symbol reference is contained in the aready collected Items list.
             /// </summary>
             /// <param name="sr">The Symbol Reference to Check</param>
