@@ -41,10 +41,25 @@ namespace TypeCobol.LanguageServer.Utilities
             private set;
         }
 
-        private bool IsInProcedureDivision
+        /// <summary>
+        /// Procedure Division counter, because a FunctionDeclaration can have a procedure
+        /// Division;
+        /// </summary>
+        int ProcedureDivisionCount
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Getter if we are in a Procedure Division.
+        /// </summary>
+        private bool IsInProcedureDivision
+        {
+            get
+            {
+                return ProcedureDivisionCount > 0;
+            }            
         }
 
         bool m_IsStopVisitingChildren;
@@ -102,7 +117,7 @@ namespace TypeCobol.LanguageServer.Utilities
                         IsInProcedureDivision);
                     if (canVisit && node is ProcedureDivision)
                     {
-                        IsInProcedureDivision = true;
+                        ProcedureDivisionCount++;
                     }
                     return canVisit;
                 }
@@ -123,7 +138,7 @@ namespace TypeCobol.LanguageServer.Utilities
                     {
                         if (node is ProcedureDivision)
                         {
-                            IsInProcedureDivision = false;
+                            ProcedureDivisionCount--;                            
                         }
                     }
                     break;
