@@ -47,11 +47,12 @@ namespace TypeCobol.LanguageServer.Utilities
             set;
         }
 
+        bool m_IsStopVisitingChildren;
         public override bool IsStopVisitingChildren
         {
             get
             {
-                return false;
+                return m_IsStopVisitingChildren;
             }
         }
 
@@ -74,6 +75,7 @@ namespace TypeCobol.LanguageServer.Utilities
         {
             Mode = mode;
             MatchingToken = matchingToken;
+            m_IsStopVisitingChildren = false;
         }
 
         public override bool IsSymbolInformationForTokensEnabled
@@ -130,19 +132,32 @@ namespace TypeCobol.LanguageServer.Utilities
             }
         }
 
+        /// <summary>
+        /// Checks if the given node match the token
+        /// </summary>
+        /// <param name="node">The Node to check</param>
+        /// <returns>true if the nod ematches the token, fals eotherwise.</returns>
+        private bool CheckMatchingTokenNode(Node node)
+        {
+            if (node.CodeElement != null && node.CodeElement.ConsumedTokens != null)
+            {
+                bool bResult = (node.CodeElement.ConsumedTokens.Contains(MatchingToken));
+                if (bResult)
+                {
+                    this.MatchingNode = node;
+                    m_IsStopVisitingChildren = true;
+                }
+                return bResult;
+            }
+            return false;
+        }
+
         public override bool Visit(Perform perform)
         {
             switch (Mode)
             {
                 case CompletionMode.Perform:
-                    if (perform.CodeElement != null && perform.CodeElement.ConsumedTokens != null)
-                    {
-                        bool bResult = (perform.CodeElement.ConsumedTokens.Contains(MatchingToken));
-                        if (bResult)
-                            this.MatchingNode = perform;
-                        return !bResult;
-                    }
-                    return true;
+                    return !CheckMatchingTokenNode(perform);
                 default:
                     return true;
             }
@@ -153,14 +168,7 @@ namespace TypeCobol.LanguageServer.Utilities
             switch (Mode)
             {
                 case CompletionMode.Perform:
-                    if (performProcedure.CodeElement != null && performProcedure.CodeElement.ConsumedTokens != null)
-                    {
-                        bool bResult = (performProcedure.CodeElement.ConsumedTokens.Contains(MatchingToken));
-                        if (bResult)
-                            this.MatchingNode = performProcedure;
-                        return !bResult;
-                    }
-                    return true;
+                    return !CheckMatchingTokenNode(performProcedure);
                 default:
                     return true;
             }
