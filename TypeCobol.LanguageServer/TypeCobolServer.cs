@@ -306,8 +306,8 @@ namespace TypeCobol.LanguageServer
                 if (token.Column <= position.character && token.EndColumn >= position.character)
                 {
                     if (token.TokenType != Compiler.Scanner.TokenType.PERFORM && token.Column != position.character)
-                    {   //We are on a token which is not a PERFORM token and the the cursor position is not at the
-                        //beginning of the character ==> cancel the previous PERFORM token
+                    {   //We are on a token which is not a matching token and the the cursor position is not at the
+                        //beginning of the character ==> cancel the previous matching token
                         lastToken = null;
                     }
                     break;
@@ -332,7 +332,6 @@ namespace TypeCobol.LanguageServer
                 string fileName = Path.GetFileName(objUri.LocalPath);
                 var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
 
-                //Compiler.Scanner.TokenType.PERFORM
                 if (fileCompiler.CompilationResultsForProgram != null && fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
                 {
                     // Find the token located below the mouse pointer
