@@ -55,6 +55,12 @@ namespace TypeCobol.Compiler.Diagnostics {
             SectionOrParagraphUsageChecker.CheckParagraph(paragraph);
             return true;
         }
+
+        public override bool Visit(ProcedureDivision procedureDivision) {
+            LibraryChecker.CheckLibrary(procedureDivision);
+            return true;
+        }
+
         public override bool Visit(Section section) {
             SectionOrParagraphUsageChecker.CheckSection(section);
             return true;
