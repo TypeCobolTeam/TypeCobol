@@ -305,7 +305,7 @@ namespace TypeCobol.LanguageServer
 
                 if (token.Column <= position.character && token.EndColumn >= position.character)
                 {
-                    if (token.TokenType != Compiler.Scanner.TokenType.PERFORM && token.Column != position.character)
+                    if (token.TokenType != tokenType && token.Column != position.character)
                     {   //We are on a token which is not a matching token and the the cursor position is not at the
                         //beginning of the character ==> cancel the previous matching token
                         lastToken = null;
