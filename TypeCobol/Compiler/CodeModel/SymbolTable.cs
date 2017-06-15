@@ -27,9 +27,10 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         private List<T> GetFromTableAndEnclosing<T>(string head,
-            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction) where T : Node
+            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, SymbolTable symbolTable = null) where T : Node
         {
-            var table = getTableFunction.Invoke(this);
+            symbolTable = symbolTable ?? this;
+            var table = getTableFunction.Invoke(symbolTable);
             var values = GetFromTable(head, table);
             if (EnclosingScope != null)
             {
@@ -193,7 +194,10 @@ namespace TypeCobol.Compiler.CodeModel
 
         private IList<DataDefinition> GetVariable(string name)
         {
-            return GetFromTableAndEnclosing(name, GetDataDefinitionTable);
+            //Try to et variable in the current program
+            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable);
+           
+            return found;
         }
 
         private IDictionary<string, List<DataDefinition>> GetDataDefinitionTable(SymbolTable symbolTable)
@@ -201,97 +205,117 @@ namespace TypeCobol.Compiler.CodeModel
             return symbolTable.DataEntries;
         }
 
-        public List<DataDefinition> GetVariableExplicit(QualifiedName name)
+        public List<DataDefinition> GetVariableExplicit(QualifiedName name, bool typeSeeking = false)
         {
             var found = new List<DataDefinition>();
             var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
-            
-            foreach (var candidate in candidates) 
-            {
-                //Find the top level of the typedef declaration so we can get all the references that use this type
-                var typeDefinitionLevel = candidate.GetParentTypeDefinition;
+            candidates.AddRange(GetVariable(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
 
-                if (typeDefinitionLevel != null) //Check if candidate is inside a typedef declaration
+            if(name.Count == 1 && candidates.Count == 1 && candidates.First().IsTableOccurence)
+            {
+                found.AddRange(candidates);
+            }
+            else
+            {
+                foreach (var candidate in candidates)
                 {
-                    var tempParentTypeReferences = typeDefinitionLevel.References;
+                    if (candidate.Parent != null)
+                    {
+                        var varCheck = SeekForVariablePath(candidate, name);
+                        if (varCheck != null && varCheck.Count > 0)
+                            found.Add(candidate);
+                    }
+                    else //It's a simple variable 
+                    {
+                        found.Add(candidate);
+                    }
+                }
+            }
+
+            return found;
+        }
+
+
+        private List<DataDefinition> SeekForVariablePath(DataDefinition candidate, QualifiedName name, int i = -1)
+        {
+            var found = new List<DataDefinition>();
+
+            Node tempParent = candidate;
+            i = i < 0 ? name.Count - 1 : i; //Index to reverse count the QualifiedName parts
+            while (tempParent.Parent != null && i >= 0) //Loop on candidate parent to see if the chain match the qualified name
+            {
+                if (!name[i].Equals(tempParent.Name, StringComparison.InvariantCultureIgnoreCase) || (tempParent as DataDefinition).IsPartOfATypeDef)
+                {
+                    if (tempParent is DataDefinition && (tempParent as DataDefinition).GetParentTypeDefinition != null)
+                    {
+                        var typedefParent = (tempParent as DataDefinition).GetParentTypeDefinition;
+                        var tempParentTypeReferences = typedefParent.References;
                         //Get type's references
-                    var parentTypeReferences = new List<DataDefinition>();
+                        var parentTypeReferences = new List<DataDefinition>();
 
-                    foreach (var dataEntry in this.DataEntries) //Filter on DataEntries of the current SymbolTable
-                    {
-                        foreach (var value in dataEntry.Value)
+                        var knownDataEntries = new List<DataDefinition>();
+                        knownDataEntries.AddRange(this.DataEntries.SelectMany(d => d.Value));
+                        knownDataEntries.AddRange(GetTableFromScope(Scope.Global).DataEntries.SelectMany(d => d.Value));
+                      
+                        foreach (var dataEntry in knownDataEntries) //Filter on DataEntries of the current SymbolTable
                         {
-                            parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => r == value)); //Filter the references for the current scope (usefull for Proc/Func)
+                            parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => r == dataEntry)); //Filter the references for the current scope (usefull for Proc/Func)
                         }
-                    }
 
-                    parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => r.IsPartOfATypeDef)); //Get back the references which are defined in Typedef and not present in DataEtries SymbolTable
+                        parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => r.IsPartOfATypeDef)); //Get back the references which are defined in Typedef and not present in DataEtries SymbolTable
 
-                    if (parentTypeReferences.Count == 0)
-                        continue; //If no references found it means the type is not used so the seeked variable is not accessible
+                        if (parentTypeReferences.Count == 0)
+                            return null; //If no references found it means the type is not used so the seeked variable is not accessible
 
-                    foreach (var reference in parentTypeReferences)
-                    {
-                        if (!reference.IsPartOfATypeDef && ((name.Parent != null && reference.Name.Equals(name.Parent.Head, StringComparison.InvariantCultureIgnoreCase)) || name.Parent == null))
-                            found.Add(candidate); //If the reference is not declared in a typedef and the reference name is equals to the qualified name.Parent so we get a match
-                        else if (name.Parent != null && name.Parent.Any(p => p.Equals(reference.Name, StringComparison.InvariantCultureIgnoreCase)))
+                        foreach (var reference in parentTypeReferences)
                         {
-                            // If it's correponds between parent name and reference name it's a match but we have to go deeper because it's a typedef variable reference
-                            var parentFound = GetVariableExplicit(name.Parent); //Try to search deeper in qualifiedName parent
-                            if (parentFound.Count > 0) //If something is found, it's a match
-                                found.Add(candidate);
-                        }
-                    }
-                } else {
-                    throw new SystemException("we expect data definition part of Typedef");
-                }
-            }
-
-
-            var candidates2 = GetVariable(name.Head); //Get all variables that corresponds to the given head of QualifiedName
-            foreach (var candidate in candidates2) 
-            {
-                //Data manipulation for non Typedef Data Defintion
-                if (name.Parent != null)
-                {
-                    Node tempParent = candidate; 
-                    int i = name.Count - 1; //Index to reverse count the QualifiedName parts
-                    while (tempParent.Parent != null) //Loop on candidate parent to see if the chain match the qualified name
-                    {
-                        if (i < 0 || !name[i].Equals(tempParent.Name, StringComparison.InvariantCultureIgnoreCase)) 
-                        {
-                            bool parentFound = false;
-                            var secondTempParent = tempParent;
-                            while (secondTempParent.Parent != null) //If it doesn't match between name and parent name try to see deeper if there is no jump in gven QualifiedName
+                            if (reference.IsPartOfATypeDef)
                             {
-                                if (name[i].Equals(secondTempParent.Name, StringComparison.InvariantCultureIgnoreCase))
-                                {
-                                    parentFound = true;
-                                    tempParent = secondTempParent; //If we found a parent it means that there were jumps in QualifiedName 
-                                }
-                                secondTempParent = secondTempParent.Parent;
+                                var varCheck = SeekForVariablePath(reference, name, i); //Go deeper in typedef in order to get a variable
+                                if (varCheck != null && varCheck.Count > 0)
+                                    found.Add(candidate);
                             }
-
-                            if (!parentFound)
-                                break;
+                            else
+                                //HERE IS THE BUG 
+                                found.Add(candidate); //We've found a variable.. but is she really the right one... 
                         }
 
-                        if (tempParent.Name.Equals(name[i], StringComparison.InvariantCultureIgnoreCase) && i == 0)
-                        {
-                            found.Add(candidate); //Everythin correpond, let's add this candidate
+                        if (found.Count > 0)
                             break;
+                    }
+                    else
+                    {
+                        var secondTempParent = tempParent;
+                        bool parentFound = false;
+
+                        while (secondTempParent.Parent != null) //If it doesn't match between name and parent name try to see deeper if there is no jump in gven QualifiedName
+                        {
+                            if (name[i].Equals(secondTempParent.Name, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                parentFound = true;
+                                tempParent = secondTempParent; //If we found a parent it means that there were jumps in QualifiedName 
+                            }
+                            secondTempParent = secondTempParent.Parent;
                         }
 
-                        tempParent = tempParent.Parent; //Go deeper in canddiate parent
-                        i--; //Decrease the index for the QualifiedName recognition
+                        if (!parentFound)
+                            break;
                     }
                 }
-                //It's a simple variable 
-                else { // name.Parent == null
-                    found.Add(candidate);
-                }
-            }
 
+                if (tempParent.Name.Equals(name[i], StringComparison.InvariantCultureIgnoreCase) && i == 0 && !(tempParent as DataDefinition).IsPartOfATypeDef && (tempParent as DataDefinition).GetParentTypeDefinition == null)
+                {
+                    found.Add(candidate); //Everythin correpond, let's add this candidate
+                    break;
+                }
+
+                tempParent = tempParent.Parent; //Go deeper in canddiate's parent
+                i--; //Decrease the index for the QualifiedName recognition
+            }
+            if(candidate.Parent == null && name.ToString().Equals(candidate.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                found.Add(candidate);
+            }
             return found;
         }
 
@@ -301,17 +325,40 @@ namespace TypeCobol.Compiler.CodeModel
         private List<DataDefinition> GetCustomTypesSubordinatesNamed(string name)
         {
             var subs = new List<DataDefinition>();
-            var scope = this;
-            while (scope != null) {
-                foreach (var type in scope.Types) {
-                    foreach (var type2 in type.Value) {
-                        subs.AddRange(type2.GetChildren<DataDefinition>(name, true));
+            seekSymbolTable(this, name, out subs);
+
+            if (subs.Count > 0)
+                return subs; //name found in current program symboltable
+
+            //Get programs from Namespace table
+            var programs = this.GetProgramsTable(GetTableFromScope(Scope.Namespace));
+            foreach (var program in programs)
+            {
+                var pgm = program.Value.FirstOrDefault();
+                if (pgm != null)
+                {
+                    seekSymbolTable(pgm.SymbolTable, name, out subs);
+                }
+            }
+            
+            return subs;
+        }
+
+        private void seekSymbolTable(SymbolTable symbolTable, string name, out List<DataDefinition> datadefinitions)
+        {
+            datadefinitions = new List<DataDefinition>();
+            var scope = symbolTable;
+            while (scope != null)
+            {
+                foreach (var type in scope.Types)
+                {
+                    foreach (var type2 in type.Value)
+                    {
+                        datadefinitions.AddRange(type2.GetChildren<DataDefinition>(name, true));
                     }
                 }
                 scope = scope.EnclosingScope;
             }
-            
-            return subs;
         }
 
         /// <summary>Gets all data items of a specific type, accross all scopes.</summary>
@@ -945,5 +992,26 @@ namespace TypeCobol.Compiler.CodeModel
 
 
         #endregion
+    }
+
+    public static class IEnumerableExtensions
+    {
+        public static IEnumerable<T> SelectManyRecursive<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> selector)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+            if (selector == null) throw new ArgumentNullException("selector");
+
+            return !source.Any() ? source :
+                source.Concat(
+                    source
+                    .SelectMany(i => selector(i).EmptyIfNull())
+                    .SelectManyRecursive(selector)
+                );
+        }
+
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> source)
+        {
+            return source ?? Enumerable.Empty<T>();
+        }
     }
 }

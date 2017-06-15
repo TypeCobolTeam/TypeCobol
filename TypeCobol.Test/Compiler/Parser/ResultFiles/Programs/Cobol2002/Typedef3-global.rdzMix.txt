@@ -54,7 +54,7 @@
               10 td-var32     pic X.
               10 td-var33     type SubPgm1::Typedef4.
 
-       01 Var1 type Typedef1.
+       01 Var1 type Typedef1 global.
        01 Var2 pic X.
 
       
@@ -126,7 +126,7 @@ Line 100[12,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumer
            move Var1::td-var10 to td-var11
 
       *OK path with "holes" till Type2
-           move td-var10::td-var11 to td-var10::td-var13::td-var-20
+           move td-var10::td-var11 to td-var10::td-var13::td-var20
       *Ok path with "holes" till Type2
            move td-var20::td-var21 to Var1::td-var20::td-var21
       *Ok path with "holes" till Type2
@@ -184,7 +184,7 @@ Line 153[12,47] <30, Error, Semantics> - Semantic error: Cannot write Alphanumer
 
       *OK path with "holes" till Type2
            move td-var11 of td-var10 
-             to td-var-20 of td-var13 of td-var10
+             to td-var20 of td-var13 of td-var10
       *Ok path with "holes" till Type2
            move td-var21  of td-var20 
              to td-var21 of td-var20 of Var1
