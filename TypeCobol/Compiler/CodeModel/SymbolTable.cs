@@ -3,12 +3,9 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.Core.Internal;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Scanner;
-using String = System.String;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -200,123 +197,116 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
+
         private IDictionary<string, List<DataDefinition>> GetDataDefinitionTable(SymbolTable symbolTable)
         {
             return symbolTable.DataEntries;
         }
 
-        public List<DataDefinition> GetVariableExplicit(QualifiedName name, bool typeSeeking = false)
+        public List<DataDefinition> GetVariableExplicit(QualifiedName name)
         {
             var found = new List<DataDefinition>();
             var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
             candidates.AddRange(GetVariable(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
-
-            if(name.Count == 1 && candidates.Count == 1 && candidates.First().IsTableOccurence)
-            {
-                found.AddRange(candidates);
-            }
-            else
-            {
-                foreach (var candidate in candidates)
-                {
-                    if (candidate.Parent != null)
-                    {
-                        var varCheck = SeekForVariablePath(candidate, name);
-                        if (varCheck != null && varCheck.Count > 0)
-                            found.Add(candidate);
-                    }
-                    else //It's a simple variable 
-                    {
+            
+            
+            foreach (var candidate in candidates) {
+                //if name doesn't match we're with a Index
+                if (!name.Head.Equals(candidate.Name, StringComparison.InvariantCultureIgnoreCase)) {
+                    if (candidate.IsTableOccurence && name.Count ==1) {
                         found.Add(candidate);
+                        break;
                     }
-                }
+                    throw new NotImplementedException();
+                    //TODO can we have an INDEX inside a TYPEDEF?
+                    
+                } 
+                MatchVariable(found, candidate, name, name.Count-1, candidate);
             }
 
+//
             return found;
         }
 
+        public void MatchVariable(IList<DataDefinition> found, DataDefinition heaDataDefinition, QualifiedName name,
+            int nameIndex, DataDefinition currentDataDefinition) {
 
-        private List<DataDefinition> SeekForVariablePath(DataDefinition candidate, QualifiedName name, int i = -1)
-        {
-            var found = new List<DataDefinition>();
 
-            Node tempParent = candidate;
-            i = i < 0 ? name.Count - 1 : i; //Index to reverse count the QualifiedName parts
-            while (tempParent.Parent != null && i >= 0) //Loop on candidate parent to see if the chain match the qualified name
-            {
-                if (!name[i].Equals(tempParent.Name, StringComparison.InvariantCultureIgnoreCase) || (tempParent as DataDefinition).IsPartOfATypeDef)
-                {
-                    if (tempParent is DataDefinition && (tempParent as DataDefinition).GetParentTypeDefinition != null)
-                    {
-                        var typedefParent = (tempParent as DataDefinition).GetParentTypeDefinition;
-                        var tempParentTypeReferences = typedefParent.References;
-                        //Get type's references
-                        var parentTypeReferences = new List<DataDefinition>();
+            var currentTypeDef = currentDataDefinition as TypeDefinition;
 
-                        var knownDataEntries = new List<DataDefinition>();
-                        knownDataEntries.AddRange(this.DataEntries.SelectMany(d => d.Value));
-                        knownDataEntries.AddRange(GetTableFromScope(Scope.Global).DataEntries.SelectMany(d => d.Value));
-                      
-                        foreach (var dataEntry in knownDataEntries) //Filter on DataEntries of the current SymbolTable
-                        {
-                            parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => r == dataEntry)); //Filter the references for the current scope (usefull for Proc/Func)
-                        }
+            //Name match ?
+            if (currentTypeDef == null && //Do not try to match a TYPEDEF name
+                name[nameIndex].Equals(currentDataDefinition.Name, StringComparison.InvariantCultureIgnoreCase)) {
 
-                        parentTypeReferences.AddRange(tempParentTypeReferences.Where(r => r.IsPartOfATypeDef)); //Get back the references which are defined in Typedef and not present in DataEtries SymbolTable
+                nameIndex--;
+                if (nameIndex < 0) { //We reached the end of the name : it's a complete match
 
-                        if (parentTypeReferences.Count == 0)
-                            return null; //If no references found it means the type is not used so the seeked variable is not accessible
-
-                        foreach (var reference in parentTypeReferences)
-                        {
-                            if (reference.IsPartOfATypeDef)
-                            {
-                                var varCheck = SeekForVariablePath(reference, name, i); //Go deeper in typedef in order to get a variable
-                                if (varCheck != null && varCheck.Count > 0)
-                                    found.Add(candidate);
-                            }
-                            else
-                                //HERE IS THE BUG 
-                                found.Add(candidate); //We've found a variable.. but is she really the right one... 
-                        }
-
-                        if (found.Count > 0)
-                            break;
+                    var parentTypeDef = currentDataDefinition.GetParentTypeDefinition;
+                    if (parentTypeDef != null) { //We are under a TypeDefinition
+                        //For each variable declared with this type (or a type that use this type), we need to add the headDataDefinition
+                        AddAllReference(found, heaDataDefinition, parentTypeDef);
+                    } else { //we are on a variable
+                        found.Add(heaDataDefinition);
                     }
-                    else
-                    {
-                        var secondTempParent = tempParent;
-                        bool parentFound = false;
 
-                        while (secondTempParent.Parent != null) //If it doesn't match between name and parent name try to see deeper if there is no jump in gven QualifiedName
-                        {
-                            if (name[i].Equals(secondTempParent.Name, StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                parentFound = true;
-                                tempParent = secondTempParent; //If we found a parent it means that there were jumps in QualifiedName 
-                            }
-                            secondTempParent = secondTempParent.Parent;
-                        }
+                    //End here
+                    return;
+                } 
 
-                        if (!parentFound)
-                            break;
+                //else it's not the end of name, let's continue with next part of QualifiedName
+            }
+
+
+            //Either we have a match or not, we need to continue to the parent or DataDefinition that use this TypeDefinition
+            var parent = currentDataDefinition.Parent as DataDefinition;
+            if (parent != null)
+            {
+                MatchVariable(found, heaDataDefinition, name, nameIndex, parent);
+                return;
+            }
+
+            
+            if (currentTypeDef != null)
+            {
+                foreach (var reference in currentTypeDef.References)
+                {
+                    //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
+                    //So we need to check if we can access this variable
+                    if (reference.IsPartOfATypeDef || GetVariable(reference.Name).Contains(reference))
+                        MatchVariable(found, heaDataDefinition, name, nameIndex, reference);
+                }
+                return;
+            }
+
+
+            //If we reach here, it means we are on a DataDefinition with no parent
+            //==> End of treatment, there is no match
+        }
+
+
+        /// <summary>
+        /// For all usage of this type by a variable (outside a TypeDefinition), add heaDataDefinition to found
+        /// 
+        /// 
+        /// Technical note: this method should be declared under MatchVariable because there is no use for it outside.
+        /// </summary>
+        /// <param name="found"></param>
+        /// <param name="heaDataDefinition"></param>
+        /// <param name="currentDataDefinition"></param>
+        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition) {
+
+            foreach (var reference in currentDataDefinition.References) {
+                var parentTypeDef = reference.GetParentTypeDefinition;
+                if (parentTypeDef != null) {
+                    AddAllReference(found, heaDataDefinition, parentTypeDef);
+                } else { 
+                    //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
+                    //So we need to check if we can access this variable
+                    if (GetVariable(reference.Name).Contains(reference)) {
+                        found.Add(heaDataDefinition);
                     }
                 }
-
-                if (tempParent.Name.Equals(name[i], StringComparison.InvariantCultureIgnoreCase) && i == 0 && !(tempParent as DataDefinition).IsPartOfATypeDef && (tempParent as DataDefinition).GetParentTypeDefinition == null)
-                {
-                    found.Add(candidate); //Everythin correpond, let's add this candidate
-                    break;
-                }
-
-                tempParent = tempParent.Parent; //Go deeper in canddiate's parent
-                i--; //Decrease the index for the QualifiedName recognition
             }
-            if(candidate.Parent == null && name.ToString().Equals(candidate.Name, StringComparison.InvariantCultureIgnoreCase))
-            {
-                found.Add(candidate);
-            }
-            return found;
         }
 
         /// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
@@ -584,7 +574,7 @@ namespace TypeCobol.Compiler.CodeModel
         private static Dictionary<string, List<TypeDefinition>> GetPublicTypes(IDictionary<string, List<TypeDefinition>> programTypes) {
             return programTypes
                 .Where(p =>
-                    p.Value.All(f => (f.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public)) 
+                    p.Value.All(f => ((DataTypeDescriptionEntry) f.CodeElement).Visibility == AccessModifier.Public)) 
                 .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort types to get only the ones with public AccessModifier
         }
 
@@ -683,8 +673,7 @@ namespace TypeCobol.Compiler.CodeModel
         [NotNull]
         private List<FunctionDeclaration> GetFunction(string head, string nameSpace)
         {
-            var result = new List<FunctionDeclaration>();
-            result = GetFromTableAndEnclosing(head, GetFunctionTable);
+            var result = GetFromTableAndEnclosing(head, GetFunctionTable);
 
             if (string.IsNullOrEmpty(nameSpace) || result.Any(f => string.Compare(f.QualifiedName.Tail, nameSpace, StringComparison.InvariantCultureIgnoreCase) == 0))
                 return result;
@@ -695,7 +684,7 @@ namespace TypeCobol.Compiler.CodeModel
                 var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Declarations).Functions; //Get all function from this program
                 programFunctions = programFunctions
                                     .Where(p =>
-                                            p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
+                                            p.Value.All(f => ((FunctionDeclarationHeader) f.CodeElement).Visibility == AccessModifier.Public))
                                             .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort functions to get only the one with public AccessModifier
 
                 result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
