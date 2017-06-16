@@ -66,13 +66,21 @@ namespace TypeCobol.LanguageServices.Editor
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
-        public void UpdateSourceFile(string fileName, TextChangedEvent textChangedEvent)
+        public void UpdateSourceFile(string fileName, TextChangedEvent textChangedEvent, bool bAsync)
         {
             FileCompiler fileCompilerToUpdate = null;
             if (OpenedFileCompilers.TryGetValue(fileName, out fileCompilerToUpdate))
             {
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines();
+
+                if (!bAsync)
+                {//Don't wait asynchoneous snapshot refresh.
+                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
+                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
+                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+                }
             }
         }
 

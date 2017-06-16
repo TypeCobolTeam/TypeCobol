@@ -182,7 +182,7 @@ namespace TypeCobol.LanguageServer
                 #endregion
 
                 // Update the source file with the computed text changes
-                typeCobolWorkspace.UpdateSourceFile(fileName, textChangedEvent);
+                typeCobolWorkspace.UpdateSourceFile(fileName, textChangedEvent, false);
 
                 // DEBUG information
                 RemoteConsole.Log("Udpated source file : " + fileName);
@@ -268,16 +268,42 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Tries to math a token at a given position in a list of Tokens.
+        /// Completion Tokens is an array of Tuple<TokenType, AllowLastPos> for each token that can target a completion.
+        /// The Flag AllowLastPos says that if the cursor is at the last position of a token that the token can
+        /// be conidered a completion token. For instance the for PERFORM token the last position is not allowed:
+        /// PERFORM
+        ///        ^
+        /// that is to say if the cursor is just after the M that no completion should occurs.
         /// </summary>
-        /// <param name="tokenType">The Token type</param>
-        /// <param name="position">The Position to match the token</param>
-        /// <param name="tokens">The list of tokens</param>
+        private static Tuple<TypeCobol.Compiler.Scanner.TokenType, bool>[] elligibleCompletionTokens = new Tuple<TypeCobol.Compiler.Scanner.TokenType, bool>[]{
+            new Tuple<TypeCobol.Compiler.Scanner.TokenType, bool>(Compiler.Scanner.TokenType.PERFORM,false)
+        };
+
+        /// <summary>
+        /// Determines if the given token is elligible for a completion
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="bAllowLastPos"></param>
         /// <returns></returns>
-        private static TypeCobol.Compiler.Scanner.Token MatchTokenPosition(TypeCobol.Compiler.Scanner.TokenType tokenType, Position position, System.Collections.Generic.IList<TypeCobol.Compiler.Scanner.Token> tokens)
+        private static bool IsCompletionElligibleToken(TypeCobol.Compiler.Scanner.Token token, out bool bAllowLastPos)
         {
+            bAllowLastPos = false;
+            for (int i = 0; i < elligibleCompletionTokens.Length; i++)
+            {
+                if (elligibleCompletionTokens[i].Item1 == token.TokenType)
+                {
+                    bAllowLastPos = elligibleCompletionTokens[i].Item2;
+                    return true;
+                }
+            }
+            return false;
+        }
+        private static TypeCobol.Compiler.Scanner.Token MatchCompletionTokenPosition(Position position, System.Collections.Generic.IList<TypeCobol.Compiler.Scanner.Token> tokens)
+        {
+            bool bAllowLastPos = false;
             int count = tokens.Count;
             TypeCobol.Compiler.Scanner.Token lastToken = null;
+            int character = position.character + 1;
             for (int i = 0; i < count; i++)
             {
                 //Skip Whitespace
@@ -290,32 +316,81 @@ namespace TypeCobol.LanguageServer
                     {
                         break;
                     }
-                    else if (token.Column <= position.character && token.EndColumn >= position.character)
+                    else if (token.Column <= character && (token.EndColumn + 1) >= character)
                     {
                         if (lastToken != null)
-                            return lastToken;
+                        {
+                            if ((!bAllowLastPos && lastToken != null && (lastToken.EndColumn + 1) == character) || lastToken.Column == character)
+                                lastToken = null;
+                            else
+                                return lastToken;
+                        }
                     }
                 }
                 i = j;
                 if (i >= count)
                     break;
                 token = tokens[i];
-                if (token.TokenType == tokenType)
+                bool isElligible = IsCompletionElligibleToken(token, out bAllowLastPos);
+                if (isElligible)
                     lastToken = token;
 
-                if (token.Column <= position.character && token.EndColumn >= position.character)
+                if (token.Column == character)
                 {
-                    if (token.TokenType != tokenType && token.Column != position.character)
+                    if (!isElligible && token.Column != character)
                     {   //We are on a token which is not a matching token and the the cursor position is not at the
                         //beginning of the character ==> cancel the previous matching token
                         lastToken = null;
                     }
                     break;
                 }
-                if (token.TokenType != tokenType)
+                if (!isElligible)
                     lastToken = null;
             }
+            if ((!bAllowLastPos && lastToken != null && (lastToken.EndColumn + 1) == character) || lastToken.Column == character)
+                lastToken = null;
+
             return lastToken;
+        }
+
+        /// <summary>
+        /// Atomic Varibale used by WaitProgramClassNotChanged()
+        /// </summary>
+        int m_unchanged = 0;
+        /// <summary>
+        /// Event handler used by WaitProgramClassNotChanged()
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CompilationResultsForProgram_ProgramClassNotChanged(object sender, int e)
+        {
+            System.Threading.Interlocked.Exchange(ref m_unchanged, 1);
+        }
+
+        /// <summary>
+        /// This Was used to detecy that no further ProgramClass change construction is performed
+        /// during successive incremental snapshot refresh. The key idea was to listen to a new event
+        /// ProgramClassNotChanged.
+        /// But that problem when doing that is that the asynchonous Program Class construction
+        /// is performed every 3s, a completion cannot wait 3s second before having an answer.
+        /// </summary>
+        /// <param name="fileCompiler"></param>
+        private void WaitProgramClassNotChanged(TypeCobol.Compiler.FileCompiler fileCompiler)
+        {
+            fileCompiler.CompilationResultsForProgram.ProgramClassNotChanged += CompilationResultsForProgram_ProgramClassNotChanged;
+            System.Threading.Interlocked.Exchange(ref m_unchanged, 0);
+            try
+            {
+                while (System.Threading.Interlocked.CompareExchange(ref m_unchanged, 0, 1) == 0)
+                {
+                    System.Threading.Thread.Sleep(20);
+                }
+            }
+            finally
+            {
+                fileCompiler.CompilationResultsForProgram.ProgramClassNotChanged -= CompilationResultsForProgram_ProgramClassNotChanged;
+                System.Threading.Interlocked.Exchange(ref m_unchanged, 0);
+            }
         }
 
         /// <summary>
@@ -331,26 +406,34 @@ namespace TypeCobol.LanguageServer
                 // Get compilation info for the current file
                 string fileName = Path.GetFileName(objUri.LocalPath);
                 var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
-
+               
                 if (fileCompiler.CompilationResultsForProgram != null && fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
                 {
                     // Find the token located below the mouse pointer
                     var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
                     var tokens = tokensLine.TokensWithCompilerDirectives;
-                    TypeCobol.Compiler.Scanner.Token performToken = MatchTokenPosition(Compiler.Scanner.TokenType.PERFORM, parameters.position, tokens);
-                    if (performToken != null)
+                    TypeCobol.Compiler.Scanner.Token matchingToken = MatchCompletionTokenPosition(parameters.position, tokens);
+                    if (matchingToken != null)
                     {//We got a perform Token
-                        List<CompletionItem> items = new List<CompletionItem>();
-                        ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, performToken);
-                        if (paragraphs != null)
+                        switch (matchingToken.TokenType)
                         {
-                            foreach (String p in paragraphs)
-                            {
-                                CompletionItem item = new CompletionItem(p);
-                                items.Add(item);
-                            }
+                            case Compiler.Scanner.TokenType.PERFORM:
+                                {
+                                    List<CompletionItem> items = new List<CompletionItem>();
+                                    ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, matchingToken);
+                                    if (paragraphs != null)
+                                    {
+                                        foreach (String p in paragraphs)
+                                        {
+                                            CompletionItem item = new CompletionItem(p);
+                                            items.Add(item);
+                                        }
+                                    }
+                                    return items;
+                                }
+                            default:
+                                break;
                         }
-                        return items;
                     }
                 }
             }

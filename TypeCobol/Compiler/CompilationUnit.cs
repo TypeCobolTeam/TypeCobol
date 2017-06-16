@@ -189,9 +189,14 @@ namespace TypeCobol.Compiler
 
             // Send events to all listeners
             EventHandler<int> programClassChanged = ProgramClassChanged; // avoid race condition
+            EventHandler<int> programClassNotChanged = ProgramClassNotChanged;
             if (snapshotWasUpdated && programClassChanged != null)
             {
                 programClassChanged(this, ProgramClassDocumentSnapshot.CurrentVersion);
+            }
+            else if (!snapshotWasUpdated && programClassNotChanged != null)
+            {
+                programClassNotChanged(this, ProgramClassDocumentSnapshot.CurrentVersion);
             }
         }
 
@@ -238,6 +243,12 @@ namespace TypeCobol.Compiler
         /// Subscribe to this event to be notified of all changes in the complete program or class view of the document
         /// </summary>
         public event EventHandler<int> ProgramClassChanged;
+
+        /// <summary>
+        /// Subscribe to this event to be notified when no changes in the complete program or class view of the document has been
+        /// detected after a snapshot refresh.
+        /// </summary>
+        public event EventHandler<int> ProgramClassNotChanged;
 
         /// <summary>
         /// Performance stats for the RefreshProgramClassDocumentSnapshot method
