@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
@@ -50,6 +51,9 @@ namespace TypeCobol.LanguageServices.Editor
         {
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, compilationProject.Encoding, compilationProject.ColumnsLayout, sourceText);
             FileCompiler fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, false, compilationProject);
+            //Create our own empty Symbol table.
+            SymbolTable table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
+            fileCompiler.CompilationResultsForProgram.CustomSymbols = table;
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
             lock (OpenedFileCompilers)
             {
@@ -62,13 +66,21 @@ namespace TypeCobol.LanguageServices.Editor
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
-        public void UpdateSourceFile(string fileName, TextChangedEvent textChangedEvent)
+        public void UpdateSourceFile(string fileName, TextChangedEvent textChangedEvent, bool bAsync)
         {
             FileCompiler fileCompilerToUpdate = null;
             if (OpenedFileCompilers.TryGetValue(fileName, out fileCompilerToUpdate))
             {
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines();
+
+                if (!bAsync)
+                {//Don't wait asynchoneous snapshot refresh.
+                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
+                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
+                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+                }
             }
         }
 
@@ -84,9 +96,9 @@ namespace TypeCobol.LanguageServices.Editor
                 {
                     fileCompilerToClose = OpenedFileCompilers[fileName];
                     OpenedFileCompilers.Remove(fileName);
+                    fileCompilerToClose.StopContinuousBackgroundCompilation();
                 }
-            }
-            fileCompilerToClose.StopContinuousBackgroundCompilation();
+            }            
         }
     }
 }

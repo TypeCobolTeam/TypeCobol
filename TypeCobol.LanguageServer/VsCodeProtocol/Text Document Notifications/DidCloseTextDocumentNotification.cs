@@ -15,6 +15,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class DidCloseTextDocumentNotification
     {
-        public static readonly NotificationType Type = new NotificationType("textDocument/didClose", typeof(TextDocumentIdentifier));
+        public static readonly NotificationType Type = new NotificationType("textDocument/didClose", typeof(DidCloseTextDocumentParams));
     }
 }

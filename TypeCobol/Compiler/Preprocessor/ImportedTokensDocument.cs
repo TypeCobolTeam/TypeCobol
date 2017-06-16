@@ -14,11 +14,12 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     public class ImportedTokensDocument
     {
-        public ImportedTokensDocument(CopyDirective copyDirective, ProcessedTokensDocument importedDocumentSource)
+        public ImportedTokensDocument(CopyDirective copyDirective, ProcessedTokensDocument importedDocumentSource, PerfStatsForImportedDocument perfStats)
         {
             CopyDirective = copyDirective;
             SourceDocument = importedDocumentSource;
             HasReplacingDirective = copyDirective.ReplaceOperations.Count > 0;
+            PerfStatsForImportedDocument = perfStats;
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace TypeCobol.Compiler.Preprocessor
         /// True if a REPLACING clause was applied to the imported document
         /// </summary>
         public bool HasReplacingDirective { get; private set; }
-        
+
         /// <summary>
         /// Iterator over the tokens contained in this imported document after
         /// - REPLACING directive processing if necessary
@@ -45,8 +46,8 @@ namespace TypeCobol.Compiler.Preprocessor
             ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines);
             if (HasReplacingDirective
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
-                || CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar       
-#endif               
+                || CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar
+#endif
                 )
             {
                 ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(sourceIterator, CopyDirective);
@@ -57,5 +58,10 @@ namespace TypeCobol.Compiler.Preprocessor
                 return sourceIterator;
             }
         }
+
+        /// <summary>
+        /// Performance metrics for compilation documents retrieved in cache
+        /// </summary>
+        public PerfStatsForImportedDocument PerfStatsForImportedDocument { get; private set; }
     }
 }

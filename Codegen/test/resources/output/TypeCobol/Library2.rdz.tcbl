@@ -25,6 +25,7 @@
       *      PERFORM Copy-Process-Mode
       *    ELSE
            PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
       *    END-IF
 
            GOBACK.
@@ -37,7 +38,7 @@
             END-IF
                .
 
-            PntTab-Pnt POINTER TO ADDRESS OF TC-DVZZDATE-PntTab
+            set PntTab-Pnt TO ADDRESS OF TC-DVZZDATE-PntTab
 
            .
                                              

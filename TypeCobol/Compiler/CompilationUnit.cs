@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
@@ -26,8 +27,10 @@ namespace TypeCobol.Compiler
             base(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, copyTextNameVariations)
         {
             // Initialize performance stats 
-            PerfStatsForCodeElementsParser = new PerfStatsForCompilationStep(CompilationStep.CodeElementsParser);
-            PerfStatsForProgramClassParser = new PerfStatsForCompilationStep(CompilationStep.ProgramClassParser);
+            PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
+            PerfStatsForProgramClassParser = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
+
+            
         }
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace TypeCobol.Compiler
                 }
 
                 // Start perf measurement
-                PerfStatsForCodeElementsParser.OnStartRefresh();
+                var perfStatsForParserInvocation = PerfStatsForCodeElementsParser.OnStartRefreshParsingStep();
 
                 // Track all changes applied to the document while updating this snapshot
                 DocumentChangedEvent<ICodeElementsLine> documentChangedEvent = null;
@@ -71,16 +74,19 @@ namespace TypeCobol.Compiler
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    // Parse the whole document for the first time
-                    CodeElementsParserStep.ParseDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines), CompilerOptions);
+                    if (processedTokensDocument != null)
+                    {
+                        // Parse the whole document for the first time
+                        CodeElementsParserStep.ParseDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines), CompilerOptions, perfStatsForParserInvocation);
 
-                    // Create the first code elements document snapshot
-                    CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
+                        // Create the first code elements document snapshot
+                        CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, new DocumentVersion<ICodeElementsLine>(this), ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines));
+                    }
                 }
                 else
                 {
                     ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<ICodeElementsLine>> documentChanges = CodeElementsParserStep.ParseProcessedTokensLinesChanges(TextSourceInfo, codeElementsDocumentLines, processedTokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions);
+                    IList<DocumentChange<ICodeElementsLine>> documentChanges = CodeElementsParserStep.ParseProcessedTokensLinesChanges(TextSourceInfo, codeElementsDocumentLines, processedTokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, perfStatsForParserInvocation);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<ICodeElementsLine> currentCodeElementsLinesVersion = previousCodeElementsDocument.CurrentVersion;
@@ -96,7 +102,7 @@ namespace TypeCobol.Compiler
                 }
 
                 // Stop perf measurement
-                PerfStatsForCodeElementsParser.OnStopRefresh();
+                PerfStatsForCodeElementsParser.OnStopRefreshParsingStep();
 
                 // Send events to all listeners
                 EventHandler<DocumentChangedEvent<ICodeElementsLine>> codeElementsLinesChanged = CodeElementsLinesChanged; // avoid race condition
@@ -121,7 +127,28 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Performance stats for the RefreshCodeElementsDocumentSnapshot method
         /// </summary>
-        public PerfStatsForCompilationStep PerfStatsForCodeElementsParser { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForCodeElementsParser { get; private set; }
+
+        public string AntlrResult {
+            get
+            {
+                StringBuilder builder = new StringBuilder();
+
+                if (CodeElementsParserStep.AntlrPerformanceProfiler != null && PerfStatsForCodeElementsParser.ActivateDetailedAntlrPofiling)
+                {
+                    builder.Append("---CODE ELEMENT PARSER STEP---\n");
+                    builder.Append(CodeElementsParserStep.AntlrPerformanceProfiler.WriteInfoToString());
+                }
+
+                if (ProgramClassParserStep.AntlrPerformanceProfiler != null && PerfStatsForProgramClassParser.ActivateDetailedAntlrPofiling)
+                {
+                    builder.Append("\n\n---PROGRAM CLASS PARSER STEP---\n");
+                    builder.Append(ProgramClassParserStep.AntlrPerformanceProfiler.WriteInfoToString());
+                }
+
+                return builder.ToString();
+            }
+        }
 
         /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
@@ -138,33 +165,38 @@ namespace TypeCobol.Compiler
                 CodeElementsDocument codeElementsDocument = CodeElementsDocumentSnapshot;
 
                 // Check if an update is necessary and compute changes to apply since last version
-                if (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != codeElementsDocument.CurrentVersion)
+                if ((CodeElementsDocumentSnapshot != null) && (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != codeElementsDocument.CurrentVersion))
                 {
                     // Start perf measurement
-                    PerfStatsForProgramClassParser.OnStartRefresh();
+                    var perfStatsForParserInvocation = PerfStatsForProgramClassParser.OnStartRefreshParsingStep();
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root;
                     IList<ParserDiagnostic> newDiagnostics;
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, out root, out newDiagnostics);
-
+                    ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics);
+                
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
-                        codeElementsDocument, ProgramClassDocumentSnapshot == null ? 0 : ProgramClassDocumentSnapshot.CurrentVersion +1,
+                        codeElementsDocument, ProgramClassDocumentSnapshot == null ? 0 : ProgramClassDocumentSnapshot.CurrentVersion + 1,
                         root, newDiagnostics);
                     snapshotWasUpdated = true;
 
                     // Stop perf measurement
-                    PerfStatsForProgramClassParser.OnStopRefresh();
+                    PerfStatsForProgramClassParser.OnStopRefreshParsingStep();
                 }
             }
 
             // Send events to all listeners
             EventHandler<int> programClassChanged = ProgramClassChanged; // avoid race condition
+            EventHandler<int> programClassNotChanged = ProgramClassNotChanged;
             if (snapshotWasUpdated && programClassChanged != null)
             {
                 programClassChanged(this, ProgramClassDocumentSnapshot.CurrentVersion);
+            }
+            else if (!snapshotWasUpdated && programClassNotChanged != null)
+            {
+                programClassNotChanged(this, ProgramClassDocumentSnapshot.CurrentVersion);
             }
         }
 
@@ -180,19 +212,25 @@ namespace TypeCobol.Compiler
         /// Return all diagnostics from all snaphost
         /// </summary>
         /// <returns></returns>
-        public override IList<Diagnostic> AllDiagnostics() {
+        public override IList<Diagnostic> AllDiagnostics()
+        {
             var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
 
-            if (CodeElementsDocumentSnapshot != null && CodeElementsDocumentSnapshot.ParserDiagnostics != null) {
+            if (CodeElementsDocumentSnapshot != null && CodeElementsDocumentSnapshot.ParserDiagnostics != null)
+            {
                 allDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
             }
-            if (ProgramClassDocumentSnapshot != null && ProgramClassDocumentSnapshot.Diagnostics != null) {
+            if (ProgramClassDocumentSnapshot != null && ProgramClassDocumentSnapshot.Diagnostics != null)
+            {
                 allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
             }
 
-            if (CodeElementsDocumentSnapshot != null) {
-                foreach (var ce in CodeElementsDocumentSnapshot.CodeElements) {
-                    if (ce.Diagnostics != null) {
+            if (CodeElementsDocumentSnapshot != null)
+            {
+                foreach (var ce in CodeElementsDocumentSnapshot.CodeElements)
+                {
+                    if (ce.Diagnostics != null)
+                    {
                         allDiagnostics.AddRange(ce.Diagnostics);
                     }
                 }
@@ -207,9 +245,15 @@ namespace TypeCobol.Compiler
         public event EventHandler<int> ProgramClassChanged;
 
         /// <summary>
+        /// Subscribe to this event to be notified when no changes in the complete program or class view of the document has been
+        /// detected after a snapshot refresh.
+        /// </summary>
+        public event EventHandler<int> ProgramClassNotChanged;
+
+        /// <summary>
         /// Performance stats for the RefreshProgramClassDocumentSnapshot method
         /// </summary>
-        public PerfStatsForCompilationStep PerfStatsForProgramClassParser { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForProgramClassParser { get; private set; }
 
         #region Thread ownership and synchronization
 

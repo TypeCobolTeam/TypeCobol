@@ -487,6 +487,15 @@ namespace TypeCobol.Compiler.CodeModel
             return symbolTable.Paragraphs;
         }
 
+        /// <summary>
+        /// Get all paragraphs in the current scope.
+        /// </summary>
+        /// <returns>The collection of paragraph names</returns>
+        public ICollection<string> GetParagraphNames()
+        {
+            return Paragraphs.Keys;
+        }
+
         #endregion
 
         #region TYPES

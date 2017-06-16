@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using Analytics;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
@@ -170,7 +171,28 @@ class ReadOnlyPropertiesChecker {
                 if (c < callArgsCount)
                 {
                     var actual = call.Arguments[c].StorageAreaOrValue;
-                    if (actual.IsLiteral) continue;
+                    if (actual.IsLiteral) continue; //TODO
+
+
+                    var actualSpecialRegister = actual.StorageArea as StorageAreaPropertySpecialRegister;
+                    if (actualSpecialRegister != null) {
+                        var tokenType = actualSpecialRegister.SpecialRegisterName.TokenType;
+                        if (tokenType == TokenType.LENGTH) {
+                            //parameter must be a Numeric of lengt
+                            //TODO
+                            //return an error for now
+                            DiagnosticUtils.AddError(e, "LENGTH OF not allowed yet with procedure");
+                            return;
+                        } else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer) {
+                            //It's ok
+                            return;
+                        } else if (tokenType == TokenType.LINAGE_COUNTER) {
+                            //Do not know what to do : RFC
+                            DiagnosticUtils.AddError(e, "LENGTH OF not allowed yet with procedure");
+                            return;
+                        }
+                    }
+
                     var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
                     var found = table.GetVariable(actual);
                     if (found.Count < 1)
@@ -524,44 +546,41 @@ class FunctionDeclarationChecker: NodeListener {
 
 
 
-/// <summary>Checks the TypeCobol custom functions rules:
-/// * TCRFUN_NO_SECTION_OR_PARAGRAPH_IN_LIBRARY
-/// * TCRFUN_LIBRARY_COPY
+/// <summary>
+/// Checks the TypeCobol rules for Library
 /// </summary>
-class LibraryChecker: NodeListener {
+public class LibraryChecker {
 
-	public void OnNode([NotNull] Node node, ParserRuleContext context, CodeModel.Program program) {
-        ProcedureDivision procedureDivision = node as ProcedureDivision;
-	    if (procedureDivision == null) {
-	        return; //not our job
-	    }
-        var pdiv = procedureDivision.CodeElement as ProcedureDivisionHeader;
-		bool isPublicLibrary = false;
-		var elementsInError = new List<CodeElement>();
-		var errorMessages = new List<string>();
-		foreach(var child in procedureDivision.Children) {
-			if (child.CodeElement == null) {
-				elementsInError.Add(procedureDivision.CodeElement);
-				errorMessages.Add("Illegal default section in library. " + child);
-			} else {
-				var function = child.CodeElement as FunctionDeclarationHeader;
-				if (function != null) {
-					isPublicLibrary = isPublicLibrary || function.Visibility == AccessModifier.Public;
-				} else {
-					elementsInError.Add(child.CodeElement);
-					errorMessages.Add("Illegal non-function item in library");
-				}
-			}
-		}
-		if (isPublicLibrary) {
-//			if (copy == null || copy.CodeElement().Name == null) // TCRFUN_LIBRARY_COPY
-//				DiagnosticUtils.AddError(pgm.CodeElement, "Missing library copy in IDENTIFICATION DIVISION.", context);
+	public static void CheckLibrary([NotNull] ProcedureDivision procedureDivision) {
+        //A procedure or a function cannot contains another procedure or function declaration
+        //So we only need to check ProcedureDivision of Program
+	    if ( !(procedureDivision.Parent is Program) )
+	        return;
 
-			if (pdiv.UsingParameters != null && pdiv.UsingParameters.Count > 0)
-				DiagnosticUtils.AddError(pdiv, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.", context);
 
-			for(int c = 0; c < errorMessages.Count; c++)
-				DiagnosticUtils.AddError(elementsInError[c], errorMessages[c], context);
+        //If the procedure division contains a PUBLIC procedure or function then it's considered as a "Library"
+	    bool isLibrary = procedureDivision.Children.Any(c =>
+		{
+		    var f = c.CodeElement as FunctionDeclarationHeader;
+		    return f!=null && f.Visibility == AccessModifier.Public;
+		} );
+
+	    if (isLibrary)
+        {
+	        foreach (var child in procedureDivision.Children)
+            {
+                //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
+                if (!(child is Paragraph || child is FunctionDeclaration))
+                {
+                    DiagnosticUtils.AddError(child.CodeElement, "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
+                }
+            }
+
+		    var pdiv = procedureDivision.CodeElement as ProcedureDivisionHeader;
+
+            //TCRFUN_LIBRARY_PROCEDURE_NO_USING 
+            if (pdiv.UsingParameters != null && pdiv.UsingParameters.Count > 0)
+			    DiagnosticUtils.AddError(pdiv, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.");
 		}
 	}
 }

@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM0001.
+       DATA DIVISION .
+       working-storage section.
+      
+       01  myDate1 TYPE Date.
+       01  toto pic X.
+      
+       procedure division.
+      
+           move unsafe myDate1 to toto
+           .
+       END PROGRAM PGM0001.

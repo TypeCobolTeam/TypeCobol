@@ -1,0 +1,34 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOZDATE.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01  typeOfDaysPublic TYPEDEF STRICT PUBLIC pic X(01) .
+      *         88 BusinessDays     VALUE 'E'.
+      *         88 WorkDays         VALUE 'A'.
+      *         88 CalendarDays     VALUE 'J'.
+      
+      *01  typeOfDaysPrivate TYPEDEF STRICT pic X(01) .
+      *         88 BusinessDays     VALUE 'E'.
+      *         88 WorkDays         VALUE 'A'.
+      *         88 CalendarDays     VALUE 'J'.
+      
+      *01 typeOfPriv TYPE typeOfDaysPrivate.
+       01 typeOfPriv pic X(01).
+            88 BusinessDays VALUE 'E'.
+            88 WorkDays VALUE 'A'.
+            88 CalendarDays VALUE 'J'.
+                                            
+      
+      *01 MyType typedef strict.
+      *    05 Pointer1             usage is pointer.
+      *    05 Pointer2             usage pointer.
+      *    05 Pointer3             pointer.
+      
+      *01 var1 type MyType.
+       01 var1.
+           02 Pointer1 usage is pointer.
+           02 Pointer2 usage pointer.
+           02 Pointer3 pointer.
+                           
+      
+       END PROGRAM TCOZDATE.

@@ -1,0 +1,1 @@
+﻿-c2tc input\EncodedTypeCobol.tcmc output\Result.tcbl

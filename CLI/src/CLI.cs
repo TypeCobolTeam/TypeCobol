@@ -48,7 +48,7 @@ namespace TypeCobol.Server
             //Call the runOnce2() Methode and manage all the different kinds of exception. 
             try
             {
-                runOnce2(config, errorWriter);
+                return runOnce2(config, errorWriter);
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
@@ -105,13 +105,14 @@ namespace TypeCobol.Server
             return ReturnCode.Success;
         }
 
-        private static void runOnce2(Config config, AbstractErrorWriter errorWriter)
+        private static ReturnCode runOnce2(Config config, AbstractErrorWriter errorWriter)
         {
             var parser = new Parser();
 
             parser.CustomSymbols = LoadCopies(errorWriter, config.Copies, config.Format); //Load of the intrinsics
             parser.CustomSymbols = LoadDependencies(errorWriter, config.Dependencies, config.Format, parser.CustomSymbols); //Load of the dependency files
 
+            ReturnCode returnCode = ReturnCode.Success;
             for (int c = 0; c < config.InputFiles.Count; c++)
             {
                 string path = config.InputFiles[c];
@@ -137,7 +138,7 @@ namespace TypeCobol.Server
 
                 parser.Parse(path);
 
-
+                
                 bool copyAreMissing = false;
                 if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
                 {
@@ -172,11 +173,10 @@ namespace TypeCobol.Server
                     //Exception is thrown just below
                     }
 
-
                 //Copy missing is more important than diagnostics
                 if (copyAreMissing) {
                     throw new MissingCopyException("Some copy are missing", path, null, logged: false, needMail: false);
-                } else if (allDiags.Count > 0) {
+                } else if (parser.Results.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error)) {
                     throw new PresenceOfDiagnostics("Diagnostics Detected"); //Make ParsingException trace back to RunOnce()
                 }
 
@@ -195,11 +195,14 @@ namespace TypeCobol.Server
                     var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
                     try
                     {
-                        codegen.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat); //TODO : Add exception management for code generation
+                        codegen.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
                         if (codegen.Diagnostics != null)
                         {
                             errorWriter.AddErrors(path, codegen.Diagnostics); //Write diags into error file
+                            throw new PresenceOfDiagnostics("Diagnostics Detected"); //Make ParsingException trace back to RunOnce()
                         }
+                    } catch (PresenceOfDiagnostics) {//rethrow exception
+                        throw;
                     }
                     catch (Exception e)
                     {
@@ -210,7 +213,13 @@ namespace TypeCobol.Server
                     }
 
                 }
+
+                if (parser.Results.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Warning)) {
+                    returnCode = ReturnCode.Warning;
+                }
             }
+
+            return returnCode;
         }
 
         /// <summary>

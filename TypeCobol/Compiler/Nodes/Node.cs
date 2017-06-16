@@ -241,6 +241,18 @@ namespace TypeCobol.Compiler.Nodes {
                 return lines;
             }
         }
+        public virtual IEnumerable<ITextLine> SelfAndChildrenLines {
+            get {
+                var lines = new List<ITextLine>();
+                lines.AddRange(Lines);
+                foreach (var child in children) {
+                    lines.AddRange(child.SelfAndChildrenLines);
+                }
+                return lines;
+            }
+        }
+
+
 
         /// <summary>
         /// Marker for Code Generation to know if this Node will generate code.
@@ -248,7 +260,11 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         public bool NeedGeneration { get; set; }
 
-        public IList<CodeElementHolder<T>> GetChildren<T>() where T : CodeElement {
+        public IList<N> GetChildren<N>() where N : Node {
+            return children.OfType<N>().ToList();
+        }
+
+        public IList<CodeElementHolder<T>> GetCodeElementHolderChildren<T>() where T : CodeElement {
             var results = new List<CodeElementHolder<T>>();
             foreach (var child in children) {
                 if (child.CodeElement == null) continue;
@@ -406,10 +422,11 @@ namespace TypeCobol.Compiler.Nodes {
                 Node[] childrenNodes = children.ToArray();
                 foreach (Node child in childrenNodes)
                 {
-                    if (!continueVisit) {
+                    if (!continueVisit && astVisitor.IsStopVisitingChildren)
+                    {
                         break;
                     }
-                    continueVisit = child.AcceptASTVisitor(astVisitor);
+                    continueVisit = child.AcceptASTVisitor(astVisitor);                    
                 }
             }
 

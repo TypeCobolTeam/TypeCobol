@@ -3,11 +3,17 @@ using System.Text;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
-    class RuleStackBuilder
+    public class RuleStackBuilder
     {
-        public string GetRuleStack(RuleContext context)
+        public static string GetRuleStack(RuleContext context)
+        {
+            return GetRuleStack(context, false);
+        }
+
+        public static string GetRuleStack(RuleContext context, bool withDepthPrefix)
         {
             var builder = new StringBuilder(GetRuleName(context));
+            int depth = 1;
             var parent = context.parent;
             while (parent != null)
             {
@@ -16,12 +22,14 @@ namespace TypeCobol.Compiler.AntlrUtils
                 if (ruleName == "cobolCodeElements") break;
 
                 builder.Insert(0, ruleName + '>');
+                depth++;
                 parent = parent.parent;
             }
+            if (withDepthPrefix) builder.Insert(0, depth + ":");
             return builder.ToString();
         }
 
-        private string GetRuleName(RuleContext context)
+        private static string GetRuleName(RuleContext context)
         {
             string classname = context.GetType().Name;
             var builder = new StringBuilder(classname);

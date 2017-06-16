@@ -183,11 +183,21 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public override SymbolReference MainSymbolReference { get { return SymbolReference ?? base.MainSymbolReference; } }
 
-        public override string ToString() {
+        public override string ToString()
+        {
+            return ToString(false);
+        }
+        public new string ToString(bool bUseToString) {
 		    if (NumericValue != null) return NumericValue.Value.ToString();
 		    try {
-			    if (SymbolReference != null) return SymbolReference.Name;
-                if (StorageArea != null) return StorageArea.SymbolReference.Name;
+                if (SymbolReference != null)
+                {
+                    return bUseToString ? SymbolReference.ToString() : SymbolReference.Name;
+                }
+                if (StorageArea != null)
+                {
+                    return bUseToString ? StorageArea.SymbolReference.ToString() : StorageArea.SymbolReference.Name;
+                }
 			    //these should be: return XXXValue.GetValueInContext(???);
 			    if (AlphanumericValue != null) return AlphanumericValue.Token.SourceText;
 			    if (RepeatedCharacterValue != null) return RepeatedCharacterValue.Token.SourceText;

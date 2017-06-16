@@ -95,16 +95,36 @@ functionReturningPhrase: RETURNING parameterDescription;
 parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
 
 functionDataParameter:
-	dataNameDefinition (pictureClause|cobol2002TypeClause)
-		( blankWhenZeroClause
-		| justifiedClause
-		| synchronizedClause
-		| groupUsageClause
-		| signClause
-		| usageClause
-		| valueClause
+	dataNameDefinition (pictureClause | POINTER | cobol2002TypeClause)
+		blankWhenZeroClause?
+		justifiedClause?
+		synchronizedClause?
+		groupUsageClause?
+		signClause?
+		tcfuncParameterUsageClause?
+		valueClause?
 		//No OccursClause because we only allow Level 01
-		)*;
+		;
+
+tcfuncParameterUsageClause:
+	                (BINARY NATIVE?) |
+					(COMP NATIVE?)   | (COMPUTATIONAL NATIVE?)   |
+					(COMP_1 NATIVE?) | (COMPUTATIONAL_1 NATIVE?) |
+					(COMP_2 NATIVE?) | (COMPUTATIONAL_2 NATIVE?) |
+					(COMP_3 NATIVE?) | (COMPUTATIONAL_3 NATIVE?) |
+					(COMP_4 NATIVE?) | (COMPUTATIONAL_4 NATIVE?) |
+					(COMP_5 NATIVE?) | (COMPUTATIONAL_5 NATIVE?) |
+					(DISPLAY NATIVE?)   |
+					(DISPLAY_1 NATIVE?) |
+					INDEX |
+					(NATIONAL NATIVE?) |
+					//not implemented yet
+					//(OBJECT REFERENCE classNameReference?) |        
+					(PACKED_DECIMAL NATIVE?) |              
+					    
+					//Try to rewrite a cleaner/simpler grammar so POINTER must be declared at picture or type level.
+					//FUNCTION_POINTER and PROCEDURE_POINTER are not implemented yet
+				    ;
 
 functionConditionParameter:
 	levelNumber=integerValue conditionNameDefinition valueClauseForCondition;

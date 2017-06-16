@@ -28,6 +28,7 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                   
+       01 myPointer     pointer.
 
        01  someformat   PIC X(08).
       *01  flag         TYPE Bool.
@@ -52,6 +53,7 @@
       *   INPUT  mydate        TYPE Date
       *          format        PIC X(08)
       *          myDate2       type Date
+      *          arg0          pointer
       *   IN-OUT myDate3       type Date
       *          myDate4       type Date
       *   OUTPUT okay          TYPE Bool
@@ -120,12 +122,14 @@
       *    CALL myProc  INPUT     by content somedate
       *                                        'YYYYMMDD'
       *                                      myDate2
+      *                           address of myDate2
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
-           CALL 'f98cef23' USING
+           CALL 'e6e45a7d' USING
                     by content   somedate
                                  'YYYYMMDD'
                                  myDate2
+                                 address of myDate2
                     by reference myDate3
                                  myDate4
                     by reference flag-value
@@ -137,14 +141,37 @@
       *    CALL myProc  INPUT  somedate
       *                        by content 'YYYYMMDD'
       *                        by reference myDate2
+      *                           address of myDate2
       *                 IN-OUT myDate3
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'f98cef23' USING
+           CALL 'e6e45a7d' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
+                                 address of myDate2
+                    by reference myDate3
+                                 myDate4
+                    by reference flag-value
+                                 realformat
+                                         
+           END-CALL
+      * __________________________________________________
+      * OK  
+      *    CALL myProc  INPUT  somedate
+      *                        by content 'YYYYMMDD'
+      *                        by reference myDate2
+      *                        myPointer
+      *                 IN-OUT myDate3
+      *                        myDate4
+      *                 OUTPUT flag
+      *                        realformat
+           CALL 'e6e45a7d' USING
+                                 somedate
+                    by content   'YYYYMMDD'
+                    by reference myDate2
+                                 myPointer
                     by reference myDate3
                                  myDate4
                     by reference flag-value
@@ -194,6 +221,7 @@
       *   INPUT  mydate        TYPE Date
       *          format        PIC X(08)
       *          myDate2       type Date
+      *          arg0          pointer
       *   IN-OUT myDate3       type Date
       *          myDate4       type Date
       *   OUTPUT okay          TYPE Bool
@@ -201,7 +229,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f98cef23.
+       PROGRAM-ID. e6e45a7d.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -213,6 +241,7 @@
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
            02 DD PIC 9(2).
+       01 arg0 Pointer.
        01 myDate3.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -229,10 +258,11 @@
              USING BY REFERENCE mydate
                    BY REFERENCE format
                    BY REFERENCE myDate2
+                   BY REFERENCE arg0
                    BY REFERENCE myDate3
                    BY REFERENCE myDate4
                    BY REFERENCE okay-value
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM f98cef23.
+       END PROGRAM e6e45a7d.

@@ -32,13 +32,13 @@ namespace TypeCobol.Compiler
             FixedLineLength = fixedLineLength;
             ColumnsLayout = columnsLayout;
             CompilationOptions = compilationOptions;
-                        
+
             CobolFiles = new Dictionary<string, CobolFile>();
             CobolTextReferences = new Dictionary<string, CobolFile>();
             CobolProgramCalls = new Dictionary<string, CobolFile>();
             MissingCopys = new List<string>();
         }
-        
+
         /// <summary>
         /// Save project configuration to an XML file in the project root directory
         /// </summary>
@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler
         /// to enable other text libraries.
         /// </summary>
         public SourceFileProvider SourceFileProvider { get; private set; }
-        
+
         // Used for file creation and file import in the root directory
         ICobolLibrary rootDirectoryLibrary;
 
@@ -112,7 +112,7 @@ namespace TypeCobol.Compiler
         public CobolFile ImportExistingFile(string cobolFileName)
         {
             CobolFile cobolFile = null;
-            if(rootDirectoryLibrary.TryGetFile(cobolFileName, out cobolFile))
+            if (rootDirectoryLibrary.TryGetFile(cobolFileName, out cobolFile))
             {
                 CobolFiles.Add(cobolFileName, cobolFile);
             }
@@ -173,39 +173,47 @@ namespace TypeCobol.Compiler
         IDictionary<string, CompilationDocument> importedCompilationDocumentsCache = new Dictionary<string, CompilationDocument>();
 
 
-        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName) {
-            return GetProcessedTokensDocument(libraryName, textName, null, null);
+        public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, string textName, out PerfStatsForImportedDocument perfStats)
+        {
+            return GetProcessedTokensDocument(libraryName, textName, null, null, out perfStats);
         }
 
         /// <summary>
         /// Returns a ProcessedTokensDocument already in cache or loads, scans and processes a new CompilationDocument
         /// </summary>
         public virtual ProcessedTokensDocument GetProcessedTokensDocument(string libraryName, [NotNull] string textName,
-            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+            [CanBeNull] MultilineScanState scanState, List<RemarksDirective.TextNameVariation> copyTextNameVariations, out PerfStatsForImportedDocument perfStats)
         {
             string cacheKey = (libraryName == null ? SourceFileProvider.DEFAULT_LIBRARY_NAME : libraryName.ToUpper()) + "." + textName.ToUpper();
-            if (scanState != null) {
-                cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") + 
+            if (scanState != null)
+            {
+                cacheKey += (scanState.DecimalPointIsComma ? "D1" : "__") + (scanState.WithDebuggingMode ? "D2" : "__") +
                             (scanState.InsideDataDivision ? "D3" : "__") + (scanState.InsideProcedureDivision ? "D4" : "__");
                 // NB : the hypothesis here is that we don't need to include more properties of scanState in the cache key, 
                 // because a COPY is always cleanly delimited at CodeElement boundaries.
             }
+
+            perfStats = new PerfStatsForImportedDocument();
             CompilationDocument resultDocument;
-            if(importedCompilationDocumentsCache.ContainsKey(cacheKey))
+            if (importedCompilationDocumentsCache.ContainsKey(cacheKey))
             {
                 resultDocument = importedCompilationDocumentsCache[cacheKey];
+                perfStats.WasRetrievedFromCache = true;
             }
             else
             {
-                
+
                 FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true, scanState, this, copyTextNameVariations);
                 //FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true);
                 fileCompiler.CompileOnce();
                 resultDocument = fileCompiler.CompilationResultsForCopy;
+                perfStats.WasRetrievedFromCache = false;
+                perfStats.SourceFileSearchTime = fileCompiler.SourceFileSearchTime;
+                perfStats.SourceFileLoadTime = fileCompiler.SourceFileLoadTime;
 
                 importedCompilationDocumentsCache[cacheKey] = resultDocument;
             }
             return resultDocument.ProcessedTokensDocumentSnapshot;
         }
-    } 
+    }
 }

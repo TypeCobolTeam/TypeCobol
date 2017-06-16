@@ -58,7 +58,7 @@
       *01  PERSON-1                  TYPE PERSON.
        01 PERSON-1.
            02 UID PIC 9(13).
-           02.
+           02 filler.
              03 InternalRef.
                04 RType PIC X(03).
                04 RReference PIC X(13).
@@ -77,14 +77,14 @@
              03 Ligne-02 PIC X(32).
              03.
                04 Ligne-03 PIC X(32).
-             03.
+             03 filler.
                04 Ligne-04 PIC X(32).
                04 Ligne-05 PIC X(32).
                                                  
       *01  PERSON-2                  TYPE PERSON.
        01 PERSON-2.
            02 UID PIC 9(13).
-           02.
+           02 filler.
              03 InternalRef.
                04 RType PIC X(03).
                04 RReference PIC X(13).
@@ -103,7 +103,7 @@
              03 Ligne-02 PIC X(32).
              03.
                04 Ligne-03 PIC X(32).
-             03.
+             03 filler.
                04 Ligne-04 PIC X(32).
                04 Ligne-05 PIC X(32).
                                                  

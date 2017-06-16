@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Analytics;
@@ -67,6 +68,16 @@ namespace TypeCobol.Compiler
         public CobolFile GeneratedCobolFile { get; private set; }
 
         /// <summary>
+        /// Number of milliseconds to locate the source file in the source library
+        /// </summary>
+        public int SourceFileSearchTime { get; private set; }
+
+        /// <summary>
+        /// Number of milliseconds to load the source file in memory
+        /// </summary>
+        public int SourceFileLoadTime { get; private set; }
+
+        /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
         public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, CompilationProject compilationProject) :
@@ -100,6 +111,10 @@ namespace TypeCobol.Compiler
         private FileCompiler(string libraryName, string fileName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile,
             [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
         {
+
+            var chrono = new Stopwatch();
+            chrono.Start();
+
             // 1.a Find the Cobol source file
             CobolFile sourceFile = null;
             CompilationProject = compilationProject;
@@ -110,24 +125,29 @@ namespace TypeCobol.Compiler
                 {
                     CobolFile = sourceFile;
                 }
-                else 
+                else
                 {
-                    if(isCopyFile)
+                    if (isCopyFile)
                         compilationProject.MissingCopys.Add(fileName);
 
-                    var message = string.IsNullOrEmpty(libraryName) ? string.Format("Cobol source file not found: {0}", fileName) 
+                    var message = string.IsNullOrEmpty(libraryName) ? string.Format("Cobol source file not found: {0}", fileName)
                                                                     : string.Format("Cobol source file not found: {0} in {1}", fileName, libraryName);
                     throw new Exception(message);
                 }
-              
+
             }
             // 1.b Register a Cobol source file which was already loaded
-            else if(loadedCobolFile != null)
+            else if (loadedCobolFile != null)
             {
                 CobolFile = loadedCobolFile;
             }
 
+            chrono.Stop();
+            SourceFileSearchTime = (int)chrono.ElapsedMilliseconds;
+            chrono.Reset();
+
             // 2.a Load it in a new text document in memory
+            chrono.Start();
             if (textDocument == null)
             {
                 TextDocument = new ReadOnlyTextDocument(sourceFile.Name, sourceFile.Encoding, columnsLayout, sourceFile.ReadChars());
@@ -151,17 +171,24 @@ namespace TypeCobol.Compiler
                 throw new Exception(string.Format("Source file {0} is empty", fileName));
             }
 
+            chrono.Stop();
+            SourceFileLoadTime = (int)chrono.ElapsedMilliseconds;
+            chrono.Reset();
+
             // 3. Prepare the data structures used by the different steps of the compiler
-            if (isCopyFile) {
-				CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
-				CompilationResultsForCopy.CustomSymbols = customSymbols;
-			} else {
-				CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, copyTextNameVariations);
-				CompilationResultsForProgram.CustomSymbols = customSymbols;
-			}
+            if (isCopyFile)
+            {
+                CompilationResultsForCopy = new CompilationDocument(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, scanState, copyTextNameVariations);
+                CompilationResultsForCopy.CustomSymbols = customSymbols;
+            }
+            else
+            {
+                CompilationResultsForProgram = new CompilationUnit(TextDocument.Source, TextDocument.Lines, compilerOptions, documentProvider, copyTextNameVariations);
+                CompilationResultsForProgram.CustomSymbols = customSymbols;
+            }
             CompilerOptions = compilerOptions;
         }
-        
+
         /// <summary>
         /// Synchronous one-time compilation of the current file
         /// </summary>
@@ -202,7 +229,7 @@ namespace TypeCobol.Compiler
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //SemanticCheck
             }
 
-           
+
         }
 
         // Timers used for background execution of all compiler steps
@@ -222,13 +249,13 @@ namespace TypeCobol.Compiler
             lock (timersSyncObject)
             {
                 // Already started, nothing to do
-                if(scannerTimer != null)
+                if (scannerTimer != null)
                 {
                     return;
                 }
 
                 // Check that periods for sucessive steps are consistent
-                if(preprocessorPeriodMillisecond <= scannerPeriodMillisecond ||
+                if (preprocessorPeriodMillisecond <= scannerPeriodMillisecond ||
                    codeElementsParserPeriodMillisecond <= preprocessorPeriodMillisecond ||
                    programClassParserPeriodMillisecond <= codeElementsParserPeriodMillisecond)
                 {
@@ -270,7 +297,7 @@ namespace TypeCobol.Compiler
                 if (CompilationResultsForCopy != null)
                 {
                     waitHandles = new EventWaitHandle[2];
-                    for(int i = 0; i < 2; i++)
+                    for (int i = 0; i < 2; i++)
                     {
                         waitHandles[i] = new EventWaitHandle(false, EventResetMode.AutoReset);
                     }
@@ -292,7 +319,7 @@ namespace TypeCobol.Compiler
                 WaitHandle.WaitAll(waitHandles);
             }
         }
-        
+
         /// <summary>
         /// Start listening to document change events
         /// </summary>
@@ -301,7 +328,7 @@ namespace TypeCobol.Compiler
             // Start compilation process
             TextDocument.StartSendingChangeEvents();
         }
-        
+
         /// <summary>
         /// Monitor changes to the source Cobol file and automatically update TextDocument contents after each file update
         /// </summary>
@@ -341,6 +368,6 @@ namespace TypeCobol.Compiler
                     throw new InvalidOperationException("File change type " + fileEvent.Type + " is not supported in this configuration");
                 }
             }
-        }        
+        }
     }
 }

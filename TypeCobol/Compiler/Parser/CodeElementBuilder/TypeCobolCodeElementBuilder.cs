@@ -138,12 +138,14 @@ namespace TypeCobol.Compiler.Parser
                 parameter.UserDefinedDataType =
                     CobolWordsBuilder.CreateQualifiedDataTypeReference(context.cobol2002TypeClause());
                 parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
+            } else if (context.POINTER() != null) {
+                parameter.Usage = CreateDataUsageProperty(DataUsage.Pointer, context.POINTER());
             }
 
-            if (context.blankWhenZeroClause() != null && context.blankWhenZeroClause().Length > 0)
+            if (context.blankWhenZeroClause() != null)
             {
-                var blankClauseContext = context.blankWhenZeroClause()[0];
-                Token zeroToken = null;
+                var blankClauseContext = context.blankWhenZeroClause();
+                Token zeroToken;
                 if (blankClauseContext.ZERO() != null)
                 {
                     zeroToken = ParseTreeUtils.GetFirstToken(blankClauseContext.ZERO());
@@ -159,9 +161,9 @@ namespace TypeCobol.Compiler.Parser
                 parameter.IsBlankWhenZero = new SyntaxProperty<bool>(true, zeroToken);
             }
 
-            if (context.justifiedClause() != null && context.justifiedClause().Length > 0)
+            if (context.justifiedClause() != null)
             {
-                var justifiedClauseContext = context.justifiedClause()[0];
+                var justifiedClauseContext = context.justifiedClause();
                 Token justifiedToken = null;
                 if (justifiedClauseContext.JUSTIFIED() != null)
                 {
@@ -174,9 +176,9 @@ namespace TypeCobol.Compiler.Parser
                 parameter.IsJustified = new SyntaxProperty<bool>(true, justifiedToken);
             }
 
-            if (context.synchronizedClause() != null && context.synchronizedClause().Length > 0)
+            if (context.synchronizedClause() != null)
             {
-                var synchronizedClauseContext = context.synchronizedClause()[0];
+                var synchronizedClauseContext = context.synchronizedClause();
                 if (synchronizedClauseContext.SYNCHRONIZED() != null)
                 {
                     parameter.IsSynchronized = new SyntaxProperty<bool>(true,
@@ -189,9 +191,9 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            if (context.groupUsageClause() != null && context.groupUsageClause().Length > 0)
+            if (context.groupUsageClause() != null)
             {
-                var groupUsageClauseContext = context.groupUsageClause()[0];
+                var groupUsageClauseContext = context.groupUsageClause();
                 parameter.IsJustified = new SyntaxProperty<bool>(true,
                     ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL()));
             }
@@ -263,9 +265,9 @@ namespace TypeCobol.Compiler.Parser
 //                }
 //            }
 
-            if (context.signClause() != null && context.signClause().Length > 0)
+            if (context.signClause() != null)
             {
-                var signClauseContext = context.signClause()[0];
+                var signClauseContext = context.signClause();
                 if (signClauseContext.LEADING() != null)
                 {
                     parameter.SignPosition = new SyntaxProperty<SignPosition>(SignPosition.Leading,
@@ -283,18 +285,41 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            if (context.usageClause() != null && context.usageClause().Length > 0)
+            //As POINTER can already be defined in Usage property, we don't want to overwrite it
+            if (parameter.Usage == null && context.tcfuncParameterUsageClause() != null)
             {
-                parameter.Usage = CreateUsageClause(context.usageClause()[0]);
+                parameter.Usage = CreateTCFuncParameterUsageClause(context.tcfuncParameterUsageClause());
+
             }
 
-            if (context.valueClause() != null && context.valueClause().Length > 0)
+            if (context.valueClause() != null)
             {
-                var valueClauseContext = context.valueClause()[0];
+                var valueClauseContext = context.valueClause();
                 parameter.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
             }
 
             return parameter;
+        }
+
+        private SyntaxProperty<DataUsage> CreateTCFuncParameterUsageClause(CodeElementsParser.TcfuncParameterUsageClauseContext c) {
+            return CreateDataUsageProperty(DataUsage.Binary, c.BINARY()) ??
+                   CreateDataUsageProperty(DataUsage.Binary, c.COMP()) ??
+                   CreateDataUsageProperty(DataUsage.Binary, c.COMPUTATIONAL()) ??
+                   CreateDataUsageProperty(DataUsage.Binary, c.COMP_4()) ??
+                   CreateDataUsageProperty(DataUsage.Binary, c.COMPUTATIONAL_4()) ??
+                   CreateDataUsageProperty(DataUsage.FloatingPoint, c.COMP_1()) ??
+                   CreateDataUsageProperty(DataUsage.FloatingPoint, c.COMPUTATIONAL_1()) ??
+                   CreateDataUsageProperty(DataUsage.LongFloatingPoint, c.COMP_2()) ??
+                   CreateDataUsageProperty(DataUsage.LongFloatingPoint, c.COMPUTATIONAL_2()) ??
+                   CreateDataUsageProperty(DataUsage.PackedDecimal, c.PACKED_DECIMAL()) ??
+                   CreateDataUsageProperty(DataUsage.PackedDecimal, c.COMP_3()) ??
+                   CreateDataUsageProperty(DataUsage.PackedDecimal, c.COMPUTATIONAL_3()) ??
+                   CreateDataUsageProperty(DataUsage.NativeBinary, c.COMP_5()) ??
+                   CreateDataUsageProperty(DataUsage.NativeBinary, c.COMPUTATIONAL_5()) ??
+                   CreateDataUsageProperty(DataUsage.Display, c.DISPLAY()) ??
+                   CreateDataUsageProperty(DataUsage.DBCS, c.DISPLAY_1()) ??
+                   CreateDataUsageProperty(DataUsage.Index, c.INDEX()) ??
+                   CreateDataUsageProperty(DataUsage.National, c.NATIONAL());
         }
 
         private DataConditionEntry CreateFunctionConditionParameter(

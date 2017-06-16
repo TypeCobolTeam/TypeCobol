@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.AntlrUtils;
 
 namespace TypeCobol.Compiler
 {
@@ -29,8 +30,8 @@ namespace TypeCobol.Compiler
         /// </summary>
         public TypeCobolOptions CompilerOptions { get; private set; }
 
-		/// <summary>Optional custom symbol table to use for name and type resolution.</summary>
-		public CodeModel.SymbolTable CustomSymbols = null;
+        /// <summary>Optional custom symbol table to use for name and type resolution.</summary>
+        public CodeModel.SymbolTable CustomSymbols = null;
 
         /// <summary>
         /// The build system implements an efficient way to retrieve ProcessedTokensDocuments
@@ -116,6 +117,40 @@ namespace TypeCobol.Compiler
             }
         }
 
+        public class PerfStatsForParsingStep : PerfStatsForCompilationStep
+        {
+            public PerfStatsForParsingStep(CompilationStep compilationStep) : base(compilationStep)
+            { }
+
+            public PerfStatsForParserInvocation FirstParsingTime { get; private set; }
+            public PerfStatsForParserInvocation LastParsingTime { get; private set; }
+            public PerfStatsForParserInvocation TotalParsingTime { get; private set; }
+
+            /// <summary>
+            /// Set to true to activate very detailed Anltr profiling statistics, which can then be accessed 
+            /// through XxxParserStep.AntlrPerformanceProfiler static properties
+            /// </summary>
+            public bool ActivateDetailedAntlrPofiling { get; set; }
+
+            public PerfStatsForParserInvocation OnStartRefreshParsingStep()
+            {
+                LastParsingTime = new PerfStatsForParserInvocation(ActivateDetailedAntlrPofiling);
+                OnStartRefresh();
+                return LastParsingTime;
+            }
+
+            public void OnStopRefreshParsingStep()
+            {
+                OnStopRefresh();
+                if (FirstParsingTime == null)
+                {
+                    FirstParsingTime = LastParsingTime;
+                    TotalParsingTime = new PerfStatsForParserInvocation(ActivateDetailedAntlrPofiling);
+                }
+                TotalParsingTime.Add(LastParsingTime);
+            }
+        }
+
 
         // --- Initialization ---
 
@@ -127,7 +162,7 @@ namespace TypeCobol.Compiler
         public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines,
             TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :
             this(textSourceInfo, initialTextLines, compilerOptions, processedTokensDocumentProvider, null, copyTextNameVariations)
-        { 
+        {
         }
 
         public CompilationDocument(TextSourceInfo textSourceInfo, IEnumerable<ITextLine> initialTextLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider,
@@ -156,7 +191,7 @@ namespace TypeCobol.Compiler
             // Initialize performance stats 
             PerfStatsForText = new PerfStatsForCompilationStep(CompilationStep.Text);
             PerfStatsForScanner = new PerfStatsForCompilationStep(CompilationStep.Scanner);
-            PerfStatsForPreprocessor = new PerfStatsForCompilationStep(CompilationStep.Preprocessor);
+            PerfStatsForPreprocessor = new PerfStatsForParsingStep(CompilationStep.Preprocessor);
 
             initialScanStateForCopy = scanState;
         }
@@ -259,7 +294,7 @@ namespace TypeCobol.Compiler
                             // Recompute the line indexes of all the changes prevously applied
                             foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
                             {
-                                if(documentChangeToAdjust.LineIndex >= textChange.LineIndex)
+                                if (documentChangeToAdjust.LineIndex >= textChange.LineIndex)
                                 {
                                     documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex + 1;
                                 }
@@ -295,9 +330,9 @@ namespace TypeCobol.Compiler
                                 {
                                     documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex - 1;
                                 }
-                                else if(documentChangeToAdjust.LineIndex == textChange.LineIndex)
+                                else if (documentChangeToAdjust.LineIndex == textChange.LineIndex)
                                 {
-                                    if(documentChangesToRemove == null)
+                                    if (documentChangesToRemove == null)
                                     {
                                         documentChangesToRemove = new List<DocumentChange<ICobolTextLine>>(1);
                                     }
@@ -305,7 +340,7 @@ namespace TypeCobol.Compiler
                                 }
                             }
                             // Ignore all previous changes applied to a line now removed
-                            if(documentChangesToRemove != null)
+                            if (documentChangesToRemove != null)
                             {
                                 foreach (DocumentChange<ICobolTextLine> documentChangeToRemove in documentChangesToRemove)
                                 {
@@ -400,11 +435,11 @@ namespace TypeCobol.Compiler
             // Check if an update is necessary and compute changes to apply since last version
             bool scanAllDocumentLines = false;
             IList<DocumentChange<ICobolTextLine>> textLineChanges = null;
-            if(textLinesVersionForCurrentTokensLines == null)
+            if (textLinesVersionForCurrentTokensLines == null)
             {
                 scanAllDocumentLines = true;
             }
-            else if(currentTextLinesVersion == textLinesVersionForCurrentTokensLines)
+            else if (currentTextLinesVersion == textLinesVersionForCurrentTokensLines)
             {
                 // Text lines did not change since last update => nothing to do
                 return;
@@ -436,7 +471,7 @@ namespace TypeCobol.Compiler
 
                     // Prepare an event to signal document change to all listeners
                     documentChangedEvent = new DocumentChangedEvent<ITokensLine>(currentTokensLinesVersion, currentTokensLinesVersion.next);
-                    currentTokensLinesVersion = currentTokensLinesVersion.next;                    
+                    currentTokensLinesVersion = currentTokensLinesVersion.next;
                 }
 
                 // Register that the tokens lines were synchronized with the current text lines version
@@ -507,7 +542,7 @@ namespace TypeCobol.Compiler
         /// Tread-safe : accessible from any thread, returns an immutable object tree.
         /// </summary>
         public TokensDocument TokensDocumentSnapshot { get; private set; }
-        
+
         /// <summary>
         /// Creates a new snapshot of the document viewed as tokens AFTER compiler directives processing.
         /// (if the tokens lines changed since the last time this method was called)
@@ -516,12 +551,12 @@ namespace TypeCobol.Compiler
         public void RefreshProcessedTokensDocumentSnapshot()
         {
             // Make sure two threads don't try to update this snapshot at the same time
-            lock(lockObjectForProcessedTokensDocumentSnapshot)
+            lock (lockObjectForProcessedTokensDocumentSnapshot)
             {
                 // Capture previous snapshots at one point in time
                 TokensDocument tokensDocument = TokensDocumentSnapshot;
                 ProcessedTokensDocument previousProcessedTokensDocument = ProcessedTokensDocumentSnapshot;
-                
+
                 // Check if an update is necessary and compute changes to apply since last version
                 bool scanAllDocumentLines = false;
                 IList<DocumentChange<ITokensLine>> tokensLineChanges = null;
@@ -541,24 +576,27 @@ namespace TypeCobol.Compiler
                 }
 
                 // Start perf measurement
-                PerfStatsForPreprocessor.OnStartRefresh();
+                var perfStatsForParserInvocation = PerfStatsForPreprocessor.OnStartRefreshParsingStep();
 
                 // Track all changes applied to the document while updating this snapshot
                 DocumentChangedEvent<IProcessedTokensLine> documentChangedEvent = null;
-               
+
                 // Apply text changes to the compilation document
                 if (scanAllDocumentLines)
                 {
-                    // Process all lines of the document for the first time
-                    PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations);
+                    if (tokensDocument != null)
+                    {
+                        // Process all lines of the document for the first time
+                        PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations, perfStatsForParserInvocation);
 
-                    // Create the first processed tokens document snapshot
-                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines));
+                        // Create the first processed tokens document snapshot
+                        ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines));
+                    }
                 }
                 else
                 {
                     ImmutableList<CodeElementsLine>.Builder processedTokensDocumentLines = ((ImmutableList<CodeElementsLine>)tokensDocument.Lines).ToBuilder();
-                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(TextSourceInfo, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations);
+                    IList<DocumentChange<IProcessedTokensLine>> documentChanges = PreprocessorStep.ProcessTokensLinesChanges(TextSourceInfo, processedTokensDocumentLines, tokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations, perfStatsForParserInvocation);
 
                     // Create a new version of the document to track these changes
                     DocumentVersion<IProcessedTokensLine> currentProcessedTokensLineVersion = previousProcessedTokensDocument.CurrentVersion;
@@ -599,7 +637,7 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Performance stats for the RefreshProcessedTokensDocumentSnapshot method
         /// </summary>
-        public PerfStatsForCompilationStep PerfStatsForPreprocessor { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForPreprocessor { get; private set; }
 
         #region Thread ownership and synchronization
         // Inspired from ICSharpCode.AvalonEdit.Document.TextDocument
@@ -623,10 +661,10 @@ namespace TypeCobol.Compiler
         /// </remarks>
         public void VerifyAccess()
         {
-            #if DEBUG
+#if DEBUG
             if (Thread.CurrentThread != documentOwnerThread)
                 throw new InvalidOperationException("CompilationDocument can be accessed only from the thread that owns it.");
-            #endif
+#endif
         }
 
         /// <summary>

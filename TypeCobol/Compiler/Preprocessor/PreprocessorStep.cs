@@ -21,15 +21,18 @@ namespace TypeCobol.Compiler.Preprocessor
         /// <summary>
         /// Initial preprocessing of a complete document
         /// </summary>
-        internal static void ProcessDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        internal static void ProcessDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations, PerfStatsForParserInvocation perfStatsForParserInvocation)
         {
-            ProcessTokensLinesChanges(textSourceInfo, documentLines, null, null, compilerOptions, processedTokensDocumentProvider, copyTextNameVariations);
+            ProcessTokensLinesChanges(textSourceInfo, documentLines, null, null, compilerOptions, processedTokensDocumentProvider, copyTextNameVariations, perfStatsForParserInvocation);
         }
+
+        // When not null, optionnaly used to gather Antlr performance profiling information
+        public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
 
         /// <summary>
         /// Incremental preprocessing of a set of tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
+        internal static IList<DocumentChange<IProcessedTokensLine>> ProcessTokensLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<ProcessedTokensLine> documentLines, IList<DocumentChange<ITokensLine>> tokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, IProcessedTokensDocumentProvider processedTokensDocumentProvider, List<RemarksDirective.TextNameVariation> copyTextNameVariations, PerfStatsForParserInvocation perfStatsForParserInvocation)
         {
             // Collect all changes applied to the processed tokens lines during the incremental scan
             IList<DocumentChange<IProcessedTokensLine>> processedTokensLinesChanges = new List<DocumentChange<IProcessedTokensLine>>();
@@ -75,6 +78,19 @@ namespace TypeCobol.Compiler.Preprocessor
             // Init a compiler directive parser
             CommonTokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
             CobolCompilerDirectivesParser directivesParser = new CobolCompilerDirectivesParser(tokenStream);
+
+            // Optionnaly activate Antlr Parser performance profiling
+            // WARNING : use this in a single-treaded context only (uses static field)       
+            if (AntlrPerformanceProfiler == null && perfStatsForParserInvocation.ActivateDetailedAntlrPofiling) AntlrPerformanceProfiler = new AntlrPerformanceProfiler(directivesParser);
+            if (AntlrPerformanceProfiler != null)
+            {
+                // Replace the generated parser by a subclass which traces all rules invocations
+                directivesParser = new CobolCompilerDirectivesTracingParser(tokenStream);
+                AntlrPerformanceProfiler.BeginParsingFile(textSourceInfo, null);
+            }
+
+
+
             IAntlrErrorStrategy compilerDirectiveErrorStrategy = new CompilerDirectiveErrorStrategy();
             directivesParser.ErrorHandler = compilerDirectiveErrorStrategy;
 
@@ -116,8 +132,16 @@ namespace TypeCobol.Compiler.Preprocessor
                 compilerDirectiveErrorStrategy.Reset(directivesParser);
 
                 // 3. Try to parse a compiler directive starting with the current token
+                perfStatsForParserInvocation.OnStartAntlrParsing();
+                if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.BeginParsingSection();
                 CobolCompilerDirectivesParser.CompilerDirectingStatementContext directiveParseTree = directivesParser.compilerDirectingStatement();
+                if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.EndParsingSection(directiveParseTree.ChildCount);
+                perfStatsForParserInvocation.OnStopAntlrParsing(
+                    AntlrPerformanceProfiler != null ? (int)AntlrPerformanceProfiler.CurrentFileInfo.DecisionTimeMs : 0,
+                    AntlrPerformanceProfiler != null ? AntlrPerformanceProfiler.CurrentFileInfo.RuleInvocations.Sum() : 0);
 
+
+                perfStatsForParserInvocation.OnStartTreeBuilding();
                 // 4. Visit the parse tree to build a first class object representing the compiler directive
                 walker.Walk(directiveBuilder, directiveParseTree);
                 CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;
@@ -194,7 +218,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         foreach (Diagnostic directiveDiag in directiveParseTree.Diagnostics)
                         {
-                            if(compilerDirective != null)
+                            if (compilerDirective != null)
                             {
                                 compilerDirective.AddDiagnostic(directiveDiag);
                             }
@@ -203,6 +227,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     }
                 }
             }
+
+            if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.EndParsingFile(directivesParser.ParseInfo.DecisionInfo, (int)(directivesParser.ParseInfo.GetTotalTimeInPrediction() / 1000000));
 
             // 8. Advance the state off all ProcessedTokensLines : 
             // NeedsCompilerDirectiveParsing => NeedsCopyDirectiveProcessing if it contains a COPY directive
@@ -213,7 +239,7 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 if (parsedLine.ImportedDocuments != null)
                 {
-                    if(parsedLinesWithCopyDirectives == null)
+                    if (parsedLinesWithCopyDirectives == null)
                     {
                         parsedLinesWithCopyDirectives = new List<ProcessedTokensLine>();
                     }
@@ -225,6 +251,8 @@ namespace TypeCobol.Compiler.Preprocessor
                     parsedLine.PreprocessingState = ProcessedTokensLine.PreprocessorState.Ready;
                 }
             }
+
+            perfStatsForParserInvocation.OnStopTreeBuilding();
 
             // --- COPY IMPORT PHASE : Process COPY (REPLACING) directives ---
 
@@ -238,16 +266,18 @@ namespace TypeCobol.Compiler.Preprocessor
                     {
                         try
                         {
+                            PerfStatsForImportedDocument perfStats;
+
                             // Load (or retrieve in cache) the document referenced by the COPY directive
                             //Issue #315: tokensLineWithCopyDirective.ScanState must be passed because special names paragraph such as "Decimal point is comma" are declared in the enclosing program and can affect the parsing of COPY
                             ProcessedTokensDocument importedDocumentSource =
                                 processedTokensDocumentProvider.GetProcessedTokensDocument(copyDirective.LibraryName,
                                     copyDirective.TextName,
-                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken], copyTextNameVariations);
+                                    tokensLineWithCopyDirective.ScanStateBeforeCOPYToken[copyDirective.COPYToken], copyTextNameVariations, out perfStats);
 
                             // Store it on the current line after applying the REPLACING directive
                             ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
-                                importedDocumentSource);
+                                importedDocumentSource, perfStats);
                             tokensLineWithCopyDirective.ImportedDocuments[copyDirective] = importedDocument;
                         }
                         catch (Exception e)
@@ -258,7 +288,7 @@ namespace TypeCobol.Compiler.Preprocessor
                                 .First(
                                     token =>
                                         token.TokenType == TokenType.CopyImportDirective &&
-                                        ((CompilerDirectiveToken) token).CompilerDirective == copyDirective);
+                                        ((CompilerDirectiveToken)token).CompilerDirective == copyDirective);
 
                             Diagnostic diag = new Diagnostic(
                                 MessageCode.FailedToLoadTextDocumentReferencedByCopyDirective,
@@ -359,7 +389,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         lineIndex = previousLineIndex;
                         previousLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.Preprocessor);
                         processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
-                        if(!previousLine.HasDirectiveTokenContinuationFromPreviousLine)
+                        if (!previousLine.HasDirectiveTokenContinuationFromPreviousLine)
                         {
                             break;
                         }
@@ -386,7 +416,7 @@ namespace TypeCobol.Compiler.Preprocessor
                     // A reset line will be treated by the next call to CheckIfAdjacentLinesNeedRefresh : stop searching
                     if (nextLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                     {
-                       break;
+                        break;
                     }
                     // Next line is a continuation and is continued: reset this line and continue navigating forwards
                     // Next line is a continuation but is not continued : reset this line and stop navigating forwards

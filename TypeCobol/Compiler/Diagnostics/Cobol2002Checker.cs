@@ -67,7 +67,7 @@
                 if (typedef.Picture != null)
                 {
                     string message = "Elementary TYPEDEF cannot be STRONG";
-                    string rulestack = new RuleStackBuilder().GetRuleStack(context.cobol2002TypedefClause());
+                    string rulestack = RuleStackBuilder.GetRuleStack(context.cobol2002TypedefClause());
                     DiagnosticUtils.AddError(typedef, message, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
                 }
             }

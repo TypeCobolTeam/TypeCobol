@@ -15,13 +15,16 @@ py package.py CONFIG_NAME
 files = [
     # assemblies (@see ildasm)
     'TypeCobol.CLI.exe',
-      'TypeCobol.Codegen.exe',
+      'TypeCobol.Codegen.dll',
         'RazorEngine.dll',
           'System.Web.Razor.dll',
       'SimpleMsgPack.dll',
-      'TypeCobol.exe',
+      'TypeCobol.dll',
         'Antlr4.Runtime.dll',
       'TypeCobol.Transform.exe',
+      'TypeCobol.Analytics.dll',
+        'Microsoft.ApplicationInsights.dll',
+	'NLog.dll',
     # resource files
     os.path.join('config','skeletons.xml'),
     ]

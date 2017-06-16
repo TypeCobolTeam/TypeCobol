@@ -381,7 +381,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         {
             try
             {
-                OnDidCloseTextDocument((TextDocumentIdentifier)parameters);
+                OnDidCloseTextDocument((DidCloseTextDocumentParams)parameters);
             }
             catch (Exception e)
             {
@@ -499,7 +499,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// where the document's uri points to (e.g. if the document's uri is a file uri
         /// the truth now exists on disk).
         /// </summary>
-        public virtual void OnDidCloseTextDocument(TextDocumentIdentifier parameters)
+        public virtual void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
         { }
 
         /// <summary>

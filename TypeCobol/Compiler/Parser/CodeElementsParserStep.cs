@@ -23,9 +23,9 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Initial parsing of a complete document
         /// </summary>
-        internal static void ParseDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> documentLines, TypeCobolOptions compilerOptions)
+        internal static void ParseDocument(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> documentLines, TypeCobolOptions compilerOptions, PerfStatsForParserInvocation perfStatsForParserInvocation)
         {
-            ParseProcessedTokensLinesChanges(textSourceInfo, documentLines, null, null, compilerOptions);
+            ParseProcessedTokensLinesChanges(textSourceInfo, documentLines, null, null, compilerOptions, perfStatsForParserInvocation);
         }
 
         /// <summary>
@@ -52,10 +52,13 @@ namespace TypeCobol.Compiler.Parser
             public bool StopTokenIsFirstTokenOfTheLine { get; set; }
         }
 
+        // When not null, optionnaly used to gather Antlr performance profiling information
+        public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
+
         /// <summary>
         /// Incremental parsing of a set of processed tokens lines changes
         /// </summary>
-        internal static IList<DocumentChange<ICodeElementsLine>> ParseProcessedTokensLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> documentLines, IList<DocumentChange<IProcessedTokensLine>> processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions)
+        internal static IList<DocumentChange<ICodeElementsLine>> ParseProcessedTokensLinesChanges(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> documentLines, IList<DocumentChange<IProcessedTokensLine>> processedTokensLinesChanges, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, PerfStatsForParserInvocation perfStatsForParserInvocation)
         {
             // Collect all changes applied to the processed tokens lines during the incremental scan
             IList<DocumentChange<ICodeElementsLine>> codeElementsLinesChanges = new List<DocumentChange<ICodeElementsLine>>();
@@ -104,7 +107,19 @@ namespace TypeCobol.Compiler.Parser
             TokensLinesTokenStream tokenStream = new TokensLinesTokenStream(tokenSource, Token.CHANNEL_SourceTokens);
             CodeElementsParser cobolParser = new CodeElementsParser(tokenStream);
             // REVERT TO STD PARSER ==> TracingCobolParser cobolParser = new TracingCobolParser(tokenStream);
-            
+
+            // Optionnaly activate Antlr Parser performance profiling
+            // WARNING : use this in a single-treaded context only (uses static field)     
+            if (AntlrPerformanceProfiler == null && perfStatsForParserInvocation.ActivateDetailedAntlrPofiling) AntlrPerformanceProfiler = new AntlrPerformanceProfiler(cobolParser);
+            if (AntlrPerformanceProfiler != null)
+            {
+                // Replace the generated parser by a subclass which traces all rules invocations
+                cobolParser = new CodeElementsTracingParser(tokenStream);
+
+                var tokensCountIterator = ProcessedTokensDocument.GetProcessedTokensIterator(textSourceInfo, documentLines);
+                AntlrPerformanceProfiler.BeginParsingFile(textSourceInfo, tokensCountIterator);
+            }
+
             // Customize error recovery strategy
             IAntlrErrorStrategy cobolErrorStrategy = new CodeElementErrorStrategy();
             cobolParser.ErrorHandler = cobolErrorStrategy;
@@ -147,15 +162,25 @@ namespace TypeCobol.Compiler.Parser
                 // - starting with the current parse section Start token
                 // - ending with the current parse section Stop token
                 CodeElementsParser.CobolCodeElementsContext codeElementsParseTree = null;
-                try {
+                try
+                {
+                    perfStatsForParserInvocation.OnStartAntlrParsing();
+                    if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.BeginParsingSection();
                     codeElementsParseTree = cobolParser.cobolCodeElements();
-                } catch (Exception e) {
+                    if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.EndParsingSection(codeElementsParseTree.ChildCount);
+                    perfStatsForParserInvocation.OnStopAntlrParsing(
+                        AntlrPerformanceProfiler != null ? (int)AntlrPerformanceProfiler.CurrentFileInfo.DecisionTimeMs : 0,
+                        AntlrPerformanceProfiler != null ? AntlrPerformanceProfiler.CurrentFileInfo.RuleInvocations.Sum() : 0);
+                }
+                catch (Exception e)
+                {
                     var currentToken = (Token)cobolParser.CurrentToken;
                     CodeElementsLine codeElementsLine = GetCodeElementsLineForToken(currentToken);
                     codeElementsLine.AddParserDiagnostic(new TokenDiagnostic(MessageCode.ImplementationError, currentToken, currentToken.Line, e));
                 }
 
-                if (codeElementsParseTree != null) {
+                if (codeElementsParseTree != null)
+                {
                     // If the parse tree is not empty
                     if (codeElementsParseTree.codeElement() != null && codeElementsParseTree.codeElement().Length > 0)
                     {
@@ -172,6 +197,7 @@ namespace TypeCobol.Compiler.Parser
                             //codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, updatedLineIndex, codeElementsLine));
                             codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, codeElementsLine.InitialLineIndex, codeElementsLine));
 
+                            perfStatsForParserInvocation.OnStartTreeBuilding();
                             // Visit the parse tree to build a first class object representing the code elements
                             try { walker.Walk(codeElementBuilder, codeElementParseTree); }
                             catch (Exception ex)
@@ -207,7 +233,7 @@ namespace TypeCobol.Compiler.Parser
                                 {
                                     DiagnosticUtils.AddError(codeElement, "A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)", MessageCode.TypeCobolParserLimitation);
                                 }
-                            
+
                                 // Add code element to the list                    
                                 codeElementsLine.AddCodeElement(codeElement);
                                 if (codeElement.Diagnostics != null)
@@ -232,6 +258,7 @@ namespace TypeCobol.Compiler.Parser
                             }
                         }
                     }
+                    perfStatsForParserInvocation.OnStopTreeBuilding();
                 }
 
                 // In case of incremental parsing, directly jump to next parse section in the token stream
@@ -254,7 +281,9 @@ namespace TypeCobol.Compiler.Parser
             }
             while (tokenStream.La(1) >= 0);
 
-            return codeElementsLinesChanges; 
+            if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.EndParsingFile(cobolParser.ParseInfo.DecisionInfo, (int)(cobolParser.ParseInfo.GetTotalTimeInPrediction() / 1000000));
+
+            return codeElementsLinesChanges;
         }
 
         private static CodeElementsLine GetCodeElementsLineForToken(Token tokenStart)
@@ -310,7 +339,7 @@ namespace TypeCobol.Compiler.Parser
             if (lineIndex > 0)
             {
                 int previousLineIndex = lineIndex;
-                int lastLineIndexReset = lastParseSection != null ? lastParseSection.StopLineIndex  : - 1;
+                int lastLineIndexReset = lastParseSection != null ? lastParseSection.StopLineIndex : -1;
                 IEnumerator<CodeElementsLine> reversedEnumerator = documentLines.GetEnumerator(previousLineIndex - 1, -1, true);
                 bool previousLineHasCodeElements = false;
                 while (reversedEnumerator.MoveNext() && (--previousLineIndex > lastLineIndexReset))
@@ -325,12 +354,12 @@ namespace TypeCobol.Compiler.Parser
                         currentParseSection.StartLineIndex = previousLineIndex;
                         currentParseSection.StartToken = previousLine.CodeElements[0].ConsumedTokens[0];
                     }
-                    
+
                     // All lines contained in the parse section could be modified, and should be reset
                     previousLine = (CodeElementsLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.CodeElementsParser);
                     previousLine.ResetCodeElements();
                     codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
-                                        
+
                     // Stop iterating backwards as soon as the start of an old CodeElement is found                   
                     if (previousLineHasCodeElements)
                     {
@@ -347,7 +376,7 @@ namespace TypeCobol.Compiler.Parser
             }
             // If line 0 was updated, current parse section starts at the beggining of the file
             else
-            {                
+            {
                 currentParseSection.StartLineIndex = 0;
                 currentParseSection.StartToken = null;
             }
@@ -368,10 +397,10 @@ namespace TypeCobol.Compiler.Parser
                     nextLineHasCodeElements = nextLine.HasCodeElements;
                     bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
                     if (nextLineHasCodeElements)
-                    {                        
+                    {
                         Token startTokenForNextParseSection = nextLine.CodeElements[0].ConsumedTokens[0];
                         Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
-                        nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;                        
+                        nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
                     }
 
                     // All lines contained in the parse section could be modified
@@ -390,10 +419,10 @@ namespace TypeCobol.Compiler.Parser
                         currentParseSection.StopToken = nextLine.CodeElements[0].ConsumedTokens[0];
                         currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
                         break;
-                    }                   
+                    }
                 }
                 // If no CodeElement was found on the next lines, current parse section current parse section ends at the end of the file
-                if(!nextLineHasCodeElements)
+                if (!nextLineHasCodeElements)
                 {
                     currentParseSection.StopLineIndex = nextLineIndex;
                     currentParseSection.StopToken = null;
@@ -403,10 +432,10 @@ namespace TypeCobol.Compiler.Parser
             // If last line was updated, or if no CodeElement was found after the updated line, current parse section ends at the end of the file
             else
             {
-               currentParseSection.StopLineIndex = documentLines.Count - 1;
-               currentParseSection.StopToken = null;
-               currentParseSection.StopTokenIsFirstTokenOfTheLine = false;
-            }        
+                currentParseSection.StopLineIndex = documentLines.Count - 1;
+                currentParseSection.StopToken = null;
+                currentParseSection.StopTokenIsFirstTokenOfTheLine = false;
+            }
 
             return currentParseSection;
         }

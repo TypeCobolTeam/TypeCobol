@@ -137,6 +137,29 @@ internal class TypedDataNode: DataDescription, Generated {
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Extract All Tokens after encountering a LevelNumber token
+    /// </summary>
+    /// <param name="dataDescEntry">The Data Description Entry Node</param>
+    /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
+    /// <returns>The string representing all tokens after a LevelNumber </returns>
+    internal static string ExtractTokensValuesAfterLevel(DataDescriptionEntry dataDescEntry, out bool bHasPeriod)
+    {
+        bHasPeriod = false;
+        StringBuilder sb = new StringBuilder();
+        if (dataDescEntry.ConsumedTokens != null)
+        {
+            if (dataDescEntry.ConsumedTokens != null)
+            {
+                int i = 0;
+                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.LevelNumber)
+                    i++;
+                FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
+            }
+        }
+        return sb.ToString();
+    }
+
 	internal static ITextLine CreateDataDefinition(DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null) {
         if (data_def is DataDescriptionEntry)
         {
@@ -144,22 +167,46 @@ internal class TypedDataNode: DataDescription, Generated {
             bool bHasPeriod = false;
             var line = GetIndent(level, indent, isFirst);
 		    line.Append(level.ToString("00"));
-            if (data_def.Name != null) 
-                line.Append(' ').Append(data.Name);
             if (!isCustomType)
             {
                 string text = ExtractPicTokensValues(data, out bHasPeriod);
                 if (text.Length > 0) {
+                    if (data_def.Name != null)
+                        line.Append(' ').Append(data.Name);
                     line.Append(text);
-                } else if (data.Picture !=null && !string.IsNullOrEmpty(data.Picture.ToString())) {
+                }
+                else if (data.Picture != null && !string.IsNullOrEmpty(data.Picture.ToString()))
+                {
+                    if (data_def.Name != null)
+                        line.Append(' ').Append(data.Name);
                     line.Append(" PIC ").Append(data.Picture);
+                }
+                else
+                {//Try to extract after a Level.
+                    text = ExtractTokensValuesAfterLevel(data, out bHasPeriod);
+                    if (text.Length > 0)
+                    {
+                        line.Append(text);
+                    }
+                    else
+                    {
+                        if (data_def.Name != null)
+                            line.Append(' ').Append(data.Name);
+                    }
                 }
             }
             else if (customtype != null)
             {   //This variable will have no subtypes as children at all
                 //So Auto detect a type based on scalar COBOL typedef.            
+                if (data_def.Name != null)
+                    line.Append(' ').Append(data.Name);
                 string text = ExtractAnyCobolScalarTypeDef(customtype, out bHasPeriod);
                 line.Append(text);
+            }
+            else
+            {
+                if (data_def.Name != null)
+                    line.Append(' ').Append(data.Name);
             }
             if (!bHasPeriod)
             {
