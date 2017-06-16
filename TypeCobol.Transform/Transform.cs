@@ -59,7 +59,7 @@ namespace TypeCobol.Transform
                     System.Console.WriteLine(String.Format("{0} : {1}", PROGNAME, Resource.Invalid_count_args));
                     return 1;
                 }
-                return Decoder.decode(args[1], args[2]) ? 0 : 1;
+                return Decoder.decode(args[1], args[2]); //Returns 0 if no lines difference. If > 0 correponds to number of line changes. If == -1 exception occured.
             }
             else 
             {
