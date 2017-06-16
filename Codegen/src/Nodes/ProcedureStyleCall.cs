@@ -1,9 +1,13 @@
-﻿namespace TypeCobol.Codegen.Nodes {
+﻿
+
+using TypeCobol.Codegen.Extensions.Compiler.CodeElements.Expressions;
+
+namespace TypeCobol.Codegen.Nodes {
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
 	using TypeCobol.Compiler.Text;
 
-/// <summary>
+    /// <summary>
 ///  Class that represents the Node associated to a procedure call.
 /// </summary>
 internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
@@ -212,7 +216,9 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 		if (variable.IsLiteral)
             return share_mode + name;
 		var found = table.GetVariable(variable);
-		if (found.Count < 1) return "?NOT_FOUND?";
+        if (found.Count < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
+            return share_mode + variable.ToCobol85();
+        }
 //		if (found.Count > 1) return "?AMBIGUOUS?";
 		var data = found[0] as Compiler.Nodes.DataDescription;
 		if (data.DataType == DataType.Boolean) name += "-value";

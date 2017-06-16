@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using Analytics;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
@@ -170,7 +171,28 @@ class ReadOnlyPropertiesChecker: NodeListener {
                 if (c < callArgsCount)
                 {
                     var actual = call.Arguments[c].StorageAreaOrValue;
-                    if (actual.IsLiteral) continue;
+                    if (actual.IsLiteral) continue; //TODO
+
+
+                    var actualSpecialRegister = actual.StorageArea as StorageAreaPropertySpecialRegister;
+                    if (actualSpecialRegister != null) {
+                        var tokenType = actualSpecialRegister.SpecialRegisterName.TokenType;
+                        if (tokenType == TokenType.LENGTH) {
+                            //parameter must be a Numeric of lengt
+                            //TODO
+                            //return an error for now
+                            DiagnosticUtils.AddError(e, "LENGTH OF not allowed yet with procedure");
+                            return;
+                        } else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer) {
+                            //It's ok
+                            return;
+                        } else if (tokenType == TokenType.LINAGE_COUNTER) {
+                            //Do not know what to do : RFC
+                            DiagnosticUtils.AddError(e, "LENGTH OF not allowed yet with procedure");
+                            return;
+                        }
+                    }
+
                     var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
                     var found = table.GetVariable(actual);
                     if (found.Count < 1)

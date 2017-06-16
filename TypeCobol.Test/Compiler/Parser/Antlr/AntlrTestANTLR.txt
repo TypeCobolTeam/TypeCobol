@@ -17,6 +17,7 @@ Top rules invocations
 69	sharedStorageArea1
 57	parameterDescription
 57	functionDataParameter
+57	tcfuncParameterUsageClause
 54	tcCodeElement
 51	typeNameReference
 51	cobol2002TypeClause
@@ -32,7 +33,6 @@ Top rules invocations
 35	alphanumericValue7
 35	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference
 35	qualifiedDataNameOrQualifiedConditionNameOrFileName
-34	sentenceEnd
 
 ---------------------
 Rules invocation info
@@ -213,12 +213,14 @@ Rules invocation info
 
 7:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter
 	35	7:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>dataNameDefinition
+	35	7:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>tcfuncParameterUsageClause
 	21	7:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause
 	14	7:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>pictureClause
 
 7:codeElement>tcCodeElement>functionDeclarationHeader>outputPhrase>parameterDescription>functionDataParameter
 	22	7:codeElement>tcCodeElement>functionDeclarationHeader>outputPhrase>parameterDescription>functionDataParameter>dataNameDefinition
 	22	7:codeElement>tcCodeElement>functionDeclarationHeader>outputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause
+	22	7:codeElement>tcCodeElement>functionDeclarationHeader>outputPhrase>parameterDescription>functionDataParameter>tcfuncParameterUsageClause
 
 
 
