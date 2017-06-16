@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Codegen.Nodes {
+﻿using System.Linq;
+
+namespace TypeCobol.Codegen.Nodes {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
@@ -9,17 +11,17 @@
 internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generated {
 
 	string ProgramName = null;
-	Node Node = null;
+	Node OriginalNode = null;
 
-	public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration node): base(node.CodeElement()) {        
-		ProgramName = node.Hash;
-		foreach(var child in node.Children) {
+	public FunctionDeclaration(Compiler.Nodes.FunctionDeclaration originalNode): base(originalNode.CodeElement()) {        
+		ProgramName = originalNode.Hash;
+		foreach(var child in originalNode.Children) {
 			if (child is Compiler.Nodes.ProcedureDivision) {
-				CreateOrUpdateLinkageSection(node, node.CodeElement().Profile);
+				CreateOrUpdateLinkageSection(originalNode, originalNode.CodeElement().Profile);
 				var sentences = new List<Node>();
 				foreach(var sentence in child.Children)
 					sentences.Add(sentence);
-				var pdiv = new ProcedureDivision(node, sentences);
+				var pdiv = new ProcedureDivision(originalNode, sentences);
 				children.Add(pdiv);
 			} else
 			if (child.CodeElement is FunctionDeclarationEnd) {
@@ -30,7 +32,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 				children.Add(child);
 			}            
 		}
-		this.Node = new Compiler.Nodes.FunctionDeclaration(node.CodeElement());
+	    this.OriginalNode = originalNode;
 	}
 
 	private void CreateOrUpdateLinkageSection(Compiler.Nodes.FunctionDeclaration node, ParametersProfile profile) {
@@ -99,6 +101,21 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 				_cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________", null));
 				_cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
 				_cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. "+ProgramName+'.', null));
+			    var envDiv = OriginalNode.GetProgramNode().GetChildren<EnvironmentDivision>();
+			    if (envDiv != null && envDiv.Count == 1) {
+                    _cache.Add(new TextLineSnapshot(-1, "ENVIRONMENT DIVISION. ", null));
+                            
+                    var configSections = envDiv.First().GetChildren<ConfigurationSection>();
+
+			        if (configSections != null && configSections.Count == 1) {
+                        foreach (var line in configSections.First().SelfAndChildrenLines)
+                        {
+                            _cache.Add(line);
+                        }
+			        }
+			    } //else no config or semantic error, no my job  
+
+
 			}
 			return _cache;
 		}

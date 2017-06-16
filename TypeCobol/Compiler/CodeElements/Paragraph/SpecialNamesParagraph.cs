@@ -76,6 +76,9 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public SyntaxProperty<bool> DecimalPointIsComma { get; set; }
 
+        public bool DecimalPointIsComma2 {
+            get { return DecimalPointIsComma != null && DecimalPointIsComma.Value; }
+        }
         /// <summary>
         /// The XML-SCHEMA clause provides the means of relating xml-schema-name-1 to an
         /// external file identifier: a ddname or environment variable that identifies the actual

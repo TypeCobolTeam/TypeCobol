@@ -1,6 +1,9 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        Working-STORAGE SECTION.
 
@@ -276,7 +279,6 @@
        END PROGRAM Callee.
 
        END PROGRAM PGM1.
-
       *
       *declare procedure check public
       *   input mydate        TYPE Date
@@ -373,6 +375,10 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a0508f35.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -394,6 +400,10 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. fde394fb.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.

@@ -44,9 +44,12 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 							picture = customtype.CodeElement().Picture;
 						}
 					} else picture = this.CodeElement().Picture;
+
                     if (picture != null)
                     {
                         str.Append(" PIC ").Append(picture);
+                    } else if (this.CodeElement().Usage != null) {
+                            str.Append(" ").Append(this.CodeElement().Usage);
                     }
                     else if (this.CodeElement().DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
                     {//JCM humm... Type without picture lookup enclosing scope.
@@ -65,7 +68,7 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 
 					// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
-					foreach(var child in GetChildren<DataConditionEntry>()) {
+					foreach(var child in GetCodeElementHolderChildren<DataConditionEntry>()) {
 						str.Clear();
 						var entry = child.CodeElement();
 						str.Append("    ").Append("88 ").Append(entry.Name);

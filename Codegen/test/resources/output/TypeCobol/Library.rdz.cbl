@@ -119,6 +119,9 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. db42865c.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        LINKAGE SECTION.
        01 Result.
@@ -137,6 +140,9 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. fa5ee5e9.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.
@@ -176,6 +182,9 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. cf63e86f.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.
@@ -210,6 +219,9 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. cfc290ce.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *01  W-Dat       TYPE date.
@@ -246,6 +258,9 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. b8721d20.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        LINKAGE SECTION.
        01 Result PIC 9(08).
