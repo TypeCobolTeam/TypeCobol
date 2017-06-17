@@ -211,14 +211,24 @@ namespace TypeCobol.Compiler.CodeModel
             
             
             foreach (var candidate in candidates) {
-                //if name doesn't match we're with a Index
+                //if name doesn't match then name.Head match one property inside the DataDefinition
                 if (!name.Head.Equals(candidate.Name, StringComparison.InvariantCultureIgnoreCase)) {
-                    if (candidate.IsTableOccurence && name.Count ==1) {
-                        found.Add(candidate);
+
+                    //we're with an Index. 
+                    if (candidate.IsTableOccurence) {
+                        //Index can't be qualified name.Count must be == 1
+                        //But that's a job to checker to check that
+                        TypeDefinition parentTypeDef = candidate.GetParentTypeDefinition;
+                        if (parentTypeDef != null) {
+                            //If index is inside a Type, then add all variables which used this type as found
+                            AddAllReference(found, candidate, parentTypeDef);
+                        } else {
+                            //If we are on a variable, add it
+                            found.Add(candidate);
+                        }
                         break;
                     }
                     throw new NotImplementedException();
-                    //TODO can we have an INDEX inside a TYPEDEF?
                     
                 } 
                 MatchVariable(found, candidate, name, name.Count-1, candidate);

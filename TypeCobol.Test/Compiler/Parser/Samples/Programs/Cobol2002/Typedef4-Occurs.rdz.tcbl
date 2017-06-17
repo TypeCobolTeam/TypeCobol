@@ -1,0 +1,53 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MainProgram.
+       data division.
+       working-storage section.
+      *Complex USED Typedef
+       01 Typedef1 TYPEDEF STRICT.
+           05 td-var1         pic X.
+           05 td-var10 occurs 10 indexed by td-var10Ind.
+              10 td-var11     pic X.
+              10 td-var12     pic X.
+              10 td-var13     type Typedef2.
+       01 Typedef2 TYPEDEF STRICT.
+           05 td-var2         pic X.
+           05 td-var20 occurs 10 indexed by td-var20Ind.
+              10 td-var21     pic X.
+              10 td-var22     pic X.
+              10 td-var23     type MainProgram::Typedef3.
+       01 Typedef3 TYPEDEF STRICT.
+           05 td-var3         pic X.
+           05 td-var30 occurs 10 indexed by td-var30Ind.
+              10 td-var31     pic X.
+              10 td-var32     pic X.
+              10 td-var33     type SubPgm1::Typedef4.
+
+       01 Var1 type Typedef1.
+
+      *Use Typedef3 twice to have 2 index with the same name
+       01 Var3a type Typedef3.
+       01 Var3b type Typedef3.
+
+      
+       procedure division.
+      *OK
+           set td-var10Ind to 1
+      *OK
+           set td-var20Ind to 1
+
+      *KO, because 2 vars use Typedef3
+           set td-var30Ind of Var3a to 1
+
+
+           .
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. SubPgm1.
+       data division.
+       working-storage section.
+       01 Typedef4 TYPEDEF STRICT PUBLIC.
+           05 td-var4         pic X.
+           05 td-var40.
+              10 td-var41     pic X.
+              10 td-var42     pic X.
+       END PROGRAM SubPgm1.
+       END PROGRAM MainProgram.
