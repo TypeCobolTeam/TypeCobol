@@ -75,7 +75,7 @@ Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strong
             Y
           Coord3d
             Z
-        Point
+        Point2
           Position2d
           Movment2d
             Accel2d
@@ -153,10 +153,10 @@ Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strong
           TYPE-GRP-STRONG-REN
     procedure-division
       sentence-0
-        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [95,99:Point]<UserDefinedWord>
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [46,51:Point2]<UserDefinedWord>
 
-        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [74,78:Point]<UserDefinedWord>
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [60,65:Point2]<UserDefinedWord>
 
-        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [71,75:Point]<UserDefinedWord>
+        [[MoveStatement]] [1,4:MOVE]<MOVE> --> [57,62:Point2]<UserDefinedWord>
 
         end

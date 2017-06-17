@@ -54,7 +54,7 @@
               10 td-var32     pic X.
               10 td-var33     type SubPgm1::Typedef4.
 
-       01 Var1 type Typedef1.
+       01 Var1 type Typedef1 global.
        01 Var2 pic X.
 
       

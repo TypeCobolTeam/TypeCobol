@@ -425,7 +425,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            var types = node.SymbolTable.GetTypes(node);
+            var types = node.SymbolTable.GetType(node);
             if (types.Count == 1)
             {
                 data.DataType.RestrictionLevel = types[0].DataType.RestrictionLevel;

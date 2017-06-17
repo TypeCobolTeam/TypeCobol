@@ -1,7 +1,10 @@
 ﻿
+using JetBrains.Annotations;
+
 namespace TypeCobol.Compiler.Nodes {
 
     using System;
+    using System.Collections.Generic;
     using CodeElements.Expressions;
     using TypeCobol.Compiler.CodeElements;
 
@@ -113,12 +116,12 @@ namespace TypeCobol.Compiler.Nodes {
     /// </summary>
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
 
-
         private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
-        protected DataDefinition(DataDefinitionEntry entry): base(entry) {  }
+        protected DataDefinition(DataDefinitionEntry entry): base(entry) { References = new List<DataDefinition>(); }
         public override string ID { get { return "data-definition"; } }
         public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 
+        public List<DataDefinition> References { get; set; }
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }
@@ -167,6 +170,27 @@ namespace TypeCobol.Compiler.Nodes {
                     parent = parent.Parent;
                 }
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Return Parent TypeDefinition if this node is under it
+        /// Otherwise return null
+        /// </summary>
+        [CanBeNull]
+        public TypeDefinition GetParentTypeDefinition {
+            get {
+                Node currentNode = this;
+                while (currentNode != null) {
+                    var typedNode = currentNode as TypeDefinition;
+                    if (typedNode != null) return typedNode;
+
+                    //Stop if we reach a Parent which is not a DataDefinion (Working storage section for example)
+                    if (!(currentNode is DataDefinition)) return null;
+
+                    currentNode = currentNode.Parent;
+                }
+                return null;
             }
         }
 

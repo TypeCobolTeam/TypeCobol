@@ -9,7 +9,7 @@
        01  T-Disp TYPEDEF STRICT.
              05 LIG-DET                  pic X(50).
              05 LIG-NB                   pic X(50).
-       01 DISP Type T-Disp.
+
 
 
       *Complex unused Typedef
@@ -54,12 +54,21 @@
               10 td-var32     pic X.
               10 td-var33     type SubPgm1::Typedef4.
 
-       01 Var1 type Typedef1.
-       01 Var2 pic X.
+
 
       
        procedure division.
+
+       declare procedure Check.
+       data division.
+       working-storage section.
+       01 DISP Type T-Disp.
+
+       01 Var1 type Typedef1.
+       01 Var2 pic X.
+       procedure division.
       *KO type mismatch
+Line 71[12,28] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1:Typedef1.
            move Var2 to Var1
 
       *OK Var declared in a Typedef only used by one variable
@@ -67,12 +76,18 @@
 
       *KO these 2 vars are only present in a TypeDef
       *no var use this Type
+Line 78[12,56] <27, Error, Syntax> - Syntax error : Symbol UnusedTypeDef-Var1 is not referenced
+Line 78[12,56] <27, Error, Syntax> - Syntax error : Symbol UnusedTypeDef-Var2 is not referenced
            move UnusedTypeDef-Var1 to UnusedTypeDef-Var2
 
       *KO these 2 vars are only present in a TypeDef
       *no var use this Type
+Line 82[12,38] <27, Error, Syntax> - Syntax error : Symbol utd-var32 is not referenced
+Line 82[12,38] <27, Error, Syntax> - Syntax error : Symbol utd-var21 is not referenced
            move utd-var32 to utd-var21
       *KO for same reason
+Line 84[12,64] <27, Error, Syntax> - Syntax error : Symbol utd-var10.utd-var32 is not referenced
+Line 84[12,64] <27, Error, Syntax> - Syntax error : Symbol utd-var20.utd-var21 is not referenced
            move utd-var32 of utd-var10 to utd-var21 of utd-var20
 
 
@@ -82,12 +97,14 @@
       *OK full path till Type1
            move Var1::td-var1 to Var1::td-var10::td-var11
       *KO full path till Type1 but type mismatch
+Line 93[12,68] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var13:Typedef2.
            move Var1::td-var10::td-var12 to Var1::td-var10::td-var13
 
       *OK full path till Type2
            move Var1::td-var10::td-var13::td-var20::td-var21
              to Var1::td-var10::td-var13::td-var20::td-var22
       *KO full path till Type2 but type mismatch
+Line 99[12,60] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var23:Typedef3.
            move Var1::td-var10::td-var13::td-var20::td-var22
              to Var1::td-var10::td-var13::td-var20::td-var23
       
@@ -97,6 +114,7 @@
              to Var1::td-var10::td-var13::td-var20::td-var23::
                 td-var30::td-var32
       *KO full path till Type3 but type mismatch
+Line 108[12,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var33:Typedef4.
            move Var1::td-var10::td-var13::td-var20::td-var23::
                 td-var30::td-var32
              to Var1::td-var10::td-var13::td-var20::td-var23::
@@ -134,6 +152,7 @@
       *OK full path till Type1
            move td-var1 of Var1 to td-var11 of td-var10 of Var1
       *KO full path till Type1 but type mismatch
+Line 145[12,44] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var13:Typedef2.
            move td-var12 of td-var10 of Var1 
              to td-var13 of td-var10 of Var1
 
@@ -141,6 +160,7 @@
            move td-var21 of td-var20 of td-var13 of td-var10 of Var1
              to td-var22 of td-var20 of td-var13 of td-var10 of Var1
       *KO full path till Type2 but type mismatch
+Line 152[12,68] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var23:Typedef3.
            move td-var22 of td-var20 of td-var13 of td-var10 of Var1
              to td-var23 of td-var20 of td-var13 of td-var10 of Var1
 
@@ -150,6 +170,7 @@
              to td-var32 of td-var30 of td-var23 of td-var20 
                 of td-var13 of td-var10 of Var1
       *KO full path till Type3 but type mismatch
+Line 161[12,47] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var33:Typedef4.
            move td-var32 of td-var30 of td-var23 of td-var20 
                 of td-var13 of td-var10 of Var1
              to td-var33 of td-var30 of td-var23 of td-var20 
@@ -182,9 +203,9 @@
       *Ok path with "holes" till Type3
            move td-var32 of Var1 
              to td-var32 of td-var23 of td-var20 of Var1
+        .
+        end-declare.
 
-
-           .
        IDENTIFICATION DIVISION.
        PROGRAM-ID. SubPgm1.
        data division.

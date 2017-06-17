@@ -91,7 +91,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="**\*.cs" />
+    <Compile Include="ProjectMetrics\CountLinesOfCode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="*.cs" />
+    <Compile Include="Compiler\File\*.cs" />
+    <Compile Include="Compiler\Parser\*.cs" />
+    <Compile Include="Compiler\Pipeline\*.cs" />
+    <Compile Include="Compiler\Preprocessor\*.cs" />
+    <Compile Include="Compiler\Scanner\*.cs" />
+    <Compile Include="Compiler\Text\*.cs" />
     <Content Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
     <Content Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
     <Content Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
@@ -103,7 +111,6 @@
     <Content Include="**\*Preprocessor\**" />
     <Content Include="**\ResultFiles\**" />
     <Content Include="ThirdParty\**" />
-    <Content Include="**\Antlr\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">
@@ -116,6 +123,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Compiler\Parser\Samples\Programs\Cobol85\BlockContains.rdz.cbl" />
+    <None Include="Compiler\Parser\EILegacy\Samples\AutoRemarks.rdz.cbl" />
+    <None Include="Compiler\Parser\EILegacy\Samples\YCONVEA.CPY" />
+    <None Include="Compiler\Parser\EILegacy\Samples\YPRTD20.CPY" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

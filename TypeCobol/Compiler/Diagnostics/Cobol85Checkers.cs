@@ -16,8 +16,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 
     public class Cobol85CompleteASTChecker : AbstractAstVisitor
     {
+        private Node CurrentNode {get;set;}
         public override bool BeginNode(Node node)
         {
+            CurrentNode = node;
+
             CodeElement codeElement = node.CodeElement;
             if (codeElement != null && codeElement.StorageAreaReads != null)
             {
@@ -36,7 +39,9 @@ namespace TypeCobol.Compiler.Diagnostics {
 
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
-            return base.BeginNode(node);
+            RenamesChecker.OnNode(node);
+            ReadOnlyPropertiesChecker.OnNode(node);
+            return true;
         }
 
 
@@ -71,6 +76,12 @@ namespace TypeCobol.Compiler.Diagnostics {
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
+            return true;
+        }
+
+
+        public override bool VisitVariableWriter(VariableWriter variableWriter) {
+            WriteTypeConsistencyChecker.OnNode(variableWriter, CurrentNode);
             return true;
         }
 
@@ -441,20 +452,19 @@ namespace TypeCobol.Compiler.Diagnostics {
 		    }
 
 
-    class WriteTypeConsistencyChecker: NodeListener {
+    class WriteTypeConsistencyChecker {
 
-	public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-        var variableWriter = node as VariableWriter;
-	    if (variableWriter == null) {
-                return; //not our job
-        }
-	    var variables = variableWriter.VariablesWritten;
-	    foreach(var variable in variables) CheckVariable(node, variable.Key, variable.Value);
-	}
+	    public static void OnNode(VariableWriter variableWriter, Node node) {
+	        if (variableWriter == null) {
+                    return; //not our job
+            }
+	        var variables = variableWriter.VariablesWritten;
+	        foreach(var variable in variables) CheckVariable(node, variable.Key, variable.Value);
+	    }
 
         /// <param name="wname">Receiving item; must be found and its type known</param>
         /// <param name="sent">Sending item; must be found and its type known</param>
-        private void CheckVariable(Node node, QualifiedName wname, object sent) {
+        private static void CheckVariable(Node node, QualifiedName wname, object sent) {
 		if (sent == null || wname == null) return;// I need both items
 		var wsymbol = GetSymbol(node.SymbolTable, wname);
 		if (wsymbol == null) return;// receiving symbol name unresolved
@@ -494,19 +504,19 @@ namespace TypeCobol.Compiler.Diagnostics {
 			}
 		}
 	}
-	private DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference) {
+	private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference) {
 		var found = table.GetVariable(symbolReference);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}
-    private DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName) {
+    private static DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName) {
 		var found = table.GetVariable(qualifiedName);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}
 
     //TODO move this method to DataDefinition
-	private DataType GetTypeDefinition(SymbolTable table, Node symbol) {
+	private static DataType GetTypeDefinition(SymbolTable table, Node symbol) {
 		var data = symbol as DataDefinition;
 		if (data != null) {
 		    var dataCondition = data as DataCondition;
@@ -533,7 +543,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
         ITypedNode typed = symbol as ITypedNode;
 		if (typed == null) return null;// symbol untyped
-		var types = table.GetTypes(typed);
+		var types = table.GetType(typed);
 		if (types.Count != 1) return null;// symbol type not found or ambiguous
 		return types[0].DataType;
 	}
@@ -544,7 +554,7 @@ namespace TypeCobol.Compiler.Diagnostics {
         /// <param name="table"></param>
         /// <param name="dataRedefinesEntry"></param>
         /// <returns></returns>
-        private DataDescriptionEntry GetDataDescriptionEntry(SymbolTable table, DataRedefinesEntry dataRedefinesEntry) {
+        private static DataDescriptionEntry GetDataDescriptionEntry(SymbolTable table, DataRedefinesEntry dataRedefinesEntry) {
             var node = GetSymbol(table, dataRedefinesEntry.RedefinesDataName);
             if (node == null) {
                 return null;

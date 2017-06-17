@@ -9,7 +9,7 @@
        01  T-Disp TYPEDEF STRICT.
              05 LIG-DET                  pic X(50).
              05 LIG-NB                   pic X(50).
-       01 DISP Type T-Disp.
+
 
 
       *Complex unused Typedef
@@ -54,10 +54,18 @@
               10 td-var32     pic X.
               10 td-var33     type SubPgm1::Typedef4.
 
-       01 Var1 type Typedef1.
-       01 Var2 pic X.
+
 
       
+       procedure division.
+
+       declare procedure Check.
+       data division.
+       working-storage section.
+       01 DISP Type T-Disp.
+
+       01 Var1 type Typedef1.
+       01 Var2 pic X.
        procedure division.
       *KO type mismatch
            move Var2 to Var1
@@ -182,9 +190,9 @@
       *Ok path with "holes" till Type3
            move td-var32 of Var1 
              to td-var32 of td-var23 of td-var20 of Var1
+        .
+        end-declare.
 
-
-           .
        IDENTIFICATION DIVISION.
        PROGRAM-ID. SubPgm1.
        data division.

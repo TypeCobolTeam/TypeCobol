@@ -3,12 +3,9 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.Core.Internal;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Scanner;
-using String = System.String;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -27,9 +24,10 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         private List<T> GetFromTableAndEnclosing<T>(string head,
-            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction) where T : Node
+            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, SymbolTable symbolTable = null) where T : Node
         {
-            var table = getTableFunction.Invoke(this);
+            symbolTable = symbolTable ?? this;
+            var table = getTableFunction.Invoke(symbolTable);
             var values = GetFromTable(head, table);
             if (EnclosingScope != null)
             {
@@ -188,201 +186,179 @@ namespace TypeCobol.Compiler.CodeModel
 
         public List<DataDefinition> GetVariable(QualifiedName name)
         {
-            return new List<DataDefinition>(GetVariableExplicit(name).Keys.Cast<DataDefinition>());
+            return GetVariableExplicit(name);
         }
 
         private IList<DataDefinition> GetVariable(string name)
         {
-            return GetFromTableAndEnclosing(name, GetDataDefinitionTable);
+            //Try to et variable in the current program
+            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable);
+           
+            return found;
         }
+
 
         private IDictionary<string, List<DataDefinition>> GetDataDefinitionTable(SymbolTable symbolTable)
         {
             return symbolTable.DataEntries;
         }
 
-        public Dictionary<Node, List<LinkedList<Node>>> GetVariableExplicit(QualifiedName name)
+        public List<DataDefinition> GetVariableExplicit(QualifiedName name)
         {
-            var candidates = new List<Node>();
-            candidates.AddRange(GetCustomTypesSubordinatesNamed(name.Head));
-            candidates.AddRange(GetVariable(name.Head));
-            //TODO candidates.AddRange(GetFunction(name.Head));
+            var found = new List<DataDefinition>();
+            var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
+            candidates.AddRange(GetVariable(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
+            
+            
+            foreach (var candidate in candidates) {
+                //if name doesn't match then name.Head match one property inside the DataDefinition
+                if (!name.Head.Equals(candidate.Name, StringComparison.InvariantCultureIgnoreCase)) {
 
-            var map = new Dictionary<Node, List<LinkedList<Node>>>();
-            foreach (var candidate in candidates)
-            {
-                var link = new LinkedList<Node>();
-                link.AddFirst(new LinkedListNode<Node>(candidate));
-                map.Add(candidate, new List<LinkedList<Node>> {link});
-            }
-
-            for (int i = name.Count - 2; i >= 0; --i)
-            {
-                var winners = new Dictionary<Node, List<LinkedList<Node>>>();
-                foreach (var original in map.Keys)
-                {
-                    // for each original node
-                    var toplevels = new List<LinkedList<Node>>();
-                    foreach (var link in map[original])
-                    {
-                        var node = link.First.Value;
-                        var ancestors = GetTopLevel(node, name[i]);
-                        foreach (var ancestor in ancestors) MergeLink(ancestor, link);
-                        toplevels.AddRange(ancestors);
+                    //we're with an Index. 
+                    if (candidate.IsTableOccurence) {
+                        //Index can't be qualified name.Count must be == 1
+                        //But that's a job to checker to check that
+                        TypeDefinition parentTypeDef = candidate.GetParentTypeDefinition;
+                        if (parentTypeDef != null) {
+                            //If index is inside a Type, then add all variables which used this type as found
+                            AddAllReference(found, candidate, parentTypeDef);
+                        } else {
+                            //If we are on a variable, add it
+                            found.Add(candidate);
+                        }
+                        break;
                     }
-                    toplevels = new List<LinkedList<Node>>(new HashSet<LinkedList<Node>>(toplevels));
-                        // remove duplicates
-                    if (toplevels.Count > 0) winners.Add(original, toplevels);
-                }
-                map.Clear();
-                if (winners.Count < 1) break; // early exit
-                foreach (var winner in winners) map.Add(winner.Key, winner.Value);
+                    throw new NotImplementedException();
+                    
+                } 
+                MatchVariable(found, candidate, name, name.Count-1, candidate);
             }
 
-            foreach (var winner in map)
-            {
-                if (winner.Value.Count != 1)
-                {
-                    var str =
-                        new StringBuilder().Append(winner.Key.QualifiedName).Append(" expected:1-sized list, got: [");
-                    foreach (var v in winner.Value) str.Append(' ').Append(ToString(v)).Append(',');
-                    if (winner.Value.Count > 0) str.Length -= 1;
-                    throw new NotImplementedException(str.Append(" ]").ToString());
-                }
-            }
-
-            return map;
+//
+            return found;
         }
 
-        /// <summary>Merges second LinkedList with first LinkedList.
-        /// If last items in first LinkedList are equal to first items in second LinkedList, these common items are not duplicated.
+        public void MatchVariable(IList<DataDefinition> found, DataDefinition heaDataDefinition, QualifiedName name,
+            int nameIndex, DataDefinition currentDataDefinition) {
+
+
+            var currentTypeDef = currentDataDefinition as TypeDefinition;
+
+            //Name match ?
+            if (currentTypeDef == null && //Do not try to match a TYPEDEF name
+                name[nameIndex].Equals(currentDataDefinition.Name, StringComparison.InvariantCultureIgnoreCase)) {
+
+                nameIndex--;
+                if (nameIndex < 0) { //We reached the end of the name : it's a complete match
+
+                    var parentTypeDef = currentDataDefinition.GetParentTypeDefinition;
+                    if (parentTypeDef != null) { //We are under a TypeDefinition
+                        //For each variable declared with this type (or a type that use this type), we need to add the headDataDefinition
+                        AddAllReference(found, heaDataDefinition, parentTypeDef);
+                    } else { //we are on a variable
+                        found.Add(heaDataDefinition);
+                    }
+
+                    //End here
+                    return;
+                } 
+
+                //else it's not the end of name, let's continue with next part of QualifiedName
+            }
+
+
+            //Either we have a match or not, we need to continue to the parent or DataDefinition that use this TypeDefinition
+            var parent = currentDataDefinition.Parent as DataDefinition;
+            if (parent != null)
+            {
+                MatchVariable(found, heaDataDefinition, name, nameIndex, parent);
+                return;
+            }
+
+            
+            if (currentTypeDef != null)
+            {
+                foreach (var reference in currentTypeDef.References)
+                {
+                    //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
+                    //So we need to check if we can access this variable
+                    if (reference.IsPartOfATypeDef || GetVariable(reference.Name).Contains(reference))
+                        MatchVariable(found, heaDataDefinition, name, nameIndex, reference);
+                }
+                return;
+            }
+
+
+            //If we reach here, it means we are on a DataDefinition with no parent
+            //==> End of treatment, there is no match
+        }
+
+
+        /// <summary>
+        /// For all usage of this type by a variable (outside a TypeDefinition), add heaDataDefinition to found
+        /// 
+        /// 
+        /// Technical note: this method should be declared under MatchVariable because there is no use for it outside.
         /// </summary>
-        /// <param name="begin"></param>
-        /// <param name="end"></param>
-        private void MergeLink(LinkedList<Node> first, LinkedList<Node> second)
-        {
-            foreach (var item in second) if (item != first.Last.Value) first.AddLast(item);
-        }
+        /// <param name="found"></param>
+        /// <param name="heaDataDefinition"></param>
+        /// <param name="currentDataDefinition"></param>
+        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition) {
 
-        public static string ToString(IEnumerable<Node> names)
-        {
-            var str = new System.Text.StringBuilder().Append('[');
-            foreach (var name in names) str.Append(' ').Append(name.Name).Append(',');
-            if (str.Length > 1) str.Length -= 1;
-            return str.Append(' ').Append(']').ToString();
-        }
-
-        /// <summary>Gets direct or indirect toplevel item for a node.</summary>
-        /// <param name="node">We want the toplevel item for this node</param>
-        /// <param name="name">We want a toplevel item named like that</param>
-        /// <returns>List of LinkedLists of items ; last item of each LinkedList is always node</returns>
-        private List<LinkedList<Node>> GetTopLevel(Node node, string name)
-        {
-            var toplevel = new List<LinkedList<Node>>();
-            if (node.Parent == null) return toplevel;
-            var typedef = node.Parent as TypeDefinition;
-            if (typedef != null)
-            {
-                var vars = GetVariablesTyped(typedef.QualifiedName);
-                var typs = GetCustomTypesSubordinatesTyped(typedef.QualifiedName);
-                foreach (var item in vars)
-                {
-                    if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var link = CreateLinkedList(node);
-                        link.AddFirst(item);
-                        toplevel.Add(link);
+            foreach (var reference in currentDataDefinition.References) {
+                var parentTypeDef = reference.GetParentTypeDefinition;
+                if (parentTypeDef != null) {
+                    AddAllReference(found, heaDataDefinition, parentTypeDef);
+                } else { 
+                    //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
+                    //So we need to check if we can access this variable
+                    if (GetVariable(reference.Name).Contains(reference)) {
+                        found.Add(heaDataDefinition);
                     }
                 }
-                foreach (var item in typs)
-                {
-                    if (name.Equals(item.Name, System.StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var link = CreateLinkedList(node);
-                        link.AddFirst(item);
-                        toplevel.Add(link);
-                    }
-                }
-                return toplevel;
             }
-            if (name.Equals(node.Parent.Name))
-            {
-                var link = CreateLinkedList(node);
-                link.AddFirst(node.Parent);
-                toplevel.Add(link);
-            }
-            // as name can be implicit, don't stop at first properly named parent encountered
-            var other = GetTopLevel(node.Parent, name);
-            foreach (var o in other) o.AddLast(node);
-            toplevel.AddRange(other);
-            return toplevel;
-        }
-
-        private LinkedList<N> CreateLinkedList<N>(N item)
-        {
-            var link = new LinkedList<N>();
-            link.AddFirst(new LinkedListNode<N>(item));
-            return link;
         }
 
         /// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
         /// <param name="name">Name of items we search for</param>
         /// <returns>Direct or indirect subordinates of a custom type</returns>
-        private List<Node> GetCustomTypesSubordinatesNamed(string name)
+        private List<DataDefinition> GetCustomTypesSubordinatesNamed(string name)
         {
-            var subs = new List<Node>();
-            var scope = this;
-            while (scope != null) {
-                foreach (var type in scope.Types) {
-                    foreach (var type2 in type.Value) {
-                        subs.AddRange(type2.GetChildren(name, true));
-                    }
+            var subs = new List<DataDefinition>();
+            seekSymbolTable(this, name, out subs);
+
+            if (subs.Count > 0)
+                return subs; //name found in current program symboltable
+
+            //Get programs from Namespace table
+            var programs = this.GetProgramsTable(GetTableFromScope(Scope.Namespace));
+            foreach (var program in programs)
+            {
+                var pgm = program.Value.FirstOrDefault();
+                if (pgm != null)
+                {
+                    seekSymbolTable(pgm.SymbolTable, name, out subs);
                 }
-                scope = scope.EnclosingScope;
             }
             
             return subs;
         }
 
-        /// <summary>Get all items of a specific type that are subordinates of a custom type</summary>
-        /// <param name="name">Type name we search for</param>
-        /// <returns>Direct or indirect subordinates of a custom type</returns>
-        private List<Node> GetCustomTypesSubordinatesTyped(QualifiedName typename)
+        private void seekSymbolTable(SymbolTable symbolTable, string name, out List<DataDefinition> datadefinitions)
         {
-            var types = new List<Node>();
-            var scope = this;
+            datadefinitions = new List<DataDefinition>();
+            var scope = symbolTable;
             while (scope != null)
             {
-                foreach (var type in scope.Types) types.AddRange(type.Value);
+                foreach (var type in scope.Types)
+                {
+                    foreach (var type2 in type.Value)
+                    {
+                        datadefinitions.AddRange(type2.GetChildren<DataDefinition>(name, true));
+                    }
+                }
                 scope = scope.EnclosingScope;
             }
-            var subs = new List<Node>();
-            foreach (var type in types)
-            {
-                subs.AddRange(GetChildrenOfDataType(type, typename, true));
-            }
-            return subs;
-        }
-
-        /// <summary>Searches all children of a given node that are of a given type</summary>
-        /// <param name="node">We search among this Node's children</param>
-        /// <param name="typename">Name of the type we want</param>
-        /// <param name="deep">True for deep search, false for shallow search</param>
-        /// <returns>All children of a given type</returns>
-        private List<Node> GetChildrenOfDataType(Node node, QualifiedName typename, bool deep)
-        {
-            var results = new List<Node>();
-            foreach (var child in node.Children)
-            {
-                var typed = child as ITypedNode;
-                if (typed != null)
-                {
-                    if (typename.Head.Equals(typed.DataType.Name, System.StringComparison.InvariantCultureIgnoreCase))
-                        results.Add(child);
-                }
-                if (deep) results.AddRange(GetChildrenOfDataType(child, typename, true));
-            }
-            return results;
         }
 
         /// <summary>Gets all data items of a specific type, accross all scopes.</summary>
@@ -542,12 +518,9 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Types, type);
         }
 
-        public IList<TypeDefinition> GetTypes(ITypedNode symbol)
+        public IList<TypeDefinition> GetType(ITypedNode symbol)
         {
-            var types = new List<TypeDefinition>();
-            var list = GetType(symbol.DataType.Name);
-            foreach (var type in list) types.Add(type);
-            return types;
+            return GetType(symbol.DataType);
         }
 
         public List<TypeDefinition> GetType(SymbolReference symbolReference)
@@ -573,6 +546,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         /// <param name="name">Qualified name of the wated type</param>
         /// <returns></returns>
+        [NotNull]
         public List<TypeDefinition> GetType(QualifiedName name)
         {
             var found = GetType(name.Head);
@@ -619,7 +593,7 @@ namespace TypeCobol.Compiler.CodeModel
         private static Dictionary<string, List<TypeDefinition>> GetPublicTypes(IDictionary<string, List<TypeDefinition>> programTypes) {
             return programTypes
                 .Where(p =>
-                    p.Value.All(f => (f.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public)) 
+                    p.Value.All(f => ((DataTypeDescriptionEntry) f.CodeElement).Visibility == AccessModifier.Public)) 
                 .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort types to get only the ones with public AccessModifier
         }
 
@@ -718,8 +692,7 @@ namespace TypeCobol.Compiler.CodeModel
         [NotNull]
         private List<FunctionDeclaration> GetFunction(string head, string nameSpace)
         {
-            var result = new List<FunctionDeclaration>();
-            result = GetFromTableAndEnclosing(head, GetFunctionTable);
+            var result = GetFromTableAndEnclosing(head, GetFunctionTable);
 
             if (string.IsNullOrEmpty(nameSpace) || result.Any(f => string.Compare(f.QualifiedName.Tail, nameSpace, StringComparison.InvariantCultureIgnoreCase) == 0))
                 return result;
@@ -730,7 +703,7 @@ namespace TypeCobol.Compiler.CodeModel
                 var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Declarations).Functions; //Get all function from this program
                 programFunctions = programFunctions
                                     .Where(p =>
-                                            p.Value.All(f => (f.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public))
+                                            p.Value.All(f => ((FunctionDeclarationHeader) f.CodeElement).Visibility == AccessModifier.Public))
                                             .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort functions to get only the one with public AccessModifier
 
                 result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
@@ -1027,5 +1000,26 @@ namespace TypeCobol.Compiler.CodeModel
 
 
         #endregion
+    }
+
+    public static class IEnumerableExtensions
+    {
+        public static IEnumerable<T> SelectManyRecursive<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> selector)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+            if (selector == null) throw new ArgumentNullException("selector");
+
+            return !source.Any() ? source :
+                source.Concat(
+                    source
+                    .SelectMany(i => selector(i).EmptyIfNull())
+                    .SelectManyRecursive(selector)
+                );
+        }
+
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> source)
+        {
+            return source ?? Enumerable.Empty<T>();
+        }
     }
 }

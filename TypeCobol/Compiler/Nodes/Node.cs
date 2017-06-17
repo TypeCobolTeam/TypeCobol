@@ -286,16 +286,17 @@ namespace TypeCobol.Compiler.Nodes {
                 child = child.Parent;
             return (Program)child;
         }
-
+        
         /// <summary>Search for all children of a specific Name</summary>
         /// <param name="name">Name we search for</param>
         /// <param name="deep">true for deep search, false for shallow search</param>
         /// <returns>List of all children with the proper name ; empty list if there is none</returns>
-        public IList<Node> GetChildren(string name, bool deep) {
-            var results = new List<Node>();
+        public IList<T> GetChildren<T>(string name, bool deep) where T : Node {
+            var results = new List<T>();
             foreach (var child in children) {
-                if (name.Equals(child.Name, StringComparison.InvariantCultureIgnoreCase)) results.Add(child);
-                if (deep) results.AddRange(child.GetChildren(name, true));
+                var typedChild = child as T;
+                if (typedChild != null && name.Equals(child.Name, StringComparison.InvariantCultureIgnoreCase)) results.Add(typedChild);
+                if (deep) results.AddRange(child.GetChildren<T>(name, true));
             }
             return results;
         }

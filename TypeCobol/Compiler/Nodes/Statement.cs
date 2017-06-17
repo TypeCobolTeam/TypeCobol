@@ -162,7 +162,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -193,7 +193,7 @@
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -219,7 +219,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -253,7 +253,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -263,7 +263,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -293,7 +293,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -303,7 +303,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -313,7 +313,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -323,7 +323,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 
@@ -333,7 +333,7 @@
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && astVisitor.VisitVariableWriter(this);
         }
     }
 

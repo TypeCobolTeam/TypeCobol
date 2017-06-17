@@ -68,7 +68,7 @@ namespace TypeCobol.Compiler.Parser
             ParseTreeWalker walker = new ParseTreeWalker();
             CobolNodeBuilder programClassBuilder = new CobolNodeBuilder();
             programClassBuilder.SyntaxTree = new SyntaxTree(); //Initializie SyntaxTree for the current source file
-            programClassBuilder.CustomSymbols = customSymbols;
+			programClassBuilder.CustomSymbols = customSymbols;
             programClassBuilder.Dispatcher = new NodeDispatcher();
             programClassBuilder.Dispatcher.CreateListeners();
 
@@ -82,12 +82,15 @@ namespace TypeCobol.Compiler.Parser
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
             }
 
+            //Create link between datas
+            programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new TypeCobolLinker());
+
             perfStatsForParserInvocation.OnStopTreeBuilding();
 
             //Complete some information on Node and run checker that need a full AST
             programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
-
-
+              
+           
             // Register compiler results
             root = programClassBuilder.SyntaxTree.Root; //Set output root node
             diagnostics = programClassBuilder.GetDiagnostics(programClassParseTree);

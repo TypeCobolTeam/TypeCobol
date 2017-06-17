@@ -1,0 +1,24 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPGM.
+       DATA DIVISION .
+       working-storage section.
+      *Declaration of 3 types but no variable use them
+       01 Type3 typedef strict.
+           05 var3 pic X.
+      
+        01 Type2 typedef strict.
+           05 var2.
+              10 type3 type Type3.
+      
+        01 Type1 typedef strict.
+           05 var1.
+                10  type2 type type2.
+
+       procedure division.
+      *KO : variable are not accessible because types are not used
+           move var1::type2::var2::type3::var3  to var3
+           move type3::var3  to var3
+           move var2  to var2
+           move var1  to var1
+            .
+       END PROGRAM MyPGM.
