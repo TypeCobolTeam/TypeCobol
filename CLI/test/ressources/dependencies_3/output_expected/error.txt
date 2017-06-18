@@ -1,2 +1,2 @@
 ﻿1 error in "input\PGM3.rdz.tcbl":
-Line 22[12,39] <27, Error, Syntax> - Syntax error : Function not found 'MyPublicProcedure' input(DATE)
+Line 26[12,39] <27, Error, Syntax> - Syntax error : Function not found 'MyPublicProcedure' input(DATE)

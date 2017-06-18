@@ -6,6 +6,7 @@
 
        01  somedate     TYPE Date.
        01  message      PIC X(80).
+       01 Calendar TYPE Callee::Calendar.
 
        PROCEDURE DIVISION.
 
@@ -17,6 +18,9 @@
 
 
        TRAITEMENT.
+
+           set Calendar::Gregorian to true
+
       * __________________________________________________
       * KO, MyPublicProcedure is not an intrinsic procedure
            CALL MyPublicProcedure

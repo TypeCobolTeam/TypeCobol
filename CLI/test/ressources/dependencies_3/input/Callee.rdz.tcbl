@@ -1,7 +1,12 @@
 ﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
+       data division.
+       working-storage section.
 
+       01 Calendar TYPEDEF STRICT PUBLIC pic X.
+           88 Gregorian value 'G'.
        PROCEDURE DIVISION.
+
 
        DECLARE PROCEDURE MyPublicProcedure PUBLIC
            INPUT mydate        TYPE Date
