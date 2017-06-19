@@ -325,11 +325,7 @@ namespace TypeCobol.Compiler.CodeModel
         private List<DataDefinition> GetCustomTypesSubordinatesNamed(string name)
         {
             var subs = new List<DataDefinition>();
-            seekSymbolTable(this, name, subs);
-
-            //if (subs.Count > 0)
-            //    return subs; //name found in current program symboltable
-
+            
             //Get programs from Namespace table
             var programList = this.GetProgramsTable(GetTableFromScope(Scope.Namespace));
             foreach (var programs in programList) {
