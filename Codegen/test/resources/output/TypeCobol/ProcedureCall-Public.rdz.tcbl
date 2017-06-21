@@ -26,11 +26,7 @@
            02 FirstName pic X(30).
                                                 
        01 TC-Callee pic X(08) value 'Callee'.
-       01 TC-Callee-FctList-Loaded PIC X(02).
-           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PersonSe pic X(08) value 'PersonSe'.
-       01 TC-PersonSe-FctList-Loaded PIC X(02).
-           88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
 
        LINKAGE SECTION.
       *Common to all librairies used by the program.
@@ -188,7 +184,6 @@
                      TC-Library-Item(TC-Library-Idx)
                 END-EVALUATE
             END-PERFORM
-            SET TC-Callee-FctList-IsLoaded TO TRUE
             .
       *=================================================================
         TC-LOAD-POINTERS-PersonSe.
@@ -205,7 +200,6 @@
                      TC-Library-Item(TC-Library-Idx)
                 END-EVALUATE
             END-PERFORM
-            SET TC-PersonSe-FctList-IsLoaded TO TRUE
             .
 
 

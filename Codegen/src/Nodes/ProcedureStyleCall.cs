@@ -83,7 +83,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 
                 //We don't need end-if anymore, but I let it for now. Because this generated code still need to be tested on production
                 bool bNeedEndIf = false;
-                if (((FunctionDeclarationHeader)fun_decl.CodeElement).Visibility == AccessModifier.Public)
+                if (((FunctionDeclarationHeader)fun_decl.CodeElement).Visibility == AccessModifier.Public && fun_decl.GetProgramNode() != this.GetProgramNode())
                 {
                     if (this.Node.IsNotByExternalPointer || IsNotByExternalPointer)
                     {
