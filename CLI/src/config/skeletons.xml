@@ -296,8 +296,6 @@
         var items = "";
         foreach (var pgm in %imports.Programs.Values) {
         items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n";
-        items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02).\n";
-        items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
         }
         }
         @items
@@ -400,7 +398,6 @@
           }
           clause += "         END-EVALUATE\n";
           clause += "     END-PERFORM\n";
-          clause += "     SET TC-"+pgm.Name+"-FctList-IsLoaded TO TRUE\n";
           clause += "     .\n";
         }
         }

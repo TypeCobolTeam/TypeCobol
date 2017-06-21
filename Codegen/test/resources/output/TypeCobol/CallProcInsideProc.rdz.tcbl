@@ -1,0 +1,158 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+      *01  mydate1     TYPE Date.
+       01 mydate1.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                                 
+
+       PROCEDURE DIVISION.
+
+      *declare procedure check private
+      *   input mydate        TYPE Date
+      *  .
+
+       TRAITEMENT.
+      *OK  call check of PGM1
+      *   call check input mydate1
+          CALL 'a0508f35' USING
+                                 mydate1
+           end-call
+                                  
+      
+        .
+
+      *PersonService contains public procedure
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PersonService.
+       DATA DIVISION.
+                                                                  
+       WORKING-STORAGE SECTION.
+       01  TC-PersonSe-FctList-Loaded PIC X(02).
+           88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-PersonSe-PntTab.
+           05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
+      *PersonSe::GetPersonById
+           05 TC-PersonSe-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
+           05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
+
+       
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                           
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-PersonSe-FctList-IsLoaded
+              SET TC-PersonSe-cd991005   TO ENTRY 'cd991005'
+
+              SET TC-PersonSe-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-PersonSe-PntTab
+
+           .
+                                 
+      *declare procedure GetPersonById public
+      *   input  personId  type date.
+       END PROGRAM PersonService.
+
+
+       END PROGRAM PGM1.
+
+      *
+      *declare procedure GetPersonById public
+      *   input  personId  type date.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. cd991005.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 personId.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+       PROCEDURE DIVISION
+             USING BY REFERENCE personId
+           .
+           CONTINUE.
+       END PROGRAM cd991005.
+      *
+      *declare procedure check private
+      *   input mydate        TYPE Date
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a0508f35.
+       data division.
+       working-storage section.
+       01 TC-PersonSe pic X(08) value 'PersonSe'.
+
+       linkage section.
+       01 mydate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+           05 TC-Library-PntNbr          PIC S9(04) COMP.
+           05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
+      *PersonSe::GetPersonById
+       01 TC-PersonSe-cd991005-Item.
+          05 TC-PersonSe-cd991005-Idt PIC X(08).
+          05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate
+           .
+           PERFORM TC-Initializations
+      *    Call PersonService::GetPersonById input mydate
+           IF TC-PersonService-cd991005-Idt not = 'cd991005'
+               PERFORM TC-LOAD-POINTERS-PersonService
+           END-IF
+           CALL TC-PersonService-cd991005 USING
+                                 mydate
+           end-call
+                                                         
+           .
+      *=================================================================
+       TC-Initializations.
+           .
+      *=================================================================
+      *=================================================================
+       TC-LOAD-POINTERS-PersonSe.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-PersonSe
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'cd991005'
+                     SET ADDRESS OF
+                     TC-PersonSe-cd991005-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                END-EVALUATE
+            END-PERFORM
+            .
+       END PROGRAM a0508f35.

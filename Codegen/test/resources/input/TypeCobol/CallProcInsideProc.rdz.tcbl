@@ -1,0 +1,41 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+       01  mydate1     TYPE Date.
+
+       PROCEDURE DIVISION.
+
+       declare procedure check private
+          input mydate        TYPE Date
+         .
+       data division.
+       working-storage section.
+       linkage section.
+       PROCEDURE DIVISION.
+           Call PersonService::GetPersonById input mydate
+           .
+       END-DECLARE.
+
+       TRAITEMENT.
+      *OK  call check of PGM1
+          call check input mydate1
+      
+        .
+
+      *PersonService contains public procedure
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PersonService.
+       PROCEDURE DIVISION.       
+       declare procedure GetPersonById public
+          input  personId  type date.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       END PROGRAM PersonService.
+
+
+       END PROGRAM PGM1.
+
