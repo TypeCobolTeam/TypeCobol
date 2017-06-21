@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler.Parser
             // Iterate over all processed tokens changes detected by the PreprocessorStep :
             // - refresh all the adjacent lines participating in a CodeElement
             // - register the start and stop token for all sections of the document which need to be parsed again
-            if (processedTokensLinesChanges != null)
+            if (processedTokensLinesChanges != null && processedTokensLinesChanges.Count > 0)
             {
                 // If the document was cleared, everything must be parsed again
                 if (processedTokensLinesChanges[0].Type != DocumentChangeType.DocumentCleared)

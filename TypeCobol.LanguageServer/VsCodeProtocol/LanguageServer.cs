@@ -36,6 +36,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             rpcServer.RegisterNotificationMethod(DidChangeTextDocumentNotification.Type, CallDidChangeTextDocument);
             rpcServer.RegisterNotificationMethod(DidCloseTextDocumentNotification.Type, CallDidCloseTextDocument);
             rpcServer.RegisterNotificationMethod(DidOpenTextDocumentNotification.Type, CallDidOpenTextDocument);
+            rpcServer.RegisterNotificationMethod(DidSaveTextDocumentNotification.Type, CallDidSaveTextDocument);
 
             RemoteConsole = new RemoteConsole(rpcServer);
             RemoteWindow = new RemoteWindow(rpcServer);
@@ -401,6 +402,18 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
         }
 
+        private void CallDidSaveTextDocument(NotificationType notificationType, object parameters)
+        {
+            try
+            {
+                OnDidSaveTextDocument((DidSaveTextDocumentParams)parameters);
+            }
+            catch (Exception e)
+            {
+                RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
+            }
+        }
+
         // --- Fully typed methods to overload in derived classes ---
 
         /// <summary>
@@ -500,6 +513,12 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// the truth now exists on disk).
         /// </summary>
         public virtual void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
+        { }
+
+        /// <summary>
+        /// The document save notification is sent from the client to the server when the document for saved in the client.
+        /// </summary>
+        public virtual void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
         { }
 
         /// <summary>

@@ -160,6 +160,8 @@
     <Compile Include="VsCodeProtocol\Text Document Notifications\DidCloseTextDocumentParams.cs" />
     <Compile Include="VsCodeProtocol\Text Document Notifications\DidOpenTextDocumentNotification.cs" />
     <Compile Include="VsCodeProtocol\Text Document Notifications\DidOpenTextDocumentParams.cs" />
+    <Compile Include="VsCodeProtocol\Text Document Notifications\DidSaveTextDocumentNotification.cs" />
+    <Compile Include="VsCodeProtocol\Text Document Notifications\DidSaveTextDocumentParams.cs" />
     <Compile Include="VsCodeProtocol\Text Document Notifications\TextDocumentContentChangeEvent.cs" />
     <Compile Include="VsCodeProtocol\Text Document\Diagnostic.cs" />
     <Compile Include="VsCodeProtocol\Text Document\Location.cs" />

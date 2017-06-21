@@ -75,7 +75,7 @@ namespace TypeCobol.LanguageServices.Editor
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines();
 
                 if (!bAsync)
-                {//Don't wait asynchoneous snapshot refresh.
+                {//Don't wait asynchroneous snapshot refresh.
                     fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
                     fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
                     fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();

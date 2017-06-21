@@ -182,7 +182,7 @@ namespace TypeCobol.LanguageServer
                 #endregion
 
                 // Update the source file with the computed text changes
-                typeCobolWorkspace.UpdateSourceFile(fileName, textChangedEvent, false);
+                typeCobolWorkspace.UpdateSourceFile(fileName, textChangedEvent, true);
 
                 // DEBUG information
                 RemoteConsole.Log("Udpated source file : " + fileName);
@@ -203,6 +203,18 @@ namespace TypeCobol.LanguageServer
 
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + fileName);
+            }
+        }
+
+        public override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
+        {
+            if (parameters.text != null)
+            {//So Call OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
+                DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams(parameters.textDocument.uri);
+                TextDocumentContentChangeEvent tdcce = new TextDocumentContentChangeEvent();
+                tdcce.text = parameters.text;
+                dctdp.contentChanges = new TextDocumentContentChangeEvent[] { tdcce };
+                OnDidChangeTextDocument(dctdp);
             }
         }
 
@@ -347,7 +359,7 @@ namespace TypeCobol.LanguageServer
                 if (!isElligible)
                     lastToken = null;
             }
-            if ((!bAllowLastPos && lastToken != null && (lastToken.EndColumn + 1) == character) || lastToken.Column == character)
+            if (lastToken != null && ((!bAllowLastPos && (lastToken.EndColumn + 1) == character) || lastToken.Column == character))
                 lastToken = null;
 
             return lastToken;
