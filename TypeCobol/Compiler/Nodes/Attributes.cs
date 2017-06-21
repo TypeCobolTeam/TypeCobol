@@ -426,20 +426,17 @@ internal class LibraryCopyAttribute: Attribute {
     /// <summary>
     /// return all imports of a Program Node
     /// </summary>
-    internal class ProgramImportsAttribute : Attribute {
+    public class ProgramImportsAttribute : Attribute {
         public object GetValue(object o, SymbolTable table)
         {
             ProgramImports imports = new ProgramImports();
-            var program = o as Program;
+            var program = o as IProcCaller;
             if (program != null)
             {
                 if (program.ProcStyleCalls != null)
                 {
                     //All imported program.                    
-                    var name = program.Name;
-                    string name_low = name.ToLower();
-                    string pgm_name = program.Name.Substring(0, Math.Min(name.Length, 8));
-                    string pgm_name_low = pgm_name.ToLower();
+                    string name_low = program.Name.ToLower();
                     //For each entry in the Procedure Style Call Dictionary
                     foreach (var e in program.ProcStyleCalls)
                     {

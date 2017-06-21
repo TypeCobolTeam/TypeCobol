@@ -1,4 +1,7 @@
-﻿namespace TypeCobol.Compiler.Nodes {
+﻿using System;
+using TypeCobol.Compiler.CodeModel;
+
+namespace TypeCobol.Compiler.Nodes {
 
     using System.Collections.Generic;
     using System.Text;
@@ -58,7 +61,7 @@
 
     // [TYPECOBOL]
 
-    public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable {
+    public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller {
 	    public FunctionDeclaration(FunctionDeclarationHeader header): base(header) { Profile = new ParametersProfileNode(null); }
 	    public override string ID { get { return Name; } }
 	    public string Label { get; internal set; }
@@ -99,6 +102,8 @@
         {
             return astVisitor.Visit(this);
         }
+
+        public Dictionary<string, Tuple<IList<SymbolReference>, ProcedureStyleCall>> ProcStyleCalls { get; set; }
     }
 
     public class FunctionEnd: Node, CodeElementHolder<FunctionDeclarationEnd> {

@@ -71,6 +71,10 @@
       <HintPath>..\..\packages\Antlr4.Runtime.4.5.3\lib\net45\Antlr4.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.0.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\JetBrains.Annotations.11.0.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\RazorEngine.3.10.0\lib\net45\RazorEngine.dll</HintPath>
       <Private>True</Private>

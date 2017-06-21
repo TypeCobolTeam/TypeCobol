@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Actions
         /// </summary>
         private Dictionary<Type, Type> Generators = new Dictionary<Type, Type> {
 				{ typeof(DataDescriptionEntry), typeof(TypedDataNode) },
-				{ typeof(FunctionDeclarationHeader), typeof(Codegen.Nodes.FunctionDeclaration) },
+				{ typeof(FunctionDeclarationHeader), typeof(Codegen.Nodes.FunctionDeclarationCG) },
 				{ typeof(ProcedureStyleCallStatement), typeof(Codegen.Nodes.ProcedureStyleCall) }
 			};
 

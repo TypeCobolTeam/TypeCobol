@@ -79,6 +79,44 @@
         }
     }
 
+
+    internal class GeneratedNode2 : Compiler.Nodes.Node, Generated
+    {
+        public GeneratedNode2(string text, bool isLeaf) : base(null) {
+            this.Text = text;
+            this.IsLeaf = isLeaf;
+        }
+
+        public bool IsLeaf { get; internal set; }
+
+        public string Text { get; internal set; }
+
+        private IList<ITextLine> _cache = null;
+        public override IEnumerable<ITextLine> Lines
+        {
+            get
+            {
+                if (_cache == null)
+                {
+                    _cache = new List<ITextLine>();
+                    if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
+                        _cache.Add(new TextLineSnapshot(-1, "", null));
+                    foreach (string line in Text.Split('\n'))
+                    {
+                        _cache.Add(new TextLineSnapshot(-1, line, null));
+                    }
+                }
+                return _cache;
+            }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            //Generated Node doesn't need to be visited
+            return false;
+        }
+    }
+
     internal abstract class FakeGeneratedNode : Compiler.Nodes.Node, Generated
     {
         public FakeGeneratedNode(CodeElement CodeElement) : base(CodeElement) { }
