@@ -57,6 +57,12 @@ namespace TypeCobol.LanguageServices.Editor
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
             lock (OpenedFileCompilers)
             {
+                if (OpenedFileCompilers.ContainsKey(fileName))
+                {   
+                    //Close the previous opened file.
+                    CloseSourceFile(fileName);
+                    OpenedFileCompilers.Remove(fileName);
+                }
                 OpenedFileCompilers.Add(fileName, fileCompiler);
             }
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
@@ -72,14 +78,21 @@ namespace TypeCobol.LanguageServices.Editor
             if (OpenedFileCompilers.TryGetValue(fileName, out fileCompilerToUpdate))
             {
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
-                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines();
-
                 if (!bAsync)
                 {//Don't wait asynchroneous snapshot refresh.
-                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
-                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
-                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+                    fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
+                        () =>
+                        {
+                            fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+                            fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
+                            fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
+                            fileCompilerToUpdate.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+                        }
+                        );
+                }
+                else
+                {
+                    fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines();
                 }
             }
         }

@@ -375,6 +375,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             catch (Exception e)
             {
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
+                throw e;
             }
         }
 

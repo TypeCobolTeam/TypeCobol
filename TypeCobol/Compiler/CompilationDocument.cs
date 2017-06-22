@@ -420,7 +420,7 @@ namespace TypeCobol.Compiler
         /// Update the tokens lines of the document if the text lines changed since the last time this method was called.
         /// NOT thread-safe : this method can only be called from the owner thread.
         /// </summary>
-        public void UpdateTokensLines()
+        public void UpdateTokensLines(System.Action onVersion = null)
         {
             // This method can only be called by the document owner thread
             if (documentOwnerThread == null)
@@ -472,6 +472,8 @@ namespace TypeCobol.Compiler
                     // Prepare an event to signal document change to all listeners
                     documentChangedEvent = new DocumentChangedEvent<ITokensLine>(currentTokensLinesVersion, currentTokensLinesVersion.next);
                     currentTokensLinesVersion = currentTokensLinesVersion.next;
+                    if (onVersion != null)
+                        onVersion();
                 }
 
                 // Register that the tokens lines were synchronized with the current text lines version

@@ -92,15 +92,26 @@ namespace TypeCobol.LanguageServer
                     // Document cleared
                     if (contentChange.range == null)
                     {
-                        var textChange = new TextChange(TextChangeType.DocumentCleared, 0, null);
-                        textChangedEvent.TextChanges.Add(textChange);
-                        if (lineUpdates != null)
+                        //var textChange = new TextChange(TextChangeType.DocumentCleared, 0, null);
+                        //textChangedEvent.TextChanges.Add(textChange);
+                        //if (lineUpdates != null)
+                        //{
+                        //    for (int i = 0; i < lineUpdates.Length; i++)
+                        //    {
+                        //        textChange = new TextChange(TextChangeType.LineInserted, i, new TextLineSnapshot(i, lineUpdates[i], null));
+                        //        textChangedEvent.TextChanges.Add(textChange);
+                        //    }
+                        //}
+
+                        //JCM: I have noticed that if the entire text has changed, is better to reload the entire file
+                        //To avoid crashes.
+                        try
                         {
-                            for (int i = 0; i < lineUpdates.Length; i++)
-                            {
-                                textChange = new TextChange(TextChangeType.LineInserted, i, new TextLineSnapshot(i, lineUpdates[i], null));
-                                textChangedEvent.TextChanges.Add(textChange);
-                            }
+                            typeCobolWorkspace.OpenSourceFile(fileName, contentChange.text);
+                        }
+                        catch (Exception e)
+                        {//Don't rethow an exception on save.
+                            RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", "textDocument/didChange", e.Message));
                         }
                     }
                     // Document updated
@@ -133,7 +144,7 @@ namespace TypeCobol.LanguageServer
                         string originalLastLineText = originalFirstLineText;
                         if(lastLineIndex > firstLineIndex)
                         {
-                            originalLastLineText = fileCompiler.CompilationResultsForProgram.CobolTextLines[lastLineIndex].Text;
+                            originalLastLineText = fileCompiler.CompilationResultsForProgram.CobolTextLines[Math.Min(lastLineIndex, fileCompiler.CompilationResultsForProgram.CobolTextLines.Count - 1)].Text;
                         }
 
                         // Text not modified at the beginning of the first replaced line
@@ -182,7 +193,7 @@ namespace TypeCobol.LanguageServer
                 #endregion
 
                 // Update the source file with the computed text changes
-                typeCobolWorkspace.UpdateSourceFile(fileName, textChangedEvent, true);
+                typeCobolWorkspace.UpdateSourceFile(fileName, textChangedEvent, false);
 
                 // DEBUG information
                 RemoteConsole.Log("Udpated source file : " + fileName);
