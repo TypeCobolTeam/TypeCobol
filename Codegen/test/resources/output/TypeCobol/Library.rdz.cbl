@@ -205,7 +205,6 @@
            ACCEPT W-Dat             FROM DATE YYYYMMDD
       *    move unsafe W-Dat to Result
            move        W-Dat to Result
-                                      
            .
        END PROGRAM cf63e86f.
       *

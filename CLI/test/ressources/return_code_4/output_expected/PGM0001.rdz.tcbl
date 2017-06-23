@@ -15,6 +15,5 @@
       
       *    move unsafe myDate1 to toto
            move        myDate1 to toto
-                                      
            .
        END PROGRAM PGM0001.

@@ -344,14 +344,14 @@ namespace TypeCobol.Codegen.Actions
                                     }
                                 }
                                 //We got It ==> Create our Generate Nodes
-                                GenerateQualifierToken item = new GenerateQualifierToken(
-                                    new QualifierTokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
+                                GenerateToken item = new GenerateToken(
+                                    new TokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
                                     sourcePositions);
                                 item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                                 sourceNode.Add(item);
                                 if (tokenColonColon != null)
                                 {
-                                    item = new GenerateQualifierToken(new QualifierTokenCodeElement(tokenColonColon), string.Intern(" OF "),
+                                    item = new GenerateToken(new TokenCodeElement(tokenColonColon), string.Intern(" OF "),
                                         sourcePositions);
                                     item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                                     sourceNode.Add(item);
@@ -373,14 +373,14 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// The Code Element of a Qualifier Token.
         /// </summary>
-        internal class QualifierTokenCodeElement : TypeCobol.Compiler.CodeElements.CodeElement
+        internal class TokenCodeElement : TypeCobol.Compiler.CodeElements.CodeElement
         {
-            public QualifierTokenCodeElement(TypeCobol.Compiler.Scanner.Token token) : base((CodeElementType)0)
+            public TokenCodeElement(TypeCobol.Compiler.Scanner.Token token) : base((CodeElementType)0)
             {
                 base.ConsumedTokens = new List<TypeCobol.Compiler.Scanner.Token>();
                 base.ConsumedTokens.Add(token);
             }
-            public QualifierTokenCodeElement(List<TypeCobol.Compiler.Scanner.Token> consumedTokens)
+            public TokenCodeElement(List<TypeCobol.Compiler.Scanner.Token> consumedTokens)
                 : base((CodeElementType)0)
             {
                 base.ConsumedTokens = consumedTokens;
@@ -390,7 +390,7 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// A Node to just generate Qualifier tokens.
         /// </summary>
-        internal class GenerateQualifierToken : Compiler.Nodes.Node, GeneratedAndReplace
+        internal class GenerateToken : Compiler.Nodes.Node, GeneratedAndReplace
         {
             /// <summary>
             /// 
@@ -398,7 +398,7 @@ namespace TypeCobol.Codegen.Actions
             /// <param name="codelement">The Code element of this Node</param>
             /// <param name="code">The replace code</param>
             /// <param name="sourcePositions">The Positions of the Source Node</param>
-            public GenerateQualifierToken(CodeElement codelement, string code, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
+            public GenerateToken(CodeElement codelement, string code, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
                 : base(codelement)
             {
                 ReplaceCode = code;

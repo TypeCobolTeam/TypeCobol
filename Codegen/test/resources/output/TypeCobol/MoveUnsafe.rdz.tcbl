@@ -1,0 +1,21 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION .
+       local-STORAGE SECTION.
+      
+       01 Car.
+           05 Driver.
+      *        10 BirthDate type date.
+               10 BirthDate.
+           11 YYYY PIC 9(4).
+           11 MM PIC 9(2).
+           11 DD PIC 9(2).
+                                      
+      
+       PROCEDURE DIVISION.
+      *    move unsafe 19900101
+      *         to Car::Driver::BirthDate
+           move        19900101
+                to BirthDate OF Driver OF Car
+           .
+       END PROGRAM DVZF0OSM.

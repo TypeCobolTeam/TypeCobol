@@ -23,7 +23,7 @@ namespace TypeCobol.Codegen.Actions
     {
         public string Group { get; private set; }
         internal Node Node;
-        private IEnumerable<string> Words;
+        private List<string> Words;
 
         /// <summary>
         /// Get the list of Erased Nodes
@@ -46,30 +46,54 @@ namespace TypeCobol.Codegen.Actions
         }
 
         /// <summary>
+        /// The list of erased Tokens if any.
+        /// </summary>
+        private List<Qualifier.GenerateToken> ErasedTokens
+        {
+            get;
+            set;
+        }
+        /// <summary>
+        /// Determines if in the consumed tokens there are erased words.
+        /// </summary>
+        private bool HasErasedWord
+        {
+            get
+            {
+                if (ErasedTokens == null)
+                {
+                    ErasedTokens = new List<Qualifier.GenerateToken>();
+                    string word = Words[0].ToLower();
+                    if (Node.CodeElement.ConsumedTokens != null)
+                    {
+                        foreach (TypeCobol.Compiler.Scanner.Token token in Node.CodeElement.ConsumedTokens)
+                        {
+                            if (token.Text.ToLower().Equals(word))
+                            {
+                                Qualifier.GenerateToken item = new Qualifier.GenerateToken(new Qualifier.TokenCodeElement(token), new string(' ', word.Length), null);
+                                ErasedTokens.Add(item);
+                            }
+                        }
+                    }
+                }
+                return ErasedTokens.Count > 0;
+            }
+        }
+
+        /// <summary>
         /// Perform the action.
         /// </summary>
         public void Execute()
         {
-            var solver = new Skeletons.Templates.Eraser(Node.CodeElement.SourceText, this.Words);
-            bool somethingToDo = solver.Run();
-            if (!somethingToDo) return;
-
-            // retrieve data
-            int index = this.Node.Parent.IndexOf(this.Node);
-            if (index > -1)
+            if (!HasErasedWord)
+                return;
+            //Add all Erased Tokens
+            foreach (Qualifier.GenerateToken token in ErasedTokens)
             {
-                var nodegen = new GeneratedNode(solver, this.Node.CodeElement);
-                this.Node.Parent.Add(nodegen, index + 1);
+                this.Node.Add(token);
             }
             // comment out original "line" (=~ non expanded node)
             this.Node.Comment = true;
-            //Get Erased Nodes
-            List<Node> erasedNodes = new List<Node>();
-            this.Node.ListChildren(erasedNodes);
-            erasedNodes.TrimExcess();
-            ErasedNodes = erasedNodes;
-            this.Node.Clear();
-
         }
     }
 }
