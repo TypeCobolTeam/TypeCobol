@@ -23,6 +23,10 @@ namespace TypeCobol.Codegen.Generators
         /// Flag to indicate that the buffer has alreday been in line overflow states.
         /// </summary>
         const int ALREADY_LINE_OVERFLOW = 0x01 << 0;
+        /// <summary>
+        /// The Set of Exceed Lines over column 72
+        /// </summary>
+        private HashSet<int> ExceedLines;
 
         /// <summary>
         /// Constructor
@@ -271,6 +275,8 @@ namespace TypeCobol.Codegen.Generators
                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                 AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
             }            
+            //5)//Generate Line Exceed Diagnostics
+            GenerateExceedLineDiagnostics();
             return targetSourceText;
         }
 
@@ -298,37 +304,46 @@ namespace TypeCobol.Codegen.Generators
             int lineLen = -1;
             int lineStartOffset = -1;
             int lineEndOffset = -1;
-            bool has73Chars = false;
             int start = Math.Min(from.Pos, buffer.Size);
             int end = Math.Min(to.Pos, buffer.Size);
-            if (Layout == ColumnsLayout.CobolReferenceFormat && !buffer.IsFlagSet(ALREADY_LINE_OVERFLOW))
+            if (ExceedLines != null)
             {
-                lineLen = buffer.GetLineInfo(start, out lineStartOffset, out lineEndOffset);
-                if (lineLen > LEGAL_COBOL_LINE_LENGTH)
+                ExceedLines.Remove(lineNumber);
+            }
+            lineLen = buffer.GetLineInfo(start, out lineStartOffset, out lineEndOffset);
+            buffer.Insert(code, start, end);
+
+            int delta = -(end - start) + code.Length;
+            int newLineLen = lineLen + delta;
+            bool newHas73Chars = false;
+            if (newLineLen > LEGAL_COBOL_LINE_LENGTH)
+            {
+                for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++)
+                    newHas73Chars = !Char.IsWhiteSpace(buffer[lineStartOffset + k]);
+                //Error
+                //Emit an error.
+                if ((newLineLen > MAX_COBOL_LINE_LENGTH) || newHas73Chars)
                 {
-                    for (int k = LEGAL_COBOL_LINE_LENGTH; k < lineLen & !has73Chars; k++)
-                        has73Chars = !Char.IsWhiteSpace(buffer[lineStartOffset + k]);
+                    if (ExceedLines == null)
+                    {
+                        ExceedLines = new HashSet<int>();
+                    }
+                    ExceedLines.Add(lineNumber);
                 }
             }
-            buffer.Insert(code, start, end);
-            if (Layout == ColumnsLayout.CobolReferenceFormat && !buffer.IsFlagSet(ALREADY_LINE_OVERFLOW))
+        }
+
+        /// <summary>
+        /// Generate Line Exceed diagnotics
+        /// </summary>
+        private void GenerateExceedLineDiagnostics()
+        {
+            if (ExceedLines != null)
             {
-                int delta = -(end - start) + code.Length;
-                int newLineLen = lineLen + delta;
-                bool newHas73Chars = false;
-                if (newLineLen > LEGAL_COBOL_LINE_LENGTH)
+                foreach (int lineNumber in ExceedLines)
                 {
-                    for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++)
-                        newHas73Chars = !Char.IsWhiteSpace(buffer[lineStartOffset + k]);
-                    //Error
-                    //Emit an error.
-                    if ((newLineLen > MAX_COBOL_LINE_LENGTH) || !has73Chars && newHas73Chars)
-                    {
-                        //GenerationErrorLineExceed
-                        Diagnostic diag = new Diagnostic(MessageCode.GenerationErrorLineExceed, 0, 0, lineNumber);
-                        AddDiagnostic(diag);
-                        buffer.SetCustomFlag(ALREADY_LINE_OVERFLOW, true);
-                    }
+                    Diagnostic diag = new Diagnostic(MessageCode.GenerationErrorLineExceed, 0, 0, lineNumber);
+                    AddDiagnostic(diag);
                 }
             }
         }
