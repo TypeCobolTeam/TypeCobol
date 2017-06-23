@@ -599,7 +599,11 @@ namespace TypeCobol.Compiler.Parser
 
 				if (logicalOperator == null)
 				{
-					return CreateConditionalExpression(context.conditionalExpression()[0]);
+                    if (context.conditionalExpression().Length == 1)
+                        return CreateConditionalExpression(context.conditionalExpression()[0]);
+                    else {
+                        return null;
+                    }
 				}
 				else
 				{
