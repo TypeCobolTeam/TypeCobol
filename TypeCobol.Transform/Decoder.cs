@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace TypeCobol.Transform
@@ -109,59 +108,67 @@ namespace TypeCobol.Transform
             var outputWriter = new StreamWriter(outputStream);
             try
             {
-                var completeFile = File.ReadAllLines(concatenatedFilePath).ToList();
-
-                String s_part3Line = completeFile.First().Substring(36, 6);
-                int part3StartFromLine1 = Convert.ToInt32(s_part3Line);
-
-                int part2StartIndex = completeFile.IndexOf(completeFile.FirstOrDefault(l => l.Contains("*£TC-PART2")));
-                int part3StartIndex = completeFile.IndexOf(completeFile.FirstOrDefault(l => l.Contains("*£TC-PART3")));
-                int part4StartIndex = completeFile.IndexOf(completeFile.FirstOrDefault(l => l.Contains("*£TC-PART4")));
-
-                // Check if magic lines are present  
-                if (part2StartIndex < 0)
-                    Console.WriteLine("Magic line of part 2 not present");
-                if (part3StartIndex < 0)
-                    Console.WriteLine("Magic line of part 3 not present");
-                if (part4StartIndex < 0)
-                    Console.WriteLine("Magic line of part 4 not present");
-
                 var tcLines = new List<string>();
                 var tcLinesCol7 = new StringBuilder();
+                bool isInPart3 = false, isInPart4 = false;
+                int part3Length = 0;
+                int part3StartFromLine1 = 0;
+                int realPart3LineNumber = 0;
 
-                ////Read Part 3
-                var part3Lines = completeFile.Skip(part3StartIndex+1).Take(part4StartIndex - part3StartIndex - 1);
-                foreach (var part3Line in part3Lines)
+                foreach (var line in File.ReadLines(concatenatedFilePath))
                 {
-                    if (part3Line.Length >= 7)
-                        tcLines.Add(part3Line.Substring(7));
-                    else
-                        tcLines.Add("");
+                    if (!isInPart3 && !isInPart4)
+                        realPart3LineNumber++;
+
+                    if (line.Contains("*£TC-PART1")) //Detect first line
+                    {
+                        part3StartFromLine1 = Convert.ToInt32(line.Substring(36, 6));
+                        continue; //Go on the next line
+                    }
+                    else if (line.Contains("*£TC-PART3")) //Detect start of Part 3
+                    {
+                        isInPart3 = true;
+                        continue;
+                    }
+                    else if (line.Contains("*£TC-PART4")) //Detect start of part 4
+                    {
+                        isInPart3 = false;
+                        isInPart4 = true;
+                        continue;
+                    }
+
+                    if(isInPart3) //If inside part 3 add lines
+                    {
+                        if (line.Length >= 7)
+                            tcLines.Add(line.Substring(7));
+                        else
+                            tcLines.Add("");
+
+                        part3Length++;
+                    }
+
+                    if (isInPart4) // If inside of part 4 append
+                    {
+                        if (line.Length >= 7)
+                            tcLinesCol7.Append(line.Substring(7).PadRight(LineLength - 1));
+                    }
                 }
 
-                // Read Part 4
-                var part4Lines = completeFile.Skip(part4StartIndex+1).Take(completeFile.Count - part4StartIndex-1);
-                foreach (var part4Line in part4Lines)
-                {
-                    if (part4Line.Length >= 7)
-                        tcLinesCol7.Append(part4Line.Substring(7).PadRight(LineLength - 1));
-                }
-                
                 //Write
-                for (var i = 0; i < (part4StartIndex - part3StartIndex) -1; i++)
+                for (var i = 0; i < part3Length; i++)
                 {
                     String line = (tcLinesCol7[i] + tcLines[i]);
                     if (line.Trim().Length != 0)
                         outputWriter.Write("      ");//Write spaces for line number
                     else
                         line = "";
-                    if (i != (part4StartIndex - part3StartIndex - 1))
+                    if (i != part3Length - 1)
                         outputWriter.WriteLine(line);
                     else
                         outputWriter.Write(line);
                 }
 
-                return Math.Abs(part3StartIndex + 1 - part3StartFromLine1);
+                return Math.Abs(realPart3LineNumber - part3StartFromLine1);
             }
             catch (Exception e)
             {//Any exception lead to an error --> This may not be a Generated Cobol file from a TypeCobol File.                
