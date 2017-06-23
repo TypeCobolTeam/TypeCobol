@@ -14,16 +14,12 @@ namespace TypeCobol.Compiler.Parser
 		internal static void AddError(CodeElement e, string message, MessageCode code = MessageCode.SyntaxErrorInParser) {
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
             var parserDiag = new ParserDiagnostic(message, e.StartIndex + 1, e.StopIndex + 1, e.ConsumedTokens[0].Line, null, code);
-            e.Diagnostics.Add(parserDiag);
-
-            AnalyticsWrapper.Telemetry.TrackTrace("[Diagnostic] " + parserDiag.ToStringWithRuleStack());
+            e.Diagnostics.Add(parserDiag);    
         }
 		internal static void AddError(CodeElement e, string message, Scanner.Token token, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
             if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
             var parserDiag = new ParserDiagnostic(message, token, rulestack, code);
             e.Diagnostics.Add(parserDiag);
-
-            AnalyticsWrapper.Telemetry.TrackTrace("[Diagnostic] " + parserDiag.ToStringWithRuleStack());
         }
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Analytics;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -22,6 +23,8 @@ namespace TypeCobol.Compiler.Diagnostics
             Message = String.Format(Info.MessageTemplate, messageArgs ?? new object[0]);
             CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
             MessageArgs = messageArgs;
+
+            AnalyticsWrapper.Telemetry.TrackTrace("[Diagnostic] " + this.ToString());
         }
 
         public DiagnosticMessage Info { get; set; }
