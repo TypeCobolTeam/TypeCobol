@@ -7,9 +7,11 @@
        01  somedate     TYPE Date.
        01  message      PIC X(80).
        01  vect2        TYPE Vect2.
+       01  vect2b       TYPE Vect2.
 
        PROCEDURE DIVISION.
-
+           move vect2::Coord2d to Vect2b::Coord2d
+           .
        declare procedure check private
           input mydate        TYPE Date.
          PROCEDURE DIVISION.

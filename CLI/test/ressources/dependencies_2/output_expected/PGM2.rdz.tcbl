@@ -19,6 +19,14 @@
            02 Coord3d.
              03 Z PIC 9.
                                    
+      *01  vect2b       TYPE Vect2.
+       01 vect2b.
+           02 Coord2d.
+             03 X PIC 9.
+             03 Y PIC 9.
+           02 Coord3d.
+             03 Z PIC 9.
+                                   
        01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::MyPublicProcedure
@@ -32,16 +40,18 @@
 
 
        PROCEDURE DIVISION.
+      *
+           PERFORM TC-Initializations
 
+                          
+      *    move vect2::Coord2d to Vect2b::Coord2d
+           move Coord2d OF vect2 to Coord2d OF Vect2b
+           .
       *declare procedure check private
       *   input mydate        TYPE Date.
 
 
        TRAITEMENT.
-      *
-           PERFORM TC-Initializations
-
-                  
       * __________________________________________________
       * OK public procedures declared in "dependencies" file
       *    CALL Callee::MyPublicProcedure

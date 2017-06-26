@@ -209,7 +209,7 @@ namespace TypeCobol.Compiler.CodeModel
             var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
             candidates.AddRange(GetVariable(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
             
-            
+
             foreach (var candidate in candidates) {
                 //if name doesn't match then name.Head match one property inside the DataDefinition
                 if (!name.Head.Equals(candidate.Name, StringComparison.InvariantCultureIgnoreCase)) {
@@ -230,11 +230,10 @@ namespace TypeCobol.Compiler.CodeModel
                     }
                     throw new NotImplementedException();
                     
-                } 
+                }
                 MatchVariable(found, candidate, name, name.Count-1, candidate);
             }
-
-//
+            
             return found;
         }
 
@@ -325,32 +324,46 @@ namespace TypeCobol.Compiler.CodeModel
         private List<DataDefinition> GetCustomTypesSubordinatesNamed(string name)
         {
             var subs = new List<DataDefinition>();
-            
+
             //Get programs from Namespace table
             var programList = this.GetProgramsTable(GetTableFromScope(Scope.Namespace));
             foreach (var programs in programList) {
+
+                //Get Custom Types from program 
                 foreach (var pgm in programs.Value) { //we shouldn't have more than one program with the same name
                                                       //but just in case it changes 
                     seekSymbolTable(pgm.SymbolTable, name, subs);
                 }
             }
-            
+
+
+            //Get Custom Types from Intrinsic table 
+            var intrinsicTable = this.GetTableFromScope(Scope.Intrinsic);
+            foreach (var type in intrinsicTable.Types)
+            {
+                foreach (var type2 in type.Value)
+                {
+                    subs.AddRange(type2.GetChildren<DataDefinition>(name, true));
+                }
+            }
+
             return subs;
         }
 
         private void seekSymbolTable(SymbolTable symbolTable, string name, List<DataDefinition> datadefinitions)
         {
-            var scope = symbolTable;
-            while (scope != null)
+            var currSymbolTable = symbolTable;
+            //Don't search into Intrinsic table because it's shared between all programs
+            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Intrinsic)
             {
-                foreach (var type in scope.Types)
+                foreach (var type in currSymbolTable.Types)
                 {
                     foreach (var type2 in type.Value)
                     {
                         datadefinitions.AddRange(type2.GetChildren<DataDefinition>(name, true));
                     }
                 }
-                scope = scope.EnclosingScope;
+                currSymbolTable = currSymbolTable.EnclosingScope;
             }
         }
 
