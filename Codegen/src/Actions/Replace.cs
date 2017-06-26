@@ -39,7 +39,7 @@ namespace TypeCobol.Codegen.Actions
         public void Execute()
         {
             //No need to replace an erased node.
-            if (!Old.IsFlagSet(Node.Flag.GeneratorErasedNode))
+            if (!Old.IsFlagSet(Node.Flag.GeneratorErasedNode) || Old.IsFlagSet(Node.Flag.PersistentNode))
             {
                 // transfer Old's children to New
                 for (int i = Old.Children.Count - 1; i >= 0; --i)

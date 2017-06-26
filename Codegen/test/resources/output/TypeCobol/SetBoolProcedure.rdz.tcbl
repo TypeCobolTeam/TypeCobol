@@ -1,0 +1,42 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION .
+       working-storage section.
+      *01  IsOk type bool.
+       01  IsOk-value PIC X VALUE LOW-VALUE.
+           88  IsOk       VALUE 'T'.
+           88  IsOk-false VALUE 'F'.
+                          
+      
+       procedure division.
+           set IsOk to true
+      *    set IsOk to false
+           SET IsOk-false TO TRUE
+                            
+           .
+      
+      *DECLARE PROCEDURE IsDateValid.
+      
+           .
+       END PROGRAM DVZF0OSM.
+      *
+      *DECLARE PROCEDURE IsDateValid.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ee0864c9.
+       DATA DIVISION .
+       working-storage section.
+      *01  Result type bool.
+       01  Result-value PIC X VALUE LOW-VALUE.
+           88  Result       VALUE 'T'.
+           88  Result-false VALUE 'F'.
+                            
+       PROCEDURE DIVISION
+           .
+      *-----------------------------------------------------------------
+               SET Result  TO true
+      *        SET Result  TO false
+               SET Result-false TO TRUE
+                                   
+           .
+       END PROGRAM ee0864c9.

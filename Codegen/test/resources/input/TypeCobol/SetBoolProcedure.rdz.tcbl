@@ -1,0 +1,24 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION .
+       working-storage section.
+       01  IsOk type bool.
+      
+       procedure division.
+           set IsOk to true
+           set IsOk to false
+           .
+      
+       DECLARE PROCEDURE IsDateValid.
+       DATA DIVISION .
+       working-storage section.
+       01  Result type bool.
+       PROCEDURE DIVISION.
+      *-----------------------------------------------------------------
+               SET Result  TO true
+               SET Result  TO false
+           .
+       END-DECLARE.
+      
+           .
+       END PROGRAM DVZF0OSM.
