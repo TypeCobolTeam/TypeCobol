@@ -2,7 +2,7 @@
        PROGRAM-ID. DVZZOSM7.
        DATA DIVISION .
        WORKING-STORAGE SECTION.
-       01  TC-DVZZOSM7-FctList-Loaded PIC X(02) EXTERNAL.
+       01  TC-DVZZOSM7-FctList-Loaded PIC X(02).
            88 TC-DVZZOSM7-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZOSM7-PntTab.
            05 TC-DVZZOSM7-PntNbr         PIC S9(04) COMP VALUE 1.

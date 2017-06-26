@@ -92,7 +92,7 @@
     </conditions>
     <patterns>      
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
-01  TC-%programName8-FctList-Loaded PIC X(02) EXTERNAL.
+01  TC-%programName8-FctList-Loaded PIC X(02).
     88 TC-%programName8-FctList-IsLoaded      VALUE 'OK'.
       </pattern>
       <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->

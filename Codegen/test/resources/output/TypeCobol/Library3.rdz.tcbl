@@ -2,7 +2,7 @@
        PROGRAM-ID. DVZZDATE.
        DATA DIVISION. 
        WORKING-STORAGE SECTION.
-       01  TC-DVZZDATE-FctList-Loaded PIC X(02) EXTERNAL.
+       01  TC-DVZZDATE-FctList-Loaded PIC X(02).
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 1.
