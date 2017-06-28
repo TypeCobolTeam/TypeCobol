@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -382,7 +383,6 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.UserDefinedWord:
                     case TokenType.SymbolicCharacter:
                     case TokenType.SectionParagraphName:
-                        return Token.Text;
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
@@ -394,6 +394,33 @@ namespace TypeCobol.Compiler.CodeElements
                 }
             }
         }
+
+        public string NormalizedValue
+        {
+            get
+            {
+                switch (Token.TokenType)
+                {
+                    case TokenType.PictureCharacterString:
+                        return NormalizePictureText(Token.Text);
+                    default:
+                        throw new InvalidOperationException("Unexpected literal token type: " + Token.TokenType);
+                }
+            }
+        }
+
+        private static string NormalizePictureText(string picText)
+        {
+            foreach (Match match in Regex.Matches(picText, @"\(([^)]*)\)"))
+            {
+                int value = Math.Abs(int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses));
+                if (value < 10 && value > 0)
+                    picText = picText.Replace(match.Value, "(" + value + ")");
+            }
+
+            return picText.ToUpper();
+        }
+
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);

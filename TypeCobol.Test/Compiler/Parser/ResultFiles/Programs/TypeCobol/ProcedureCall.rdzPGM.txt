@@ -6,9 +6,9 @@ Line 113[12,50] <27, Error, Syntax> - Syntax error : Function not found 'Validat
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
-Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 8
+Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 1
 Line 124[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Alphanumeric 
-Line 124[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 8
+Line 124[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 1
 Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'mydate' of type DATE and received 'someformat' of type Alphanumeric 
 Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'format' of type Alphanumeric and received 'somedate' of type DATE 
 Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Alphanumeric 
@@ -17,7 +17,7 @@ Line 152[12,46] <27, Error, Syntax> - Syntax error : Parameter INOUT is not refe
 Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
 Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
 Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
-Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 8
+Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 1
 Line 190[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
 Line 199[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
 Line 202[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD' input(DATE)

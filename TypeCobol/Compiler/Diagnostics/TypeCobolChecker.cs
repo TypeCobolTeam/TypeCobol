@@ -155,6 +155,10 @@ class ReadOnlyPropertiesChecker {
             }
         }
 
+
+
+
+
         private static void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
             [NotNull] FunctionDeclaration definition)
         {
@@ -234,7 +238,7 @@ class ReadOnlyPropertiesChecker {
                         }
                     }
 
-                    if(actualDataDefinition.Picture != null && expected.Picture != null && actualDataDefinition.Picture.Value != expected.Picture.Value)
+                    if(actualDataDefinition.Picture != null && expected.Picture != null && actualDataDefinition.Picture.NormalizedValue != expected.Picture.NormalizedValue)
                     {
                         var m =
                             string.Format(
@@ -243,6 +247,7 @@ class ReadOnlyPropertiesChecker {
                                 callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.Picture.Value);
                         DiagnosticUtils.AddError(e, m);
                     }
+              
 
 //                    if (dataDefinitionOfActual.Length != expectedParameter.Length)
 //                    {
@@ -377,7 +382,6 @@ class ReadOnlyPropertiesChecker {
                 }
             }
         }
-
 
         private static TypeDefinition GetSymbolType(DataDefinition node)
         {
