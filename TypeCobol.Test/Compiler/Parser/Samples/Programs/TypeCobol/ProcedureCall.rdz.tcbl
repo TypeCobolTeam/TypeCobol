@@ -7,7 +7,7 @@
        01  somedate     TYPE Date.
        01  someformat   PIC X(08).
        01  flag         TYPE Bool.
-       01  realformat   PIC X9(8)v9(02).
+       01  realformat   PIC S9(8)v9(02).
        01  varA         PIC X(8).
       *01  varB         PIC X(8).
        01  varC         PIC X(8).
@@ -22,7 +22,7 @@
            INPUT  mydate        TYPE Date
                   format        PIC x(8)
            OUTPUT okay          TYPE Bool
-                  actual-format PIC X9(08)V9(2).
+                  actual-format PIC S9(08)V9(2).
          .
          PROCEDURE DIVISION.
            CONTINUE.
