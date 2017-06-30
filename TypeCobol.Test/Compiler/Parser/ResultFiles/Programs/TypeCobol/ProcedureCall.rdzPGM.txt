@@ -2,22 +2,22 @@
 Line 145[18,21] <27, Error, Syntax> - Syntax error : no viable alternative at input 'var1' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[18,21:var1]<UserDefinedWord>
 Line 92[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:declare]<DECLARE>
 Line 96[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:declare]<DECLARE>
-Line 113[12,50] <27, Error, Syntax> - Syntax error : Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Alphanumeric)
+Line 113[12,50] <27, Error, Syntax> - Syntax error : Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Numeric)
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
 Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
-Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 8
-Line 124[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Alphanumeric 
-Line 124[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 8
+Line 121[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Numeric and length 1
+Line 124[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Numeric 
+Line 124[12,50] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Numeric and length 1
 Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'mydate' of type DATE and received 'someformat' of type Alphanumeric 
 Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'format' of type Alphanumeric and received 'somedate' of type DATE 
-Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Alphanumeric 
-Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'actual-format' of type Alphanumeric and received 'flag' of type BOOL 
+Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Numeric 
+Line 130[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'actual-format' of type Numeric and received 'flag' of type BOOL 
 Line 152[12,46] <27, Error, Syntax> - Syntax error : Parameter INOUT is not referenced
 Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
 Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
 Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
-Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Alphanumeric and length 8
+Line 182[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Numeric and length 1
 Line 190[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
 Line 199[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
 Line 202[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD' input(DATE)
@@ -31,7 +31,7 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
   somedate:DATE
   someformat:Alphanumeric
   flag:BOOL
-  realformat:Alphanumeric
+  realformat:Numeric
   varA:Alphanumeric
   varC:Alphanumeric
   MyToto:Toto
@@ -45,7 +45,7 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
         in: mydate:DATE
         in: format:Alphanumeric
        out: okay:BOOL
-       out: actual-format:Alphanumeric
+       out: actual-format:Numeric
   EmptyProc
   DoesNothingFunc
   StrangelyReturnsItsInput

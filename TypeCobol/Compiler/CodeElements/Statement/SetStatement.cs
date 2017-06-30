@@ -150,13 +150,18 @@
 
         public object Value {
 		    get {
-			    if(IntegerVariableOrIndex != null)
-				    if (IntegerVariableOrIndex.Value != null) return IntegerVariableOrIndex.Value.Value;
-				    else return IntegerVariableOrIndex.StorageArea.SymbolReference.Name;
-			    if(NullPointerValue != null) return NullPointerValue.ToString();
-			    if(ProgramNameOrProgramEntryVariable != null) {
-				    var program = ProgramNameOrProgramEntryVariable.StorageArea.SymbolReference;
-				    if (program != null) return new URI(program.Name);
+		        if (IntegerVariableOrIndex != null) {
+		            if (IntegerVariableOrIndex.Value != null) return IntegerVariableOrIndex.Value.Value;
+
+                    if (IntegerVariableOrIndex.StorageArea != null &&
+		                     IntegerVariableOrIndex.StorageArea.SymbolReference != null)
+		                return IntegerVariableOrIndex.StorageArea.SymbolReference.Name;
+		            return null;
+		        }
+		        if(NullPointerValue != null) return NullPointerValue.ToString();
+			    if(ProgramNameOrProgramEntryVariable != null && ProgramNameOrProgramEntryVariable.StorageArea != null) {
+			        var program = ProgramNameOrProgramEntryVariable.StorageArea.SymbolReference;
+			        if (program != null) return new URI(program.Name);
 			    }
 			    if(SelfObjectIdentifier != null) return SelfObjectIdentifier.ToString();
 			    return null;
