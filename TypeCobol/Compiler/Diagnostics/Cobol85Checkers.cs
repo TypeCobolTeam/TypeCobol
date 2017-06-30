@@ -3,16 +3,17 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
-	using Antlr4.Runtime;
-	using System;
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.CodeElements.Expressions;
-	using TypeCobol.Compiler.CodeModel;
-	using TypeCobol.Compiler.Nodes;
-	using TypeCobol.Compiler.Parser;
-	using TypeCobol.Compiler.Parser.Generated;
-	using TypeCobol.Tools;
+    using Antlr4.Runtime;
+    using System;
+    using System.Collections.Generic;
+    using TypeCobol.Compiler.CodeElements;
+    using TypeCobol.Compiler.CodeElements.Expressions;
+    using TypeCobol.Compiler.CodeModel;
+    using TypeCobol.Compiler.Nodes;
+    using TypeCobol.Compiler.Parser;
+    using TypeCobol.Compiler.Parser.Generated;
+    using TypeCobol.Tools;
+    using System.Text.RegularExpressions;
 
     public class Cobol85CompleteASTChecker : AbstractAstVisitor
     {
@@ -34,6 +35,24 @@ namespace TypeCobol.Compiler.Diagnostics {
                 foreach (var storageAreaWrite in codeElement.StorageAreaWrites)
                 {
                     CheckVariable(node, storageAreaWrite);
+                }
+            }
+
+            if(codeElement is CommonDataDescriptionAndDataRedefines && (codeElement as CommonDataDescriptionAndDataRedefines).Picture != null)
+            {
+                var picture = (codeElement as CommonDataDescriptionAndDataRedefines).Picture;
+                foreach (Match match in Regex.Matches(picture.Value, @"\(([^)]*)\)"))
+                {
+                    try //Try catch is here beacause of the risk to parse a non numerical value
+                    {
+                        int value = int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
+                    }
+                    catch (Exception)
+                    {
+                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
+                        DiagnosticUtils.AddError(codeElement, m);
+                    }
+
                 }
             }
 

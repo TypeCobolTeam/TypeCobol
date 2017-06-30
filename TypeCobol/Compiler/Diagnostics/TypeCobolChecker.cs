@@ -11,6 +11,7 @@ using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using Analytics;
 using TypeCobol.Compiler.Scanner;
+using System.Text.RegularExpressions;
 
 namespace TypeCobol.Compiler.Diagnostics {
 
@@ -469,22 +470,41 @@ class FunctionDeclarationChecker: NodeListener {
 		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce, context, node);
 		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce, context, node);
 	}
-	private void CheckParameter([NotNull] ParameterDescriptionEntry parameter, CodeElement ce, ParserRuleContext context, Node node) {
-		// TCRFUN_LEVEL_88_PARAMETERS
-		if (parameter.LevelNumber.Value != 1) {
-		    DiagnosticUtils.AddError(ce, "Condition parameter \""+parameter.Name+"\" must be subordinate to another parameter.", context);
-		}
-	    if (parameter.DataConditions != null)
+        private void CheckParameter([NotNull] ParameterDescriptionEntry parameter, CodeElement ce, ParserRuleContext context, Node node)
         {
-            foreach (var condition in parameter.DataConditions)
+            // TCRFUN_LEVEL_88_PARAMETERS
+            if (parameter.LevelNumber.Value != 1)
             {
-                if (condition.LevelNumber.Value != 88)
-                    DiagnosticUtils.AddError(ce, "Condition parameter \"" + condition.Name + "\" must be level 88.");
+                DiagnosticUtils.AddError(ce, "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", context);
             }
-        }
+            if (parameter.DataConditions != null)
+            {
+                foreach (var condition in parameter.DataConditions)
+                {
+                    if (condition.LevelNumber.Value != 88)
+                        DiagnosticUtils.AddError(ce, "Condition parameter \"" + condition.Name + "\" must be level 88.");
+                }
+            }
 
-        var type = parameter.DataType;
-        TypeDefinitionHelper.Check(node, type); //Check if the type exists and is not ambiguous
+            if (parameter.Picture != null)
+            {
+                foreach (Match match in Regex.Matches(parameter.Picture.Value, @"\(([^)]*)\)"))
+                {
+                    try //Try catch is here beacause of the risk to parse a non numerical value
+                    {
+                        int value = int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
+                    }
+                    catch (Exception)
+                    {
+                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
+                        DiagnosticUtils.AddError(ce, m);
+                    }
+
+                }
+            }
+
+            var type = parameter.DataType;
+            TypeDefinitionHelper.Check(node, type); //Check if the type exists and is not ambiguous
 
         }
 	/// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
