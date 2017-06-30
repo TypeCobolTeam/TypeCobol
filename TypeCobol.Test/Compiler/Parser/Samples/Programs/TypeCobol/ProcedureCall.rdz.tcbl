@@ -7,10 +7,12 @@
        01  somedate     TYPE Date.
        01  someformat   PIC X(08).
        01  flag         TYPE Bool.
-       01  realformat   PIC S9(8)v9(02).
+       01  realformat   PIC S9(100)v9(02).
        01  varA         PIC X(8).
       *01  varB         PIC X(8).
        01  varC         PIC X(8).
+      * KO PIC value is not correct
+       01  varD         PIC X(00ABC100).
 
        01 Toto typedef strict public.
            05 varTo pic X.
@@ -22,7 +24,7 @@
            INPUT  mydate        TYPE Date
                   format        PIC x(8)
            OUTPUT okay          TYPE Bool
-                  actual-format PIC S9(08)V9(2).
+                  actual-format PIC S9(0000100)V9(2).
          .
          PROCEDURE DIVISION.
            CONTINUE.
