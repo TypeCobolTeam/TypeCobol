@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using Analytics;
+using Mono.Options;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.LanguageServices.Editor
@@ -21,27 +23,24 @@ namespace TypeCobol.LanguageServices.Editor
     /// </summary>
     public class Workspace
     {
-        /// <summary>
-        /// Given set of source files.
-        /// Common set of configuration properties for these files.
-        /// Cached compilation results.
-        /// </summary>
-        private CompilationProject compilationProject;
 
-        /// <summary>
-        /// Source documents opened in interactive text editors.
-        /// Continuous compilation of these source documents in the background.
-        /// Cached compilation results.
-        /// </summary>
-        public IDictionary<string, FileCompiler> OpenedFileCompilers { get; private set; }
-        
+        private SymbolTable CustomSymbols;
+        private string RootDirectoryFullName;
+        private string WorkspaceName;
+        private CompilationProject CompilationProject;
+        private string[] Extensions = { ".cbl", ".cpy" };
 
-        public Workspace(string workspaceName, string rootDirectory, string[] fileExtensions, 
-                         Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength, ColumnsLayout columnsLayout, 
-                         TypeCobolOptions compilationOptions)
+
+        private Config TypeCobolConfiguration { get; set; }
+        public Dictionary<string, FileCompiler> OpenedFileCompiler{ get; private set; }
+
+        public Workspace(string rootDirectoryFullName, string workspaceName)
         {
-            compilationProject = new CompilationProject(workspaceName, rootDirectory, fileExtensions, encoding, endOfLineDelimiter, fixedLineLength, columnsLayout, compilationOptions);
-            OpenedFileCompilers = new Dictionary<string, FileCompiler>(3);
+            TypeCobolConfiguration = new Config();
+            OpenedFileCompiler = new Dictionary<string, FileCompiler>(3); //Why is it limited to 3?
+
+            this.RootDirectoryFullName = rootDirectoryFullName;
+            this.WorkspaceName = workspaceName;
         }
 
         /// <summary>
@@ -49,24 +48,20 @@ namespace TypeCobol.LanguageServices.Editor
         /// </summary>
         public void OpenSourceFile(string fileName, string sourceText)
         {
-            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, compilationProject.Encoding, compilationProject.ColumnsLayout, sourceText);
-            FileCompiler fileCompiler = new FileCompiler(initialTextDocumentLines, compilationProject.SourceFileProvider, compilationProject, compilationProject.CompilationOptions, false, compilationProject);
-            //Create our own empty Symbol table.
-            SymbolTable table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
-            fileCompiler.CompilationResultsForProgram.CustomSymbols = table;
+            ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
+            var fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, CustomSymbols, false, CompilationProject);
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
-            lock (OpenedFileCompilers)
+
+            lock (OpenedFileCompiler)
             {
-                if (OpenedFileCompilers.ContainsKey(fileName))
-                {   
-                    //Close the previous opened file.
-                    CloseSourceFile(fileName);
-                    OpenedFileCompilers.Remove(fileName);
-                }
-                OpenedFileCompilers.Add(fileName, fileCompiler);
+                if (OpenedFileCompiler.ContainsKey(fileName))
+                    CloseSourceFile(fileName); //Close and remove the previous opened file.
+
+                OpenedFileCompiler.Add(fileName, fileCompiler);
             }
+
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
-            fileCompiler.StartContinuousBackgroundCompilation(200,500,1000,3000);
+            fileCompiler.StartContinuousBackgroundCompilation(200, 500, 1000, 3000); //TODO: create a better refresh compilation
         }
 
         /// <summary>
@@ -75,19 +70,18 @@ namespace TypeCobol.LanguageServices.Editor
         public void UpdateSourceFile(string fileName, TextChangedEvent textChangedEvent, bool bAsync)
         {
             FileCompiler fileCompilerToUpdate = null;
-            if (OpenedFileCompilers.TryGetValue(fileName, out fileCompilerToUpdate))
+            if (OpenedFileCompiler.TryGetValue(fileName, out fileCompilerToUpdate))
             {
-                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
                 if (!bAsync)
                 {//Don't wait asynchroneous snapshot refresh.
                     fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
                         () =>
-                        {
-                            fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                            fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
-                            fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
-                            fileCompilerToUpdate.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
-                        }
+                            {
+                                fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+                                fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
+                                fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
+                                fileCompilerToUpdate.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+                            }
                         );
                 }
                 else
@@ -103,15 +97,216 @@ namespace TypeCobol.LanguageServices.Editor
         public void CloseSourceFile(string fileName)
         {
             FileCompiler fileCompilerToClose = null;
-            lock (OpenedFileCompilers)
+            lock (OpenedFileCompiler)
             {
-                if (OpenedFileCompilers.ContainsKey(fileName))
+                if (OpenedFileCompiler.ContainsKey(fileName))
                 {
-                    fileCompilerToClose = OpenedFileCompilers[fileName];
-                    OpenedFileCompilers.Remove(fileName);
+                    fileCompilerToClose = OpenedFileCompiler[fileName];
+                    OpenedFileCompiler.Remove(fileName);
                     fileCompilerToClose.StopContinuousBackgroundCompilation();
                 }
             }            
         }
+
+        public void DidChangeConfigurationParams(string settings)
+        {
+            var options = new OptionSet()
+            {
+                { "s|skeletons=", "{PATH} to the skeletons files.", v => TypeCobolConfiguration.skeletonPath = v },
+                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol", v => TypeCobolConfiguration.AutoRemarks = true },
+                { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => TypeCobolConfiguration.HaltOnMissingCopyFilePath = v },
+                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, Generate/4)", v => Enum.TryParse(v.ToString(), true, out TypeCobolConfiguration.ExecToStep) },
+				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
+                                +"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
+                                v => TypeCobolConfiguration.Format = CreateFormat(v, TypeCobolConfiguration)
+                },
+                { "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => TypeCobolConfiguration.Intrinsics.Add(v) },
+                { "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => TypeCobolConfiguration.CopyFolders.Add(v) },
+                { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => TypeCobolConfiguration.Dependencies.Add(v) },
+                { "t|telemetry", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => TypeCobolConfiguration.Telemetry = true }
+            };
+            options.Parse(settings.Split(' '));
+
+            //Adding default copies folder
+            var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            TypeCobolConfiguration.CopyFolders.Add(folder + @"\DefaultCopies\");
+
+            if (TypeCobolConfiguration.Telemetry)
+                AnalyticsWrapper.Telemetry.DisableTelemetry = false; //If telemetry arg is passed enable telemetry
+
+            if (TypeCobolConfiguration.ExecToStep >= ExecutionStep.Generate)
+                TypeCobolConfiguration.ExecToStep = ExecutionStep.SemanticCheck; //Language Server does not support Cobol Generation for now
+
+            var typeCobolOptions = new TypeCobolOptions
+            {
+                HaltOnMissingCopy = TypeCobolConfiguration.HaltOnMissingCopyFilePath != null,
+                ExecToStep = TypeCobolConfiguration.ExecToStep,
+#if EUROINFO_RULES
+                AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks
+#endif
+            };
+
+            CompilationProject = new CompilationProject(WorkspaceName, RootDirectoryFullName, Extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
+
+            if (OpenedFileCompiler.Count > 0)
+                RefreshOpenedFiles();
+            else
+                RefreshCustomSymbols();
+        }
+
+        /// <summary>
+        /// Refresh all opened files' parser.
+        /// </summary>
+        private void RefreshOpenedFiles()
+        {
+            RefreshCustomSymbols();
+
+            foreach (var FileParser in OpenedFileCompiler)
+            {
+                OpenSourceFile(FileParser.Key, FileParser.Value.TextDocument.TextSegment(0, FileParser.Value.TextDocument.Length-1));
+            }
+        }
+
+        private void RefreshCustomSymbols()
+        {
+            CustomSymbols = null;
+            CustomSymbols = LoadIntrinsic(TypeCobolConfiguration.Intrinsics, TypeCobolConfiguration.Format); //Refresh Intrinsics
+            CustomSymbols = LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols); //Refresh Dependencies
+        }
+
+
+        private SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat)
+        {
+            var parser = new Parser();
+            var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
+            var instrincicFiles = new List<string>();
+
+            foreach (string path in paths) instrincicFiles.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false));
+
+            foreach (string path in instrincicFiles)
+            {
+                //try
+                //{
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, intrinsicDocumentFormat);
+                    parser.Parse(path);
+
+                    var diagnostics = parser.Results.AllDiagnostics();
+
+
+                    foreach (var diagnostic in diagnostics)
+                    {
+                        //TODO: Send diagnostics to client...
+                    }
+
+                    //if (diagnostics.Count > 0)
+                    //    throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", path, null, logged: false, needMail: false);
+
+
+                    //if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
+                    //{
+                    //    throw new CopyLoadingException("Your Intrisic types/functions are not included into a program.", path, null, logged: true, needMail: false);
+                    //}
+
+                    foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
+                    {
+                        var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+
+                        //if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
+                        //{
+                        //    Server.AddError(writer, MessageCode.Warning, "No types and no procedures/functions found", path);
+                        //    continue;
+                        //}
+
+                        table.CopyAllTypes(symbols.Types);
+                        table.CopyAllFunctions(symbols.Functions);
+                    }
+                //}
+                //catch (CopyLoadingException copyException)
+                //{
+                //    throw copyException; //Make CopyLoadingException trace back to runOnce()
+                //}
+                //catch (Exception e)
+                //{
+                //    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e, logged: true, needMail: true);
+                //}
+            }
+            return table;
+        }
+
+        private SymbolTable LoadDependencies(List<string> paths, DocumentFormat format, SymbolTable intrinsicTable)
+        {
+            var parser = new Parser(intrinsicTable);
+            var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
+
+            var dependencies = new List<string>();
+            string[] extensions = { ".tcbl", ".cbl", ".cpy" };
+            foreach (var path in paths)
+            {
+                dependencies.AddRange(Tools.FileSystem.GetFiles(path, extensions, true)); //Get File by name or search the directory for all files
+            }
+
+            foreach (string path in dependencies)
+            {
+                //try
+                //{
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format);
+                    parser.Parse(path); //Parse the dependencie file
+
+                    var diagnostics = parser.Results.AllDiagnostics();
+                    foreach (var diagnostic in diagnostics)
+                    {
+                        //TODO : Send diagnostics to client...
+                    }
+                    //if (diagnostics.Count > 0)
+                    //    throw new DepedenciesLoadingException("Diagnostics detected while parsing dependency file", path, null, logged: false, needMail: false);
+
+                    //if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
+                    //{
+                    //    throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
+                    //}
+
+                    foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
+                    {
+                        table.AddProgram(program); //Add program to Namespace symbol table
+                    }
+
+                //}
+                //catch (DepedenciesLoadingException)
+                //{
+                //    throw; //Make DepedenciesLoadingException trace back to runOnce()
+                //}
+                //catch (Exception e)
+                //{
+                //    throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e);
+                //}
+            }
+            return table;
+        }
+
+
+        private DocumentFormat CreateFormat(string encoding, Config config)
+        {
+            config.EncFormat = encoding;
+
+            if (encoding == null) return null;
+            if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
+            if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
+            /*if (encoding.ToLower().Equals("rdz"))*/
+            return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+        }
+    }
+
+    public class Config 
+    {
+        public DocumentFormat Format = DocumentFormat.RDZReferenceFormat;
+        public bool AutoRemarks;
+        public string HaltOnMissingCopyFilePath;
+        public List<string> CopyFolders = new List<string>();
+        public ExecutionStep ExecToStep = ExecutionStep.SemanticCheck; //Default value is Generate
+        public string skeletonPath = "";
+        public List<string> Intrinsics = new List<string>();
+        public List<string> Dependencies = new List<string>();
+        public string EncFormat = null;
+        public bool Telemetry { get; set; }
     }
 }

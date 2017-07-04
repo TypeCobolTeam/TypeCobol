@@ -99,6 +99,13 @@ namespace TypeCobol.Compiler
         { }
 
         /// <summary>
+        /// Use a pre-existing text document, not yet associated with a Cobol file + Existing SymbolTable
+        /// </summary>
+        public FileCompiler(ITextDocument textDocument, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile, CompilationProject compilationProject) :
+            this(null, null, null, sourceFileProvider, documentProvider, default(ColumnsLayout), textDocument, compilerOptions, customSymbols, isCopyFile, null, compilationProject, null)
+        { }
+
+        /// <summary>
         /// Use a pre-existing text document, already initialized from a Cobol file
         /// </summary>
         public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations) :

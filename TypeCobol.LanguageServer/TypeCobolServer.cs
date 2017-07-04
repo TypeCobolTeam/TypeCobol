@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
@@ -17,23 +18,26 @@ namespace TypeCobol.LanguageServer
     /// <summary>
     /// Override methods of the base language server to implement TypeCobol editor experiences
     /// </summary>
-    class TypeCobolServer : TypeCobol.LanguageServer.VsCodeProtocol.LanguageServer
+    class TypeCobolServer : VsCodeProtocol.LanguageServer
     {
         public TypeCobolServer(IRPCServer rpcServer) : base(rpcServer) { }
 
         // -- Initialization : create workspace and return language server capabilities --
 
         private Workspace typeCobolWorkspace;
-               
+
+
+        #region Override LSP Methods
         public override InitializeResult OnInitialize(InitializeParams parameters)
         {
-            // Initialize the workspace
-            // TO DO : receive all these configuration properties from the client
             var rootDirectory = new DirectoryInfo(parameters.rootPath);
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
-            typeCobolWorkspace = new Workspace(workspaceName, rootDirectory.FullName, new string[] { ".cbl", ".pgm", ".cpy", ".txt", },
-                Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat, 
-                new TypeCobolOptions());
+
+            // Initialize the workspace
+            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName);
+          
+            //Simulate Configuration change
+            //typeCobolWorkspace.DidChangeConfigurationParams(@"-o C:\TypeCobol\Test.cee -d C:\TypeCobol\Test.xml -t -s C:\TypeCobol\Sources\##Latest_Release##\skeletons.xml -e rdz -y C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt --autoremarks --dependencies C:\TypeCobol\Sources\##Latest_Release##\Dependencies\*.tcbl");
 
             // DEBUG information
             RemoteWindow.ShowInformationMessage("TypeCobol language server was launched !");
@@ -44,7 +48,7 @@ namespace TypeCobol.LanguageServer
             initializeResult.capabilities.hoverProvider = true;
             CompletionOptions completionOptions = new CompletionOptions();
             completionOptions.resolveProvider = false;
-            completionOptions.triggerCharacters = new String[]{"::"};
+            completionOptions.triggerCharacters = new String[] { "::" };
             initializeResult.capabilities.completionProvider = completionOptions;
 
             return initializeResult;
@@ -71,7 +75,7 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 string fileName = Path.GetFileName(objUri.LocalPath);
-                var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[fileName];
 
                 #region Convert text changes format from multiline range replacement to single line updates
 
@@ -83,7 +87,7 @@ namespace TypeCobol.LanguageServer
                     // Split the text updated into distinct lines
                     string[] lineUpdates = null;
                     bool replacementTextStartsWithNewLine = false;
-                    if(contentChange.text != null && contentChange.text.Length > 0)
+                    if (contentChange.text != null && contentChange.text.Length > 0)
                     {
                         replacementTextStartsWithNewLine = contentChange.text[0] == '\r' || contentChange.text[0] == '\n';
                         lineUpdates = contentChange.text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -134,7 +138,7 @@ namespace TypeCobol.LanguageServer
                             lastLineIndex--;
                             lastLineDeleted = true;
                         }
-                        if(!lastLineDeleted && contentChange.text.Length == 0)
+                        if (!lastLineDeleted && contentChange.text.Length == 0)
                         {
                             lineUpdates = new string[0];
                         }
@@ -142,7 +146,7 @@ namespace TypeCobol.LanguageServer
                         // Get original lines text before change
                         string originalFirstLineText = fileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line].Text;
                         string originalLastLineText = originalFirstLineText;
-                        if(lastLineIndex > firstLineIndex)
+                        if (lastLineIndex > firstLineIndex)
                         {
                             originalLastLineText = fileCompiler.CompilationResultsForProgram.CobolTextLines[Math.Min(lastLineIndex, fileCompiler.CompilationResultsForProgram.CobolTextLines.Count - 1)].Text;
                         }
@@ -179,7 +183,7 @@ namespace TypeCobol.LanguageServer
                                 {
                                     newLine = startOfFirstLine + newLine;
                                 }
-                                if(i == lineUpdatesCount - 1)
+                                if (i == lineUpdatesCount - 1)
                                 {
                                     newLine = newLine + endOfLastLine;
                                     if (lastLineDeleted) break;
@@ -197,7 +201,7 @@ namespace TypeCobol.LanguageServer
 
                 // DEBUG information
                 RemoteConsole.Log("Udpated source file : " + fileName);
-                foreach(var textChange in textChangedEvent.TextChanges)
+                foreach (var textChange in textChangedEvent.TextChanges)
                 {
                     RemoteConsole.Log(" - " + textChange.ToString());
                 }
@@ -229,7 +233,10 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        // -- Tooltip information on hover --
+        public override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
+        {
+            typeCobolWorkspace.DidChangeConfigurationParams(parameters.settings.ToString());
+        }
 
         public override Hover OnHover(TextDocumentPosition parameters)
         {
@@ -238,7 +245,7 @@ namespace TypeCobol.LanguageServer
             {
                 // Get compilation info for the current file
                 string fileName = Path.GetFileName(objUri.LocalPath);
-                var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[fileName];
 
                 // Find the token located below the mouse pointer
                 var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
@@ -251,21 +258,71 @@ namespace TypeCobol.LanguageServer
                     return new Hover()
                     {
                         range = new Range(parameters.position.line, hoveredToken.StartIndex, parameters.position.line, hoveredToken.StopIndex + 1),
-                        contents = new MarkedString[] { new MarkedString() { language="Cobol", value=tokenDescription } }
+                        contents = new MarkedString[] { new MarkedString() { language = "Cobol", value = tokenDescription } }
                     };
                 }
             }
             return null;
         }
 
-        
+        /// <summary>
+        /// Request to request completion at a given text document position. The request's
+        /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
+        /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
+        /// </summary>
+        public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
+        {
+            Uri objUri = new Uri(parameters.uri);
+            if (objUri.IsFile)
+            {
+                // Get compilation info for the current file
+                string fileName = Path.GetFileName(objUri.LocalPath);
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[fileName];
+
+                if (fileCompiler.CompilationResultsForProgram != null && fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
+                {
+                    // Find the token located below the mouse pointer
+                    var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
+                    var tokens = tokensLine.TokensWithCompilerDirectives;
+                    TypeCobol.Compiler.Scanner.Token matchingToken = MatchCompletionTokenPosition(parameters.position, tokens);
+                    if (matchingToken != null)
+                    {//We got a perform Token
+                        switch (matchingToken.TokenType)
+                        {
+                            case Compiler.Scanner.TokenType.PERFORM:
+                                {
+                                    List<CompletionItem> items = new List<CompletionItem>();
+                                    ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, matchingToken);
+                                    if (paragraphs != null)
+                                    {
+                                        foreach (String p in paragraphs)
+                                        {
+                                            CompletionItem item = new CompletionItem(p);
+                                            items.Add(item);
+                                        }
+                                    }
+                                    return items;
+                                }
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+            return new List<CompletionItem>();
+        }
+        #endregion
+
+
+
+
         /// <summary>
         /// Get the paragraph that can be associated to PERFORM Completion token.
         /// </summary>
         /// <param name="fileCompiler">The target FileCompiler instance</param>
         /// <param name="performToken">The PERFORM token</param>
         /// <returns></returns>
-        private ICollection<string> GetCompletionPerformParagraph(TypeCobol.Compiler.FileCompiler fileCompiler, TypeCobol.Compiler.Scanner.Token performToken)
+        private ICollection<string> GetCompletionPerformParagraph(FileCompiler fileCompiler, Compiler.Scanner.Token performToken)
         {
             if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null)
             {
@@ -298,8 +355,8 @@ namespace TypeCobol.LanguageServer
         ///        ^
         /// that is to say if the cursor is just after the M that no completion should occurs.
         /// </summary>
-        private static Tuple<TypeCobol.Compiler.Scanner.TokenType, bool>[] elligibleCompletionTokens = new Tuple<TypeCobol.Compiler.Scanner.TokenType, bool>[]{
-            new Tuple<TypeCobol.Compiler.Scanner.TokenType, bool>(Compiler.Scanner.TokenType.PERFORM,false)
+        private static Tuple<Compiler.Scanner.TokenType, bool>[] elligibleCompletionTokens = new Tuple<Compiler.Scanner.TokenType, bool>[]{
+            new Tuple<Compiler.Scanner.TokenType, bool>(Compiler.Scanner.TokenType.PERFORM,false)
         };
 
         /// <summary>
@@ -308,7 +365,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="token"></param>
         /// <param name="bAllowLastPos"></param>
         /// <returns></returns>
-        private static bool IsCompletionElligibleToken(TypeCobol.Compiler.Scanner.Token token, out bool bAllowLastPos)
+        private static bool IsCompletionElligibleToken(Compiler.Scanner.Token token, out bool bAllowLastPos)
         {
             bAllowLastPos = false;
             for (int i = 0; i < elligibleCompletionTokens.Length; i++)
@@ -321,7 +378,7 @@ namespace TypeCobol.LanguageServer
             }
             return false;
         }
-        private static TypeCobol.Compiler.Scanner.Token MatchCompletionTokenPosition(Position position, System.Collections.Generic.IList<TypeCobol.Compiler.Scanner.Token> tokens)
+        private static Compiler.Scanner.Token MatchCompletionTokenPosition(Position position, IList<Compiler.Scanner.Token> tokens)
         {
             bool bAllowLastPos = false;
             int count = tokens.Count;
@@ -398,7 +455,7 @@ namespace TypeCobol.LanguageServer
         /// is performed every 3s, a completion cannot wait 3s second before having an answer.
         /// </summary>
         /// <param name="fileCompiler"></param>
-        private void WaitProgramClassNotChanged(TypeCobol.Compiler.FileCompiler fileCompiler)
+        private void WaitProgramClassNotChanged(Compiler.FileCompiler fileCompiler)
         {
             fileCompiler.CompilationResultsForProgram.ProgramClassNotChanged += CompilationResultsForProgram_ProgramClassNotChanged;
             System.Threading.Interlocked.Exchange(ref m_unchanged, 0);
@@ -416,51 +473,6 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        /// <summary>
-        /// Request to request completion at a given text document position. The request's
-        /// parameter is of type[TextDocumentPosition](#TextDocumentPosition) the response
-        /// is of type[CompletionItem[]](#CompletionItem) or a Thenable that resolves to such.
-        /// </summary>
-        public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
-        {
-            Uri objUri = new Uri(parameters.uri);
-            if (objUri.IsFile)
-            {
-                // Get compilation info for the current file
-                string fileName = Path.GetFileName(objUri.LocalPath);
-                var fileCompiler = typeCobolWorkspace.OpenedFileCompilers[fileName];
-               
-                if (fileCompiler.CompilationResultsForProgram != null && fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
-                {
-                    // Find the token located below the mouse pointer
-                    var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
-                    var tokens = tokensLine.TokensWithCompilerDirectives;
-                    TypeCobol.Compiler.Scanner.Token matchingToken = MatchCompletionTokenPosition(parameters.position, tokens);
-                    if (matchingToken != null)
-                    {//We got a perform Token
-                        switch (matchingToken.TokenType)
-                        {
-                            case Compiler.Scanner.TokenType.PERFORM:
-                                {
-                                    List<CompletionItem> items = new List<CompletionItem>();
-                                    ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, matchingToken);
-                                    if (paragraphs != null)
-                                    {
-                                        foreach (String p in paragraphs)
-                                        {
-                                            CompletionItem item = new CompletionItem(p);
-                                            items.Add(item);
-                                        }
-                                    }
-                                    return items;
-                                }
-                            default:
-                                break;
-                        }
-                    }
-                }
-            }
-            return new List<CompletionItem>();
-        }
+
     }
 }

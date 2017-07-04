@@ -80,8 +80,8 @@ namespace TypeCobol
 			Compiler.CompilationResultsForProgram.TextLinesChanged += OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged += OnCodeElementLine;
 
-			if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
-			else Compiler.CompilationResultsForProgram.UpdateTextLines(e);
+            if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
+            else if (e != null) Compiler.CompilationResultsForProgram.UpdateTextLines(e);
 
             AnalyticsWrapper.Telemetry.TrackEvent("[Parser] Started");
 
