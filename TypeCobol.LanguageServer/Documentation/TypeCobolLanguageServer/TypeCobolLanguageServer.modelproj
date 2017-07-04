@@ -24,6 +24,13 @@
       <SubType>Content</SubType>
       <DependentUpon>UMLSequenceDiagram1.sequencediagram</DependentUpon>
     </Content>
+    <Content Include="ClientServer.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ClientServer.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>ClientServer.sequencediagram</DependentUpon>
+    </Content>
     <Folder Include="ModelDefinition\" />
     <Content Include="ModelDefinition\TypeCobolLanguageServer.uml">
       <SubType>Content</SubType>
