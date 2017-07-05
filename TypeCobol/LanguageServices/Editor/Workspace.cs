@@ -9,6 +9,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServices.Editor
 {
@@ -31,13 +32,13 @@ namespace TypeCobol.LanguageServices.Editor
         private string[] Extensions = { ".cbl", ".cpy" };
 
 
-        private Config TypeCobolConfiguration { get; set; }
+        private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
         public Dictionary<string, FileCompiler> OpenedFileCompiler{ get; private set; }
 
         public Workspace(string rootDirectoryFullName, string workspaceName)
         {
-            TypeCobolConfiguration = new Config();
-            OpenedFileCompiler = new Dictionary<string, FileCompiler>(3); //Why is it limited to 3?
+            TypeCobolConfiguration = new TypeCobolConfiguration();
+            OpenedFileCompiler = new Dictionary<string, FileCompiler>();
 
             this.RootDirectoryFullName = rootDirectoryFullName;
             this.WorkspaceName = workspaceName;
@@ -72,6 +73,7 @@ namespace TypeCobol.LanguageServices.Editor
             FileCompiler fileCompilerToUpdate = null;
             if (OpenedFileCompiler.TryGetValue(fileName, out fileCompilerToUpdate))
             {
+                fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
                 if (!bAsync)
                 {//Don't wait asynchroneous snapshot refresh.
                     fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
@@ -110,21 +112,7 @@ namespace TypeCobol.LanguageServices.Editor
 
         public void DidChangeConfigurationParams(string settings)
         {
-            var options = new OptionSet()
-            {
-                { "s|skeletons=", "{PATH} to the skeletons files.", v => TypeCobolConfiguration.skeletonPath = v },
-                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol", v => TypeCobolConfiguration.AutoRemarks = true },
-                { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => TypeCobolConfiguration.HaltOnMissingCopyFilePath = v },
-                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, Generate/4)", v => Enum.TryParse(v.ToString(), true, out TypeCobolConfiguration.ExecToStep) },
-				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
-                                +"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
-                                v => TypeCobolConfiguration.Format = CreateFormat(v, TypeCobolConfiguration)
-                },
-                { "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => TypeCobolConfiguration.Intrinsics.Add(v) },
-                { "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => TypeCobolConfiguration.CopyFolders.Add(v) },
-                { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => TypeCobolConfiguration.Dependencies.Add(v) },
-                { "t|telemetry", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => TypeCobolConfiguration.Telemetry = true }
-            };
+            var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
             options.Parse(settings.Split(' '));
 
             //Adding default copies folder
@@ -170,7 +158,7 @@ namespace TypeCobol.LanguageServices.Editor
         private void RefreshCustomSymbols()
         {
             CustomSymbols = null;
-            CustomSymbols = LoadIntrinsic(TypeCobolConfiguration.Intrinsics, TypeCobolConfiguration.Format); //Refresh Intrinsics
+            CustomSymbols = LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format); //Refresh Intrinsics
             CustomSymbols = LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols); //Refresh Dependencies
         }
 
@@ -282,31 +270,5 @@ namespace TypeCobol.LanguageServices.Editor
             }
             return table;
         }
-
-
-        private DocumentFormat CreateFormat(string encoding, Config config)
-        {
-            config.EncFormat = encoding;
-
-            if (encoding == null) return null;
-            if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
-            if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
-            /*if (encoding.ToLower().Equals("rdz"))*/
-            return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
-        }
-    }
-
-    public class Config 
-    {
-        public DocumentFormat Format = DocumentFormat.RDZReferenceFormat;
-        public bool AutoRemarks;
-        public string HaltOnMissingCopyFilePath;
-        public List<string> CopyFolders = new List<string>();
-        public ExecutionStep ExecToStep = ExecutionStep.SemanticCheck; //Default value is Generate
-        public string skeletonPath = "";
-        public List<string> Intrinsics = new List<string>();
-        public List<string> Dependencies = new List<string>();
-        public string EncFormat = null;
-        public bool Telemetry { get; set; }
     }
 }

@@ -13,91 +13,45 @@ using TypeCobol.Compiler.Text;
 using SimpleMsgPack;
 using TypeCobol.Server.Serialization;
 using Analytics;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server {
 
-    /// <summary>
-    /// Config class that holds all the argument information like input files, output files, error file etc.
-    /// </summary>
-    public class Config
-    {
-        public string CommandLine { get; set; }
-        public TypeCobol.Compiler.DocumentFormat Format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
-        public bool AutoRemarks;
-        public string HaltOnMissingCopyFilePath;
-        public List<string> CopyFolders = new List<string>();
-        public List<string> InputFiles = new List<string>();
-        public List<string> OutputFiles = new List<string>();
-        public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
-        public string ErrorFile = null;
-        public string skeletonPath = "";
-        public bool IsErrorXML
-        {
-            get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
-        }
-        public List<string> Copies = new List<string>();
-        public List<string> Dependencies = new List<string>();
-
-        public string EncFormat = null;
-
-        public bool Telemetry { get; set; }
-    }
-
     class Server {
-
         enum StartClient {
             No, HiddenWindow, NormalWindow
         }
         static int Main(string[] argv) {
             bool help = false;
-			bool version = false;
-			bool once = false;
+            bool version = false;
+            bool once = false;
             StartClient startClient = StartClient.No;
-			var config = new Config();
+            var config = new TypeCobolConfiguration();
             config.CommandLine = string.Join(" ", argv);
-			var pipename = "TypeCobol.Server";
+            var pipename = "TypeCobol.Server";
 
-            var p = new OptionSet() {
-                "USAGE",
-                "  "+PROGNAME+" [OPTIONS]... [PIPENAME]",
-                "",
-                "VERSION:",
-                "  "+PROGVERSION,
-                "",
-                "DESCRIPTION:",
-                "  Run the TypeCobol parser server.",
-                { "k|startServer:", "Start the server if not already started, and executes commandline.\n" +
-                                    "By default the server is started in window mode\n" +
-                                    "'{hidden}' hide the window.", v =>
+            var p = TypeCobolOptionSet.GetCommonTypeCobolOptions(config);
+
+            //Add custom options for CLI
+            p.Add(string.Format("USAGE\n {0} [OPTIONS]... [PIPENAME]\n VERSION:\n {1} \n DESCRIPTION: \n Run the TypeCObol parser server", PROGNAME, PROGVERSION));
+            p.Add("k|startServer:",
+                "Start the server if not already started, and executes commandline.\n" + "By default the server is started in window mode\n" + "'{hidden}' hide the window.",
+                v =>
                 {
-                    if ("hidden".Equals(v, StringComparison.InvariantCultureIgnoreCase)) {
+                    if ("hidden".Equals(v, StringComparison.InvariantCultureIgnoreCase))
+                    {
                         startClient = StartClient.HiddenWindow;
-                    } else {
+                    }
+                    else
+                    {
                         startClient = StartClient.NormalWindow;
                     }
-                }  },
-                { "1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v!=null) },
-                { "i|input=", "{PATH} to an input file to parse. This option can be specified more than once.", v => config.InputFiles.Add(v) },
-                { "o|output=","{PATH} to an ouput file where to generate code. This option can be specified more than once.", v => config.OutputFiles.Add(v) },
-                { "d|diagnostics=", "{PATH} to the error diagnostics file.", v => config.ErrorFile = v },
-                { "s|skeletons=", "{PATH} to the skeletons files.", v => config.skeletonPath = v },
-                { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol", v => config.AutoRemarks = true },
-                { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => config.HaltOnMissingCopyFilePath = v },
-                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, Generate/4)", v => Enum.TryParse(v.ToString(), true, out config.ExecToStep) },
-//				{ "p|pipename=",  "{NAME} of the communication pipe to use. Default: "+pipename+".", (string v) => pipename = v },
-				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
-                                +"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
-                                v => config.Format = CLI.CreateFormat(v, ref config)
-                },
-                { "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => config.Copies.Add(v) },
-                { "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => config.CopyFolders.Add(v) },
-                { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => config.Dependencies.Add(v) },
-                { "h|help",  "Output a usage message and exit.", v => help = (v!=null) },
-                { "V|version",  "Output the version number of "+PROGNAME+" and exit.", v => version = (v!=null) },
-                { "t|telemetry", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => config.Telemetry = true }
-            };
+                }); 
+            p.Add("1|once",  "Parse one set of files and exit. If present, this option does NOT launch the server.", v => once = (v != null));
+            p.Add("h|help", "Output a usage message and exit.", v => help = (v != null));
+            p.Add("V|version", "Output the version number of " + PROGNAME + " and exit.", v => version = (v != null));
 
-      
+
             //Add DefaultCopies to running session
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             config.CopyFolders.Add(folder + @"\DefaultCopies\");

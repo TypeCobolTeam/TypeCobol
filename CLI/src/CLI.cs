@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Text;
 using Analytics;
 using TypeCobol.CLI.CustomExceptions;
 using System.Linq;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server
 {
@@ -25,7 +26,7 @@ namespace TypeCobol.Server
         /// runOnce method to parse the input file(s).
         /// </summary>
         /// <param name="config">Config</param>
-        internal static ReturnCode runOnce(Config config) {
+        internal static ReturnCode runOnce(TypeCobolConfiguration config) {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             string debugLine = DateTime.Now + " start parsing of ";
@@ -105,7 +106,7 @@ namespace TypeCobol.Server
             return ReturnCode.Success;
         }
 
-        private static ReturnCode runOnce2(Config config, AbstractErrorWriter errorWriter)
+        private static ReturnCode runOnce2(TypeCobolConfiguration config, AbstractErrorWriter errorWriter)
         {
             var parser = new Parser();
 
@@ -347,21 +348,6 @@ namespace TypeCobol.Server
             return table;
         }
 
-        /// <summary>
-        /// CreateFormat method to get the format name.
-        /// </summary>
-        /// <param name="encoding">string</param>
-        /// <param name="config">Config</param>
-        /// <returns>DocumentFormat</returns>
-        internal static Compiler.DocumentFormat CreateFormat(string encoding, ref Config config)
-        {
-            config.EncFormat = encoding;
-
-            if (encoding == null) return null;
-            if (encoding.ToLower().Equals("zos")) return TypeCobol.Compiler.DocumentFormat.ZOsReferenceFormat;
-            if (encoding.ToLower().Equals("utf8")) return TypeCobol.Compiler.DocumentFormat.FreeUTF8Format;
-            /*if (encoding.ToLower().Equals("rdz"))*/
-            return TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
-        }
+        
     }
 }

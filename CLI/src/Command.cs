@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using TypeCobol.Server.Serialization;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server
 {
@@ -116,9 +117,9 @@ namespace TypeCobol.Server
 
             try
             {
-                Config config = new Config();
+                TypeCobolConfiguration config = new TypeCobolConfiguration();
                 config = configSerializer.Deserialize(originalbuffer);
-                config.Format = CLI.CreateFormat(config.EncFormat, ref config);
+                config.Format = TypeCobolOptionSet.CreateFormat(config.EncFormat, ref config);
                 returnCode = CLI.runOnce(config); //Try to run TypeCobol ad get status in returnCode
             }
             catch (Exception e)
