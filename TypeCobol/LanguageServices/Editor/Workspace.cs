@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Analytics;
-using Mono.Options;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
@@ -34,6 +33,9 @@ namespace TypeCobol.LanguageServices.Editor
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
         public Dictionary<string, FileCompiler> OpenedFileCompiler{ get; private set; }
+        public EventHandler<IList<Compiler.Diagnostics.Diagnostic>> DiagnosticsEvent { get; set; }
+        public EventHandler<List<string>> MissingCopiesEvent { get; set; }
+
 
         public Workspace(string rootDirectoryFullName, string workspaceName)
         {
@@ -59,6 +61,7 @@ namespace TypeCobol.LanguageServices.Editor
                     CloseSourceFile(fileName); //Close and remove the previous opened file.
 
                 OpenedFileCompiler.Add(fileName, fileCompiler);
+                fileCompiler.CompilationResultsForProgram.ProgramClassChanged += ProgramClassChanged;
             }
 
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
@@ -106,6 +109,7 @@ namespace TypeCobol.LanguageServices.Editor
                     fileCompilerToClose = OpenedFileCompiler[fileName];
                     OpenedFileCompiler.Remove(fileName);
                     fileCompilerToClose.StopContinuousBackgroundCompilation();
+                    fileCompilerToClose.CompilationResultsForProgram.ProgramClassChanged -= ProgramClassChanged;
                 }
             }            
         }
@@ -160,6 +164,21 @@ namespace TypeCobol.LanguageServices.Editor
             CustomSymbols = null;
             CustomSymbols = LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format); //Refresh Intrinsics
             CustomSymbols = LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols); //Refresh Dependencies
+        }
+
+        /// <summary>
+        /// Called by a ProgramClass changed event trigger. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProgramClassChanged(object sender, int e)
+        {
+            var compilationUnit = sender as CompilationUnit;
+
+            if (compilationUnit.AllDiagnostics().Count > 0)
+                DiagnosticsEvent(compilationUnit, compilationUnit.AllDiagnostics());
+            if (CompilationProject.MissingCopys.Count > 0)
+                MissingCopiesEvent(CompilationProject, CompilationProject.MissingCopys);
         }
 
 

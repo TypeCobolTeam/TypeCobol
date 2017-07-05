@@ -2,23 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using TypeCobol.Compiler;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
-using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.LanguageServices.Editor;
+using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 
 namespace TypeCobol.LanguageServer
 {
     /// <summary>
     /// Override methods of the base language server to implement TypeCobol editor experiences
     /// </summary>
-    class TypeCobolServer : VsCodeProtocol.LanguageServer
+    class TypeCobolServer : TypeCobolCustomLanguageServer
     {
         public TypeCobolServer(IRPCServer rpcServer) : base(rpcServer) { }
 
@@ -37,7 +34,7 @@ namespace TypeCobol.LanguageServer
             typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName);
           
             //Simulate Configuration change
-            //typeCobolWorkspace.DidChangeConfigurationParams(@"-o C:\TypeCobol\Test.cee -d C:\TypeCobol\Test.xml -t -s C:\TypeCobol\Sources\##Latest_Release##\skeletons.xml -e rdz -y C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt --autoremarks --dependencies C:\TypeCobol\Sources\##Latest_Release##\Dependencies\*.tcbl");
+            //typeCobolWorkspace.DidChangeConfigurationParams(@"-o C:\TypeCobol\Test.cee -d C:\TypeCobol\Test.xml -s C:\TypeCobol\Sources\##Latest_Release##\skeletons.xml -e rdz -y C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt --autoremarks --dependencies C:\TypeCobol\Sources\##Latest_Release##\Dependencies\*.tcbl");
 
             // DEBUG information
             RemoteWindow.ShowInformationMessage("TypeCobol language server was launched !");
@@ -54,8 +51,7 @@ namespace TypeCobol.LanguageServer
             return initializeResult;
         }
 
-        // -- Files synchronization : maintain a list of opened files, apply all updates to their content --
-
+        // -- Files synchronization : maintain a list of opened files, apply all updates to their content -- //
         public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
             Uri objUri = new Uri(parameters.textDocument.uri);
@@ -63,6 +59,10 @@ namespace TypeCobol.LanguageServer
             {
                 string fileName = Path.GetFileName(objUri.LocalPath);
                 typeCobolWorkspace.OpenSourceFile(fileName, parameters.text != null ? parameters.text : parameters.textDocument.text);
+
+                //Subscribe to diagnostics event
+                typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
+                typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + fileName);
@@ -237,6 +237,7 @@ namespace TypeCobol.LanguageServer
         {
             typeCobolWorkspace.DidChangeConfigurationParams(parameters.settings.ToString());
         }
+        // ----------------------------------------------------------------------------------------------- //
 
         public override Hover OnHover(TextDocumentPosition parameters)
         {
@@ -311,10 +312,48 @@ namespace TypeCobol.LanguageServer
             }
             return new List<CompletionItem>();
         }
+
+        public override void OnShutdown()
+        {
+            typeCobolWorkspace.MissingCopiesEvent -= MissingCopiesDetected;
+            typeCobolWorkspace.DiagnosticsEvent -= DiagnosticsDetected;
+
+            base.OnShutdown();
+        }
         #endregion
 
+        /// <summary>
+        /// Event Method triggered when missing copies are detected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">List of missing copies name</param>
+        private void MissingCopiesDetected(object sender, List<string> e)
+        {
+            //Send missing copies to client
+            var missingCopiesParam = new MissingCopiesParams();
+            missingCopiesParam.Copies = e;
 
+            SendMissingCopies(missingCopiesParam);
+        }
 
+        /// <summary>
+        /// Event Method triggered when diagnostics are detected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">List of TypeCobol compiler diagnostics</param>
+        private void DiagnosticsDetected(object sender, IList<Compiler.Diagnostics.Diagnostic> e)
+        {
+            var diagParameter = new PublishDiagnosticsParams();
+            var diagList = new List<Diagnostic>();
+
+            foreach (var diag in e)
+            {
+                diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd), diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(), diag.Info.ReferenceText));
+            }
+
+            diagParameter.diagnostics = diagList.ToArray();
+            SendDiagnostics(diagParameter);
+        }
 
         /// <summary>
         /// Get the paragraph that can be associated to PERFORM Completion token.

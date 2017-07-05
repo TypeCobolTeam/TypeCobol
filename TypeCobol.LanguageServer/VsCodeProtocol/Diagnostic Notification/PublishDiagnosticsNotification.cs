@@ -13,6 +13,6 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     class PublishDiagnosticsNotification
     {
-        public readonly NotificationType Type = new NotificationType("textDocument/publishDiagnostics", typeof(PublishDiagnosticsParams));
+        public static readonly NotificationType Type = new NotificationType("textDocument/publishDiagnostics", typeof(PublishDiagnosticsParams));
     }
 }

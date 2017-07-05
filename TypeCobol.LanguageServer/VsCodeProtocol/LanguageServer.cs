@@ -7,7 +7,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// <summary>
     /// Base class for all language servers
     /// </summary>
-    public class LanguageServer
+    class LanguageServer
     {
         public LanguageServer(IRPCServer rpcServer)
         {
@@ -43,7 +43,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         // RPC server used to send Remote Procedure Calls to the client
-        private IRPCServer rpcServer;
+        public IRPCServer rpcServer { get; private set; }
 
         // --- Generic notification and request handlers ---
 
@@ -526,7 +526,12 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// Diagnostics notification are sent from the server to the client to signal
         /// results of validation runs.
         /// </summary>
-        public virtual void SendDiagnostics(PublishDiagnosticsParams parameters) { }
+        public virtual void SendDiagnostics(PublishDiagnosticsParams parameters)
+        {
+            rpcServer.SendNotification(PublishDiagnosticsNotification.Type, parameters);
+        }
+
+       
 
         /// <summary>
         /// Request to request hover information at a given text document position. The request's
