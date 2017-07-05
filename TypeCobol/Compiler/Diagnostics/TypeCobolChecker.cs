@@ -488,19 +488,7 @@ class FunctionDeclarationChecker: NodeListener {
 
             if (parameter.Picture != null)
             {
-                foreach (Match match in Regex.Matches(parameter.Picture.Value, @"\(([^)]*)\)"))
-                {
-                    try //Try catch is here beacause of the risk to parse a non numerical value
-                    {
-                        int value = int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                    }
-                    catch (Exception)
-                    {
-                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(ce, m);
-                    }
-
-                }
+                Cobol85CompleteASTChecker.CheckPicture(parameter);
             }
 
             var type = parameter.DataType;

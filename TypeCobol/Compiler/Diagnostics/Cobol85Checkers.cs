@@ -38,23 +38,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                 }
             }
 
-            if(codeElement is CommonDataDescriptionAndDataRedefines && (codeElement as CommonDataDescriptionAndDataRedefines).Picture != null)
-            {
-                var picture = (codeElement as CommonDataDescriptionAndDataRedefines).Picture;
-                foreach (Match match in Regex.Matches(picture.Value, @"\(([^)]*)\)"))
-                {
-                    try //Try catch is here beacause of the risk to parse a non numerical value
-                    {
-                        int value = int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                    }
-                    catch (Exception)
-                    {
-                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(codeElement, m);
-                    }
-
-                }
-            }
+            
 
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
@@ -102,6 +86,34 @@ namespace TypeCobol.Compiler.Diagnostics {
         public override bool VisitVariableWriter(VariableWriter variableWriter) {
             WriteTypeConsistencyChecker.OnNode(variableWriter, CurrentNode);
             return true;
+        }
+
+        public override bool Visit(DataDefinition dataDefinition)
+        {
+            if(dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
+            {
+                CheckPicture((dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines));
+            }
+            return true;
+        }
+
+        public static void CheckPicture(CommonDataDescriptionAndDataRedefines codeElement)
+        {
+            if (codeElement.Picture != null)
+            {
+                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
+                {
+                    try //Try catch is here beacause of the risk to parse a non numerical value
+                    {
+                        int value = int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
+                    }
+                    catch (Exception)
+                    {
+                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
+                        DiagnosticUtils.AddError(codeElement, m);
+                    }
+                }
+            }
         }
 
         private void CheckVariable(Node node, VariableBase variable)

@@ -418,13 +418,10 @@ namespace TypeCobol.Compiler.CodeElements
                     int value = Math.Abs(int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses));
                     picText = picText.Replace(match.Value, "(" + value + ")");
                 }
-                catch (Exception)
-                {
-                    //Error while int.parse, error has certainly been raised before in Cobol85Checker or TypeCobolChecker
+                catch (Exception) {
+                    //Error while int.parse, error has certainly been raised before in Cobol85Checker
                 }
-                
             }
-
             return picText.ToUpper();
         }
 
