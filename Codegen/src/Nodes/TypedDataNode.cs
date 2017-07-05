@@ -110,6 +110,30 @@ internal class TypedDataNode: DataDescription, Generated {
     }
 
     /// <summary>
+    /// Tries to extract all remaining tokens after a Type Name.
+    /// </summary>
+    /// <param name="customtype">The Type definition node</param>
+    /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
+    /// <returns>The string representing the Tokens after TYPE Name</returns>
+    internal static string ExtractTokensValuesAfterTypeName(DataDescriptionEntry dataDescEntry, out bool bHasPeriod)
+    {
+        bHasPeriod = false;
+        StringBuilder sb = new StringBuilder();
+        if (dataDescEntry.ConsumedTokens != null)
+        {
+            if (dataDescEntry.ConsumedTokens != null)
+            {
+                int i = 0;
+                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPE)
+                    i++;
+                i++;//Ignore the Name of the Type.
+                FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
+            }
+        }
+        return sb.ToString();
+    }
+
+    /// <summary>
     /// Tries to detect a (PIC|PICTURE) construction for a Data Description Entry.
     /// </summary>
     /// <param name="dataDescEntry">The Data Description Entry Node</param>
@@ -201,7 +225,16 @@ internal class TypedDataNode: DataDescription, Generated {
                 if (data_def.Name != null)
                     line.Append(' ').Append(data.Name);
                 string text = ExtractAnyCobolScalarTypeDef(customtype, out bHasPeriod);
-                line.Append(text);
+                if (text.Length != 0)
+                {
+                    line.Append(text);
+                }
+                else
+                {
+                    text = ExtractTokensValuesAfterTypeName(data, out bHasPeriod);
+                    if (text.Length != 0)
+                        line.Append(text);
+                }
             }
             else
             {

@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. VARTYPEXT.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      *01  var1     Type Date external.
+       01 var1 external.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                                       
+
+       END PROGRAM VARTYPEXT.
