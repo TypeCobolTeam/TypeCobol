@@ -1,4 +1,5 @@
-﻿using TypeCobol.LanguageServer.JsonRPC;
+﻿using System;
+using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
@@ -6,7 +7,28 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
     {
         public TypeCobolCustomLanguageServer(IRPCServer rpcServer) : base(rpcServer)
         {
+            rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);
+        }
 
+        private void CallReceiveMissingCopies(NotificationType notificationType, object parameters)
+        {
+            try
+            {
+                OnDidReceiveMissingCopies((MissingCopiesParams)parameters);
+            }
+            catch (Exception e)
+            {
+                RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
+            }
+        }
+
+        /// <summary>
+        /// The Missing copies notification is sent from the client to the server
+        /// when the client failled to load copies, it send back a list of missing copies to the server.
+        /// </summary>
+        public virtual void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
+        {
+            //Nothing to do for now, maybe add some telemetry here...
         }
 
         /// <summary>
