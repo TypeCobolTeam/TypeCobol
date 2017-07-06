@@ -112,7 +112,7 @@ namespace TypeCobol.Server
             var parser = new Parser();
 
             parser.CustomSymbols = LoadCopies(errorWriter, config.Copies, config.Format); //Load of the intrinsics
-            parser.CustomSymbols = LoadDependencies(errorWriter, config.Dependencies, config.Format, parser.CustomSymbols); //Load of the dependency files
+            parser.CustomSymbols = LoadDependencies(errorWriter, config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles); //Load of the dependency files
 
             ReturnCode returnCode = ReturnCode.Success;
             for (int c = 0; c < config.InputFiles.Count; c++)
@@ -295,9 +295,11 @@ namespace TypeCobol.Server
         /// </summary>
         /// <param name="writer">AbstractErrorWriter</param>
         /// <param name="paths">List<string></param>
-        /// <param name="copyDocumentFormat">DocumentFormat</param>
+        /// <param name="format"></param>
+        /// <param name="intrinsicTable"></param>
+        /// <param name="inputFiles">Input files that will be parsed after dependecies are loaded</param>
         /// <returns>SymbolTable</returns>
-        private static SymbolTable LoadDependencies(AbstractErrorWriter writer, List<string> paths, DocumentFormat format, SymbolTable intrinsicTable)
+        private static SymbolTable LoadDependencies(AbstractErrorWriter writer, List<string> paths, DocumentFormat format, SymbolTable intrinsicTable, List<string> inputFiles)
         {
             var parser = new Parser(intrinsicTable);
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
@@ -309,10 +311,39 @@ namespace TypeCobol.Server
                 dependencies.AddRange(Tools.FileSystem.GetFiles(path, extensions, true)); //Get File by name or search the directory for all files
             }
 
+
+#if EUROINFO_RULES
+            //Create list of inputFileName according to our naming convention in the case of an usage with RDZ
+            var inputFileNames = new List<string>();
+            foreach (var inputFile in inputFiles) {
+                var inputFileName = Path.GetFileNameWithoutExtension(inputFile);
+                if (inputFileName != null) {
+                    //our inputFiles contains a temporary file : the first 8 chars are the program name then there are random chars and then .cbl extension
+                    if (inputFileName.Length > 8) {
+                        inputFileName = inputFileName.Substring(0, 8);
+                    }
+                    inputFileNames.Add(inputFileName);
+                }
+            }
+#endif
             foreach (string path in dependencies)
             {
                 try
                 {
+
+#if EUROINFO_RULES
+                    //Issue #583, ignore a dependency if the same file will be parsed as an input file just after
+                    
+                    //Our dependency folder contains file named with 8 chars + tcbl extension
+                    string depFileName = Path.GetFileNameWithoutExtension(path);
+
+                    if (depFileName != null &&
+                        inputFileNames.Any(inputFileName => depFileName.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase))) {
+                        continue;
+                    }
+#endif
+
+
                     parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format);
                     parser.Parse(path); //Parse the dependencie file
 

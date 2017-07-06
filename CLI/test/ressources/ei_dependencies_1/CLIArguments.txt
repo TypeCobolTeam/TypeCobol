@@ -1,0 +1,1 @@
+﻿-1 -i input\PGM3.rdz.tcbl -g -o output\PGM3.rdz.tcbl -d output\error.txt --dependencies input\dependencies\*.rdz.tcbl -s ..\skeletons.xml -e rdz -y input\MyIntrinsicFunctions.rdz.tcbl
