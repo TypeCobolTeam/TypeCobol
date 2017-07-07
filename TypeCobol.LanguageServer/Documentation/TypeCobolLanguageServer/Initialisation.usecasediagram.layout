@@ -1,1 +1,4 @@
-﻿ 
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Initialisation">
+  <useCaseModelRootMoniker Id="854b4007-8338-4639-a54f-f7a20facaf2c" />
+</useCaseDiagram>

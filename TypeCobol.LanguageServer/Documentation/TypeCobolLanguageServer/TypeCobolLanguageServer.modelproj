@@ -17,6 +17,27 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" />
   <ItemGroup>
+    <Content Include="DidChangeConfiguration.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="DidChangeConfiguration.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>DidChangeConfiguration.usecasediagram</DependentUpon>
+    </Content>
+    <Content Include="DidConfigurationChange.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="DidConfigurationChange.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>DidConfigurationChange.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Initialisation.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Initialisation.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Initialisation.usecasediagram</DependentUpon>
+    </Content>
     <Content Include="UMLSequenceDiagram1.sequencediagram">
       <SubType>Content</SubType>
     </Content>
