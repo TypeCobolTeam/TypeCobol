@@ -1,1 +1,2 @@
-﻿No error in "input\WrongCodeElement.rdz.tcbl".
+﻿ReturnCode=Success_
+No error in "input\WrongCodeElement.rdz.tcbl".

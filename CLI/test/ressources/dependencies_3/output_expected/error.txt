@@ -1,2 +1,3 @@
-﻿1 error in "input\PGM3.rdz.tcbl":
+﻿ReturnCode=ParsingDiagnostics_
+1 error in "input\PGM3.rdz.tcbl":
 Line 26[12,39] <27, Error, Syntax> - Syntax error : Function not found 'MyPublicProcedure' input(DATE)

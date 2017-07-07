@@ -1,4 +1,5 @@
-﻿1 error in "input\empty.rdz.tcbl":
+﻿ReturnCode=FatalError_
+1 error in "input\empty.rdz.tcbl":
 Line 1[0,0] <33, Error, Semantics> - Source file empty.rdz.tcbl is empty
    at TypeCobol.Server.CLI.runOnce2(TypeCobolConfiguration config, AbstractErrorWriter errorWriter)
    at TypeCobol.Server.CLI.runOnce(TypeCobolConfiguration config)

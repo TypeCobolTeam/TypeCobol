@@ -1,2 +1,3 @@
-﻿1 error in "input\PGM0001.rdz.tcbl":
+﻿ReturnCode=Warning_
+1 error in "input\PGM0001.rdz.tcbl":
 Line 11[12,38] <29, Warning, Semantics> - Warning: Useless UNSAFE with non strongly typed receiver.

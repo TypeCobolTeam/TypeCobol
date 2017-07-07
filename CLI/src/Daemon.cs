@@ -242,7 +242,7 @@ namespace TypeCobol.Server {
         Success = 0,
         
         //Warnings
-        Warning = 0,            //Warning(s) issued during parsing of input file
+        Warning = 1,            //Warning(s) issued during parsing of input file
 
 
         //Errors

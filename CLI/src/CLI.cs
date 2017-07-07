@@ -47,9 +47,11 @@ namespace TypeCobol.Server
             errorWriter.Outputs = config.OutputFiles;
 
             //Call the runOnce2() Methode and manage all the different kinds of exception. 
+
+            ReturnCode returnCode;
             try
             {
-                return runOnce2(config, errorWriter);
+                returnCode =  runOnce2(config, errorWriter);
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
@@ -67,15 +69,15 @@ namespace TypeCobol.Server
                
 
                 if (typeCobolException is PresenceOfDiagnostics)
-                    return ReturnCode.ParsingDiagnostics;
-                if (typeCobolException is ParsingException)
-                    return ReturnCode.FatalError;
-                if (typeCobolException is GenerationException)
-                    return ReturnCode.GenerationError;
-                if (typeCobolException is MissingCopyException)
-                    return ReturnCode.MissingCopy;
-
-                return ReturnCode.FatalError; //Just in case..
+                    returnCode = ReturnCode.ParsingDiagnostics;
+                else if (typeCobolException is ParsingException)
+                    returnCode = ReturnCode.FatalError;
+                else if(typeCobolException is GenerationException)
+                    returnCode = ReturnCode.GenerationError;
+                else if(typeCobolException is MissingCopyException)
+                    returnCode = ReturnCode.MissingCopy;
+                else
+                    returnCode = ReturnCode.FatalError; //Just in case..
             }
             catch (Exception e)//Catch any other exception
             {
@@ -83,27 +85,26 @@ namespace TypeCobol.Server
                 AnalyticsWrapper.Telemetry.SendMail(e, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, e.Message + e.StackTrace, string.Empty);
-                return ReturnCode.FatalError;
+                returnCode= ReturnCode.FatalError;
             }
-            finally
-            {
-                errorWriter.Write();
-                errorWriter.FlushAndClose();
-                errorWriter = null;
-                //as textWriter can be a Text file created, we need to close it
-                textWriter.Close();
+            
 
-                stopWatch.Stop();
-                debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
-                File.AppendAllText("TypeCobol.CLI.log", debugLine);
-                Console.WriteLine(debugLine);
+            errorWriter.Write(returnCode);
+            errorWriter.FlushAndClose();
+            errorWriter = null;
+            //as textWriter can be a Text file created, we need to close it
+            textWriter.Close();
 
-                AnalyticsWrapper.Telemetry.TrackEvent("[Duration] Execution Time",
-                                                        new Dictionary<string, string> { { "Duration", "Duration"} }, //Custom properties for metrics
-                                                        new Dictionary<string, double> { { "ExecutionTime", stopWatch.Elapsed.Milliseconds} }); //Metrics fo duration
-            }
+            stopWatch.Stop();
+            debugLine = "                         parsed in " + stopWatch.Elapsed + " ms\n";
+            File.AppendAllText("TypeCobol.CLI.log", debugLine);
+            Console.WriteLine(debugLine);
 
-            return ReturnCode.Success;
+            AnalyticsWrapper.Telemetry.TrackEvent("[Duration] Execution Time",
+                                                    new Dictionary<string, string> { { "Duration", "Duration"} }, //Custom properties for metrics
+                                                    new Dictionary<string, double> { { "ExecutionTime", stopWatch.Elapsed.Milliseconds} }); //Metrics fo duration
+            
+            return returnCode;
         }
 
         private static ReturnCode runOnce2(TypeCobolConfiguration config, AbstractErrorWriter errorWriter)

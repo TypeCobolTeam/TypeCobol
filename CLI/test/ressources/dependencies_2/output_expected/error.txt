@@ -1,1 +1,2 @@
-﻿No error in "input\PGM2.rdz.tcbl".
+﻿ReturnCode=Success_
+No error in "input\PGM2.rdz.tcbl".

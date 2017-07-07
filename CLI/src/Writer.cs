@@ -7,7 +7,7 @@ using TypeCobol.Tools;
 
 namespace TypeCobol.Server {
     interface ErrorWriter {
-        void Write();
+        void Write(ReturnCode returnCode);
         void FlushAndClose();
     }
 
@@ -37,16 +37,14 @@ namespace TypeCobol.Server {
         }
 
         public void AddErrors(string key, IEnumerable<Diagnostic> errors) {
-            key = GetDefaultKeyIfNull(key);
             GetErrors(key).AddRange(errors);
         }
 
-        public string GetDefaultKeyIfNull(string key) {
+        private string GetDefaultKeyIfNull(string key) {
             return key ?? @"_DEFAULT_";
         }
 
         public void AddErrors(string key, Diagnostic error) {
-            key = GetDefaultKeyIfNull(key);
             GetErrors(key).Add(error);
         }
 
@@ -60,7 +58,7 @@ namespace TypeCobol.Server {
             return count++;
         }
 
-        public abstract void Write();
+        public abstract void Write(ReturnCode returnCode);
         public abstract void FlushAndClose();
     }
 
@@ -75,7 +73,8 @@ namespace TypeCobol.Server {
             this.writer = XmlWriter.Create(writer, settings);
         }
 
-        public override void Write() {
+        public override void Write(ReturnCode returnCode) {
+            writer.WriteComment(" ReturnCode = " + returnCode +" ");
             writeHead();
             writeInputs();
             foreach (var key in Errors.Keys) {
@@ -170,7 +169,8 @@ namespace TypeCobol.Server {
             this.writer = writer;
         }
 
-        public override void Write() {
+        public override void Write(ReturnCode returnCode) {
+            writer.WriteLineAsync("ReturnCode=" + returnCode +"_");
             foreach (var key in Errors.Keys) {
                 write(key, Errors[key]);
             }
