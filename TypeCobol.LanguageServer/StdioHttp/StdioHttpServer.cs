@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TypeCobol.LanguageServer.StdioHttp
 {
@@ -136,25 +137,31 @@ namespace TypeCobol.LanguageServer.StdioHttp
         /// </summary>
         public void SendMessage(string message)
         {
-            lock(_lock)
+            Action<object> action = (object msg) =>
             {
-                // Write only the Content-Length header
-                int contentLength = Console.Out.Encoding.GetByteCount(message);
-                Console.Out.WriteLine("Content-Length: " + contentLength);
-                Console.Out.WriteLine();
-                if (logLevel >= ServerLogLevel.Message)
+                lock (_lock)
                 {
-                    logWriter.WriteLine(String.Format("{0} << Message sent : Content-Length={1}", DateTime.Now, contentLength));
-                }
+                    string the_message = (string)msg;
+                    // Write only the Content-Length header
+                    int contentLength = Console.Out.Encoding.GetByteCount(the_message);
+                    Console.Out.WriteLine("Content-Length: " + contentLength);
+                    Console.Out.WriteLine();
+                    if (logLevel >= ServerLogLevel.Message)
+                    {
+                        logWriter.WriteLine(String.Format("{0} << Message sent : Content-Length={1}", DateTime.Now, contentLength));
+                    }
 
-                // Write the message body
-                Console.Out.Write(message);
-                if (logLevel == ServerLogLevel.Protocol)
-                {
-                    logWriter.WriteLine(message);
-                    logWriter.WriteLine("----------");
+                    // Write the message body
+                    Console.Out.Write(the_message);
+                    if (logLevel == ServerLogLevel.Protocol)
+                    {
+                        logWriter.WriteLine(the_message);
+                        logWriter.WriteLine("----------");
+                    }
                 }
-            }
+            };
+            Task tsend = new Task(action, message);
+            tsend.Start();
         }
 
         /// <summary>
