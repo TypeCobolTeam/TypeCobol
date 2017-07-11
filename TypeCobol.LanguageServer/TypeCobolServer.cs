@@ -20,7 +20,6 @@ namespace TypeCobol.LanguageServer
         public TypeCobolServer(IRPCServer rpcServer) : base(rpcServer) { }
 
         // -- Initialization : create workspace and return language server capabilities --
-
         private Workspace typeCobolWorkspace;
 
 
@@ -85,28 +84,18 @@ namespace TypeCobol.LanguageServer
                 foreach (var contentChange in parameters.contentChanges)
                 {
                     // Split the text updated into distinct lines
-                    string[] lineUpdates = null;
+                    List<string> lineUpdates = null;
                     bool replacementTextStartsWithNewLine = false;
+
                     if (contentChange.text != null && contentChange.text.Length > 0)
                     {
                         replacementTextStartsWithNewLine = contentChange.text[0] == '\r' || contentChange.text[0] == '\n';
-                        lineUpdates = contentChange.text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        lineUpdates = contentChange.text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
                     }
 
                     // Document cleared
                     if (contentChange.range == null)
                     {
-                        //var textChange = new TextChange(TextChangeType.DocumentCleared, 0, null);
-                        //textChangedEvent.TextChanges.Add(textChange);
-                        //if (lineUpdates != null)
-                        //{
-                        //    for (int i = 0; i < lineUpdates.Length; i++)
-                        //    {
-                        //        textChange = new TextChange(TextChangeType.LineInserted, i, new TextLineSnapshot(i, lineUpdates[i], null));
-                        //        textChangedEvent.TextChanges.Add(textChange);
-                        //    }
-                        //}
-
                         //JCM: I have noticed that if the entire text has changed, is better to reload the entire file
                         //To avoid crashes.
                         try
@@ -121,13 +110,22 @@ namespace TypeCobol.LanguageServer
                     // Document updated
                     else
                     {
+                        // Get original lines text before change
+                        string originalFirstLineText = fileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line].Text;
+                        string originalLastLineText = originalFirstLineText;
+
+
                         // Check if the first line was inserted
                         int firstLineIndex = contentChange.range.start.line;
                         int firstLineChar = contentChange.range.start.character;
-                        if (replacementTextStartsWithNewLine)
+                        if (replacementTextStartsWithNewLine && !(contentChange.range.start.character < originalLastLineText.Length)) 
                         {
                             firstLineIndex++;
                             firstLineChar = 0;
+                        }
+                        else if (replacementTextStartsWithNewLine) //Detected that the add line appeared inside an existing line
+                        {
+                            lineUpdates.Add(lineUpdates.First()); ///Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
                         }
 
                         // Check if the last line was deleted
@@ -140,12 +138,9 @@ namespace TypeCobol.LanguageServer
                         }
                         if (!lastLineDeleted && contentChange.text.Length == 0)
                         {
-                            lineUpdates = new string[0];
+                            lineUpdates = new List<string>();
                         }
-
-                        // Get original lines text before change
-                        string originalFirstLineText = fileCompiler.CompilationResultsForProgram.CobolTextLines[contentChange.range.start.line].Text;
-                        string originalLastLineText = originalFirstLineText;
+                       
                         if (lastLineIndex > firstLineIndex)
                         {
                             originalLastLineText = fileCompiler.CompilationResultsForProgram.CobolTextLines[Math.Min(lastLineIndex, fileCompiler.CompilationResultsForProgram.CobolTextLines.Count - 1)].Text;
@@ -175,10 +170,10 @@ namespace TypeCobol.LanguageServer
                         // Insert the updated lines
                         if (!(startOfFirstLine == null && lineUpdates == null && endOfLastLine == null))
                         {
-                            int lineUpdatesCount = (lineUpdates != null && lineUpdates.Length > 0) ? lineUpdates.Length : 1;
+                            int lineUpdatesCount = (lineUpdates != null && lineUpdates.Count > 0) ? lineUpdates.Count : 1;
                             for (int i = 0; i < lineUpdatesCount; i++)
                             {
-                                string newLine = (lineUpdates != null && lineUpdates.Length > 0) ? lineUpdates[i] : String.Empty;
+                                string newLine = (lineUpdates != null && lineUpdates.Count > 0) ? lineUpdates[i] : String.Empty;
                                 if (i == 0)
                                 {
                                     newLine = startOfFirstLine + newLine;
@@ -346,7 +341,7 @@ namespace TypeCobol.LanguageServer
             var diagParameter = new PublishDiagnosticsParams();
             var diagList = new List<Diagnostic>();
 
-            foreach (var diag in e)
+            foreach (var diag in e.Take(100))
             {
                 diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd), diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(), diag.Info.ReferenceText));
             }

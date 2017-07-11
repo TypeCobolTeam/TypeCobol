@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler.Text
                     ReadOnlyTextLine line = new ReadOnlyTextLine(lineIndex, charsCount, currentLineText.ToString(), null);
                     lines.Add(line);
                     lineIndex++;
-                    charsCount += line.Length;
+                    charsCount += line.Length + 1; //+1 to add the \r char
 
                     // Reset StringBuilder contents for next line
                     currentLineText = new StringBuilder();
@@ -67,12 +67,13 @@ namespace TypeCobol.Compiler.Text
                         ReadOnlyTextLine line = new ReadOnlyTextLine(lineIndex, charsCount, currentLineText.ToString(), null);
                         lines.Add(line);
                         lineIndex++;
-                        charsCount += line.Length;
+                        charsCount += line.Length + 1; //+1 to add the \n char
 
                         // Reset StringBuilder contents for next line
                         currentLineText = new StringBuilder();
                     }
 
+                    charsCount++;
                     previousCharWasCr = false;
                 }
                 else

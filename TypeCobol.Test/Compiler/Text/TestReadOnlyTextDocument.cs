@@ -180,17 +180,17 @@ namespace TypeCobol.Test.Compiler.Text
             {
                 throw new Exception("Character at position 0 should be 0");
             }
-            if (textDocument.CharAt(88) != 'M')
+            if (textDocument.CharAt(90) != 'M')
             {
-                throw new Exception("Character at position 88 should be M");
+                throw new Exception("Character at position 90 should be M");
             }
-            if (textDocument.CharAt(17899) != '/')
+            if (textDocument.CharAt(18345) != '/')
             {
-                throw new Exception("Character at position 17899 should be /");
+                throw new Exception("Character at position 18345 should be /");
             }
-            if (textDocument.CharAt(17919) != '1')
+            if (textDocument.CharAt(18365) != '1')
             {
-                throw new Exception("Character at position 17191 should be 1");
+                throw new Exception("Character at position 18365 should be 1");
             }
 
             if(textDocument.Chars.Skip(88).First() != 'M')
@@ -205,13 +205,13 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("Incorrect line at index 0");
             }
             line = (ReadOnlyTextLine)textDocument.GetLineByIndex(1);
-            if (line.Length != 80 || line.LineIndex != 1 || line.StartOffset != 80 ||
+            if (line.Length != 80 || line.LineIndex != 1 || line.StartOffset != 82 ||
                 line.Text != "000020*-Maintenance frame - Created on 14 Oct 2013 at 17:27:08          00002001")
             {
                 throw new Exception("Incorrect line at index 1");
             }
             line = (ReadOnlyTextLine)textDocument.GetLineByIndex(223);
-            if (line.Length != 80 || line.LineIndex != 223 || line.StartOffset != 17840 ||
+            if (line.Length != 80 || line.LineIndex != 223 || line.StartOffset != 18286 ||
                 line.Text != "002240     05                             PIC X(08) VALUE '/MSVCOUT'.   02010001")
             {
                 throw new Exception("Incorrect line at index 223");
@@ -224,19 +224,19 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("Incorrect line at offset 12");
             }
             line = (ReadOnlyTextLine)textDocument.GetLineByOffset(159, out indexOfCharInLine);
-            if (line.LineIndex != 1 || indexOfCharInLine != 79)
+            if (line.LineIndex != 1 || indexOfCharInLine != 77)
             {
-                throw new Exception("Incorrect line at offset 79");
+                throw new Exception("Incorrect line at offset 159");
             }
             line = (ReadOnlyTextLine)textDocument.GetLineByOffset(17899, out indexOfCharInLine);
-            if (line.LineIndex != 223 || indexOfCharInLine != 59)
+            if (line.LineIndex != 218 || indexOfCharInLine != 23)
             {
                 throw new Exception("Incorrect line at offset 17899");
             }
 
-            if (textDocument.Length != 17920)
+            if (textDocument.Length != 18366)
             {
-                throw new Exception("Document should have length 17920");
+                throw new Exception("Document should have length 18366");
             }
 
             if (textDocument.LineCount != 224)
@@ -273,13 +273,13 @@ namespace TypeCobol.Test.Compiler.Text
             {
                 throw new Exception("Character at position 0 should be 0");
             }
-            if (textDocument.CharAt(90) != 'a')
+            if (textDocument.CharAt(92) != 'a')
             {
-                throw new Exception("Character at position 90 should be a");
+                throw new Exception("Character at position 92 should be a");
             }
-            if (textDocument.CharAt(2510) != '/')
+            if (textDocument.CharAt(2582) != '/')
             {
-                throw new Exception("Character at position 2510 should be /");
+                throw new Exception("Character at position 2582 should be /");
             }
             if (textDocument.CharAt(2522) != ' ')
             {
@@ -298,13 +298,13 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("Incorrect line at index 0");
             }
             line = (ReadOnlyTextLine)textDocument.GetLineByIndex(1);
-            if (line.Length != 96 || line.LineIndex != 1 || line.StartOffset != 65 ||
+            if (line.Length != 96 || line.LineIndex != 1 || line.StartOffset != 67 ||
                 line.Text != "* MSVCINP               partie ALLER FIXE des MESSAGES échangés avec tout SERVICE APPLICATIF C14")
             {
                 throw new Exception("Incorrect line at index 1");
             }
             line = (ReadOnlyTextLine)textDocument.GetLineByIndex(36);
-            if (line.Length != 66 || line.LineIndex != 36 || line.StartOffset != 2457 ||
+            if (line.Length != 66 || line.LineIndex != 36 || line.StartOffset != 2529 ||
                 line.Text != "d    05                            PIC X(008) VALUE '/MSVCINP'.   ")
             {
                 throw new Exception("Incorrect line at index 36");
@@ -317,19 +317,19 @@ namespace TypeCobol.Test.Compiler.Text
                 throw new Exception("Incorrect line at offset 12");
             }
             line = (ReadOnlyTextLine)textDocument.GetLineByOffset(881, out indexOfCharInLine);
-            if (line.LineIndex != 12 || indexOfCharInLine != 5)
+            if (line.LineIndex != 11 || indexOfCharInLine != 48)
             {
-                throw new Exception("Incorrect line at offset 981");
+                throw new Exception("Incorrect line at offset 881");
             }
             line = (ReadOnlyTextLine)textDocument.GetLineByOffset(2509, out indexOfCharInLine);
-            if (line.LineIndex != 36 || indexOfCharInLine != 52)
+            if (line.LineIndex != 35 || indexOfCharInLine != 48)
             {
                 throw new Exception("Incorrect line at offset 2509");
             }
 
-            if (textDocument.Length != 2523)
+            if (textDocument.Length != 2595)
             {
-                throw new Exception("Document should have length 2523");
+                throw new Exception("Document should have length 2595");
             }
 
             if (textDocument.LineCount != 37)
