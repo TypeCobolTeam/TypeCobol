@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
 using Analytics;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools.Options_Config;
 
@@ -44,6 +46,12 @@ namespace TypeCobol.LanguageServices.Editor
 
             this.RootDirectoryFullName = rootDirectoryFullName;
             this.WorkspaceName = workspaceName;
+
+            this.CompilationProject = new CompilationProject(
+                WorkspaceName, RootDirectoryFullName, Extensions,
+                Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat,
+                new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
+
         }
 
         /// <summary>
