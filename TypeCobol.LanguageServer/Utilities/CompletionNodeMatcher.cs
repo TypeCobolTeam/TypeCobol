@@ -20,7 +20,8 @@ namespace TypeCobol.LanguageServer.Utilities
             /// <summary>
             /// Completion on PERFORM Token
             /// </summary>
-            Perform = 0x01 << 0
+            Perform,
+            Call,
         }
 
         /// <summary>
@@ -86,7 +87,7 @@ namespace TypeCobol.LanguageServer.Utilities
         /// </summary>
         /// <param name="mode">Completion mode</param>
         /// <param name="matchingToken">Matching token</param>
-        public CompletionNodeMatcher(CompletionMode mode, TypeCobol.Compiler.Scanner.Token matchingToken)
+        public CompletionNodeMatcher(CompletionMode mode, Compiler.Scanner.Token matchingToken)
         {
             Mode = mode;
             MatchingToken = matchingToken;
@@ -121,6 +122,20 @@ namespace TypeCobol.LanguageServer.Utilities
                     }
                     return canVisit;
                 }
+                case CompletionMode.Call:
+                    {
+                        if(node.CodeElement !=null)
+                        {
+                            var consumedTokens = node.CodeElement.ConsumedTokens;
+                            if (consumedTokens != null && consumedTokens.Any(t => t.Line <= MatchingToken.Line && t.Column <= MatchingToken.Column))
+                            {
+                                MatchingNode = node;
+                            }
+                            else if (!consumedTokens.Any(t => t.Line <= MatchingToken.Line && t.Column <= MatchingToken.Column))
+                                return false;
+                        }
+                        return true;
+                    }
                 default:
                     return true;
             }            
@@ -141,6 +156,8 @@ namespace TypeCobol.LanguageServer.Utilities
                             ProcedureDivisionCount--;                            
                         }
                     }
+                    break;
+                case CompletionMode.Call:
                     break;
                 default:
                     break;

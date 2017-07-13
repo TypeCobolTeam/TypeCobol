@@ -641,6 +641,27 @@ namespace TypeCobol.Compiler.CodeModel
             return GetFunction(uri, profile);
         }
 
+        public IDictionary<string, List<FunctionDeclaration>> GetFunctions(string filter)
+        {
+            //Get Function for this programm 
+            var functions = this.GetTableFromScope(Scope.Declarations).Functions
+                            .Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase))).ToDictionary(f => f.Key, f => f.Value);
+
+            //Get public functions from other programs
+            var publicFunctions = this.GetTableFromScope(Scope.Namespace)
+                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
+                                    .Functions.Where(f => f.Value.All(fd => ((FunctionDeclarationHeader)fd.CodeElement).Visibility == AccessModifier.Public))
+                                    .Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase))));
+
+            foreach (var pubFunc in publicFunctions)
+            {
+                if (!functions.ContainsKey(pubFunc.Key))
+                    functions.Add(pubFunc.Key, pubFunc.Value);
+            }
+
+            return functions;
+        }
+
         public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, string nameSpace = null)
         {
             var found = GetFunction(name.Head, nameSpace);

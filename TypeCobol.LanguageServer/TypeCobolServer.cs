@@ -9,6 +9,8 @@ using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.LanguageServices.Editor;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
+using TypeCobol.Compiler.Nodes;
+using static TypeCobol.LanguageServer.Utilities.CompletionNodeMatcher;
 
 namespace TypeCobol.LanguageServer
 {
@@ -44,7 +46,7 @@ namespace TypeCobol.LanguageServer
             initializeResult.capabilities.hoverProvider = true;
             CompletionOptions completionOptions = new CompletionOptions();
             completionOptions.resolveProvider = false;
-            completionOptions.triggerCharacters = new String[] { "::" };
+            completionOptions.triggerCharacters = new string[] { "::" };
             initializeResult.capabilities.completionProvider = completionOptions;
 
             return initializeResult;
@@ -104,7 +106,7 @@ namespace TypeCobol.LanguageServer
                         }
                         catch (Exception e)
                         {//Don't rethow an exception on save.
-                            RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", "textDocument/didChange", e.Message));
+                            RemoteConsole.Error(string.Format("Error while handling notification {0} : {1}", "textDocument/didChange", e.Message));
                         }
                     }
                     // Document updated
@@ -173,7 +175,7 @@ namespace TypeCobol.LanguageServer
                             int lineUpdatesCount = (lineUpdates != null && lineUpdates.Count > 0) ? lineUpdates.Count : 1;
                             for (int i = 0; i < lineUpdatesCount; i++)
                             {
-                                string newLine = (lineUpdates != null && lineUpdates.Count > 0) ? lineUpdates[i] : String.Empty;
+                                string newLine = (lineUpdates != null && lineUpdates.Count > 0) ? lineUpdates[i] : string.Empty;
                                 if (i == 0)
                                 {
                                     newLine = startOfFirstLine + newLine;
@@ -280,28 +282,27 @@ namespace TypeCobol.LanguageServer
                     // Find the token located below the mouse pointer
                     var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
                     var tokens = tokensLine.TokensWithCompilerDirectives;
-                    TypeCobol.Compiler.Scanner.Token matchingToken = MatchCompletionTokenPosition(parameters.position, tokens);
+                    Compiler.Scanner.Token userFilterToken = null;
+                    Compiler.Scanner.Token matchingToken = MatchCompletionTokenPosition(parameters.position, tokens, out userFilterToken);
                     if (matchingToken != null)
                     {//We got a perform Token
+                        List<CompletionItem> items = new List<CompletionItem>();
                         switch (matchingToken.TokenType)
                         {
                             case Compiler.Scanner.TokenType.PERFORM:
                                 {
-                                    List<CompletionItem> items = new List<CompletionItem>();
-                                    ICollection<String> paragraphs = GetCompletionPerformParagraph(fileCompiler, matchingToken);
-                                    if (paragraphs != null)
-                                    {
-                                        foreach (String p in paragraphs)
-                                        {
-                                            CompletionItem item = new CompletionItem(p);
-                                            items.Add(item);
-                                        }
-                                    }
-                                    return items;
+                                    items = GetCompletionPerformParagraph(fileCompiler, matchingToken);
+                                    break;
+                                }
+                            case Compiler.Scanner.TokenType.CALL:
+                                {
+                                    items = GetCompletionForProcedure(fileCompiler, matchingToken, userFilterToken);
+                                    break;
                                 }
                             default:
                                 break;
                         }
+                        return items;
                     }
                 }
             }
@@ -356,29 +357,92 @@ namespace TypeCobol.LanguageServer
         /// <param name="fileCompiler">The target FileCompiler instance</param>
         /// <param name="performToken">The PERFORM token</param>
         /// <returns></returns>
-        private ICollection<string> GetCompletionPerformParagraph(FileCompiler fileCompiler, Compiler.Scanner.Token performToken)
+        private List<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, Compiler.Scanner.Token performToken)
+        {
+            var performNode = GetMatchingNode(fileCompiler, performToken, CompletionMode.Perform);
+            ICollection<string> pargraphs = null;
+            if (performNode != null)
+            {
+                if (performNode.SymbolTable != null)
+                {
+                    pargraphs = performNode.SymbolTable.GetParagraphNames();
+                }
+            }
+
+            var completionItems = new List<CompletionItem>();
+            if (pargraphs != null)
+            {
+                foreach (var para in pargraphs)
+                {
+                    completionItems.Add(new CompletionItem(para));
+                }
+            }
+
+            return completionItems;
+        }
+
+        private List<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, Compiler.Scanner.Token callToken, Compiler.Scanner.Token userFilterToken)
+        {
+            var callNode = GetMatchingNode(fileCompiler, callToken, CompletionMode.Call);
+            IDictionary<string, List<FunctionDeclaration>> procedures = new Dictionary<string, List<FunctionDeclaration>>(StringComparer.InvariantCultureIgnoreCase);
+            if (callNode != null)
+            {
+                if (callNode.SymbolTable != null)
+                {
+                    procedures = callNode.SymbolTable.GetFunctions(userFilterToken != null ? userFilterToken.Text : string.Empty);
+                }
+            }
+
+            var completionItems = new List<CompletionItem>();
+            if (procedures != null)
+            {
+                foreach (var proc in procedures)
+                {
+                    string inputParams = null, outputParams = null, inoutParams = null;
+                    var procedure = proc.Value.First();
+
+                    if(procedure.Profile != null)
+                    {
+                        if (procedure.Profile.InputParameters != null && procedure.Profile.InputParameters.Count > 0)
+                            inputParams = string.Format("INPUT: {0}", string.Join(", ", procedure.Profile.InputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                        if (procedure.Profile.OutputParameters != null && procedure.Profile.OutputParameters.Count > 0)
+                            outputParams = string.Format("| OUTPUT: {0}", string.Join(", ", procedure.Profile.OutputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                        if (procedure.Profile.InoutParameters != null && procedure.Profile.InoutParameters.Count > 0)
+                            inoutParams = string.Format("| INOUT: {0}", string.Join(", ", procedure.Profile.InoutParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                    }
+                    var completionItem = new CompletionItem(string.Format("{0} ({1} {2} {3})", procedure.Name, inputParams, outputParams, inoutParams));
+                    completionItem.insertText = proc.Key;
+                    completionItem.kind = procedure.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
+                    completionItems.Add(completionItem);
+                }
+            }
+
+            return completionItems;
+        }
+
+
+
+
+        /// <summary>
+        /// Get the matchig node for a given Token and a gien completion mode. Returning a matching Node or null.
+        /// </summary>
+        /// <param name="fileCompiler"></param>
+        /// <param name="token"></param>
+        /// <param name="completionMode"></param>
+        /// <returns></returns>
+        private Node GetMatchingNode(FileCompiler fileCompiler, Compiler.Scanner.Token token, CompletionMode completionMode)
         {
             if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null)
             {
                 if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root != null)
                 {
-                    CompletionNodeMatcher matcher = new CompletionNodeMatcher(CompletionNodeMatcher.CompletionMode.Perform, performToken);
+                    CompletionNodeMatcher matcher = new CompletionNodeMatcher(completionMode, token);
                     fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(matcher);
-                    if (matcher.MatchingNode != null)
-                    {
-                        if (matcher.MatchingNode.SymbolTable != null)
-                        {
-                            ICollection<string> pargraphs = matcher.MatchingNode.SymbolTable.GetParagraphNames();
-                            return pargraphs;
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
+                    return matcher.MatchingNode;
                 }
             }
-            return null;
+
+            return null; 
         }
 
         /// <summary>
@@ -390,7 +454,8 @@ namespace TypeCobol.LanguageServer
         /// that is to say if the cursor is just after the M that no completion should occurs.
         /// </summary>
         private static Tuple<Compiler.Scanner.TokenType, bool>[] elligibleCompletionTokens = new Tuple<Compiler.Scanner.TokenType, bool>[]{
-            new Tuple<Compiler.Scanner.TokenType, bool>(Compiler.Scanner.TokenType.PERFORM,false)
+            new Tuple<Compiler.Scanner.TokenType, bool>(Compiler.Scanner.TokenType.PERFORM,false),
+            new Tuple<Compiler.Scanner.TokenType, bool>(Compiler.Scanner.TokenType.CALL,false)
         };
 
         /// <summary>
@@ -412,59 +477,34 @@ namespace TypeCobol.LanguageServer
             }
             return false;
         }
-        private static Compiler.Scanner.Token MatchCompletionTokenPosition(Position position, IList<Compiler.Scanner.Token> tokens)
+        private static Compiler.Scanner.Token MatchCompletionTokenPosition(Position position, IList<Compiler.Scanner.Token> tokens, out Compiler.Scanner.Token userFilterToken)
         {
             bool bAllowLastPos = false;
-            int count = tokens.Count;
-            TypeCobol.Compiler.Scanner.Token lastToken = null;
-            int character = position.character + 1;
-            for (int i = 0; i < count; i++)
+            TypeCobol.Compiler.Scanner.Token LastSignificatifToken = null;
+         
+            var finalTokens = tokens.Except(tokens.Where(t => t.TokenFamily == Compiler.Scanner.TokenFamily.Whitespace)); //Remove space tokens
+            foreach (var finalToken in finalTokens)
             {
-                //Skip Whitespace
-                int j = i;
-                TypeCobol.Compiler.Scanner.Token token = null;
-                for (j = i; j < count; j++)
+                if(IsCompletionElligibleToken(finalToken, out bAllowLastPos) && finalToken.EndColumn <= position.character)
                 {
-                    token = tokens[j];
-                    if (token.TokenFamily != Compiler.Scanner.TokenFamily.Whitespace)
-                    {
-                        break;
-                    }
-                    else if (token.Column <= character && (token.EndColumn + 1) >= character)
-                    {
-                        if (lastToken != null)
-                        {
-                            if ((!bAllowLastPos && lastToken != null && (lastToken.EndColumn + 1) == character) || lastToken.Column == character)
-                                lastToken = null;
-                            else
-                                return lastToken;
-                        }
-                    }
+                    LastSignificatifToken = finalToken;
                 }
-                i = j;
-                if (i >= count)
-                    break;
-                token = tokens[i];
-                bool isElligible = IsCompletionElligibleToken(token, out bAllowLastPos);
-                if (isElligible)
-                    lastToken = token;
 
-                if (token.Column == character)
-                {
-                    if (!isElligible && token.Column != character)
-                    {   //We are on a token which is not a matching token and the the cursor position is not at the
-                        //beginning of the character ==> cancel the previous matching token
-                        lastToken = null;
-                    }
+                if (LastSignificatifToken != null && finalToken.TokenType == Compiler.Scanner.TokenType.UserDefinedWord)
                     break;
-                }
-                if (!isElligible)
-                    lastToken = null;
             }
-            if (lastToken != null && ((!bAllowLastPos && (lastToken.EndColumn + 1) == character) || lastToken.Column == character))
-                lastToken = null;
 
-            return lastToken;
+            userFilterToken = finalTokens.FirstOrDefault(t => t.EndColumn == position.character || t.EndColumn == position.character && t.TokenType == Compiler.Scanner.TokenType.UserDefinedWord);
+
+
+            //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
+            if (LastSignificatifToken != null && ((!bAllowLastPos && LastSignificatifToken.EndColumn == position.character) || LastSignificatifToken.Column == position.character))
+            {
+                LastSignificatifToken = null; 
+                userFilterToken = null;
+            }
+
+            return LastSignificatifToken;
         }
 
         /// <summary>
