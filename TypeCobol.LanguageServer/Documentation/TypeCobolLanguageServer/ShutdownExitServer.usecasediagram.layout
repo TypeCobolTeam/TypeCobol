@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="ShutdownExitServer">
+  <useCaseModelRootMoniker Id="8f88b799-00fb-4f06-8c42-e658206e3b40" />
+  <nestedChildShapes>
+    <actorShape Id="bb95a261-9b1c-4110-8c90-1a620430a2f1" absoluteBounds="1.25, 1.375, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="5de50319-c9b3-43de-b40d-8d9cba9e506e" LastKnownName="Eclise" />
+      <relativeChildShapes />
+    </actorShape>
+    <actorShape Id="ebc13266-f3a2-4a0b-a8e5-003e411722aa" absoluteBounds="3.375, 0.875, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="2b7c0325-18e4-440c-945b-d447c7a44be0" LastKnownName="TCOBPlugin" />
+      <relativeChildShapes />
+    </actorShape>
+  </nestedChildShapes>
+</useCaseDiagram>

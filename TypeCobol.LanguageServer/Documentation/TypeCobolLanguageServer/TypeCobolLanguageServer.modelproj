@@ -17,6 +17,20 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" />
   <ItemGroup>
+    <Content Include="Demarrage.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Demarrage.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Demarrage.usecasediagram</DependentUpon>
+    </Content>
+    <Content Include="DemarrageSrv.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="DemarrageSrv.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>DemarrageSrv.sequencediagram</DependentUpon>
+    </Content>
     <Content Include="DidChangeConfiguration.usecasediagram">
       <SubType>Content</SubType>
     </Content>
@@ -38,6 +52,20 @@
       <SubType>Content</SubType>
       <DependentUpon>Initialisation.usecasediagram</DependentUpon>
     </Content>
+    <Content Include="ShutdownExit.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ShutdownExit.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>ShutdownExit.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="ShutdownExitServer.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ShutdownExitServer.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>ShutdownExitServer.usecasediagram</DependentUpon>
+    </Content>
     <Content Include="UMLSequenceDiagram1.sequencediagram">
       <SubType>Content</SubType>
     </Content>
@@ -51,6 +79,13 @@
     <Content Include="ClientServer.sequencediagram.layout">
       <SubType>Content</SubType>
       <DependentUpon>ClientServer.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Demarrage.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Demarrage.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Demarrage.sequencediagram</DependentUpon>
     </Content>
     <Folder Include="ModelDefinition\" />
     <Content Include="ModelDefinition\TypeCobolLanguageServer.uml">
