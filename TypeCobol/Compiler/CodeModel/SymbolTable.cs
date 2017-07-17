@@ -533,7 +533,9 @@ namespace TypeCobol.Compiler.CodeModel
         {
             return GetType(symbolReference.URI);
         }
-       
+
+      
+
         public List<TypeDefinition> GetType(DataType dataType, string pgmName = null)
         {
             var uri = new URI(dataType.Name);
@@ -563,6 +565,24 @@ namespace TypeCobol.Compiler.CodeModel
             found = GetType(name, name.Tail, found); //Pass name.Tail as a program name 
 
             return found;
+        }
+
+        public IDictionary<string, List<TypeDefinition>> GetTypes(string filter)
+        {
+            var types = this.GetTableFromScope(Scope.Declarations).Types
+                            .Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase)))
+                            .ToDictionary(d => d.Key, d => d.Value);
+            var publicTypes = this.GetTableFromScope(Scope.Intrinsic).Types
+                                .Where(t => t.Value.All(tp => (tp.CodeElement  as DataTypeDescriptionEntry) != null && (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public)) 
+                                .Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase)));
+
+            foreach (var pubType in publicTypes)
+            {
+                if (!types.ContainsKey(pubType.Key))
+                    types.Add(pubType.Key, pubType.Value);
+            }
+
+            return types;
         }
 
         /// <summary>
@@ -794,7 +814,13 @@ namespace TypeCobol.Compiler.CodeModel
             return symbolTable.Programs;
         }
 
-       
+        public IDictionary<string, List<Program>> GetPrograms(string filter)
+        {
+            var programs = this.GetTableFromScope(Scope.Namespace)
+                                   .Programs.Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase))).ToDictionary(d => d.Key, d => d.Value);
+            return programs;
+        }
+
 
         #endregion
 

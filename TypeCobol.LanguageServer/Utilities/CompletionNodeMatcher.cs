@@ -22,6 +22,7 @@ namespace TypeCobol.LanguageServer.Utilities
             /// </summary>
             Perform,
             Call,
+            Type,
         }
 
         /// <summary>
@@ -123,6 +124,7 @@ namespace TypeCobol.LanguageServer.Utilities
                     return canVisit;
                 }
                 case CompletionMode.Call:
+                case CompletionMode.Type:
                     {
                         if(node.CodeElement !=null)
                         {
