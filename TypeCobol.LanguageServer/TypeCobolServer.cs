@@ -408,24 +408,27 @@ namespace TypeCobol.LanguageServer
             var completionItems = new List<CompletionItem>();
             if (procedures != null)
             {
-                foreach (var proc in procedures)
+                foreach (var procedure in procedures)
                 {
-                    string inputParams = null, outputParams = null, inoutParams = null;
-                    var procedure = proc.Value.First();
-
-                    if(procedure.Profile != null)
+                    foreach (var proc in procedure.Value)
                     {
-                        if (procedure.Profile.InputParameters != null && procedure.Profile.InputParameters.Count > 0)
-                            inputParams = string.Format("INPUT: {0}", string.Join(", ", procedure.Profile.InputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                        if (procedure.Profile.OutputParameters != null && procedure.Profile.OutputParameters.Count > 0)
-                            outputParams = string.Format("| OUTPUT: {0}", string.Join(", ", procedure.Profile.OutputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                        if (procedure.Profile.InoutParameters != null && procedure.Profile.InoutParameters.Count > 0)
-                            inoutParams = string.Format("| INOUT: {0}", string.Join(", ", procedure.Profile.InoutParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                        string inputParams = null, outputParams = null, inoutParams = null;
+
+                        if (proc.Profile != null)
+                        {
+                            if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
+                                inputParams = string.Format("INPUT: {0}", string.Join(", ", proc.Profile.InputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                            if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
+                                outputParams = string.Format("| OUTPUT: {0}", string.Join(", ", proc.Profile.OutputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                            if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
+                                inoutParams = string.Format("| INOUT: {0}", string.Join(", ", proc.Profile.InoutParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                        }
+                        var completionItem = new CompletionItem(string.Format("{0} ({1} {2} {3})", proc.Name, inputParams, outputParams, inoutParams));
+                        completionItem.insertText = procedure.Key;
+                        completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
+                        completionItems.Add(completionItem);
                     }
-                    var completionItem = new CompletionItem(string.Format("{0} ({1} {2} {3})", procedure.Name, inputParams, outputParams, inoutParams));
-                    completionItem.insertText = proc.Key;
-                    completionItem.kind = procedure.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
-                    completionItems.Add(completionItem);
+                  
                 }
             }
 

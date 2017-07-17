@@ -580,6 +580,8 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 if (!types.ContainsKey(pubType.Key))
                     types.Add(pubType.Key, pubType.Value);
+                else if(!types.ContainsKey(pubType.Value.First().QualifiedName.ToString()))
+                    types.Add(pubType.Value.First().QualifiedName.ToString(), pubType.Value); //If type alreday exists in dictionnay then add it with qualified name
             }
 
             return types;
@@ -677,6 +679,8 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 if (!functions.ContainsKey(pubFunc.Key))
                     functions.Add(pubFunc.Key, pubFunc.Value);
+                else if(!functions.ContainsKey(pubFunc.Value.First().QualifiedName.ToString()))
+                    functions.Add(pubFunc.Value.First().QualifiedName.ToString(), pubFunc.Value); //If function alreday in dictionnary add with the qualified name
             }
 
             return functions;
