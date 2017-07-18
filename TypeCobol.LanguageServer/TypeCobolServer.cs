@@ -289,7 +289,7 @@ namespace TypeCobol.LanguageServer
                         {
                             case TokenType.PERFORM:
                                 {
-                                    items.AddRange(GetCompletionPerformParagraph(fileCompiler, matchingToken));
+                                    items.AddRange(GetCompletionPerformParagraph(fileCompiler, matchingToken, userFilterToken));
                                     break;
                                 }
                             case TokenType.CALL:
@@ -369,24 +369,39 @@ namespace TypeCobol.LanguageServer
         /// <param name="fileCompiler">The target FileCompiler instance</param>
         /// <param name="performToken">The PERFORM token</param>
         /// <returns></returns>
-        private IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, Token performToken)
+        private IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, Token performToken, Token userFilterToken)
         {
             var performNode = GetMatchingNode(fileCompiler, performToken, CompletionMode.Perform);
             ICollection<string> pargraphs = null;
+            List<DataDefinition> variables = null;
+            var completionItems = new List<CompletionItem>();
+
             if (performNode != null)
             {
                 if (performNode.SymbolTable != null)
                 {
-                    pargraphs = performNode.SymbolTable.GetParagraphNames();
+                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                    pargraphs = performNode.SymbolTable.GetParagraphNames(userFilterText);
+                    variables = performNode.SymbolTable.GetVariables(da => da.Picture != null && 
+                                                                    da.DataType.Name == "Numeric" && 
+                                                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase));
                 }
             }
-
-            var completionItems = new List<CompletionItem>();
+  
             if (pargraphs != null)
             {
                 foreach (var para in pargraphs)
                 {
                     completionItems.Add(new CompletionItem(para));
+                }
+            }
+            if(variables != null)
+            {
+                foreach (var variable in variables)
+                {
+                    var completionItem = new CompletionItem(string.Format("{0} PIC{1}", variable.Name, variable.Picture.NormalizedValue));
+                    completionItem.insertText = variable.Name;
+                    completionItems.Add(completionItem);
                 }
             }
 

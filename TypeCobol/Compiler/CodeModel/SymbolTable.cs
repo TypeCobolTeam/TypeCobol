@@ -6,6 +6,7 @@ using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
+using System.Linq.Expressions;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -195,6 +196,11 @@ namespace TypeCobol.Compiler.CodeModel
             var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable);
            
             return found;
+        }
+
+        public List<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate)
+        {
+            return DataEntries.Values.SelectMany(d => d).AsQueryable().Where(predicate).ToList();
         }
 
 
@@ -507,9 +513,17 @@ namespace TypeCobol.Compiler.CodeModel
         /// Get all paragraphs in the current scope.
         /// </summary>
         /// <returns>The collection of paragraph names</returns>
-        public ICollection<string> GetParagraphNames()
+        public ICollection<string> GetParagraphNames(string filter)
         {
-            return Paragraphs.Keys;
+            var paragraphs = new List<string>();
+
+            foreach (var paraKey in Paragraphs.Keys)
+            {
+                if (paraKey.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase))
+                    paragraphs.Add(paraKey);
+            }
+
+            return paragraphs;
         }
 
         #endregion
@@ -1057,26 +1071,5 @@ namespace TypeCobol.Compiler.CodeModel
 
 
         #endregion
-    }
-
-    public static class IEnumerableExtensions
-    {
-        public static IEnumerable<T> SelectManyRecursive<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> selector)
-        {
-            if (source == null) throw new ArgumentNullException("source");
-            if (selector == null) throw new ArgumentNullException("selector");
-
-            return !source.Any() ? source :
-                source.Concat(
-                    source
-                    .SelectMany(i => selector(i).EmptyIfNull())
-                    .SelectManyRecursive(selector)
-                );
-        }
-
-        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> source)
-        {
-            return source ?? Enumerable.Empty<T>();
-        }
     }
 }
