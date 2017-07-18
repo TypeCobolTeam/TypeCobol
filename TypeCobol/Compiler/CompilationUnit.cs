@@ -85,10 +85,21 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    //Reset all diagnostics in modified lines
+                    ////Reset all diagnostics in modified lines
                     foreach (var change in processedTokensLineChanges)
-                    {    //                                                                               + 1 beacause of Antlr Strat line (1..n)
-                        ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines)[change.LineIndex + 1].ResetDiagnostics(); 
+                    {   
+                        var lines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines);
+                        if (lines != null && lines.Count > 0)
+                        {
+                            if (change.LineIndex + 1 <= lines.Count - 1)        //Temporary workaround until issue #611 is fixed
+                            {                                                   //Temporary workaround until issue #611 is fixed
+                                lines[change.LineIndex + 1].ResetDiagnostics(); //Temporary workaround until issue #611 is fixed
+                                lines[change.LineIndex].ResetDiagnostics();     //Temporary workaround until issue #611 is fixed
+                            }                                                   //Temporary workaround until issue #611 is fixed
+                            else                                                //Temporary workaround until issue #611 is fixed
+                                lines[change.LineIndex].ResetDiagnostics();
+                        }
+                           
                     }
 
                     ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
