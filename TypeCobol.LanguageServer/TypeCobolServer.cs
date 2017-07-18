@@ -60,15 +60,15 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
             {
-                string fileName = Path.GetFileName(objUri.LocalPath);
-                typeCobolWorkspace.OpenSourceFile(fileName, parameters.text != null ? parameters.text : parameters.textDocument.text);
+                
+                typeCobolWorkspace.OpenSourceFile(objUri, parameters.text != null ? parameters.text : parameters.textDocument.text);
 
                 //Subscribe to diagnostics event
                 typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
 
                 // DEBUG information
-                RemoteConsole.Log("Opened source file : " + fileName);
+                RemoteConsole.Log("Opened source file : " + objUri.LocalPath);
             }
         }
 
@@ -77,8 +77,7 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile)
             {
-                string fileName = Path.GetFileName(objUri.LocalPath);
-                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[fileName];
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
 
                 #region Convert text changes format from multiline range replacement to single line updates
 
@@ -104,7 +103,7 @@ namespace TypeCobol.LanguageServer
                         //To avoid crashes.
                         try
                         {
-                            typeCobolWorkspace.OpenSourceFile(fileName, contentChange.text);
+                            typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text);
                         }
                         catch (Exception e)
                         {//Don't rethow an exception on save.
@@ -196,10 +195,10 @@ namespace TypeCobol.LanguageServer
                 #endregion
 
                 // Update the source file with the computed text changes
-                typeCobolWorkspace.UpdateSourceFile(fileName, textChangedEvent, false);
+                typeCobolWorkspace.UpdateSourceFile(objUri, textChangedEvent, false);
 
                 // DEBUG information
-                RemoteConsole.Log("Udpated source file : " + fileName);
+                RemoteConsole.Log("Udpated source file : " + objUri.LocalPath);
                 foreach (var textChange in textChangedEvent.TextChanges)
                 {
                     RemoteConsole.Log(" - " + textChange.ToString());
@@ -212,11 +211,10 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
             {
-                string fileName = Path.GetFileName(objUri.LocalPath);
-                typeCobolWorkspace.CloseSourceFile(fileName);
+                typeCobolWorkspace.CloseSourceFile(objUri);
 
                 // DEBUG information
-                RemoteConsole.Log("Closed source file : " + fileName);
+                RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
             }
         }
 
@@ -244,8 +242,7 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 // Get compilation info for the current file
-                string fileName = Path.GetFileName(objUri.LocalPath);
-                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[fileName];
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
 
                 // Find the token located below the mouse pointer
                 var tokensLine = fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[parameters.position.line];
@@ -276,8 +273,7 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 // Get compilation info for the current file
-                string fileName = Path.GetFileName(objUri.LocalPath);
-                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[fileName];
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
 
                 if (fileCompiler.CompilationResultsForProgram != null && fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
                 {
@@ -337,11 +333,12 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">List of missing copies name</param>
-        private void MissingCopiesDetected(object sender, List<string> e)
+        private void MissingCopiesDetected(object fileUri, List<string> e)
         {
             //Send missing copies to client
             var missingCopiesParam = new MissingCopiesParams();
             missingCopiesParam.Copies = e;
+            missingCopiesParam.uri = fileUri.ToString();
 
             SendMissingCopies(missingCopiesParam);
         }
@@ -364,7 +361,6 @@ namespace TypeCobol.LanguageServer
             diagParameter.diagnostics = diagList.ToArray();
             SendDiagnostics(diagParameter);
         }
-
 
         #region Completion Methods
         /// <summary>
@@ -483,7 +479,7 @@ namespace TypeCobol.LanguageServer
         }
         #endregion
 
-
+        #region Helpers
         /// <summary>
         /// Get the matchig node for a given Token and a gien completion mode. Returning a matching Node or null.
         /// </summary>
@@ -503,7 +499,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            return null; 
+            return null;
         }
 
         /// <summary>
@@ -543,11 +539,11 @@ namespace TypeCobol.LanguageServer
         {
             bool bAllowLastPos = false;
             Token LastSignificatifToken = null;
-         
+
             var finalTokens = tokens.Except(tokens.Where(t => t.TokenFamily == TokenFamily.Whitespace)); //Remove space tokens
             foreach (var finalToken in finalTokens)
             {
-                if(IsCompletionElligibleToken(finalToken, out bAllowLastPos) && finalToken.EndColumn <= position.character)
+                if (IsCompletionElligibleToken(finalToken, out bAllowLastPos) && finalToken.EndColumn <= position.character)
                 {
                     LastSignificatifToken = finalToken;
                 }
@@ -562,7 +558,7 @@ namespace TypeCobol.LanguageServer
             //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
             if (LastSignificatifToken != null && ((!bAllowLastPos && LastSignificatifToken.EndColumn == position.character) || LastSignificatifToken.Column == position.character))
             {
-                LastSignificatifToken = null; 
+                LastSignificatifToken = null;
                 userFilterToken = null;
             }
 
@@ -608,7 +604,6 @@ namespace TypeCobol.LanguageServer
                 System.Threading.Interlocked.Exchange(ref m_unchanged, 0);
             }
         }
-
-
+        #endregion
     }
 }

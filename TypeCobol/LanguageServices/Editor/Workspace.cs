@@ -35,7 +35,7 @@ namespace TypeCobol.LanguageServices.Editor
 
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
-        public Dictionary<string, FileCompiler> OpenedFileCompiler{ get; private set; }
+        public Dictionary<Uri, FileCompiler> OpenedFileCompiler{ get; private set; }
         public EventHandler<IList<Compiler.Diagnostics.Diagnostic>> DiagnosticsEvent { get; set; }
         public EventHandler<List<string>> MissingCopiesEvent { get; set; }
 
@@ -43,7 +43,7 @@ namespace TypeCobol.LanguageServices.Editor
         public Workspace(string rootDirectoryFullName, string workspaceName)
         {
             TypeCobolConfiguration = new TypeCobolConfiguration();
-            OpenedFileCompiler = new Dictionary<string, FileCompiler>();
+            OpenedFileCompiler = new Dictionary<Uri, FileCompiler>();
 
             this.RootDirectoryFullName = rootDirectoryFullName;
             this.WorkspaceName = workspaceName;
@@ -58,18 +58,19 @@ namespace TypeCobol.LanguageServices.Editor
         /// <summary>
         /// Start continuous background compilation on a newly opened file
         /// </summary>
-        public void OpenSourceFile(string fileName, string sourceText)
+        public void OpenSourceFile(Uri fileUri, string sourceText)
         {
+            string fileName = Path.GetFileName(fileUri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
             var fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, CustomSymbols, false, CompilationProject);
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
             lock (OpenedFileCompiler)
             {
-                if (OpenedFileCompiler.ContainsKey(fileName))
-                    CloseSourceFile(fileName); //Close and remove the previous opened file.
+                if (OpenedFileCompiler.ContainsKey(fileUri))
+                    CloseSourceFile(fileUri); //Close and remove the previous opened file.
 
-                OpenedFileCompiler.Add(fileName, fileCompiler);
+                OpenedFileCompiler.Add(fileUri, fileCompiler);
                 fileCompiler.CompilationResultsForProgram.ProgramClassChanged += ProgramClassChanged;
             }
 
@@ -80,10 +81,10 @@ namespace TypeCobol.LanguageServices.Editor
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
-        public void UpdateSourceFile(string fileName, TextChangedEvent textChangedEvent, bool bAsync)
+        public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent, bool bAsync)
         {
             FileCompiler fileCompilerToUpdate = null;
-            if (OpenedFileCompiler.TryGetValue(fileName, out fileCompilerToUpdate))
+            if (OpenedFileCompiler.TryGetValue(fileUri, out fileCompilerToUpdate))
             {
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
                 if (!bAsync)
@@ -108,15 +109,15 @@ namespace TypeCobol.LanguageServices.Editor
         /// <summary>
         /// Stop continuous background compilation after a file has been closed
         /// </summary>
-        public void CloseSourceFile(string fileName)
+        public void CloseSourceFile(Uri fileUri)
         {
             FileCompiler fileCompilerToClose = null;
             lock (OpenedFileCompiler)
             {
-                if (OpenedFileCompiler.ContainsKey(fileName))
+                if (OpenedFileCompiler.ContainsKey(fileUri))
                 {
-                    fileCompilerToClose = OpenedFileCompiler[fileName];
-                    OpenedFileCompiler.Remove(fileName);
+                    fileCompilerToClose = OpenedFileCompiler[fileUri];
+                    OpenedFileCompiler.Remove(fileUri);
                     fileCompilerToClose.StopContinuousBackgroundCompilation();
                     fileCompilerToClose.CompilationResultsForProgram.ProgramClassChanged -= ProgramClassChanged;
                 }
@@ -201,7 +202,12 @@ namespace TypeCobol.LanguageServices.Editor
             if (diags.Count > 0)
                 DiagnosticsEvent(compilationUnit, diags);
             if (CompilationProject.MissingCopys.Count > 0)
-                MissingCopiesEvent(CompilationProject, CompilationProject.MissingCopys);
+            {
+                //Get File URI 
+                var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
+                MissingCopiesEvent(fileUri, CompilationProject.MissingCopys);
+            }
+                
         }
 
 

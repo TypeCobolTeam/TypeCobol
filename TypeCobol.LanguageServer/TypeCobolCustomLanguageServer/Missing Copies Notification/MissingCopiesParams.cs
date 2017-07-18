@@ -8,6 +8,10 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
     class MissingCopiesParams
     {
         /// <summary>
+        /// The URI for which diagnostic information is reported.
+        /// </summary>
+        public string uri { get; set; }
+        /// <summary>
         /// List of missing copies
         /// </summary>
         public List<string> Copies { get; set; }
