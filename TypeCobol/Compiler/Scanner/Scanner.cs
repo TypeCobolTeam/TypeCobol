@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Analytics;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -66,21 +67,23 @@ namespace TypeCobol.Compiler.Scanner
             if (tokensLine.ScanState.InsideRemarksDirective) {
                 string remarksLine = textLine.SourceText;
 
-                int startIndexForSignificantPart = GetStartIndexOfSignificantPart(remarksLine, tokensLine.ScanState);
-                int firstPeriodIndex = remarksLine.IndexOf('.', startIndexForSignificantPart);
-                int endIndexForSignificantPart = GetEndIndexOfSignificantPart(remarksLine, tokensLine.ScanState, firstPeriodIndex);
-                string significantPart = remarksLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
+                if(remarksLine != null) { 
+                    int startIndexForSignificantPart = GetStartIndexOfSignificantPart(remarksLine, tokensLine.ScanState);
+                    int firstPeriodIndex = remarksLine.IndexOf('.', startIndexForSignificantPart);
+                    int endIndexForSignificantPart = GetEndIndexOfSignificantPart(remarksLine, tokensLine.ScanState, firstPeriodIndex);
+                    string significantPart = remarksLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
 
         
-                if (tokensLine.ScanState.InsideRemarksDirective && (remarksLine.Contains(").") || remarksLine.Contains(")"))) {
-                    tokensLine.ScanState.LeavingRemarksDirective = true; // indicates the end of the REMARKS compiler directive
-                }
+                    if (tokensLine.ScanState.InsideRemarksDirective && (remarksLine.Contains(").") || remarksLine.Contains(")"))) {
+                        tokensLine.ScanState.LeavingRemarksDirective = true; // indicates the end of the REMARKS compiler directive
+                    }
 
-                RemarksDirective remarksDirective = CreateRemarksDirective(significantPart, tokensLine.ScanState);
-                if (remarksDirective != null && remarksDirective.CopyTextNamesVariations.Count > 0) {
-                    // A non empty remarks directive will replace the comment line
-                    tokensLine.AddToken(CreateCompilerDirectiveToken(remarksDirective, tokensLine, startIndex, lastIndex, copyTextNameVariations));
-                    return;
+                    RemarksDirective remarksDirective = CreateRemarksDirective(significantPart, tokensLine.ScanState);
+                    if (remarksDirective != null && remarksDirective.CopyTextNamesVariations.Count > 0) {
+                        // A non empty remarks directive will replace the comment line
+                        tokensLine.AddToken(CreateCompilerDirectiveToken(remarksDirective, tokensLine, startIndex, lastIndex, copyTextNameVariations));
+                        return;
+                    }
                 }
             }
 
@@ -131,7 +134,7 @@ namespace TypeCobol.Compiler.Scanner
 			if (type != CobolTextLineType.Comment || line == null) return false;
 			return line.StartsWith("REMARKS.", StringComparison.InvariantCultureIgnoreCase);
 		}
-        private static int GetStartIndexOfSignificantPart(string line, MultilineScanState state) {
+        private static int GetStartIndexOfSignificantPart([NotNull] string line, MultilineScanState state) {
             int start = Math.Max(line.IndexOf(' ') +1, line.IndexOf('=') +1);
             if (!state.InsideRemarksParentheses) {
                 int firstLParenIndex = line.IndexOf('(');

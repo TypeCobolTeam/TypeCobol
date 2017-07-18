@@ -1,0 +1,7 @@
+﻿--- Program ---
+PROGRAM: MYPGM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
