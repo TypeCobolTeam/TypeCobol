@@ -318,14 +318,17 @@ namespace TypeCobol.LanguageServer
             return new List<CompletionItem>();
         }
 
-       
-
         public override void OnShutdown()
         {
             typeCobolWorkspace.MissingCopiesEvent -= MissingCopiesDetected;
             typeCobolWorkspace.DiagnosticsEvent -= DiagnosticsDetected;
 
             base.OnShutdown();
+        }
+
+        public override void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
+        {
+            typeCobolWorkspace.UpdateMissingCopies(parameter.Copies);
         }
         #endregion
 

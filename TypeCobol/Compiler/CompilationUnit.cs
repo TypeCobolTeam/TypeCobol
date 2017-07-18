@@ -85,6 +85,12 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
+                    //Reset all diagnostics in modified lines
+                    foreach (var change in processedTokensLineChanges)
+                    {    //                                                                               + 1 beacause of Antlr Strat line (1..n)
+                        ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines)[change.LineIndex + 1].ResetDiagnostics(); 
+                    }
+
                     ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
                     IList<DocumentChange<ICodeElementsLine>> documentChanges = CodeElementsParserStep.ParseProcessedTokensLinesChanges(TextSourceInfo, codeElementsDocumentLines, processedTokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, perfStatsForParserInvocation);
 
@@ -96,7 +102,7 @@ namespace TypeCobol.Compiler
                     // Prepare an event to signal document change to all listeners
                     documentChangedEvent = new DocumentChangedEvent<ICodeElementsLine>(currentCodeElementsLinesVersion, currentCodeElementsLinesVersion.next);
                     currentCodeElementsLinesVersion = currentCodeElementsLinesVersion.next;
-
+                   
                     // Update the code elements document snapshot
                     CodeElementsDocumentSnapshot = new CodeElementsDocument(processedTokensDocument, currentCodeElementsLinesVersion, codeElementsDocumentLines.ToImmutable());
                 }

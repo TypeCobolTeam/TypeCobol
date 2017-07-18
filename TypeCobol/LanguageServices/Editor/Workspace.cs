@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Analytics;
@@ -154,6 +155,19 @@ namespace TypeCobol.LanguageServices.Editor
                 RefreshCustomSymbols();
         }
 
+        public void UpdateMissingCopies(List<string> RemainingMissingCopies)
+        {
+            if(RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
+            {
+                CompilationProject.MissingCopys.RemoveAll(c => true);
+                return;
+            }
+
+            var copiesToRemove = CompilationProject.MissingCopys.Except(RemainingMissingCopies);
+            foreach (var copyToRemove in copiesToRemove)
+                CompilationProject.MissingCopys.Remove(copyToRemove);
+        }
+
         /// <summary>
         /// Refresh all opened files' parser.
         /// </summary>
@@ -183,8 +197,9 @@ namespace TypeCobol.LanguageServices.Editor
         {
             var compilationUnit = sender as CompilationUnit;
 
-            if (compilationUnit.AllDiagnostics().Count > 0)
-                DiagnosticsEvent(compilationUnit, compilationUnit.AllDiagnostics());
+            var diags = compilationUnit.AllDiagnostics();
+            if (diags.Count > 0)
+                DiagnosticsEvent(compilationUnit, diags);
             if (CompilationProject.MissingCopys.Count > 0)
                 MissingCopiesEvent(CompilationProject, CompilationProject.MissingCopys);
         }

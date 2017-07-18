@@ -134,7 +134,7 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    if (isCopyFile)
+                    if (isCopyFile && !compilationProject.MissingCopys.Contains(fileName))
                         compilationProject.MissingCopys.Add(fileName);
 
                     var message = string.IsNullOrEmpty(libraryName) ? string.Format("Cobol source file not found: {0}", fileName)

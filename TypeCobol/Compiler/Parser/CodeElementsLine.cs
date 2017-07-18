@@ -89,5 +89,13 @@ namespace TypeCobol.Compiler.Parser
 
             ParserDiagnostics.Add(diag);
         }
-	}
+
+        /// <summary>
+        /// Reset ParserDiagnostics property of this current line
+        /// </summary>
+        internal void ResetDiagnostics()
+        {
+            ParserDiagnostics = null;
+        }
+    }
 }
