@@ -338,7 +338,7 @@ namespace TypeCobol.LanguageServer
             //Send missing copies to client
             var missingCopiesParam = new MissingCopiesParams();
             missingCopiesParam.Copies = e;
-            missingCopiesParam.uri = fileUri.ToString();
+            missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
 
             SendMissingCopies(missingCopiesParam);
         }

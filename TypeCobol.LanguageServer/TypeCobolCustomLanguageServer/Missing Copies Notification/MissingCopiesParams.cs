@@ -8,9 +8,9 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
     class MissingCopiesParams
     {
         /// <summary>
-        /// The URI for which diagnostic information is reported.
+        /// The TextDocumentIdentifier for which diagnostic information is reported.
         /// </summary>
-        public string uri { get; set; }
+        public VsCodeProtocol.TextDocumentIdentifier textDocument { get; set; }
         /// <summary>
         /// List of missing copies
         /// </summary>
