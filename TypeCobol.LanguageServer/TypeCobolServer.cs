@@ -383,7 +383,7 @@ namespace TypeCobol.LanguageServer
                     var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                     pargraphs = performNode.SymbolTable.GetParagraphNames(userFilterText);
                     variables = performNode.SymbolTable.GetVariables(da => da.Picture != null && 
-                                                                    da.DataType.Name == "Numeric" && 
+                                                                    da.DataType.Name == Compiler.CodeElements.DataType.Numeric.Name && 
                                                                     da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase));
                 }
             }
