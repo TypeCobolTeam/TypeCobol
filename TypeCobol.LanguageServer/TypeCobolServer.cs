@@ -575,7 +575,7 @@ namespace TypeCobol.LanguageServer
                     break;
             }
 
-            userFilterToken = finalTokens.FirstOrDefault(t => position.character <= t.EndColumn && position.character >= t.StartIndex  && t.TokenType == TokenType.UserDefinedWord);
+            userFilterToken = finalTokens.FirstOrDefault(t => position.character <= t.EndColumn && position.character > t.StartIndex  && t.TokenType == TokenType.UserDefinedWord);
 
 
             //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
