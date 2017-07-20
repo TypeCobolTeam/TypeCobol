@@ -194,20 +194,16 @@ namespace TypeCobol.LanguageServices.Editor
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ProgramClassChanged(object sender, int e)
+        private void ProgramClassChanged(object cUnit, int version)
         {
-            var compilationUnit = sender as CompilationUnit;
+            var compilationUnit = cUnit as CompilationUnit;
+            var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
             var diags = compilationUnit.AllDiagnostics();
             if (diags.Count > 0)
-                DiagnosticsEvent(compilationUnit, diags);
+                DiagnosticsEvent(fileUri, diags);
             if (CompilationProject.MissingCopys.Count > 0)
-            {
-                //Get File URI 
-                var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
                 MissingCopiesEvent(fileUri, CompilationProject.MissingCopys);
-            }
-                
         }
 
 

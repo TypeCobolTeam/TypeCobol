@@ -80,9 +80,6 @@ namespace TypeCobol.LanguageServer
                 var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
 
                 #region Convert text changes format from multiline range replacement to single line updates
-
-                // THIS CONVERSION STILL NEEDS MORE WORK : much more complicated than you would think
-
                 TextChangedEvent textChangedEvent = new TextChangedEvent();
                 foreach (var contentChange in parameters.contentChanges)
                 {
@@ -92,8 +89,8 @@ namespace TypeCobol.LanguageServer
 
                     if (contentChange.text != null && contentChange.text.Length > 0)
                     {
-                        replacementTextStartsWithNewLine = contentChange.text[0] == '\r' || contentChange.text[0] == '\n';
-                        lineUpdates = contentChange.text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                        replacementTextStartsWithNewLine = contentChange.text[0] == '\r' || contentChange.text[0] == '\n'; //Allow to know if a new line was added
+                        lineUpdates = contentChange.text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList(); //Split on /r /n to know the number of lines added
                     }
 
                     // Document cleared
@@ -167,7 +164,7 @@ namespace TypeCobol.LanguageServer
                         for (int i = firstLineIndex; i <= lastLineIndex; i++)
                         {
                             var textChange = new TextChange(TextChangeType.LineRemoved, firstLineIndex, null);
-                            textChangedEvent.TextChanges.Add(textChange);
+                            textChangedEvent.TextChanges.Add(textChange); //Mark the index line to be removed. The index will remains the same for each line delete, beacause text change are apply one after another
                         }
 
                         // Insert the updated lines
@@ -333,11 +330,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">List of missing copies name</param>
-        private void MissingCopiesDetected(object fileUri, List<string> e)
+        private void MissingCopiesDetected(object fileUri, List<string> missingCopies)
         {
             //Send missing copies to client
             var missingCopiesParam = new MissingCopiesParams();
-            missingCopiesParam.Copies = e;
+            missingCopiesParam.Copies = missingCopies;
             missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
 
             SendMissingCopies(missingCopiesParam);
@@ -348,16 +345,17 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">List of TypeCobol compiler diagnostics</param>
-        private void DiagnosticsDetected(object sender, IList<Compiler.Diagnostics.Diagnostic> e)
+        private void DiagnosticsDetected(object fileUri, IList<Compiler.Diagnostics.Diagnostic> diagnostics)
         {
             var diagParameter = new PublishDiagnosticsParams();
             var diagList = new List<Diagnostic>();
 
-            foreach (var diag in e.Take(100))
+            foreach (var diag in diagnostics.Take(100))
             {
                 diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd), diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(), diag.Info.ReferenceText));
             }
 
+            diagParameter.uri = fileUri.ToString();
             diagParameter.diagnostics = diagList.ToArray();
             SendDiagnostics(diagParameter);
         }
@@ -383,7 +381,7 @@ namespace TypeCobol.LanguageServer
                     var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                     pargraphs = performNode.SymbolTable.GetParagraphNames(userFilterText);
                     variables = performNode.SymbolTable.GetVariables(da => da.Picture != null && 
-                                                                    da.DataType.Name == Compiler.CodeElements.DataType.Numeric.Name && 
+                                                                    da.DataType == Compiler.CodeElements.DataType.Numeric && 
                                                                     da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase));
                 }
             }
@@ -486,7 +484,7 @@ namespace TypeCobol.LanguageServer
             foreach (var type in types)
             {
                 var completionItem = new CompletionItem(type.Key);
-                completionItem.kind = CompletionItemKind.Property;
+                completionItem.kind = CompletionItemKind.Class;
                 completionItems.Add(completionItem);
             }
 
@@ -550,10 +548,10 @@ namespace TypeCobol.LanguageServer
             }
             return false;
         }
-        private static Token MatchCompletionTokenPosition(Position position, IList<Token> tokens, out Token userFilterToken)
+        private static Token MatchCompletionTokenPosition(Position position, IEnumerable<Token> tokens, out Token userFilterToken)
         {
             bool bAllowLastPos = false;
-            Token LastSignificatifToken = null;
+            Token LastSignificantifToken = null;
 
             var finalTokens = tokens.Except(tokens.Where(t => t.TokenFamily == TokenFamily.Whitespace)); //Remove space tokens
             foreach (var finalToken in finalTokens)
@@ -564,29 +562,30 @@ namespace TypeCobol.LanguageServer
                 
                 if (IsCompletionElligibleToken(finalToken, out bAllowLastPos) && finalToken.EndColumn <= position.character)
                 {
-                    LastSignificatifToken = finalToken;
+                    LastSignificantifToken = finalToken; //If eveyrhing is Ok add the final token as LastSinificantToken
                 }
-                else if(finalToken.TokenType != TokenType.UserDefinedWord && finalToken.TokenFamily != TokenFamily.Whitespace)
+                else if(finalToken.TokenType != TokenType.UserDefinedWord)
                 {
-                    LastSignificatifToken = null;
+                    LastSignificantifToken = null; //If a token is detected that is different from UserDefinedWord and not recognize as a Eliible token, we cannot do completion
                 }
 
-                if (LastSignificatifToken != null && finalToken.TokenType == TokenType.UserDefinedWord && finalToken == finalTokens.LastOrDefault())
-                    break;
+                if (LastSignificantifToken != null && finalToken.TokenType == TokenType.UserDefinedWord && finalToken == finalTokens.LastOrDefault())
+                    break; //If a LastSignificatnToken is found + the last token is a userdefinedword we do not have to continue
             }
 
+            //Get the userdefinedword associated to the cursor position in the document
             userFilterToken = finalTokens.FirstOrDefault(t => position.character <= t.EndColumn && position.character > t.StartIndex  && t.TokenType == TokenType.UserDefinedWord);
 
 
             //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
-            if ((LastSignificatifToken != null && ((!bAllowLastPos && LastSignificatifToken.EndColumn == position.character) || LastSignificatifToken.Column == position.character)) 
+            if ((LastSignificantifToken != null && ((!bAllowLastPos && LastSignificantifToken.EndColumn == position.character) || LastSignificantifToken.Column == position.character)) 
                 || (finalTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord && !(position.character <= finalTokens.LastOrDefault().EndColumn && position.character >= finalTokens.LastOrDefault().StartIndex)))
             {
-                LastSignificatifToken = null;
+                LastSignificantifToken = null;
                 userFilterToken = null;
             }
 
-            return LastSignificatifToken;
+            return LastSignificantifToken;
         }
 
         /// <summary>
