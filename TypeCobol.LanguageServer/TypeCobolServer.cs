@@ -558,20 +558,29 @@ namespace TypeCobol.LanguageServer
             var finalTokens = tokens.Except(tokens.Where(t => t.TokenFamily == TokenFamily.Whitespace)); //Remove space tokens
             foreach (var finalToken in finalTokens)
             {
+                if (finalToken.StartIndex > position.character)
+                    break;
+
+                
                 if (IsCompletionElligibleToken(finalToken, out bAllowLastPos) && finalToken.EndColumn <= position.character)
                 {
                     LastSignificatifToken = finalToken;
                 }
+                else if(finalToken.TokenType != TokenType.UserDefinedWord && finalToken.TokenFamily != TokenFamily.Whitespace)
+                {
+                    LastSignificatifToken = null;
+                }
 
-                if (LastSignificatifToken != null && finalToken.TokenType == TokenType.UserDefinedWord)
+                if (LastSignificatifToken != null && finalToken.TokenType == TokenType.UserDefinedWord && finalToken == finalTokens.LastOrDefault())
                     break;
             }
 
-            userFilterToken = finalTokens.FirstOrDefault(t => t.EndColumn == position.character || t.EndColumn == position.character && t.TokenType == TokenType.UserDefinedWord);
+            userFilterToken = finalTokens.FirstOrDefault(t => position.character <= t.EndColumn && position.character >= t.StartIndex  && t.TokenType == TokenType.UserDefinedWord);
 
 
             //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
-            if (LastSignificatifToken != null && ((!bAllowLastPos && LastSignificatifToken.EndColumn == position.character) || LastSignificatifToken.Column == position.character))
+            if ((LastSignificatifToken != null && ((!bAllowLastPos && LastSignificatifToken.EndColumn == position.character) || LastSignificatifToken.Column == position.character)) 
+                || (finalTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord && !(position.character <= finalTokens.LastOrDefault().EndColumn && position.character >= finalTokens.LastOrDefault().StartIndex)))
             {
                 LastSignificatifToken = null;
                 userFilterToken = null;
