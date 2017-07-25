@@ -242,10 +242,14 @@ namespace TypeCobol.Compiler.Diagnostics {
         }
         var context = c as CodeElementsParser.CobolCallStatementContext;
 
-		foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
+        if(context != null) //if null it's certainly a CallStatementContext
+        {
+            foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 
-		if (context.callReturningParameter() != null && statement.OutputParameter == null)
-			DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
+            if (context.callReturningParameter() != null && statement.OutputParameter == null)
+                DiagnosticUtils.AddError(statement, "CALL .. RETURNING: Missing identifier", context);
+        }
+	
 	}
 
 	private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context) {

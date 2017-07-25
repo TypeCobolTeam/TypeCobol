@@ -162,6 +162,12 @@ namespace TypeCobol.Compiler.Parser
 		  ////////////////////
 		 // CALL STATEMENT //
 		////////////////////
+        internal CallStatement CreateCallStatement(CodeElementsParser.CallStatementContext context)
+        {
+            var statement = new CallStatement();
+           
+            return new CallStatement();
+        }
 
 		internal CallStatement CreateCallStatement(CodeElementsParser.CobolCallStatementContext context) {
 			var statement = new CallStatement();

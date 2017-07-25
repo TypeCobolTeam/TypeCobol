@@ -23,6 +23,7 @@ namespace TypeCobol.LanguageServer.Utilities
             Perform,
             Call,
             Type,
+            UserDefined,
         }
 
         /// <summary>
@@ -125,6 +126,7 @@ namespace TypeCobol.LanguageServer.Utilities
                 }
                 case CompletionMode.Call:
                 case CompletionMode.Type:
+                case CompletionMode.UserDefined:
                     {
                         if(node.CodeElement !=null)
                         {
