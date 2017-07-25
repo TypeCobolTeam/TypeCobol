@@ -304,6 +304,14 @@ namespace TypeCobol.LanguageServer
                             default:
                                 break;
                         }
+                        if (userFilterToken != null)
+                        { //Add the range object to let the client know the position of the user filter token
+                            items = items.Select(c =>
+                            {
+                                c.data = new Range(userFilterToken.Line, userFilterToken.StartIndex, userFilterToken.Line, userFilterToken.StopIndex);
+                                return c;
+                            }).ToList();
+                        }
                         return items;
                     }
                 }
