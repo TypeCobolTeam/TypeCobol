@@ -200,7 +200,12 @@ namespace TypeCobol.Compiler.CodeModel
 
         public List<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate)
         {
-            return DataEntries.Values.SelectMany(d => d).AsQueryable().Where(predicate).ToList();
+            var values = DataEntries.Values.SelectMany(d => d).AsQueryable().Where(predicate).ToList();
+            var globalValues = (this.GetTableFromScope(Scope.Global).DataEntries.Values.SelectMany(d => d).AsQueryable().Where(predicate));
+
+            values.AddRange(globalValues);
+
+            return values;
         }
 
 
