@@ -17,6 +17,22 @@
   <packagedElements>
     <packageHasNamedElement>
       <interaction Id="215fca5d-ff39-4b99-974e-9fa2afa7b8f3" name="DemarrageSrv" collapseFragmentsFlag="false" isActiveClass="false" isAbstract="false" isLeaf="false" isReentrant="false">
+        <ownedCommentsInternal>
+          <comment Id="cfbe3f23-9244-47cf-a1e9-d6cd58378b9f">
+            <elementDefinition Id="26e7bf76-5f48-41b1-aa33-633b758c3332" />
+            <body>Point d'entré du processus TypeCobol.LanguageServer.</body>
+            <annotatedElements>
+              <behaviorExecutionSpecificationMoniker Id="7118c901-114e-4416-9bb1-8e52527377df" LastKnownName="BehaviorExecutionSpecification1" />
+            </annotatedElements>
+          </comment>
+          <comment Id="ae6a7c58-00af-44c9-b94c-be9085d6c640">
+            <elementDefinition Id="787f4d69-0db8-4b63-836f-f774a3fe68c3" />
+            <body>Instance du TypeCobol.LanguageServer</body>
+            <annotatedElements>
+              <lifelineMoniker Id="331f263e-13da-48b8-98d4-87ed1fb83bde" LastKnownName="TypeCobolServer" />
+            </annotatedElements>
+          </comment>
+        </ownedCommentsInternal>
         <elementDefinition Id="4492a912-181a-4ad6-965a-427fe1e42bdb" />
         <fragments>
           <behaviorExecutionSpecification Id="7118c901-114e-4416-9bb1-8e52527377df" name="BehaviorExecutionSpecification1">

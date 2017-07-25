@@ -31,6 +31,20 @@
       <SubType>Content</SubType>
       <DependentUpon>DemarrageSrv.sequencediagram</DependentUpon>
     </Content>
+    <Content Include="DIAGNOSTICS.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="DIAGNOSTICS.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>DIAGNOSTICS.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="DIAGNOSTICS.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="DIAGNOSTICS.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>DIAGNOSTICS.usecasediagram</DependentUpon>
+    </Content>
     <Content Include="DidChangeConfiguration.usecasediagram">
       <SubType>Content</SubType>
     </Content>
@@ -45,12 +59,33 @@
       <SubType>Content</SubType>
       <DependentUpon>DidConfigurationChange.sequencediagram</DependentUpon>
     </Content>
+    <Content Include="EDITOR_DIAGNOSTICS.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="EDITOR_DIAGNOSTICS.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>EDITOR_DIAGNOSTICS.sequencediagram</DependentUpon>
+    </Content>
     <Content Include="Initialisation.usecasediagram">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Initialisation.usecasediagram.layout">
       <SubType>Content</SubType>
       <DependentUpon>Initialisation.usecasediagram</DependentUpon>
+    </Content>
+    <Content Include="MissingCOPYs.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="MissingCOPYs.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>MissingCOPYs.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="MissingCOPYs.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="MissingCOPYs.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>MissingCOPYs.usecasediagram</DependentUpon>
     </Content>
     <Content Include="ShutdownExit.sequencediagram">
       <SubType>Content</SubType>

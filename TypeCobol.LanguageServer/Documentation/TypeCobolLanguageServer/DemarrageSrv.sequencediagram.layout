@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<sequenceDesignerDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="DemarrageSrv">
+<sequenceDesignerDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.125, 8.5" name="DemarrageSrv">
   <SequenceDesignerModelMoniker Id="24ee62b2-3a21-4979-b6f7-ca2b67f2b0c5" />
   <nestedChildShapes>
     <lifelineShape Id="3338814d-bb2f-459a-bf72-3a264a2975cf" absoluteBounds="2.1979166666666665, 1, 0.15, 4.739583333333333" visible="true" visualStyleMode="Modified">
@@ -131,5 +131,27 @@
         <umlExecutionSpecificationShapeMoniker Id="fd15e51c-ddc5-4671-9ab3-f89b7e0d1b0d" />
       </nodes>
     </returnMessageConnector>
+    <commentShape Id="7afa6322-99b5-4c6b-8409-c6946fef3df1" absoluteBounds="0.25, 1.5, 1.25, 0.75" customColor="251, 247, 200">
+      <commentMoniker Id="cfbe3f23-9244-47cf-a1e9-d6cd58378b9f" />
+      <relativeChildShapes />
+    </commentShape>
+    <commentConnector edgePoints="[(1.5 : 1.875); (2.19791666666667 : 1.875)]" fixedFrom="Algorithm" fixedTo="Algorithm" TargetRelationshipDomainClassId="217d6bd0-42ed-4e7f-ad2b-af3ef5142428" customColor="Black">
+      <relativeChildShapes />
+      <nodes>
+        <commentShapeMoniker Id="7afa6322-99b5-4c6b-8409-c6946fef3df1" />
+        <umlExecutionSpecificationShapeMoniker Id="fd15e51c-ddc5-4671-9ab3-f89b7e0d1b0d" />
+      </nodes>
+    </commentConnector>
+    <commentShape Id="80a3aeef-0ef8-415e-be0e-1a64f47e2cc8" absoluteBounds="9.625, 1.5, 1.25, 0.5" customColor="251, 247, 200">
+      <commentMoniker Id="ae6a7c58-00af-44c9-b94c-be9085d6c640" />
+      <relativeChildShapes />
+    </commentShape>
+    <commentConnector edgePoints="[(9.625 : 1.75); (8.81666650772095 : 1.75)]" fixedFrom="Algorithm" fixedTo="Algorithm" TargetRelationshipDomainClassId="217d6bd0-42ed-4e7f-ad2b-af3ef5142428" customColor="Black">
+      <relativeChildShapes />
+      <nodes>
+        <commentShapeMoniker Id="80a3aeef-0ef8-415e-be0e-1a64f47e2cc8" />
+        <lifelineShapeMoniker Id="1a6b10cd-5c81-48bf-9086-fd74b9bd8e99" />
+      </nodes>
+    </commentConnector>
   </nestedChildShapes>
 </sequenceDesignerDiagram>

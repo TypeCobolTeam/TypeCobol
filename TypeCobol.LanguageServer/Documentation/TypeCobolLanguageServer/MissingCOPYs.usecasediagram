@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm10="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" dslVersion="1.0.0.0" Id="032cf219-34c6-45a9-b77d-fc79676929eb" name="MissingCOPYs" linkedPackageId="1ce99f60-a124-40d6-9250-9806bc2ac24a" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+  <profileInstances>
+    <packageHasProfileInstances Id="6e5c1037-371a-453f-a966-6be8766157a9">
+      <profileInstance Id="f4ff518c-13f9-42d7-ba44-4529a54f9cf2" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="3757d19e-1151-425d-9d7d-2f23deed93ca">
+      <profileInstance Id="e89c8f4b-7c33-4fe8-97dc-41c1912058ec" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <useCaseModelRootHasTypes>
+      <actor Id="3efe1b17-9d90-4c4d-a43b-5fc918508f3d" name="TypeCobol.LanguageServer" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="c8586f32-483e-4517-890f-358107f07780" />
+        <targetEnds>
+          <association Id="0a08e168-5839-4389-a197-6ad9f3655000" isDerived="false" sourceEndRoleName="TypeCobol.LanguageServer" targetEndRoleName="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="3b1bd355-d090-4a6f-b88d-fbae97355ba5" LastKnownName="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="81109df6-6079-45fc-808c-a157049dcb10" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="eb976963-95e5-4cab-a052-6347e22fa3fc" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7b4567d4-f635-45db-bdb8-f771301b0114" name="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="4d3e42ff-c4e8-4330-9a82-78cfaaf625a2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="5b6f129d-2619-4ea0-8018-98a5d18ad273" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="2455715a-8c15-4d33-aa28-ceeaae8690db" name="TypeCobol.LanguageClient" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="cba6d4a2-7955-4768-b15b-c34950d59a30" />
+        <targetEnds>
+          <association Id="5f595c6c-a839-4158-bced-45c73fcf3826" isDerived="false" sourceEndRoleName="TypeCobol.LanguageClient" targetEndRoleName="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams1" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="c7c64212-1a88-4104-92db-dd2785c61aed" LastKnownName="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="456ab8d4-ebee-4a67-94a4-9b13cbf185a4" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="6811ae7b-26bb-4b0e-8c16-3e3d2c8a252d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="9b20753f-b2f4-4279-ac38-76d31de60c6a" name="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams1" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="125f81a0-ea3a-45e7-87e6-c59c4271561a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="72548dd0-05ce-4d38-ab29-32a9373c28a5" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="3b1bd355-d090-4a6f-b88d-fbae97355ba5" name="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="147750bd-fcf7-4b15-b7b1-49692881bdc3" />
+        <targetEnds>
+          <association Id="2b1a6acd-f17b-489e-8f10-9b374b72bae5" isDerived="false" sourceEndRoleName="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" targetEndRoleName="TypeCobol.LanguageClient" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="2455715a-8c15-4d33-aa28-ceeaae8690db" LastKnownName="TypeCobol.LanguageClient" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="2373c21c-983e-4003-b562-01ef2491c11d" name="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="7bfb848a-2749-4c01-9611-854f47511914" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="9d4a03fa-5d70-4b0a-bdb0-d6253ef9bd36" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="00183fc4-8ea0-465c-8dbd-4713b2f6bc4e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="3a7e49ea-cc06-4445-97b9-614a46b9bce4" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="c7c64212-1a88-4104-92db-dd2785c61aed" name="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="5ba2c13c-649e-4e25-b0d8-0a5145588668" />
+        <targetEnds>
+          <association Id="f6910615-9fa4-4fe6-9211-b5991516d41d" isDerived="false" sourceEndRoleName="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams1" targetEndRoleName="TypeCobol.LanguageServer" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="3efe1b17-9d90-4c4d-a43b-5fc918508f3d" LastKnownName="TypeCobol.LanguageServer" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="65d480ea-3928-4575-9279-ac4f5eab5e3f" name="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams1" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="40f6113f-b0c6-4ca6-a5bb-230fa1b35481" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="b6fafbb6-4764-45c9-9beb-ae0e4b78d72f" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="39c3f066-a849-47a4-a842-a09927faf9ca" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e81c7229-fce7-4723-8116-a19589919741" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+  </packagedElements>
+  <package Id="1ce99f60-a124-40d6-9250-9806bc2ac24a" name="TypeCobolLanguageServer">
+    <elementDefinition Id="5d09ded1-4567-4003-bfe3-37cf35f27636" />
+  </package>
+</useCaseModelRoot>

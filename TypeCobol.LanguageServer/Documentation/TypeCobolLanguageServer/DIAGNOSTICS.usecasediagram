@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="667a531f-e921-42f4-8a34-d59612988dc9" name="DIAGNOSTICS" linkedPackageId="5f246eba-6c3d-4d92-9d34-63657d6b698b" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+  <profileInstances>
+    <packageHasProfileInstances Id="1521051f-ff6d-446b-be2a-d09355560730">
+      <profileInstance Id="defbb618-eab6-4201-9a8a-44f1a564bf02" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="960d641e-ec0c-43a5-89b8-927c7d872e29">
+      <profileInstance Id="7779e3c9-7225-42a5-93c7-99197d4ea7ea" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <useCaseModelRootHasTypes>
+      <actor Id="db82d7e8-c246-43a4-804a-ae117bc55e83" name="Utilisateur" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="2deff0f4-4c13-4e18-8d3e-3004833fa890" />
+        <targetEnds>
+          <association Id="68ae039f-d47b-4de6-854d-7d1c88d37571" isDerived="false" sourceEndRoleName="Utilisateur" targetEndRoleName="Editer un document" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="75f61d96-64e8-4ace-b2c1-af934e6568e5" LastKnownName="Editer un document" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="aa2c3745-f632-4e58-af40-1beee2e9030f" name="Utilisateur" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="947a0589-6fbb-4981-85e8-8f32f9e3ddd8" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8bc802da-37fe-4a1c-a51a-67855c792308" name="Editer un document" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="2e1435fd-79e6-46c8-af61-11928cba05d1" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="3328eb31-91c3-47ec-96d5-bd3b8bdce2f8" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="b6cb9383-4dea-4bb3-a816-9ecd7747006e" name="TypeCobol.LanguageClient" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="0236acf6-9fa8-46f3-bbfd-4a2497b2bc94" />
+        <targetEnds>
+          <association Id="e074e54d-2187-4a15-a100-2585f8426dce" isDerived="false" sourceEndRoleName="TypeCobol.LanguageClient" targetEndRoleName="Notifier:textDocument/didChange" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="3f0ddfff-ad3a-4cd5-83dc-8a3d26c3b4f8" LastKnownName="Notifier:textDocument/didChange" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d8467f02-4da7-4753-bf70-137fe9ff0fb6" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="14674f89-b8b3-4655-90c6-c21f131dcf2f" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3473f22c-c7b1-4735-8565-c328d1238d5b" name="Notifier:textDocument/didChange" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="a6310407-66f0-4515-aa36-ab789a607fc2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e5a81fb2-e9c2-4e0d-8449-aca299c4d25a" />
+          </association>
+          <association Id="18897f64-a4f6-4bc3-b918-a0b7144404b4" isDerived="false" sourceEndRoleName="TypeCobol.LanguageClient" targetEndRoleName="Visualiser les diagnostics" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="03213d98-f7e7-4ac6-afda-17c54f9a1d04" LastKnownName="Visualiser les diagnostics" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="97b464fa-9bfd-4eb0-b46d-b4478383d9e9" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="d0a40f38-75d2-43ec-9b45-d939f8e2fdee" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a4817400-b1d1-4ff1-832f-d2e5b95f2d82" name="Visualiser les diagnostics" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="8061aaea-3d1f-4a61-9708-b710b316d5fa" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="6db2a3d9-16c6-4389-a5f8-20f9fdf7b1c6" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="b8436c83-173e-43df-b1da-b969b90d6902" name="TypeCobol.LanguageServer" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="8878884f-ce2c-4c40-ab69-5ca4f9a54cb7" />
+        <targetEnds>
+          <association Id="19669754-76c2-4fd5-a6fc-ef293cef8f29" isDerived="false" sourceEndRoleName="TypeCobol.LanguageServer" targetEndRoleName="Notifier:textDocument/publishDiagnostics" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="6dbd6be0-4d7a-43db-a4bd-e2fcc0611e9b" LastKnownName="Notifier:textDocument/publishDiagnostics" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="86d520dd-ca01-4449-aa2f-df49eb2263d3" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="0adfd62d-bb0c-4544-906d-b5a84d9646e7" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="9fd2c3a3-1346-4ce5-b72c-e99348d70ae1" name="Notifier:textDocument/publishDiagnostics" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="c90aeb61-c364-4f1f-86d8-77fd3c35b962" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="71409feb-904a-494a-9c0c-9baf055467dd" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="75f61d96-64e8-4ace-b2c1-af934e6568e5" name="Editer un document" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="9b7aa15f-d7dc-427c-9b99-aeb910fbdea8" />
+        <targetEnds>
+          <association Id="03856b87-39ed-44cf-a5bc-f15ecd59bc24" isDerived="false" sourceEndRoleName="Editer un document" targetEndRoleName="TypeCobol.LanguageClient" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="b6cb9383-4dea-4bb3-a816-9ecd7747006e" LastKnownName="TypeCobol.LanguageClient" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="dd8476a2-4572-4613-88fb-723fd276117b" name="Editer un document" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="fead86b3-0e08-4bcc-ac4d-ba4e8654a817" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="86a67fef-aee1-4aba-92a2-2cf3968919c7" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="c5f39feb-c410-4f7b-b37b-fbfea8c96b50" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="aa547f77-2732-41f5-b852-13db4c332cc3" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="3f0ddfff-ad3a-4cd5-83dc-8a3d26c3b4f8" name="Notifier:textDocument/didChange" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="2967837b-c9d1-4218-aaa6-4c0fde79d94e" />
+        <targetEnds>
+          <association Id="c7624eef-38f9-4771-a1c7-7685e7bfc701" isDerived="false" sourceEndRoleName="Notifier:textDocument/didChange" targetEndRoleName="TypeCobol.LanguageServer" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="b8436c83-173e-43df-b1da-b969b90d6902" LastKnownName="TypeCobol.LanguageServer" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="325fb595-9a96-4366-9f51-33f7f8ce56b1" name="Notifier:textDocument/didChange" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="bfb41ee5-1d05-46fc-9ab7-8ad1cd072b19" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="5c42cdbe-c073-4e5f-9896-7a73321e2b75" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="e2c07da2-4108-4db5-84ac-e1bed2b34f65" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="463a92b5-9cbb-49ca-a5d1-33d6490082a3" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="6dbd6be0-4d7a-43db-a4bd-e2fcc0611e9b" name="Notifier:textDocument/publishDiagnostics" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="0049319f-b7de-4f9b-8c92-b751028155b9" />
+        <targetEnds>
+          <association Id="5ee24bda-6475-408f-bda3-f34729d16f0a" isDerived="false" sourceEndRoleName="Notifier:textDocument/publishDiagnostics" targetEndRoleName="TypeCobol.LanguageClient" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="b6cb9383-4dea-4bb3-a816-9ecd7747006e" LastKnownName="TypeCobol.LanguageClient" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3a28b765-bb90-4c4f-86ef-fecf20928151" name="Notifier:textDocument/publishDiagnostics" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="c604057b-57c5-4513-9609-85415d037cf0" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="52095137-d0d8-4967-8335-c581534db917" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="c1d92256-c1ac-4ebf-b69d-62b05b3aec4c" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="8abc26fe-da1f-4759-87e0-cec46a2de6c3" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="03213d98-f7e7-4ac6-afda-17c54f9a1d04" name="Visualiser les diagnostics" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="bc25a27f-49de-4483-8205-e4a5ecc59035" />
+        <targetEnds>
+          <association Id="c7d0e74e-d352-4eae-adcf-4a354985e7a9" isDerived="false" sourceEndRoleName="Visualiser les diagnostics" targetEndRoleName="Utilisateur" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="db82d7e8-c246-43a4-804a-ae117bc55e83" LastKnownName="Utilisateur" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="22686e32-75dc-4f2d-8cd1-cc2e203141b0" name="Visualiser les diagnostics" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="5c373527-ca05-4084-b062-4544c2c732b1" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3c971f82-2137-4fb7-97a9-9b65e8517760" name="Utilisateur" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="9b3e89e1-6fb6-4630-8b34-00718c673a18" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e08d5bf8-2f99-496f-bb6d-657b59958f99" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="d67b684f-917d-4837-8a3b-e48b18315562" name="Analyser le document" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="f58e32ef-89f9-4a96-ad27-f0ce556c7f50" />
+        <targetEnds>
+          <association Id="c8a7306b-7e4d-4c2a-9b65-acb5d257a36c" isDerived="false" sourceEndRoleName="Analyser le document" targetEndRoleName="TypeCobol.LanguageServer" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="b8436c83-173e-43df-b1da-b969b90d6902" LastKnownName="TypeCobol.LanguageServer" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="e87ba2be-ee0a-432d-bf3f-91d720d41ad5" name="Analyser le document" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="9af549f6-5525-43f8-b8cd-5fecf37da1a7" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="836e740a-219c-46f2-a634-3f15db34872f" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="3136cf2c-056d-4f12-88fe-5154a61b48ad" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="8cc208df-b01e-4cec-be8c-ec11fb150af5" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+  </packagedElements>
+  <package Id="5f246eba-6c3d-4d92-9d34-63657d6b698b" name="TypeCobolLanguageServer">
+    <elementDefinition Id="5d09ded1-4567-4003-bfe3-37cf35f27636" />
+  </package>
+</useCaseModelRoot>

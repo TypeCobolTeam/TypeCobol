@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="MissingCOPYs">
+  <useCaseModelRootMoniker Id="032cf219-34c6-45a9-b77d-fc79676929eb" />
+  <nestedChildShapes>
+    <actorShape Id="c4e4e663-8e56-4c20-bcfa-972a50d204b7" absoluteBounds="1.625, 2.25, 2, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="3efe1b17-9d90-4c4d-a43b-5fc918508f3d" LastKnownName="TypeCobol.LanguageServer" />
+      <relativeChildShapes />
+    </actorShape>
+    <actorShape Id="041d54b4-3a17-4dce-a162-f78937c796e8" absoluteBounds="8.875, 2, 1.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="2455715a-8c15-4d33-aa28-ceeaae8690db" LastKnownName="TypeCobol.LanguageClient" />
+      <relativeChildShapes />
+    </actorShape>
+    <useCaseShape Id="cdef6d8d-c847-475b-8590-018b1adaa629" absoluteBounds="4.5, 1.75, 3.125, 0.75" customColor="238, 237, 131" heightOffset="0">
+      <useCaseMoniker Id="3b1bd355-d090-4a6f-b88d-fbae97355ba5" LastKnownName="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" />
+      <relativeChildShapes />
+    </useCaseShape>
+    <useCaseAssociationConnector edgePoints="[(3.625 : 2.39090909090909); (4.64005237896468 : 2.28017610411294)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="0a08e168-5839-4389-a197-6ad9f3655000" />
+      <relativeChildShapes />
+      <nodes>
+        <actorShapeMoniker Id="c4e4e663-8e56-4c20-bcfa-972a50d204b7" />
+        <useCaseShapeMoniker Id="cdef6d8d-c847-475b-8590-018b1adaa629" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseAssociationConnector edgePoints="[(7.60856449220522 : 2.17924787691948); (8.875 : 2.22368421052632)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="2b1a6acd-f17b-489e-8f10-9b374b72bae5" />
+      <relativeChildShapes />
+      <nodes>
+        <useCaseShapeMoniker Id="cdef6d8d-c847-475b-8590-018b1adaa629" />
+        <actorShapeMoniker Id="041d54b4-3a17-4dce-a162-f78937c796e8" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseShape Id="bf0f4136-2153-4998-8f32-14000492faf4" absoluteBounds="4.625, 3.375, 3.125, 0.75" customColor="238, 237, 131" heightOffset="0">
+      <useCaseMoniker Id="c7c64212-1a88-4104-92db-dd2785c61aed" LastKnownName="Envoyer notification:&quot;typecobol/missingCopies&quot;:MissingCopiesParams" />
+      <relativeChildShapes />
+    </useCaseShape>
+    <useCaseAssociationConnector edgePoints="[(9.05208333333333 : 2.5); (6.94049804651899 : 3.42141903424626)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="5f595c6c-a839-4158-bced-45c73fcf3826" />
+      <relativeChildShapes />
+      <nodes>
+        <actorShapeMoniker Id="041d54b4-3a17-4dce-a162-f78937c796e8" />
+        <useCaseShapeMoniker Id="bf0f4136-2153-4998-8f32-14000492faf4" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseAssociationConnector edgePoints="[(5.30536632464518 : 3.44047941215621); (3.3375 : 2.75)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="f6910615-9fa4-4fe6-9211-b5991516d41d" />
+      <relativeChildShapes />
+      <nodes>
+        <useCaseShapeMoniker Id="bf0f4136-2153-4998-8f32-14000492faf4" />
+        <actorShapeMoniker Id="c4e4e663-8e56-4c20-bcfa-972a50d204b7" />
+      </nodes>
+    </useCaseAssociationConnector>
+  </nestedChildShapes>
+</useCaseDiagram>
