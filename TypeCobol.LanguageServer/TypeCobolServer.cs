@@ -308,7 +308,8 @@ namespace TypeCobol.LanguageServer
                         { //Add the range object to let the client know the position of the user filter token
                             items = items.Select(c =>
                             {
-                                c.data = new Range(userFilterToken.Line, userFilterToken.StartIndex, userFilterToken.Line, userFilterToken.StopIndex);
+                                //-1 on lne to 0 based / +1 on stop index to include the last character
+                                c.data = new Range(userFilterToken.Line-1, userFilterToken.StartIndex, userFilterToken.Line-1, userFilterToken.StopIndex+1); 
                                 return c;
                             }).ToList();
                         }
