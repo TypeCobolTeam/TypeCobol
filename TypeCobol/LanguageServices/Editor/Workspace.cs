@@ -39,6 +39,7 @@ namespace TypeCobol.LanguageServices.Editor
         public Dictionary<Uri, FileCompiler> OpenedFileCompiler{ get; private set; }
         public EventHandler<IList<Compiler.Diagnostics.Diagnostic>> DiagnosticsEvent { get; set; }
         public EventHandler<List<string>> MissingCopiesEvent { get; set; }
+        public EventHandler<string> LoadingIssueEvent { get; set; }
 
 
         public Workspace(string rootDirectoryFullName, string workspaceName)
@@ -177,9 +178,12 @@ namespace TypeCobol.LanguageServices.Editor
         {
             RefreshCustomSymbols();
 
-            foreach (var FileParser in OpenedFileCompiler)
+            lock(OpenedFileCompiler)
             {
-                OpenSourceFile(FileParser.Key, FileParser.Value.TextDocument.TextSegment(0, FileParser.Value.TextDocument.Length-1));
+                foreach (var FileParser in OpenedFileCompiler)
+                {
+                    OpenSourceFile(FileParser.Key, FileParser.Value.TextDocument.TextSegment(0, FileParser.Value.TextDocument.Length - 1));
+                }
             }
         }
 
@@ -192,11 +196,13 @@ namespace TypeCobol.LanguageServices.Editor
                 CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, ref diagnostics); //Refresh Intrinsics
                 CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols, TypeCobolConfiguration.InputFiles, ref diagnostics); //Refresh Dependencies
 
-                var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(); //Choose the first file of the list, those diagnostics concern all the files
-                DiagnosticsEvent(fileUri, diagnostics);
+                if(diagnostics.Count > 0)
+                    LoadingIssueEvent(null, "An error occured while trying to load Intrinsics or Dependecies files."); //Send notification to client
             }
             catch (TypeCobolException typeCobolException)
             {
+                LoadingIssueEvent(null, "An error occured while trying to load Intrinsics or Dependecies files."); //Send notification to client
+
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
 
                 if (typeCobolException.NeedMail)
@@ -204,6 +210,8 @@ namespace TypeCobol.LanguageServices.Editor
             }
             catch (Exception e)
             {
+                LoadingIssueEvent(null, "An error occured while trying to load Intrinsics or Dependecies files."); //Send notification to client
+
                 AnalyticsWrapper.Telemetry.TrackException(e);
                 AnalyticsWrapper.Telemetry.SendMail(e, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, TypeCobolConfiguration.CommandLine);
             }
@@ -221,8 +229,8 @@ namespace TypeCobol.LanguageServices.Editor
             var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
             var diags = compilationUnit.AllDiagnostics();
-            if (diags.Count > 0)
-                DiagnosticsEvent(fileUri, diags);
+            DiagnosticsEvent(fileUri, diags);
+
             if (CompilationProject.MissingCopys.Count > 0)
                 MissingCopiesEvent(fileUri, CompilationProject.MissingCopys);
         }

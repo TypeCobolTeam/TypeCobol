@@ -35,7 +35,8 @@ namespace TypeCobol.LanguageServer
 
             // Initialize the workspace
             typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName);
-          
+            typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
+
             //Simulate Configuration change
             //typeCobolWorkspace.DidChangeConfigurationParams(@"-o C:\TypeCobol\Test.cee -d C:\TypeCobol\Test.xml -s C:\TypeCobol\Sources\##Latest_Release##\skeletons.xml -e rdz -y C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt --autoremarks --dependencies C:\TypeCobol\Sources\##Latest_Release##\Dependencies\*.tcbl");
 
@@ -53,6 +54,8 @@ namespace TypeCobol.LanguageServer
 
             return initializeResult;
         }
+
+       
 
         // -- Files synchronization : maintain a list of opened files, apply all updates to their content -- //
         public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
@@ -367,6 +370,11 @@ namespace TypeCobol.LanguageServer
             diagParameter.uri = fileUri.ToString();
             diagParameter.diagnostics = diagList.ToArray();
             SendDiagnostics(diagParameter);
+        }
+
+        private void LoadingIssueDetected(object sender, string message)
+        {
+            SendLoadingIssue(new LoadingIssueParams() { Message = message });
         }
 
         #region Completion Methods
