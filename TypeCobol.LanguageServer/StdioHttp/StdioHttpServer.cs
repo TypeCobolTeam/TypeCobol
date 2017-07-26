@@ -15,6 +15,9 @@ namespace TypeCobol.LanguageServer.StdioHttp
         private Encoding messageEncoding;
         private ServerLogLevel logLevel;
         private TextWriter logWriter;
+        public const string CONTENT_LENGTH_HEADER = "Content-Length";
+        public const string CONTENT_TYPE_HEADER = "Content-Type";
+
 
         /// <summary>
         /// Configure the Http server
@@ -27,6 +30,8 @@ namespace TypeCobol.LanguageServer.StdioHttp
             this.messageEncoding = messageEncoding;
             this.logLevel = logLevel;
             this.logWriter = logWriter;
+            Console.OutputEncoding = messageEncoding ?? Encoding.UTF8;
+            Console.InputEncoding = messageEncoding ?? Encoding.UTF8;
             if (logWriter is StreamWriter)
                 (this.logWriter as StreamWriter).AutoFlush = true;
         }
@@ -34,6 +39,108 @@ namespace TypeCobol.LanguageServer.StdioHttp
         // Shutdown request
         private bool shutdownAfterNextMessage = false;
 
+        /// <summary>
+        /// Structure of Messages Headers
+        /// </summary>
+        protected class Headers
+        {
+            public int contentLength;
+            public string charset;
+            public Headers()
+            {
+                Reset();
+            }
+
+            public void Reset()
+            {
+                this.contentLength = -1;
+                this.charset = Encoding.UTF8.BodyName;
+            }
+        }
+
+        /// <summary>
+        /// Parse the Message Header Line
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="headers"></param>
+        /// <returns></returns>
+
+        protected void ParseHeader(String line, Headers headers)
+        {
+            int sepIndex = line.IndexOf(':');
+            if (sepIndex >= 0)
+            {
+                String key = line.Substring(0, sepIndex).Trim();
+                switch (key)
+                {
+                    case CONTENT_LENGTH_HEADER:
+                            Int32.TryParse(line.Substring(sepIndex + 1).Trim(), out headers.contentLength);
+                        break;
+                    case CONTENT_TYPE_HEADER:
+                        {
+                            int charsetIndex = line.IndexOf("charset=");
+                            if (charsetIndex >= 0)
+                                headers.charset = line.Substring(charsetIndex + 8).Trim();
+                            break;
+                        }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handle a Receive message for Stdin
+        /// </summary>
+        /// <param name="messageHandler">The Message Handler</param>
+        /// <param name="stdin">The Stdin instance</param>
+        /// <param name="headers">The Message Header</param>
+        /// <param name="buffer">The read buffer</param>
+        /// <returns>true if the message has been handled, false otherwise</returns>
+        protected bool HandleMessage(IMessageHandler messageHandler, Stream stdin, Headers headers, byte[] buffer)
+        {
+            // If the server could not find the content length of the message
+            // it is impossible to detect where the message ends : write a fatal 
+            // error message and exit the loop
+            if (headers.contentLength == 0)
+            {
+                logWriter.WriteLine(String.Format("{0} !! Fatal error : message without Content-Length header", DateTime.Now));
+                return false;
+            }
+            else
+            {
+                // Log the size of the message received
+                if (logLevel >= ServerLogLevel.Message)
+                {
+                    logWriter.WriteLine(String.Format("{0} >> Message received : Content-Length={1}", DateTime.Now, headers.contentLength));
+                }
+            }
+
+            // Read Http message body
+            using (MemoryStream stream = new MemoryStream(headers.contentLength))
+            {
+                while (headers.contentLength > 0)
+                {
+                    int nbCharsToRead = headers.contentLength > buffer.Length ? buffer.Length : headers.contentLength;
+                    int nbCharsRead = stdin.Read(buffer, 0, nbCharsToRead);
+                    stream.Write(buffer, 0, nbCharsRead);
+                    headers.contentLength -= nbCharsRead;
+                }
+                Encoding encoding = headers.charset == Encoding.UTF8.BodyName ? Encoding.UTF8 : Encoding.GetEncoding(headers.charset);
+                if (encoding == null) {
+                    logWriter.WriteLine(String.Format("{0} >> Fail to get encoding : {1} --> using default encoding UTF-8", DateTime.Now, headers.charset));
+                    encoding = Encoding.UTF8;
+                }
+                string message = Encoding.UTF8.GetString(stream.ToArray()); ;
+                if (logLevel == ServerLogLevel.Protocol)
+                {
+                    logWriter.WriteLine(message);
+                    logWriter.WriteLine("----------");
+                }
+
+                // Handle incoming message and optionnaly send reply
+                messageHandler.HandleMessage(message, this);
+            }
+            return true;
+        }
         /// <summary>
         /// Infinite message loop : start listening for incoming Http messages on stdin.
         /// Each message received is passed to an IMessageHandler on the main thread of the loop.
@@ -43,78 +150,71 @@ namespace TypeCobol.LanguageServer.StdioHttp
         {
             logWriter.WriteLine(String.Format("{0} -- Server startup", DateTime.Now));
 
+            StringBuilder headerBuilder = null;
+            bool newLine = false;
+            Headers headers = new Headers();
             // Infinite message loop
-            char[] buffer = new char[BUFFER_SIZE];            
-            for (;;)
+            using (Stream stdin = Console.OpenStandardInput())
             {
-                // Receive and handle one message
-                try
+                byte[] buffer = new byte[BUFFER_SIZE];
+                for (;;)
                 {
-                    // Read Http message headers                  
-                    int contentLength = 0;
-                    string headerLine = Console.ReadLine();
-                    while (!String.IsNullOrEmpty(headerLine))
+                    // Receive and handle one message
+                    try
                     {
-                        int headerSeparatorIndex = headerLine.IndexOf(':');
-                        if (headerSeparatorIndex > 0)
+                        // Read Http message headers                  
+                        int c = stdin.ReadByte();
+                        if (c == -1)
+                            break;//End of input stream has been reached???
+                        else
                         {
-                            // Ignore all headers but Content-Length
-                            string headerName = headerLine.Substring(0, headerSeparatorIndex);
-                            if (headerName == "Content-Length" && headerSeparatorIndex < (headerLine.Length - 2))
+                            if (c == '\n')
                             {
-                                // Try to parse Content-Length
-                                string headerValue = headerLine.Substring(headerSeparatorIndex + 2);
-                                Int32.TryParse(headerValue, out contentLength);
+                                if (newLine)
+                                {
+                                    // Two consecutive newlines have been read, which signals the start of the message content
+                                    if (headers.contentLength < 0)
+                                    {
+                                        logWriter.WriteLine(String.Format("{0} !! Fatal error : message without Content-Length header", DateTime.Now));
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        bool result = HandleMessage(messageHandler, stdin, headers, buffer);
+                                        if (!result)
+                                            break;
+                                        newLine = false;
+                                    }
+                                    headers.Reset();
+                                }
+                                else if (headerBuilder != null)
+                                {
+                                    // A single newline ends a header line
+                                    ParseHeader(headerBuilder.ToString(), headers);
+                                    headerBuilder = null;
+                                }
+                                newLine = true;
+                            }
+                            else if (c != '\r')
+                            {
+                                // Add the character to the current header line
+                                if (headerBuilder == null)
+                                    headerBuilder = new StringBuilder();
+                                headerBuilder.Append((char)c);
+                                newLine = false;
                             }
                         }
-                        headerLine = Console.ReadLine();
+                    }
+                    catch (Exception e)
+                    {
+                        logWriter.WriteLine(String.Format("{0} !! Exception : {1}", DateTime.Now, e.Message));
                     }
 
-                    // If the server could not find the content length of the message
-                    // it is impossible to detect where the message ends : write a fatal 
-                    // error message and exit the loop
-                    if (contentLength == 0)
+                    // Exit the loop after message handling if a shutdown of the server has been requested
+                    if (shutdownAfterNextMessage)
                     {
-                        logWriter.WriteLine(String.Format("{0} !! Fatal error : message without Content-Length header", DateTime.Now));
                         break;
                     }
-                    else
-                    {
-                        // Log the size of the message received
-                        if (logLevel >= ServerLogLevel.Message)
-                        {
-                            logWriter.WriteLine(String.Format("{0} >> Message received : Content-Length={1}", DateTime.Now, contentLength));
-                        }
-                    }
-
-                    // Read Http message body
-                    StringBuilder sbMessage = new StringBuilder();
-                    while (contentLength > 0)
-                    {
-                        int nbCharsToRead = contentLength > buffer.Length ? buffer.Length : contentLength;
-                        int nbCharsRead = Console.In.Read(buffer, 0, nbCharsToRead);
-                        sbMessage.Append(buffer, 0, nbCharsRead);
-                        contentLength -= nbCharsRead;
-                    }
-                    string message = sbMessage.ToString();
-                    if(logLevel == ServerLogLevel.Protocol)
-                    {
-                        logWriter.WriteLine(message);
-                        logWriter.WriteLine("----------");
-                    }
-
-                    // Handle incoming message and optionnaly send reply
-                    messageHandler.HandleMessage(message, this);
-                }
-                catch (Exception e)
-                {
-                    logWriter.WriteLine(String.Format("{0} !! Exception : {1}", DateTime.Now, e.Message));
-                }
-
-                // Exit the loop after message handling if a shutdown of the server has been requested
-                if (shutdownAfterNextMessage)
-                {
-                    break;
                 }
             }
 
