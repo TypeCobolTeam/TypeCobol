@@ -129,7 +129,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
                     logWriter.WriteLine(String.Format("{0} >> Fail to get encoding : {1} --> using default encoding UTF-8", DateTime.Now, headers.charset));
                     encoding = Encoding.UTF8;
                 }
-                string message = Encoding.UTF8.GetString(stream.ToArray()); ;
+                string message = encoding.GetString(stream.ToArray()); ;
                 if (logLevel == ServerLogLevel.Protocol)
                 {
                     logWriter.WriteLine(message);
