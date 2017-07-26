@@ -11,6 +11,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
+using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServices.Editor
@@ -184,9 +185,29 @@ namespace TypeCobol.LanguageServices.Editor
 
         private void RefreshCustomSymbols()
         {
+            var diagnostics = new List<Compiler.Diagnostics.Diagnostic>();
             CustomSymbols = null;
-            CustomSymbols = LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format); //Refresh Intrinsics
-            CustomSymbols = LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols); //Refresh Dependencies
+            try
+            {
+                CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, ref diagnostics); //Refresh Intrinsics
+                CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols, TypeCobolConfiguration.InputFiles, ref diagnostics); //Refresh Dependencies
+
+                var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(); //Choose the first file of the list, those diagnostics concern all the files
+                DiagnosticsEvent(fileUri, diagnostics);
+            }
+            catch (TypeCobolException typeCobolException)
+            {
+                AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
+
+                if (typeCobolException.NeedMail)
+                    AnalyticsWrapper.Telemetry.SendMail(typeCobolException, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, TypeCobolConfiguration.CommandLine);
+            }
+            catch (Exception e)
+            {
+                AnalyticsWrapper.Telemetry.TrackException(e);
+                AnalyticsWrapper.Telemetry.SendMail(e, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, TypeCobolConfiguration.CommandLine);
+            }
+
         }
 
         /// <summary>
@@ -207,112 +228,8 @@ namespace TypeCobol.LanguageServices.Editor
         }
 
 
-        private SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat)
-        {
-            var parser = new Parser();
-            var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
-            var instrincicFiles = new List<string>();
+       
 
-            foreach (string path in paths) instrincicFiles.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false));
-
-            foreach (string path in instrincicFiles)
-            {
-                //try
-                //{
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, intrinsicDocumentFormat);
-                    parser.Parse(path);
-
-                    var diagnostics = parser.Results.AllDiagnostics();
-
-
-                    foreach (var diagnostic in diagnostics)
-                    {
-                        //TODO: Send diagnostics to client...
-                    }
-
-                    //if (diagnostics.Count > 0)
-                    //    throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", path, null, logged: false, needMail: false);
-
-
-                    //if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
-                    //{
-                    //    throw new CopyLoadingException("Your Intrisic types/functions are not included into a program.", path, null, logged: true, needMail: false);
-                    //}
-
-                    foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
-                    {
-                        var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
-
-                        //if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
-                        //{
-                        //    Server.AddError(writer, MessageCode.Warning, "No types and no procedures/functions found", path);
-                        //    continue;
-                        //}
-
-                        table.CopyAllTypes(symbols.Types);
-                        table.CopyAllFunctions(symbols.Functions);
-                    }
-                //}
-                //catch (CopyLoadingException copyException)
-                //{
-                //    throw copyException; //Make CopyLoadingException trace back to runOnce()
-                //}
-                //catch (Exception e)
-                //{
-                //    throw new CopyLoadingException(e.Message + "\n" + e.StackTrace, path, e, logged: true, needMail: true);
-                //}
-            }
-            return table;
-        }
-
-        private SymbolTable LoadDependencies(List<string> paths, DocumentFormat format, SymbolTable intrinsicTable)
-        {
-            var parser = new Parser(intrinsicTable);
-            var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
-
-            var dependencies = new List<string>();
-            string[] extensions = { ".tcbl", ".cbl", ".cpy" };
-            foreach (var path in paths)
-            {
-                dependencies.AddRange(Tools.FileSystem.GetFiles(path, extensions, true)); //Get File by name or search the directory for all files
-            }
-
-            foreach (string path in dependencies)
-            {
-                //try
-                //{
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format);
-                    parser.Parse(path); //Parse the dependencie file
-
-                    var diagnostics = parser.Results.AllDiagnostics();
-                    foreach (var diagnostic in diagnostics)
-                    {
-                        //TODO : Send diagnostics to client...
-                    }
-                    //if (diagnostics.Count > 0)
-                    //    throw new DepedenciesLoadingException("Diagnostics detected while parsing dependency file", path, null, logged: false, needMail: false);
-
-                    //if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
-                    //{
-                    //    throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
-                    //}
-
-                    foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
-                    {
-                        table.AddProgram(program); //Add program to Namespace symbol table
-                    }
-
-                //}
-                //catch (DepedenciesLoadingException)
-                //{
-                //    throw; //Make DepedenciesLoadingException trace back to runOnce()
-                //}
-                //catch (Exception e)
-                //{
-                //    throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e);
-                //}
-            }
-            return table;
-        }
+  
     }
 }
