@@ -391,7 +391,8 @@ namespace TypeCobol.LanguageServer
                     pargraphs = performNode.SymbolTable.GetParagraphNames(userFilterText);
                     variables = performNode.SymbolTable.GetVariables(da => da.Picture != null && 
                                                                     da.DataType == Compiler.CodeElements.DataType.Numeric && 
-                                                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase));
+                                                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
                 }
             }
   
@@ -416,42 +417,56 @@ namespace TypeCobol.LanguageServer
         }
         private IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, Token callToken, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, callToken, CompletionMode.Call);
-            IDictionary<string, List<FunctionDeclaration>> procedures = new Dictionary<string, List<FunctionDeclaration>>(StringComparer.InvariantCultureIgnoreCase);
-            if (callNode != null)
+            var node = GetMatchingNode(fileCompiler, callToken, CompletionMode.Call);
+            var procedures = new List<FunctionDeclaration>();
+            var variables = new List<DataDefinition>();
+            if (node != null)
             {
-                if (callNode.SymbolTable != null)
+                if (node.SymbolTable != null)
                 {
-                    procedures = callNode.SymbolTable.GetFunctions(userFilterToken != null ? userFilterToken.Text : string.Empty);
+                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                    procedures = node.SymbolTable.GetFunctions(f => f.QualifiedName.ToString().StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) 
+                                                                        || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Intrinsic, SymbolTable.Scope.Namespace });
+                    variables = node.SymbolTable.GetVariables(da => da.Picture != null &&
+                                                                    da.DataType == Compiler.CodeElements.DataType.Alphanumeric &&
+                                                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
                 }
             }
 
             var completionItems = new List<CompletionItem>();
-            if (procedures != null)
-            {
-                foreach (var procedure in procedures)
-                {
-                    foreach (var proc in procedure.Value)
-                    {
-                        string inputParams = null, outputParams = null, inoutParams = null;
 
-                        if (proc.Profile != null)
-                        {
-                            if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
-                                inputParams = string.Format("INPUT: {0}", string.Join(", ", proc.Profile.InputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                            if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
-                                outputParams = string.Format("| OUTPUT: {0}", string.Join(", ", proc.Profile.OutputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                            if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
-                                inoutParams = string.Format("| INOUT: {0}", string.Join(", ", proc.Profile.InoutParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                        }
-                        var completionItem = new CompletionItem(string.Format("{0} ({1} {2} {3})", proc.Name, inputParams, outputParams, inoutParams));
-                        completionItem.insertText = procedure.Key;
-                        completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
-                        completionItems.Add(completionItem);
-                    }
-                  
+            foreach (var proc in procedures)
+            {
+                string inputParams = null, outputParams = null, inoutParams = null;
+
+                if (proc.Profile != null)
+                {
+                    if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
+                        inputParams = string.Format("INPUT: {0}", string.Join(", ", proc.Profile.InputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                    if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
+                        outputParams = string.Format("| OUTPUT: {0}", string.Join(", ", proc.Profile.OutputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                    if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
+                        inoutParams = string.Format("| INOUT: {0}", string.Join(", ", proc.Profile.InoutParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                 }
+                bool procIsPublic = (proc.CodeElement as Compiler.CodeElements.FunctionDeclarationHeader).Visibility == Compiler.CodeElements.AccessModifier.Public
+                                    && !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations).Functions.Values.Any(t => t.Contains(proc))   //Ignore public if proc is in the current program
+                                         || node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Intrinsic).Functions.Values.Any(t => t.Contains(proc))); //Ignore public if proc is in intrinsic;
+                var procDisplayName = procIsPublic ? proc.QualifiedName.ToString() : proc.Name;
+                var completionItem = new CompletionItem(string.Format("{0} ({1} {2} {3})", procDisplayName, inputParams, outputParams, inoutParams));
+                completionItem.insertText = procIsPublic ? string.Format("{0}::{1}", proc.QualifiedName.Tail, proc.QualifiedName.Head) : proc.Name;
+                completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
+                completionItems.Add(completionItem);
             }
+
+            foreach (var variable in variables)
+            {
+                var completionItem = new CompletionItem(string.Format("{0}", variable.Name));
+                completionItem.insertText = variable.Name;
+                completionItems.Add(completionItem);
+            }
+
 
             return completionItems;
         }
@@ -480,21 +495,28 @@ namespace TypeCobol.LanguageServer
         }
         private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, Token token, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, token, CompletionMode.Type);
+            var node = GetMatchingNode(fileCompiler, token, CompletionMode.Type);
             var types = new List<TypeDefinition>();
-            if (callNode != null)
+            if (node != null)
             {
-                if (callNode.SymbolTable != null)
+                if (node.SymbolTable != null)
                 {
                     var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                    types = callNode.SymbolTable.GetTypes(t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                        new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global, SymbolTable.Scope.Intrinsic, SymbolTable.Scope.Namespace });
+                    types = node.SymbolTable.GetTypes(t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) 
+                                                      || t.QualifiedName.ToString().StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                      new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global, SymbolTable.Scope.Intrinsic, SymbolTable.Scope.Namespace });
                 }
             }
             var completionItems = new List<CompletionItem>();
             foreach (var type in types)
             {
-                var completionItem = new CompletionItem(type.Name);
+                var typeIsPublic = (type.CodeElement as Compiler.CodeElements.DataTypeDescriptionEntry).Visibility == Compiler.CodeElements.AccessModifier.Public 
+                                    && !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations).Types.Values.Any(t => t.Contains(type))   //Ignore public if type is in the current program
+                                         || node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Intrinsic).Types.Values.Any(t => t.Contains(type))); //Ignore public if type is in intrinsic
+
+                var typeDisplayName = typeIsPublic ? type.QualifiedName.ToString() : type.Name;
+                var completionItem = new CompletionItem(typeDisplayName);
+                completionItem.insertText = typeIsPublic ? string.Format("{0}::{1}", type.QualifiedName.Tail, type.QualifiedName.Head) : type.Name;
                 completionItem.kind = CompletionItemKind.Class;
                 completionItems.Add(completionItem);
             }
