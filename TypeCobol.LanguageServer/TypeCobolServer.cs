@@ -481,18 +481,20 @@ namespace TypeCobol.LanguageServer
         private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, Token token, Token userFilterToken)
         {
             var callNode = GetMatchingNode(fileCompiler, token, CompletionMode.Type);
-            IDictionary<string, List<TypeDefinition>> types = new Dictionary<string, List<TypeDefinition>>(StringComparer.InvariantCultureIgnoreCase);
+            var types = new List<TypeDefinition>();
             if (callNode != null)
             {
                 if (callNode.SymbolTable != null)
                 {
-                    types = callNode.SymbolTable.GetTypes(userFilterToken != null ? userFilterToken.Text : string.Empty);
+                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                    types = callNode.SymbolTable.GetTypes(t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                        new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global, SymbolTable.Scope.Intrinsic, SymbolTable.Scope.Namespace });
                 }
             }
             var completionItems = new List<CompletionItem>();
             foreach (var type in types)
             {
-                var completionItem = new CompletionItem(type.Key);
+                var completionItem = new CompletionItem(type.Name);
                 completionItem.kind = CompletionItemKind.Class;
                 completionItems.Add(completionItem);
             }
