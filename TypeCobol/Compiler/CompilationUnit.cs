@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Castle.Components.DictionaryAdapter;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
@@ -190,13 +192,14 @@ namespace TypeCobol.Compiler
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root;
                     IList<ParserDiagnostic> newDiagnostics;
+                    List<Tuple<Node, CodeElement>> nodeCodeElementLinkers = new List<Tuple<Node, CodeElement>>();
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics);
+                    ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
                 
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
                         codeElementsDocument, ProgramClassDocumentSnapshot == null ? 0 : ProgramClassDocumentSnapshot.CurrentVersion + 1,
-                        root, newDiagnostics);
+                        root, newDiagnostics, nodeCodeElementLinkers);
                     snapshotWasUpdated = true;
 
                     // Stop perf measurement

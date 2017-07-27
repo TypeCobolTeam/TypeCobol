@@ -76,10 +76,15 @@ namespace TypeCobol.Compiler.Parser
 
 
         public Node CurrentNode { get { return SyntaxTree.CurrentNode; } }
+
+        public List<Tuple<Node, CodeElement>> NodeCodeElementLinkers = new List<Tuple<Node, CodeElement>>();
+
         private void Enter([NotNull] Node node, ParserRuleContext context = null, SymbolTable table = null)
         {
             node.SymbolTable = table ?? SyntaxTree.CurrentNode.SymbolTable;
             SyntaxTree.Enter(node, context);
+
+            NodeCodeElementLinkers.Add(new Tuple<Node, CodeElement>(node, node.CodeElement));
         }
         private void Exit()
         {

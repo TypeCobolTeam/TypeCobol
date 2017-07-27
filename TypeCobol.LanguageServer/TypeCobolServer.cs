@@ -5,12 +5,10 @@ using System.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
-using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 using TypeCobol.LanguageServices.Editor;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.Compiler.Nodes;
-using static TypeCobol.LanguageServer.Utilities.CompletionNodeMatcher;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
@@ -298,7 +296,6 @@ namespace TypeCobol.LanguageServer
                                                      && t.TokenType != TokenType.UserDefinedWord)))
                             {
                                 ignoredCodeElements.AddRange(tempCodeElements);
-                                tempCodeElements = null;
                             }
                             else
                             {
@@ -327,19 +324,19 @@ namespace TypeCobol.LanguageServer
                         {
                             case TokenType.PERFORM:
                                 {
-                                    items.AddRange(GetCompletionPerformParagraph(fileCompiler, lastSignificantToken, userFilterToken));
+                                    items.AddRange(GetCompletionPerformParagraph(fileCompiler, matchingCodeElement, userFilterToken));
                                     break;
                                 }
                             case TokenType.CALL:
                                 {
-                                    items.AddRange(GetCompletionForProcedure(fileCompiler, lastSignificantToken, userFilterToken));
-                                    items.AddRange(GetCompletionForLibrary(fileCompiler, lastSignificantToken, userFilterToken));
+                                    items.AddRange(GetCompletionForProcedure(fileCompiler, matchingCodeElement, userFilterToken));
+                                    items.AddRange(GetCompletionForLibrary(fileCompiler, matchingCodeElement, userFilterToken));
                                     break;
                                 }
                             case TokenType.TYPE:
                                 {
-                                    items.AddRange(GetCompletionForType(fileCompiler, lastSignificantToken, userFilterToken));
-                                    items.AddRange(GetCompletionForLibrary(fileCompiler, lastSignificantToken, userFilterToken));
+                                    items.AddRange(GetCompletionForType(fileCompiler, matchingCodeElement, userFilterToken));
+                                    items.AddRange(GetCompletionForLibrary(fileCompiler, matchingCodeElement, userFilterToken));
                                     break;
                                 }
                             default:
@@ -419,9 +416,9 @@ namespace TypeCobol.LanguageServer
         /// <param name="fileCompiler">The target FileCompiler instance</param>
         /// <param name="performToken">The PERFORM token</param>
         /// <returns></returns>
-        private IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, Token performToken, Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var performNode = GetMatchingNode(fileCompiler, performToken, CompletionMode.Perform);
+            var performNode = GetMatchingNode(fileCompiler, codeElement);
             ICollection<string> pargraphs = null;
             List<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
@@ -440,10 +437,7 @@ namespace TypeCobol.LanguageServer
   
             if (pargraphs != null)
             {
-                foreach (var para in pargraphs)
-                {
-                    completionItems.Add(new CompletionItem(para));
-                }
+                completionItems.AddRange(pargraphs.Select(para => new CompletionItem(para)));
             }
             if(variables != null)
             {
@@ -457,9 +451,9 @@ namespace TypeCobol.LanguageServer
 
             return completionItems;
         }
-        private IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, Token callToken, Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, callToken, CompletionMode.Call);
+            var callNode = GetMatchingNode(fileCompiler, codeElement);
             IDictionary<string, List<FunctionDeclaration>> procedures = new Dictionary<string, List<FunctionDeclaration>>(StringComparer.InvariantCultureIgnoreCase);
             if (callNode != null)
             {
@@ -498,9 +492,9 @@ namespace TypeCobol.LanguageServer
 
             return completionItems;
         }
-        private IEnumerable<CompletionItem> GetCompletionForLibrary(FileCompiler fileCompiler, Token token, Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionForLibrary(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, token, CompletionMode.Call);
+            var callNode = GetMatchingNode(fileCompiler, codeElement);
             IDictionary<string, List<Program>> programs = new Dictionary<string, List<Program>>(StringComparer.InvariantCultureIgnoreCase);
             if (callNode != null)
             {
@@ -521,16 +515,13 @@ namespace TypeCobol.LanguageServer
 
             return completionItems;
         }
-        private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, Token token, Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, token, CompletionMode.Type);
+            var callNode = GetMatchingNode(fileCompiler, codeElement);
             IDictionary<string, List<TypeDefinition>> types = new Dictionary<string, List<TypeDefinition>>(StringComparer.InvariantCultureIgnoreCase);
-            if (callNode != null)
+            if (callNode != null && callNode.SymbolTable != null)
             {
-                if (callNode.SymbolTable != null)
-                {
-                    types = callNode.SymbolTable.GetTypes(userFilterToken != null ? userFilterToken.Text : string.Empty);
-                }
+                types = callNode.SymbolTable.GetTypes(userFilterToken != null ? userFilterToken.Text : string.Empty);
             }
             var completionItems = new List<CompletionItem>();
             foreach (var type in types)
@@ -549,19 +540,16 @@ namespace TypeCobol.LanguageServer
         /// Get the matchig node for a given Token and a gien completion mode. Returning a matching Node or null.
         /// </summary>
         /// <param name="fileCompiler"></param>
-        /// <param name="token"></param>
-        /// <param name="completionMode"></param>
+        /// <param name="codeElement"></param>
         /// <returns></returns>
-        private Node GetMatchingNode(FileCompiler fileCompiler, Token token, CompletionMode completionMode)
+        private Node GetMatchingNode(FileCompiler fileCompiler, CodeElement codeElement)
         {
-            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null)
+            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null
+                && fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers != null)
             {
-                if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root != null)
-                {
-                    CompletionNodeMatcher matcher = new CompletionNodeMatcher(completionMode, token);
-                    fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(matcher);
-                    return matcher.MatchingNode;
-                }
+                var matchingTuple = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers.FirstOrDefault(t => t.Item2 != null && t.Item2.Equals((codeElement)));
+                if (matchingTuple != null)
+                    return matchingTuple.Item1;
             }
 
             return null;

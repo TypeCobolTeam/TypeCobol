@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Nodes;
@@ -14,13 +15,14 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     public class ProgramClassDocument
     {
-        public ProgramClassDocument(CodeElementsDocument previousStepSnapshot, int programClassVersion, SourceFile root, IList<ParserDiagnostic> diagnostics)
+        public ProgramClassDocument(CodeElementsDocument previousStepSnapshot, int programClassVersion, SourceFile root, IList<ParserDiagnostic> diagnostics, List<Tuple<Node, CodeElement>> nodeCodeElementLinkers)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;
             CurrentVersion = programClassVersion;
             Root = root;
             Diagnostics = diagnostics;
+            NodeCodeElementLinkers = nodeCodeElementLinkers;
         }
 
         /// <summary>
@@ -40,6 +42,7 @@ namespace TypeCobol.Compiler.Parser
 
         public SourceFile Root { get; private set; }
 
+        public List<Tuple<Node, CodeElement>> NodeCodeElementLinkers { get; private set; }
 
         /// <summary>
         /// Errors found while parsing Program or Class
