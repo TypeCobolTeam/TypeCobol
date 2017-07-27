@@ -37,7 +37,7 @@ namespace TypeCobol.LanguageServices.Editor
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
         public Dictionary<Uri, FileCompiler> OpenedFileCompiler{ get; private set; }
-        public EventHandler<IList<Compiler.Diagnostics.Diagnostic>> DiagnosticsEvent { get; set; }
+        public EventHandler<IEnumerable<Compiler.Diagnostics.Diagnostic>> DiagnosticsEvent { get; set; }
         public EventHandler<List<string>> MissingCopiesEvent { get; set; }
         public EventHandler<string> LoadingIssueEvent { get; set; }
 
@@ -228,7 +228,7 @@ namespace TypeCobol.LanguageServices.Editor
             var compilationUnit = cUnit as CompilationUnit;
             var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
-            var diags = compilationUnit.AllDiagnostics();
+            var diags = compilationUnit.AllDiagnostics().Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 100 : TypeCobolConfiguration.MaximumDiagnostics);
             DiagnosticsEvent(fileUri, diags);
 
             if (CompilationProject.MissingCopys.Count > 0)

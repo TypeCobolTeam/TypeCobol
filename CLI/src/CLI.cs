@@ -168,7 +168,7 @@ namespace TypeCobol.Server
                 }
 
                 var allDiags = parser.Results.AllDiagnostics();
-                errorWriter.AddErrors(path, allDiags); //Write diags into error file
+                errorWriter.AddErrors(path, allDiags.Take(config.MaximumDiagnostics == 0 ? allDiags.Count : config.MaximumDiagnostics)); //Write diags into error file
 
                 if (allDiags.Count > 0)
                 {

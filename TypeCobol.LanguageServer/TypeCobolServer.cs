@@ -340,8 +340,8 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Event Method triggered when missing copies are detected.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e">List of missing copies name</param>
+        /// <param name="fileUri">File URI to be send to the client</param>
+        /// <param name="missingCopies">List of missing copies name</param>
         private void MissingCopiesDetected(object fileUri, List<string> missingCopies)
         {
             //Send missing copies to client
@@ -355,14 +355,14 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Event Method triggered when diagnostics are detected.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e">List of TypeCobol compiler diagnostics</param>
-        private void DiagnosticsDetected(object fileUri, IList<Compiler.Diagnostics.Diagnostic> diagnostics)
+        /// <param name="fileUri">File URI to be send to the client</param>
+        /// <param name="diagnostics">List of TypeCobol compiler diagnostics</param>
+        private void DiagnosticsDetected(object fileUri, IEnumerable<Compiler.Diagnostics.Diagnostic> diagnostics)
         {
             var diagParameter = new PublishDiagnosticsParams();
             var diagList = new List<Diagnostic>();
 
-            foreach (var diag in diagnostics.Take(100))
+            foreach (var diag in diagnostics)
             {
                 diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd), diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(), diag.Info.ReferenceText));
             }
