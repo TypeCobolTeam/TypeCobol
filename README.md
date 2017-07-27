@@ -1,10 +1,56 @@
-# TypeCobol
-
 [![Build status](https://ci.appveyor.com/api/projects/status/hum7rioly7mib3so/branch/master?svg=true)](https://ci.appveyor.com/project/TypeCobolTeam/typecobol/branch/master)
 
-Prototype of an incremental Cobol compiler front-end for IBM Enterprise Cobol 5.1 for zOS syntax.
 
-This prototype is a work in progress and is currently written in C#.
+# TypeCobol
+TypeCobol is two things:
+ - An open source Cobol 85 incremental parser (+Typedef of  Cobol 2002)
+    - We are working on a implemention of LanguageServer Protocol to plug our paser with [RDZ](http://www.ibm.com/software/products/fr/ibm-developer-for-z-systems-enterprise-edition)
+ - An extension of Cobol 85 language which can then be converted to Cobol 85
+    - Like TypeScript with JavaScript
+
+## Open source parser
+Our parser is based on IBM Enterprise Cobol 5.1 for zOS syntax.
+We'll certainly implement IBM Enterprise Cobol 6 next year.
+
+This parser can be used :
+ - as C# API
+ - with our [Command Line interface ](https://github.com/TypeCobolTeam/TypeCobol/wiki/Command-Line-Interface)
+ - with our LanguageServer implementation (still a work in progress).
+ - You can also look at our https://github.com/TypeCobolTeam/TypeCobolBuild project which use our C# API from a Java RTC plugin
+
+
+
+## Extension of Cobol 85 syntax
+TypeCobol extends Cobol 85 with the following features:
+ - [Type mechanism](https://github.com/TypeCobolTeam/TypeCobol/wiki/TypeCobolTypesNutshell) (like TypeDef of Cobol 2002)
+   - TypeCobol comes with intrinsic types: [Boolean](https://github.com/TypeCobolTeam/TypeCobol/wiki/TypeCobolTypeBool), [Date](https://github.com/TypeCobolTeam/TypeCobol/wiki/TypeCobolTypeDate), ...
+ - [Procedures](https://github.com/TypeCobolTeam/TypeCobol/wiki/TypeCobolFunctionNutshell) :
+    - Procedure looks like nested program but with shorter syntax and parameters are clearly categorized as input, in-out or output
+    - Arguments of a procedure must match between Caller and procedure signature
+    - We support procedures overloading
+ - [Operator `::`](https://github.com/TypeCobolTeam/TypeCobol/wiki/TypeCobolNameQualification) which allow to qualify a variable starting with the top most variable
+    - Same behavior as operators `of` and `in`, but you have to start with the parent variable
+
+TypeCobol code is then translated to Cobol 85 compliant with IBM Enterprise Cobol 5.1 for zOS syntax.
+
+### Integration with IDE
+We provide [minimal integration with RDZ](https://github.com/TypeCobolTeam/TypeCobol/wiki/RDZPreprocessor).
+
+We also have an integration with RDZ and our LanguageServer. This is still a work in progress and the RDZ plugin is currently private.
+Maybe this will change in the future.
+
+The LanguageServer allows us to provide:
+ - Errors in real time as you type your code
+ - Code completion for Type, variables, procedures and operator `::`
+ - Go to a definition of a variable
+ 
+
+# Project status and documentation
+This project is currently maintained by 4 persons and our company starts to use it since July 2017.
+
+The documentation is still very limited.
+If you are interested don't hesitate to contact us so we can give you more information.
+
 
 # Architecture overview
 
