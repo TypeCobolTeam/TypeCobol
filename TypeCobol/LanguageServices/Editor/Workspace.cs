@@ -180,9 +180,10 @@ namespace TypeCobol.LanguageServices.Editor
 
             lock(OpenedFileCompiler)
             {
-                foreach (var FileParser in OpenedFileCompiler)
+                var tempOpenedFileCompiler = new Dictionary<Uri, FileCompiler>(OpenedFileCompiler);
+                foreach (var fileParser in tempOpenedFileCompiler)
                 {
-                    OpenSourceFile(FileParser.Key, FileParser.Value.TextDocument.TextSegment(0, FileParser.Value.TextDocument.Length - 1));
+                    OpenSourceFile(fileParser.Key, fileParser.Value.TextDocument.TextSegment(0, fileParser.Value.TextDocument.Length - 1));
                 }
             }
         }
