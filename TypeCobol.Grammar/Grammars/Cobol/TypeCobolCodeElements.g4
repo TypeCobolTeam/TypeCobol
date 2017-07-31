@@ -150,7 +150,7 @@ tcCallStatement:
 //We should create an entry programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionNameReference
 //But as we are thinking to simplify the grammar, for now only the TypeCobolCodeElementBuilder will now that 
 //programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable can be ambiguous an one of its CandidatesType can be TCFunctionName
-	CALL (programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable | functionNameReference)
+	CALL (programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable | functionNameReference)?
 		(INPUT  callInputParameter+)?
 		(IN_OUT  callInoutParameter+)?
 		(OUTPUT callOutputParameter+)?

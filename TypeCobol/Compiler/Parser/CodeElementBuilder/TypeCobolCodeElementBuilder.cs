@@ -398,6 +398,13 @@ namespace TypeCobol.Compiler.Parser
             ProcedureStyleCallStatement statement = null;
             Context = context;
 
+            if (cbCallProc == null)
+            {
+                CodeElement = new ProcedureStyleCallStatement();
+                return;
+            }
+
+
             //Here ambiguousSymbolReference with either CandidatesType:
             // - ProgramNameOrProgramEntry
             // - data, condition, UPSISwitch, TCFunctionName

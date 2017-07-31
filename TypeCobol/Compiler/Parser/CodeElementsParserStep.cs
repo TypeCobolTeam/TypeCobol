@@ -217,10 +217,11 @@ namespace TypeCobol.Compiler.Parser
                                 // Attach consumed tokens and main document line numbers information to the code element
                                 if (codeElement.ConsumedTokens.Count == 0)
                                 {// ISSUE #204:
-                                    if (tokenStream.Lt(1) != null)
+                                    var tempToken = tokenStream.Lt(1);
+                                    if (tempToken != null && tempToken != Token.END_OF_FILE)
                                     {// if not end of file,
                                         // add next token to ConsumedTokens to know where is the CodeElement in error
-                                        codeElement.ConsumedTokens.Add((Token)tokenStream.Lt(1));
+                                        codeElement.ConsumedTokens.Add((Token)tempToken);
                                         // this alter CodeElements semantics: in addition to matched tokens,
                                         // it includes the first token in error if no token has been matched
                                     }

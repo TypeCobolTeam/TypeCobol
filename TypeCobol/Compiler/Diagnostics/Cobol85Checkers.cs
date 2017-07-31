@@ -240,9 +240,9 @@ namespace TypeCobol.Compiler.Diagnostics {
         if (statement == null) {
             return; //not our job
         }
-        var context = c as CodeElementsParser.CobolCallStatementContext;
+	    var context = (c as CodeElementsParser.CallStatementContext).cobolCallStatement();
 
-        if(context != null) //if null it's certainly a CallStatementContext
+        if (context != null) //if null it's certainly a CallStatementContext
         {
             foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
 

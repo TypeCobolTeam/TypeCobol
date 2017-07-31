@@ -1635,17 +1635,19 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterCallStatement([NotNull] CodeElementsParser.CallStatementContext context)
         {
             Context = context;
-            CodeElement = CobolStatementsBuilder.CreateCallStatement(context);
+            if (context.cobolCallStatement() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateCallStatement(context.cobolCallStatement());
+            }
+            else if (context.tcCallStatement() != null)
+            {
+                //Let TypeCobolCodeElementBuilder do the work
+            }
+            else
+            {
+                CodeElement = new CallStatement();
+            }
         }
-
-        /// <summary>
-        /// Call statement for a COBOL CALL 
-        /// </summary>
-        /// <param name="context"></param>
-        public override void EnterCobolCallStatement(CodeElementsParser.CobolCallStatementContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateCallStatement(context);
-		}
 
 		public override void EnterCallStatementEnd(CodeElementsParser.CallStatementEndContext context) {
 			Context = context;
