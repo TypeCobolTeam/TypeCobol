@@ -1,0 +1,314 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="5a84352f-26c5-48cf-a16b-beff83e01b0d" name="GotoSymbolAction" linkedPackageId="9e6e0d9f-c9e2-47d2-9e35-5fdb3be5b3d6" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+  <profileInstances>
+    <packageHasProfileInstances Id="e4573fbb-0361-45d4-8907-2cee7739a069">
+      <profileInstance Id="7ac9673a-1f11-482c-8170-3617bd81861a" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="62f23eaf-8cb2-4ccb-a299-ee240a8048c3">
+      <profileInstance Id="501b496f-8b15-4853-ba7c-a4b61e806f80" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <useCaseModelRootHasTypes>
+      <actor Id="fbab9178-6583-42e1-90f3-23a2c3e2e00e" name="Utilisateur" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="c530ba42-0905-44b4-b4a8-123430793e7a" />
+        <targetEnds>
+          <association Id="95299132-5e34-4b0c-aef8-019bc7ad4a90" isDerived="false" sourceEndRoleName="Utilisateur" targetEndRoleName="Action Utilisateur F3: Open Declaration" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="1033e07f-e998-49a5-96df-ddaea9bac75e" LastKnownName="Action Utilisateur F3: Open Declaration" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7cef505d-490a-4deb-868c-2eef364bc836" name="Utilisateur" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="c2e86b11-ef2a-43f3-a3fb-e45aac662f7f" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7ec4ee80-7ccc-4dc2-8b01-0e4a46ddbf4c" name="Action Utilisateur F3: Open Declaration" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="d52f6f0b-e027-4459-82b1-8965734b3872" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="af0b3c7e-23b6-433c-a255-ff1c938465ea" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="1033e07f-e998-49a5-96df-ddaea9bac75e" name="Action Utilisateur F3: Open Declaration" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="2d1a3597-0037-4fc5-8a0e-c93305f8e095" />
+        <targetEnds>
+          <association Id="1b7b8823-35ad-4f49-85e1-e06f7a359fd8" isDerived="false" sourceEndRoleName="Action Utilisateur F3: Open Declaration" targetEndRoleName="TypeCobolMultiPartEditor" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="29372afe-1ce0-438c-a664-8bc4be4282c0" LastKnownName="TypeCobolMultiPartEditor" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="fddb620b-8dae-4bb9-9f44-3049917a82a4" name="Action Utilisateur F3: Open Declaration" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="e452c505-1fd1-4845-990c-f9c177494878" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="9b3e36d8-2732-4c41-a446-7a0bbec23e0a" name="TypeCobolMultiPartEditor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="76a2d481-984d-442f-9015-e5b78fdb29a5" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="2db15e57-39f2-4cf8-a5d7-378b0c84802d" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="29372afe-1ce0-438c-a664-8bc4be4282c0" name="TypeCobolMultiPartEditor" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="bea6c2e2-e52e-4b4f-a994-6af4fc7fa0fd" />
+        <targetEnds>
+          <association Id="ccf50b4b-bd94-4b60-b19d-2105222a083c" isDerived="false" sourceEndRoleName="TypeCobolMultiPartEditor" targetEndRoleName="Obtenir l'emplecement" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="34e67506-7b20-4575-9b38-cd5db0f65482" LastKnownName="Obtenir l'emplacement" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="83c3a57f-9b4a-49b4-ae6f-52ee2eab06ea" name="TypeCobolMultiPartEditor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="53722843-8e16-4f4b-bf1f-8c1f352dd2b6" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="b0eb70a9-6247-4dbe-8a3e-2f7c729b7c56" name="Obtenir l'emplecement" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="11986963-9d8c-4b9d-a795-26be55377ec7" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="6b68f991-6fe3-4b40-b1e3-2248f116e7d8" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="22551720-3fe7-4962-920b-c6caa0529705" name="TypeCobol.LanguageClient" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="f4435d1c-9dc6-406d-a8ee-97ce37070aba" />
+        <targetEnds>
+          <association Id="3f27558f-094e-45fa-870a-c6ea4e2dd1b0" isDerived="false" sourceEndRoleName="TypeCobol.LanguageClient" targetEndRoleName="Envoyer requête:textDocument/definition" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="30b2dbba-4a8e-4185-94c7-9e07e9905fa8" LastKnownName="Envoyer requête:textDocument/definition" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="57c0e2b1-294b-466c-864d-3c74d489e6d2" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="fb4ce9f6-478e-45f6-8438-5071c29e4a36" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="28961f79-059c-4371-94f3-5fe687c98b14" name="Envoyer requête:textDocument/definition" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="b63489c2-29e2-4b1a-9833-b50709876910" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="9467ddc2-65b2-4604-a738-0a3576d2ea1c" />
+          </association>
+          <association Id="49071c9f-b2f3-477b-9177-ab3467238202" isDerived="false" sourceEndRoleName="TypeCobol.LanguageClient" targetEndRoleName="Fournir les emplacements" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="8bfff01a-ec6d-4bed-bf99-9c8eb8e71ef3" LastKnownName="Répondre avec  les emplacements" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3898235c-2568-45bf-af0e-ae3ce5e57d0f" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="da8ea300-4338-4b7e-bf0b-c73f52096bdf" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="99328331-6074-4ae5-ae44-0ef59cdf08b1" name="Fournir les emplacements" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="7522c9d4-26aa-4c34-936a-437a5ad6f88f" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="119cc065-afd6-44c4-abbd-5ac264b33dbf" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="82198b04-93fa-4fb8-85a4-062d8b89fa37" name="TypeCobol.LanguageServer" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="c6ac8cd4-b4ad-46b1-920b-00d14bdb8d0b" />
+        <targetEnds>
+          <association Id="90082264-2758-4900-856b-55008bb92507" isDerived="false" sourceEndRoleName="TypeCobol.LanguageServer" targetEndRoleName="Fournir les emplacements" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="5a48dfdc-bfbb-4583-927c-6b8f9a06c8c4" LastKnownName="Répondre avec  les emplacements" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="e3e65713-ccd3-4339-8207-3eedd188e936" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="5602a93e-0d2d-4cec-899a-9ee673a57f82" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a16b5322-a718-4b5a-b9b0-1ff0dc3eae0e" name="Fournir les emplacements" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="80bd6635-2229-4a48-b29f-ee6b66054102" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="6ff95e29-a832-470c-a645-60b03edef1ff" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="30b2dbba-4a8e-4185-94c7-9e07e9905fa8" name="Envoyer requête:textDocument/definition" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="ea4d82ec-3fdb-46fc-88c9-b17e68f12817" />
+        <targetEnds>
+          <association Id="c84055fa-7973-4383-8212-c75570cdee9f" isDerived="false" sourceEndRoleName="textDocument/definition" targetEndRoleName="TypeCobol.LanguageServer" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="82198b04-93fa-4fb8-85a4-062d8b89fa37" LastKnownName="TypeCobol.LanguageServer" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8ab6d2b7-37f3-4dd4-8f6f-454bfb826769" name="textDocument/definition" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="469e900b-d1b0-412f-ba76-baf691247c5d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="43148b1d-0b12-4285-9380-54bfa1067175" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="6f20ac96-ba22-4dd4-8816-c3d01a921a9f" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="1629a86d-87ea-4ef8-a024-93987e1c7e9c" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="5a48dfdc-bfbb-4583-927c-6b8f9a06c8c4" name="Répondre avec  les emplacements" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="de2f1ecb-2a40-47ad-9d89-6cc1d77e1c60" />
+        <targetEnds>
+          <association Id="d4a577ab-c44f-4a6d-8613-b333b47ca752" isDerived="false" sourceEndRoleName="Fournir les emplacements" targetEndRoleName="TypeCobol.LanguageClient" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="22551720-3fe7-4962-920b-c6caa0529705" LastKnownName="TypeCobol.LanguageClient" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f586dc54-0219-4296-81a1-ef7f838c9268" name="Fournir les emplacements" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="7f016849-5c31-493b-b0b7-3ccc3ed80cf2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="35d717ba-372f-4d2e-9b05-1df74045812a" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="c002d3d7-be1e-497c-9a4e-7c71f3a28d67" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="c25c2773-79ac-4318-8aae-af61e9a39b90" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="3e017dda-21e6-4415-93b2-675b01cd041b" name="Fournisseur d'emplacements" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="c6bfa1ae-400a-4b83-b410-e4b264b119b5" />
+        <targetEnds>
+          <association Id="2e80ffef-829c-4142-b29b-d4abedb9697b" isDerived="false" sourceEndRoleName="Fournisseur dempleceemnt" targetEndRoleName="Envoyer requête:textDocument/definition" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="10dfe8cc-c207-4ee0-88f3-31b1e212679d" LastKnownName="Envoyer requête:textDocument/definition" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a1a55a08-b142-407e-a1d7-62aceb1cbdaa" name="Fournisseur dempleceemnt" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="e226275c-ab71-4020-a63d-ada953e9e467" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7f8c53a5-46d1-49c5-8da9-871a839cb66a" name="Envoyer requête:textDocument/definition" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="28813efc-2048-4a1e-a88d-20a57272435d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="fed555d0-2f07-4401-aed1-dc8784cf7dce" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="34e67506-7b20-4575-9b38-cd5db0f65482" name="Obtenir l'emplacement" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="601de7dc-620e-4767-b7d7-086f6849d6e2" />
+        <targetEnds>
+          <association Id="1ddaf206-37d3-4fb9-8de0-b34a759b1901" isDerived="false" sourceEndRoleName="Obtenir l'emplecement" targetEndRoleName="Fournisseur dempleceemnt" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="3e017dda-21e6-4415-93b2-675b01cd041b" LastKnownName="Fournisseur d'emplacements" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d41bb173-73ed-48d0-a958-689fcc51f13a" name="Obtenir l'emplecement" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="1ec48215-acc3-4ec2-be6d-81dd1be1b063" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="b95764d2-7de8-4b85-8211-88823b280a56" name="Fournisseur dempleceemnt" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="01985376-6d40-4bf1-828c-cbb881ca33dd" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="29e0c988-0cf3-46bc-abe8-db0af062e739" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="10dfe8cc-c207-4ee0-88f3-31b1e212679d" name="Envoyer requête:textDocument/definition" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="676b47f5-fce8-403b-ac83-d52db6f70642" />
+        <targetEnds>
+          <association Id="8df516a0-a8f8-49f7-9e7f-fcdbfc2724ea" isDerived="false" sourceEndRoleName="Envoyer requête:textDocument/definition" targetEndRoleName="TypeCobol.LanguageClient" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="22551720-3fe7-4962-920b-c6caa0529705" LastKnownName="TypeCobol.LanguageClient" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="c591f673-e9b2-46b6-9d02-0f1956d59bcb" name="Envoyer requête:textDocument/definition" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="8f9fefdc-26f8-4afe-bfb9-0ad772c58779" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="c8ddc11e-2007-4ce9-bc42-fc5dee8dd192" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="2cdfafa8-500c-474e-92e2-39d539ffa8fe" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="0abd39f5-5868-42f5-8302-eae81f5ca63c" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="8bfff01a-ec6d-4bed-bf99-9c8eb8e71ef3" name="Répondre avec  les emplacements" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="5b9a9efe-6f70-46ec-9268-40c5c2cd83d8" />
+        <targetEnds>
+          <association Id="0d26bb31-ad7a-44ba-a79e-8468d109eeaf" isDerived="false" sourceEndRoleName="Fournir les emplacements" targetEndRoleName="Fournisseur demplecemnts" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="3e017dda-21e6-4415-93b2-675b01cd041b" LastKnownName="Fournisseur d'emplacements" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="06eea490-8d3a-468d-86c0-3ba5493e1570" name="Fournir les emplacements" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="3d0c7ccc-8538-4c29-b769-750c83d93099" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="62421cf2-eca3-4d7c-b81d-4e525246b699" name="Fournisseur demplecemnts" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="2b6ebdc4-57ae-4995-af55-46742f3c9f0a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="d684a6a4-fcc9-4e30-937a-a8c0aa0615bd" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="abe7cbf7-4fbb-46f9-bc2d-50f298318a4e" name="Afficher l' emplacement" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="bcc57d6d-022f-4027-ab3d-7e98cce55983" />
+        <targetEnds>
+          <association Id="87b58caa-7f29-4f7d-8a16-26ecb5b12e7c" isDerived="false" sourceEndRoleName="Afficher les emplacements" targetEndRoleName="TypeCobolMultiPartEditor" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="29372afe-1ce0-438c-a664-8bc4be4282c0" LastKnownName="TypeCobolMultiPartEditor" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="e40b2697-4aac-4875-87ec-1d46ffa07c48" name="Afficher les emplacements" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="b8e35101-503a-4f53-b8f0-9ad21174b54d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="4c15b3c3-d8ed-49dd-9857-d4513f8a352f" name="TypeCobolMultiPartEditor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="5eaea32e-7c6c-4936-8ac6-290d1f30580b" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e2e737cf-6112-4261-9f59-ada3cddc00d9" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+  </packagedElements>
+  <package Id="9e6e0d9f-c9e2-47d2-9e35-5fdb3be5b3d6" name="TypeCobolLanguageServer">
+    <elementDefinition Id="5d09ded1-4567-4003-bfe3-37cf35f27636" />
+  </package>
+</useCaseModelRoot>

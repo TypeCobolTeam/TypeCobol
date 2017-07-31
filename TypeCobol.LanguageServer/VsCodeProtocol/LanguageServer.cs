@@ -581,7 +581,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// </summary>
         public virtual Definition OnDefinition(TextDocumentPosition parameters)
         {
-            return null;
+            throw new ArgumentException("No definition");            
         }
 
         /// <summary>

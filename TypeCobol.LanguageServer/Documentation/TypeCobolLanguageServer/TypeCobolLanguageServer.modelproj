@@ -72,6 +72,27 @@
       <SubType>Content</SubType>
       <DependentUpon>EDITOR_DIAGNOSTICS.sequencediagram</DependentUpon>
     </Content>
+    <Content Include="GotoSymbolAction.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="GotoSymbolAction.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>GotoSymbolAction.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="GotoSymbolAction.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="GotoSymbolAction.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>GotoSymbolAction.usecasediagram</DependentUpon>
+    </Content>
+    <Content Include="GotoSymbolDef.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="GotoSymbolDef.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>GotoSymbolDef.sequencediagram</DependentUpon>
+    </Content>
     <Content Include="Initialisation.usecasediagram">
       <SubType>Content</SubType>
     </Content>
