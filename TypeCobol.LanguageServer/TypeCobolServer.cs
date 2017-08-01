@@ -231,7 +231,16 @@ namespace TypeCobol.LanguageServer
 
         public override void OnDidChangeConfiguration(DidChangeConfigurationParams parameters)
         {
-            typeCobolWorkspace.DidChangeConfigurationParams(parameters.settings.ToString());
+            if (parameters.settings is Newtonsoft.Json.Linq.JArray)
+            {
+                Newtonsoft.Json.Linq.JArray array = parameters.settings as Newtonsoft.Json.Linq.JArray;
+                IEnumerable<string> arguments = array.Select(t => t.ToString());
+                typeCobolWorkspace.DidChangeConfigurationParams(arguments);
+            }
+            else 
+            {
+                typeCobolWorkspace.DidChangeConfigurationParams(parameters.settings.ToString());
+            }            
         }
         // ----------------------------------------------------------------------------------------------- //
 

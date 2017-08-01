@@ -128,8 +128,17 @@ namespace TypeCobol.LanguageServices.Editor
 
         public void DidChangeConfigurationParams(string settings)
         {
+            DidChangeConfigurationParams(settings.Split(' '));
+        }
+
+        /// <summary>
+        /// Handle the Configuration change notification.
+        /// </summary>
+        /// <param name="arguments">The arguments</param>
+        public void DidChangeConfigurationParams(IEnumerable<string> arguments)
+        {
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
-            options.Parse(settings.Split(' '));
+            options.Parse(arguments);
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
