@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Constructor for tokens without delimiters
         /// </summary>
-        internal Token(TokenType tokenType, int startIndex, int stopIndex, ITokensLine tokensLine) :
+        public Token(TokenType tokenType, int startIndex, int stopIndex, ITokensLine tokensLine) :
             this(tokenType, startIndex, stopIndex, false, tokensLine)
         { }
 

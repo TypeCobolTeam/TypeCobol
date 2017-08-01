@@ -23,20 +23,28 @@ public class AddSimpleStatement: AddStatement {
 		get {
 			var map = new Dictionary<string,List<ArithmeticExpression>>();
 			ArithmeticExpression left = null;
-			foreach (NumericVariable varTogether in VariablesTogether) {
-			    var right = new NumericVariableOperand(varTogether);
-			    if (left == null) left = right;
-			    else left = ArithmeticOperator.Plus.CreateOperation(left, right);
-			}
-			foreach(var receiver in SendingAndReceivingStorageAreas) {
-				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea.ToString();
-				if (!map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
-				var right = new NumericVariableOperand(new NumericVariable(rarea));
-				var operation = ArithmeticOperator.Plus.CreateOperation(left, right);
-				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-				map[key].Add(operation);
-			}
+                if (VariablesTogether != null)
+                {
+                    foreach (NumericVariable varTogether in VariablesTogether)
+                    {
+                        var right = new NumericVariableOperand(varTogether);
+                        if (left == null) left = right;
+                        else left = ArithmeticOperator.Plus.CreateOperation(left, right);
+                    }
+                }
+                if(SendingAndReceivingStorageAreas != null)
+                {
+                    foreach (var receiver in SendingAndReceivingStorageAreas)
+                    {
+                        var rarea = receiver.ReceivingStorageArea.StorageArea;
+                        string key = rarea.ToString();
+                        if (!map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+                        var right = new NumericVariableOperand(new NumericVariable(rarea));
+                        var operation = ArithmeticOperator.Plus.CreateOperation(left, right);
+                        if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
+                        map[key].Add(operation);
+                    }
+                }
 			return map;
 		}
 	}

@@ -404,7 +404,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.PictureCharacterString:
                         return NormalizePictureText(Token.Text);
                     default:
-                        throw new InvalidOperationException("Unexpected literal token type: " + Token.TokenType);
+                        return Value;
                 }
             }
         }

@@ -162,12 +162,11 @@ namespace TypeCobol.Compiler.Parser
 		  ////////////////////
 		 // CALL STATEMENT //
 		////////////////////
-
 		internal CallStatement CreateCallStatement(CodeElementsParser.CobolCallStatementContext context) {
 			var statement = new CallStatement();
-			statement.ProgramOrProgramEntryOrProcedureOrFunction = 
-				CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(
-					context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable());
+
+            statement.ProgramOrProgramEntryOrProcedureOrFunction = 
+				CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable(context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable());
 			statement.InputParameters = new List<CallSiteParameter>();
 			if (context.callUsingParameters() != null) {
 				SyntaxProperty<ParameterSharingMode> sendingMode = new SyntaxProperty<ParameterSharingMode>(ParameterSharingMode.ByReference, null);

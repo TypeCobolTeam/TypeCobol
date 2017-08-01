@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Nodes;
 using System.Linq;
+using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -24,7 +25,7 @@ namespace TypeCobol.Compiler.Parser
         // When not null, optionnaly used to gather Antlr performance profiling information
         public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
 
-        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out IList<ParserDiagnostic> diagnostics)
+        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out IList<ParserDiagnostic> diagnostics, out List<Tuple<Node, CodeElement>> nodeCodeElementLinkers )
         {
             // Create an Antlr compatible token source on top a the token iterator
             CodeElementsLinesTokenSource tokenSource = new CodeElementsLinesTokenSource(
@@ -94,6 +95,7 @@ namespace TypeCobol.Compiler.Parser
             // Register compiler results
             root = programClassBuilder.SyntaxTree.Root; //Set output root node
             diagnostics = programClassBuilder.GetDiagnostics(programClassParseTree);
+            nodeCodeElementLinkers = programClassBuilder.NodeCodeElementLinkers;
 
             if (programClassBuilderError != null)
             {

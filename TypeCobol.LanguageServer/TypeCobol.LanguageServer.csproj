@@ -90,7 +90,6 @@
     <Compile Include="TypeCobolServerHost.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesParams.cs" />
-    <Compile Include="Utilities\CompletionNodeMatcher.cs" />
     <Compile Include="Utilities\DebugTextWriter.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionContext.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionParams.cs" />

@@ -151,6 +151,21 @@ namespace TypeCobol.Compiler.CodeElements
 			return sb.ToString();
 		}
 
+        public override bool Equals(object obj)
+        {
+            var codeElement = obj as CodeElement;
+            if (codeElement == null)
+                return false;
+
+            return this.Line == codeElement.Line &&
+                   this.Type == codeElement.Type &&
+                   this.Column == codeElement.Column &&
+                   this.SourceText == codeElement.SourceText &&
+                   this.StartIndex == codeElement.StartIndex &&
+                   this.StopIndex == codeElement.StopIndex &&
+                   this.Text == codeElement.Text;
+        }
+
         private bool? _isInsideCopy = null; 
 
         /// <summary>
@@ -330,7 +345,9 @@ namespace TypeCobol.Compiler.CodeElements
 				return ConsumedTokens[0].InputStream;
 			}
 		}
-	}
+
+       
+    }
 
     // --- Temporary base classes for data definition code elements ---
 

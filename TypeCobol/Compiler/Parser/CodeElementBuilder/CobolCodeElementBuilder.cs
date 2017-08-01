@@ -1492,7 +1492,12 @@ namespace TypeCobol.Compiler.Parser
 			} else
 			if (context.addCorresponding() != null) {
 				CodeElement = CobolStatementsBuilder.CreateAddCorrespondingStatement(context.addCorresponding());
-			}
+			} 
+            else
+            {
+                CodeElement = new AddSimpleStatement();
+            }
+                
 		}
 		public override void EnterAddStatementEnd(CodeElementsParser.AddStatementEndContext context) {
 			Context = context;
@@ -1622,12 +1627,27 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = CobolStatementsBuilder.CreateAlterStatement(context);
 		}
 
-		// --- CALL ---
-
-		public override void EnterCobolCallStatement(CodeElementsParser.CobolCallStatementContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateCallStatement(context);
-		}
+        // --- CALL ---
+        /// <summary>
+        /// Generic and default CALL statement
+        /// </summary>
+        /// <param name="context"></param>
+        public override void EnterCallStatement([NotNull] CodeElementsParser.CallStatementContext context)
+        {
+            Context = context;
+            if (context.cobolCallStatement() != null)
+            {
+                CodeElement = CobolStatementsBuilder.CreateCallStatement(context.cobolCallStatement());
+            }
+            else if (context.tcCallStatement() != null)
+            {
+                //Let TypeCobolCodeElementBuilder do the work
+            }
+            else
+            {
+                CodeElement = new CallStatement();
+            }
+        }
 
 		public override void EnterCallStatementEnd(CodeElementsParser.CallStatementEndContext context) {
 			Context = context;
