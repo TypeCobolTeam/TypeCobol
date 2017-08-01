@@ -463,7 +463,7 @@ namespace TypeCobol.LanguageServer
         }
         private IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var node = GetMatchingNode(fileCompiler, callToken, CompletionMode.Call);
+            var node = GetMatchingNode(fileCompiler, codeElement);
             var procedures = new List<FunctionDeclaration>();
             var variables = new List<DataDefinition>();
             if (node != null)
@@ -541,13 +541,16 @@ namespace TypeCobol.LanguageServer
         }
         private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, token, CompletionMode.Type);
-            IDictionary<string, List<TypeDefinition>> types = new Dictionary<string, List<TypeDefinition>>(StringComparer.InvariantCultureIgnoreCase);
-            if (callNode != null)
+            var node = GetMatchingNode(fileCompiler, codeElement);
+            var types = new List<TypeDefinition>();
+            if (node != null)
             {
-                if (callNode.SymbolTable != null)
+                if (node.SymbolTable != null)
                 {
-                    types = callNode.SymbolTable.GetTypes(userFilterToken != null ? userFilterToken.Text : string.Empty);
+                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                    types = node.SymbolTable.GetTypes(t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
+                                                      || t.QualifiedName.ToString().StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                      new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global, SymbolTable.Scope.Intrinsic, SymbolTable.Scope.Namespace });
                 }
             }
             var completionItems = new List<CompletionItem>();
