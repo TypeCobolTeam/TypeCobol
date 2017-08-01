@@ -27,6 +27,7 @@ namespace TypeCobol.Tools.Options_Config
         public List<string> Dependencies = new List<string>();
         public string EncFormat = null;
         public bool Telemetry;
+        public int MaximumDiagnostics;
     }
 
     public static class TypeCobolOptionSet
@@ -40,7 +41,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "s|skeletons=", "{PATH} to the skeletons files.", v => typeCobolConfig.skeletonPath = v },
                 { "a|autoremarks", "Enable automatic remarks creation while parsing and generating Cobol", v => typeCobolConfig.AutoRemarks = true },
                 { "hc|haltonmissingcopy=", "HaltOnMissingCopy will generate a file to list all the absent copies", v => typeCobolConfig.HaltOnMissingCopyFilePath = v },
-                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, Generate/4)", v => Enum.TryParse(v.ToString(), true, out typeCobolConfig.ExecToStep) },
+                { "ets|exectostep=", "ExecToStep will execute TypeCobol Compiler until the included given step (Scanner/0, Preprocessor/1, SyntaxCheck/2, SemanticCheck/3, Generate/4)", v => Enum.TryParse(v.ToString(), true, out typeCobolConfig.ExecToStep)},
 				{ "e|encoding=", "{ENCODING} of the file(s) to parse. It can be one of \"rdz\"(this is the default), \"zos\", or \"utf8\". "
                                 +"If this option is not present, the parser will attempt to guess the {ENCODING} automatically.",
                                 v => typeCobolConfig.Format = CreateFormat(v, ref typeCobolConfig)
@@ -48,7 +49,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => typeCobolConfig.Copies.Add(v) },
                 { "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => typeCobolConfig.CopyFolders.Add(v) },
                 { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => typeCobolConfig.Dependencies.Add(v) },
-                { "t|telemetry", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => typeCobolConfig.Telemetry = true }
+                { "t|telemetry=", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => typeCobolConfig.Telemetry = true },
+                { "md|maximumdiagnostics=", "Wait for an int value that will represent the maximum number of diagnostics that TypeCobol have to return.", v =>  typeCobolConfig.MaximumDiagnostics = int.Parse(v.ToString())}
             };
 
             return commonOptions;

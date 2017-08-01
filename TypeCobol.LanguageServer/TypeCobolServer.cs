@@ -34,7 +34,8 @@ namespace TypeCobol.LanguageServer
 
             // Initialize the workspace
             typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName);
-          
+            typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
+
             //Simulate Configuration change
             //typeCobolWorkspace.DidChangeConfigurationParams(@"-o C:\TypeCobol\Test.cee -d C:\TypeCobol\Test.xml -s C:\TypeCobol\Sources\##Latest_Release##\skeletons.xml -e rdz -y C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt --autoremarks --dependencies C:\TypeCobol\Sources\##Latest_Release##\Dependencies\*.tcbl");
 
@@ -52,6 +53,8 @@ namespace TypeCobol.LanguageServer
 
             return initializeResult;
         }
+
+       
 
         // -- Files synchronization : maintain a list of opened files, apply all updates to their content -- //
         public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
@@ -347,7 +350,8 @@ namespace TypeCobol.LanguageServer
                         { //Add the range object to let the client know the position of the user filter token
                             items = items.Select(c =>
                             {
-                                c.data = new Range(userFilterToken.Line, userFilterToken.StartIndex, userFilterToken.Line, userFilterToken.StopIndex);
+                                //-1 on lne to 0 based / +1 on stop index to include the last character
+                                c.data = new Range(userFilterToken.Line-1, userFilterToken.StartIndex, userFilterToken.Line-1, userFilterToken.StopIndex+1); 
                                 return c;
                             }).ToList();
                         }
@@ -377,8 +381,8 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Event Method triggered when missing copies are detected.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e">List of missing copies name</param>
+        /// <param name="fileUri">File URI to be send to the client</param>
+        /// <param name="missingCopies">List of missing copies name</param>
         private void MissingCopiesDetected(object fileUri, List<string> missingCopies)
         {
             //Send missing copies to client
@@ -392,14 +396,14 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Event Method triggered when diagnostics are detected.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e">List of TypeCobol compiler diagnostics</param>
-        private void DiagnosticsDetected(object fileUri, IList<Compiler.Diagnostics.Diagnostic> diagnostics)
+        /// <param name="fileUri">File URI to be send to the client</param>
+        /// <param name="diagnostics">List of TypeCobol compiler diagnostics</param>
+        private void DiagnosticsDetected(object fileUri, IEnumerable<Compiler.Diagnostics.Diagnostic> diagnostics)
         {
             var diagParameter = new PublishDiagnosticsParams();
             var diagList = new List<Diagnostic>();
 
-            foreach (var diag in diagnostics.Take(100))
+            foreach (var diag in diagnostics)
             {
                 diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd), diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(), diag.Info.ReferenceText));
             }
@@ -407,6 +411,11 @@ namespace TypeCobol.LanguageServer
             diagParameter.uri = fileUri.ToString();
             diagParameter.diagnostics = diagList.ToArray();
             SendDiagnostics(diagParameter);
+        }
+
+        private void LoadingIssueDetected(object sender, string message)
+        {
+            SendLoadingIssue(new LoadingIssueParams() { Message = message });
         }
 
         #region Completion Methods
@@ -431,7 +440,8 @@ namespace TypeCobol.LanguageServer
                     pargraphs = performNode.SymbolTable.GetParagraphNames(userFilterText);
                     variables = performNode.SymbolTable.GetVariables(da => da.Picture != null && 
                                                                     da.DataType == Compiler.CodeElements.DataType.Numeric && 
-                                                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase));
+                                                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
                 }
             }
   
@@ -453,42 +463,56 @@ namespace TypeCobol.LanguageServer
         }
         private IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, codeElement);
-            IDictionary<string, List<FunctionDeclaration>> procedures = new Dictionary<string, List<FunctionDeclaration>>(StringComparer.InvariantCultureIgnoreCase);
-            if (callNode != null)
+            var node = GetMatchingNode(fileCompiler, callToken, CompletionMode.Call);
+            var procedures = new List<FunctionDeclaration>();
+            var variables = new List<DataDefinition>();
+            if (node != null)
             {
-                if (callNode.SymbolTable != null)
+                if (node.SymbolTable != null)
                 {
-                    procedures = callNode.SymbolTable.GetFunctions(userFilterToken != null ? userFilterToken.Text : string.Empty);
+                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                    procedures = node.SymbolTable.GetFunctions(f => f.QualifiedName.ToString().StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) 
+                                                                        || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Intrinsic, SymbolTable.Scope.Namespace });
+                    variables = node.SymbolTable.GetVariables(da => da.Picture != null &&
+                                                                    da.DataType == Compiler.CodeElements.DataType.Alphanumeric &&
+                                                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
                 }
             }
 
             var completionItems = new List<CompletionItem>();
-            if (procedures != null)
-            {
-                foreach (var procedure in procedures)
-                {
-                    foreach (var proc in procedure.Value)
-                    {
-                        string inputParams = null, outputParams = null, inoutParams = null;
 
-                        if (proc.Profile != null)
-                        {
-                            if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
-                                inputParams = string.Format("INPUT: {0}", string.Join(", ", proc.Profile.InputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                            if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
-                                outputParams = string.Format("| OUTPUT: {0}", string.Join(", ", proc.Profile.OutputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                            if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
-                                inoutParams = string.Format("| INOUT: {0}", string.Join(", ", proc.Profile.InoutParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                        }
-                        var completionItem = new CompletionItem(string.Format("{0} ({1} {2} {3})", proc.Name, inputParams, outputParams, inoutParams));
-                        completionItem.insertText = procedure.Key;
-                        completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
-                        completionItems.Add(completionItem);
-                    }
-                  
+            foreach (var proc in procedures)
+            {
+                string inputParams = null, outputParams = null, inoutParams = null;
+
+                if (proc.Profile != null)
+                {
+                    if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
+                        inputParams = string.Format("INPUT: {0}", string.Join(", ", proc.Profile.InputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                    if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
+                        outputParams = string.Format("| OUTPUT: {0}", string.Join(", ", proc.Profile.OutputParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                    if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
+                        inoutParams = string.Format("| INOUT: {0}", string.Join(", ", proc.Profile.InoutParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                 }
+                bool procIsPublic = (proc.CodeElement as Compiler.CodeElements.FunctionDeclarationHeader).Visibility == Compiler.CodeElements.AccessModifier.Public
+                                    && !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations).Functions.Values.Any(t => t.Contains(proc))   //Ignore public if proc is in the current program
+                                         || node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Intrinsic).Functions.Values.Any(t => t.Contains(proc))); //Ignore public if proc is in intrinsic;
+                var procDisplayName = procIsPublic ? proc.QualifiedName.ToString() : proc.Name;
+                var completionItem = new CompletionItem(string.Format("{0} ({1} {2} {3})", procDisplayName, inputParams, outputParams, inoutParams));
+                completionItem.insertText = procIsPublic ? string.Format("{0}::{1}", proc.QualifiedName.Tail, proc.QualifiedName.Head) : proc.Name;
+                completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
+                completionItems.Add(completionItem);
             }
+
+            foreach (var variable in variables)
+            {
+                var completionItem = new CompletionItem(string.Format("{0}", variable.Name));
+                completionItem.insertText = variable.Name;
+                completionItems.Add(completionItem);
+            }
+
 
             return completionItems;
         }
@@ -517,16 +541,25 @@ namespace TypeCobol.LanguageServer
         }
         private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
-            var callNode = GetMatchingNode(fileCompiler, codeElement);
+            var callNode = GetMatchingNode(fileCompiler, token, CompletionMode.Type);
             IDictionary<string, List<TypeDefinition>> types = new Dictionary<string, List<TypeDefinition>>(StringComparer.InvariantCultureIgnoreCase);
-            if (callNode != null && callNode.SymbolTable != null)
+            if (callNode != null)
             {
-                types = callNode.SymbolTable.GetTypes(userFilterToken != null ? userFilterToken.Text : string.Empty);
+                if (callNode.SymbolTable != null)
+                {
+                    types = callNode.SymbolTable.GetTypes(userFilterToken != null ? userFilterToken.Text : string.Empty);
+                }
             }
             var completionItems = new List<CompletionItem>();
             foreach (var type in types)
             {
-                var completionItem = new CompletionItem(type.Key);
+                var typeIsPublic = (type.CodeElement as Compiler.CodeElements.DataTypeDescriptionEntry).Visibility == Compiler.CodeElements.AccessModifier.Public 
+                                    && !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations).Types.Values.Any(t => t.Contains(type))   //Ignore public if type is in the current program
+                                         || node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Intrinsic).Types.Values.Any(t => t.Contains(type))); //Ignore public if type is in intrinsic
+
+                var typeDisplayName = typeIsPublic ? type.QualifiedName.ToString() : type.Name;
+                var completionItem = new CompletionItem(typeDisplayName);
+                completionItem.insertText = typeIsPublic ? string.Format("{0}::{1}", type.QualifiedName.Tail, type.QualifiedName.Head) : type.Name;
                 completionItem.kind = CompletionItemKind.Class;
                 completionItems.Add(completionItem);
             }

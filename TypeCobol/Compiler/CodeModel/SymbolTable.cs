@@ -198,9 +198,22 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public List<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate)
+        public List<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
         {
-            return DataEntries.Values.SelectMany(d => d).AsQueryable().Where(predicate).ToList();
+            var foundedVariables = new List<DataDefinition>();
+            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
+
+            foreach (var scope in scopes)
+            {
+                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
+                    throw new NotSupportedException();
+
+                var dataToSeek = this.GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t);
+                var results = dataToSeek.AsQueryable().Where(predicate);
+                foundedVariables.AddRange(results);
+            }
+
+            return foundedVariables.Distinct().ToList(); //Distinct on object not on variable name
         }
 
 
@@ -581,25 +594,37 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public IDictionary<string, List<TypeDefinition>> GetTypes(string filter)
+        public List<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, List<Scope> scopes)
         {
-            var types = this.GetTableFromScope(Scope.Declarations).Types
-                            .Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase)))
-                            .ToDictionary(d => d.Key, d => d.Value);
-            var publicTypes = this.GetTableFromScope(Scope.Intrinsic).Types
-                                .Where(t => t.Value.All(tp => (tp.CodeElement  as DataTypeDescriptionEntry) != null && (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public)) 
-                                .Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase)));
-
-            foreach (var pubType in publicTypes)
+            var foundedTypes = new List<TypeDefinition>();
+            
+            foreach (var scope in scopes)
             {
-                if (!types.ContainsKey(pubType.Key))
-                    types.Add(pubType.Key, pubType.Value);
-                else if(!types.ContainsKey(pubType.Value.First().QualifiedName.ToString()))
-                    types.Add(pubType.Value.First().QualifiedName.ToString(), pubType.Value); //If type alreday exists in dictionnay then add it with qualified name
+                var dataToSeek = this.GetTableFromScope(scope).Types.Values.SelectMany(t => t);
+                if (scope == Scope.Namespace)
+                {
+                    //For namespace scope, we need to browse every program
+                    dataToSeek = this.GetTableFromScope(scope)
+                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
+                                    .Types.Values.SelectMany(t => t));
+
+                    dataToSeek.Concat(this.GetTableFromScope(scope)
+                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Global)
+                                    .Types.Values.SelectMany(t => t)));
+                }
+
+                var results = dataToSeek.AsQueryable().Where(predicate);
+
+                if (scope == Scope.Intrinsic || scope == Scope.Namespace)
+                    results = results.Where(tp => (tp.CodeElement as DataTypeDescriptionEntry) != null && (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public);
+
+                foundedTypes.AddRange(results);
             }
 
-            return types;
+            return foundedTypes.Distinct().ToList();
         }
+
+
 
         /// <summary>
         /// Get type into a specific program by giving program name
@@ -677,28 +702,34 @@ namespace TypeCobol.Compiler.CodeModel
             return GetFunction(uri, profile);
         }
 
-        public IDictionary<string, List<FunctionDeclaration>> GetFunctions(string filter)
+
+        public List<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, List<Scope> scopes)
         {
-            //Get Function for this programm 
-            var functions = this.GetTableFromScope(Scope.Declarations).Functions
-                            .Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase))).ToDictionary(f => f.Key, f => f.Value);
+            var foundedFunctions = new List<FunctionDeclaration>();
 
-            //Get public functions from other programs
-            var publicFunctions = this.GetTableFromScope(Scope.Namespace)
-                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
-                                    .Functions.Where(f => f.Value.All(fd => ((FunctionDeclarationHeader)fd.CodeElement).Visibility == AccessModifier.Public))
-                                    .Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase))));
-
-            foreach (var pubFunc in publicFunctions)
+            foreach (var scope in scopes)
             {
-                if (!functions.ContainsKey(pubFunc.Key))
-                    functions.Add(pubFunc.Key, pubFunc.Value);
-                else if(!functions.ContainsKey(pubFunc.Value.First().QualifiedName.ToString()))
-                    functions.Add(pubFunc.Value.First().QualifiedName.ToString(), pubFunc.Value); //If function alreday in dictionnary add with the qualified name
+                var dataToSeek = this.GetTableFromScope(scope).Functions.Values.SelectMany(t => t);
+                if (scope == Scope.Namespace)
+                {
+                    //For namespace scope, we need to browse every program
+                    dataToSeek = this.GetTableFromScope(scope)
+                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
+                                    .Functions.Values.SelectMany(t => t));
+                }
+
+                var results = dataToSeek.AsQueryable().Where(predicate);
+
+                if (scope == Scope.Intrinsic || scope == Scope.Namespace)
+                    results = results.Where(tp => (tp.CodeElement as FunctionDeclarationHeader) != null && (tp.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public);
+
+                foundedFunctions.AddRange(results);
             }
 
-            return functions;
+            return foundedFunctions.Distinct().ToList();
         }
+
+        
 
         public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, string nameSpace = null)
         {

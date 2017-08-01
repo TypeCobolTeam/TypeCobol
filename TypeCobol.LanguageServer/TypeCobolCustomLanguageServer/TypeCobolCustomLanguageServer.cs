@@ -39,5 +39,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             this.rpcServer.SendNotification(MissingCopiesNotification.Type, parameters);
         }
+
+        /// <summary>
+        /// Loading Issue notification is sent from the server to the client
+        /// Usefull to let the client knows that a error occured while trying to load Intrinsic/Dependencies. 
+        /// </summary>
+        public virtual void SendLoadingIssue(LoadingIssueParams parameters)
+        {
+            this.rpcServer.SendNotification(LoadingIssueNotification.Type, parameters);
+        }
     }
 }
