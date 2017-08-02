@@ -116,7 +116,62 @@ namespace TypeCobol.Compiler.Preprocessor
         
 		public override void EnterCopyCompilerStatement(CobolCompilerDirectivesParser.CopyCompilerStatementContext context) {
 			CompilerDirective = new CopyDirective(CompilerDirectiveType.COPY, ParseTreeUtils.GetFirstToken(context.COPY()));
-		}
+
+            var copy = (CopyDirective)CompilerDirective;
+
+		    if (context.copyCompilerStatementBody() != null)
+		    {
+		        var bodyContext = context.copyCompilerStatementBody();
+
+                if (bodyContext.qualifiedTextName() != null && context.PeriodSeparator() != null)
+                {
+                    var ctxt = bodyContext.qualifiedTextName();
+                    copy.TextName = GetTextName(ctxt.textName());
+                    copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+                    if (copy.TextName != null)
+                    {
+
+                        // Find the list of copy text names variations declared by previous REMARKS compiler directives
+                        var variations = CopyTextNameVariations;
+                        if (TypeCobolOptions.AutoRemarksEnable && (variations == null || !variations.Any(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase)))) //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
+                        {
+                            AnalyticsWrapper.Telemetry.TrackEvent("[Copy-Missing] " + copy.TextName);
+
+                            variations = new List<RemarksDirective.TextNameVariation>
+                        {
+                            new RemarksDirective.TextNameVariation(copy.TextName)
+                        };
+
+                            CopyTextNameVariations.AddRange(variations);
+                        }
+
+                        if (variations != null)
+                        {
+                            var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase));
+                            if (declaration != null)
+                            {
+                                // Declaration found => apply the legacy REPLACING semantics to the copy directive
+                                copy.RemoveFirst01Level = true;
+                                if (declaration.HasSuffix)
+                                {
+                                    copy.TextName = declaration.TextName;
+                                    copy.InsertSuffixChar = true;
+                                    copy.Suffix = declaration.Suffix;
+                                    copy.PreSuffix = declaration.PreSuffix;
+                                }
+                            }
+                        }
+
+
+                    }
+#endif
+                    copy.LibraryName = GetLibraryName(ctxt.libraryName());
+                    copy.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.libraryName());
+                }
+
+            }
+        }
 
 		private string GetTextName(CobolCompilerDirectivesParser.TextNameContext context) {
 			if (context == null) return null;
@@ -145,55 +200,12 @@ namespace TypeCobol.Compiler.Preprocessor
 		}
 
 		public override void EnterCopyCompilerStatementBody(CobolCompilerDirectivesParser.CopyCompilerStatementBodyContext context) {
-			var copy = (CopyDirective)CompilerDirective;
-			if (context.qualifiedTextName() != null) {
-				var ctxt = context.qualifiedTextName();
-				copy.TextName = GetTextName(ctxt.textName());
-				copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
-				if (copy.TextName != null) {
 
-                    // Find the list of copy text names variations declared by previous REMARKS compiler directives
-                    var variations = CopyTextNameVariations;
-                    if (TypeCobolOptions.AutoRemarksEnable && (variations == null || !variations.Any(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase)))) //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
-				    {
-                        AnalyticsWrapper.Telemetry.TrackEvent("[Copy-Missing] " + copy.TextName);
-
-                        variations = new List<RemarksDirective.TextNameVariation>
-				        {
-				            new RemarksDirective.TextNameVariation(copy.TextName)
-				        };
-
-                       CopyTextNameVariations.AddRange(variations);
-                    }
-
-				    if (variations != null)
-				    {
-                        var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase));
-                        if (declaration != null)
-                        {
-                            // Declaration found => apply the legacy REPLACING semantics to the copy directive
-                            copy.RemoveFirst01Level = true;
-                            if (declaration.HasSuffix)
-                            {
-                                copy.TextName = declaration.TextName;
-                                copy.InsertSuffixChar = true;
-                                copy.Suffix = declaration.Suffix;
-                                copy.PreSuffix = declaration.PreSuffix;
-                            }
-                        }
-                    }
-				    
-					
-				}
-#endif
-                    copy.LibraryName = GetLibraryName(ctxt.libraryName());
-				copy.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.libraryName());
-			}
-			copy.Suppress = (context.SUPPRESS() != null);
+            var copy = (CopyDirective)CompilerDirective;
+            copy.Suppress = (context.SUPPRESS() != null);
 
             // REPLACING
-            if(context.copyReplacingOperand() != null)
+            if (context.copyReplacingOperand() != null)
             {
                 // Data used to build the current replace operation             
                 Token comparisonToken = null;
@@ -208,20 +220,24 @@ namespace TypeCobol.Compiler.Preprocessor
                 {
                     // Get relevant tokens
                     IList<IToken> operandTokens = null;
-					if (replacingOperandContext.pseudoText() != null) { // Pseudo-text => List of tokens
-						if (replacingOperandContext.pseudoText()._pseudoTextTokens != null)
-							operandTokens = replacingOperandContext.pseudoText()._pseudoTextTokens;
-					} else { // Single token
-						if (replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy() != null) {
-							var terminalNode = ParseTreeUtils.GetFirstTerminalNode(replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy());
-							operandTokens = new List<IToken>(1);
-							operandTokens.Add(terminalNode.Symbol);
-						}
-					}
+                    if (replacingOperandContext.pseudoText() != null)
+                    { // Pseudo-text => List of tokens
+                        if (replacingOperandContext.pseudoText()._pseudoTextTokens != null)
+                            operandTokens = replacingOperandContext.pseudoText()._pseudoTextTokens;
+                    }
+                    else
+                    { // Single token
+                        if (replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy() != null)
+                        {
+                            var terminalNode = ParseTreeUtils.GetFirstTerminalNode(replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy());
+                            operandTokens = new List<IToken>(1);
+                            operandTokens.Add(terminalNode.Symbol);
+                        }
+                    }
                     BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens, ref replacementToken, ref replacementTokens, ref pseudoTextIndex, operandTokens);
                 }
             }
-		}
+        }
 
         private static void BuildReplaceOperation(IList<ReplaceOperation> replaceOperations, ref Token comparisonToken, ref Token[] followingComparisonTokens, ref Token replacementToken, ref Token[] replacementTokens, ref int pseudoTextIndex, IList<IToken> operandTokens)
         {

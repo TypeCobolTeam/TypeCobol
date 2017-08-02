@@ -88,7 +88,7 @@ namespace TypeCobol
                 throw new ParsingException(MessageCode.SyntaxErrorInParser, ex.Message, path, ex, true, true);
 			}
 
-		    MissingCopys = Compiler.CompilationProject.MissingCopys;
+		    MissingCopys = Compiler.CompilationResultsForProgram.MissingCopies;
 
 			Compiler.CompilationResultsForProgram.TextLinesChanged -= OnTextLine;
 			Compiler.CompilationResultsForProgram.CodeElementsLinesChanged -= OnCodeElementLine;

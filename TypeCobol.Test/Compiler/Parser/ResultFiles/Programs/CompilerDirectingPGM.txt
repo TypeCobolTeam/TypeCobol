@@ -10,7 +10,6 @@ Line 88[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file 
 Line 92[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 96[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 100[3,9] <27, Error, Syntax> - Syntax error : mismatched input 'PERFORM' expecting '.' RuleStack=compilerDirectingStatement>copyCompilerStatement,  OffendingSymbol=[3,9:PERFORM]<PERFORM>
-Line 99[3,10] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 
 --- Program ---
 PROGRAM: compiler-directing common:False initial:False recursive:False

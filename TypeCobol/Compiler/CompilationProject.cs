@@ -36,7 +36,6 @@ namespace TypeCobol.Compiler
             CobolFiles = new Dictionary<string, CobolFile>();
             CobolTextReferences = new Dictionary<string, CobolFile>();
             CobolProgramCalls = new Dictionary<string, CobolFile>();
-            MissingCopys = new List<string>();
         }
 
         /// <summary>
@@ -84,10 +83,6 @@ namespace TypeCobol.Compiler
         public int FixedLineLength { get; private set; }
         public ColumnsLayout ColumnsLayout { get; private set; }
         public TypeCobolOptions CompilationOptions { get; private set; }
-        /// <summary>
-        /// Used to indentify the missing Copys from the parsed file
-        /// </summary>
-        public List<string> MissingCopys { get; set; }
 
         // -- Files manipulation --
 

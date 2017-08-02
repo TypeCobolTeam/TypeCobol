@@ -387,8 +387,7 @@ controlCblCompilerStatement:
 
 // ... more details on Replacement and comparison rules p534 -> p537 ...
 
-copyCompilerStatement:
-                         COPY copyCompilerStatementBody PeriodSeparator;
+copyCompilerStatement: COPY copyCompilerStatementBody PeriodSeparator;
              
 copyCompilerStatementBody: qualifiedTextName SUPPRESS? (REPLACING (copyReplacingOperand BY copyReplacingOperand)+)?;
 

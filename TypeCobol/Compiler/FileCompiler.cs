@@ -77,6 +77,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         public int SourceFileLoadTime { get; private set; }
 
+
         /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
@@ -134,9 +135,6 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    if (isCopyFile && !compilationProject.MissingCopys.Contains(fileName))
-                        compilationProject.MissingCopys.Add(fileName);
-
                     var message = string.IsNullOrEmpty(libraryName) ? string.Format("Cobol source file not found: {0}", fileName)
                                                                     : string.Format("Cobol source file not found: {0} in {1}", fileName, libraryName);
                     throw new Exception(message);
@@ -225,7 +223,7 @@ namespace TypeCobol.Compiler
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
 
                 if (!(CompilerOptions.ExecToStep > ExecutionStep.Preprocessor)) return;
-                if (CompilerOptions.HaltOnMissingCopy && CompilationProject.MissingCopys.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
+                if (CompilerOptions.HaltOnMissingCopy && CompilationResultsForProgram.MissingCopies.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
 
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Syntaxic Step");
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck

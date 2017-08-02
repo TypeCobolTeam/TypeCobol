@@ -169,15 +169,15 @@ namespace TypeCobol.LanguageServices.Editor
 
         public void UpdateMissingCopies(List<string> RemainingMissingCopies)
         {
-            if(RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
-            {
-                CompilationProject.MissingCopys.RemoveAll(c => true);
-                return;
-            }
+            //if(RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
+            //{
+            //    CompilationProject.MissingCopys.RemoveAll(c => true);
+            //    return;
+            //}
 
-            var copiesToRemove = CompilationProject.MissingCopys.Except(RemainingMissingCopies);
-            foreach (var copyToRemove in copiesToRemove)
-                CompilationProject.MissingCopys.Remove(copyToRemove);
+            //var copiesToRemove = CompilationProject.MissingCopys.Except(RemainingMissingCopies);
+            //foreach (var copyToRemove in copiesToRemove)
+            //    CompilationProject.MissingCopys.Remove(copyToRemove);
         }
 
         /// <summary>
@@ -241,8 +241,8 @@ namespace TypeCobol.LanguageServices.Editor
             var diags = compilationUnit.AllDiagnostics().Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 100 : TypeCobolConfiguration.MaximumDiagnostics);
             DiagnosticsEvent(fileUri, diags);
 
-            if (CompilationProject.MissingCopys.Count > 0)
-                MissingCopiesEvent(fileUri, CompilationProject.MissingCopys);
+            if (compilationUnit.MissingCopies.Count > 0)
+                MissingCopiesEvent(fileUri, compilationUnit.MissingCopies);
         }
 
 
