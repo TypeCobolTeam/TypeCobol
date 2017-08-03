@@ -131,9 +131,12 @@ namespace TypeCobol.Compiler.CodeElements
         //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
         public static readonly DataType Date               = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
-		public static Nodes.TypeDefinition CreateBuiltIn(DataType type) {
-			if (type == DataType.Date) return CreateDate();
-			return CreateBase(type);
+		public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
+		{
+            var builtInNode = type == DataType.Date ? CreateDate() : CreateBase(type);
+            builtInNode.IsIntrinsic = true; //Mark BuiltIn Type as Instrinsic
+
+		    return builtInNode;
 		}
 		private static Nodes.TypeDefinition CreateBase(DataType type) {
 			var entry = new DataTypeDescriptionEntry();

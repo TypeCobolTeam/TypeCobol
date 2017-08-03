@@ -505,9 +505,9 @@ namespace TypeCobol.LanguageServer
                     if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
                         inoutParams = string.Format("| INOUT: {0}", string.Join(", ", proc.Profile.InoutParameters.Select(p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                 }
-                bool procIsPublic = (proc.CodeElement as Compiler.CodeElements.FunctionDeclarationHeader).Visibility == Compiler.CodeElements.AccessModifier.Public
+                bool procIsPublic = (proc.CodeElement as FunctionDeclarationHeader).Visibility == Compiler.CodeElements.AccessModifier.Public
                                     && !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations).Functions.Values.Any(t => t.Contains(proc))   //Ignore public if proc is in the current program
-                                         || node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Intrinsic).Functions.Values.Any(t => t.Contains(proc))); //Ignore public if proc is in intrinsic;
+                                         || proc.IsIntrinsic); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.QualifiedName.ToString() : proc.Name;
                 var completionItem = new CompletionItem(string.Format("{0} ({1} {2} {3})", procDisplayName, inputParams, outputParams, inoutParams));
                 completionItem.insertText = procIsPublic ? string.Format("{0}::{1}", proc.QualifiedName.Tail, proc.QualifiedName.Head) : proc.Name;
@@ -565,9 +565,9 @@ namespace TypeCobol.LanguageServer
             var completionItems = new List<CompletionItem>();
             foreach (var type in types)
             {
-                var typeIsPublic = (type.CodeElement as Compiler.CodeElements.DataTypeDescriptionEntry).Visibility == Compiler.CodeElements.AccessModifier.Public 
+                var typeIsPublic = (type.CodeElement as DataTypeDescriptionEntry).Visibility == Compiler.CodeElements.AccessModifier.Public 
                                     && !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations).Types.Values.Any(t => t.Contains(type))   //Ignore public if type is in the current program
-                                         || node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Intrinsic).Types.Values.Any(t => t.Contains(type))); //Ignore public if type is in intrinsic
+                                         || type.IsIntrinsic); //Ignore public if type is in intrinsic
 
                 var typeDisplayName = typeIsPublic ? type.QualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);

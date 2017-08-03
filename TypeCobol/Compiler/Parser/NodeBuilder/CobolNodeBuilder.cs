@@ -11,6 +11,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Tools;
 using Analytics;
+using Castle.Core.Internal;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -51,6 +52,10 @@ namespace TypeCobol.Compiler.Parser
                 {
                     SymbolTable intrinsicTable = value.GetTableFromScope(SymbolTable.Scope.Intrinsic);
                     SymbolTable nameSpaceTable = value.GetTableFromScope(SymbolTable.Scope.Namespace);
+
+                    intrinsicTable.DataEntries.Values.ForEach(d => d.ForEach(da => da.IsIntrinsic = true));
+                    intrinsicTable.Types.Values.ForEach(d => d.ForEach(da => da.IsIntrinsic = true));
+                    intrinsicTable.Functions.Values.ForEach(d => d.ForEach(da => da.IsIntrinsic = true));
 
                     TableOfIntrisic.CopyAllDataEntries(intrinsicTable.DataEntries.Values);
                     TableOfIntrisic.CopyAllTypes(intrinsicTable.Types);

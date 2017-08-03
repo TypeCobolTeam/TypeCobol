@@ -259,6 +259,10 @@ namespace TypeCobol.Compiler.Nodes {
         /// TODO this method should be in CodeGen project
         /// </summary>
         public bool NeedGeneration { get; set; }
+        /// <summary>
+        /// Flag to know if the node belongs to the intrinsic files
+        /// </summary>
+        public bool IsIntrinsic { get; set; }
 
         public IList<N> GetChildren<N>() where N : Node {
             return children.OfType<N>().ToList();
