@@ -52,7 +52,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         public List<RemarksDirective.TextNameVariation> CopyTextNamesVariations { get; set; }
 
-        public List<string> MissingCopies { get; set; }
+        public List<CopyDirective> MissingCopies { get; set; }
 
         /// <summary>
         /// Register a new symbolic character name found in the source file
@@ -173,7 +173,7 @@ namespace TypeCobol.Compiler
             TextSourceInfo = textSourceInfo;
             CompilerOptions = compilerOptions;
             CopyTextNamesVariations = copyTextNameVariations ?? new List<RemarksDirective.TextNameVariation>();
-            MissingCopies = new List<string>();
+            MissingCopies = new List<CopyDirective>();
 
             this.processedTokensDocumentProvider = processedTokensDocumentProvider;
 

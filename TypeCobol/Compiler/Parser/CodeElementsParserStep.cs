@@ -353,7 +353,7 @@ namespace TypeCobol.Compiler.Parser
                     if (previousLineHasCodeElements)
                     {
                         currentParseSection.StartLineIndex = previousLineIndex;
-                        currentParseSection.StartToken = previousLine.CodeElements[0].ConsumedTokens[0];
+                        currentParseSection.StartToken = previousLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
                     }
 
                     // All lines contained in the parse section could be modified, and should be reset
@@ -399,7 +399,7 @@ namespace TypeCobol.Compiler.Parser
                     bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
                     if (nextLineHasCodeElements)
                     {
-                        Token startTokenForNextParseSection = nextLine.CodeElements[0].ConsumedTokens[0];
+                        Token startTokenForNextParseSection = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
                         Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
                         nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
                     }
@@ -417,7 +417,7 @@ namespace TypeCobol.Compiler.Parser
                     if (nextLineHasCodeElements)
                     {
                         currentParseSection.StopLineIndex = nextLineIndex;
-                        currentParseSection.StopToken = nextLine.CodeElements[0].ConsumedTokens[0];
+                        currentParseSection.StopToken = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
                         currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
                         break;
                     }

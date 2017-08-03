@@ -383,7 +383,7 @@ namespace TypeCobol.LanguageServer
 
         public override void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
         {
-            typeCobolWorkspace.UpdateMissingCopies(parameter.Copies);
+            typeCobolWorkspace.UpdateMissingCopies(new Uri(parameter.textDocument.uri), parameter.Copies);
         }
         #endregion
 

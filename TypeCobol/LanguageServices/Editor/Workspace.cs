@@ -167,17 +167,23 @@ namespace TypeCobol.LanguageServices.Editor
                 RefreshCustomSymbols();
         }
 
-        public void UpdateMissingCopies(List<string> RemainingMissingCopies)
+        public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
         {
-            //if(RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
-            //{
-            //    CompilationProject.MissingCopys.RemoveAll(c => true);
-            //    return;
-            //}
+            if (!OpenedFileCompiler.Any())
+                return;
+            var fileCompiler = OpenedFileCompiler[fileUri];
+            if (fileCompiler == null)
+                return;
 
-            //var copiesToRemove = CompilationProject.MissingCopys.Except(RemainingMissingCopies);
-            //foreach (var copyToRemove in copiesToRemove)
-            //    CompilationProject.MissingCopys.Remove(copyToRemove);
+            if (RemainingMissingCopies == null || RemainingMissingCopies.Count == 0)
+            {
+                fileCompiler.CompilationResultsForProgram.MissingCopies.RemoveAll(c => true);
+                return;
+            }
+
+            fileCompiler.CompilationResultsForProgram.MissingCopies =
+                fileCompiler.CompilationResultsForProgram.MissingCopies.Where(
+                    c => RemainingMissingCopies.Any(rc => rc == c.TextName)).ToList();
         }
 
         /// <summary>
@@ -242,7 +248,7 @@ namespace TypeCobol.LanguageServices.Editor
             DiagnosticsEvent(fileUri, diags);
 
             if (compilationUnit.MissingCopies.Count > 0)
-                MissingCopiesEvent(fileUri, compilationUnit.MissingCopies);
+                MissingCopiesEvent(fileUri, compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList());
         }
 
 
