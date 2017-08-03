@@ -5,6 +5,7 @@ using TypeCobol.Test.Compiler.Parser;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using TypeCobol.Codegen.Config;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 
@@ -24,16 +25,16 @@ namespace TypeCobol.Test {
 
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex = "*.cbl") {
-	        CheckTests(rootFolder, resultFolder, resultFile, regex, new string[] {}, new string[] {});
+	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex = "*.cbl", string skelPath = "") {
+	        CheckTests(rootFolder, resultFolder, resultFile, regex, new string[] {}, new string[] {}, skelPath);
 	    }
 
 	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex,
-	        string[] include, string[] exclude, int stopAfterAsManyErrors = 10000) {
-            CheckTests(rootFolder, resultFolder, resultFile, regex, include, exclude, new string[] { });
+	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000) {
+            CheckTests(rootFolder, resultFolder, resultFile, regex, include, exclude, new string[] { }, skelPath);
         }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, int stopAfterAsManyErrors = 10000) { 
+	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors = 10000) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
@@ -99,7 +100,11 @@ namespace TypeCobol.Test {
 			        var writer = new StringWriter();
                     watch.Reset();
 			        watch.Start();
-                    var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, null);
+
+                    //Retrieve skeletons
+			        var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : null;
+
+			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons);
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(document.Results, columns);
 

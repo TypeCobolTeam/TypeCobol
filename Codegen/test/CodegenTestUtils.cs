@@ -68,11 +68,9 @@ namespace TypeCobol.Codegen {
         }
 
 
-        public static List<Skeleton> ParseConfig(string resource)
-        {
+        public static List<Skeleton> ParseConfig(string resource) {
             var path = Path.Combine(ROOT, CONFIG, resource);
-            var parser = Config.Config.CreateParser(Path.GetExtension(path));
-            return parser.Parse(path);
+            return Config.Config.Parse(path);
         }
     }
 }
