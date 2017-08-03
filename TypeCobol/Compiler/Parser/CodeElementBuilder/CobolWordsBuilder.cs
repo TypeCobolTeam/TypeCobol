@@ -622,7 +622,10 @@ namespace TypeCobol.Compiler.Parser
         internal SymbolReference CreateQualifiedDataTypeReference(CodeElementsParser.Cobol2002TypeClauseContext context)
         {
             var pgmNameContext = context.programNameReference3(); //Get program name Context
-            var dataNameContext = context.typeNameReference().UserDefinedWord(); //Get variable/type name Context
+            var typeNameRef = context.typeNameReference();
+            if (typeNameRef == null)
+                return null;
+            var dataNameContext = typeNameRef.UserDefinedWord(); //Get variable/type name Context
             if (dataNameContext == null)
                 dataNameContext = context.typeNameReference().DATE();
 
