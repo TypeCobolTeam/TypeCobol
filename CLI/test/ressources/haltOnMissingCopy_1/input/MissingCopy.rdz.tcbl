@@ -6,9 +6,10 @@
        DATA DIVISION.
        WORKING-STORAGE section.
           01 PRTD20L. COPY  YPRTD20L.   
-          01 CONVEAL. COPY  YCONVEAL.   
+          01 CONVEAL. COPY  YCONVEAL.
       
        PROCEDURE DIVISION.
+       EXEC SQL INCLUDE YTTMCOIS END-EXEC.
            GOBACK
            .
        END PROGRAM MYPGM.

@@ -117,60 +117,7 @@ namespace TypeCobol.Compiler.Preprocessor
 		public override void EnterCopyCompilerStatement(CobolCompilerDirectivesParser.CopyCompilerStatementContext context) {
 			CompilerDirective = new CopyDirective(CompilerDirectiveType.COPY, ParseTreeUtils.GetFirstToken(context.COPY()));
 
-            var copy = (CopyDirective)CompilerDirective;
-
-		    if (context.copyCompilerStatementBody() != null)
-		    {
-		        var bodyContext = context.copyCompilerStatementBody();
-
-                if (bodyContext.qualifiedTextName() != null && context.PeriodSeparator() != null)
-                {
-                    var ctxt = bodyContext.qualifiedTextName();
-                    copy.TextName = GetTextName(ctxt.textName());
-                    copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
-                    if (copy.TextName != null)
-                    {
-
-                        // Find the list of copy text names variations declared by previous REMARKS compiler directives
-                        var variations = CopyTextNameVariations;
-                        if (TypeCobolOptions.AutoRemarksEnable && (variations == null || !variations.Any(v => string.Equals(v.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase)))) //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
-                        {
-                            AnalyticsWrapper.Telemetry.TrackEvent("[Copy-Missing] " + copy.TextName);
-
-                            variations = new List<RemarksDirective.TextNameVariation>
-                        {
-                            new RemarksDirective.TextNameVariation(copy.TextName)
-                        };
-
-                            CopyTextNameVariations.AddRange(variations);
-                        }
-
-                        if (variations != null)
-                        {
-                            var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName, StringComparison.InvariantCultureIgnoreCase));
-                            if (declaration != null)
-                            {
-                                // Declaration found => apply the legacy REPLACING semantics to the copy directive
-                                copy.RemoveFirst01Level = true;
-                                if (declaration.HasSuffix)
-                                {
-                                    copy.TextName = declaration.TextName;
-                                    copy.InsertSuffixChar = true;
-                                    copy.Suffix = declaration.Suffix;
-                                    copy.PreSuffix = declaration.PreSuffix;
-                                }
-                            }
-                        }
-
-
-                    }
-#endif
-                    copy.LibraryName = GetLibraryName(ctxt.libraryName());
-                    copy.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.libraryName());
-                }
-
-            }
+          
         }
 
 		private string GetTextName(CobolCompilerDirectivesParser.TextNameContext context) {
@@ -199,9 +146,74 @@ namespace TypeCobol.Compiler.Preprocessor
 			if (node != null && property == null) property = node.GetText();
 		}
 
-		public override void EnterCopyCompilerStatementBody(CobolCompilerDirectivesParser.CopyCompilerStatementBodyContext context) {
+        public override void EnterCopyCompilerStatementBody(
+            CobolCompilerDirectivesParser.CopyCompilerStatementBodyContext context)
+        {
 
-            var copy = (CopyDirective)CompilerDirective;
+            var copy = (CopyDirective) CompilerDirective;
+
+            var copyParentContext = context.parent as CobolCompilerDirectivesParser.CopyCompilerStatementContext; //Get the parent context as CopyCompilerStatement. 
+            //If null it means the parent is certainly CobolCompilerDirectivesParser.ExecSqlIncludeStatementContext 
+            //If not null we are going to check is the PeriodSeperator is present. 
+
+            if (context.qualifiedTextName() != null && (copyParentContext == null || copyParentContext != null && copyParentContext.PeriodSeparator() != null))
+            {
+                var ctxt = context.qualifiedTextName();
+                copy.TextName = GetTextName(ctxt.textName());
+                copy.TextNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.textName());
+#if EUROINFO_LEGACY_REPLACING_SYNTAX
+                if (copy.TextName != null)
+                {
+
+                    // Find the list of copy text names variations declared by previous REMARKS compiler directives
+                    var variations = CopyTextNameVariations;
+                    if (TypeCobolOptions.AutoRemarksEnable &&
+                        (variations == null ||
+                         !variations.Any(
+                             v =>
+                                 string.Equals(v.TextNameWithSuffix, copy.TextName,
+                                     StringComparison.InvariantCultureIgnoreCase))))
+                        //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
+                    {
+                        AnalyticsWrapper.Telemetry.TrackEvent("[Copy-Missing] " + copy.TextName);
+
+                        variations = new List<RemarksDirective.TextNameVariation>
+                        {
+                            new RemarksDirective.TextNameVariation(copy.TextName)
+                        };
+
+                        CopyTextNameVariations.AddRange(variations);
+                    }
+
+                    if (variations != null)
+                    {
+                        var declaration =
+                            variations.Find(
+                                d =>
+                                    String.Equals(d.TextNameWithSuffix, copy.TextName,
+                                        StringComparison.InvariantCultureIgnoreCase));
+                        if (declaration != null)
+                        {
+                            // Declaration found => apply the legacy REPLACING semantics to the copy directive
+                            copy.RemoveFirst01Level = true;
+                            if (declaration.HasSuffix)
+                            {
+                                copy.TextName = declaration.TextName;
+                                copy.InsertSuffixChar = true;
+                                copy.Suffix = declaration.Suffix;
+                                copy.PreSuffix = declaration.PreSuffix;
+                            }
+                        }
+                    }
+
+
+                }
+#endif
+                copy.LibraryName = GetLibraryName(ctxt.libraryName());
+                copy.LibraryNameSymbol = ParseTreeUtils.GetFirstToken(ctxt.libraryName());
+            }
+
+
             copy.Suppress = (context.SUPPRESS() != null);
 
             // REPLACING
@@ -216,25 +228,32 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Used to distinguish pseudo-text1 and pseudo-text2
                 int pseudoTextIndex = 0;
 
-                foreach (CobolCompilerDirectivesParser.CopyReplacingOperandContext replacingOperandContext in context.copyReplacingOperand())
+                foreach (
+                    CobolCompilerDirectivesParser.CopyReplacingOperandContext replacingOperandContext in
+                    context.copyReplacingOperand())
                 {
                     // Get relevant tokens
                     IList<IToken> operandTokens = null;
                     if (replacingOperandContext.pseudoText() != null)
-                    { // Pseudo-text => List of tokens
+                    {
+                        // Pseudo-text => List of tokens
                         if (replacingOperandContext.pseudoText()._pseudoTextTokens != null)
                             operandTokens = replacingOperandContext.pseudoText()._pseudoTextTokens;
                     }
                     else
-                    { // Single token
+                    {
+                        // Single token
                         if (replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy() != null)
                         {
-                            var terminalNode = ParseTreeUtils.GetFirstTerminalNode(replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy());
+                            var terminalNode =
+                                ParseTreeUtils.GetFirstTerminalNode(
+                                    replacingOperandContext.literalOrUserDefinedWordOReservedWordExceptCopy());
                             operandTokens = new List<IToken>(1);
                             operandTokens.Add(terminalNode.Symbol);
                         }
                     }
-                    BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens, ref replacementToken, ref replacementTokens, ref pseudoTextIndex, operandTokens);
+                    BuildReplaceOperation(copy.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
+                        ref replacementToken, ref replacementTokens, ref pseudoTextIndex, operandTokens);
                 }
             }
         }

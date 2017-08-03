@@ -84,7 +84,8 @@ namespace TypeCobol.Compiler.Parser
             node.SymbolTable = table ?? SyntaxTree.CurrentNode.SymbolTable;
             SyntaxTree.Enter(node, context);
 
-            NodeCodeElementLinkers.Add(node.CodeElement, node);
+            if (node.CodeElement != null)
+                NodeCodeElementLinkers.Add(node.CodeElement, node);
         }
         private void Exit()
         {
