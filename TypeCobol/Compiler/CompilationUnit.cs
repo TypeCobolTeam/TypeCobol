@@ -192,7 +192,7 @@ namespace TypeCobol.Compiler
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root;
                     IList<ParserDiagnostic> newDiagnostics;
-                    List<Tuple<Node, CodeElement>> nodeCodeElementLinkers = new List<Tuple<Node, CodeElement>>();
+                    Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
                 

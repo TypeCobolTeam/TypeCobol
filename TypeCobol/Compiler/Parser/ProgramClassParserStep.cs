@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Parser
         // When not null, optionnaly used to gather Antlr performance profiling information
         public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
 
-        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out IList<ParserDiagnostic> diagnostics, out List<Tuple<Node, CodeElement>> nodeCodeElementLinkers )
+        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out IList<ParserDiagnostic> diagnostics, out Dictionary<CodeElement, Node> nodeCodeElementLinkers )
         {
             // Create an Antlr compatible token source on top a the token iterator
             CodeElementsLinesTokenSource tokenSource = new CodeElementsLinesTokenSource(

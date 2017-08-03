@@ -592,9 +592,7 @@ namespace TypeCobol.LanguageServer
             if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null
                 && fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers != null)
             {
-                var matchingTuple = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers.FirstOrDefault(t => t.Item2 != null && t.Item2.Equals((codeElement)));
-                if (matchingTuple != null)
-                    return matchingTuple.Item1;
+                return fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers.FirstOrDefault(t => t.Key.Equals(codeElement)).Value;
             }
 
             return null;

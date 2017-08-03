@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     public class ProgramClassDocument
     {
-        public ProgramClassDocument(CodeElementsDocument previousStepSnapshot, int programClassVersion, SourceFile root, IList<ParserDiagnostic> diagnostics, List<Tuple<Node, CodeElement>> nodeCodeElementLinkers)
+        public ProgramClassDocument(CodeElementsDocument previousStepSnapshot, int programClassVersion, SourceFile root, IList<ParserDiagnostic> diagnostics, Dictionary<CodeElement, Node> nodeCodeElementLinkers)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;
@@ -42,7 +42,7 @@ namespace TypeCobol.Compiler.Parser
 
         public SourceFile Root { get; private set; }
 
-        public List<Tuple<Node, CodeElement>> NodeCodeElementLinkers { get; private set; }
+        public Dictionary<CodeElement, Node> NodeCodeElementLinkers { get; private set; }
 
         /// <summary>
         /// Errors found while parsing Program or Class
