@@ -46,6 +46,7 @@ namespace TypeCobol.Test {
 			TimeSpan codeGenSumDuration = new TimeSpan(0);
 			int parseErrors = 0;
 			int codegenErrors = 0;
+			int codegenDiff = 0;
 			foreach (var file in files) {
 
 				string filename = Path.GetFileName(file);
@@ -117,51 +118,70 @@ namespace TypeCobol.Test {
 
                     writer.Close();
 
-			        var expected = AsLines(File.ReadAllText(path, format.Encoding));
-			        var actual = AsLines(writer.ToString());
+                    //Error during generation, no need to check the content of generated Cobol
+			        if (generator.Diagnostics != null && generator.Diagnostics.Count > 0) {
 
-			        Directory.CreateDirectory(resultFolder);
-			        
+			            codegenErrors += generator.Diagnostics.Count;
+                        displayAndWriteErrorsToGrammarResult(resultFile, generator.Diagnostics);
+                        nbFilesInError++;
+                        if (nbFilesInError >= stopAfterAsManyErrors) break;
 
-			        var linesKO = new List<int>();
-			        for (int i = 0; i < Math.Min(expected.Count, actual.Count); i++) {
-			            if (!expected[i].Equals(actual[i])) linesKO.Add(i);
-			        }
-			        var errors = new System.Text.StringBuilder();
-			        string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));
-			        if (linesKO.Count > 0 || expected.Count != actual.Count) {
-			            errors.AppendLine("--- Lines mismatch ---");
-                        File.WriteAllLines(
-                        resultFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Expected" +
-                        Path.GetExtension(file), expected);
-                        File.WriteAllLines(
-                            resultFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Actual" +
-                            Path.GetExtension(file), actual);
+                    } else {
+                        //Compare generated Cobol with expected
+                        var expected = AsLines(File.ReadAllText(path, format.Encoding));
+                        var actual = AsLines(writer.ToString());
+
+                        Directory.CreateDirectory(resultFolder);
+
+
+                        var linesKO = new List<int>();
+                        for (int i = 0; i < Math.Min(expected.Count, actual.Count); i++)
+                        {
+                            if (!expected[i].Equals(actual[i])) linesKO.Add(i);
+                        }
+                        var errors = new System.Text.StringBuilder();
+                        string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));
+                        if (linesKO.Count > 0 || expected.Count != actual.Count)
+                        {
+                            errors.AppendLine("--- Lines mismatch ---");
+                            File.WriteAllLines(
+                            resultFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Expected" +
+                            Path.GetExtension(file), expected);
+                            File.WriteAllLines(
+                                resultFolder + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(file) + "-Actual" +
+                                Path.GetExtension(file), actual);
+                        }
+                        int start = -1;
+                        for (int i = 0; i < linesKO.Count; i++)
+                        {
+                            int currentline = linesKO[i];
+                            bool follows = i > 0 && linesKO[i - 1] == currentline - 1;
+                            if (!follows)
+                            {
+                                start = currentline;
+                                before(errors, expected, currentline, 3, fmt);
+                            }
+                            bool preceeds = i + 1 < linesKO.Count && linesKO[i + 1] == currentline + 1;
+                            if (!preceeds)
+                            {
+                                diff(errors, expected, actual, start, currentline, fmt);
+                                after(errors, expected, currentline, 3, fmt);
+                                start = -1;
+                            }
+                        }
+                        for (int i = actual.Count; i < expected.Count; i++)
+                            errors.AppendLine(String.Format("-{0:" + fmt + "} {1}", i, expected[i]));
+                        for (int i = expected.Count; i < actual.Count; i++)
+                            errors.AppendLine(String.Format("+{0:" + fmt + "} {1}", i, actual[i]));
+                        if (errors.Length > 0)
+                        {
+                            codegenDiff += linesKO.Count + Math.Abs(actual.Count - expected.Count);
+                            File.AppendAllText(resultFile, errors.ToString());
+                            if (okay) nbFilesInError++;
+                        }
                     }
-			        int start = -1;
-			        for (int i = 0; i < linesKO.Count; i++) {
-			            int currentline = linesKO[i];
-			            bool follows = i > 0 && linesKO[i - 1] == currentline - 1;
-			            if (!follows) {
-			                start = currentline;
-			                before(errors, expected, currentline, 3, fmt);
-			            }
-			            bool preceeds = i + 1 < linesKO.Count && linesKO[i + 1] == currentline + 1;
-			            if (!preceeds) {
-			                diff(errors, expected, actual, start, currentline, fmt);
-			                after(errors, expected, currentline, 3, fmt);
-			                start = -1;
-			            }
-			        }
-			        for (int i = actual.Count; i < expected.Count; i++)
-			            errors.AppendLine(String.Format("-{0:" + fmt + "} {1}", i, expected[i]));
-			        for (int i = expected.Count; i < actual.Count; i++)
-			            errors.AppendLine(String.Format("+{0:" + fmt + "} {1}", i, actual[i]));
-			        if (errors.Length > 0) {
-			            codegenErrors += linesKO.Count + Math.Abs(actual.Count - expected.Count);
-			            File.AppendAllText(resultFile, errors.ToString());
-			            if (okay) nbFilesInError++;
-			        }
+
+                    
 			    } else {
                     File.AppendAllText(resultFile, "\n");
                 }
@@ -172,6 +192,7 @@ namespace TypeCobol.Test {
 			string message = "Files tested=" + tested + "/" + files.Length + ", files in error=" + nbFilesInError + ", ignored=" + ignores + "\n";
 			if (parseErrors > 0)   message += "Parsing errors: "+ parseErrors   + '\n';
 			if (codegenErrors > 0) message += "Codegen errors: "+ codegenErrors + '\n';
+			if (codegenDiff > 0) message += "Codegen Diff: "+ codegenDiff + '\n';
             message += "Parsing time: " + parsingTotalDurationFormatted;
             if (codegen) {
                 string codeGenTotalDurationFormatted = string.Format("{0:00}m{1:00}s{2:000}ms", codeGenSumDuration.Minutes, codeGenSumDuration.Seconds, codeGenSumDuration.Milliseconds);
