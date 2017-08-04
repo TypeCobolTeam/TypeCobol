@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.File
     /// <summary>
     /// External change detected on a Cobol file
     /// </summary>
-    public class CobolFileChangedEvent
+    public class CobolFileChangedEvent : EventArgs
     {
         /// <summary>
         /// Some Cobol file types can be monitored for external changes

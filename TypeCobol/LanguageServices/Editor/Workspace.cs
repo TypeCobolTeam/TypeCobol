@@ -37,9 +37,9 @@ namespace TypeCobol.LanguageServices.Editor
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
         public Dictionary<Uri, FileCompiler> OpenedFileCompiler{ get; private set; }
-        public EventHandler<IEnumerable<Compiler.Diagnostics.Diagnostic>> DiagnosticsEvent { get; set; }
-        public EventHandler<List<string>> MissingCopiesEvent { get; set; }
-        public EventHandler<string> LoadingIssueEvent { get; set; }
+        public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
+        public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
+        public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
 
 
         public Workspace(string rootDirectoryFullName, string workspaceName)
@@ -213,11 +213,11 @@ namespace TypeCobol.LanguageServices.Editor
                 CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols, TypeCobolConfiguration.InputFiles, ref diagnostics); //Refresh Dependencies
 
                 if(diagnostics.Count > 0)
-                    LoadingIssueEvent(null, "An error occured while trying to load Intrinsics or Dependecies files."); //Send notification to client
+                    LoadingIssueEvent(null, new LoadingIssueEvent() {Message = "An error occured while trying to load Intrinsics or Dependencies files."}); //Send notification to client
             }
             catch (TypeCobolException typeCobolException)
             {
-                LoadingIssueEvent(null, "An error occured while trying to load Intrinsics or Dependecies files."); //Send notification to client
+                LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
 
@@ -226,7 +226,7 @@ namespace TypeCobol.LanguageServices.Editor
             }
             catch (Exception e)
             {
-                LoadingIssueEvent(null, "An error occured while trying to load Intrinsics or Dependecies files."); //Send notification to client
+                LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
                 AnalyticsWrapper.Telemetry.TrackException(e);
                 AnalyticsWrapper.Telemetry.SendMail(e, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, TypeCobolConfiguration.CommandLine);
@@ -239,21 +239,36 @@ namespace TypeCobol.LanguageServices.Editor
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ProgramClassChanged(object cUnit, int version)
+        private void ProgramClassChanged(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
             var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
             var diags = compilationUnit.AllDiagnostics().Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 100 : TypeCobolConfiguration.MaximumDiagnostics);
-            DiagnosticsEvent(fileUri, diags);
+            DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags});
 
             if (compilationUnit.MissingCopies.Count > 0)
-                MissingCopiesEvent(fileUri, compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList());
+                MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
         }
 
 
        
 
   
+    }
+
+    public class DiagnosticEvent : EventArgs
+    {
+        public IEnumerable<Compiler.Diagnostics.Diagnostic> Diagnostics { get; set; }  
+    }
+
+    public class MissingCopiesEvent : EventArgs
+    {
+        public List<string> Copies { get; set; }
+    }
+
+    public class LoadingIssueEvent : EventArgs
+    {
+        public string Message { get; set; }
     }
 }

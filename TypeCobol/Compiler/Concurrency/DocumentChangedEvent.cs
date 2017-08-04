@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.Concurrency
     /// Document changes are tracked at the line level.
     /// This class models a change which can span several lines of a document.
     /// </summary>
-    public class DocumentChangedEvent<T>
+    public class DocumentChangedEvent<T> : EventArgs
     {
         public DocumentChangedEvent(DocumentVersion<T> before, DocumentVersion<T> after)
         {

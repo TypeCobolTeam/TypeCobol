@@ -392,11 +392,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="fileUri">File URI to be send to the client</param>
         /// <param name="missingCopies">List of missing copies name</param>
-        private void MissingCopiesDetected(object fileUri, List<string> missingCopies)
+        private void MissingCopiesDetected(object fileUri, MissingCopiesEvent missingCopiesEvent)
         {
             //Send missing copies to client
             var missingCopiesParam = new MissingCopiesParams();
-            missingCopiesParam.Copies = missingCopies;
+            missingCopiesParam.Copies = missingCopiesEvent.Copies;
             missingCopiesParam.textDocument = new TextDocumentIdentifier(fileUri.ToString());
 
             SendMissingCopies(missingCopiesParam);
@@ -407,12 +407,12 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="fileUri">File URI to be send to the client</param>
         /// <param name="diagnostics">List of TypeCobol compiler diagnostics</param>
-        private void DiagnosticsDetected(object fileUri, IEnumerable<Compiler.Diagnostics.Diagnostic> diagnostics)
+        private void DiagnosticsDetected(object fileUri, DiagnosticEvent diagnosticEvent)
         {
             var diagParameter = new PublishDiagnosticsParams();
             var diagList = new List<Diagnostic>();
 
-            foreach (var diag in diagnostics)
+            foreach (var diag in diagnosticEvent.Diagnostics)
             {
                 diagList.Add(new Diagnostic(new Range(diag.Line, diag.ColumnStart, diag.Line, diag.ColumnEnd), diag.Message, (DiagnosticSeverity)diag.Info.Severity, diag.Info.Code.ToString(), diag.Info.ReferenceText));
             }
@@ -422,9 +422,9 @@ namespace TypeCobol.LanguageServer
             SendDiagnostics(diagParameter);
         }
 
-        private void LoadingIssueDetected(object sender, string message)
+        private void LoadingIssueDetected(object sender, LoadingIssueEvent loadingIssueEvent)
         {
-            SendLoadingIssue(new LoadingIssueParams() { Message = message });
+            SendLoadingIssue(new LoadingIssueParams() { Message = loadingIssueEvent.Message });
         }
 
         #region Completion Methods
@@ -722,45 +722,6 @@ namespace TypeCobol.LanguageServer
             return significantCodeElement;
         }
 
-        /// <summary>
-        /// Atomic Varibale used by WaitProgramClassNotChanged()
-        /// </summary>
-        int m_unchanged = 0;
-        /// <summary>
-        /// Event handler used by WaitProgramClassNotChanged()
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CompilationResultsForProgram_ProgramClassNotChanged(object sender, int e)
-        {
-            System.Threading.Interlocked.Exchange(ref m_unchanged, 1);
-        }
-
-        /// <summary>
-        /// This Was used to detecy that no further ProgramClass change construction is performed
-        /// during successive incremental snapshot refresh. The key idea was to listen to a new event
-        /// ProgramClassNotChanged.
-        /// But that problem when doing that is that the asynchonous Program Class construction
-        /// is performed every 3s, a completion cannot wait 3s second before having an answer.
-        /// </summary>
-        /// <param name="fileCompiler"></param>
-        private void WaitProgramClassNotChanged(FileCompiler fileCompiler)
-        {
-            fileCompiler.CompilationResultsForProgram.ProgramClassNotChanged += CompilationResultsForProgram_ProgramClassNotChanged;
-            System.Threading.Interlocked.Exchange(ref m_unchanged, 0);
-            try
-            {
-                while (System.Threading.Interlocked.CompareExchange(ref m_unchanged, 0, 1) == 0)
-                {
-                    System.Threading.Thread.Sleep(20);
-                }
-            }
-            finally
-            {
-                fileCompiler.CompilationResultsForProgram.ProgramClassNotChanged -= CompilationResultsForProgram_ProgramClassNotChanged;
-                System.Threading.Interlocked.Exchange(ref m_unchanged, 0);
-            }
-        }
         #endregion
     }
 

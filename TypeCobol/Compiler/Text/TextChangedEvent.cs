@@ -7,7 +7,7 @@ namespace TypeCobol.Compiler.Text
     /// Text changes are tracked at the line level.
     /// This class models a change which can span several lines of text.
     /// </summary>
-    public class TextChangedEvent
+    public class TextChangedEvent : EventArgs
     {
         public TextChangedEvent()
         {

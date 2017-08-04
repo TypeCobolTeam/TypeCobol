@@ -48,7 +48,7 @@ internal class FunctionDeclaration: Compiler.Nodes.FunctionDeclaration, Generate
 			linkage = new LinkageSection();
 			datadiv.Add(linkage);
 		}
-		if (linkage != null) data = linkage.Children();
+		if (linkage != null) data = linkage.Children().ToList();
 		// TCRFUN_CODEGEN_PARAMETERS_ORDER
 		var generated = new List<string>();
 		foreach(var parameter in profile.InputParameters) {

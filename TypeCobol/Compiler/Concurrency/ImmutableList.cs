@@ -6358,8 +6358,9 @@ namespace TypeCobol.Compiler.Concurrency
                 return false;
             }
         }
-
+#if NET45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         internal bool IsOwned<TCaller>(ref TCaller caller)
             where TCaller : struct, ISecurePooledObjectUser
         {
