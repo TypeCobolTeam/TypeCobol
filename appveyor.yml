@@ -24,14 +24,16 @@ build:
   verbosity: minimal
   
 artifacts: 
-  - path: bin\ReleasePackage
-    name: EIReleasePackage
+  - path: bin\EI_TypeCobol_Release
+    name: EI_TypeCobol_Release
+  - path: bin\TypeCobol_Release
+    name: TypeCobol_Release
 
 deploy:
   provider: GitHub
   auth_token: 
     secure: oX7Ck0VMD2HvWjA2Itqc+95Azad6jIkr6C0uMLoq0gK9kKfK+UIXWvwqM6oenhkG
-  artifact: EIReleasePackage
+  artifact: EI_TypeCobol_Release,TypeCobol_Release
   draft: false
   force_update: true
   on:
