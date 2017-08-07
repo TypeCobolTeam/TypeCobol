@@ -110,18 +110,22 @@ namespace TypeCobol.Server
         private static ReturnCode runOnce2(TypeCobolConfiguration config, AbstractErrorWriter errorWriter)
         {
             var parser = new Parser();
-            var diagnostics = new List<Diagnostic>();
-            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, ref diagnostics); //Load of the intrinsics
-            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, ref diagnostics); //Load of the dependency files
-
-            //Read the diags and send themto server logs
-            foreach (var diagnostic in diagnostics)
+            bool diagDetected = false;
+            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = null;
+            DiagnosticsErrorEvent += delegate(object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
             {
+                //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                diagDetected = true;
+                var diagnostic = diagEvent.Diagnostic;
                 Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
                     diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
-                    "Error while parsing : " + diagnostic, null);
-            }
-            if (diagnostics.Count > 0)
+                    "Error while parsing : " + diagnostic, diagEvent.Path);
+            };
+
+            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load of the intrinsics
+            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, DiagnosticsErrorEvent); //Load of the dependency files
+           
+            if (diagDetected)
                 throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
 
             ReturnCode returnCode = ReturnCode.Success;

@@ -205,14 +205,20 @@ namespace TypeCobol.LanguageServices.Editor
 
         private void RefreshCustomSymbols()
         {
-            var diagnostics = new List<Compiler.Diagnostics.Diagnostic>();
+            bool diagDetected = false;
+            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = null;
+            DiagnosticsErrorEvent += delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+            {
+                //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                diagDetected = true;
+            };
             CustomSymbols = null;
             try
             {
-                CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, ref diagnostics); //Refresh Intrinsics
-                CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols, TypeCobolConfiguration.InputFiles, ref diagnostics); //Refresh Dependencies
+                CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
+                CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols, TypeCobolConfiguration.InputFiles, DiagnosticsErrorEvent); //Refresh Dependencies
 
-                if(diagnostics.Count > 0)
+                if(diagDetected)
                     LoadingIssueEvent(null, new LoadingIssueEvent() {Message = "An error occured while trying to load Intrinsics or Dependencies files."}); //Send notification to client
             }
             catch (TypeCobolException typeCobolException)

@@ -14,14 +14,14 @@ namespace TypeCobol.Tools.APIHelpers
 {
     public static class Helpers
     {
-        public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, ref List<Diagnostic> diagnostics)
+        public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             var parser = new Parser();
-            diagnostics = new List<Diagnostic>();
+            var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
             var instrincicFiles = new List<string>();
 
-            foreach (string path in paths) instrincicFiles.AddRange(Tools.FileSystem.GetFiles(path, parser.Extensions, false));
+            foreach (string path in paths) instrincicFiles.AddRange(FileSystem.GetFiles(path, parser.Extensions, false));
 
             foreach (string path in instrincicFiles)
             {
@@ -31,6 +31,11 @@ namespace TypeCobol.Tools.APIHelpers
                     parser.Parse(path);
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
+
+                    if (diagEvent != null && diagnostics.Count > 0)
+                    {
+                        diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = d}));
+                    }
 
                     if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
                     {
@@ -60,10 +65,10 @@ namespace TypeCobol.Tools.APIHelpers
             return table;
         }
 
-        public static SymbolTable LoadDependencies(List<string> paths, DocumentFormat format, SymbolTable intrinsicTable, List<string> inputFiles, ref List<Diagnostic> diagnostics)
+        public static SymbolTable LoadDependencies(List<string> paths, DocumentFormat format, SymbolTable intrinsicTable, List<string> inputFiles, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
             var parser = new Parser(intrinsicTable);
-            diagnostics = new List<Diagnostic>();
+            var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
@@ -114,6 +119,11 @@ namespace TypeCobol.Tools.APIHelpers
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
 
+                    if (diagEvent != null && diagnostics.Count > 0)
+                    {
+                        diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
+                    }
+
                     if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
                     {
                         throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
@@ -135,5 +145,11 @@ namespace TypeCobol.Tools.APIHelpers
             }
             return table;
         }
+    }
+
+    public class DiagnosticsErrorEvent : EventArgs
+    {
+        public string Path { get; set; }
+        public Diagnostic Diagnostic { get; set; }
     }
 }
