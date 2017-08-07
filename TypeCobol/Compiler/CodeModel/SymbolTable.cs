@@ -863,11 +863,11 @@ namespace TypeCobol.Compiler.CodeModel
             return symbolTable.Programs;
         }
 
-        public IDictionary<string, List<Program>> GetPrograms(string filter)
+        public List<Program> GetPrograms(string filter)
         {
             var programs = this.GetTableFromScope(Scope.Namespace)
-                                   .Programs.Where(f => f.Value.All(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase))).ToDictionary(d => d.Key, d => d.Value);
-            return programs;
+                .Programs.Values.SelectMany(t => t).Where(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase));
+            return programs.ToList();
         }
 
 
