@@ -388,29 +388,31 @@ namespace TypeCobol.LanguageServer
                         {
                             case TokenType.PERFORM:
                             {
-                                items.AddRange(GetCompletionPerformParagraph(fileCompiler, matchingCodeElement,
-                                    userFilterToken));
+                                items.AddRange(GetCompletionPerformParagraph(fileCompiler, matchingCodeElement, userFilterToken));
                                 break;
                             }
                             case TokenType.CALL:
                             {
-                                items.AddRange(GetCompletionForProcedure(fileCompiler, matchingCodeElement,
-                                    userFilterToken));
-                                items.AddRange(GetCompletionForLibrary(fileCompiler, matchingCodeElement,
-                                    userFilterToken));
+                                items.AddRange(GetCompletionForProcedure(fileCompiler, matchingCodeElement, userFilterToken));
+                                items.AddRange(GetCompletionForLibrary(fileCompiler, matchingCodeElement, userFilterToken));
                                 break;
                             }
                             case TokenType.TYPE:
                             {
                                 items.AddRange(GetCompletionForType(fileCompiler, matchingCodeElement, userFilterToken));
-                                items.AddRange(GetCompletionForLibrary(fileCompiler, matchingCodeElement,
-                                    userFilterToken));
+                                items.AddRange(GetCompletionForLibrary(fileCompiler, matchingCodeElement, userFilterToken));
                                 break;
                             }
                             case TokenType.QualifiedNameSeparator:
                             {
-                                items.AddRange(GetCompletionForQualifiedName(parameters.position, fileCompiler,
-                                    matchingCodeElement, lastSignificantToken, userFilterToken));
+                                items.AddRange(GetCompletionForQualifiedName(parameters.position, fileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken));
+                                break;
+                            }
+                            case TokenType.INPUT:
+                            case TokenType.OUTPUT:
+                            case TokenType.IN_OUT:
+                            {
+                                items.AddRange(GetCompletionForProcedureParameter(parameters.position, fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
                                 break;
                             }
                             default:
@@ -436,6 +438,8 @@ namespace TypeCobol.LanguageServer
             }
             return new List<CompletionItem>();
         }
+
+
 
         public override void OnShutdown()
         {
@@ -502,8 +506,7 @@ namespace TypeCobol.LanguageServer
         /// <param name="fileCompiler">The target FileCompiler instance</param>
         /// <param name="performToken">The PERFORM token</param>
         /// <returns></returns>
-        private IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler,
-            CodeElement codeElement, Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
             var performNode = GetMatchingNode(fileCompiler, codeElement);
             ICollection<string> pargraphs = null;
@@ -544,8 +547,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement,
-            Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
             var node = GetMatchingNode(fileCompiler, codeElement);
             var procedures = new List<FunctionDeclaration>();
@@ -580,7 +582,7 @@ namespace TypeCobol.LanguageServer
 
 
 
-            completionItems = CreateCompletionItemsForProcedures(procedures, node);
+            completionItems = CreateCompletionItemsForProcedures(procedures, node).ToList();
 
             foreach (var variable in variables)
             {
@@ -593,8 +595,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private IEnumerable<CompletionItem> GetCompletionForLibrary(FileCompiler fileCompiler, CodeElement codeElement,
-            Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionForLibrary(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
             var callNode = GetMatchingNode(fileCompiler, codeElement);
             List<Program> programs = new List<Program>();
@@ -619,8 +620,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement,
-            Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
             var node = GetMatchingNode(fileCompiler, codeElement);
             var types = new List<TypeDefinition>();
@@ -650,8 +650,7 @@ namespace TypeCobol.LanguageServer
             return CreateCompletionItemsForType(types, node);
         }
 
-        private IEnumerable<CompletionItem> GetCompletionForQualifiedName(Position position, FileCompiler fileCompiler,
-            CodeElement codeElement, Token qualifiedNameSeparatorToken, Token userFilterToken)
+        private IEnumerable<CompletionItem> GetCompletionForQualifiedName(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token qualifiedNameSeparatorToken, Token userFilterToken)
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
@@ -767,8 +766,101 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private List<CompletionItem> CreateCompletionItemsForType(List<TypeDefinition> types, Node node,
-            bool enablePublicFlag = true)
+        private IEnumerable<CompletionItem> GetCompletionForProcedureParameter(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
+        {
+            var completionItems = new List<CompletionItem>();
+            var arrangedCodeElement = codeElement as CodeElementWrapper;
+            var node = GetMatchingNode(fileCompiler, codeElement);
+            var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+
+            //Get procedure name or qualified name
+            string procedureName = string.Empty;
+            if (arrangedCodeElement.ArrangedConsumedTokens.Any(t => t.TokenType == TokenType.QualifiedNameSeparator))
+            {
+                procedureName = arrangedCodeElement.ArrangedConsumedTokens
+                    .TakeWhile(t => t.TokenType != TokenType.QualifiedNameSeparator).LastOrDefault().Text + ".";
+            }
+
+            procedureName = procedureName + arrangedCodeElement.ArrangedConsumedTokens
+                                .TakeWhile( t => t.TokenType != TokenType.INPUT 
+                                                && t.TokenType != TokenType.OUTPUT 
+                                                && t.TokenType != TokenType.IN_OUT)
+                                .LastOrDefault(t => t.TokenFamily != TokenFamily.Whitespace).Text;
+           
+
+            //Try to get procedure by its name
+            var calledProcedures =
+                node.SymbolTable.GetFunctions(
+                    p =>
+                        p.Name.Equals(procedureName) ||
+                        p.QualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
+                    {
+                        SymbolTable.Scope.Declarations,
+                        SymbolTable.Scope.Intrinsic,
+                        SymbolTable.Scope.Namespace
+                    });
+
+
+            int alreadyGivenParametersCount = arrangedCodeElement.ArrangedConsumedTokens
+                .SkipWhile(t => t != lastSignificantToken).Skip(1)
+                .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
+                .Except(new List<Token>() {userFilterToken})
+                .Count(t => t.Line <= position.line + 1 && t.StopIndex + 1 <= position.character);
+
+            var potentialVariablesForCompletion = new List<DataDefinition>();
+            foreach (var procedure in calledProcedures)
+            {
+                IEnumerable<ParameterDescription> procParams = null;
+                //Switch to select the correct parameters profile
+                #region Selective parameters Switch
+                switch (lastSignificantToken.TokenType)
+                {
+                    case TokenType.INPUT:
+                    {
+                        procParams = procedure.Profile.InputParameters;
+                        break;
+                    }
+                    case TokenType.OUTPUT:
+                    {
+                        procParams = procedure.Profile.OutputParameters;
+                        break;
+                    }
+                    case TokenType.IN_OUT:
+                    {
+                        procParams = procedure.Profile.InoutParameters;
+                        break;
+                    }
+                    default:
+                        procParams = new List<ParameterDescription>();
+                        break;
+                }
+
+                #endregion
+
+                //If the user already written all or more parameters than required let's check for an other proc signature
+                if (alreadyGivenParametersCount >= procParams.Count())
+                    continue;
+                
+                //Else see which parameter could be filled
+                var parameterToFill = procParams.ToArray()[alreadyGivenParametersCount];
+                //Get local/global variable that could correspond to the parameter
+                potentialVariablesForCompletion.AddRange(
+                    node.SymbolTable.GetVariables(v => v.DataType == parameterToFill.DataType &&
+                                                       v.Name.StartsWith(userFilterText,
+                                                           StringComparison.InvariantCultureIgnoreCase),
+                        new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
+
+            }
+
+
+            //Add potential variables to completionItems
+            completionItems.AddRange(potentialVariablesForCompletion.Distinct().Select(v => new CompletionItem(v.Name)));
+
+            return completionItems;
+        }
+
+
+        private IEnumerable<CompletionItem> CreateCompletionItemsForType(List<TypeDefinition> types, Node node, bool enablePublicFlag = true)
         {
             var completionItems = new List<CompletionItem>();
 
@@ -795,8 +887,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private List<CompletionItem> CreateCompletionItemsForProcedures(List<FunctionDeclaration> procedures, Node node,
-            bool enablePublicFlag = true)
+        private IEnumerable<CompletionItem> CreateCompletionItemsForProcedures(List<FunctionDeclaration> procedures, Node node, bool enablePublicFlag = true)
         {
             var completionItems = new List<CompletionItem>();
 
@@ -844,7 +935,6 @@ namespace TypeCobol.LanguageServer
 
             return completionItems;
         }
-
         #endregion
 
         #region Helpers
@@ -876,12 +966,14 @@ namespace TypeCobol.LanguageServer
         ///        ^
         /// that is to say if the cursor is just after the M that no completion should occurs.
         /// </summary>
-        private static Tuple<TokenType, bool>[] elligibleCompletionTokens = new Tuple<TokenType, bool>[]
-        {
+        private static Tuple<TokenType, bool>[] elligibleCompletionTokens = {
             new Tuple<TokenType, bool>(TokenType.PERFORM, false),
             new Tuple<TokenType, bool>(TokenType.CALL, false),
             new Tuple<TokenType, bool>(TokenType.TYPE, false),
-            new Tuple<TokenType, bool>(TokenType.QualifiedNameSeparator, true)
+            new Tuple<TokenType, bool>(TokenType.QualifiedNameSeparator, true),
+            new Tuple<TokenType, bool>(TokenType.INPUT, false),
+            new Tuple<TokenType, bool>(TokenType.OUTPUT, false),
+            new Tuple<TokenType, bool>(TokenType.IN_OUT, false)
         };
 
         /// <summary>
@@ -964,9 +1056,11 @@ namespace TypeCobol.LanguageServer
                         codeElements = tempCodeElements;
 
                     //The closestToken to cursor as to be added to this codeElement as a userdefinedword
-                    codeElements.LastOrDefault()
-                        .ArrangedConsumedTokens.Add(new Token(TokenType.UserDefinedWord, closestTokenToCursor.StartIndex,
-                            closestTokenToCursor.StopIndex, closestTokenToCursor.TokensLine));
+                    if (closestTokenToCursor.TokenType != TokenType.UserDefinedWord)
+                        codeElements.LastOrDefault()
+                            .ArrangedConsumedTokens.Add(new Token(TokenType.UserDefinedWord,
+                                closestTokenToCursor.StartIndex,
+                                closestTokenToCursor.StopIndex, closestTokenToCursor.TokensLine));
                 }
             }
             else if (closestTokenToCursor != null)
@@ -1012,8 +1106,9 @@ namespace TypeCobol.LanguageServer
                     userFilterToken =
                         consumedTokens.FirstOrDefault(
                             t =>
-                                position.character <= t.StopIndex + 1 && position.character > t.StartIndex &&
-                                t.TokenType == TokenType.UserDefinedWord);
+                                position.character <= t.StopIndex + 1 && position.character > t.StartIndex
+                                && t.Line == position.line + 1
+                                && t.TokenType == TokenType.UserDefinedWord);
 
                     //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
                     if ((lastSignificantToken != null &&
@@ -1023,7 +1118,8 @@ namespace TypeCobol.LanguageServer
                         ||
                         (consumedTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord &&
                          !(position.character <= consumedTokens.LastOrDefault().StopIndex + 1 &&
-                           position.character >= consumedTokens.LastOrDefault().StartIndex)))
+                           position.character >= consumedTokens.LastOrDefault().StartIndex) 
+                           && !(lastSignificantToken.TokenType == TokenType.INPUT || lastSignificantToken.TokenType == TokenType.OUTPUT || lastSignificantToken.TokenType == TokenType.IN_OUT)))
                     {
                         lastSignificantToken = null;
                         userFilterToken = null;
@@ -1049,6 +1145,9 @@ namespace TypeCobol.LanguageServer
             ArrangedConsumedTokens = new List<Token>();
             foreach (var token in ConsumedTokens)
             {
+                if (token is Compiler.AntlrUtils.MissingToken)
+                    continue;
+
                 ArrangedConsumedTokens.Add(new Token(token.TokenType, token.StartIndex, token.StopIndex, token.TokensLine));
             }
         }

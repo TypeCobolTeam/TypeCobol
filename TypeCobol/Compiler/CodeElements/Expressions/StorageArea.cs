@@ -141,10 +141,13 @@ namespace TypeCobol.Compiler.CodeElements
 
 	    public override string ToString() {
 			var str = new System.Text.StringBuilder();
-			str.Append(SymbolReference.Name);
-			if (Subscripts != null)
-			foreach(var subscript in Subscripts)
-				str.Append('(').Append(subscript).Append(')');
+	        if (SymbolReference != null)
+	        {
+                str.Append(SymbolReference.Name);
+                if (Subscripts != null)
+                    foreach (var subscript in Subscripts)
+                        str.Append('(').Append(subscript).Append(')');
+            }
 			return str.ToString();
 		}
 	}
