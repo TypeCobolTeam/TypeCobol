@@ -318,6 +318,7 @@ namespace TypeCobol.LanguageServer
         public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
             Uri objUri = new Uri(parameters.uri);
+            bool temp;
             if (objUri.IsFile)
             {
                 // Get compilation info for the current file
@@ -338,29 +339,21 @@ namespace TypeCobol.LanguageServer
                         if (codeElementsLine != null && codeElementsLine.CodeElements != null)
                         {
                             //Ignore all the EndOfFile token 
-                            //TODO: Analyse why there is EndOfFile Token on incomplete CodeElement
                             var tempCodeElements =
                                 codeElementsLine.CodeElements.Where(
                                     c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
 
+                            foreach (var tempCodeElement in tempCodeElements.Reverse())
+                            {
+                                if (!tempCodeElement.ConsumedTokens.Any(t => IsCompletionElligibleToken(t, out temp) &&
+                                ((t.Line == parameters.position.line +1 && t.StopIndex +1 <= parameters.position.character) || t.Line < parameters.position.line + 1)))
+                                    ignoredCodeElements.Add(tempCodeElement);
+                                else
+                                    codeElements.Add(tempCodeElement);
+                            }
 
-                            //Rules of this condition statement :
-                            //If a code element is on the same line as the cursor and that the cursor is inside or close to a ConsumedToken 
-                            //and that ConsumedToken is different from UserDefinedWord, the current has to be ignored
-                            if (tempCodeElements.Any(c => c.Line == parameters.position.line + 1
-                                                          &&
-                                                          c.ConsumedTokens.Any(
-                                                              t =>
-                                                                  t.Line == parameters.position.line + 1 &&
-                                                                  t.StopIndex + 1 >= parameters.position.character
-                                                                  && t.TokenType != TokenType.UserDefinedWord)))
-                            {
-                                ignoredCodeElements.AddRange(tempCodeElements);
-                            }
-                            else
-                            {
-                                codeElements.AddRange(tempCodeElements);
-                            }
+                            if(tempCodeElements.Any(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.PeriodSeparator && !(t is Compiler.AntlrUtils.MissingToken))))
+                                break;
                         }
 
                         lineIndex--; //decrease lineIndex to get the previous line of TypeCobol Tree.
@@ -1026,8 +1019,9 @@ namespace TypeCobol.LanguageServer
                 codeElements.Select(
                         c =>
                             c.ArrangedConsumedTokens.LastOrDefault(
-                                t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character)))
-                    .LastOrDefault();
+                                t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character))).Where(t => t!=null)
+                    .OrderBy(t =>  Math.Abs(position.character - t.StopIndex + 1)) //Allows to get the token closest to the cursor
+                    .FirstOrDefault();
 
             if (closestTokenToCursor != null && closestTokenToCursor.Line == position.line + 1 &&
                 position.character > closestTokenToCursor.StartIndex &&
@@ -1057,10 +1051,20 @@ namespace TypeCobol.LanguageServer
 
                     //The closestToken to cursor as to be added to this codeElement as a userdefinedword
                     if (closestTokenToCursor.TokenType != TokenType.UserDefinedWord)
+                    {
                         codeElements.LastOrDefault()
                             .ArrangedConsumedTokens.Add(new Token(TokenType.UserDefinedWord,
-                                closestTokenToCursor.StartIndex,
-                                closestTokenToCursor.StopIndex, closestTokenToCursor.TokensLine));
+                                                        closestTokenToCursor.StartIndex,
+                                                        closestTokenToCursor.StopIndex, closestTokenToCursor.TokensLine));
+
+                        foreach (var codeElement in codeElements)
+                        {
+                            if (codeElement.ArrangedConsumedTokens.Contains(closestTokenToCursor) && closestTokenToCursor.TokenType != TokenType.UserDefinedWord)
+                                codeElement.ArrangedConsumedTokens.Remove(closestTokenToCursor);
+                        }
+                       
+                    }
+               
                 }
             }
             else if (closestTokenToCursor != null)
@@ -1077,14 +1081,17 @@ namespace TypeCobol.LanguageServer
                 var consumedTokens =
                     codeElement.ArrangedConsumedTokens.Where(
                         t =>
-                            t.StartIndex <= position.character && t.Line <= position.line + 1 &&
+                            ((t.StartIndex <= position.character && t.Line <= position.line + 1) ||
+                            t.Line < position.line + 1) &&
                             t.TokenFamily != TokenFamily.Whitespace);
+
+                
 
                 if (consumedTokens != null && consumedTokens.Any())
                 {
                     foreach (var finalToken in consumedTokens)
                     {
-                        if (finalToken.StartIndex > position.character)
+                        if (finalToken.StartIndex > position.character && !(finalToken.Line < position.line + 1))
                             break;
 
                         if (IsCompletionElligibleToken(finalToken, out bAllowLastPos) &&
@@ -1093,12 +1100,6 @@ namespace TypeCobol.LanguageServer
                             lastSignificantToken = finalToken;
                                 //If eveyrhing is Ok add the final token as LastSinificantToken
                             significantCodeElement = codeElement;
-                        }
-                        else if (finalToken.TokenType != TokenType.UserDefinedWord)
-                        {
-                            lastSignificantToken = null;
-                                //If a token is detected that is different from UserDefinedWord and not recognize as a Eliible token, we cannot do completion
-                            significantCodeElement = null;
                         }
                     }
 
@@ -1112,10 +1113,7 @@ namespace TypeCobol.LanguageServer
 
                     //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
                     if ((lastSignificantToken != null &&
-                         ((!bAllowLastPos && lastSignificantToken.StopIndex + 1 == position.character) ||
-                          (lastSignificantToken.StartIndex == position.character &&
-                           lastSignificantToken.Line == position.line + 1)))
-                        ||
+                         (!bAllowLastPos && lastSignificantToken.StopIndex + 1 == position.character && lastSignificantToken.Line == position.line + 1)) ||
                         (consumedTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord &&
                          !(position.character <= consumedTokens.LastOrDefault().StopIndex + 1 &&
                            position.character >= consumedTokens.LastOrDefault().StartIndex) 
