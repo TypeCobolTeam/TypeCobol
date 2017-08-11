@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
@@ -408,6 +409,17 @@ namespace TypeCobol.LanguageServer
                                 items.AddRange(GetCompletionForProcedureParameter(parameters.position, fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
                                 break;
                             }
+                            case TokenType.MOVE:
+                            {
+                                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                                items.AddRange(GetCompletionForVariable(fileCompiler, matchingCodeElement, da => da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
+                                break;
+                            }
+                            case TokenType.TO:
+                            {
+                                items.AddRange(GetCompletionForTo(fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
+                                break;
+                            }
                             default:
                                 break;
                         }
@@ -432,7 +444,7 @@ namespace TypeCobol.LanguageServer
             return new List<CompletionItem>();
         }
 
-
+      
 
         public override void OnShutdown()
         {
@@ -852,6 +864,58 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
+        private IEnumerable<CompletionItem> GetCompletionForVariable(FileCompiler fileCompiler, CodeElement codeElement, Expression<Func<DataDefinition, bool>> predicate)
+        {
+            var completionItems = new List<CompletionItem>();
+            var node = GetMatchingNode(fileCompiler, codeElement);
+            List<DataDefinition> variables = null;
+
+            variables = node.SymbolTable.GetVariables(predicate, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+            completionItems.AddRange(variables.Select(v => new CompletionItem(v.Name)));
+
+            return completionItems;
+        }
+
+        private IEnumerable<CompletionItem> GetCompletionForTo(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
+        {
+            var completionItems = new List<CompletionItem>();
+            var arrangedCodeElement = codeElement as CodeElementWrapper;
+            var node = GetMatchingNode(fileCompiler, codeElement);
+            List<DataDefinition> variables = new List<DataDefinition>();
+            var firstReferences = new List<Node>();
+
+            var firstReferenceToken = arrangedCodeElement.ArrangedConsumedTokens.TakeWhile(t => t != lastSignificantToken).LastOrDefault();
+            if (firstReferenceToken == null) 
+                return completionItems;
+
+            firstReferences.AddRange(
+                node.SymbolTable.GetVariables(
+                    da => da.Name.Equals(firstReferenceToken.Text, StringComparison.InvariantCultureIgnoreCase),
+                    new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
+
+            if (firstReferences != null && firstReferences.Count == 0) //No variable found, it mays come from a type.
+            {
+                var possibleTypes = node.SymbolTable.GetTypes(t => t.Children != null && t.Children.Any(da => da!=null && da.Name!=null && da.Name.Equals(firstReferenceToken.Text, StringComparison.InvariantCultureIgnoreCase)),
+                                                            new List<SymbolTable.Scope>
+                                                            {
+                                                                SymbolTable.Scope.Declarations,
+                                                                SymbolTable.Scope.Global,
+                                                                SymbolTable.Scope.Intrinsic,
+                                                                SymbolTable.Scope.Namespace
+                                                            });
+
+                firstReferences.AddRange(possibleTypes.SelectMany(t => t.Children.Where(c => c.Name.Equals(firstReferenceToken.Text, StringComparison.InvariantCultureIgnoreCase))));
+            }
+
+            foreach (var firstReference in firstReferences)
+            {
+                variables.AddRange(node.SymbolTable.GetVariables(da => da.DataType == (firstReference as DataDefinition).DataType, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global }));
+            }
+         
+            completionItems.AddRange(variables.Distinct().Select(v => new CompletionItem(v.Name)));
+
+            return completionItems;
+        }
 
         private IEnumerable<CompletionItem> CreateCompletionItemsForType(List<TypeDefinition> types, Node node, bool enablePublicFlag = true)
         {
@@ -966,7 +1030,9 @@ namespace TypeCobol.LanguageServer
             new Tuple<TokenType, bool>(TokenType.QualifiedNameSeparator, true),
             new Tuple<TokenType, bool>(TokenType.INPUT, false),
             new Tuple<TokenType, bool>(TokenType.OUTPUT, false),
-            new Tuple<TokenType, bool>(TokenType.IN_OUT, false)
+            new Tuple<TokenType, bool>(TokenType.IN_OUT, false),
+            new Tuple<TokenType, bool>(TokenType.MOVE, false),
+            new Tuple<TokenType, bool>(TokenType.TO, false)
         };
 
         /// <summary>
