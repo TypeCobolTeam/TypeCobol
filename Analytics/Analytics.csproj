@@ -34,7 +34,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Release|AnyCPU' ">
-    <OutputPath>..\bin\EIRules_Release\</OutputPath>
+    <OutputPath>..\bin\EI_Release\</OutputPath>
     <DefineConstants>TRACE;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF, NET45</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -45,7 +45,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\EIRules_Debug\</OutputPath>
+    <OutputPath>..\bin\EI_Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF, NET45</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -132,7 +132,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF DEFINED TYPECOBOLCONFIG ( echo F|xcopy $(TYPECOBOLCONFIG) "$(TargetFileName).config" /Y) ELSE (ECHO Analytics - Post Build event : Environement variable not defined)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
