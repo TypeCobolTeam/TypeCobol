@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TypeCobol.LanguageServer.StdioHttp;
+using Analytics;
 
 namespace TypeCobol.LanguageServer.JsonRPC
 {
@@ -269,6 +270,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
         public void WriteServerLog(string trace)
         {
             messageServer.WriteServerLog(trace);
+            AnalyticsWrapper.Telemetry.TrackException(new Exception(trace));
         }       
     }
 }

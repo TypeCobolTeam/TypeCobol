@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using Analytics;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
@@ -277,6 +278,7 @@ namespace TypeCobol.LanguageServer
 
         public override Hover OnHover(TextDocumentPosition parameters)
         {
+            AnalyticsWrapper.Telemetry.TrackEvent("[LSP] Hover");
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile)
             {
@@ -376,7 +378,7 @@ namespace TypeCobol.LanguageServer
                         out userFilterToken, out lastSignificantToken); //Magic happens here
                     if (lastSignificantToken != null)
                     {
-//We got a perform Token
+                        AnalyticsWrapper.Telemetry.TrackEvent("[Completion] " + lastSignificantToken.TokenType);
                         List<CompletionItem> items = new List<CompletionItem>();
                         switch (lastSignificantToken.TokenType)
                         {
