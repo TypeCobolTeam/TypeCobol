@@ -350,15 +350,22 @@ namespace TypeCobol.Compiler.Diagnostics {
         if (statement == null) {
             return; //not our job
         }
-		var context = c as CodeElementsParser.MoveSimpleContext;
-	    if (statement.StorageAreaWrites != null) {
-	        for (int i = 0; i < statement.StorageAreaWrites.Count; i++) {
-	            var receiver = statement.StorageAreaWrites[i].StorageArea;
-	            if (receiver is FunctionCallResult)
-	                DiagnosticUtils.AddError(statement, "MOVE: illegal <function call> after TO", context.storageArea1()[i]);
-	        }
-	    }
-	}
+		var moveStatementContext = c as CodeElementsParser.MoveStatementContext;
+	    if (moveStatementContext != null)
+	    {
+	        var moveSimpleContext = moveStatementContext.moveSimple();
+	        if (moveSimpleContext != null)
+	        {
+	            if (statement.StorageAreaWrites != null) {
+	                for (int i = 0; i < statement.StorageAreaWrites.Count; i++) {
+	                    var receiver = statement.StorageAreaWrites[i].StorageArea;
+	                    if (receiver is FunctionCallResult)
+	                        DiagnosticUtils.AddError(statement, "MOVE: illegal <function call> after TO", moveSimpleContext.storageArea1()[i]);
+	                }
+	            }
+            }
+        }
+    }
 }
 
     class SearchStatementChecker: CodeElementListener {

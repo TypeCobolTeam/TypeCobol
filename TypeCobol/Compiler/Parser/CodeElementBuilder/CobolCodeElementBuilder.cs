@@ -1942,14 +1942,24 @@ namespace TypeCobol.Compiler.Parser
 
 		// --- MOVE STATEMENT ---
 
-		public override void EnterMoveSimple(CodeElementsParser.MoveSimpleContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateMoveStatement(context);
-		}
-		public override void EnterMoveCorresponding(CodeElementsParser.MoveCorrespondingContext context) {
-			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateMoveStatement(context);
-		}
+	    public override void EnterMoveStatement(CodeElementsParser.MoveStatementContext context)
+	    {
+	        Context = context;
+	        CodeElement = null;
+            if (context == null)
+	            return;
+
+	        if (context.moveSimple() != null)
+	        {
+                CodeElement = CobolStatementsBuilder.CreateMoveStatement(context.moveSimple());
+            }
+	        else if (context.moveCorresponding() != null)
+	        {
+                CodeElement = CobolStatementsBuilder.CreateMoveStatement(context.moveCorresponding());
+            }
+            else 
+                CodeElement = new MoveSimpleStatement(null, null, null);
+	    }
 
 		// --- SET STATEMENT ---
 
