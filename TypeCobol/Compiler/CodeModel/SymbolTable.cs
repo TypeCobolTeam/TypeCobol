@@ -526,17 +526,9 @@ namespace TypeCobol.Compiler.CodeModel
         /// Get all paragraphs in the current scope.
         /// </summary>
         /// <returns>The collection of paragraph names</returns>
-        public ICollection<string> GetParagraphNames(string filter)
+        public List<Paragraph> GetParagraphs(Expression<Func<Paragraph, bool>> predicate)
         {
-            var paragraphs = new List<string>();
-
-            foreach (var paraKey in Paragraphs.Keys)
-            {
-                if (paraKey.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase))
-                    paragraphs.Add(paraKey);
-            }
-
-            return paragraphs;
+            return Paragraphs.Values.SelectMany(p => p).AsQueryable().Where(predicate).Distinct().ToList();
         }
 
         #endregion

@@ -30,7 +30,6 @@ namespace TypeCobol.LanguageServer
         // -- Initialization : create workspace and return language server capabilities --
         private Workspace typeCobolWorkspace;
 
-
         #region Override LSP Methods
 
         public override InitializeResult OnInitialize(InitializeParams parameters)
@@ -59,9 +58,6 @@ namespace TypeCobol.LanguageServer
 
             return initializeResult;
         }
-
-
-
         // -- Files synchronization : maintain a list of opened files, apply all updates to their content -- //
         public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
@@ -273,7 +269,6 @@ namespace TypeCobol.LanguageServer
                 typeCobolWorkspace.DidChangeConfigurationParams(parameters.settings.ToString());
             }
         }
-
         // ----------------------------------------------------------------------------------------------- //
 
         public override Hover OnHover(TextDocumentPosition parameters)
@@ -366,14 +361,14 @@ namespace TypeCobol.LanguageServer
                         //Add the previously ignored Code Elements, may be they are usefull to help completion.
 
                     if (!codeElements.Any(c => c.ConsumedTokens.Any(t => t.Line <= parameters.position.line + 1)))
-                        return new List<CompletionItem>(); //If nothing is found near the cursor we can"t do completion
+                        return new List<CompletionItem>(); //If nothing is found near the cursor we can't do completion
 
                     var finalList = codeElements.Select(c => new CodeElementWrapper(c));
                         //Create a list of CodeElementWrapper in prder to loose the ConsumedTokens ref. 
 
                     Token userFilterToken = null;
                     Token lastSignificantToken = null;
-                    //Try o get a significant token for competion and return the codeelement containing the matching token.
+                    //Try to get a significant token for competion and return the codeelement containing the matching token.
                     CodeElement matchingCodeElement = MatchCompletionCodeElement(parameters.position, finalList,
                         out userFilterToken, out lastSignificantToken); //Magic happens here
                     if (lastSignificantToken != null)
@@ -446,7 +441,106 @@ namespace TypeCobol.LanguageServer
             return new List<CompletionItem>();
         }
 
-      
+        public override Definition OnDefinition(TextDocumentPosition parameters)
+        {
+            var defaultDefinition = new Definition(parameters.uri, new Range());
+            Uri objUri = new Uri(parameters.uri);
+            if (objUri.IsFile)
+            {
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
+
+                if (fileCompiler.CompilationResultsForProgram != null &&
+                    fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
+                {
+                    var matchingCodeElement =
+                        fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers
+                            .Keys.FirstOrDefault(c => c.ConsumedTokens.Any(
+                                t => t.Line == parameters.position.line + 1 &&
+                                     parameters.position.character >= t.StartIndex &&
+                                     parameters.position.character <= t.StopIndex + 1));
+                    if (matchingCodeElement == null)
+                        return defaultDefinition;
+
+                    var matchingNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[matchingCodeElement];
+                    if (matchingNode == null)
+                        return defaultDefinition;
+
+                    var matchingToken = matchingCodeElement.ConsumedTokens.FirstOrDefault(t =>
+                                            t.Line == parameters.position.line + 1 &&
+                                            parameters.position.character >= t.StartIndex &&
+                                            parameters.position.character <= t.StopIndex+1);
+                    if (matchingToken == null)
+                        return defaultDefinition;
+
+                    Token userFilterToken = null;
+                    Token lastSignificantToken = null;
+                    var potentialDefinitionNodes = new List<Node>();
+
+                    MatchCompletionCodeElement(parameters.position, new List<CodeElementWrapper>() {new CodeElementWrapper(matchingCodeElement)}, out userFilterToken, out lastSignificantToken); //Magic happens here
+                    if (lastSignificantToken != null)
+                    {
+                        switch (lastSignificantToken.TokenType)
+                        {
+                            case TokenType.PERFORM:
+                            {
+                                potentialDefinitionNodes.AddRange(
+                                    matchingNode.SymbolTable.GetParagraphs(
+                                        p => p.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase)));
+                                break;
+                            }
+                            case TokenType.CALL:
+                            {
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
+                                    f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
+                                    new List<SymbolTable.Scope>()
+                                    {
+                                        SymbolTable.Scope.Declarations,
+                                        SymbolTable.Scope.Global
+                                    }));
+                                break;
+                            }
+                            case TokenType.TYPE:
+                            {
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
+                                    t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
+                                    new List<SymbolTable.Scope>()
+                                    {
+                                        SymbolTable.Scope.Declarations,
+                                        SymbolTable.Scope.Global
+                                    }));
+                                break;
+                            }
+                            case TokenType.INPUT:
+                            case TokenType.OUTPUT:
+                            case TokenType.IN_OUT:
+                            case TokenType.MOVE:
+                            case TokenType.TO:
+                            default:
+                            {
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
+                                    v => v.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
+                                    new List<SymbolTable.Scope>()
+                                    {
+                                        SymbolTable.Scope.Declarations,
+                                        SymbolTable.Scope.Global
+                                    }));
+                                break;
+                            }
+                        }
+                    }
+
+                    if (potentialDefinitionNodes.Count > 0)
+                    {
+                        var nodeDefinition = potentialDefinitionNodes.FirstOrDefault();
+                        if (nodeDefinition != null)
+                            return new Definition(parameters.uri,
+                                new Range() {start = new Position(nodeDefinition.CodeElement.Line - 1, 0)});
+                    }
+                }
+            }
+
+            return defaultDefinition;
+        }
 
         public override void OnShutdown()
         {
@@ -516,7 +610,7 @@ namespace TypeCobol.LanguageServer
         private IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
         {
             var performNode = GetMatchingNode(fileCompiler, codeElement);
-            ICollection<string> pargraphs = null;
+            List<Paragraph> pargraphs = null;
             List<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
 
@@ -525,7 +619,7 @@ namespace TypeCobol.LanguageServer
                 if (performNode.SymbolTable != null)
                 {
                     var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                    pargraphs = performNode.SymbolTable.GetParagraphNames(userFilterText);
+                    pargraphs = performNode.SymbolTable.GetParagraphs(p => p.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase));
                     variables = performNode.SymbolTable.GetVariables(da => da.Picture != null &&
                                                                            da.DataType ==
                                                                            Compiler.CodeElements.DataType.Numeric &&
@@ -538,7 +632,7 @@ namespace TypeCobol.LanguageServer
 
             if (pargraphs != null)
             {
-                completionItems.AddRange(pargraphs.Select(para => new CompletionItem(para)));
+                completionItems.AddRange(pargraphs.Select(para => new CompletionItem(para.Name)));
             }
             if (variables != null)
             {
