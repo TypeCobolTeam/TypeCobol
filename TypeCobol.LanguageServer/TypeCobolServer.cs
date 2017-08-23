@@ -443,6 +443,7 @@ namespace TypeCobol.LanguageServer
 
         public override Definition OnDefinition(TextDocumentPosition parameters)
         {
+            AnalyticsWrapper.Telemetry.TrackEvent("[Definition]"); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile)
