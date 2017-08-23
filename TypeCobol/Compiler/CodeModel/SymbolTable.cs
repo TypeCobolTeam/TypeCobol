@@ -39,9 +39,12 @@ namespace TypeCobol.Compiler.CodeModel
 
         private List<T> GetFromTable<T>(string head, IDictionary<string, List<T>> table) where T : Node
         {
-            List<T> values;
-            table.TryGetValue(head, out values);
-            if (values != null) return values.ToList();
+            if (head != null)
+            {
+                List<T> values;
+                table.TryGetValue(head, out values);
+                if (values != null) return values.ToList();
+            }
             return new List<T>();
         }
 
