@@ -6,6 +6,7 @@ using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen
@@ -44,15 +45,19 @@ namespace TypeCobol.Codegen
         /// </summary>
         private Program CurrentProgram = null;
 
+        public Generator Generator { get; private set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="Skeletons">Skeletons pattern for actions</param>
-        public GeneratorActions(List<Skeleton> skeletons, CompilationDocument compilationDocument)
-        {
+        public GeneratorActions(Generator generator, List<Skeleton> skeletons, CompilationDocument compilationDocument) {
+            Generator = generator;
             Skeletons = skeletons ?? new List<Skeleton>();
             CompilationDocument = compilationDocument;
         }
+
+
 
         /// <summary>
         /// Get all actions created for a node.
@@ -114,15 +119,21 @@ namespace TypeCobol.Codegen
             var groups = new List<string>();
             foreach (var action in this)
             {
-                if (action.Group != null && groups.Contains(action.Group)) 
+                try
+                {
+                    if (action.Group != null && groups.Contains(action.Group)) 
                     continue;
-                if (BeforeAction != null)
-                    BeforeAction(this, (EventArgs)action);
-                action.Execute();
-                if (AfterAction != null)
-                    AfterAction(this, (EventArgs)action);
-                if (action.Group != null) 
-                    groups.Add(action.Group);
+                    if (BeforeAction != null)
+                        BeforeAction(this, (EventArgs)action);
+                    action.Execute();
+                    if (AfterAction != null)
+                        AfterAction(this, (EventArgs)action);
+                    if (action.Group != null)
+                        groups.Add(action.Group);
+                } catch (Exception e) {
+                    Diagnostic diag = new Diagnostic(MessageCode.ImplementationError, 0, 0, 0, e.Message + "\n" + e.StackTrace);
+                    Generator.AddDiagnostic(diag);
+                }
             }
         }
 
