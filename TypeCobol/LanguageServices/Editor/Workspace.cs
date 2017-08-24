@@ -137,6 +137,7 @@ namespace TypeCobol.LanguageServices.Editor
         /// <param name="arguments">The arguments</param>
         public void DidChangeConfigurationParams(IEnumerable<string> arguments)
         {
+            TypeCobolConfiguration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
             options.Parse(arguments);
 
