@@ -17,10 +17,11 @@ namespace TypeCobol.Compiler.AntlrUtils
         
         public override void CopyFrom(Antlr4.Runtime.ParserRuleContext ctx)
         {
-            base.CopyFrom(ctx);            
-            if(ctx is ParserRuleContextWithDiagnostics)
+            base.CopyFrom(ctx);
+            var diagnostics = ctx as ParserRuleContextWithDiagnostics;
+            if(diagnostics != null)
             {
-                this._diagnostics = ((ParserRuleContextWithDiagnostics)ctx)._diagnostics;
+                this._diagnostics = diagnostics._diagnostics;
             }
         }
         
