@@ -151,7 +151,7 @@ namespace TypeCobol.LanguageServer
                         if (contentChange.range.end.line > contentChange.range.start.line &&
                             contentChange.range.end.character == 0)
                         {
-                            lastLineIndex--;
+                            firstLineIndex++;
                             lastLineDeleted = true;
                         }
                         if (!lastLineDeleted && contentChange.text.Length == 0)
