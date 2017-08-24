@@ -95,8 +95,11 @@ namespace TypeCobol.Compiler
                         {
                             if (change.LineIndex + 1 <= lines.Count - 1)        //Temporary workaround until issue #611 is fixed
                             {                                                   //Temporary workaround until issue #611 is fixed
-                                lines[change.LineIndex + 1].ResetDiagnostics(); //Temporary workaround until issue #611 is fixed
-                                lines[change.LineIndex].ResetDiagnostics();     //Temporary workaround until issue #611 is fixed
+                                var lineIndex = change.LineIndex;
+                                while (lineIndex < lines.Count-1 && lines[lineIndex].ParserDiagnostics == null)
+                                    lineIndex++;
+
+                                lines[lineIndex].ResetDiagnostics();
                             }                                                   //Temporary workaround until issue #611 is fixed
                             else                                                //Temporary workaround until issue #611 is fixed
                                 lines[change.LineIndex].ResetDiagnostics();
