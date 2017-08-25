@@ -147,14 +147,12 @@ namespace TypeCobol.LanguageServer
 
                         // Check if the last line was deleted
                         int lastLineIndex = contentChange.range.end.line;
-                        bool lastLineDeleted = false;
                         if (contentChange.range.end.line > contentChange.range.start.line &&
                             contentChange.range.end.character == 0)
                         {
-                            firstLineIndex++;
-                            lastLineDeleted = true;
+                           //Allows to detect if the next line was supressed
                         }
-                        if (!lastLineDeleted && contentChange.text.Length == 0)
+                        if (contentChange.text.Length == 0)
                         {
                             lineUpdates = new List<string>();
                         }
@@ -176,7 +174,7 @@ namespace TypeCobol.LanguageServer
 
                         // Text not modified at the end of the last replaced line
                         string endOfLastLine = null;
-                        if (!lastLineDeleted && contentChange.range.end.character < originalLastLineText.Length)
+                        if (contentChange.range.end.character < originalLastLineText.Length)
                         {
                             endOfLastLine = originalLastLineText.Substring(contentChange.range.end.character);
                         }
@@ -207,7 +205,6 @@ namespace TypeCobol.LanguageServer
                                 if (i == lineUpdatesCount - 1)
                                 {
                                     newLine = newLine + endOfLastLine;
-                                    if (lastLineDeleted) break;
                                 }
                                 var textChange = new TextChange(TextChangeType.LineInserted, firstLineIndex + i,
                                     new TextLineSnapshot(firstLineIndex + i, newLine, null));
