@@ -241,7 +241,7 @@
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
            02 DD PIC 9(2).
-       01 arg0 Pointer.
+       01 arg0 pointer.
        01 myDate3.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).

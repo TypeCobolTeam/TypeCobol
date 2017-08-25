@@ -12,8 +12,8 @@
       *      INPUT x PIC 9(04).
 
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
-      *      INPUT     x      PIC 9(04)
-      *      RETURNING result PIC 9(04)
+      *      INPUT     x      PIC 9(04) comp-3
+      *      RETURNING result PIC 9(04) comp
       *    .
 
       *written in lower-case to make sure code generation doesn't 
@@ -68,16 +68,16 @@
        END PROGRAM cd51a7fd.
       *
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
-      *      INPUT     x      PIC 9(04)
-      *      RETURNING result PIC 9(04)
+      *      INPUT     x      PIC 9(04) comp-3
+      *      RETURNING result PIC 9(04) comp
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. c498f2f1.
        DATA DIVISION.
        LINKAGE SECTION.
-       01 x PIC 9(04).
-       01 result PIC 9(04).
+       01 x PIC 9(04) comp-3.
+       01 result PIC 9(04) comp.
        PROCEDURE DIVISION
              USING BY REFERENCE x
                    BY REFERENCE result
