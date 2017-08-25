@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Text;
 using SimpleMsgPack;
 using TypeCobol.Server.Serialization;
 using Analytics;
+using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server {
@@ -61,7 +62,8 @@ namespace TypeCobol.Server {
 		        try {
 
 		            args = p.Parse(argv);
-		        } catch (OptionException ex) {
+
+                } catch (OptionException ex) {
                     return exit(ReturnCode.FatalError, ex.Message);
 		        }
 

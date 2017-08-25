@@ -69,6 +69,7 @@ namespace TypeCobol.Server.Serialization
             msgpack.ForcePathObject("HaltOnMissingCopyFilePath").AsString = string.IsNullOrEmpty(data.HaltOnMissingCopyFilePath) ? string.Empty : data.HaltOnMissingCopyFilePath;
             msgpack.ForcePathObject("AutoRmarks").AsString = Convert.ToString(data.AutoRemarks);
             msgpack.ForcePathObject("Telemetry").AsString = Convert.ToString(data.Telemetry);
+            msgpack.ForcePathObject("OutputFormat").AsString = Convert.ToString(data.OutputFormat);
 
 
 
@@ -139,6 +140,7 @@ namespace TypeCobol.Server.Serialization
             config.HaltOnMissingCopyFilePath = msgpack.ForcePathObject("HaltOnMissingCopyFilePath").AsString;
             config.AutoRemarks = msgpack.ForcePathObject("AutoRmarks").AsString.Equals("True", StringComparison.InvariantCultureIgnoreCase);
             config.Telemetry = msgpack.ForcePathObject("Telemetry").AsString.Equals("True", StringComparison.InvariantCultureIgnoreCase);
+            Enum.TryParse(msgpack.ForcePathObject("OutputFormat").AsString, true, out config.OutputFormat); //Get string processing step into enum value
 
             List<string> InputFiles = new List<string>();
             foreach (MsgPack item in msgpack.ForcePathObject("InputFiles"))

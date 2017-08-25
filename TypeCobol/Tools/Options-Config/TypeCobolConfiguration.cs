@@ -28,8 +28,13 @@ namespace TypeCobol.Tools.Options_Config
         public string EncFormat = null;
         public bool Telemetry;
         public int MaximumDiagnostics;
+        public OutputFormat OutputFormat = OutputFormat.Cobol85;
     }
 
+    public enum OutputFormat {
+        Cobol85,
+        PublicSignatures
+    }
     public static class TypeCobolOptionSet
     {
         public static OptionSet GetCommonTypeCobolOptions(TypeCobolConfiguration typeCobolConfig)
@@ -50,7 +55,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => typeCobolConfig.CopyFolders.Add(v) },
                 { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => typeCobolConfig.Dependencies.Add(v) },
                 { "t|telemetry=", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => typeCobolConfig.Telemetry = true },
-                { "md|maximumdiagnostics=", "Wait for an int value that will represent the maximum number of diagnostics that TypeCobol have to return.", v =>  typeCobolConfig.MaximumDiagnostics = int.Parse(v.ToString())}
+                { "md|maximumdiagnostics=", "Wait for an int value that will represent the maximum number of diagnostics that TypeCobol have to return.", v =>  typeCobolConfig.MaximumDiagnostics = int.Parse(v.ToString())},
+                { "f|outputFormat=", "Output format (default is Cobol 85). (Cobol85/0, PublicSignature/1)", v => Enum.TryParse(v.ToString(), true, out typeCobolConfig.OutputFormat)}
             };
 
             return commonOptions;
