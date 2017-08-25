@@ -70,6 +70,7 @@ namespace TypeCobol.Compiler.Parser
             // --- PREPARATION PHASE : identify all parse sections where code elements need to be refreshed ---
 
             IList<ParseSection> refreshParseSections = null;
+            ParseSection largestRefreshParseSection = null;
 
             // Iterate over all processed tokens changes detected by the PreprocessorStep :
             // - refresh all the adjacent lines participating in a CodeElement
@@ -92,6 +93,18 @@ namespace TypeCobol.Compiler.Parser
                     }
                 }
             }
+            if (refreshParseSections != null)
+            {
+                var minParseSection = refreshParseSections.OrderBy(p => p.StartLineIndex).First();
+                var maxParseSection = refreshParseSections.OrderByDescending(p => p.StopLineIndex).First();
+                largestRefreshParseSection = new ParseSection(minParseSection.StartLineIndex,
+                    minParseSection.StartToken, maxParseSection.StopLineIndex, maxParseSection.StopToken,
+                    maxParseSection.StopTokenIsFirstTokenOfTheLine);
+
+                refreshParseSections.Clear();
+                refreshParseSections.Add(largestRefreshParseSection);
+            }
+
 
             // --- INITIALIZE ANTLR CodeElements parser ---
 

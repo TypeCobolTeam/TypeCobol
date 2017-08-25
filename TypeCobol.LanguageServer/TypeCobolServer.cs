@@ -97,10 +97,9 @@ namespace TypeCobol.LanguageServer
                     {
                         replacementTextStartsWithNewLine = contentChange.text[0] == '\r' ||
                                                            contentChange.text[0] == '\n';
-                            //Allow to know if a new line was added
+                        //Allow to know if a new line was added
                         lineUpdates =
-                            contentChange.text.Split(new char[] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries)
-                                .ToList(); //Split on /r /n to know the number of lines added
+                            contentChange.text.Replace("\r", "").Split('\n').ToList(); //Split on \r \n to know the number of lines added
                     }
 
                     // Document cleared
