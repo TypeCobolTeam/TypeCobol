@@ -120,13 +120,8 @@ internal class SenderAttribute: Attribute {
 		var set = ce as SetStatementForConditions;
 		if (set != null) return new URI(set.SendingValue.Value.ToString());
 
-	    if (ce.StorageAreaReads == null || ce.StorageAreaReads.Count == 0) {
-	        return null;
-	    }
-	    if (ce.StorageAreaReads.Count > 1) {
-	        throw new System.ArgumentOutOfRangeException("Too many sending items (" + ce.StorageAreaReads.Count + ")");
-	    }
-	    return ce.StorageAreaReads[0].ToString();
+            //The only skeletons rule that use "sender" attribute if for "set bool to false" so ignore all other codeElement that are not a SetStatementForConditions
+            return null;
 	}
 }
 internal class ReceiverAttribute: Attribute {
