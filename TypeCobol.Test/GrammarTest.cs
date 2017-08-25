@@ -98,16 +98,17 @@ namespace TypeCobol.Test {
 				}
 
 			    if (codegen && okay) {
-			        var writer = new StringWriter();
                     watch.Reset();
 			        watch.Start();
 
+                    var writer = new StringWriter();
                     //Retrieve skeletons
-			        var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : null;
+                    var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : null;
 
 			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons);
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(document.Results, columns);
+                    writer.Close();
 
                     //Write duration to GrammarResultFile
                     watch.Stop();
@@ -116,7 +117,7 @@ namespace TypeCobol.Test {
                     formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
                     File.AppendAllText(resultFile, " generated in " + formatted + "\n");
 
-                    writer.Close();
+                    
 
                     //Error during generation, no need to check the content of generated Cobol
 			        if (generator.Diagnostics != null && generator.Diagnostics.Count > 0) {

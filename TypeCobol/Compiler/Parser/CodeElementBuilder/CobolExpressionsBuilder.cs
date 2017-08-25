@@ -1235,6 +1235,23 @@ namespace TypeCobol.Compiler.Parser
             return variable;
         }
 
+        internal SymbolReferenceVariable CreateProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(CodeElementsParser.IdentifierContext context)
+		{
+            SymbolReferenceVariable variable = null;
+			
+			StorageArea storageArea = CreateIdentifierOrTCFunctionProcedure(context);
+			variable = new SymbolReferenceVariable(StorageDataType.ProcedurePointerOrFunctionPointerOrTCFunctionName, storageArea);
+			
+
+            // Collect storage area read/writes at the code element level
+            if (variable.StorageArea != null)
+            {
+                this.storageAreaReads.Add(variable.StorageArea);
+            }
+
+            return variable;
+        }
+
 		internal SymbolReferenceVariable CreateClassNameOrObjectReferenceVariable(CodeElementsParser.ClassNameOrObjectReferenceVariableContext context)
 		{
 			StorageArea storageArea = CreateIdentifierOrClassName(context.identifierOrClassName());
