@@ -14,6 +14,10 @@
               88 IMSBatch value "TI".
               88 DB2Batch value "TD".
               88 Batch    value "  ".
+              88 Others123456   values "a1" thru "a9"
+                                 "b1" thru "b9"
+                                 "c1" thru "c9"
+                                 "d1" thru "d9".
 
        01 ProcessingMode typedef strict.
            05 temp pic X(02).

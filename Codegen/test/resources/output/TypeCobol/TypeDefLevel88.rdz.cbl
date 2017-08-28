@@ -14,6 +14,10 @@
       *       88 IMSBatch value "TI".
       *       88 DB2Batch value "TD".
       *       88 Batch    value "  ".
+      *       88 Others123456   values "a1" thru "a9"
+      *                          "b1" thru "b9"
+      *                          "c1" thru "c9"
+      *                          "d1" thru "d9".
 
       *01 ProcessingMode typedef strict.
       *    05 temp pic X(02).
@@ -36,6 +40,8 @@
             88 IMSBatch value "TI".
             88 DB2Batch value "TD".
             88 Batch value "  ".
+            88 Others123456 values "a1" thru "a9" "b1" thru "b9" "c1" th
+      -    ru "c9" "d1" thru "d9".
                                       
 
        PROCEDURE DIVISION.
@@ -47,4 +53,4 @@
           END-IF.
        END PROGRAM TypeDefLevel88.
       * 1 errors
-      * Line 29[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns
+      * Line 33[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns

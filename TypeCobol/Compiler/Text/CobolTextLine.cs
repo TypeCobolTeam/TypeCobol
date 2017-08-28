@@ -105,13 +105,26 @@ namespace TypeCobol.Compiler.Text
             var lines = Split(text, 65);
             result.Add(new TextLineSnapshot(index, Convert(layout, lines[0], indicator, indent), null));
             if (indicator == ' ') indicator = '-';
-            for (int i = 1; i < lines.Count; i++)
-            {
-                if (index > -1) index++;
-                result.Add(new TextLineSnapshot(index, Convert(layout, lines[i], indicator, indent), null));
+
+
+            if (lines.Count > 1) {
+                int i = 1;
+                //Issue #651, continuation lines must start in Area B
+                //Only 61 chars remains available
+                if (indicator == '-') {
+                    //Remove 65 chars already added to result
+                    lines = Split(text.Substring(65), 61);
+                    i = 0;
+                }
+                for (; i < lines.Count; i++) {
+                    if (index > -1) index++;
+                    result.Add(new TextLineSnapshot(index, Convert(layout, lines[i], indicator, indent), null));
+                }
             }
             return result;
         }
+
+        private const string ContinuationLinePrefix = "      -    ";
         private static string Convert(ColumnsLayout layout, string text, char indicator, string indent)
         {
             string result = "";
@@ -120,9 +133,12 @@ namespace TypeCobol.Compiler.Text
                 result = (indicator == '*' ? "*" : "") + indent + text;
             }
             else {
-                string end = "";
-                for (int c = text.Length; c < 65; c++) end += " ";
-                result = "      " + indicator + indent + text + end + "      ";//+"000000";
+                var end = text.Length < 65 ? new string(' ', 65 - text.Length) : "";
+                if (indicator != '-') {
+                    result = "      " + indicator + indent + text + end + "      ";//+"000000";
+                } else {
+                    result = ContinuationLinePrefix + indent + text + end + "      "; //+"000000"
+                }
             }
             return result;
         }
