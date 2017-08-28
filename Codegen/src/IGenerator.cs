@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
@@ -17,5 +19,7 @@ namespace TypeCobol.Codegen
         /// <param name="compilationUnit">Compilation unit resulting from TypeCobol parsing</param>
         /// <param name="columns">Columns layout</param>
         void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat);
+
+        List<Diagnostic> Diagnostics { get; }
     }
 }

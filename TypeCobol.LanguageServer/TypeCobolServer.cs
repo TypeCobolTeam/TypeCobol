@@ -903,7 +903,7 @@ namespace TypeCobol.LanguageServer
                 .SkipWhile(t => t != lastSignificantToken).Skip(1)
                 .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
                 .Except(new List<Token>() {userFilterToken})
-                .Count(t => t.Line <= position.line + 1 && t.StopIndex + 1 <= position.character);
+                .Count(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line <= position.line + 1);
 
             var potentialVariablesForCompletion = new List<DataDefinition>();
             foreach (var procedure in calledProcedures)

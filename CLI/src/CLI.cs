@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Threading;
 using TypeCobol.CustomExceptions;
-using TypeCobol.Compiler;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Text;
 using Analytics;
 using TypeCobol.CLI.CustomExceptions;
 using System.Linq;
+using TypeCobol.Codegen;
+using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server
@@ -205,29 +203,38 @@ namespace TypeCobol.Server
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path); //Make ParsingException trace back to RunOnce()
                 }
 
-                if (config.ExecToStep >= ExecutionStep.Generate)
-                {
-                    var skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
-                    var codegen = new TypeCobol.Codegen.Generators.DefaultGenerator(parser.Results, new StreamWriter(config.OutputFiles[c]), skeletons);
-                    try
-                    {
-                        codegen.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
-                        if (codegen.Diagnostics != null)
-                        {
-                            errorWriter.AddErrors(path, codegen.Diagnostics); //Write diags into error file
-                            throw new PresenceOfDiagnostics("Diagnostics Detected"); //Make ParsingException trace back to RunOnce()
-                        }
-                    } catch (PresenceOfDiagnostics) {//rethrow exception
-                        throw;
-                    }
-                    catch (Exception e)
-                    {
-                        if (e is GenerationException)
-                            throw e; //Throw the same exception to let runOnce() knows there is a problem
-                        
-                        throw new GenerationException(e.Message, path, e); //Otherwise create a new GenerationException
+                if (config.ExecToStep >= ExecutionStep.Generate) {
+
+                    //Load skeletons if necessary
+                    List<Skeleton> skeletons = null;
+                    if (!(string.IsNullOrEmpty(config.skeletonPath))) {
+                        skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
                     }
 
+
+                    //Get Generator from specified config.OutputFormat
+                    var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(), parser.Results,
+                        new StreamWriter(config.OutputFiles[c]), skeletons);
+
+                    if (generator == null) {
+                        throw new GenerationException("Unkown OutputFormat=" + config.OutputFormat + "_", path);
+                    }
+
+                    //Generate and check diagnostics
+                    try {
+                        generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
+                        if (generator.Diagnostics != null) {
+                            errorWriter.AddErrors(path, generator.Diagnostics); //Write diags into error file
+                            throw new PresenceOfDiagnostics("Diagnostics Detected");
+                            //Make ParsingException trace back to RunOnce()
+                        }
+                    } catch (PresenceOfDiagnostics) { 
+                        throw; //Throw the same exception to let runOnce() knows there is a problem
+                    } catch (GenerationException) {
+                        throw; //Throw the same exception to let runOnce() knows there is a problem
+                    } catch(Exception e) { //Otherwise create a new GenerationException
+                        throw new GenerationException(e.Message, path, e);
+                    }
                 }
 
                 if (parser.Results.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Warning)) {

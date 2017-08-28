@@ -386,18 +386,14 @@ namespace TypeCobol.Compiler.Parser
 
         public override void EnterTcCallStatement(CodeElementsParser.TcCallStatementContext context)
         {
-            if (context.functionNameReference() != null)
-            {
-                throw new NotImplementedException("should not pass here");
-            }
-
-            var cbCallProc = context.programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable();
+            var cbCallProc = context.procedurePointerOrFunctionPointerVariableOrfunctionNameReference;
 
             // Register call parameters (shared storage areas) information at the CodeElement level
             CallSite callSite = null;
             ProcedureStyleCallStatement statement = null;
             Context = context;
 
+            //Incomplete CallStatement, create an empty CodeElement and return
             if (cbCallProc == null)
             {
                 CodeElement = new ProcedureStyleCallStatement();
@@ -408,9 +404,7 @@ namespace TypeCobol.Compiler.Parser
             //Here ambiguousSymbolReference with either CandidatesType:
             // - ProgramNameOrProgramEntry
             // - data, condition, UPSISwitch, TCFunctionName
-            var ambiguousSymbolReference =
-                CobolExpressionsBuilder.CreateProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(
-                        cbCallProc);
+            var ambiguousSymbolReference = CobolExpressionsBuilder.CreateProcedurePointerOrFunctionPointerVariableOrTCFunctionProcedure(cbCallProc);
           
 
             //If (inputs, inouts ou outputs).Count > 0, then it's a procedure call
@@ -562,16 +556,7 @@ namespace TypeCobol.Compiler.Parser
             }
             else
             {
-                //It's a ProgramNameOrProgramEntry
-                if (ambiguousSymbolReference.MainSymbolReference != null && ambiguousSymbolReference.MainSymbolReference.IsOrCanBeOnlyOfTypes(SymbolType.ProgramEntry, SymbolType.ProgramName))
-                {
-                    statement = new ProcedureStyleCallStatement
-                        {
-                            ProgramNameOrProgramEntry = ambiguousSymbolReference.MainSymbolReference
-                        };
-
-                }
-                else if (ambiguousSymbolReference.MainSymbolReference != null &&
+                if (ambiguousSymbolReference.MainSymbolReference != null &&
                          ambiguousSymbolReference.MainSymbolReference.IsOrCanBeOfType(SymbolType.DataName, SymbolType.TCFunctionName)) {
 
 

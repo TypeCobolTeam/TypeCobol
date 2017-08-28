@@ -48,10 +48,12 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
                     if (picture != null)
                     {
                         str.Append(" PIC ").Append(picture);
-                    } else if (this.CodeElement().Usage != null) {
-                            str.Append(" ").Append(this.CodeElement().Usage);
                     }
-                    else if (this.CodeElement().DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
+                    if (this.CodeElement().Usage != null) {
+                            str.Append(" ").Append(this.CodeElement().Usage.Token.SourceText);
+                    }
+
+                    if (picture == null && this.CodeElement().Usage == null && this.CodeElement().DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
                     {//JCM humm... Type without picture lookup enclosing scope.
                         var found = this.SymbolTable.GetType(this.CodeElement().DataType);
                         if (found.Count > 0)

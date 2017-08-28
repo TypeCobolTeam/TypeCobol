@@ -84,7 +84,7 @@ Line 222[12,40] <27, Error, Syntax> - Syntax error : No suitable function signat
     procedure-division
       TRAITEMENT
         sentence-0
-          [[ProcedureStyleCall]] [12,15:call]<CALL> --> [17,23+:'case1']<AlphanumericLiteral>(',Y,Y){case1}
+          [[CallStatement]] [12,15:call]<CALL> --> [17,23+:'case1']<AlphanumericLiteral>(',Y,Y){case1}
 
           [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [34,39:result]<UserDefinedWord>
 

@@ -64,6 +64,12 @@ namespace CLI.Test
             CLITestHelper.Test("return_code_4", ReturnCode.Warning);
         }
 
+
+        [TestMethod]
+        public void TestOutputFormat() {
+            CLITestHelper.Test("outputSignature_1", ReturnCode.Success);
+        }
+
     }
 
     class CLITestHelper {

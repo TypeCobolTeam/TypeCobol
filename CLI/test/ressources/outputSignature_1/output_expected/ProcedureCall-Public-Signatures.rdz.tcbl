@@ -1,0 +1,32 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Callee.
+       DATA DIVISION.
+       working-storage section.
+       01  MyType1 TYPEDEF STRICT PUBLIC.
+          05 Var1 pic X.
+       01  MyType2 TYPEDEF STRICT PUBLIC.
+          05 Var2 pic X.
+       01  MyType5 TYPEDEF STRICT PUBLIC.
+          05 Var5 pic X.
+       PROCEDURE DIVISION.
+       declare procedure check public
+          input mydate        TYPE Date
+         .
+       END-DECLARE.
+       declare procedure check2 public
+          input mydate        TYPE Date
+         .
+       END-DECLARE.
+       declare procedure check2 public
+          input mydate        TYPE Date
+                myDate2       type date
+         .
+       END-DECLARE.
+       DECLARE PROCEDURE MyPublicProcedure PUBLIC
+           INPUT mydate        TYPE Date
+                 format        PIC X(08)
+          OUTPUT okay          TYPE Bool
+                 actual-format PIC X(08).
+         .
+       END-DECLARE.
+       END PROGRAM Callee.

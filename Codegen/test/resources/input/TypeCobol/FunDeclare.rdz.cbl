@@ -25,8 +25,8 @@
        END-DECLARE.
 
        DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
-             INPUT     x      PIC 9(04)
-             RETURNING result PIC 9(04)
+             INPUT     x      PIC 9(04) comp-3
+             RETURNING result PIC 9(04) comp
            .
        DATA DIVISION.
        LINKAGE SECTION.

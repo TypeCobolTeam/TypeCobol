@@ -61,6 +61,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	    ProgramName,
 	    ProgramNameOrProgramEntry,
 	    ProgramNameOrProgramEntryOrProcedurePointerOrFunctionPointer,
+	    ProcedurePointerOrFunctionPointerOrTCFunctionName,
 	    ClassNameOrObjectReference,
 	    MethodName
     }

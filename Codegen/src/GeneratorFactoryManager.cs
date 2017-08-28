@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Codegen.Generators;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Codegen
 {
@@ -11,14 +13,7 @@ namespace TypeCobol.Codegen
     /// </summary>
     public class GeneratorFactoryManager
     {
-        /// <summary>
-        /// ID of the Default Generator
-        /// </summary>
-        public static readonly String DEFAULT_GENERATOR_ID = typeof(TypeCobol.Codegen.Generators.DefaultGenerator).FullName;
-        /// <summary>
-        /// ID of the TypeCobol Generator
-        /// </summary>
-        public static readonly String TYPECOBOL_GENERATOR_ID = typeof(TypeCobol.Codegen.Generators.TypeCobolGenerator).FullName;
+
         /// <summary>
         /// The Unique instanceof this class
         /// </summary>
@@ -34,6 +29,8 @@ namespace TypeCobol.Codegen
         static GeneratorFactoryManager()
         {
             Singleton = new GeneratorFactoryManager();
+            Instance.RegisterFactory(OutputFormat.Cobol85.ToString(), (id, document, destination, skeletons) => new DefaultGenerator(document, destination, skeletons));
+            Instance.RegisterFactory(OutputFormat.PublicSignatures.ToString(), (id, document, destination, skeletons) => new SignaturesGenerator(destination));
         }
 
         /// <summary>

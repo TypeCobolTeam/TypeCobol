@@ -142,19 +142,12 @@ cobolCallStatement:
 
 // TCRFUN_CALL_PARAMETER_ORDER
 tcCallStatement:
-//SMEDILOL: 
-//programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable can lead to "identifier"
-//functionNameReference only leads to "identifier"
-//so functionNameReference can never be filled by Antlr
-//
-//We should create an entry programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariableOrTCFunctionNameReference
-//But as we are thinking to simplify the grammar, for now only the TypeCobolCodeElementBuilder will now that 
-//programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable can be ambiguous an one of its CandidatesType can be TCFunctionName
-	CALL (programNameOrProgramEntryOrProcedurePointerOrFunctionPointerVariable | functionNameReference)?
+	CALL procedurePointerOrFunctionPointerVariableOrfunctionNameReference=identifier?
 		(INPUT  callInputParameter+)?
 		(IN_OUT  callInoutParameter+)?
 		(OUTPUT callOutputParameter+)?
 	;
+//procedurePointerOrFunctionPointerVariableOrfunctionNameReference is only used in this rule so do not create a grammar rule for it
 
 callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? sharedVariableOrFileName; // TCRFUN_INPUT_BY
 callInoutParameter: sharedStorageArea1;  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
