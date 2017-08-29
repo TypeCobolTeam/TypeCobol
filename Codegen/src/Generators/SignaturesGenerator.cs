@@ -77,6 +77,10 @@ namespace TypeCobol.Codegen.Generators
 
         public override bool Visit(FunctionDeclaration node)
         {
+            if (node.CodeElement().Visibility != AccessModifier.Public) {
+                node.Remove();
+                return false;
+            }
             //Note : There is only 1 FunctionEnd
             var functionEnds = node.GetChildren<FunctionEnd>();
             node.RemoveAllChildren();
