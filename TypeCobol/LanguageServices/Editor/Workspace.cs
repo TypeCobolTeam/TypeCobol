@@ -162,6 +162,17 @@ namespace TypeCobol.LanguageServices.Editor
 
             CompilationProject = new CompilationProject(WorkspaceName, RootDirectoryFullName, Extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
 
+            if (TypeCobolConfiguration.CopyFolders != null && TypeCobolConfiguration.CopyFolders.Count > 0)
+            {
+                foreach (var copyFolder in TypeCobolConfiguration.CopyFolders)
+                {
+                    CompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(copyFolder, false,
+                        new[] {".cpy"}, TypeCobolConfiguration.Format.Encoding,
+                        TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength);
+                }
+                
+            }
+
             if (OpenedFileCompiler.Count > 0)
                 RefreshOpenedFiles();
             else
