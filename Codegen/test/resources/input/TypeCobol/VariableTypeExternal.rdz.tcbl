@@ -2,7 +2,16 @@
        PROGRAM-ID. VARTYPEXT.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+      *Données immuables et stable pendant toute
+      *la durée de l'enclave
+       01  MyType typedef strict.       
+           05 Var1           type Date. 
+           05 Var2           pic X(08).
 
        01  var1     Type Date external.
+       01  var2     pic X(08) external.
+       01  Var3 external. copy MyDataCopy suppress.
+       01  Var4        pic X(01) external.
+       01  Var5 Type MyType external.
 
        END PROGRAM VARTYPEXT.
