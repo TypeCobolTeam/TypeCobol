@@ -48,10 +48,10 @@ internal class TypedDataNode: DataDescription, Generated {
         while (i < consumedTokens.Count)
         {
             if ((i != consumedTokens.Count - 1) || (consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
-                sb.Append(string.Intern(" "));//Add a space but not before a a Period Separator
+                sb.Append(string.Intern(" "));//Add a space but not before a Period Separator
             sb.Append(consumedTokens[i].Text);
             if (i == consumedTokens.Count - 1)
-                bHasPeriod = consumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
+            bHasPeriod = consumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator;
             i++;
         }
     }
@@ -68,10 +68,7 @@ internal class TypedDataNode: DataDescription, Generated {
         StringBuilder sb = new StringBuilder();
         if (data_def.ConsumedTokens != null)
         {
-            if (data_def.ConsumedTokens != null)
-            {
                 FlushConsumedTokens(0, data_def.ConsumedTokens, sb, out bHasPeriod);
-            }
         }
         return sb.ToString();
     }
@@ -103,7 +100,13 @@ internal class TypedDataNode: DataDescription, Generated {
                 if((i+1) < customtype.CodeElement.ConsumedTokens.Count && (customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PUBLIC || customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PRIVATE))
                     i++;
 
-                FlushConsumedTokens(++i, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod);
+                ++i;
+                //If we reached the last Tokens and if it's a PeriodSeparator then don't return a text
+                if (i < customtype.CodeElement.ConsumedTokens.Count && customtype.CodeElement.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator) {
+                    bHasPeriod = true;
+                    return "";
+                }
+                FlushConsumedTokens(i, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod);
             }
         }
         return sb.ToString();
@@ -121,14 +124,20 @@ internal class TypedDataNode: DataDescription, Generated {
         StringBuilder sb = new StringBuilder();
         if (dataDescEntry.ConsumedTokens != null)
         {
-            if (dataDescEntry.ConsumedTokens != null)
-            {
-                int i = 0;
-                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPE)
-                    i++;
-                i++;//Ignore the Name of the Type.
-                FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
+            int i = 0;
+            while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPE)
+                i++;
+            i++;//Ignore the Name of the Type.
+
+            ++i;
+            
+            //Ignore qualified type name
+            while (i < dataDescEntry.ConsumedTokens.Count &&
+                   dataDescEntry.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.QualifiedNameSeparator) {
+                i += 2; //skip  :: and the next type name
             }
+            
+            FlushConsumedTokens(i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
         }
         return sb.ToString();
     }
@@ -145,18 +154,15 @@ internal class TypedDataNode: DataDescription, Generated {
         StringBuilder sb = new StringBuilder();
         if (dataDescEntry.ConsumedTokens != null)
         {
-            if (dataDescEntry.ConsumedTokens != null)
+            int i = 0;
+            while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PIC && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PICTURE)
+                i++;
+            if (i < dataDescEntry.ConsumedTokens.Count)
             {
-                int i = 0;
-                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PIC && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PICTURE)
-                    i++;
-                if (i < dataDescEntry.ConsumedTokens.Count)
-                {
-                    sb.Append(string.Intern(" "));
-                    sb.Append(dataDescEntry.ConsumedTokens[i].Text);
-                }
-                FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
+                sb.Append(string.Intern(" "));
+                sb.Append(dataDescEntry.ConsumedTokens[i].Text);
             }
+            FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
         }
         return sb.ToString();
     }
@@ -173,21 +179,18 @@ internal class TypedDataNode: DataDescription, Generated {
         StringBuilder sb = new StringBuilder();
         if (dataDescEntry.ConsumedTokens != null)
         {
-            if (dataDescEntry.ConsumedTokens != null)
-            {
-                int i = 0;
-                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.LevelNumber)
-                    i++;
-                FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
-            }
+            int i = 0;
+            while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.LevelNumber)
+                i++;
+            FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
         }
         return sb.ToString();
     }
 
 	internal static ITextLine CreateDataDefinition(DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null) {
-        if (data_def is DataDescriptionEntry)
+	    var data = data_def as DataDescriptionEntry;
+	    if (data != null)
         {
-            DataDescriptionEntry data = data_def as DataDescriptionEntry;
             bool bHasPeriod = false;
             var line = GetIndent(level, indent, isFirst);
 		    line.Append(level.ToString("00"));
@@ -309,12 +312,13 @@ internal class TypedDataNode: DataDescription, Generated {
                 }
             }
 
-			var typed = (ITypedNode)child;
+			var typed = (DataDefinition) child;
 			var types = table.GetType(typed.DataType);
 			bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
-            if (child.CodeElement is DataDefinitionEntry)
+		    var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
+		    if (dataDefinitionEntry != null)
             {
-                lines.Add(CreateDataDefinition((DataDefinitionEntry)child.CodeElement, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
+                lines.Add(CreateDataDefinition(dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
             }
             else
             {//Humm ... It will be a bug.
@@ -323,7 +327,7 @@ internal class TypedDataNode: DataDescription, Generated {
             if (isCustomTypeToo)
                 lines.AddRange(InsertChildren(table, types[0], level + 1, indent + 1));
             else
-                lines.AddRange(InsertChildren(table, child as DataDefinition, level + 1, indent + 1));
+                lines.AddRange(InsertChildren(table, typed, level + 1, indent + 1));
 		}
 		return lines;
 	}

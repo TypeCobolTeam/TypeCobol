@@ -117,7 +117,7 @@ namespace TypeCobol.Server
                 var diagnostic = diagEvent.Diagnostic;
                 Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
                     diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
-                    "Error while parsing : " + diagnostic, diagEvent.Path);
+                    "Error while parsing " + diagEvent.Path + ": " + diagnostic, diagEvent.Path);
             };
 
             parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load of the intrinsics
@@ -205,23 +205,24 @@ namespace TypeCobol.Server
 
                 if (config.ExecToStep >= ExecutionStep.Generate) {
 
-                    //Load skeletons if necessary
-                    List<Skeleton> skeletons = null;
-                    if (!(string.IsNullOrEmpty(config.skeletonPath))) {
-                        skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
-                    }
+                    try
+                    {
+                        //Load skeletons if necessary
+                        List<Skeleton> skeletons = null;
+                        if (!(string.IsNullOrEmpty(config.skeletonPath))) {
+                            skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
+                        }
 
 
-                    //Get Generator from specified config.OutputFormat
-                    var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(), parser.Results,
-                        new StreamWriter(config.OutputFiles[c]), skeletons);
+                        //Get Generator from specified config.OutputFormat
+                        var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(), parser.Results,
+                            new StreamWriter(config.OutputFiles[c]), skeletons);
 
-                    if (generator == null) {
-                        throw new GenerationException("Unkown OutputFormat=" + config.OutputFormat + "_", path);
-                    }
+                        if (generator == null) {
+                            throw new GenerationException("Unkown OutputFormat=" + config.OutputFormat + "_", path);
+                        }
 
-                    //Generate and check diagnostics
-                    try {
+                        //Generate and check diagnostics
                         generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
                         if (generator.Diagnostics != null) {
                             errorWriter.AddErrors(path, generator.Diagnostics); //Write diags into error file

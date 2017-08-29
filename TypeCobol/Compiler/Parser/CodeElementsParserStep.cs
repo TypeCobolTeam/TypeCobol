@@ -293,7 +293,7 @@ namespace TypeCobol.Compiler.Parser
                     }
                 }
             }
-            while (tokenStream.La(1) >= 0);
+            while (tokenStream.Index < (tokenStream.Size - 1) && tokenStream.La(1) >= 0);
 
             if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.EndParsingFile(cobolParser.ParseInfo.DecisionInfo, (int)(cobolParser.ParseInfo.GetTotalTimeInPrediction() / 1000000));
 
@@ -412,9 +412,16 @@ namespace TypeCobol.Compiler.Parser
                     bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
                     if (nextLineHasCodeElements)
                     {
-                        Token startTokenForNextParseSection = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
-                        Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
-                        nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
+                        try
+                        {
+                            Token startTokenForNextParseSection = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                            Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
+                            nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
+                        }
+                        catch (System.InvalidOperationException /*e*/)
+                        {//JCM: 28/08/2017: I noticed that this Exception can occur if: it doesn't exists a token which verifies the predicate: token.Channel == Token.CHANNEL_SourceToken
+                            nextCodeElementStartsAtTheBeginningOfTheLine = false;
+                        }
                     }
 
                     // All lines contained in the parse section could be modified
