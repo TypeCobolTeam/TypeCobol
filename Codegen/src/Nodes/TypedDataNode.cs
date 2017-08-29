@@ -124,14 +124,20 @@ internal class TypedDataNode: DataDescription, Generated {
         StringBuilder sb = new StringBuilder();
         if (dataDescEntry.ConsumedTokens != null)
         {
-            if (dataDescEntry.ConsumedTokens != null)
-            {
-                int i = 0;
-                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPE)
-                    i++;
-                i++;//Ignore the Name of the Type.
-                FlushConsumedTokens(++i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
+            int i = 0;
+            while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.TYPE)
+                i++;
+            i++;//Ignore the Name of the Type.
+
+            ++i;
+            
+            //Ignore qualified type name
+            while (i < dataDescEntry.ConsumedTokens.Count &&
+                   dataDescEntry.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.QualifiedNameSeparator) {
+                i += 2; //skip  :: and the next type name
             }
+            
+            FlushConsumedTokens(i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
         }
         return sb.ToString();
     }
