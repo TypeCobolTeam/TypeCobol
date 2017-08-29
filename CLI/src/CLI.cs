@@ -117,7 +117,7 @@ namespace TypeCobol.Server
                 var diagnostic = diagEvent.Diagnostic;
                 Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
                     diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
-                    "Error while parsing : " + diagnostic, diagEvent.Path);
+                    "Error while parsing " + diagEvent.Path + ": " + diagnostic, diagEvent.Path);
             };
 
             parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load of the intrinsics

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -46,8 +47,10 @@ namespace TypeCobol.Tools.APIHelpers
                     {
                         var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
 
-                        if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
+                        if (symbols.Types.Count == 0 && symbols.Functions.Count == 0) {
+                            diagEvent(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = new ParserDiagnostic("No types and no procedures/functions found", 1,1,1,null, MessageCode.Warning) });
                             continue;
+                        }
 
                         table.CopyAllTypes(symbols.Types);
                         table.CopyAllFunctions(symbols.Functions);
@@ -99,7 +102,7 @@ namespace TypeCobol.Tools.APIHelpers
             foreach (string path in dependencies)
             {
 
-
+                
 #if EUROINFO_RULES
                 //Issue #583, ignore a dependency if the same file will be parsed as an input file just after
 
