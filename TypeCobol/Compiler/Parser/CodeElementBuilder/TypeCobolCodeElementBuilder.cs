@@ -564,10 +564,14 @@ namespace TypeCobol.Compiler.Parser
                     //Maybe just define CandidatesTypes for the Head...
                     if (ambiguousSymbolReference.MainSymbolReference.IsQualifiedReference) {
                         var qualifiedSymbolReference = (QualifiedSymbolReference) ambiguousSymbolReference.MainSymbolReference;
-                        if (qualifiedSymbolReference.Head.IsAmbiguous) {
-                            ((AmbiguousSymbolReference) qualifiedSymbolReference.Head).CandidateTypes = new[]{SymbolType.DataName, SymbolType.TCFunctionName};
+
+                        
+                        AmbiguousSymbolReference.ApplyCandidatesTypes(qualifiedSymbolReference, new[] { SymbolType.DataName, SymbolType.ProgramName });
+                        //Adjust candidate types only for the first element
+                        if (qualifiedSymbolReference.First.IsAmbiguous) {
+                            ((AmbiguousSymbolReference) qualifiedSymbolReference.First).CandidateTypes = new[]{SymbolType.DataName, SymbolType.TCFunctionName};
                         }
-                        AmbiguousSymbolReference.ApplyCandidatesTypes(qualifiedSymbolReference.Tail, new[] {SymbolType.DataName, SymbolType.ProgramName});
+                        
 
                     } else {
                         ((AmbiguousSymbolReference) ambiguousSymbolReference.MainSymbolReference).CandidateTypes = new[] {SymbolType.DataName, SymbolType.TCFunctionName};
