@@ -117,6 +117,7 @@ namespace TypeCobol.Compiler.CodeElements
 
 
 		public static readonly DataType Unknown            = new DataType("?");
+		public static readonly DataType Omitted            = new DataType("Omitted");
 		public static readonly DataType Alphabetic         = new DataType("Alphabetic");
 		public static readonly DataType Numeric            = new DataType("Numeric");
 		public static readonly DataType NumericEdited      = new DataType("NumericEdited");

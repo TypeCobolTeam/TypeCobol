@@ -743,7 +743,7 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        private bool Matches(ParameterList p1, ParameterList p2, string pgmName)
+        private bool Matches(ParametersProfileNode p1, ParameterList p2, string pgmName)
         {
             if (p1.InputParameters.Count != p2.InputParameters.Count) return false;
             if (p1.InoutParameters.Count != p2.InoutParameters.Count) return false;
@@ -764,9 +764,14 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="p2">Represent the DataType from the caller function/procedure</param>
         /// <param name="pgmName">Corresponds to the progam containing the called function/procedure</param>
         /// <returns></returns>
-        private bool TypeCompare(DataType p1, DataType p2, string pgmName)
+        private bool TypeCompare(ParameterDescription p1, DataType p2, string pgmName)
         {
-            var p1Types = p1.Name.Contains(".") ? this.GetType(p1) : this.GetType(p1, pgmName);
+            //Omitted accepted only if parameter is Omittable
+            if (p2 == DataType.Omitted) {
+                return p1.IsOmittable;
+            }
+            
+            var p1Types = p1.Name.Contains(".") ? this.GetType(p1) : this.GetType(p1.DataType, pgmName);
             var p2Types = this.GetType(p2);
 
             if (p1Types.Count > 1 || p2Types.Count > 1)
@@ -1062,10 +1067,10 @@ namespace TypeCobol.Compiler.CodeModel
             foreach (var functions in Functions)
                 foreach (var function in functions.Value)
                 {
-                    if (accessModifier != null && ((FunctionDeclarationHeader)function.CodeElement).Visibility == accessModifier)
+                    if (accessModifier == null  //If no AccessModifier given, add all the functions
+                        || ((FunctionDeclarationHeader)function.CodeElement).Visibility == accessModifier) {
                         this.AddFunction(function); //Add function depending on the specified AccessModifier
-                    else if(accessModifier == null)
-                        this.AddFunction(function); //If no AccessModifier given, add all the functions
+                    }
                 }
         }
 

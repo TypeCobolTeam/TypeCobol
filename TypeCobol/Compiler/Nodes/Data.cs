@@ -300,6 +300,8 @@ namespace TypeCobol.Compiler.Nodes {
         public IntegerValue LevelNumber { get { return _CodeElement.LevelNumber; } }
         public SymbolDefinition DataName { get { return _CodeElement.DataName; } }
 
+        public bool IsOmittable { get { return _CodeElement.IsOmittable; } }
+
 
     }
     // [/TYPECOBOL]

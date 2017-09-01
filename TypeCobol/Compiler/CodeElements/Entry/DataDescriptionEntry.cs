@@ -859,6 +859,11 @@ namespace TypeCobol.Compiler.CodeElements {
         // group usage national, blank when zero and so on
 
         public IList<DataConditionEntry> DataConditions { get; internal set; }
+        public SyntaxProperty<bool> Omittable { get; set; }
+
+        public bool IsOmittable {
+            get { return Omittable != null && Omittable.Value; }
+        }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
