@@ -37,3 +37,4 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 5;36;1;Error during Cobol generation;0;0;Page
 7;37;2;Warning: {0};0;0;
 5;38;1;Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns;0;0;Page
+2;39;1;QuestionMark should be followed by a space;0;0;Page

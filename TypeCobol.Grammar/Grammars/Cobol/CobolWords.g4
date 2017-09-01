@@ -516,6 +516,7 @@ tokens
     PRIVATE,
     IN_OUT,
 	STRICT,
+	QuestionMark
 }
 
 
@@ -2035,7 +2036,8 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     PUBLIC |
     PRIVATE |
     IN_OUT | 
-	STRICT 
+	STRICT  |
+	QuestionMark
 );
 
 
