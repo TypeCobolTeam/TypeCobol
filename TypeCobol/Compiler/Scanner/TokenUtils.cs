@@ -218,6 +218,8 @@ namespace TypeCobol.Compiler.Scanner
                         return "user defined word";
                     case TokenType.SymbolicCharacter:
                         return "symbolic character";
+                    case TokenType.QuestionMark:
+                        return "?";
                     default:
                         return "...";
                 }

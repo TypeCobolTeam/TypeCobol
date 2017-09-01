@@ -43,12 +43,12 @@ namespace TypeCobol.Compiler.Scanner
         SyntaxKeyword=201,
         // 453 -> 454 : Keywords - Cobol 2002
         Cobol2002Keyword = 453,
-        // 455 -> 458 : Keywords - TypeCobol
+        // 455 -> 460 : Keywords - TypeCobol
         TypeCobolKeyword = 455,
-        // 459 -> 461 : Compiler directives
-        CompilerDirective = 460,
-        // 462 -> 462 : Internal token groups - used by the preprocessor only
-        InternalTokenGroup = 463
+        // 461 -> 463 : Compiler directives
+        CompilerDirective = 461,
+        // 464 -> 464 : Internal token groups - used by the preprocessor only
+        InternalTokenGroup = 464
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -535,13 +535,14 @@ namespace TypeCobol.Compiler.Scanner
         PRIVATE = 457,
         IN_OUT = 458,
         STRICT = 459,
+        QuestionMark = 460,
         // Group of tokens produced by the preprocessor
         // - compiler directives
-        CompilerDirective = 460,
-        CopyImportDirective = 461,
-        ReplaceDirective = 462,
+        CompilerDirective = 461,
+        CopyImportDirective = 462,
+        ReplaceDirective = 463,
         // - internal token groups -> used by the preprocessor only
-        ContinuationTokenGroup = 463
+        ContinuationTokenGroup = 464
     }
 
     public static class TokenConst {

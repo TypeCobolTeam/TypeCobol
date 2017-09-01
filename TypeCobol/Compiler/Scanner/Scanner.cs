@@ -635,6 +635,10 @@ namespace TypeCobol.Compiler.Scanner
                     {
                         return ScanOneCharFollowedBySpace(startIndex, TokenType.CommaSeparator, MessageCode.InvalidCharAfterComma, false);
                     }
+                case '?':
+                    //QuestionMark=460,
+                    //TypeCobol
+                    return ScanOneCharFollowedBySpace(startIndex, TokenType.QuestionMark, MessageCode.QuestionMarkShouldBeFollowedBySpace);         
                 case ';':
                     //SemicolonSeparator=3,
                     // p46: A separator semicolon is composed of a semicolon followed by a space.
