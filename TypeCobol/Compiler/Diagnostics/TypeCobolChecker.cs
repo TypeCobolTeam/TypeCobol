@@ -175,6 +175,18 @@ class ReadOnlyPropertiesChecker {
                 var expected = parameters[c];
                 if (c < callArgsCount)
                 {
+                    //Omitted
+                    if (call.Arguments[c].IsOmitted)
+                    {
+                        if (expected.IsOmittable) {
+                            continue;
+                        } else {
+                            DiagnosticUtils.AddError(e, "Omitted not allowed for this parameter");
+                            return;
+                        }
+                    }
+                    
+                    
                     var actual = call.Arguments[c].StorageAreaOrValue;
                     if (actual.IsLiteral) continue; //TODO
 
