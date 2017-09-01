@@ -37,6 +37,7 @@ Line 212[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.
 Line 215[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case13(no arguments)'
 Line 219[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case14(no arguments)'
 Line 222[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case15(no arguments)'
+Line 225[12,49] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case15.unknown'(no arguments)
 --- Nodes ---
 ?
   CallToPublicProcedure
@@ -167,6 +168,8 @@ Line 222[12,40] <27, Error, Syntax> - Syntax error : No suitable function signat
           [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case14]<UserDefinedWord>
 
           [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [35,40:case15]<UserDefinedWord>
+
+          [[ProcedureStyleCall]] [12,15:CALL]<CALL> --> [43,49:unknown]<UserDefinedWord>
 
           end
     PublicProcedures

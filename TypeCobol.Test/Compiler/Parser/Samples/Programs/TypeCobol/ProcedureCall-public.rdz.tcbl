@@ -221,6 +221,9 @@
       *Ko: case15 is defined 2 times with different signature
            CALL PublicProcedures::case15
 
+      *Ko: 
+           CALL PublicProcedures::case15::unknown
+
 
        .
        IDENTIFICATION DIVISION.
