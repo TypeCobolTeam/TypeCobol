@@ -36,7 +36,7 @@ namespace TypeCobol.Compiler.Scanner
         // 154 -> 184 : Keywords - Special registers
         SpecialRegisterKeyword=154,
         // 185 -> 198 : Keywords - Figurative constants
-        FigurativeConstantKeyword=185,
+        FigurativeConstantKeyword=185, 
         // 199 -> 200 : Keywords - Special object identifiers
         SpecialObjetIdentifierKeyword=199,
         // 201 -> 452 : Keywords - Syntax tokens
@@ -45,6 +45,10 @@ namespace TypeCobol.Compiler.Scanner
         Cobol2002Keyword = 453,
         // 455 -> 460 : Keywords - TypeCobol
         TypeCobolKeyword = 455,
+
+        // 460 -> 460 : Operators - TypeCobol
+        TypeCobolOperators= 460, 
+
         // 461 -> 463 : Compiler directives
         CompilerDirective = 461,
         // 464 -> 464 : Internal token groups - used by the preprocessor only
@@ -107,6 +111,9 @@ namespace TypeCobol.Compiler.Scanner
         ExecTranslatorName = 37,
         PartialCobolWord = 38,
         UserDefinedWord = 39,
+
+        //First Keyword is referend in TokenUtils() with keywordBegin
+
         // Keywords - Compiler directive starting tokens
         ASTERISK_CBL = 40,
         ASTERISK_CONTROL = 41,
@@ -535,6 +542,11 @@ namespace TypeCobol.Compiler.Scanner
         PRIVATE = 457,
         IN_OUT = 458,
         STRICT = 459,
+
+
+        //Last Keyword is referend in TokenUtils() with keywordEnd
+
+        //Operators - TypeCobol
         QuestionMark = 460,
         // Group of tokens produced by the preprocessor
         // - compiler directives
@@ -549,7 +561,7 @@ namespace TypeCobol.Compiler.Scanner
         private static readonly TokenType[] TypeCobolTokenType =
         {
             TokenType.DECLARE, TokenType.END_DECLARE, TokenType.PUBLIC, TokenType.PRIVATE, TokenType.IN_OUT,
-            TokenType.UNSAFE, TokenType.STRICT
+            TokenType.UNSAFE, TokenType.STRICT, TokenType.QuestionMark
         };
 
         private static readonly TokenType[] Cobol2002TokenType = {TokenType.STRONG, TokenType.TYPEDEF};

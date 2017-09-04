@@ -134,7 +134,8 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
         {
             return tokenFamily >= TokenFamily.CompilerDirectiveStartingKeyword &&
                    tokenFamily != TokenFamily.SpecialRegisterKeyword &&
-                   tokenFamily != TokenFamily.FigurativeConstantKeyword;
+                   tokenFamily != TokenFamily.FigurativeConstantKeyword &&
+                   tokenFamily != TokenFamily.TypeCobolOperators;
         }
 
         internal static bool IsSymbolOrLiteral(TokenType tokenType, TokenFamily tokenFamily)
