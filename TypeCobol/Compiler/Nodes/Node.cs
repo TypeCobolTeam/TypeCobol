@@ -5,7 +5,6 @@ using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
@@ -461,31 +460,6 @@ namespace TypeCobol.Compiler.Nodes {
             children.Clear();
         }
 
-        /// <summary>TODO#364 hack ; this method exists because preprocessor directive tokens are not seeable in AST</summary>
-        private int TryToExtendLineFrom(int index, Token token, out bool endsLine) {
-            var tokens = token.TokensLine.SourceTokens;
-            var c = tokens.IndexOf(token);
-            if (c == -1) {
-                endsLine = true;
-                return index;
-            } // something was probably REPLACEd
-            var takeall = false;
-            c++;
-            for (; c < tokens.Count; c++) {
-                var t = tokens[c];
-                if (!takeall)
-                    if (t.TokenFamily == TokenFamily.Whitespace) ; // take this token
-                    else if (t.TokenFamily == TokenFamily.CompilerDirectiveStartingKeyword
-                             || t.TokenFamily == TokenFamily.CompilerDirective
-                             || t.TokenFamily == TokenFamily.Comments) takeall = true; // take all tokens until end of line
-                    else break; // don't take any more tokens
-                token = t;
-                index = t.StopIndex;
-            }
-            endsLine = token == tokens[tokens.Count - 1];
-            return index;
-        }
-
         /// <summary>Implementation of the GoF Visitor pattern.</summary>
         public void Accept(NodeVisitor visitor) {
             visitor.Visit(this);
@@ -493,7 +467,6 @@ namespace TypeCobol.Compiler.Nodes {
 
         /// <summary>
         ///     Return true if this Node is inside a COPY
-        ///     TODO To discuss: make a rule: a Node CAN'T have token in two different source file
         /// </summary>
         /// <returns></returns>
         public bool IsInsideCopy() {
@@ -607,7 +580,7 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
-                return this.children.Where(c => c is Class).Select(c => c as Class);
+                return this.children.OfType<Class>();
             }
         }
 
