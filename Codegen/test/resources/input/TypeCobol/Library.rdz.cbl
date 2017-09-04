@@ -81,6 +81,7 @@
                           INPUT dateType   PIC X(01)
                                 direction  PIC X(01)
                                 separator  PIC X(01)
+
                                 culture    TYPE culture
                                 returnCode PIC 9(04)
                           RETURNING Result PIC X(40).
