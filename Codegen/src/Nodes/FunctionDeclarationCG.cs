@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
+using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Codegen.Nodes {
     using System.Collections.Generic;
@@ -151,9 +153,9 @@ namespace TypeCobol.Codegen.Nodes {
                 datadiv.Add(linkage);
             }
 
-            IReadOnlyList<DataDefinition> data;
+            TypeCobol.IReadOnlyList<DataDefinition> data;
             if (linkage != null) data = linkage.Children();
-            else data = new List<DataDefinition>().AsReadOnly();
+            else data = ImmutableList.Create<DataDefinition>();
             // TCRFUN_CODEGEN_PARAMETERS_ORDER
             var generated = new List<string>();
             foreach (var parameter in profile.InputParameters) {
@@ -190,7 +192,7 @@ namespace TypeCobol.Codegen.Nodes {
             return generated;
         }
 
-        private bool Contains(IReadOnlyList<DataDefinition> data, string dataname) {
+        private bool Contains([NotNull] IEnumerable<DataDefinition> data, string dataname) {
             foreach (var node in data)
                 if (dataname.Equals(node.Name))
                     return true;
