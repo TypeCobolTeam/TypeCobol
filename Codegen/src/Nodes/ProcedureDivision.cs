@@ -1,4 +1,8 @@
-﻿namespace TypeCobol.Codegen.Nodes {
+﻿
+
+using JetBrains.Annotations;
+
+namespace TypeCobol.Codegen.Nodes {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
@@ -12,7 +16,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 	private SymbolTable table;
 
 
-	public ProcedureDivision(Compiler.Nodes.FunctionDeclaration declaration, List<Compiler.Nodes.Node> sentences): base(null) {
+	public ProcedureDivision(Compiler.Nodes.FunctionDeclaration declaration, [NotNull] List<Compiler.Nodes.Node> sentences): base(null) {
 		table = declaration.SymbolTable;
 		UsingParameters = new List<CallTargetParameter>();
 		// TCRFUN_CODEGEN_PARAMETERS_ORDER

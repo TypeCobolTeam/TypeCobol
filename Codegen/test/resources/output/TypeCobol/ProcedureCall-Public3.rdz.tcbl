@@ -18,8 +18,6 @@
                                   
        01  realformat   PIC X(08).
        01 TC-Callee pic X(08) value 'Callee'.
-       01 TC-Callee-FctList-Loaded PIC X(02).
-           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
 
        LINKAGE SECTION.
       *Common to all librairies used by the program.
@@ -183,7 +181,6 @@
                      TC-Library-Item(TC-Library-Idx)
                 END-EVALUATE
             END-PERFORM
-            SET TC-Callee-FctList-IsLoaded TO TRUE
             .
 
 

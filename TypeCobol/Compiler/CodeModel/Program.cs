@@ -10,9 +10,23 @@ using TypeCobol.Compiler.Nodes;
 namespace TypeCobol.Compiler.CodeModel
 {
     /// <summary>
+    /// Node that can contains a ProcedureCall (private or public)
+    /// </summary>
+    public interface IProcCaller {
+        /// <summary>
+        /// The Dictionary of all Procedure Style Calls performed by this Program.
+        /// Dictionary<hash:string, Tuple<qualified_items:IList<SymbolReference>, proc:TypeCobol.Compiler.Nodes.ProcedureStyleCall>>
+        /// This values is calculated by the Generator during the Qualifier Action.
+        /// </summary>
+        Dictionary<string, Tuple<IList<SymbolReference>, ProcedureStyleCall>> ProcStyleCalls { get; set; }
+        
+        string Name { get; }
+    }
+
+    /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public class Program : Node, CodeElementHolder<ProgramIdentification>
+    public class Program : Node, CodeElementHolder<ProgramIdentification>, IProcCaller
     {
         public Program(CodeElement codeElement) : base(codeElement) { }
         public override bool VisitNode(IASTVisitor astVisitor)

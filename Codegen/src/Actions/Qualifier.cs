@@ -34,7 +34,7 @@ namespace TypeCobol.Codegen.Actions
             /// <summary>
             /// The Stack of Programs encountered
             /// </summary>
-            public Stack<Program> ProgramStack = null;
+            public Stack<IProcCaller> ProcCallerStack;
             /// <summary>
             /// Constructor
             /// </summary>
@@ -72,13 +72,13 @@ namespace TypeCobol.Codegen.Actions
                 {
                     //Check if the first element is already in
                     SymbolReference first = items[0];
-                    if (Containss(first))
+                    if (AllItemsListContains(first))
                         return true;
-                    if (Contains(first))
+                    if (ItemsContains(first))
                     {
                         foreach (SymbolReference sr in items)
                         {
-                            if (!Contains(sr))
+                            if (!ItemsContains(sr))
                                 Items.Add(sr);
                         }
                     }
@@ -106,7 +106,7 @@ namespace TypeCobol.Codegen.Actions
             /// </summary>
             /// <param name="sr">The Symbol Reference to Check</param>
             /// <returns>True if it is aready in, false otherwise</returns>
-            private bool Contains(SymbolReference sr)
+            private bool ItemsContains(SymbolReference sr)
             {
                 if (Items == null)
                     return false;
@@ -121,7 +121,7 @@ namespace TypeCobol.Codegen.Actions
             /// </summary>
             /// <param name="sr">The Symbol Reference to Check</param>
             /// <returns>True if it is aready in, false otherwise</returns>
-            private bool Containss(SymbolReference sr)
+            private bool AllItemsListContains(SymbolReference sr)
             {
                 if (AllItemsList == null)
                     return false;
@@ -138,15 +138,16 @@ namespace TypeCobol.Codegen.Actions
             {
                 PerformMatch();
                 this.CurrentNode = node;
-                if (node is Program)
-                {
-                    if (this.ProgramStack == null)
-                        this.ProgramStack = new Stack<Program>();
-                    Program program = node as Program;
-                    this.ProgramStack.Push(program);
-                    //Create the Dictionary of ProcStyleCall for this program
-                    program.ProcStyleCalls = new Dictionary<string, Tuple<IList<SymbolReference>, Compiler.Nodes.ProcedureStyleCall>>();
+
+                var procCaller = node as IProcCaller;
+                if (procCaller != null) {
+                    if (this.ProcCallerStack == null)
+                        this.ProcCallerStack = new Stack<IProcCaller>();
+                    this.ProcCallerStack.Push(procCaller);
+                    procCaller.ProcStyleCalls =
+                        new Dictionary<string, Tuple<IList<SymbolReference>, Compiler.Nodes.ProcedureStyleCall>>();
                 }
+                
                 return base.BeginNode(node);
             }
 
@@ -155,9 +156,9 @@ namespace TypeCobol.Codegen.Actions
                 base.EndNode(node);
                 PerformMatch();
                 node.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-                if (node is Program)
+                if (node is IProcCaller )
                 {
-                    this.ProgramStack.Pop();
+                    this.ProcCallerStack.Pop();
                 }
             }
 
@@ -192,27 +193,27 @@ namespace TypeCobol.Codegen.Actions
             private bool IsProcedureStyleCallItems(IList<SymbolReference> items, out string hashFunction)
             {
                 hashFunction = null;
-                if (CurrentNode is TypeCobol.Compiler.Nodes.ProcedureStyleCall)
+
+                TypeCobol.Compiler.Nodes.ProcedureStyleCall procStyleCall = CurrentNode as TypeCobol.Compiler.Nodes.ProcedureStyleCall;
+                if (procStyleCall != null)
                 {
-                    TypeCobol.Compiler.Nodes.ProcedureStyleCall procStyleCall = CurrentNode as TypeCobol.Compiler.Nodes.ProcedureStyleCall;
-                    if (procStyleCall.CodeElement is TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement)
+                    ProcedureStyleCallStatement procStyleCallStmt = procStyleCall.CodeElement as ProcedureStyleCallStatement;
+                    if (procStyleCallStmt != null)
                     {
-                        TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement procStyleCallStmt =
-                            procStyleCall.CodeElement as TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement;
-                        if (procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction is
-                            TypeCobol.Compiler.CodeElements.TypeCobolQualifiedSymbolReference)
+                        TypeCobolQualifiedSymbolReference tcqsr = procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction as
+                            TypeCobolQualifiedSymbolReference;
+
+                        if (tcqsr != null)
                         {
-                            TypeCobol.Compiler.CodeElements.TypeCobolQualifiedSymbolReference tcqsr = procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction as
-                            TypeCobol.Compiler.CodeElements.TypeCobolQualifiedSymbolReference;
                             IList<SymbolReference> names_items = tcqsr.AsList();
                             if (names_items.Count != items.Count)
                                 return false;
                             if (EqualItems(items, names_items))
                             {//This is a reference to a Function Call.
                                 hashFunction = procStyleCall.FunctionDeclaration.Hash;
-                                if (ProgramStack != null && ProgramStack.Count > 0)
-                                {   //Memoïze the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
-                                    var program = ProgramStack.Peek();
+                                if (ProcCallerStack != null && ProcCallerStack.Count > 0)
+                                {   //Memorize the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
+                                    var program = ProcCallerStack.Peek();
                                     if (!program.ProcStyleCalls.ContainsKey(hashFunction))
                                         program.ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
                                 }
