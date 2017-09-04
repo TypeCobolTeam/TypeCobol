@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using JetBrains.Annotations;
-using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Codegen.Nodes {
     using System.Collections.Generic;
@@ -153,33 +152,35 @@ namespace TypeCobol.Codegen.Nodes {
                 datadiv.Add(linkage);
             }
 
-            TypeCobol.IReadOnlyList<DataDefinition> data;
-            if (linkage != null) data = linkage.Children();
-            else data = ImmutableList.Create<DataDefinition>();
-            // TCRFUN_CODEGEN_PARAMETERS_ORDER
-            var generated = new List<string>();
-            foreach (var parameter in profile.InputParameters) {
-                if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
-                    generated.Add(parameter.Name);
+            if (linkage != null) {
+                var data = linkage.Children();
+
+                // TCRFUN_CODEGEN_PARAMETERS_ORDER
+                var generated = new List<string>();
+                foreach (var parameter in profile.InputParameters) {
+                    if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
+                        linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                        generated.Add(parameter.Name);
+                    }
                 }
-            }
-            foreach (var parameter in profile.InoutParameters) {
-                if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
-                    generated.Add(parameter.Name);
+                foreach (var parameter in profile.InoutParameters) {
+                    if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
+                        linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                        generated.Add(parameter.Name);
+                    }
                 }
-            }
-            foreach (var parameter in profile.OutputParameters) {
-                if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
-                    generated.Add(parameter.Name);
+                foreach (var parameter in profile.OutputParameters) {
+                    if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
+                        linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                        generated.Add(parameter.Name);
+                    }
                 }
-            }
-            if (profile.ReturningParameter != null) {
-                if (!generated.Contains(profile.ReturningParameter.Name) && !Contains(data, profile.ReturningParameter.Name)) {
-                    linkage.Add(CreateParameterEntry(profile.ReturningParameter, node.SymbolTable));
-                    generated.Add(profile.ReturningParameter.Name);
+                if (profile.ReturningParameter != null) {
+                    if (!generated.Contains(profile.ReturningParameter.Name) &&
+                        !Contains(data, profile.ReturningParameter.Name)) {
+                        linkage.Add(CreateParameterEntry(profile.ReturningParameter, node.SymbolTable));
+                        generated.Add(profile.ReturningParameter.Name);
+                    }
                 }
             }
         }
