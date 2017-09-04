@@ -530,7 +530,7 @@ namespace TypeCobol.Codegen.Generators
             if (cobol != null)
             {
                 StringBuilder text = new StringBuilder(cobol.Text);
-                if(text.Length > 5) 
+                if(text.Length > 6) 
                     text[6] = '*';
                 var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, cobol.InitialLineIndex);
                 foreach (var l in lines) return l;// there's only one in the collection
