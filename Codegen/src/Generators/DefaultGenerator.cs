@@ -440,7 +440,6 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="to">The ending position in the buffer</param>
         private void ReplaceByBlanks(StringSourceText sourceText, int from, int to)
         {
-            int length = to - from;
             for (int i = from; i < to; i++)
             {
                 char c = sourceText[i];
@@ -531,7 +530,8 @@ namespace TypeCobol.Codegen.Generators
             if (cobol != null)
             {
                 StringBuilder text = new StringBuilder(cobol.Text);
-                text[6] = '*';
+                if(text.Length > 5) 
+                    text[6] = '*';
                 var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, cobol.InitialLineIndex);
                 foreach (var l in lines) return l;// there's only one in the collection
                 throw new System.NotImplementedException("I should have at least one item!");
