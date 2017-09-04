@@ -1,6 +1,7 @@
 ﻿
 
 using TypeCobol.Codegen.Extensions.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen.Nodes {
 	using System.Collections.Generic;
@@ -181,7 +182,8 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 	private string ToString(TypeCobol.Compiler.CodeElements.CallSiteParameter parameter, Compiler.CodeModel.SymbolTable table, ArgMode mode,
         ref TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode, ref int previousSpan) {
         Variable variable = parameter.StorageAreaOrValue;
-		var name = variable.ToString(true);
+        var name = parameter.IsOmitted ? "omitted" : variable.ToString(true);
+
         string share_mode = "";
         int defaultSpan = string.Intern("by reference ").Length;
         if (parameter.SharingMode.Token != null)
@@ -213,15 +215,17 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
             previousSpan = share_mode.Length;
         }
 
-		if (variable.IsLiteral)
-            return share_mode + name;
-		var found = table.GetVariable(variable);
-        if (found.Count < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
-            return share_mode + variable.ToCobol85();
-        }
+        if (variable != null) {
+            if (variable.IsLiteral)
+                return share_mode + name;
+            var found = table.GetVariable(variable);
+            if (found.Count < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
+                return share_mode + variable.ToCobol85();
+            }
 //		if (found.Count > 1) return "?AMBIGUOUS?";
-		var data = found[0] as Compiler.Nodes.DataDescription;
-		if (data.DataType == DataType.Boolean) name += "-value";
+            var data = found[0] as DataDescription;
+            if (data != null && data.DataType == DataType.Boolean) name += "-value";
+        }
         return share_mode + name;
 	}
 

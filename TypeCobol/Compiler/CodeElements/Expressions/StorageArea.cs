@@ -427,8 +427,12 @@ namespace TypeCobol.Compiler.CodeElements
 			    return results;
 		    }
 		    internal static DataType CreateParameter([NotNull] CallSiteParameter p, CodeModel.SymbolTable table) {
-			    DataType type = null;
-			    var parameter = p.StorageAreaOrValue;
+		        if (p.IsOmitted) {
+		            return DataType.Omitted;
+		        }
+
+                DataType type = null;
+                var parameter = p.StorageAreaOrValue;
 			    if (parameter.IsLiteral) {
 				    if (parameter.NumericValue != null)
 				         type = DataType.Numeric;

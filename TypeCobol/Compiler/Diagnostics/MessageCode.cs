@@ -46,5 +46,6 @@ namespace TypeCobol.Compiler.Diagnostics
         GenerationFailled  = 36,
         Warning = 37,
         GenerationErrorLineExceed = 38,
+        QuestionMarkShouldBeFollowedBySpace = 39,
     }
 }

@@ -95,7 +95,7 @@ functionReturningPhrase: RETURNING parameterDescription;
 parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
 
 functionDataParameter:
-	dataNameDefinition (pictureClause | POINTER | cobol2002TypeClause)
+	dataNameDefinition QuestionMark? (pictureClause | POINTER | cobol2002TypeClause)
 		blankWhenZeroClause?
 		justifiedClause?
 		synchronizedClause?
@@ -103,7 +103,7 @@ functionDataParameter:
 		signClause?
 		tcfuncParameterUsageClause?
 		valueClause?
-		//No OccursClause because we only allow Level 01
+		//No OccursClause because we only allow Level 01		
 		;
 
 tcfuncParameterUsageClause:
@@ -149,9 +149,9 @@ tcCallStatement:
 	;
 //procedurePointerOrFunctionPointerVariableOrfunctionNameReference is only used in this rule so do not create a grammar rule for it
 
-callInputParameter: (BY? (REFERENCE | CONTENT | VALUE))? sharedVariableOrFileName; // TCRFUN_INPUT_BY
-callInoutParameter: sharedStorageArea1;  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
-callOutputParameter: sharedStorageArea1; // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
+callInputParameter:  (BY? (REFERENCE | CONTENT | VALUE))? (sharedVariableOrFileName | OMITTED); // TCRFUN_INPUT_BY
+callInoutParameter:  (sharedStorageArea1 | OMITTED);  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
+callOutputParameter: (sharedStorageArea1 | OMITTED); // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
 
 typeNameReference: (UserDefinedWord | DATE);
 

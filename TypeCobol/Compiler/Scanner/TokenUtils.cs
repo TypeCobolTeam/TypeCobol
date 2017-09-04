@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Scanner
             }
             // Register the token strings corresponding to each token type (for keywords only)
             int keywordBegin = (int)TokenType.UserDefinedWord + 1;
-            int keywordEnd = (int)TokenType.CompilerDirective - 1;
+            int keywordEnd = (int)TokenType.QuestionMark - 1;
             tokenStringFromTokenType = new string[types.Length];
             for (int c = keywordBegin; c < types.Length; c++)
             {
@@ -125,6 +125,8 @@ namespace TypeCobol.Compiler.Scanner
                     return "cobol 2002 keyword";
                 case TokenFamily.TypeCobolKeyword:
                     return "TypeCobol keyword";
+                case TokenFamily.TypeCobolOperators:
+                    return "TypeCobol Operators";
                 default:
                     return "...";
             }
@@ -132,7 +134,7 @@ namespace TypeCobol.Compiler.Scanner
 
         public static string GetDisplayNameForTokenType(TokenType tokenType)
         {
-            if ((int)tokenType >= (int)TokenFamily.CompilerDirectiveStartingKeyword && tokenType != TokenType.SymbolicCharacter)
+            if ((int)TokenFamily.TypeCobolOperators > (int)tokenType && (int)tokenType >= (int)TokenFamily.CompilerDirectiveStartingKeyword && tokenType != TokenType.SymbolicCharacter )
             {
                 return tokenType.ToString().Replace('_', '-');
             }
@@ -218,6 +220,8 @@ namespace TypeCobol.Compiler.Scanner
                         return "user defined word";
                     case TokenType.SymbolicCharacter:
                         return "symbolic character";
+                    case TokenType.QuestionMark:
+                        return "?";
                     default:
                         return "...";
                 }

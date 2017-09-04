@@ -187,13 +187,13 @@ namespace TypeCobol.Compiler.CodeElements {
         {
 		    var str = new System.Text.StringBuilder();
 		    str.Append('(');
-		    foreach (var p in InputParameters) str.Append(p.Name).Append(':').Append(p.DataType).Append(", ");
+		    foreach (var p in InputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
 		    if (InputParameters.Count > 0) str.Length -= 2;
 		    str.Append("):(");
-		    foreach (var p in OutputParameters) str.Append(p.Name).Append(':').Append(p.DataType).Append(", ");
+		    foreach (var p in OutputParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
 		    if (OutputParameters.Count > 0) str.Length -= 2;
 		    str.Append("):(");
-		    foreach (var p in InoutParameters) str.Append(p.Name).Append(':').Append(p.DataType).Append(", ");
+		    foreach (var p in InoutParameters) str.Append(p.Name).Append(p.IsOmittable ? " ?" : "").Append(':').Append(p.DataType).Append(", ");
 		    if (InoutParameters.Count > 0) str.Length -= 2;
 		    str.Append("):(");
 		    if (ReturningParameter != null) str.Append(ReturningParameter.Name).Append(':').Append(ReturningParameter.DataType);

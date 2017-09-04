@@ -1,0 +1,104 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. OmittedPgm.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION. 
+      
+       01 Bool1       Type bool.
+       01 var1        pic X.
+       01 Date1       Type Date.
+
+
+       01 ReturnCode TYPEDEF strict pic X(04).
+       01 Account TYPEDEF strict pic X.
+       01 AccountID TYPEDEF strict pic 9.
+
+    
+       01 AccountID Type AccountID.
+       01 Account Type Account.
+       01 RC Type ReturnCode.
+       01 var10        pic X(10).
+
+       procedure division.
+
+             
+      
+       declare procedure TestMe private
+           input  var1         pic X
+           output var2         pic X.
+       end-declare.  
+             
+       declare procedure TestMe private
+           input  var1 ?       type bool
+           output var2 ?       pic X.
+       end-declare.  
+           
+              
+      
+       declare procedure TestMe2 private
+           input  var1         type Bool
+           output var2 ?       type Date.
+       end-declare.  
+             
+       declare procedure TestMe2 private
+           input  var1 ?       type Bool
+           output var2 ?       pic X.
+       end-declare.
+
+      *Same procedure with omittable support
+      *we only need 2 signatures
+       
+       declare procedure GetAccount private
+           input  AccountId         pic 9
+           output Account           type Account
+                  AdditionalInfos ? pic X(10)
+                  RC                type ReturnCode.
+       end-declare.  
+           
+       declare procedure GetAccount private
+           input  AccountId         type AccountID
+           output Account           type Account
+                  AdditionalInfos ? pic X(10)
+                  RC                type ReturnCode.
+       end-declare.
+      
+
+
+      *Ok, only one signature accept omitted
+           call TestMe input  omitted
+                       output omitted
+
+      *Ok, only one signature accept omitted
+           call TestMe input  bool1
+                       output omitted
+
+      *Ok, only one signature accept omitted
+           call TestMe input  omitted
+                       output var1
+
+      *KO, ambiguous, because both signature of TestMe2 have the same 1st parameter and accept omitted as 2nd parameter
+           call TestMe2 input  bool1
+                        output omitted
+
+      *KO, No signature accept omitted and a Date
+           call TestMe2 input  omitted
+                        output Date1
+
+      *Ok
+           call TestMe2 input  Bool1
+                        output Date1
+
+
+      *KO
+           call GetAccount input  omitted
+                           output omitted
+                                  omitted
+                                  omitted
+      *Ok
+           call GetAccount input  AccountId
+                           output Account
+                                  omitted
+                                  RC
+
+           .
+      
+       END PROGRAM OmittedPgm.

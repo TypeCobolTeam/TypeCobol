@@ -84,7 +84,7 @@ Line 24[26,33] <27, Error, Syntax> - Syntax error : no viable alternative at inp
 -- Line 25 --
 *** DIRECTIVE INVALID SYNTAX -> COPY <REPLACE[MultipleTokens] TOTO1,= ,BY BY TITI1> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,21:TEXTNAME7]<UserDefinedWord>[22,22: ]<SpaceSeparator>[23,31:REPLACING]<REPLACING>[32,32: ]<SpaceSeparator>[33,34:==]<PseudoTextDelimiter>[35,35: ]<SpaceSeparator>[36,40:TOTO1]<UserDefinedWord>[41,41: ]<SpaceSeparator>[42,43:= ]<EqualOperator>[44,45:BY]<BY>[46,46: ]<SpaceSeparator>[47,48:==]<PseudoTextDelimiter>[49,53:TITI1]<UserDefinedWord>[54,55:==]<PseudoTextDelimiter>) ***
 Line 25[49,53] <27, Error, Syntax> - Syntax error : missing BY at 'TITI1'
-Line 26[8,11] <27, Error, Syntax> - Syntax error : mismatched input 'COPY' expecting {whitespace, comments, separator, arithmetic operator, relational operator, alphanumeric literal, numeric literal, character string, symbol, compiler directive starting keyword, statement starting keyword, special register, figurative constant, special object identifier, keyword, cobol 2002 keyword, TypeCobol keyword}
+Line 26[8,11] <27, Error, Syntax> - Syntax error : mismatched input 'COPY' expecting {whitespace, comments, separator, arithmetic operator, relational operator, alphanumeric literal, numeric literal, character string, symbol, compiler directive starting keyword, statement starting keyword, special register, figurative constant, special object identifier, keyword, cobol 2002 keyword, TypeCobol keyword, TypeCobol Operators}
 
 -- Line 26 --
 *** DIRECTIVE INVALID SYNTAX -> COPY TEXTNAME11 <REPLACE[SingleToken] TOTO5 BY TITI6> <REPLACE[SingleToMultipleTokens] REPLACING BY TOTO6,TOTO7> ([8,11:COPY]<COPY>[12,12: ]<SpaceSeparator>[13,22:TEXTNAME11]<UserDefinedWord>) ***
