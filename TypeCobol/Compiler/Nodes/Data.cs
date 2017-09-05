@@ -11,8 +11,10 @@ namespace TypeCobol.Compiler.Nodes {
 
 
     public class DataDivision: Node, CodeElementHolder<DataDivisionHeader>, Parent<DataSection> {
+
+        public const string NODE_ID = "data-division";
 	    public DataDivision(DataDivisionHeader header): base(header) { }
-	    public override string ID { get { return "data-division"; } }
+	    public override string ID { get { return NODE_ID; } }
 
 	    public override void Add(Node child, int index = -1) {
 		    if (index <= 0) index = WhereShouldIAdd(child.GetType());
