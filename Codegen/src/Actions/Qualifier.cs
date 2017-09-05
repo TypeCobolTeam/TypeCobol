@@ -201,7 +201,7 @@ namespace TypeCobol.Codegen.Actions
                     if (procStyleCallStmt != null)
                     {
                         TypeCobolQualifiedSymbolReference tcqsr = procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction as
-                            TypeCobolQualifiedSymbolReference;
+                            TypeCobolQualifiedSymbolReference ?? procStyleCallStmt.ProcdurePointerOrTCProcedureFunction as TypeCobolQualifiedSymbolReference;
 
                         if (tcqsr != null)
                         {

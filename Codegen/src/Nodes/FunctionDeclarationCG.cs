@@ -16,17 +16,50 @@ namespace TypeCobol.Codegen.Nodes {
         public FunctionDeclarationCG(Compiler.Nodes.FunctionDeclaration originalNode) : base(originalNode.CodeElement()) {
             this.OriginalNode = originalNode;
 
+            //Check if we need to generate something special for this Procedure
+            bool needToGenerateParametersIntoLinkage = originalNode.CodeElement().Profile.InputParameters.Count + originalNode.CodeElement().Profile.InoutParameters.Count + originalNode.CodeElement().Profile.OutputParameters.Count +
+                             (originalNode.CodeElement().Profile.ReturningParameter != null ? 1 : 0) > 0;
+            //we'll generate things for public call
+            var containsPublicCall = originalNode.ProcStyleCalls != null && originalNode.ProcStyleCalls.Count > 0;
+
             ProgramName = originalNode.Hash;
             foreach (var child in originalNode.Children) {
                 if (child is Compiler.Nodes.ProcedureDivision) {
-                    CreateOrUpdateLinkageSection(originalNode, originalNode.CodeElement().Profile);
+
+                    Compiler.Nodes.WorkingStorageSection workingStorageSection = null;
+                    Compiler.Nodes.LinkageSection linkageSection = null;
+
+
+                    //Create DataDivision, WorkingStorageSection and LinkageSection if needed
+                    //Nodes must be created in the good order
+                    if (needToGenerateParametersIntoLinkage || containsPublicCall) {
+                        var dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
+                        
+                        if (containsPublicCall) {
+                            workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection());
+                        }
+                        linkageSection = GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection());
+
+
+                        //declare procedure parameters into linkage
+                        DeclareProceduresParametersIntoLinkage(originalNode, linkageSection, originalNode.CodeElement().Profile);
+                    }
+                    
+
+                    //Replace ProcedureDivision node with a new one and keep all original children
                     var sentences = new List<Node>();
                     foreach (var sentence in child.Children)
                         sentences.Add(sentence);
                     var pdiv = new ProcedureDivision(originalNode, sentences);
-
-
                     children.Add(pdiv);
+
+                    
+                    //Generate code if this procedure call a public procedure in another source
+                    
+                    if (containsPublicCall)
+                    {
+                        GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
+                    }
                 } else {
                     if (child.CodeElement is FunctionDeclarationEnd) {
                         children.Add(new ProgramEnd(new URI(ProgramName)));
@@ -38,40 +71,39 @@ namespace TypeCobol.Codegen.Nodes {
                 }
             }
 
-            if (originalNode.ProcStyleCalls != null && originalNode.ProcStyleCalls.Count > 0) {
-                AddStuffToCallPublicProc(originalNode);
-            }
+            
         }
 
-
-        public T GetOrCreateNode<T>(Node parent, Func<T> func) where T : Node {
-            T dataDivision;
+        /// <summary>
+        /// Get or create the node and add it as a child of this Node
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parent"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        private T GetOrCreateNode<T>(Node parent, Func<T> func) where T : Node {
+            T newNode;
             var retrievedChild = parent.GetChildren<T>();
             if (retrievedChild == null || !retrievedChild.Any()) {
-                dataDivision = func.Invoke();
-                children.Add(dataDivision);
+                newNode = func.Invoke();
+                //Do not add to parent but to "this"
+                this.Add(newNode);
             } else {
-                dataDivision = retrievedChild.First();
+                newNode = retrievedChild.First();
             }
-            return dataDivision;
+            return newNode;
         }
 
 
-        protected void AddStuffToCallPublicProc(FunctionDeclaration originalNode) {
-            var dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
-            var workingStorageSection =
-                GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection());
-
-
-            ProgramImports imports =
-                (ProgramImports) new ProgramImportsAttribute().GetValue(originalNode, originalNode.SymbolTable);
+        protected void GenerateCodeToCallPublicProc(FunctionDeclaration originalNode, ProcedureDivision procedureDivision, Compiler.Nodes.WorkingStorageSection workingStorageSection, Compiler.Nodes.LinkageSection linkageSection) {
+            ProgramImports imports = ProgramImportsAttribute.GetProgramImports(originalNode);
 
             foreach (var pgm in imports.Programs.Values) {
                 workingStorageSection.Add(
                     new GeneratedNode2("01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n", true));
             }
 
-            var linkageSection = GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection());
+            
             linkageSection.Add(new GeneratedNode2("*Common to all librairies used by the program.", true));
             linkageSection.Add(new GeneratedNode2("01 TC-Library-PntTab.", false));
             linkageSection.Add(new GeneratedNode2("    05 TC-Library-PntNbr          PIC S9(04) COMP.", true));
@@ -95,25 +127,34 @@ namespace TypeCobol.Codegen.Nodes {
             }
 
 
-            //TODO make clear specs about if we need to use originalNode or this
-            var procedureDivision = GetOrCreateNode<Compiler.Nodes.ProcedureDivision>(this, () => new ProcedureDivision(originalNode, new List<Node>()));
+            Node whereToGenerate;
 
-
-            Node firstProcDivchild = procedureDivision.Children.First();
-            if (firstProcDivchild is Paragraph) {
-                firstProcDivchild.Add(new GeneratedNode2("    PERFORM TC-Initializations", true), 0);
+            //Generate a PERFORM, this must be the first instruction unless we have a Paragraph or a section
+            //TODO manage declaratives, see #655
+            var firstChildOfPDiv = procedureDivision.Children.First();
+            if (firstChildOfPDiv is Section) {
+                var temp = firstChildOfPDiv.Children.First();
+                if (temp is Paragraph) {
+                    whereToGenerate = temp;
+                } else {
+                    whereToGenerate = firstChildOfPDiv;
+                }
+            } else if (firstChildOfPDiv is Paragraph) {
+                whereToGenerate = firstChildOfPDiv;
             } else {
-                procedureDivision.Add(new GeneratedNode2("    PERFORM TC-Initializations", true), 0);
+                whereToGenerate = procedureDivision;
             }
+            whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-Initializations", true), 0);
 
 
-
+            //Generate "TC-Initializations" paragraph
             procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
             procedureDivision.Add(new ParagraphGen("TC-Initializations"));
             procedureDivision.Add(new SentenceEnd());
             procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
 
 
+            //Generate "TC-LOAD-POINTERS-" paragraph
             foreach (var pgm in imports.Programs.Values) {
                 procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
                 procedureDivision.Add(new ParagraphGen("TC-LOAD-POINTERS-" + pgm.Name));
@@ -137,52 +178,37 @@ namespace TypeCobol.Codegen.Nodes {
             }
         }
 
-        private void CreateOrUpdateLinkageSection(Compiler.Nodes.FunctionDeclaration node, ParametersProfile profile) {
-            var linkage = node.Get<Compiler.Nodes.LinkageSection>("linkage");
-            var parameters = profile.InputParameters.Count + profile.InoutParameters.Count + profile.OutputParameters.Count +
-                             (profile.ReturningParameter != null ? 1 : 0);
+        private void DeclareProceduresParametersIntoLinkage(Compiler.Nodes.FunctionDeclaration node, Compiler.Nodes.LinkageSection linkage, ParametersProfile profile) {
+            var data = linkage.Children();
 
-            if (linkage == null && parameters > 0) {
-                var datadiv = node.Get<Compiler.Nodes.DataDivision>("data-division");
-                if (datadiv == null) {
-                    datadiv = new DataDivision();
-                    children.Add(datadiv);
-                }
-                linkage = new LinkageSection();
-                datadiv.Add(linkage);
-            }
-
-            if (linkage != null) {
-                var data = linkage.Children();
-
-                // TCRFUN_CODEGEN_PARAMETERS_ORDER
-                var generated = new List<string>();
-                foreach (var parameter in profile.InputParameters) {
-                    if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                        linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
-                        generated.Add(parameter.Name);
-                    }
-                }
-                foreach (var parameter in profile.InoutParameters) {
-                    if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                        linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
-                        generated.Add(parameter.Name);
-                    }
-                }
-                foreach (var parameter in profile.OutputParameters) {
-                    if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                        linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
-                        generated.Add(parameter.Name);
-                    }
-                }
-                if (profile.ReturningParameter != null) {
-                    if (!generated.Contains(profile.ReturningParameter.Name) &&
-                        !Contains(data, profile.ReturningParameter.Name)) {
-                        linkage.Add(CreateParameterEntry(profile.ReturningParameter, node.SymbolTable));
-                        generated.Add(profile.ReturningParameter.Name);
-                    }
+            // TCRFUN_CODEGEN_PARAMETERS_ORDER
+            var generated = new List<string>();
+            foreach (var parameter in profile.InputParameters) {
+                if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
+                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                    generated.Add(parameter.Name);
                 }
             }
+            foreach (var parameter in profile.InoutParameters) {
+                if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
+                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                    generated.Add(parameter.Name);
+                }
+            }
+            foreach (var parameter in profile.OutputParameters) {
+                if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
+                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                    generated.Add(parameter.Name);
+                }
+            }
+            if (profile.ReturningParameter != null) {
+                if (!generated.Contains(profile.ReturningParameter.Name) &&
+                    !Contains(data, profile.ReturningParameter.Name)) {
+                    linkage.Add(CreateParameterEntry(profile.ReturningParameter, node.SymbolTable));
+                    generated.Add(profile.ReturningParameter.Name);
+                }
+            }
+            
         }
 
         private ParameterEntry CreateParameterEntry(ParameterDescriptionEntry parameter, Compiler.CodeModel.SymbolTable table) {

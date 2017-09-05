@@ -1,5 +1,6 @@
 ﻿
 using System;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.Nodes {
 
@@ -427,60 +428,65 @@ internal class LibraryCopyAttribute: Attribute {
     /// return all imports of a Program Node
     /// </summary>
     public class ProgramImportsAttribute : Attribute {
-        public object GetValue(object o, SymbolTable table)
-        {
+
+        public static ProgramImports GetProgramImports([NotNull] IProcCaller procCaller) {
             ProgramImports imports = new ProgramImports();
-            var program = o as IProcCaller;
-            if (program != null)
+            if (procCaller.ProcStyleCalls != null)
             {
-                if (program.ProcStyleCalls != null)
+                //All imported program.                    
+                string name_low = procCaller.Name.ToLower();
+                //For each entry in the Procedure Style Call Dictionary
+                foreach (var e in procCaller.ProcStyleCalls)
                 {
-                    //All imported program.                    
-                    string name_low = program.Name.ToLower();
-                    //For each entry in the Procedure Style Call Dictionary
-                    foreach (var e in program.ProcStyleCalls)
+                    var hash = e.Key;
+                    var call = e.Value;
+                    ProcedureStyleCall proc_style_call = call.Item2;
+                    //Only import Public Functions
+                    FunctionDeclaration fun_decl = proc_style_call.FunctionDeclaration;
+                    if (fun_decl != null)
                     {
-                        var hash = e.Key;
-                        var call = e.Value;
-                        ProcedureStyleCall proc_style_call = call.Item2;
-                        //Only import Public Functions
-                        FunctionDeclaration fun_decl = proc_style_call.FunctionDeclaration;
-                        if (fun_decl != null)
-                        {
-                            if (fun_decl.CodeElement().Visibility == AccessModifier.Private)
-                                continue;//Ignore a Private function ==> Cannot Import It.
-                        }
-                        var item_pgm = call.Item1[call.Item1.Count - 1];                        
-                        if (name_low.Equals(item_pgm.Name.ToLower()))
-                        {   //Avoid imports to itself.
-                            continue;
-                        }
-                        string item_pgm_name = item_pgm.Name.Substring(0, Math.Min(item_pgm.Name.Length, 8));
-                        string item_pgm_name_low = item_pgm_name.ToLower();
-                        ProgramImport prg_imp = null;
-                        if (!imports.Programs.ContainsKey(item_pgm_name_low))
-                        {
-                            prg_imp = new ProgramImport();
-                            prg_imp.Name = item_pgm_name;
-                            imports.Programs[item_pgm_name_low] = prg_imp;
-                        }
-                        if (prg_imp == null)
-                            prg_imp = imports.Programs[item_pgm_name_low];
-                        //Store the Procedure if it is not alreday there                                                
-                        string proc_hash = hash;
-                        if (!prg_imp.Procedures.ContainsKey(proc_hash))
-                        {
-                            ProcedureImport proc_imp = new ProcedureImport();
-                            string item_proc_name = call.Item1[0].Name;
-                            proc_imp.Name = item_proc_name;
-                            proc_imp.Hash = proc_hash;
-                            proc_imp.ProcStyleCall = proc_style_call;
-                            prg_imp.Procedures[proc_hash] = proc_imp;
-                        }
+                        if (fun_decl.CodeElement().Visibility == AccessModifier.Private)
+                            continue;//Ignore a Private function ==> Cannot Import It.
+                    }
+                    var item_pgm = call.Item1[call.Item1.Count - 1];
+                    if (name_low.Equals(item_pgm.Name.ToLower()))
+                    {   //Avoid imports to itself.
+                        continue;
+                    }
+                    string item_pgm_name = item_pgm.Name.Substring(0, Math.Min(item_pgm.Name.Length, 8));
+                    string item_pgm_name_low = item_pgm_name.ToLower();
+                    ProgramImport prg_imp = null;
+                    if (!imports.Programs.ContainsKey(item_pgm_name_low))
+                    {
+                        prg_imp = new ProgramImport();
+                        prg_imp.Name = item_pgm_name;
+                        imports.Programs[item_pgm_name_low] = prg_imp;
+                    }
+                    if (prg_imp == null)
+                        prg_imp = imports.Programs[item_pgm_name_low];
+                    //Store the Procedure if it is not alreday there                                                
+                    string proc_hash = hash;
+                    if (!prg_imp.Procedures.ContainsKey(proc_hash))
+                    {
+                        ProcedureImport proc_imp = new ProcedureImport();
+                        string item_proc_name = call.Item1[0].Name;
+                        proc_imp.Name = item_proc_name;
+                        proc_imp.Hash = proc_hash;
+                        proc_imp.ProcStyleCall = proc_style_call;
+                        prg_imp.Procedures[proc_hash] = proc_imp;
                     }
                 }
             }
             return imports;
+        }
+        public object GetValue(object o, SymbolTable table)
+        {
+            
+            var program = o as IProcCaller;
+            if (program != null) {
+                return GetProgramImports(program);
+            }
+            return null;
         }
     }
 }
