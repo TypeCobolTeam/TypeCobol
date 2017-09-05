@@ -1,0 +1,21 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOZCHKP.
+       PROCEDURE DIVISION.      
+      *-----------------------------------------------------------------
+       declare procedure StartCheckpoint public
+               input param1 pic X.
+       end-declare.
+       END PROGRAM TCOZCHKP.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZZOSM5.
+       PROCEDURE DIVISION.      
+       declare procedure testos private.
+       data division.
+       working-storage section.
+       01 var1 pic X.
+       procedure division.
+           call TCOZCHKP::StartCheckpoint input var1
+           .
+       end-declare.
+       END PROGRAM DVZZOSM5.
