@@ -172,6 +172,9 @@ namespace TypeCobol.Codegen {
 		public void CallPublicProcInsideProcOfSameProgram() {
 			var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml");
 			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcInsideProcOfSameProgram") +".rdz.tcbl", skeletons);
+			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcInsideProcOfSameProgram2") +".rdz.tcbl", skeletons);
+			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcInsideProcOfSameProgram3") +".rdz.tcbl", skeletons);
+			CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcInsideProcOfSameProgram4") +".rdz.tcbl", skeletons);
 		}
 
 	    [TestMethod]
