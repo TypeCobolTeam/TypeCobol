@@ -25,7 +25,10 @@
        01 var1 pic X.
        procedure division.
            call PGM1::StartCheckpoint input var1
+           call PGM2::CheckContract input var1
+           call PGM1::StartCheckpoint input var1
 
+           call PGM2::CheckContract input var1
            call PGM2::CheckContract input var1
            .
        end-declare.
