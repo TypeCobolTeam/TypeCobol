@@ -25,20 +25,15 @@ namespace TypeCobol.Codegen.Nodes {
             ProgramName = originalNode.Hash;
             foreach (var child in originalNode.Children) {
                 if (child is Compiler.Nodes.ProcedureDivision) {
-
-                    Compiler.Nodes.WorkingStorageSection workingStorageSection = null;
                     Compiler.Nodes.LinkageSection linkageSection = null;
+                    Compiler.Nodes.DataDivision dataDivision = null;
 
-
-                    //Create DataDivision, WorkingStorageSection and LinkageSection if needed
-                    //Nodes must be created in the good order
+                    //Create DataDivision and LinkageSection if needed
+                    //DataDivision must be created before ProcedureDivision because Program Node doesn't manage order of their children
+                    //DataDivision manage order of their children so it's ok
                     if (needToGenerateParametersIntoLinkage || containsPublicCall) {
-                        var dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
-                        
-                        if (containsPublicCall) {
-                            workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection());
-                        }
-                        linkageSection = GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection());
+                        dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
+                        linkageSection = GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(), dataDivision);
 
 
                         //declare procedure parameters into linkage
@@ -56,8 +51,8 @@ namespace TypeCobol.Codegen.Nodes {
                     
                     //Generate code if this procedure call a public procedure in another source
                     
-                    if (containsPublicCall)
-                    {
+                    if (containsPublicCall) {
+                        var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(), dataDivision);
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
                     }
                 } else {
@@ -82,12 +77,16 @@ namespace TypeCobol.Codegen.Nodes {
         /// <param name="func"></param>
         /// <returns></returns>
         private T GetOrCreateNode<T>(Node parent, Func<T> func) where T : Node {
+            return GetOrCreateNode(parent, func, this);
+        }
+
+        private T GetOrCreateNode<T>(Node parent, Func<T> func, Node newParent) where T : Node {
             T newNode;
             var retrievedChild = parent.GetChildren<T>();
             if (retrievedChild == null || !retrievedChild.Any()) {
                 newNode = func.Invoke();
                 //Do not add to parent but to "this"
-                this.Add(newNode);
+                newParent.Add(newNode);
             } else {
                 newNode = retrievedChild.First();
             }
