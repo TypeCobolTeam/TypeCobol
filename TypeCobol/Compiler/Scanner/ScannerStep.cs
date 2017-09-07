@@ -206,9 +206,9 @@ namespace TypeCobol.Compiler.Scanner
         {
             // Scan the current line (or continuation lines group)
             MultilineScanState scanState = ScanTokensLineWithContinuations(lineToScanIndex, lineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, initialScanState, out nextLineToScanIndex, out nextLineToScan);
-            
+
             // Scan the following lines until we find that the scan state at the beginning of the next line has been updated
-            while(nextLineToScan != null && nextLineToScan.InitialScanState != null && !nextLineToScan.InitialScanState.Equals(scanState))
+            while (nextLineToScan != null && nextLineToScan.InitialScanState != null && !nextLineToScan.InitialScanState.Equals(scanState))
             {
                 scanState = ScanTokensLineWithContinuations(nextLineToScanIndex, nextLineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
             }

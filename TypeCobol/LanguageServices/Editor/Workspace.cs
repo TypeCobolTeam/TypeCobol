@@ -64,7 +64,22 @@ namespace TypeCobol.LanguageServices.Editor
         {
             string fileName = Path.GetFileName(fileUri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
+#if EUROINFO_RULES //Issue #583
+            SymbolTable arrangedCustomSymbol = null;
+            var inputFileName = fileName.Substring(0, 8);
+            var matchingPgm = CustomSymbols.Programs.Keys.FirstOrDefault(k => k.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase));
+            if (matchingPgm != null)
+            {
+                arrangedCustomSymbol = new SymbolTable(CustomSymbols, SymbolTable.Scope.Namespace);
+                var prog = CustomSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
+                arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() { prog.ToList() });
+                arrangedCustomSymbol.Programs.Remove(matchingPgm);
+            }
+            var fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? CustomSymbols, false, CompilationProject);
+#else
             var fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, CustomSymbols, false, CompilationProject);
+#endif
+
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
             lock (OpenedFileCompiler)

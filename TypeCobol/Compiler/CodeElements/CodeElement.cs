@@ -160,7 +160,6 @@ namespace TypeCobol.Compiler.CodeElements
             return this.Line == codeElement.Line &&
                    this.Type == codeElement.Type &&
                    this.Column == codeElement.Column &&
-                   this.SourceText == codeElement.SourceText &&
                    this.StartIndex == codeElement.StartIndex &&
                    this.StopIndex == codeElement.StopIndex &&
                    this.Text == codeElement.Text;

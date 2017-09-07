@@ -97,10 +97,9 @@ namespace TypeCobol.LanguageServer
                     {
                         replacementTextStartsWithNewLine = contentChange.text[0] == '\r' ||
                                                            contentChange.text[0] == '\n';
-                            //Allow to know if a new line was added
+                        //Allow to know if a new line was added
                         lineUpdates =
-                            contentChange.text.Split(new char[] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries)
-                                .ToList(); //Split on /r /n to know the number of lines added
+                            contentChange.text.Replace("\r", "").Split('\n').ToList(); //Split on \r \n to know the number of lines added
                     }
 
                     // Document cleared
@@ -789,26 +788,49 @@ namespace TypeCobol.LanguageServer
                         childrens.AddRange(variable.Children);
                     else //It's a typed variable, we have to search for childrens in the type
                     {
-                        var type =
-                            node.SymbolTable.GetTypes(
-                                t => t.Name.Equals(variable.DataType.Name, StringComparison.InvariantCultureIgnoreCase)
-                                     ||
-                                     t.QualifiedName.ToString()
-                                         .Equals(variable.DataType.Name, StringComparison.InvariantCultureIgnoreCase),
-                                new List<SymbolTable.Scope>
-                                {
-                                    SymbolTable.Scope.Declarations,
-                                    SymbolTable.Scope.Global,
-                                    SymbolTable.Scope.Intrinsic,
-                                    SymbolTable.Scope.Namespace
-                                }).FirstOrDefault();
-
-                        if (type != null)
-                            childrens.AddRange(type.Children);
+                        var typeChildrens = GetTypeChildrens(node.SymbolTable, variable);
+                        if (typeChildrens != null)
+                            childrens.AddRange(typeChildrens);
                     }
 
-                    completionItems.AddRange(childrens.Where(c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Select(child => new CompletionItem(child.Name)));
+                    completionItems.AddRange(
+                        childrens.Where(
+                                c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase))
+                            .Select(child => new CompletionItem(child.Name)));
                 }
+            }
+            else
+            { //If no variables found, it's could be a children declared in a typedef..
+                var childrens = new List<Node>();
+                var potentialTypes =
+                    node.SymbolTable.GetTypes(
+                        t =>
+                            t.Children != null &&
+                            t.Children.Any(
+                                tc => tc.Name != null && tc.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)),
+                        new List<SymbolTable.Scope>
+                        {
+                            SymbolTable.Scope.Declarations,
+                            SymbolTable.Scope.Global,
+                            SymbolTable.Scope.Intrinsic,
+                            SymbolTable.Scope.Namespace
+                        });
+
+                foreach (var nodeType in potentialTypes.SelectMany(t=> t.Children).Where(c => c != null && c.Name != null && c.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)))
+                {
+
+                    var nodeDataDef = nodeType as DataDefinition;
+                    if (nodeDataDef == null) continue;
+
+                    var typeChildrens = GetTypeChildrens(node.SymbolTable, nodeDataDef);
+                    if (typeChildrens != null)
+                        childrens.AddRange(typeChildrens);
+                }
+
+                completionItems.AddRange(
+                       childrens.Where(
+                               c => c != null && c.Name != null && c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase))
+                           .Select(child => new CompletionItem(child.Name)));
             }
 
             if (firstSignificantToken != null)
@@ -862,7 +884,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            return completionItems;
+            return completionItems.Distinct();
         }
 
         private IEnumerable<CompletionItem> GetCompletionForProcedureParameter(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
@@ -977,6 +999,7 @@ namespace TypeCobol.LanguageServer
             var node = GetMatchingNode(fileCompiler, codeElement);
             List<DataDefinition> variables = new List<DataDefinition>();
             var firstReferences = new List<Node>();
+            var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
 
             var firstReferenceToken = arrangedCodeElement.ArrangedConsumedTokens.TakeWhile(t => t != lastSignificantToken).LastOrDefault();
             if (firstReferenceToken == null) 
@@ -1003,7 +1026,13 @@ namespace TypeCobol.LanguageServer
 
             foreach (var firstReference in firstReferences)
             {
-                variables.AddRange(node.SymbolTable.GetVariables(da => da.DataType == (firstReference as DataDefinition).DataType, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global }));
+                variables.AddRange(
+                    node.SymbolTable.GetVariables(
+                        da =>
+                            da.DataType == (firstReference as DataDefinition).DataType &&
+                            (da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) ||
+                             da.QualifiedName.ToString().StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)),
+                        new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
             }
          
             completionItems.AddRange(variables.Distinct().Select(v => new CompletionItem(v.Name)));
@@ -1089,6 +1118,30 @@ namespace TypeCobol.LanguageServer
         #endregion
 
         #region Helpers
+
+        private IReadOnlyList<Node> GetTypeChildrens(SymbolTable symbolTable, DataDefinition dataDefNode)
+        {
+            if (symbolTable == null || dataDefNode == null)
+                return null;
+
+            var type = symbolTable.GetTypes(
+                t => t.Name.Equals(dataDefNode.DataType.Name, StringComparison.InvariantCultureIgnoreCase)
+                     ||
+                     t.QualifiedName.ToString()
+                         .Equals(dataDefNode.DataType.Name, StringComparison.InvariantCultureIgnoreCase),
+                new List<SymbolTable.Scope>
+                {
+                    SymbolTable.Scope.Declarations,
+                    SymbolTable.Scope.Global,
+                    SymbolTable.Scope.Intrinsic,
+                    SymbolTable.Scope.Namespace
+                }).FirstOrDefault();
+
+            if (type != null)
+                return type.Children;
+            else
+                return null;
+        }
 
         /// <summary>
         /// Get the matchig node for a given Token and a gien completion mode. Returning a matching Node or null.
