@@ -409,6 +409,39 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Determine if it is possible to Insert before the given node.
+        /// </summary>
+        /// <param name="beforeNode">The node to be checked</param>
+        /// <returns>true if it is possible to insert before the node, false otherwise.</returns>
+        bool CanInsertBeforeNode(Node beforeNode)
+        {
+            //Debug.Assert(beforeNode != null);
+            if (!(beforeNode != null))
+                return false;
+            //Debug.Assert(beforeNode.NodeIndex > 0);
+            if (!(beforeNode.NodeIndex > 0))
+                return false;
+            //Debug.Assert(Nodes[beforeNode.NodeIndex].Buffer != null);
+            if (!(Nodes[beforeNode.NodeIndex].Buffer != null))
+                return false;
+            //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions != null);
+            if (!(Nodes[beforeNode.NodeIndex].Positions != null))
+                return false;
+            //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.Item4.Count > 0);
+            if (!(Nodes[beforeNode.NodeIndex].Positions.Item4.Count > 0))
+                return false;
+            //Debug.Assert(Nodes[beforeNode.NodeIndex].Positions.Item5.Count > 0);
+            if (!(Nodes[beforeNode.NodeIndex].Positions.Item5.Count > 0))
+                return false;
+            //Debug.Assert(Nodes[beforeNode.NodeIndex].From != null);
+            if (!(Nodes[beforeNode.NodeIndex].From != null))
+                return false;
+            //Debug.Assert(Nodes[beforeNode.NodeIndex].To != null);
+            if (!(Nodes[beforeNode.NodeIndex].To != null))
+                return false;
+            return true;
+        }
+        /// <summary>
         /// Insert a Node bafore an another Node.
         /// </summary>
         /// <param name="theNode"></param>
@@ -548,20 +581,31 @@ namespace TypeCobol.Codegen.Generators
                 Nodes.Add(data_node);
                 Node parent = GetFirstParentWithPosition(node);                   
                 if (node.IsFlagSet(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex))
-                {//So we must keep the insertion index
+                {//So we must keep the insertion index                    
                     Node beforeNode = null;
                     int index = node.Parent.IndexOf(node);
                     while (index != 0 && index != (node.Parent.Children.Count - 1))
                     {
                         beforeNode = node.Parent.Children[index++];
                         //Ignore Functions Declarations.
-                        if(!(beforeNode is TypeCobol.Compiler.Nodes.FunctionDeclaration))
+                        if(!(beforeNode is TypeCobol.Compiler.Nodes.FunctionDeclaration) && beforeNode != node)
                             break;
                     }
                     if (index != 0 && index != (node.Parent.Children.Count - 1))
                     {
                         if (InsertNodeBeforeNode(node, beforeNode))
                             return true;
+                    }
+                    if (index != 0 && index == (node.Parent.Children.Count - 1) && beforeNode != null)
+                    {//Check if we can insert before this last node
+                        if(CanInsertBeforeNode(beforeNode))
+                        {
+                            if (InsertNodeBeforeNode(node, beforeNode))
+                            {
+                                node.SetFlag(Node.Flag.FullyGenerateRecursivelyFactoryGeneratedNode, true, true);
+                                return false;
+                            }                                
+                        }
                     }
                     if (node.Parent.Children.Count > 1 && index == (node.Parent.Children.Count - 1))
                     {

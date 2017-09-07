@@ -1,0 +1,57 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TestMe.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+      *SOURCE-COMPUTER.    IBM-3033 WITH DEBUGGING MODE.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  TC-TestMe-FctList-Loaded PIC X(02).
+           88 TC-TestMe-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-TestMe-PntTab.
+           05 TC-TestMe-PntNbr         PIC S9(04) COMP VALUE 1.
+      *TestMe::StartCheckpoint
+           05 TC-TestMe-f18df3d0-Idt   PIC X(08) VALUE 'f18df3d0'.
+           05 TC-TestMe-f18df3d0 PROCEDURE-POINTER.
+
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-TestMe-FctList-IsLoaded
+              SET TC-TestMe-f18df3d0   TO ENTRY 'f18df3d0'
+
+              SET TC-TestMe-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-TestMe-PntTab
+
+           .
+                          
+      
+      *declare procedure StartCheckpoint public
+      *    input  PgmName          pic X(08).
+      
+      
+       END PROGRAM TestMe.
+      *
+      *declare procedure StartCheckpoint public
+      *    input  PgmName          pic X(08).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. f18df3d0.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       END PROGRAM f18df3d0.

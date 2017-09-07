@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TestMe.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+      *SOURCE-COMPUTER.    IBM-3033 WITH DEBUGGING MODE.
+       PROCEDURE DIVISION.
+      
+       declare procedure StartCheckpoint public
+           input  PgmName          pic X(08).
+       end-declare.
+      
+      
+       END PROGRAM TestMe.
