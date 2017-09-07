@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Tools
+﻿using System.Linq;
+
+namespace TypeCobol.Tools
 {
 
     using System.Collections.Generic;
@@ -15,6 +17,7 @@
     {
         public static List<string> GetFiles(string path, string[] patterns = null, bool recursive = true)
         {
+            path = CleanFileName(path);
             var results = new List<string>();
             if (File.Exists(path))
             {
@@ -47,7 +50,11 @@
             return results;
         }
 
+        private static string CleanFileName(string fileName)
+        {
+            var charToIgnore = new char[] {'\"'};
+            return charToIgnore.Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
+        }
+
     }
-
-
 }
