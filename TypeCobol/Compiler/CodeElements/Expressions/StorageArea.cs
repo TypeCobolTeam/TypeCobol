@@ -433,23 +433,31 @@ namespace TypeCobol.Compiler.CodeElements
 
                 DataType type = null;
                 var parameter = p.StorageAreaOrValue;
-			    if (parameter.IsLiteral) {
-				    if (parameter.NumericValue != null)
-				         type = DataType.Numeric;
-				    else
-				    if (parameter.AlphanumericValue != null)
-				         type = DataType.Alphanumeric;
-				    else type = DataType.Unknown;
-			    } else {
-				    var found = table.GetVariable(parameter);
-				    foreach(var item in found) {
-					    var data = item as Nodes.DataDescription;
-					    if (type == null) type = data.DataType;
-					    else if (type != data.DataType) type = DataType.Unknown;
-				    }
-				    if (type == null) type = DataType.Unknown;
-			    }
-			    return type;
+		        if (parameter != null)
+		        {
+                    if (parameter.IsLiteral)
+                    {
+                        if (parameter.NumericValue != null)
+                            type = DataType.Numeric;
+                        else
+                        if (parameter.AlphanumericValue != null)
+                            type = DataType.Alphanumeric;
+                        else type = DataType.Unknown;
+                    }
+                    else
+                    {
+                        var found = table.GetVariable(parameter);
+                        foreach (var item in found)
+                        {
+                            var data = item as Nodes.DataDescription;
+                            if (type == null) type = data.DataType;
+                            else if (type != data.DataType) type = DataType.Unknown;
+                        }
+                        if (type == null) type = DataType.Unknown;
+                    }
+                    return type;
+                }
+		        return DataType.Omitted;
 		    }
 	    }
     }

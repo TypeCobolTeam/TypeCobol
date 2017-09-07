@@ -438,8 +438,8 @@ namespace TypeCobol.Compiler.Parser
                         callSiteParameter.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(p.OMITTED()));
                     }
 
-
-                    inputs.Add(callSiteParameter);
+                    if (p.sharedVariableOrFileName() != null || p.OMITTED() != null)
+                        inputs.Add(callSiteParameter);
                 }
 
                 foreach (var p in context.callInoutParameter()) {
@@ -459,7 +459,8 @@ namespace TypeCobol.Compiler.Parser
                         callSiteParameter.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(p.OMITTED()));
                     }
 
-                    inouts.Add(callSiteParameter);
+                    if (p.sharedStorageArea1() != null || p.OMITTED() != null)
+                        inouts.Add(callSiteParameter);
                 }
 
                 foreach (var p in context.callOutputParameter())
@@ -480,7 +481,8 @@ namespace TypeCobol.Compiler.Parser
                         callSiteParameter.Omitted = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(p.OMITTED()));
                     }
 
-                    outputs.Add(callSiteParameter);
+                    if (p.sharedStorageArea1() != null || p.OMITTED() != null)
+                        outputs.Add(callSiteParameter);
                 }
 
                 int parametersCount = inputs.Count + outputs.Count + inouts.Count;
