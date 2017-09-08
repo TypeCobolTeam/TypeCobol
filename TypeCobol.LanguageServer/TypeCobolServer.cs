@@ -756,7 +756,6 @@ namespace TypeCobol.LanguageServer
             var node = GetMatchingNode(fileCompiler, codeElement);
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
 
-
             //Get the token before MatchingToken 
             var userTokenToSeek =
                 arrangedCodeElement.ArrangedConsumedTokens.ElementAt(
@@ -775,10 +774,8 @@ namespace TypeCobol.LanguageServer
 
             //For MOVE INPUT OUTPUT variables etc.. , get all the childrens of a variable that are accessible
             //Try to find corresponding variables
-            var possibleVariables = node.SymbolTable.GetVariables(
-                                    v => v.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
-
+            var possibleVariables = node.SymbolTable.GetVariableExplicit(new URI(userTokenToSeek.Text));
+            
             if (possibleVariables != null && possibleVariables.Count > 0)
             {
                 //Get childrens of a type to get completion possibilities
@@ -791,12 +788,12 @@ namespace TypeCobol.LanguageServer
                     {
                         var typeChildrens = GetTypeChildrens(node.SymbolTable, variable);
                         if (typeChildrens != null)
-                            childrens.AddRange(typeChildrens);
+                            childrens.AddRange(typeChildrens.Where(t => t.Name != null));
                     }
 
                     completionItems.AddRange(
                         childrens.Where(
-                                c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase))
+                                c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
                             .Select(child => new CompletionItem(child.Name)));
                 }
             }
