@@ -4,11 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.CustomExceptions;
 
 namespace TypeCobol.Tools.APIHelpers
@@ -68,17 +71,23 @@ namespace TypeCobol.Tools.APIHelpers
             return table;
         }
 
-        public static SymbolTable LoadDependencies(List<string> paths, DocumentFormat format, SymbolTable intrinsicTable, List<string> inputFiles, EventHandler<DiagnosticsErrorEvent> diagEvent)
+        public static SymbolTable LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable,
+            [NotNull] List<string> inputFiles, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
+            
             var parser = new Parser(intrinsicTable);
             var diagnostics = new List<Diagnostic>();
             var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Namespace); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
 
             var dependencies = new List<string>();
             string[] extensions = { ".tcbl", ".cbl", ".cpy" };
-            foreach (var path in paths)
-            {
-                dependencies.AddRange(Tools.FileSystem.GetFiles(path, extensions, true)); //Get File by name or search the directory for all files
+            foreach (var path in paths) {
+                var dependenciesFound = Tools.FileSystem.GetFiles(path, extensions, true);
+                //Issue #668, warn if dependencies path are invalid
+                if (diagEvent != null && dependenciesFound.Count == 0) {
+                    diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic("No dependencies found", 1, 1, 1, null, MessageCode.Warning) });
+                }
+                dependencies.AddRange(dependenciesFound); //Get File by name or search the directory for all files
             }
 
 #if EUROINFO_RULES
@@ -99,10 +108,11 @@ namespace TypeCobol.Tools.APIHelpers
             }
 #endif
 
+
             foreach (string path in dependencies)
             {
 
-                
+
 #if EUROINFO_RULES
                 //Issue #583, ignore a dependency if the same file will be parsed as an input file just after
 
@@ -127,13 +137,26 @@ namespace TypeCobol.Tools.APIHelpers
                         diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
                     }
 
-                    if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Count() == 0)
+                    if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || !parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Any())
                     {
                         throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
                     }
 
                     foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
                     {
+                        var declarationTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+                        var globalTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+                        
+
+                        //If there is no public types or functions, then call diagEvent
+                        if (diagEvent != null 
+                            && !globalTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement().Visibility == AccessModifier.Public))            //No Public Types in Global table
+                            && !declarationTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement().Visibility == AccessModifier.Public))       //No Public Types in Declaration table
+                            && !declarationTable.Functions.Values.Any(fds => fds.Any(fd => fd.CodeElement().Visibility == AccessModifier.Public)))  //No Public Functions in Declaration table
+                        {
+                            diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(string.Format("No public types or procedures/functions found in {0}", program.Name), 1, 1, 1, null, MessageCode.Warning) });
+                            continue;
+                        }
                         table.AddProgram(program); //Add program to Namespace symbol table
                     }
                 }

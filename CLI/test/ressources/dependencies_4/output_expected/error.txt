@@ -1,0 +1,5 @@
+﻿ReturnCode=FatalError_
+1 error in "input\DoesntExists.rdz.tcbl":
+Line 1[1,1] <34, Error, Semantics> - Error while parsing input\DoesntExists.rdz.tcbl: Line 1[1,1] <37, Warning, General> - Warning: No dependencies found
+1 error in "input\Callee.rdz.tcbl":
+Line 1[1,1] <34, Error, Semantics> - Error while parsing input\Callee.rdz.tcbl: Line 1[1,1] <37, Warning, General> - Warning: No public types or procedures/functions found in Callee

@@ -1,0 +1,48 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM3.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+       01  somedate     TYPE Date.
+       01  message      PIC X(80).
+       01 Calendar TYPE Callee::Calendar.
+
+       PROCEDURE DIVISION.
+
+       declare procedure check private
+          input mydate        TYPE Date.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+
+       TRAITEMENT.
+
+           set Calendar::Gregorian to true
+
+      * __________________________________________________
+      * KO, MyPublicProcedure is not an intrinsic procedure
+           CALL MyPublicProcedure
+                    INPUT      somedate 
+      * __________________________________________________
+      * OK public procedure declared in "dependencies" file
+           CALL Callee::MyPublicProcedure
+                    INPUT      somedate
+	   
+      * __________________________________________________
+      *procedure declared in this program
+           CALL PGM3::check INPUT      somedate
+
+      *procedure declared in this program
+          CALL check         INPUT      somedate
+
+      * __________________________________________________
+      *procedure declared as intrinsic in MyIntrinsicFunctions
+          call dump input message
+      
+      *procedure declared as intrinsic in MyIntrinsicFunctions
+          call MyIntrinsicFunctions::dump input message
+        .
+       END PROGRAM PGM3.
+
