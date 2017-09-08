@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 using System.Linq.Expressions;
+using String = System.String;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -16,10 +17,40 @@ namespace TypeCobol.Compiler.CodeModel
         public Scope CurrentScope { get; internal set; }
         public SymbolTable EnclosingScope { get; internal set; }
 
+        public Dictionary<Node, List<DataDefinition>> TypesReferences
+        {
+            get
+            {
+                if (this.CurrentScope == Scope.Declarations)
+                    return _typesReferences;
+                else
+                {
+                    return GetTableFromScope(Scope.Declarations)._typesReferences;
+                }
+            }
+            set
+            {
+                if (this.CurrentScope == Scope.Declarations)
+                {
+                    _typesReferences = value;
+                }
+                else
+                {
+                    if (GetTableFromScope(Scope.Declarations) != null)
+                        GetTableFromScope(Scope.Declarations)._typesReferences = value;
+                }
+                   
+            }
+        }
+
+        private Dictionary<Node, List<DataDefinition>> _typesReferences;
+
+
         public SymbolTable(SymbolTable enclosing, Scope current)
         {
             CurrentScope = current;
             EnclosingScope = enclosing;
+            TypesReferences = new Dictionary<Node, List<DataDefinition>>();
             if (EnclosingScope == null && CurrentScope != Scope.Intrinsic)
                 throw new InvalidOperationException("Only Table of INTRINSIC symbols don't have any enclosing scope.");
         }
@@ -201,6 +232,74 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
+        public void GetVariablesByType(DataType dataType, ref List<DataDefinition> foundedVariables, List<Scope> scopes)
+        {
+            if(foundedVariables == null)
+                foundedVariables = new List<DataDefinition>();
+            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
+
+            foreach (var scope in scopes)
+            {
+                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
+                    throw new NotSupportedException();
+
+                foreach (var variable in GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t))
+                {
+                    SeekVariableType(dataType, variable, ref foundedVariables);
+                }
+          
+            }
+        }
+
+        private void SeekVariableType(DataType dataType, DataDefinition variable, ref List<DataDefinition> foundedVariables)
+        {
+            if (variable.DataType == dataType)
+            {
+                if(!foundedVariables.Any(v => v == variable))
+                    foundedVariables.Add(variable);
+                return;
+            }
+              
+            if (variable.DataType != null && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
+            {
+                var types = GetTypes(t => t.DataType == variable.DataType, new List<Scope>
+                                                                    {
+                                                                        Scope.Declarations,
+                                                                        Scope.Global,
+                                                                        Scope.Intrinsic,
+                                                                        Scope.Namespace
+                                                                    });
+
+                foreach (var type in types)
+                {
+                    if (type.Children != null && type.Children.Count > 0)
+                    {
+                        foreach (var childrenType in type.Children)
+                        {
+                            if (childrenType is DataDefinition && childrenType.Name != null)
+                            {
+                                SeekVariableType(dataType, childrenType as DataDefinition, ref foundedVariables);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (variable.Children != null && variable.Children.Count > 0)
+            {
+                foreach (var children in variable.Children)
+                {
+                    if (children is DataDefinition && children.Name != null)
+                    {
+                        SeekVariableType(dataType, children as DataDefinition, ref foundedVariables);
+                    }
+                }
+            }
+        }
+
+      
+
         public List<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
         {
             var foundedVariables = new List<DataDefinition>();
@@ -299,7 +398,11 @@ namespace TypeCobol.Compiler.CodeModel
             
             if (currentTypeDef != null)
             {
-                foreach (var reference in currentTypeDef.References)
+                var dataType = TypesReferences.FirstOrDefault(k => k.Key == currentTypeDef);
+                if (dataType.Key == null || dataType.Value == null)
+                    return;
+                var references = dataType.Value;
+                foreach (var reference in references)
                 {
                     //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable
@@ -308,7 +411,6 @@ namespace TypeCobol.Compiler.CodeModel
                 }
                 return;
             }
-
 
             //If we reach here, it means we are on a DataDefinition with no parent
             //==> End of treatment, there is no match
@@ -324,9 +426,14 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="found"></param>
         /// <param name="heaDataDefinition"></param>
         /// <param name="currentDataDefinition"></param>
-        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition) {
+        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition)
+        {
+            var dataType = TypesReferences.FirstOrDefault(k => k.Key == currentDataDefinition);
+            if (dataType.Key == null || dataType.Value == null)
+                return;
+            var references = dataType.Value;
 
-            foreach (var reference in currentDataDefinition.References) {
+            foreach (var reference in references) {
                 var parentTypeDef = reference.GetParentTypeDefinition;
                 if (parentTypeDef != null) {
                     AddAllReference(found, heaDataDefinition, parentTypeDef);

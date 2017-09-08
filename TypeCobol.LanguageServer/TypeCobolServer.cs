@@ -15,6 +15,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
 
 namespace TypeCobol.LanguageServer
 {
@@ -987,7 +988,7 @@ namespace TypeCobol.LanguageServer
             List<DataDefinition> variables = null;
 
             variables = node.SymbolTable.GetVariables(predicate, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
-            completionItems.AddRange(variables.Select(v => new CompletionItem(v.Name)));
+            completionItems.AddRange(CreateCompletionItemsForVariables(variables));
 
             return completionItems;
         }
@@ -997,47 +998,93 @@ namespace TypeCobol.LanguageServer
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(fileCompiler, codeElement);
-            List<DataDefinition> variables = new List<DataDefinition>();
-            var firstReferences = new List<Node>();
+            List<DataDefinition> potentialVariables = new List<DataDefinition>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
 
-            var firstReferenceToken = arrangedCodeElement.ArrangedConsumedTokens.TakeWhile(t => t != lastSignificantToken).LastOrDefault();
-            if (firstReferenceToken == null) 
+            var qualifiedNameTokens = arrangedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.UserDefinedWord).TakeWhile(t => t != lastSignificantToken).Where(t => t.TokenType != TokenType.QualifiedNameSeparator);
+            if (!qualifiedNameTokens.Any()) 
                 return completionItems;
 
-            firstReferences.AddRange(
-                node.SymbolTable.GetVariables(
-                    da => da.Name.Equals(firstReferenceToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                    new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
 
-            if (firstReferences != null && firstReferences.Count == 0) //No variable found, it mays come from a type.
+            DataType seekedDataType = null;
+            var foundedVar = node.SymbolTable.GetVariableExplicit(new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
+
+
+            if (foundedVar == null || (foundedVar != null && foundedVar.Count > 1))
+                return completionItems;
+
+            seekedDataType = foundedVar.First().DataType;
+
+            node.SymbolTable.GetVariablesByType(seekedDataType, ref potentialVariables, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
+
+            foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
             {
-                var possibleTypes = node.SymbolTable.GetTypes(t => t.Children != null && t.Children.Any(da => da!=null && da.Name!=null && da.Name.Equals(firstReferenceToken.Text, StringComparison.InvariantCultureIgnoreCase)),
-                                                            new List<SymbolTable.Scope>
-                                                            {
-                                                                SymbolTable.Scope.Declarations,
-                                                                SymbolTable.Scope.Global,
-                                                                SymbolTable.Scope.Intrinsic,
-                                                                SymbolTable.Scope.Namespace
-                                                            });
-
-                firstReferences.AddRange(possibleTypes.SelectMany(t => t.Children.Where(c => c.Name.Equals(firstReferenceToken.Text, StringComparison.InvariantCultureIgnoreCase))));
+                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems);
             }
 
-            foreach (var firstReference in firstReferences)
-            {
-                variables.AddRange(
-                    node.SymbolTable.GetVariables(
-                        da =>
-                            da.DataType == (firstReference as DataDefinition).DataType &&
-                            (da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) ||
-                             da.QualifiedName.ToString().StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)),
-                        new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
-            }
-         
-            completionItems.AddRange(variables.Distinct().Select(v => new CompletionItem(v.Name)));
+            completionItems.Remove(
+                completionItems.FirstOrDefault(
+                    c => c.label.Contains(string.Join("::", qualifiedNameTokens.Select(t => t.Text)))));
 
-            return completionItems;
+            return completionItems.Where(c => c.insertText.IndexOf(userFilterText, StringComparison.InvariantCultureIgnoreCase) >= 0);
+        }
+
+        private void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, ref List<CompletionItem> completionItems)
+        {
+            var symbolTable = node.SymbolTable;
+            if (variable.GetParentTypeDefinition == null)  //Variable is not comming from a type. 
+            {
+                if (symbolTable.GetVariableExplicit(new URI(variable.Name)).Count > 0)   //Check if this variable is present locally. 
+                {
+                    completionItems.Add(CreateCompletionItemForVariable(variable));
+                }
+            }
+            else
+            {
+                if (symbolTable.TypesReferences != null) //We are in a typedef, get references of this type
+                {
+                    var types = symbolTable.GetType(variable.GetParentTypeDefinition.DataType);
+                    IEnumerable<DataDefinition> references = null;
+                    if (types.Count == 0)
+                    {
+                        references = symbolTable.TypesReferences.SelectMany(t => t.Value);
+                    }
+                    else
+                    {
+                        var type = types.First();
+                        references = symbolTable.TypesReferences.Where(t => t.Key == type).SelectMany(r => r.Value);
+                    }
+
+                    foreach (var reference in references)
+                    {
+                        if (symbolTable.GetVariableExplicit(new URI(reference.Name)).Count > 0)  //Check if this variable is present locally. If not just ignore it
+                        {
+                            if (reference.GetParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final varaible
+                            {
+                                var referenceArrangedQualifiedName = string.Join("::", reference.QualifiedName.ToString().Split(reference.QualifiedName.Separator).Skip(1)); //Skip Program Name
+                                var finalQualifiedName = string.Format("{0}::{1}", referenceArrangedQualifiedName, variable.QualifiedName.Head);
+                                var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, finalQualifiedName);
+                                completionItems.Add(new CompletionItem(variableDisplay) { insertText = finalQualifiedName });
+                            }
+                            else //If the reference is always in a typedef, let's loop and ride up until we are in a final variable
+                            {
+                                var tempCompletionItems = new List<CompletionItem>();
+                                SearchVariableInTypesAndLevels(node, reference, ref tempCompletionItems);
+
+                                if (tempCompletionItems.Count > 0)
+                                {
+                                    foreach (var tempComp in tempCompletionItems)
+                                    {
+                                        tempComp.insertText += "::" + variable.QualifiedName.Head;
+                                        tempComp.label = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, tempComp.insertText);
+                                        completionItems.Add(tempComp);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private IEnumerable<CompletionItem> CreateCompletionItemsForType(List<TypeDefinition> types, Node node, bool enablePublicFlag = true)
@@ -1114,6 +1161,25 @@ namespace TypeCobol.LanguageServer
             }
 
             return completionItems;
+        }
+
+        private IEnumerable<CompletionItem> CreateCompletionItemsForVariables(List<DataDefinition> variables)
+        {
+            var completionItems = new List<CompletionItem>();
+
+            foreach (var variable in variables)
+            {
+                completionItems.Add(CreateCompletionItemForVariable(variable));
+            }
+
+            return completionItems;
+        }
+
+        private CompletionItem CreateCompletionItemForVariable(DataDefinition variable)
+        {
+            var variableArrangedQualifiedName = string.Join("::", variable.QualifiedName.ToString().Split(variable.QualifiedName.Separator).Skip(1)); //Skip Program Name
+            var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
+            return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName };
         }
         #endregion
 

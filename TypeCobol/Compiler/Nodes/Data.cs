@@ -119,11 +119,11 @@ namespace TypeCobol.Compiler.Nodes {
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
 
         private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
-        protected DataDefinition(DataDefinitionEntry entry): base(entry) { References = new List<DataDefinition>(); }
+        protected DataDefinition(DataDefinitionEntry entry): base(entry) {  }
         public override string ID { get { return "data-definition"; } }
         public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 
-        public List<DataDefinition> References { get; set; }
+
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }

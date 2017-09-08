@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -44,14 +45,20 @@ namespace TypeCobol.Compiler.Diagnostics
         private void TypeReferencer(DataDescription dataEntry)
         {
             //Check SymbolTable for dataEntry DataType.Name
-            var types = dataEntry.SymbolTable.GetType(dataEntry.DataType);
+            var symbolTable = dataEntry.SymbolTable;
+            var types = symbolTable.GetType(dataEntry.DataType);
             if (types.Count != 1) return;
 
-            //Add this dataEntry to type references
-            var typeToUpdate = types.First();
-            if (typeToUpdate == null) return;
-
-            typeToUpdate.References.Add(dataEntry);
+            var type = types.First();
+            
+            if (symbolTable.TypesReferences.ContainsKey(type)) //If datatype already exists, add ref to the list
+            {
+                symbolTable.TypesReferences[type].Add(dataEntry);
+            }
+            else
+            {
+                symbolTable.TypesReferences.Add(type, new List<DataDefinition> {dataEntry});
+            }
         }
       
     }
