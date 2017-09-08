@@ -457,7 +457,7 @@ namespace TypeCobol.Compiler.CodeElements
                     }
                     return type;
                 }
-		        return DataType.Omitted;
+		        return DataType.Unknown;
 		    }
 	    }
     }
