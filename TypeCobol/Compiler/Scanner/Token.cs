@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Scanner
@@ -87,6 +88,11 @@ namespace TypeCobol.Compiler.Scanner
         /// Type from the TokenType enumeration
         /// </summary>
         public TokenType TokenType { get; internal set; }
+
+        /// <summary>
+        /// Previous potential tokentype, used for instance when token is changed to a PartialCobolWord.
+        /// </summary>
+        public TokenType? PreviousTokenType { get; set; } 
 
         /// <summary>
         /// Family from the TokenFamily Enumeration
@@ -376,7 +382,13 @@ namespace TypeCobol.Compiler.Scanner
             {
                 return Text.IndexOf(comparisonToken.Text, StringComparison.OrdinalIgnoreCase) >= 0;
             }
-            // 3. For token families
+            // 3. Check for Picture replacement
+            //else if (TokenType == TokenType.PictureCharacterString)
+            //{
+            //    if (comparisonToken.Text.Length > 1)
+            //        return Regex.IsMatch(Text, comparisonToken.Text, RegexOptions.IgnoreCase);
+            //}
+            // 4. For token families
             //    - AlphanumericLiteral
             //    - NumericLiteral
             //    - SyntaxLiteral
@@ -387,7 +399,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 return Text.Equals(comparisonToken.Text, StringComparison.OrdinalIgnoreCase);
             }
-            // 4. In all other cases, token type comparison was enough
+            // 5. In all other cases, token type comparison was enough
             {
                 return true;
             }

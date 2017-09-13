@@ -424,11 +424,15 @@ namespace TypeCobol.Compiler.Preprocessor
                     string replacedTokenText =
                         (indexOfPartToReplace > 0 ? originalTokenText.Substring(0, indexOfPartToReplace) : String.Empty) +
                         replacementPart +
-                        ((indexOfPartToReplace + partToReplace.Length) < (originalTokenText.Length - 1) ? originalTokenText.Substring(indexOfPartToReplace + partToReplace.Length) : String.Empty);
+                        ((indexOfPartToReplace + partToReplace.Length) < (originalTokenText.Length) ? originalTokenText.Substring(indexOfPartToReplace + partToReplace.Length) : String.Empty);
                     // TO DO : find a way to transfer the scanner context the of original token to the call below
                     Diagnostic error = null;
                     Token generatedToken = Scanner.Scanner.ScanIsolatedTokenInDefaultContext(replacedTokenText, out error);
                     // TO DO : find a way to report the error above ...
+
+                    if (originalToken.PreviousTokenType != null) //In case orignal token was previously an other type of token reset it back to it's orignal type. 
+                        generatedToken.TokenType = originalToken.PreviousTokenType.Value;
+
                     ReplacedPartialCobolWord replacedPartialCobolWord = new ReplacedPartialCobolWord(generatedToken, partialWordReplaceOperation.PartialReplacementToken, originalToken);
                     return replacedPartialCobolWord;
 

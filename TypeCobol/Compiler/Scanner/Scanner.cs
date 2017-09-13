@@ -1600,8 +1600,20 @@ namespace TypeCobol.Compiler.Scanner
             }
             else
             {
-                // Return a picture character string
-                return new Token(TokenType.PictureCharacterString, startIndex, endIndex, tokensLine);
+                var picToken = new Token(TokenType.PictureCharacterString, startIndex, endIndex, tokensLine);
+                var patternEndIndex = endIndex;
+                if (CheckForPartialCobolWordPattern(line.Substring(startIndex).IndexOf(":", StringComparison.Ordinal) + startIndex, out patternEndIndex)) 
+                { //Check if there is cobol partial word inside the picture declaration. 
+                    picToken.TokenType = TokenType.PartialCobolWord; //Match the whole PictureCharecterString token as a partial cobol word. 
+                    picToken.PreviousTokenType = TokenType.PictureCharacterString; //Save that the token was previously a picture character string token
+                    return picToken;
+                }
+                else
+                {
+                    // Return a picture character string
+                    return picToken;
+                }
+               
             }
         }
 
