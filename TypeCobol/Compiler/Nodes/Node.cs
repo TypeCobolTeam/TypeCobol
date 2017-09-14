@@ -162,6 +162,15 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        /// <summary>
+        /// Used by the Generator to specify a Layout the current Node
+        /// </summary>
+        public ColumnsLayout ? Layout
+        {
+            get;
+            set;
+        }
+
         public virtual string Name {
             get { return string.Empty; }
         }

@@ -349,13 +349,24 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Get the Lines gnerated for a Node.
+        /// </summary>
+        /// <param name="node">The node to get the lines</param>
+        /// <returns>The Node's lines</returns>
+        IEnumerable<ITextLine> NodeLines(Node node)
+        {
+            node.Layout = Layout;
+            return node.Lines;
+        }
+
+        /// <summary>
         /// Recursively get all lines of a node and its children.
         /// </summary>
         /// <param name="node">The node to get all line</param>
         /// <param name="all_lines">All line accumulator</param>
         void RecursiveNodeLines(Node node, BitArray generated_node, List<ITextLine> all_lines)
         {
-            foreach (var l in node.Lines)
+            foreach (var l in NodeLines(node))
                 all_lines.Add(l);
             foreach (Node child in node.Children)
             {
@@ -382,7 +393,7 @@ namespace TypeCobol.Codegen.Generators
             }
             else
             {
-                foreach (var l in node.Lines)
+                foreach (var l in NodeLines(node))
                     yield return l;
                 if (node.IsFlagSet(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex))
                 {
@@ -394,7 +405,7 @@ namespace TypeCobol.Codegen.Generators
                         {
                             if (child.NodeIndex >= 0)
                                 generated_node[child.NodeIndex] = true;
-                            foreach (var cl in child.Lines)
+                            foreach (var cl in NodeLines(child))
                             {
                                 yield return cl;
                             }

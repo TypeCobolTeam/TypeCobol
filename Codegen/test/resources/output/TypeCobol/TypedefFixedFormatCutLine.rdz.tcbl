@@ -1,0 +1,16 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION .
+       working-storage section.
+      *01 Person TYPEDEF STRICT.
+      *    05 LastName      pic X(30) value
+      *    'zerzer zer zer zer sdfsd fzerzer zer ze rzer zer zer ze r'.
+      
+      *01 AccountOwner type Person.
+       01 AccountOwner. 
+           02 LastName pic X(30) value
+           'zerzer zer zer zer sdfsd fzerzer zer ze rzer zer zer ze r'.
+                                         
+       procedure division.
+           .
+       END PROGRAM DVZF0OSM.
