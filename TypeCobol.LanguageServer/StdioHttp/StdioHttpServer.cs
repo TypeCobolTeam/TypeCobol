@@ -66,7 +66,16 @@ namespace TypeCobol.LanguageServer.StdioHttp
         /// <returns></returns>
 
         protected void ParseHeader(String line, Headers headers)
-        {
+        {   //JCM: 14/09/2017 : I don't know how to avoid BOM characters so I remove them like this.
+            //https://en.wikipedia.org/wiki/Byte_order_mark
+            if (line.Length >= 3)
+            {   //REMOVE ANY BOM Characaters
+                //0xEF,0xBB,0xBF
+                if (line[0] == 0xEF && line[1] == 0xBB && line[2] == 0xBF)
+                {
+                    line = line.Substring(3);
+                }
+            }
             int sepIndex = line.IndexOf(':');
             if (sepIndex >= 0)
             {
