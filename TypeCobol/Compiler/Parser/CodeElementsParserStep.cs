@@ -183,8 +183,11 @@ namespace TypeCobol.Compiler.Parser
             {
                 var currentToken = (Token) cobolParser.CurrentToken;
                 CodeElementsLine codeElementsLine = GetCodeElementsLineForToken(currentToken);
-                codeElementsLine.AddParserDiagnostic(new TokenDiagnostic(MessageCode.ImplementationError,
-                    currentToken, currentToken.Line, e));
+                if (codeElementsLine != null)
+                {
+                    codeElementsLine.AddParserDiagnostic(new TokenDiagnostic(MessageCode.ImplementationError,
+                        currentToken, currentToken.Line, e));
+                }
             }
 
             if (codeElementsParseTree != null)
@@ -198,6 +201,10 @@ namespace TypeCobol.Compiler.Parser
                         // Get the first line that was parsed     
                         var tokenStart = (Token) codeElementParseTree.Start;
                         CodeElementsLine codeElementsLine = GetCodeElementsLineForToken(tokenStart);
+                        if (codeElementsLine == null)
+                        {
+                            continue;
+                        }
 
                         // Register that this line was updated
                         // COMMENTED FOR THE SAKE OF PERFORMANCE -- SEE ISSUE #160
@@ -277,7 +284,8 @@ namespace TypeCobol.Compiler.Parser
                         {
                             CodeElementsLine codeElementsLine =
                                 GetCodeElementsLineForToken((Token) d.OffendingSymbol);
-                            codeElementsLine.AddParserDiagnostic(d);
+                            if (codeElementsLine != null)
+                                codeElementsLine.AddParserDiagnostic(d);
                         }
                     }
                 }
@@ -293,15 +301,17 @@ namespace TypeCobol.Compiler.Parser
 
         private static CodeElementsLine GetCodeElementsLineForToken(Token tokenStart)
         {
-            CodeElementsLine codeElementsLine;
+            CodeElementsLine codeElementsLine = null;
             var importedToken = tokenStart as ImportedToken;
             if (importedToken != null)
             {
-                codeElementsLine = (CodeElementsLine)importedToken.CopyDirective.TextNameSymbol.TokensLine;
+                if (importedToken.CopyDirective.TextNameSymbol.TokensLine is CodeElementsLine)
+                    codeElementsLine = (CodeElementsLine)importedToken.CopyDirective.TextNameSymbol.TokensLine;
             }
             else
             {
-                codeElementsLine = ((CodeElementsLine)tokenStart.TokensLine);
+                if (tokenStart.TokensLine is CodeElementsLine)
+                    codeElementsLine = ((CodeElementsLine)tokenStart.TokensLine);
             }
 
             return codeElementsLine;
