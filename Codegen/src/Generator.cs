@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Analytics;
 using TypeCobol.Codegen.Actions;
+using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
@@ -124,7 +125,7 @@ namespace TypeCobol.Codegen
         /// </summary>
         public Tuple<int, int, int, List<int>, List<int>> FromToPositions(Node node)
         {
-            if (node.CodeElement == null || node.CodeElement.ConsumedTokens == null)
+            if (node.CodeElement == null || node.CodeElement.ConsumedTokens == null || node is ParameterEntry)
                 return null;
             if (node.CodeElement.ConsumedTokens.Count > 0)
             {

@@ -91,6 +91,7 @@ namespace TypeCobol.Compiler.Parser
                 if (context.functionDataParameter() != null)
                 {
                     var data = CreateFunctionDataParameter(context.functionDataParameter());
+                    AddTokensConsumedAndDiagnosticsAttachedInContext(data.ConsumedTokens, data.Diagnostics ?? new List<Diagnostic>(), context);
                     parameters.Add(data);
                 }
                 else if (context.functionConditionParameter() != null)
@@ -99,6 +100,7 @@ namespace TypeCobol.Compiler.Parser
                     if (parameters.Count < 1)
                     {
                         var data = CreateFunctionDataParameter(condition);
+                        AddTokensConsumedAndDiagnosticsAttachedInContext(data.ConsumedTokens, data.Diagnostics ?? new List<Diagnostic>(), context);
                         parameters.Add(data);
                     }
                     else

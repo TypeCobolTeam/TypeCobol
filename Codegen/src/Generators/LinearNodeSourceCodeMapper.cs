@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
@@ -375,7 +376,8 @@ namespace TypeCobol.Codegen.Generators
             NodeFunctionData funData = (NodeFunctionData)Nodes[CurrentFunctionDeclNode.NodeIndex];
             //Create a New Data
             NodeData data = null;
-            bool bHasCodeElement = (node.CodeElement == null || node.CodeElement.ConsumedTokens == null) ? false : node.CodeElement.ConsumedTokens.Count > 0;
+            bool bHasCodeElement = node is ParameterEntry ? false : 
+                (node.CodeElement == null || node.CodeElement.ConsumedTokens == null) ? false : node.CodeElement.ConsumedTokens.Count > 0;
             if (!bHasCodeElement)
             {
                 //No Code Element ==> certainly a Generated node                
