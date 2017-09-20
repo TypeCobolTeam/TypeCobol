@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Analytics;
 using TypeCobol.LanguageServer.JsonRPC;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
@@ -57,6 +58,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch(Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -72,6 +74,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -87,6 +90,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -102,6 +106,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -117,6 +122,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -132,6 +138,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -147,6 +154,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -162,6 +170,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -177,6 +186,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -192,6 +202,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -207,6 +218,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -222,6 +234,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -237,6 +250,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message, data = new InitializeError() { retry = false } };
             }
             return resultOrError;
@@ -252,6 +266,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -267,6 +282,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -285,6 +301,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -300,6 +317,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -315,6 +333,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message };
             }
             return resultOrError;
@@ -328,6 +347,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch(Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -340,6 +360,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
             finally
@@ -362,6 +383,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -374,8 +396,8 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
-                throw e;
             }
         }
 
@@ -387,6 +409,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -399,6 +422,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -411,6 +435,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             }
             catch (Exception e)
             {
+                AnalyticsWrapper.Telemetry.TrackException(e);
                 RemoteConsole.Error(String.Format("Error while handling notification {0} : {1}", notificationType.Method, e.Message));
             }
         }
@@ -427,11 +452,11 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         public virtual InitializeResult OnInitialize(InitializeParams parameters)
         {
             var capabilities = new ServerCapabilities();
-            capabilities.textDocumentSync = TextDocumentSyncKind.None;
+            capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
             capabilities.hoverProvider = false;
-            capabilities.completionProvider = null;
+            capabilities.completionProvider = new CompletionOptions() { resolveProvider = true};
             capabilities.signatureHelpProvider = null;
-            capabilities.definitionProvider = false;
+            capabilities.definitionProvider = true;
             capabilities.referencesProvider = false;
             capabilities.documentHighlightProvider = false;
             capabilities.documentSymbolProvider = false;

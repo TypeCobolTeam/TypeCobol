@@ -83,6 +83,9 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile)
             {
+                if (!typeCobolWorkspace.OpenedFileCompiler.ContainsKey(objUri))
+                    return;
+
                 var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
 
                 #region Convert text changes format from multiline range replacement to single line updates
@@ -100,7 +103,7 @@ namespace TypeCobol.LanguageServer
                                                            contentChange.text[0] == '\n';
                         //Allow to know if a new line was added
                         lineUpdates =
-                            contentChange.text.Replace("\r", "").Split('\n').ToList(); //Split on \r \n to know the number of lines added
+                            contentChange.text.Replace("\r", "").Split('\n').Where(s => !string.IsNullOrEmpty(s)).ToList(); //Split on \r \n to know the number of lines added
                     }
 
                     // Document cleared
@@ -169,7 +172,12 @@ namespace TypeCobol.LanguageServer
                         string startOfFirstLine = null;
                         if (firstLineChar > 0)
                         {
-                            startOfFirstLine = originalFirstLineText.Substring(0, contentChange.range.start.character);
+                            if (originalFirstLineText.Length >= contentChange.range.start.character)
+                                startOfFirstLine = originalFirstLineText.Substring(0,
+                                    contentChange.range.start.character);
+                            else
+                                startOfFirstLine = originalFirstLineText.Substring(0, originalFirstLineText.Length) +
+                                    new string(' ', contentChange.range.start.character - originalFirstLineText.Length);
                         }
 
                         // Text not modified at the end of the last replaced line
@@ -1007,7 +1015,7 @@ namespace TypeCobol.LanguageServer
             var foundedVar = node.SymbolTable.GetVariableExplicit(new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
 
 
-            if (foundedVar == null || (foundedVar != null && foundedVar.Count > 1))
+            if (foundedVar.Count != 1) //If no varaible or more than one founded stop process
                 return completionItems;
 
             seekedDataType = foundedVar.First().DataType;

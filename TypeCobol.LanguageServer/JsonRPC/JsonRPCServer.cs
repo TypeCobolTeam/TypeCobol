@@ -270,7 +270,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
         public void WriteServerLog(string trace)
         {
             messageServer.WriteServerLog(trace);
-            AnalyticsWrapper.Telemetry.TrackException(new Exception(trace));
+            AnalyticsWrapper.Telemetry.TrackTrace(trace);
         }       
     }
 }

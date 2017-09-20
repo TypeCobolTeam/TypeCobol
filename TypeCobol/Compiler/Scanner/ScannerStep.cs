@@ -259,7 +259,13 @@ namespace TypeCobol.Compiler.Scanner
                 else
                 {
                     // Get the scan state at the end of the previous line
-                    TokensLine previousLine = documentLines[lineToScanIndex - 1];
+                    int tempLineIndex = lineToScanIndex - 1;
+                    TokensLine previousLine = documentLines[tempLineIndex];
+                    while (previousLine.ScanState == null)
+                    {
+                        tempLineIndex--;
+                        previousLine = documentLines[tempLineIndex];
+                    }
                     // Scan the current line with this initial scan state 
                     Scanner.ScanTokensLine(lineToScan, previousLine.ScanState, compilerOptions, copyTextNameVariations);
                 }

@@ -91,8 +91,8 @@ namespace TypeCobol.LanguageServices.Editor
                 fileCompiler.CompilationResultsForProgram.ProgramClassChanged += ProgramClassChanged;
             }
 
-            fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
-            fileCompiler.StartContinuousBackgroundCompilation(200, 500, 1000, 3000); //TODO: create a better refresh compilation
+            //fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
+            //fileCompiler.StartContinuousBackgroundCompilation(200, 500, 1000, 3000); //TODO: create a better refresh compilation
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace TypeCobol.LanguageServices.Editor
                 {
                     fileCompilerToClose = OpenedFileCompiler[fileUri];
                     OpenedFileCompiler.Remove(fileUri);
-                    fileCompilerToClose.StopContinuousBackgroundCompilation();
+                    //fileCompilerToClose.StopContinuousBackgroundCompilation();
                     fileCompilerToClose.CompilationResultsForProgram.ProgramClassChanged -= ProgramClassChanged;
                 }
             }            
