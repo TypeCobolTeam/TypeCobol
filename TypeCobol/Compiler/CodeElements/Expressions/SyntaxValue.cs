@@ -399,13 +399,16 @@ namespace TypeCobol.Compiler.CodeElements
         {
             get
             {
-                switch (Token.TokenType)
-                {
-                    case TokenType.PictureCharacterString:
-                        return NormalizePictureText(Token.Text);
-                    default:
-                        return Value;
-                }
+                if (Token != null)
+                    switch (Token.TokenType)
+                    {
+                        case TokenType.PictureCharacterString:
+                            return NormalizePictureText(Token.Text);
+                        default:
+                            return Value;
+                    }
+                else
+                    return Value;
             }
         }
 

@@ -321,7 +321,6 @@ namespace TypeCobol.LanguageServer
         public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
             Uri objUri = new Uri(parameters.uri);
-            bool temp;
             if (objUri.IsFile)
             {
                 // Get compilation info for the current file
@@ -348,7 +347,7 @@ namespace TypeCobol.LanguageServer
 
                             foreach (var tempCodeElement in tempCodeElements.Reverse())
                             {
-                                if (!tempCodeElement.ConsumedTokens.Any(t => IsCompletionElligibleToken(t, out temp) &&
+                                if (!tempCodeElement.ConsumedTokens.Any(t => IsCompletionElligibleToken(t) &&
                                 ((t.Line == parameters.position.line +1 && t.StopIndex +1 <= parameters.position.character) || t.Line < parameters.position.line + 1)))
                                     ignoredCodeElements.Add(tempCodeElement);
                                 else
@@ -928,11 +927,22 @@ namespace TypeCobol.LanguageServer
                     });
 
 
-            int alreadyGivenParametersCount = arrangedCodeElement.ArrangedConsumedTokens
+            var alreadyGivenTokens = arrangedCodeElement.ArrangedConsumedTokens
                 .SkipWhile(t => t != lastSignificantToken).Skip(1)
                 .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
                 .Except(new List<Token>() {userFilterToken})
-                .Count(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line <= position.line + 1);
+                .Where(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line <= position.line + 1);
+
+            int alreadyGivenParametersCount = 0;
+            TokenType? previousTokenType = null;
+
+            foreach (var givenToken in alreadyGivenTokens)
+            {
+                if (givenToken.TokenType == TokenType.UserDefinedWord && (previousTokenType == null || previousTokenType.Value == TokenType.UserDefinedWord))
+                    alreadyGivenParametersCount++;
+                previousTokenType = givenToken.TokenType;
+            }
+
 
             var potentialVariablesForCompletion = new List<DataDefinition>();
             foreach (var procedure in calledProcedures)
@@ -971,17 +981,13 @@ namespace TypeCobol.LanguageServer
                 //Else see which parameter could be filled
                 var parameterToFill = procParams.ToArray()[alreadyGivenParametersCount];
                 //Get local/global variable that could correspond to the parameter
-                potentialVariablesForCompletion.AddRange(
-                    node.SymbolTable.GetVariables(v => v.DataType == parameterToFill.DataType &&
-                                                       v.Name.StartsWith(userFilterText,
-                                                           StringComparison.InvariantCultureIgnoreCase),
-                        new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
+
+                node.SymbolTable.GetVariablesByType(parameterToFill.DataType, ref potentialVariablesForCompletion, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
 
             }
 
-
-            //Add potential variables to completionItems
-            completionItems.AddRange(potentialVariablesForCompletion.Distinct().Select(v => new CompletionItem(v.Name)));
+            foreach (var potentialVariable in potentialVariablesForCompletion.Distinct()) 
+                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems
 
             return completionItems;
         }
@@ -1168,7 +1174,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private IEnumerable<CompletionItem> CreateCompletionItemsForVariables(List<DataDefinition> variables)
+        private IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables)
         {
             var completionItems = new List<CompletionItem>();
 
@@ -1259,18 +1265,23 @@ namespace TypeCobol.LanguageServer
         /// <param name="token"></param>
         /// <param name="bAllowLastPos"></param>
         /// <returns></returns>
-        private static bool IsCompletionElligibleToken(Token token, out bool bAllowLastPos)
+        private static bool IsCompletionElligibleToken(Token token)
         {
-            bAllowLastPos = false;
             for (int i = 0; i < elligibleCompletionTokens.Length; i++)
             {
                 if (elligibleCompletionTokens[i].Item1 == token.TokenType)
-                {
-                    bAllowLastPos = elligibleCompletionTokens[i].Item2;
                     return true;
-                }
             }
             return false;
+        }
+
+        private static bool DoesTokenAllowLastPos(Token token)
+        {
+            var potentialToken = elligibleCompletionTokens.FirstOrDefault(t => t.Item1 == token.TokenType);
+            if (potentialToken != null)
+                return potentialToken.Item2;
+            else
+                return false;
         }
 
         /// <summary>
@@ -1285,7 +1296,6 @@ namespace TypeCobol.LanguageServer
         private static CodeElement MatchCompletionCodeElement(Position position,
             IEnumerable<CodeElementWrapper> codeElements, out Token userFilterToken, out Token lastSignificantToken)
         {
-            bool bAllowLastPos = false;
             lastSignificantToken = null;
             CodeElement significantCodeElement = null;
             userFilterToken = null;
@@ -1313,7 +1323,7 @@ namespace TypeCobol.LanguageServer
                 //the cursor is at the end or in the middle of a token. 
             {
                 if (closestTokenToCursor.StopIndex + 1 == position.character &&
-                    IsCompletionElligibleToken(closestTokenToCursor, out bAllowLastPos) && bAllowLastPos == true)
+                    IsCompletionElligibleToken(closestTokenToCursor) && DoesTokenAllowLastPos(closestTokenToCursor))
                     //Detect if token is eligible and if the cursor is at the end of the token
                 {
                     //the completion has to start from this token and this codeElement
@@ -1369,7 +1379,7 @@ namespace TypeCobol.LanguageServer
                             t.Line < position.line + 1) &&
                             t.TokenFamily != TokenFamily.Whitespace);
 
-                
+                var significantTokensDectected = new Stack<Token>();
 
                 if (consumedTokens != null && consumedTokens.Any())
                 {
@@ -1378,11 +1388,12 @@ namespace TypeCobol.LanguageServer
                         if (finalToken.StartIndex > position.character && !(finalToken.Line < position.line + 1))
                             break;
 
-                        if (IsCompletionElligibleToken(finalToken, out bAllowLastPos) &&
+                        if (IsCompletionElligibleToken(finalToken) &&
                             (finalToken.StopIndex + 1 <= position.character || finalToken.Line <= position.line + 1))
                         {
                             lastSignificantToken = finalToken;
-                                //If eveyrhing is Ok add the final token as LastSinificantToken
+                            significantTokensDectected.Push(lastSignificantToken);
+                            //If eveyrhing is Ok add the final token as LastSinificantToken
                             significantCodeElement = codeElement;
                         }
                     }
@@ -1395,18 +1406,31 @@ namespace TypeCobol.LanguageServer
                                 && t.Line == position.line + 1
                                 && t.TokenType == TokenType.UserDefinedWord);
 
-                    //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
-                    if ((lastSignificantToken != null &&
-                         (!bAllowLastPos && lastSignificantToken.StopIndex + 1 == position.character && lastSignificantToken.Line == position.line + 1)) ||
-                        (consumedTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord &&
-                         !(position.character <= consumedTokens.LastOrDefault().StopIndex + 1 &&
-                           position.character >= consumedTokens.LastOrDefault().StartIndex) 
-                           && !(lastSignificantToken.TokenType == TokenType.INPUT || lastSignificantToken.TokenType == TokenType.OUTPUT || lastSignificantToken.TokenType == TokenType.IN_OUT)))
+
+                    var isCorrectTokenFound = false;
+                    while (!isCorrectTokenFound && significantTokensDectected.Count >= 0)
                     {
-                        lastSignificantToken = null;
-                        userFilterToken = null;
-                        significantCodeElement = null;
+                        //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
+                        if ((lastSignificantToken != null &&
+                              (!DoesTokenAllowLastPos(lastSignificantToken) && lastSignificantToken.StopIndex + 1 == position.character &&
+                               lastSignificantToken.Line == position.line + 1)) ||
+                             (consumedTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord &&
+                              !(position.character <= consumedTokens.LastOrDefault().StopIndex + 1 &&
+                                position.character >= consumedTokens.LastOrDefault().StartIndex)
+                              &&
+                              !(lastSignificantToken.TokenType == TokenType.INPUT ||
+                                lastSignificantToken.TokenType == TokenType.OUTPUT ||
+                                lastSignificantToken.TokenType == TokenType.IN_OUT)))
+                        {
+                            significantTokensDectected.Pop();
+                            lastSignificantToken = significantTokensDectected.Peek();
+                        }
+                        else
+                        {
+                            isCorrectTokenFound = true;
+                        }
                     }
+                    
                 }
             }
 
