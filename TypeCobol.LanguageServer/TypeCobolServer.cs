@@ -413,7 +413,10 @@ namespace TypeCobol.LanguageServer
                             case TokenType.MOVE:
                             {
                                 var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                                items.AddRange(GetCompletionForVariable(fileCompiler, matchingCodeElement, da => da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
+                                items.AddRange(GetCompletionForVariable(fileCompiler, matchingCodeElement,
+                                    da =>
+                                        da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
+                                        (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88)); //Ignore 88 level variable
                                 break;
                             }
                             case TokenType.TO:
@@ -1035,6 +1038,7 @@ namespace TypeCobol.LanguageServer
             seekedDataType = foundedVar.First().DataType;
 
             node.SymbolTable.GetVariablesByType(seekedDataType, ref potentialVariables, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
+            potentialVariables = potentialVariables.Where(da => (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88).ToList(); //Ignore variable of level 88. 
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
             {
