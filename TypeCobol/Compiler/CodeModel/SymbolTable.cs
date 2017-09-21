@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using String = System.String;
 
 namespace TypeCobol.Compiler.CodeModel
@@ -253,7 +254,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         private void SeekVariableType(DataType dataType, DataDefinition variable, ref List<DataDefinition> foundedVariables)
         {
-            if (variable.DataType == dataType)
+            if (Regex.Match(variable.DataType.Name, @"\b" + dataType.Name + @"\b", RegexOptions.IgnoreCase).Success) //TODO: need to evolve this check with type comparison not just text..
             {
                 if(!foundedVariables.Any(v => v == variable))
                     foundedVariables.Add(variable);

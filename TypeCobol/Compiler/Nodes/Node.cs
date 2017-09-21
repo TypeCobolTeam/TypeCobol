@@ -186,6 +186,8 @@ namespace TypeCobol.Compiler.Nodes {
                     if (!string.IsNullOrEmpty(parent.Name)) {
                         qn = parent.Name + "." + qn;
                     }
+                    if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
+                        break;
                     parent = parent.Parent;
                 }
                 

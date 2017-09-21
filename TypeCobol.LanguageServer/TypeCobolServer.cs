@@ -767,12 +767,12 @@ namespace TypeCobol.LanguageServer
             var userTokenToSeek =
                 arrangedCodeElement.ArrangedConsumedTokens.ElementAt(
                     arrangedCodeElement.ArrangedConsumedTokens.IndexOf(qualifiedNameSeparatorToken) - 1);
-            var tokensToExcept = new List<Token>();
-            tokensToExcept.AddRange(
+            var qualifiedNameTokens = new List<Token>();
+            qualifiedNameTokens.AddRange(
                     arrangedCodeElement.ArrangedConsumedTokens.Where(
                         t => t.TokenType == TokenType.UserDefinedWord || t.TokenType == TokenType.QualifiedNameSeparator));
             //Remove all the userdefinedword token and also QualifiedNameToken
-            arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(tokensToExcept).ToList();
+            arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(qualifiedNameTokens).ToList();
             //We only wants the token that in front of any QualifiedName 
             //Get the first significant token (i.e CALL/TYPE/...)
             Token firstSignificantToken;
@@ -781,7 +781,15 @@ namespace TypeCobol.LanguageServer
 
             //For MOVE INPUT OUTPUT variables etc.. , get all the childrens of a variable that are accessible
             //Try to find corresponding variables
-            var possibleVariables = node.SymbolTable.GetVariableExplicit(new URI(userTokenToSeek.Text));
+            string qualifiedName = string.Join(".",
+                        qualifiedNameTokens.Where(
+                                t =>
+                                    t.TokenType == TokenType.UserDefinedWord &&
+                                    ((t.StartIndex >= firstSignificantToken.EndColumn &&
+                                      t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line) &&
+                                      ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
+                            .Select(t => t.Text));
+            var possibleVariables = node.SymbolTable.GetVariableExplicit(new URI(qualifiedName));
             
             if (possibleVariables != null && possibleVariables.Count > 0)
             {
@@ -798,10 +806,10 @@ namespace TypeCobol.LanguageServer
                             childrens.AddRange(typeChildrens.Where(t => t.Name != null));
                     }
 
-                    completionItems.AddRange(
+                    completionItems.AddRange(CreateCompletionItemsForVariables(
                         childrens.Where(
                                 c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                            .Select(child => new CompletionItem(child.Name)));
+                            .Select(child => child as DataDefinition), false));
                 }
             }
             else
@@ -832,10 +840,10 @@ namespace TypeCobol.LanguageServer
                         childrens.AddRange(typeChildrens);
                 }
 
-                completionItems.AddRange(
-                       childrens.Where(
-                               c => c != null && c.Name != null && c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase))
-                           .Select(child => new CompletionItem(child.Name)));
+                completionItems.AddRange(CreateCompletionItemsForVariables(
+                        childrens.Where(
+                                c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
+                            .Select(child => child as DataDefinition), false));
             }
 
             if (firstSignificantToken != null)
@@ -1174,21 +1182,27 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        private IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables)
+        private IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables, bool useQualifiedName = true)
         {
             var completionItems = new List<CompletionItem>();
 
             foreach (var variable in variables)
             {
-                completionItems.Add(CreateCompletionItemForVariable(variable));
+                completionItems.Add(CreateCompletionItemForVariable(variable, useQualifiedName));
             }
 
             return completionItems;
         }
 
-        private CompletionItem CreateCompletionItemForVariable(DataDefinition variable)
+        private CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
         {
-            var variableArrangedQualifiedName = string.Join("::", variable.QualifiedName.ToString().Split(variable.QualifiedName.Separator).Skip(1)); //Skip Program Name
+            var variableArrangedQualifiedName = useQualifiedName
+                ? string.Join("::",
+                    variable.QualifiedName.ToString()
+                        .Split(variable.QualifiedName.Separator)
+                        .Skip(variable.QualifiedName.Count > 1 ? 1 : 0)) //Skip Program Name
+                : variable.Name; 
+
             var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
             return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName };
         }
