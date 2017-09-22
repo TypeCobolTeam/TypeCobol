@@ -911,19 +911,13 @@ namespace TypeCobol.LanguageServer
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
 
             //Get procedure name or qualified name
-            string procedureName = string.Empty;
-            if (arrangedCodeElement.ArrangedConsumedTokens.Any(t => t.TokenType == TokenType.QualifiedNameSeparator))
-            {
-                procedureName = arrangedCodeElement.ArrangedConsumedTokens
-                    .TakeWhile(t => t.TokenType != TokenType.QualifiedNameSeparator).LastOrDefault().Text + ".";
-            }
-
-            procedureName = procedureName + arrangedCodeElement.ArrangedConsumedTokens
-                                .TakeWhile( t => t.TokenType != TokenType.INPUT 
-                                                && t.TokenType != TokenType.OUTPUT 
-                                                && t.TokenType != TokenType.IN_OUT)
-                                .LastOrDefault(t => t.TokenFamily != TokenFamily.Whitespace).Text;
-           
+            string procedureName = string.Join(".", arrangedCodeElement.ArrangedConsumedTokens
+                                            .Skip(1) //Skip the CALL token
+                                            .TakeWhile(t => t.TokenType != TokenType.INPUT
+                                                            && t.TokenType != TokenType.OUTPUT
+                                                            && t.TokenType != TokenType.IN_OUT) // Take tokens until keyword found
+                                            .Where(t => t.TokenType == TokenType.UserDefinedWord)
+                                            .Select(t => t.Text));
 
             //Try to get procedure by its name
             var calledProcedures =
@@ -997,7 +991,7 @@ namespace TypeCobol.LanguageServer
 
             }
 
-            foreach (var potentialVariable in potentialVariablesForCompletion.Distinct()) 
+            foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct()) 
                 SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems
 
             return completionItems;
