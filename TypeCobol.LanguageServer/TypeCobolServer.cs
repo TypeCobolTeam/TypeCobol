@@ -425,6 +425,7 @@ namespace TypeCobol.LanguageServer
                                 break;
                             }
                             case TokenType.IF:
+                            case TokenType.DISPLAY:
                             {
                                 var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                                 items.AddRange(GetCompletionForVariable(fileCompiler, matchingCodeElement,
@@ -1279,6 +1280,7 @@ namespace TypeCobol.LanguageServer
             new Tuple<TokenType, bool>(TokenType.MOVE, false),
             new Tuple<TokenType, bool>(TokenType.TO, false),
             new Tuple<TokenType, bool>(TokenType.IF, false),
+            new Tuple<TokenType, bool>(TokenType.DISPLAY, false),
         };
 
         /// <summary>
