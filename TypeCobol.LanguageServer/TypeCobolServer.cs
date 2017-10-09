@@ -424,6 +424,14 @@ namespace TypeCobol.LanguageServer
                                 items.AddRange(GetCompletionForTo(fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
                                 break;
                             }
+                            case TokenType.IF:
+                            {
+                                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                                items.AddRange(GetCompletionForVariable(fileCompiler, matchingCodeElement,
+                                    da =>
+                                        da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
+                                break;
+                            }
                             default:
                                 break;
                         }
@@ -778,8 +786,8 @@ namespace TypeCobol.LanguageServer
             arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(qualifiedNameTokens).ToList();
             //We only wants the token that in front of any QualifiedName 
             //Get the first significant token (i.e CALL/TYPE/...)
-            Token firstSignificantToken;
-            MatchCompletionCodeElement(position, new List<CodeElementWrapper> {arrangedCodeElement}, out userFilterToken,
+            Token firstSignificantToken, tempUserFilterToken;
+            MatchCompletionCodeElement(position, new List<CodeElementWrapper> {arrangedCodeElement}, out tempUserFilterToken, 
                 out firstSignificantToken);
 
             //For MOVE INPUT OUTPUT variables etc.. , get all the childrens of a variable that are accessible
@@ -788,6 +796,7 @@ namespace TypeCobol.LanguageServer
                         qualifiedNameTokens.Where(
                                 t =>
                                     t.TokenType == TokenType.UserDefinedWord &&
+                                    !(t.Text == userFilterText && userFilterToken != null && t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
                                     ((t.StartIndex >= firstSignificantToken.EndColumn &&
                                       t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line) &&
                                       ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
@@ -1268,7 +1277,8 @@ namespace TypeCobol.LanguageServer
             new Tuple<TokenType, bool>(TokenType.OUTPUT, false),
             new Tuple<TokenType, bool>(TokenType.IN_OUT, false),
             new Tuple<TokenType, bool>(TokenType.MOVE, false),
-            new Tuple<TokenType, bool>(TokenType.TO, false)
+            new Tuple<TokenType, bool>(TokenType.TO, false),
+            new Tuple<TokenType, bool>(TokenType.IF, false),
         };
 
         /// <summary>
@@ -1392,6 +1402,7 @@ namespace TypeCobol.LanguageServer
                             t.TokenFamily != TokenFamily.Whitespace);
 
                 var significantTokensDectected = new Stack<Token>();
+                bool significantTokenChanged = false; 
 
                 if (consumedTokens != null && consumedTokens.Any())
                 {
@@ -1407,16 +1418,20 @@ namespace TypeCobol.LanguageServer
                             significantTokensDectected.Push(lastSignificantToken);
                             //If eveyrhing is Ok add the final token as LastSinificantToken
                             significantCodeElement = codeElement;
+                            significantTokenChanged = true;
                         }
                     }
 
-                    //Get the userdefinedword associated to the cursor position in the document
-                    userFilterToken =
-                        consumedTokens.FirstOrDefault(
-                            t =>
-                                position.character <= t.StopIndex + 1 && position.character > t.StartIndex
-                                && t.Line == position.line + 1
-                                && t.TokenType == TokenType.UserDefinedWord);
+                    if (significantTokenChanged) //In case many codeElements are analysed
+                    {
+                        //Get the userdefinedword associated to the cursor position in the document
+                        userFilterToken =
+                            consumedTokens.FirstOrDefault(
+                                t =>
+                                    position.character <= t.StopIndex + 1 && position.character > t.StartIndex
+                                    && t.Line == position.line + 1
+                                    && t.TokenType == TokenType.UserDefinedWord);
+                    }
 
 
                     var isCorrectTokenFound = false;
