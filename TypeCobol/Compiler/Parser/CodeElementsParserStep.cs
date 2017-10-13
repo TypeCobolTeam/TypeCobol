@@ -208,11 +208,11 @@ namespace TypeCobol.Compiler.Parser
 
                         // Register that this line was updated
                         // COMMENTED FOR THE SAKE OF PERFORMANCE -- SEE ISSUE #160
-                        //int updatedLineIndex = documentLines.IndexOf(codeElementsLine, codeElementsLine.InitialLineIndex);
+                        //int updatedLineIndex = documentLines.IndexOf(codeElementsLine, codeElementsLine.LineIndex);
                         //codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, updatedLineIndex, codeElementsLine));
                         codeElementsLinesChanges.Add(
                             new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated,
-                                codeElementsLine.InitialLineIndex, codeElementsLine));
+                                codeElementsLine.LineIndex, codeElementsLine));
 
                         perfStatsForParserInvocation.OnStartTreeBuilding();
                         // Visit the parse tree to build a first class object representing the code elements

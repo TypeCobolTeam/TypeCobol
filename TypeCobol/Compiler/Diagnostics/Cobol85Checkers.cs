@@ -17,6 +17,12 @@ namespace TypeCobol.Compiler.Diagnostics {
 
     public class Cobol85CompleteASTChecker : AbstractAstVisitor
     {
+        public Cobol85CompleteASTChecker(List<Diagnostic> diagnostics)
+        {
+            _Diagnostic = diagnostics;
+        }
+
+        private List<Diagnostic> _Diagnostic;
         private Node CurrentNode {get;set;}
         public override bool BeginNode(Node node)
         {
@@ -38,16 +44,41 @@ namespace TypeCobol.Compiler.Diagnostics {
                 }
             }
 
-            
-
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);
             ReadOnlyPropertiesChecker.OnNode(node);
+
+            if (node.Diagnostics != null)
+                AddDiagnostics(node.Diagnostics);
+
             return true;
         }
 
+        /// <summary>
+        /// Add diagnostic to the list of diag, also check if diagnostic does not exists in the list
+        /// </summary>
+        /// <param name="diagnostic"></param>
+        private void AddDiagnostic(Diagnostic diagnostic)
+        {
+            if(_Diagnostic == null)
+                throw new Exception("Diagnostics list has not been intialized");
 
+            if(!_Diagnostic.Contains(diagnostic))
+                _Diagnostic.Add(diagnostic);
+        }
+
+        /// <summary>
+        /// Add a range of diagnostic, also check if a diagnostic is already present in the list
+        /// </summary>
+        /// <param name="diagnostics"></param>
+        private void AddDiagnostics(List<Diagnostic> diagnostics)
+        {
+            foreach (var diagnostic in diagnostics)
+            {
+                AddDiagnostic(diagnostic);
+            }
+        }
 
         public override bool BeginCodeElement(CodeElement codeElement) {
             //This checker is only for Node after the full AST has been created
@@ -56,21 +87,37 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         public override bool Visit(PerformProcedure performProcedureNode) {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
+
+            if (performProcedureNode.Diagnostics != null)
+                AddDiagnostics(performProcedureNode.Diagnostics);
+
             return true;
         }
 
         public override bool Visit(Paragraph paragraph) {
             SectionOrParagraphUsageChecker.CheckParagraph(paragraph);
+
+            if (paragraph.Diagnostics != null)
+                AddDiagnostics(paragraph.Diagnostics);
+
             return true;
         }
 
         public override bool Visit(ProcedureDivision procedureDivision) {
             LibraryChecker.CheckLibrary(procedureDivision);
+
+            if (procedureDivision.Diagnostics != null)
+                AddDiagnostics(procedureDivision.Diagnostics);
+
             return true;
         }
 
         public override bool Visit(Section section) {
             SectionOrParagraphUsageChecker.CheckSection(section);
+
+            if (section.Diagnostics != null)
+                AddDiagnostics(section.Diagnostics);
+
             return true;
         }
 
@@ -79,12 +126,20 @@ namespace TypeCobol.Compiler.Diagnostics {
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
+
+            if (typeDefinition.Diagnostics != null)
+                AddDiagnostics(typeDefinition.Diagnostics);
+
             return true;
         }
 
 
         public override bool VisitVariableWriter(VariableWriter variableWriter) {
             WriteTypeConsistencyChecker.OnNode(variableWriter, CurrentNode);
+
+            if (CurrentNode.Diagnostics != null)
+                AddDiagnostics(CurrentNode.Diagnostics);
+
             return true;
         }
 
@@ -92,14 +147,18 @@ namespace TypeCobol.Compiler.Diagnostics {
         {
             if(dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
             {
-                CheckPicture((dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines));
+                CheckPicture(dataDefinition);
+
+                if (dataDefinition.Diagnostics != null)
+                    AddDiagnostics(dataDefinition.Diagnostics);
             }
             return true;
         }
 
-        public static void CheckPicture(CommonDataDescriptionAndDataRedefines codeElement)
+        public static void CheckPicture(Node node, CommonDataDescriptionAndDataRedefines customCodeElement = null)
         {
-            if (codeElement.Picture != null)
+            var codeElement = customCodeElement == null ? node.CodeElement as CommonDataDescriptionAndDataRedefines : customCodeElement;
+            if (codeElement != null && codeElement.Picture != null)
             {
                 foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
                 {
@@ -110,7 +169,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                     catch (Exception)
                     {
                         var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(codeElement, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
                 }
             }
@@ -437,20 +496,22 @@ namespace TypeCobol.Compiler.Diagnostics {
 
     class SectionOrParagraphUsageChecker {
 
-	    public static void CheckReferenceToParagraphOrSection(PerformProcedure perform) {
-		    var performCE = (PerformProcedureStatement) perform.CodeElement;
-		    SymbolReference symbol;
-		    symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference, performCE);
-		    if (symbol != null) performCE.Procedure = symbol;
-		    symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference, performCE);
-		    if (symbol != null) performCE.ThroughProcedure = symbol;
-	    }
-	    /// <summary>Disambiguate between section and paragraph names</summary>
+        public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
+        {
+            var performCE = (PerformProcedureStatement) perform.CodeElement;
+            SymbolReference symbol;
+            symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference, perform);
+            if (symbol != null) performCE.Procedure = symbol;
+            symbol = ResolveProcedureName(perform.SymbolTable, performCE.ThroughProcedure as AmbiguousSymbolReference, perform);
+            if (symbol != null) performCE.ThroughProcedure = symbol;
+        }
+
+        /// <summary>Disambiguate between section and paragraph names</summary>
 	    /// <param name="table">Symbol table used for name resolution</param>
 	    /// <param name="symbol">Symbol to disambiguate</param>
 	    /// <param name="ce">Original CodeElement ; error diagnostics will be added to it if name resolution fails</param>
 	    /// <returns>symbol as a SymbolReference whith a SymbolType properly set</returns>
-	    private static SymbolReference ResolveProcedureName(SymbolTable table, SymbolReference symbol, CodeElement ce) {
+	    private static SymbolReference ResolveProcedureName(SymbolTable table, SymbolReference symbol, Node node) {
 		    if (symbol == null) return null;
 
 		    SymbolReference sname = null, pname = null;
@@ -461,17 +522,17 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 		    if (pname == null) {
 			    if (sname == null) {
-				    DiagnosticUtils.AddError(ce, "Symbol "+symbol.Name+" is not referenced");
+				    DiagnosticUtils.AddError(node, "Symbol "+symbol.Name+" is not referenced");
 			    } else {
-				    if (sfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to section "+symbol.Name);
+				    if (sfound.Count > 1) DiagnosticUtils.AddError(node, "Ambiguous reference to section "+symbol.Name);
 				    return sname;
 			    }
 		    } else {
 			    if (sname == null) {
-				    if (pfound.Count > 1) DiagnosticUtils.AddError(ce, "Ambiguous reference to paragraph "+symbol.Name);
+				    if (pfound.Count > 1) DiagnosticUtils.AddError(node, "Ambiguous reference to paragraph "+symbol.Name);
 				    return pname;
 			    } else {
-				    DiagnosticUtils.AddError(ce, "Ambiguous reference to procedure "+symbol.Name);
+				    DiagnosticUtils.AddError(node, "Ambiguous reference to procedure "+symbol.Name);
 			    }
 		    }
 		    return null;
@@ -479,7 +540,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
         {
-            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Symbol \'" + node.Name + "\' already declared");
+            if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
         }
 
         public static void CheckSection(Section section)
@@ -536,12 +597,12 @@ namespace TypeCobol.Compiler.Diagnostics {
                         string message = string.Format("Cannot write {0} to {1} typed variable {2}:{3}."
                                                       , sending, receiving.RestrictionLevel == RestrictionLevel.STRONG ? "strongly" : "strictly"
                                                       , wname.Head, receiving);
-                        DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                     }
 			} else {
 				if (IsUnsafe) {
 					string message = "Useless UNSAFE with non strongly typed receiver.";
-					DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SyntaxWarningInParser);
+					DiagnosticUtils.AddError(node, message, MessageCode.SyntaxWarningInParser);
 				}
 			}
 		}

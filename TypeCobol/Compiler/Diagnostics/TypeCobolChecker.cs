@@ -32,15 +32,15 @@ class ReadOnlyPropertiesChecker {
 			var lr = table.GetVariable(pair.Key);
 			if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 			var receiving = lr[0];
-			checkReadOnly(node.CodeElement, receiving);
+			checkReadOnly(node, receiving);
 		}
 	}
-	private static void checkReadOnly(CodeElement ce, [NotNull] Node receiving) {
+	private static void checkReadOnly(Node node, [NotNull] Node receiving) {
 		var rtype = receiving.Parent as ITypedNode;
 		if (rtype == null) return;
 		foreach(var type in READONLY_DATATYPES) {
 			if (type.Equals(rtype.DataType.Name.ToUpper()))
-				DiagnosticUtils.AddError(ce, type+" properties are read-only");
+				DiagnosticUtils.AddError(node, type+" properties are read-only");
 		}
 	}
 }
@@ -72,14 +72,14 @@ class ReadOnlyPropertiesChecker {
                     if (functionDeclarations.Count == 1)
                     {
                         functionCaller.FunctionDeclaration = functionDeclarations.First();
-                        Check(node.CodeElement, node.SymbolTable, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
+                        Check(node, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
                         return; //Everything seems to be ok, lets continue on the next one
                     }
                     //Another checker should check if function declaration is not duplicated
                     if (functionDeclarations.Count > 0)
                     {
                         message = string.Format("Same function '{0}' {1} declared '{2}' times", functionCaller.FunctionCall.FunctionName, parameterList.GetSignature(), functionDeclarations.Count);
-                        DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.ImplementationError);
+                        DiagnosticUtils.AddError(node, message, MessageCode.ImplementationError);
                         return; //Do not continue the function/procedure is defined multiple times
                     }
 
@@ -89,13 +89,13 @@ class ReadOnlyPropertiesChecker {
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
                         message = string.Format("Function not found '{0}' {1}", functionCaller.FunctionCall.FunctionName, parameterList.GetSignature());
-                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        DiagnosticUtils.AddError(node, message);
                         return; //Do not continue the function/procedure does not exists
                     }
                     if (otherDeclarations.Count > 1)
                     {
                         message = string.Format("No suitable function signature found for '{0}' {1}", functionCaller.FunctionCall.FunctionName, parameterList.GetSignature());
-                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        DiagnosticUtils.AddError(node, message);
                         return;
                     }
 
@@ -120,28 +120,28 @@ class ReadOnlyPropertiesChecker {
                     {
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times", functionCaller.FunctionCall.FunctionName, potentialVariables.Count + functionDeclarations.Count);
-                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        DiagnosticUtils.AddError(node, message);
                         return;
                     }
 
                     if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}(no arguments)'", functionCaller.FunctionCall.FunctionName);
-                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        DiagnosticUtils.AddError(node, message);
                         return;
                     }
 
                     if (functionDeclarations.Count >= 1 && potentialVariables.Count == 1)
                     {
                         message = string.Format("Warning: Risk of confusion in call of '{0}'", functionCaller.FunctionCall.FunctionName);
-                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        DiagnosticUtils.AddError(node, message);
                         return;
                     }
 
                     if (functionDeclarations.Count == 0 && potentialVariables.Count == 0)
                     {
                         message = string.Format("No function or variable found for '{0}'(no arguments)", functionCaller.FunctionCall.FunctionName);
-                        DiagnosticUtils.AddError(node.CodeElement, message);
+                        DiagnosticUtils.AddError(node, message);
                         return; //Do not continue the function/procedure does not exists
                     }
 
@@ -152,7 +152,7 @@ class ReadOnlyPropertiesChecker {
 
                 functionCaller.FunctionDeclaration = functionDeclarations[0];
                 //If function is not ambigous and exists, lets check the parameters
-                Check(node.CodeElement, node.SymbolTable, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
+                Check(node, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
             }
         }
 
@@ -160,15 +160,16 @@ class ReadOnlyPropertiesChecker {
 
 
 
-        private static void Check(CodeElement e, SymbolTable table, [NotNull] FunctionCall call,
+        private static void Check(Node node, [NotNull] FunctionCall call,
             [NotNull] FunctionDeclaration definition)
         {
+            var table = node.SymbolTable;
             var parameters = definition.Profile.Parameters;
             var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
             if (callArgsCount > parameters.Count)
             {
                 var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName, parameters.Count);
-                DiagnosticUtils.AddError(e, m);
+                DiagnosticUtils.AddError(node, m);
             }
             for (int c = 0; c < parameters.Count; c++)
             {
@@ -181,7 +182,7 @@ class ReadOnlyPropertiesChecker {
                         if (expected.IsOmittable) {
                             continue;
                         } else {
-                            DiagnosticUtils.AddError(e, "Omitted not allowed for this parameter");
+                            DiagnosticUtils.AddError(node, "Omitted not allowed for this parameter");
                             return;
                         }
                     }
@@ -198,14 +199,14 @@ class ReadOnlyPropertiesChecker {
                             //parameter must be a Numeric of lengt
                             //TODO
                             //return an error for now
-                            DiagnosticUtils.AddError(e, "LENGTH OF not allowed yet with procedure");
+                            DiagnosticUtils.AddError(node, "LENGTH OF not allowed yet with procedure");
                             return;
                         } else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer) {
                             //It's ok
                             return;
                         } else if (tokenType == TokenType.LINAGE_COUNTER) {
                             //Do not know what to do : RFC
-                            DiagnosticUtils.AddError(e, "LENGTH OF not allowed yet with procedure");
+                            DiagnosticUtils.AddError(node, "LENGTH OF not allowed yet with procedure");
                             return;
                         }
                     }
@@ -213,9 +214,9 @@ class ReadOnlyPropertiesChecker {
                     var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
                     var found = table.GetVariable(actual);
                     if (found.Count < 1)
-                        DiagnosticUtils.AddError(e, "Parameter " + callArgName + " is not referenced");
+                        DiagnosticUtils.AddError(node, "Parameter " + callArgName + " is not referenced");
                     if (found.Count > 1)
-                        DiagnosticUtils.AddError(e, "Ambiguous reference to parameter " + callArgName);
+                        DiagnosticUtils.AddError(node, "Ambiguous reference to parameter " + callArgName);
                     if (found.Count != 1) continue;
                     var actualDataDefinition = found[0];
 
@@ -233,7 +234,7 @@ class ReadOnlyPropertiesChecker {
                                     "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
                                     call.FunctionName, expected.Name, expected.DataType,
                                     callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.DataType);
-                            DiagnosticUtils.AddError(e, m);
+                            DiagnosticUtils.AddError(node, m);
 
                             
                         } else if (actualDataDefinition.DataType != expected.DataType) {
@@ -246,7 +247,7 @@ class ReadOnlyPropertiesChecker {
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
                                         call.FunctionName, calleeType.Name, calleeType.DataType,
                                         callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
-                                DiagnosticUtils.AddError(e, m);
+                                DiagnosticUtils.AddError(node, m);
                             }
                         }
                     }
@@ -258,7 +259,7 @@ class ReadOnlyPropertiesChecker {
                                 "Function '{0}' expected parameter '{1}' with picture {2} and received '{3}' with picture {4}",
                                 call.FunctionName, expected.Name, expected.Picture.Value,
                                 callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.Picture.Value);
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
               
 
@@ -279,7 +280,7 @@ class ReadOnlyPropertiesChecker {
                                 "Function '{0}' expected parameter '{1}' of usage {2} and received '{3}' of usage {4}",
                                 call.FunctionName, expected.Name, expected.Usage,
                                 callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.Usage);
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
 
                     if (actualDataDefinition.IsJustified != expected.IsJustified)
@@ -289,7 +290,7 @@ class ReadOnlyPropertiesChecker {
                                 "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                 call.FunctionName, expected.Name, expected.IsJustified ? "justified" : "non-justified",
                                 callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.IsJustified ? "justified" : "non-justified");
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
 
                     if (actualDataDefinition.IsGroupUsageNational != expected.IsGroupUsageNational)
@@ -299,7 +300,7 @@ class ReadOnlyPropertiesChecker {
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                call.FunctionName, expected.Name, expected.IsGroupUsageNational ? "national group-usage" : "non national group-usage",
                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.IsGroupUsageNational ? "national group-usage" : "non national group-usage");
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
                     if (actualDataDefinition.IsTableOccurence != expected.IsTableOccurence) {
                         var m =
@@ -307,7 +308,7 @@ class ReadOnlyPropertiesChecker {
                                "Function '{0}' expected parameter '{1}' to {2} an array and received '{3}' which {4} an array",
                                call.FunctionName, expected.Name, expected.IsTableOccurence ? "be" : "be NOT", actualDataDefinition.Name,
                                 actualDataDefinition.IsTableOccurence ? "is" : "is NOT ");
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     } else if (actualDataDefinition.IsTableOccurence && expected.IsTableOccurence) {
                         if (actualDataDefinition.MinOccurencesCount != expected.MinOccurencesCount) {
                             var m =
@@ -315,7 +316,7 @@ class ReadOnlyPropertiesChecker {
                                     "Function '{0}' expected parameter '{1}' to have at least {2} occurences and received '{3}' with a minimum of {4} occurences",
                                     call.FunctionName, expected.Name, expected.MinOccurencesCount,
                                     callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.MinOccurencesCount);
-                            DiagnosticUtils.AddError(e, m);
+                            DiagnosticUtils.AddError(node, m);
                         }
 
                         if (actualDataDefinition.MaxOccurencesCount != expected.MaxOccurencesCount) {
@@ -324,7 +325,7 @@ class ReadOnlyPropertiesChecker {
                                     "Function '{0}' expected parameter '{1}' to have at most {2} occurences and received '{3}' with a maximum of {4} occurences",
                                     call.FunctionName, expected.Name, expected.MaxOccurencesCount,
                                     callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.MaxOccurencesCount);
-                            DiagnosticUtils.AddError(e, m);
+                            DiagnosticUtils.AddError(node, m);
                         }
                     }
 
@@ -335,7 +336,7 @@ class ReadOnlyPropertiesChecker {
                                "Function '{0}' expected parameter '{1}' occurs depending on ({2}) occurences and received '{3}' occurs depending on ({4})",
                                call.FunctionName, expected.Name, expected.OccursDependingOn,
                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.OccursDependingOn);
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
 
                     if (actualDataDefinition.HasUnboundedNumberOfOccurences != expected.HasUnboundedNumberOfOccurences)
@@ -345,7 +346,7 @@ class ReadOnlyPropertiesChecker {
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                call.FunctionName, expected.Name, expected.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences",
                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences");
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
 
                     if (actualDataDefinition.SignIsSeparate != expected.SignIsSeparate)
@@ -355,7 +356,7 @@ class ReadOnlyPropertiesChecker {
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                call.FunctionName, expected.Name, expected.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences",
                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences");
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
 
                     if (actualDataDefinition.SignPosition != expected.SignPosition)
@@ -365,7 +366,7 @@ class ReadOnlyPropertiesChecker {
                                "Function '{0}' expected parameter '{1}' with sign position {2} and received '{3}' with sign position {4}",
                                call.FunctionName, expected.Name, expected.SignPosition == null ? "empty" : expected.SignPosition.ToString(),
                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.SignPosition == null ? "empty" : actualDataDefinition.SignPosition.ToString());
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
 
                     if (actualDataDefinition.IsSynchronized != expected.IsSynchronized)
@@ -375,7 +376,7 @@ class ReadOnlyPropertiesChecker {
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                call.FunctionName, expected.Name, expected.IsSynchronized ? "synchonized" : "not synchronized",
                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.IsSynchronized ? "synchonized" : "not synchronized");
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
 
                     if (actualDataDefinition.ObjectReferenceClass != expected.ObjectReferenceClass)
@@ -384,14 +385,14 @@ class ReadOnlyPropertiesChecker {
                           string.Format(
                               "Function '{0}' expected parameter '{1}' and received '{2}' with wrong object reference.",
                               call.FunctionName, expected.Name, callArgName ?? string.Format("position {0}", c + 1));
-                        DiagnosticUtils.AddError(e, m);
+                        DiagnosticUtils.AddError(node, m);
                     }
                 }
                 else
                 {
                     var m = string.Format("Function '{0}' is missing parameter '{1}' of type {2} and length {3}",
                         call.FunctionName, expected.Name, expected.DataType, expected.Length);
-                    DiagnosticUtils.AddError(e, m);
+                    DiagnosticUtils.AddError(node, m);
                 }
             }
         }
@@ -445,11 +446,11 @@ class FunctionDeclarationChecker: NodeListener {
 	    if (header == null) return; //not my job
 		var filesection = node.Get<FileSection>("file");
 		if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
-			DiagnosticUtils.AddError(filesection.CodeElement, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
+			DiagnosticUtils.AddError(filesection, "Illegal FILE SECTION in function \""+header.Name+"\" declaration", context);
 
 		CheckNoGlobalOrExternal(node.Get<DataDivision>("data-division"));
 
-		CheckParameters(header.Profile, header, context, node);
+		CheckParameters(header.Profile, context, node);
 		CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
 
 		CheckNoPerform(node.SymbolTable.EnclosingScope, node);
@@ -457,10 +458,10 @@ class FunctionDeclarationChecker: NodeListener {
 	    var headerNameURI = new URI(header.Name);
 	    var functions = node.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
 		if (functions.Count > 1)
-			DiagnosticUtils.AddError(header, "A function \""+headerNameURI.Head+"\" with the same profile already exists in namespace \""+headerNameURI.Tail+"\".", context);
+			DiagnosticUtils.AddError(node, "A function \""+headerNameURI.Head+"\" with the same profile already exists in namespace \""+headerNameURI.Tail+"\".", context);
 //		foreach(var function in functions) {
 //			if (!function.IsProcedure && !function.IsFunction)
-//				DiagnosticUtils.AddError(header, "\""+header.Name.Head+"\" is neither procedure nor function.", context);
+//				DiagnosticUtils.AddError(node, "\""+header.Name.Head+"\" is neither procedure nor function.", context);
 //		}
 	}
 
@@ -471,36 +472,36 @@ class FunctionDeclarationChecker: NodeListener {
 			        var data = child.CodeElement as DataDescriptionEntry;
 			        if (data == null) continue;
 			        if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
-			            DiagnosticUtils.AddError(data, "Illegal GLOBAL clause in function data item.");
+			            DiagnosticUtils.AddError(child, "Illegal GLOBAL clause in function data item.");
 			}
 		}
 	}
 
-	private void CheckParameters([NotNull] ParametersProfile profile, CodeElement ce, ParserRuleContext context, Node node) {
-		foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, ce, context, node);
-		foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, ce, context, node);
-		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, ce, context, node);
-		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, ce, context, node);
+	private void CheckParameters([NotNull] ParametersProfile profile, ParserRuleContext context, Node node) {
+		foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, context, node);
+		foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, context, node);
+		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, context, node);
+		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, context, node);
 	}
-        private void CheckParameter([NotNull] ParameterDescriptionEntry parameter, CodeElement ce, ParserRuleContext context, Node node)
+        private void CheckParameter([NotNull] ParameterDescriptionEntry parameter,  ParserRuleContext context, Node node)
         {
             // TCRFUN_LEVEL_88_PARAMETERS
             if (parameter.LevelNumber.Value != 1)
             {
-                DiagnosticUtils.AddError(ce, "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", context);
+                DiagnosticUtils.AddError(node, "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", context);
             }
             if (parameter.DataConditions != null)
             {
                 foreach (var condition in parameter.DataConditions)
                 {
                     if (condition.LevelNumber.Value != 88)
-                        DiagnosticUtils.AddError(ce, "Condition parameter \"" + condition.Name + "\" must be level 88.");
+                        DiagnosticUtils.AddError(node, "Condition parameter \"" + condition.Name + "\" must be level 88.");
                 }
             }
 
             if (parameter.Picture != null)
             {
-                Cobol85CompleteASTChecker.CheckPicture(parameter);
+                Cobol85CompleteASTChecker.CheckPicture(node, parameter);
             }
 
             var type = parameter.DataType;
@@ -545,25 +546,25 @@ class FunctionDeclarationChecker: NodeListener {
 		return null;
 	}
 	private void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] QualifiedName name) {
-		DiagnosticUtils.AddError(node.CodeElement, name.Head+" is already a parameter.");
+		DiagnosticUtils.AddError(node, name.Head+" is already a parameter.");
 	}
 
 	private void CheckNoPerform(SymbolTable table, [NotNull] Node node) {
 		if (node is PerformProcedure) {
 			var perform = (PerformProcedureStatement)node.CodeElement;
-			CheckNotInTable(table, perform.Procedure, perform);
-			CheckNotInTable(table, perform.ThroughProcedure, perform);
+			CheckNotInTable(table, perform.Procedure, node);
+			CheckNotInTable(table, perform.ThroughProcedure, node);
 		}
 		foreach(var child in node.Children) CheckNoPerform(table, child);
 	}
-	private void CheckNotInTable(SymbolTable table, SymbolReference symbol, CodeElement ce) {
+	private void CheckNotInTable(SymbolTable table, SymbolReference symbol, Node node) {
 		if (symbol == null) return;
 		string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
 		var found = table.GetSection(symbol.Name);
-		if (found.Count > 0) DiagnosticUtils.AddError(ce, message);
+		if (found.Count > 0) DiagnosticUtils.AddError(node, message);
 		else {
 			var paragraphFounds = table.GetParagraph(symbol.Name);
-			if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(ce, message);
+			if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message);
 		}
 	}
 }
@@ -595,12 +596,7 @@ public class LibraryChecker {
             {
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (!(child is Paragraph || child is FunctionDeclaration)) {
-                    CodeElement ce;
-                    if (child.CodeElement != null)
-                        ce = child.CodeElement;
-                    else
-                        ce = procedureDivision.CodeElement;
-                    DiagnosticUtils.AddError(ce, "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
+                    DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child, "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
                 }
             }
 
@@ -608,7 +604,7 @@ public class LibraryChecker {
 
             //TCRFUN_LIBRARY_PROCEDURE_NO_USING 
             if (pdiv.UsingParameters != null && pdiv.UsingParameters.Count > 0)
-			    DiagnosticUtils.AddError(pdiv, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.");
+			    DiagnosticUtils.AddError(procedureDivision, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.");
 		}
 	}
 }

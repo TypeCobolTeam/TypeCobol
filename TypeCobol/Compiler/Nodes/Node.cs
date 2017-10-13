@@ -5,6 +5,7 @@ using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
@@ -281,6 +282,41 @@ namespace TypeCobol.Compiler.Nodes {
         /// Flag to know if the node belongs to the intrinsic files
         /// </summary>
         public bool IsIntrinsic { get; set; }
+
+        /// <summary>
+        /// List of diagnostics detected for the current node. 
+        /// Please use AddDiagnostic and RemoveDiagnostic to interact with this property. 
+        /// </summary>
+        public List<Diagnostic> Diagnostics
+        {
+            get { return _Diagnostics; }
+        }
+        private List<Diagnostic> _Diagnostics;
+
+        /// <summary>
+        /// Method to add a new diagnostic to this node
+        /// </summary>
+        /// <param name="diagnostic"></param>
+        public void AddDiagnostic(Diagnostic diagnostic)
+        {
+            if(_Diagnostics == null)
+                _Diagnostics = new List<Diagnostic>();
+
+            if (!_Diagnostics.Contains(diagnostic)) //Check if diagnostic already exists (See Equals override in Diagnostic class)
+                _Diagnostics.Add(diagnostic);
+        }
+
+        /// <summary>
+        /// Method to remove a diagnostic from this node
+        /// </summary>
+        /// <param name="diagnostic"></param>
+        public void RemoveDiagnostic(Diagnostic diagnostic)
+        {
+            if (_Diagnostics == null || (_Diagnostics != null && _Diagnostics.Count == 0))
+                return;
+
+            _Diagnostics.Remove(diagnostic);
+        }
 
         public IList<N> GetChildren<N>() where N : Node {
             return children.OfType<N>().ToList();
