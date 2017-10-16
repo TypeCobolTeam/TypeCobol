@@ -1,5 +1,8 @@
 ﻿using System;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Nodes;
+using Object = System.Object;
+using String = System.String;
 
 namespace TypeCobol.Compiler.CodeElements
 {
@@ -135,7 +138,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
 		{
             var builtInNode = type == DataType.Date ? CreateDate() : CreateBase(type);
-            builtInNode.IsIntrinsic = true; //Mark BuiltIn Type as Instrinsic
+            builtInNode.SetFlag(Node.Flag.NodeIsIntrinsic, true); //Mark BuiltIn Type as Instrinsic
 
 		    return builtInNode;
 		}

@@ -53,9 +53,9 @@ namespace TypeCobol.Compiler.Parser
                     SymbolTable intrinsicTable = value.GetTableFromScope(SymbolTable.Scope.Intrinsic);
                     SymbolTable nameSpaceTable = value.GetTableFromScope(SymbolTable.Scope.Namespace);
 
-                    intrinsicTable.DataEntries.Values.ToList().ForEach(d => d.ForEach(da => da.IsIntrinsic = true));
-                    intrinsicTable.Types.Values.ToList().ForEach(d => d.ForEach(da => da.IsIntrinsic = true));
-                    intrinsicTable.Functions.Values.ToList().ForEach(d => d.ForEach(da => da.IsIntrinsic = true));
+                    intrinsicTable.DataEntries.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
+                    intrinsicTable.Types.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
+                    intrinsicTable.Functions.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
 
                     TableOfIntrisic.CopyAllDataEntries(intrinsicTable.DataEntries.Values);
                     TableOfIntrisic.CopyAllTypes(intrinsicTable.Types);

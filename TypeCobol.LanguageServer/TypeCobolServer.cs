@@ -1128,7 +1128,7 @@ namespace TypeCobol.LanguageServer
                                    !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
                                          .Types.Values.Any(t => t.Contains(type))
                                      //Ignore public if type is in the current program
-                                     || type.IsIntrinsic); //Ignore public if type is in intrinsic
+                                     || type.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if type is in intrinsic
 
                 var typeDisplayName = typeIsPublic ? type.QualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
@@ -1175,7 +1175,7 @@ namespace TypeCobol.LanguageServer
                                    !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
                                          .Functions.Values.Any(t => t.Contains(proc))
                                      //Ignore public if proc is in the current program
-                                     || proc.IsIntrinsic); //Ignore public if proc is in intrinsic;
+                                     || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.QualifiedName.ToString() : proc.Name;
                 var completionItem =
                     new CompletionItem(string.Format("{0} ({1} {2} {3})", procDisplayName, inputParams, outputParams,
