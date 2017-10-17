@@ -335,7 +335,6 @@ tokens
     EBCDIC,
     EGCS,
     ELEMENT,
-    ENCODING,
     END_OF_PAGE,
     ENDING,
     EOP,
@@ -1856,7 +1855,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     EBCDIC |
     EGCS |
     ELEMENT |
-    ENCODING |
     END_OF_PAGE |
     ENDING |
     EOP |

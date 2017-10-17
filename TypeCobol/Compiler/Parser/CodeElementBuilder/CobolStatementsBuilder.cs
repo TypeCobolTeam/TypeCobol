@@ -1417,9 +1417,9 @@ namespace TypeCobol.Compiler.Parser
             {
                 statement.GeneratedXmlCharsCount = CobolExpressionsBuilder.CreateStorageArea(context.generatedXmlCharsCount);
             }
-            if (context.codepage() != null)
+            if (context.encoding() != null && context.encoding().codepage() != null)
             {
-                statement.CodePage = CobolExpressionsBuilder.CreateIntegerVariable(context.codepage().integerVariable1());
+                statement.CodePage = CobolExpressionsBuilder.CreateIntegerVariable(context.encoding().codepage().integerVariable1());
             }
             if (context.XML_DECLARATION() != null)
             {

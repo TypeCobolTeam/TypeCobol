@@ -7559,7 +7559,7 @@ xmlGenerateStatement:
 	XML GENERATE receivingField=storageArea1 
 	FROM dataItemToConvertToXml=variable1
 	(COUNT IN? generatedXmlCharsCount=storageArea1)?
-	(WITH? ENCODING codepage)?
+	(WITH? encoding )?
 	(WITH? XML_DECLARATION)?
 	(WITH? ATTRIBUTES)?
 	(NAMESPACE IS? namespace=alphanumericVariable2 
@@ -7567,6 +7567,12 @@ xmlGenerateStatement:
 	(NAME OF? xmlNameMapping+)?
 	(TYPE OF? xmlTypeMapping+)?
 	(SUPPRESS xmlSuppressDirective+)?;
+
+encoding: (
+				{ string.Equals(CurrentToken.Text, "ENCODING", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				
+				encodingFiller=UserDefinedWord codepage
+		  )?;
 		
 xmlNameMapping:
 	subordinateDataItem=variable1 IS? xmlNameToGenerate=alphanumericValue2;
@@ -7786,7 +7792,7 @@ codepage: integerVariable1;
 
 xmlParseStatement:
                      XML PARSE xmlTextToParse=variable1
-                     (WITH? ENCODING codepage)? 
+                     (WITH? encoding codepage)? 
                      (RETURNING NATIONAL)?
                      (VALIDATING WITH? (optimizedXmlSchemaData=variable1 | (FILE optimizedXmlSchemaFile=xmlSchemaNameReference)))?
                      PROCESSING PROCEDURE IS? (procedureName | proceduresRange);
