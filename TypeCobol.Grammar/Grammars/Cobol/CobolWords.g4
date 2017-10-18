@@ -276,7 +276,6 @@ tokens
     ASSIGN,
     AT,
     ATTRIBUTE,
-    ATTRIBUTES,
     AUTHOR,
     BEFORE,
     BEGINNING,
@@ -1794,7 +1793,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     ASSIGN |
     AT |
     ATTRIBUTE |
-    ATTRIBUTES |
     AUTHOR |
     BEFORE |
     BEGINNING |

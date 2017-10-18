@@ -7564,7 +7564,7 @@ xmlGenerateStatement:
 	(COUNT IN? generatedXmlCharsCount=storageArea1)?
 	(WITH? encoding )?
 	(WITH? XML_DECLARATION)?
-	(WITH? ATTRIBUTES)?
+	(WITH? attributes)?
 	(NAMESPACE IS? namespace=alphanumericVariable2 
 		(NAMESPACE_PREFIX IS? namespacePrefix=alphanumericVariable2)? )?
 	(NAME OF? xmlNameMapping+)?
@@ -7576,6 +7576,11 @@ encoding: (
 				
 				encodingFiller=UserDefinedWord codepage
 		  )?;
+
+attributes: (
+				{ string.Equals(CurrentToken.Text, "ATTRIBUTES", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				attributesFiller=UserDefinedWord
+			);
 		
 xmlNameMapping:
 	subordinateDataItem=variable1 IS? xmlNameToGenerate=alphanumericValue2;

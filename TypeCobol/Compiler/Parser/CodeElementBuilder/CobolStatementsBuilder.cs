@@ -1425,9 +1425,9 @@ namespace TypeCobol.Compiler.Parser
             {
                 statement.StartWithXMLDeclaration = CreateSyntaxProperty(true, context.XML_DECLARATION());
             }
-            if (context.ATTRIBUTES() != null)
+            if (context.attributes() != null)
             {
-                statement.GenerateElementaryItemsAsAttributes = CreateSyntaxProperty(true, context.ATTRIBUTES());
+                statement.GenerateElementaryItemsAsAttributes = CreateSyntaxProperty(true, context.attributes().UserDefinedWord());
             }
             if (context.@namespace != null)
             {
