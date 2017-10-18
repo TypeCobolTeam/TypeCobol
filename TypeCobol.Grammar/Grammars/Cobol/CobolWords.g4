@@ -332,7 +332,6 @@ tokens
     DOWN,
     DUPLICATES,
     DYNAMIC,
-    EBCDIC,
     EGCS,
     ELEMENT,
     END_OF_PAGE,
@@ -726,8 +725,7 @@ superObjectIdentifier: SUPER;
 // EBCDIC
 // Specifies the EBCDIC character set.
 
-standardCollatingSequence: STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
-
+standardCollatingSequence: STANDARD_1 | STANDARD_2 | NATIVE;
 
 // --- Compile-time constant values used in the Cobol grammar ---
 
@@ -1852,7 +1850,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     DOWN |
     DUPLICATES |
     DYNAMIC |
-    EBCDIC |
     EGCS |
     ELEMENT |
     END_OF_PAGE |

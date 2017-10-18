@@ -759,7 +759,10 @@ environmentNameClause:
 // data, but not for DBCS or national data.
 
 alphabetClause: 
-    ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference | userDefinedCollatingSequence+);
+    ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference 
+											| ({ string.Equals(CurrentToken.Text, "EBCDIC", System.StringComparison.InvariantCultureIgnoreCase) }? 
+													EBCDICFiller=UserDefinedWord )
+											|  userDefinedCollatingSequence+);
 
 userDefinedCollatingSequence:
     (charactersInCollatingSequence | charactersRange | charactersEqualSet);
