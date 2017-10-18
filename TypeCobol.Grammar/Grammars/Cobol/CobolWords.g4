@@ -500,7 +500,6 @@ tokens
     WITH,
     WORDS,
     WRITE_ONLY,
-    XML_DECLARATION,
     XML_SCHEMA,
     YYYYDDD,
     YYYYMMDD,
@@ -2017,7 +2016,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     WITH |
     WORDS |
     WRITE_ONLY |
-    XML_DECLARATION |
     XML_SCHEMA |
     YYYYDDD |
     YYYYMMDD |

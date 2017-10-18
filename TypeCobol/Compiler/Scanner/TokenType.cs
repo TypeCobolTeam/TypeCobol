@@ -41,17 +41,17 @@ namespace TypeCobol.Compiler.Scanner
         SpecialObjetIdentifierKeyword=199,
         // 201 -> 450 : Keywords - Syntax tokens
         SyntaxKeyword=201,
-        // 450 -> 451 : Keywords - Cobol 2002
-        Cobol2002Keyword = 450,
-        // 452 -> 456 : Keywords - TypeCobol
-        TypeCobolKeyword = 452,
+        // 449 -> 450 : Keywords - Cobol 2002
+        Cobol2002Keyword = 449,
+        // 451 -> 455 : Keywords - TypeCobol
+        TypeCobolKeyword = 451,
 
-        // 457 -> 457 : Operators - TypeCobol
-        TypeCobolOperators= 457, 
+        // 456 -> 456 : Operators - TypeCobol
+        TypeCobolOperators= 456, 
 
-        // 458 -> 460 : Compiler directives
-        CompilerDirective = 458,
-        // 461 -> 461 : Internal token groups - used by the preprocessor only
+        // 457 -> 459 : Compiler directives
+        CompilerDirective = 457,
+        // 460 -> 460 : Internal token groups - used by the preprocessor only
         InternalTokenGroup = 461
     }
 
@@ -507,24 +507,21 @@ namespace TypeCobol.Compiler.Scanner
         WITH = 443,
         WORDS = 444,
         WRITE_ONLY = 445,
-        XML_DECLARATION = 446,
-        XML_SCHEMA = 447,
-        YYYYDDD = 448,
-        YYYYMMDD = 449,
-        TYPEDEF = 450,
-        STRONG = 451,
-        UNSAFE = 452,
-        PUBLIC = 453,
-        PRIVATE = 454,
-        IN_OUT = 455,
-        STRICT = 456,
-        QuestionMark = 457,
-        CompilerDirective = 458,
-        CopyImportDirective = 459,
-        ReplaceDirective = 460,
-        ContinuationTokenGroup = 461,
-
-
+        XML_SCHEMA = 446,
+        YYYYDDD = 447,
+        YYYYMMDD = 448,
+        TYPEDEF = 449,
+        STRONG = 450,
+        UNSAFE = 451,
+        PUBLIC = 452,
+        PRIVATE = 453,
+        IN_OUT = 454,
+        STRICT = 455,
+        QuestionMark = 456,
+        CompilerDirective = 457,
+        CopyImportDirective = 458,
+        ReplaceDirective = 459,
+        ContinuationTokenGroup = 460,
     }
 
     public static class TokenConst {

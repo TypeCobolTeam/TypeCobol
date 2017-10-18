@@ -7563,7 +7563,7 @@ xmlGenerateStatement:
 	FROM dataItemToConvertToXml=variable1
 	(COUNT IN? generatedXmlCharsCount=storageArea1)?
 	(WITH? encoding )?
-	(WITH? XML_DECLARATION)?
+	(WITH? xmlDeclaration)?
 	(WITH? attributes)?
 	(NAMESPACE IS? namespace=alphanumericVariable2 
 		(NAMESPACE_PREFIX IS? namespacePrefix=alphanumericVariable2)? )?
@@ -7580,6 +7580,11 @@ encoding: (
 attributes: (
 				{ string.Equals(CurrentToken.Text, "ATTRIBUTES", System.StringComparison.InvariantCultureIgnoreCase) }? 
 				attributesFiller=UserDefinedWord
+			);
+
+xmlDeclaration: (
+					{ string.Equals(CurrentToken.Text, "XML-DECLARATION", System.StringComparison.InvariantCultureIgnoreCase) }? 
+					xmlDeclarationFiller=UserDefinedWord
 			);
 		
 xmlNameMapping:

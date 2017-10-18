@@ -1421,9 +1421,9 @@ namespace TypeCobol.Compiler.Parser
             {
                 statement.CodePage = CobolExpressionsBuilder.CreateIntegerVariable(context.encoding().codepage().integerVariable1());
             }
-            if (context.XML_DECLARATION() != null)
+            if (context.xmlDeclaration() != null)
             {
-                statement.StartWithXMLDeclaration = CreateSyntaxProperty(true, context.XML_DECLARATION());
+                statement.StartWithXMLDeclaration = CreateSyntaxProperty(true, context.xmlDeclaration().UserDefinedWord());
             }
             if (context.attributes() != null)
             {
