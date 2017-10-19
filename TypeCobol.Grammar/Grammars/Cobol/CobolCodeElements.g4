@@ -7566,7 +7566,7 @@ xmlGenerateStatement:
 	(WITH? xmlDeclaration)?
 	(WITH? attributes)?
 	(NAMESPACE IS? namespace=alphanumericVariable2 
-		(NAMESPACE_PREFIX IS? namespacePrefix=alphanumericVariable2)? )?
+		(nameSpacePrefix IS? namespacePrefix=alphanumericVariable2)? )?
 	(NAME OF? xmlNameMapping+)?
 	(TYPE OF? xmlTypeMapping+)?
 	(SUPPRESS xmlSuppressDirective+)?;
@@ -7586,6 +7586,11 @@ xmlDeclaration: (
 					{ string.Equals(CurrentToken.Text, "XML-DECLARATION", System.StringComparison.InvariantCultureIgnoreCase) }? 
 					xmlDeclarationFiller=UserDefinedWord
 			);
+
+nameSpacePrefix: (
+					{ string.Equals(CurrentToken.Text, "NAMESPACE-PREFIX", System.StringComparison.InvariantCultureIgnoreCase) }? 
+					nameSpacePrefixFiller=UserDefinedWord
+				 );
 		
 xmlNameMapping:
 	subordinateDataItem=variable1 IS? xmlNameToGenerate=alphanumericValue2;

@@ -387,7 +387,6 @@ tokens
     MORE_LABELS,
     NAME,
     NAMESPACE,
-    NAMESPACE_PREFIX,
     NATIONAL,
     NATIONAL_EDITED,
     NATIVE,
@@ -1903,7 +1902,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     MORE_LABELS |
     NAME |
     NAMESPACE |
-    NAMESPACE_PREFIX |
     NATIONAL |
     NATIONAL_EDITED |
     NATIVE |
