@@ -410,7 +410,6 @@ tokens
     PACKED_DECIMAL,
     PADDING,
     PAGE,
-    PARSE,
     PASSWORD,
     PIC,
     PICTURE,
@@ -1921,7 +1920,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     PACKED_DECIMAL |
     PADDING |
     PAGE |
-    PARSE |
     PASSWORD |
     PIC |
     PICTURE |

@@ -7829,11 +7829,16 @@ codepage: integerVariable1;
 // ... more information p473->474 Control flow ...
 
 xmlParseStatement:
-                     XML PARSE xmlTextToParse=variable1
+                     XML parse xmlTextToParse=variable1
                      (WITH? encoding codepage)? 
                      (RETURNING NATIONAL)?
                      (VALIDATING WITH? (optimizedXmlSchemaData=variable1 | (FILE optimizedXmlSchemaFile=xmlSchemaNameReference)))?
                      PROCESSING PROCEDURE IS? (procedureName | proceduresRange);
+
+parse: (
+				{ string.Equals(CurrentToken.Text, "PARSE", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				parseFiller=UserDefinedWord
+	  );
 
 
 // --- Conditions code elements syntax ---
