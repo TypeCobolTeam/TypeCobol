@@ -1464,10 +1464,10 @@ namespace TypeCobol.Compiler.Parser
 		private XmlTypeMapping CreateXmlTypeMapping(CodeElementsParser.XmlTypeMappingContext context) {
 			var typeMapping = new XmlTypeMapping();
 			typeMapping.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
-            if (context.ATTRIBUTE() != null)
+            if (context.attribute() != null)
             {
                 typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ATTRIBUTE,
-                    context.ATTRIBUTE());
+                    context.attribute().UserDefinedWord());
             }
             if (context.ELEMENT() != null)
             {
@@ -1490,7 +1490,7 @@ namespace TypeCobol.Compiler.Parser
             }
             else
             {
-                if (context.ATTRIBUTE() != null)
+                if (context.attribute() != null)
                 {
                     if (context.NUMERIC() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ATTRIBUTE,
@@ -1500,7 +1500,7 @@ namespace TypeCobol.Compiler.Parser
                             context.NONNUMERIC());
                     else
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ATTRIBUTE,
-                            context.ATTRIBUTE());
+                            context.attribute().UserDefinedWord());
                 }
                 else if (context.ELEMENT() != null)
                 {

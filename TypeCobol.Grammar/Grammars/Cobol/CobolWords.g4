@@ -275,7 +275,6 @@ tokens
     ASCENDING,
     ASSIGN,
     AT,
-    ATTRIBUTE,
     AUTHOR,
     BEFORE,
     BEGINNING,
@@ -1788,7 +1787,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     ASCENDING |
     ASSIGN |
     AT |
-    ATTRIBUTE |
     AUTHOR |
     BEFORE |
     BEGINNING |
