@@ -7565,7 +7565,7 @@ xmlGenerateStatement:
 	(WITH? encoding )?
 	(WITH? xmlDeclaration)?
 	(WITH? attributes)?
-	(NAMESPACE IS? namespace=alphanumericVariable2 
+	(nameSpace IS? namespace=alphanumericVariable2 
 		(nameSpacePrefix IS? namespacePrefix=alphanumericVariable2)? )?
 	(NAME OF? xmlNameMapping+)?
 	(TYPE OF? xmlTypeMapping+)?
@@ -7590,6 +7590,11 @@ xmlDeclaration: (
 nameSpacePrefix: (
 					{ string.Equals(CurrentToken.Text, "NAMESPACE-PREFIX", System.StringComparison.InvariantCultureIgnoreCase) }? 
 					nameSpacePrefixFiller=UserDefinedWord
+				 );
+
+nameSpace:  (
+					{ string.Equals(CurrentToken.Text, "NAMESPACE", System.StringComparison.InvariantCultureIgnoreCase) }? 
+					nameSpaceFiller=UserDefinedWord
 				 );
 		
 xmlNameMapping:

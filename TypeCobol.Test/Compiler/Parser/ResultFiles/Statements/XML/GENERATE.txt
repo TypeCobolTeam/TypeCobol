@@ -1,7 +1,7 @@
 ﻿--- Diagnostics ---
 Line 3[15,15] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {'(', FROM} RuleStack=codeElement>xmlGenerateStatement>storageArea1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference,  OffendingSymbol=[15,15+:.]<PeriodSeparator>
 Line 18[28,35] <27, Error, Syntax> - Syntax error : no viable alternative at input 'ENCODING' RuleStack=codeElement>xmlGenerateStatement>encoding,  OffendingSymbol=[28,35:ENCODING]<UserDefinedWord>
-Line 20[57,71] <27, Error, Syntax> - Syntax error : extraneous input 'XML-DECLARATION' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=codeElement>xmlGenerateStatement,  OffendingSymbol=[57,71:XML-DECLARATION]<UserDefinedWord>
+Line 20[46,55] <27, Error, Syntax> - Syntax error : no viable alternative at input 'ATTRIBUTES' RuleStack=codeElement>xmlGenerateStatement,  OffendingSymbol=[46,55:ATTRIBUTES]<UserDefinedWord>
 Line 27[59,60] <27, Error, Syntax> - Syntax error : no viable alternative at input '27' RuleStack=codeElement>xmlGenerateStatement>alphanumericVariable2,  OffendingSymbol=[59,60:27]<IntegerLiteral>{27}
 Line 28[36,37] <27, Error, Syntax> - Syntax error : no viable alternative at input '42' RuleStack=codeElement>xmlGenerateStatement>alphanumericVariable2,  OffendingSymbol=[36,37:42]<IntegerLiteral>{42}
 Line 30[23,38] <27, Error, Syntax> - Syntax error : no viable alternative at input 'NAMESPACE-PREFIX' RuleStack=codeElement>xmlGenerateStatement,  OffendingSymbol=[23,38:NAMESPACE-PREFIX]<UserDefinedWord>
