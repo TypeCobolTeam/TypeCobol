@@ -7567,7 +7567,7 @@ xmlGenerateStatement:
 	(WITH? attributes)?
 	(nameSpace IS? namespace=alphanumericVariable2 
 		(nameSpacePrefix IS? namespacePrefix=alphanumericVariable2)? )?
-	(NAME OF? xmlNameMapping+)?
+	(name OF?  xmlNameMapping+)?
 	(TYPE OF? xmlTypeMapping+)?
 	(SUPPRESS xmlSuppressDirective+)?;
 
@@ -7596,9 +7596,14 @@ nameSpace:  (
 					{ string.Equals(CurrentToken.Text, "NAMESPACE", System.StringComparison.InvariantCultureIgnoreCase) }? 
 					nameSpaceFiller=UserDefinedWord
 				 );
+
+name: (
+				{ string.Equals(CurrentToken.Text, "NAME", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				nameFiller=UserDefinedWord
+	  );
 		
 xmlNameMapping:
-	subordinateDataItem=variable1 IS? xmlNameToGenerate=alphanumericValue2;
+	({ !string.Equals(CurrentToken.Text, "NAME", System.StringComparison.InvariantCultureIgnoreCase) }? subordinateDataItem=variable1) IS? xmlNameToGenerate=alphanumericValue2;
 
 xmlTypeMapping:
 	subordinateDataItem=variable1 IS? (ATTRIBUTE | ELEMENT | CONTENT);

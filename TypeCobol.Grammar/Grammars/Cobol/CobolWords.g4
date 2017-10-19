@@ -385,7 +385,6 @@ tokens
     MODE,
     MODULES,
     MORE_LABELS,
-    NAME,
     NATIONAL,
     NATIONAL_EDITED,
     NATIVE,
@@ -1899,7 +1898,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     MODE |
     MODULES |
     MORE_LABELS |
-    NAME |
     NATIONAL |
     NATIONAL_EDITED |
     NATIVE |
