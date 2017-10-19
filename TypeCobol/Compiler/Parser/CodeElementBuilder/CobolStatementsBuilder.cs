@@ -1469,10 +1469,10 @@ namespace TypeCobol.Compiler.Parser
                 typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ATTRIBUTE,
                     context.attribute().UserDefinedWord());
             }
-            if (context.ELEMENT() != null)
+            if (context.element() != null)
             {
                 typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ELEMENT,
-                    context.ELEMENT());
+                    context.element().UserDefinedWord());
             }
             if (context.CONTENT() != null)
             {
@@ -1502,7 +1502,7 @@ namespace TypeCobol.Compiler.Parser
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ATTRIBUTE,
                             context.attribute().UserDefinedWord());
                 }
-                else if (context.ELEMENT() != null)
+                else if (context.element() != null)
                 {
                     if (context.NUMERIC() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ELEMENT,
@@ -1512,7 +1512,7 @@ namespace TypeCobol.Compiler.Parser
                             context.NONNUMERIC());
                     else
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ELEMENT,
-                            context.ELEMENT());
+                            context.element().UserDefinedWord());
                 }
             }
 			suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));

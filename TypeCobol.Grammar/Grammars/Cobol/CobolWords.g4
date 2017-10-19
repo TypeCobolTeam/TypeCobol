@@ -331,7 +331,6 @@ tokens
     DUPLICATES,
     DYNAMIC,
     EGCS,
-    ELEMENT,
     END_OF_PAGE,
     ENDING,
     EOP,
@@ -1843,7 +1842,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     DUPLICATES |
     DYNAMIC |
     EGCS |
-    ELEMENT |
     END_OF_PAGE |
     ENDING |
     EOP |
