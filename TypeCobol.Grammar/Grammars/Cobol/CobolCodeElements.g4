@@ -3840,13 +3840,18 @@ acceptDataTransfer:
 	ACCEPT alphanumericStorageArea (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
 
 acceptSystemDateTime:
-	ACCEPT alphanumericStorageArea FROM ((DATE yyyyMmDd?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME);
+	ACCEPT alphanumericStorageArea FROM ((DATE yyyyMmDd?) | (DAY yyyyDdd?) | DAY_OF_WEEK | TIME);
 
 
 yyyyMmDd: (
 				{ string.Equals(CurrentToken.Text, "YYYYMMDD", System.StringComparison.InvariantCultureIgnoreCase) }? 
 				YYYYMMDDFiller=UserDefinedWord
 	  );
+
+yyyyDdd: (
+				{ string.Equals(CurrentToken.Text, "YYYYDDD", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				YYYYDDDFiller=UserDefinedWord
+		 );
 
 
 // p298: ADD statement

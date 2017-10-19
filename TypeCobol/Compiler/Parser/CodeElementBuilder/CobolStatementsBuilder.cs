@@ -73,10 +73,10 @@ namespace TypeCobol.Compiler.Parser
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYMMDD,
 					ParseTreeUtils.GetFirstToken(context.DATE()));
 			}
-			else if (context.YYYYDDD() != null)
+			else if (context.yyyyDdd() != null)
 			{
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DAY_YYYYDDD,
-					ParseTreeUtils.GetFirstToken(context.YYYYDDD()));
+					ParseTreeUtils.GetFirstToken(context.yyyyDdd().UserDefinedWord()));
 			}
 			else if (context.DAY() != null)
 			{
