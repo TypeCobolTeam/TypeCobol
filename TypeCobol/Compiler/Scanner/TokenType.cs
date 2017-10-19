@@ -109,7 +109,7 @@ namespace TypeCobol.Compiler.Scanner
         DELETE_CD = 45,
         EJECT = 46,
         ENTER = 47,
-        EXEC_SQL_INCLUDE = 48,
+        EXEC_SQL = 48,
         INSERT = 49,
         PROCESS = 50,
         READY = 51,

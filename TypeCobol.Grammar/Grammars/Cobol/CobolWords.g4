@@ -97,7 +97,7 @@ tokens
     DELETE_CD,
     EJECT,
     ENTER,
-    EXEC_SQL_INCLUDE,
+    EXEC_SQL,
     INSERT,
     PROCESS,
     READY,
@@ -1603,7 +1603,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     DELETE_CD |
     EJECT |
     ENTER |
-    EXEC_SQL_INCLUDE |
+    EXEC_SQL |
     INSERT |
     PROCESS |
     READY |

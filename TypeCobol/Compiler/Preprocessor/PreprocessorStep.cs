@@ -119,7 +119,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 // only the third token INCLUDE is recognized as a compiler directive
                 // starting keyword by the scanner. In this case, we must rewind the 
                 // iterator two tokens backwards to start parsing just before the EXEC token.
-                if (compilerDirectiveStartingToken.TokenType == TokenType.EXEC_SQL_INCLUDE)
+                if (compilerDirectiveStartingToken.TokenType == TokenType.EXEC_SQL)
                 {
                     tokensIterator.PreviousToken();
                     tokensIterator.PreviousToken();
