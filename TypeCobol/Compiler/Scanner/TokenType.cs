@@ -39,20 +39,20 @@ namespace TypeCobol.Compiler.Scanner
         FigurativeConstantKeyword=185, 
         // 199 -> 200 : Keywords - Special object identifiers
         SpecialObjetIdentifierKeyword=199,
-        // 201 -> 442 : Keywords - Syntax tokens
+        // 201 -> 441 : Keywords - Syntax tokens
         SyntaxKeyword=201,
-        // 443 -> 444 : Keywords - Cobol 2002
-        Cobol2002Keyword = 443,
-        // 445 -> 449 : Keywords - TypeCobol
-        TypeCobolKeyword = 445,
+        // 442 -> 443 : Keywords - Cobol 2002
+        Cobol2002Keyword = 442,
+        // 444 -> 448 : Keywords - TypeCobol
+        TypeCobolKeyword = 444,
 
-        // 450-> 450 : Operators - TypeCobol
-        TypeCobolOperators= 450, 
+        // 449-> 449 : Operators - TypeCobol
+        TypeCobolOperators= 449, 
 
-        // 451 -> 453 : Compiler directives
-        CompilerDirective = 451,
-        // 454 -> 454 : Internal token groups - used by the preprocessor only
-        InternalTokenGroup = 454
+        // 450 -> 452 : Compiler directives
+        CompilerDirective = 450,
+        // 453 -> 453 : Internal token groups - used by the preprocessor only
+        InternalTokenGroup = 453
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -494,28 +494,28 @@ namespace TypeCobol.Compiler.Scanner
         UPON = 430,
         USAGE = 431,
         USING = 432,
-        VALIDATING = 433,
-        VALUE = 434,
-        VALUES = 435,
-        VARYING = 436,
-        WITH = 437,
-        WORDS = 438,
-        WRITE_ONLY = 439,
-        XML_SCHEMA = 440,
-        YYYYDDD = 441,
-        YYYYMMDD = 442,
-        TYPEDEF = 443,
-        STRONG = 444,
-        UNSAFE = 445,
-        PUBLIC = 446,
-        PRIVATE = 447,
-        IN_OUT = 448,
-        STRICT = 449,
-        QuestionMark = 450,
-        CompilerDirective = 451,
-        CopyImportDirective = 452,
-        ReplaceDirective = 453,
-        ContinuationTokenGroup = 454,
+        VALUE = 433,
+        VALUES = 434,
+        VARYING = 435,
+        WITH = 436,
+        WORDS = 437,
+        WRITE_ONLY = 438,
+        XML_SCHEMA = 439,
+        YYYYDDD = 440,
+        YYYYMMDD = 441,
+        TYPEDEF = 442,
+        STRONG = 443,
+        UNSAFE = 444,
+        PUBLIC = 445,
+        PRIVATE = 446,
+        IN_OUT = 447,
+        STRICT = 448,
+        QuestionMark = 449,
+        CompilerDirective = 450,
+        CopyImportDirective = 451,
+        ReplaceDirective = 452,
+        ContinuationTokenGroup = 453,
+
 
     }
 

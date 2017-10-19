@@ -7840,6 +7840,11 @@ parse: (
 				parseFiller=UserDefinedWord
 	  );
 
+validating: (
+				{ string.Equals(CurrentToken.Text, "VALIDATING", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				validatingFiller=UserDefinedWord
+			);
+
 
 // --- Conditions code elements syntax ---
 

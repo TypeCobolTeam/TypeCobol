@@ -487,7 +487,6 @@ tokens
     UPON,
     USAGE,
     USING,
-    VALIDATING,
     VALUE,
     VALUES,
     VARYING,
@@ -1997,7 +1996,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     UPON |
     USAGE |
     USING |
-    VALIDATING |
     VALUE |
     VALUES |
     VARYING |
