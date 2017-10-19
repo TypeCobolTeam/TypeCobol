@@ -1495,9 +1495,9 @@ namespace TypeCobol.Compiler.Parser
                     if (context.NUMERIC() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ATTRIBUTE,
                             context.NUMERIC());
-                    else if (context.NONNUMERIC() != null)
+                    else if (context.nonnumeric() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ATTRIBUTE,
-                            context.NONNUMERIC());
+                            context.nonnumeric().UserDefinedWord());
                     else
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ATTRIBUTE,
                             context.attribute().UserDefinedWord());
@@ -1507,9 +1507,9 @@ namespace TypeCobol.Compiler.Parser
                     if (context.NUMERIC() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ELEMENT,
                             context.NUMERIC());
-                    else if (context.NONNUMERIC() != null)
+                    else if (context.nonnumeric() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ELEMENT,
-                            context.NONNUMERIC());
+                            context.nonnumeric().UserDefinedWord());
                     else
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ELEMENT,
                             context.element().UserDefinedWord());

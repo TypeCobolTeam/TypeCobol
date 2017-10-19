@@ -389,7 +389,6 @@ tokens
     NEGATIVE,
     NEW,
     NO,
-    NONNUMERIC,
     NOT,
     NUMERIC,
     NUMERIC_EDITED,
@@ -1898,7 +1897,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     NEGATIVE |
     NEW |
     NO |
-    NONNUMERIC |
     NOT |
     NUMERIC |
     NUMERIC_EDITED |

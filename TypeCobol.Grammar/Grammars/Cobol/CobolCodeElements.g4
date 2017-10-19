@@ -7611,6 +7611,11 @@ element: (
 				{ string.Equals(CurrentToken.Text, "ELEMENT", System.StringComparison.InvariantCultureIgnoreCase) }? 
 				elementFiller=UserDefinedWord
 	  );
+
+nonnumeric: (
+				{ string.Equals(CurrentToken.Text, "NONNUMERIC", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				nonNumericFiller=UserDefinedWord
+	  );
 		
 xmlNameMapping:
 	({ !string.Equals(CurrentToken.Text, "NAME", System.StringComparison.InvariantCultureIgnoreCase) }? subordinateDataItem=variable1) IS? xmlNameToGenerate=alphanumericValue2;
@@ -7620,7 +7625,7 @@ xmlTypeMapping:
 
 xmlSuppressDirective:	
 	( subordinateDataItem=variable1 |
-	(EVERY (attribute | element | ((NUMERIC | NONNUMERIC) (attribute | element)?)))?)
+	(EVERY (attribute | element | ((NUMERIC | nonnumeric) (attribute | element)?)))?)
 	// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 	WHEN repeatedCharacterValue3 (OR? repeatedCharacterValue3)*;
 	
