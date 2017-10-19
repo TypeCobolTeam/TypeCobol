@@ -63,10 +63,10 @@ namespace TypeCobol.Compiler.Parser
 
 			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
 			statement.ReceivingStorageArea.DataSourceType = DataSourceType.ReadFromSystemCall;
-			if (context.YYYYMMDD() != null)
+			if (context.yyyyMmDd() != null)
 			{
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYYYMMDD,
-					ParseTreeUtils.GetFirstToken(context.YYYYMMDD()));
+					ParseTreeUtils.GetFirstToken(context.yyyyMmDd().UserDefinedWord()));
 			}
 			else if (context.DATE() != null)
 			{

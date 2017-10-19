@@ -494,7 +494,6 @@ tokens
     WRITE_ONLY,
     XML_SCHEMA,
     YYYYDDD,
-    YYYYMMDD,
     // Keywords - Cobol 2002
     TYPEDEF,
     STRONG,
@@ -2002,7 +2001,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     WRITE_ONLY |
     XML_SCHEMA |
     YYYYDDD |
-    YYYYMMDD |
     // Keywords - Cobol 2002
     TYPEDEF |
     STRONG |

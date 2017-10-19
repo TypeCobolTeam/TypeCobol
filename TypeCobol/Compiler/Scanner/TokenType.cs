@@ -41,18 +41,18 @@ namespace TypeCobol.Compiler.Scanner
         SpecialObjetIdentifierKeyword=199,
         // 201 -> 440 : Keywords - Syntax tokens
         SyntaxKeyword=201,
-        // 441 -> 442 : Keywords - Cobol 2002
-        Cobol2002Keyword = 441,
-        // 443 -> 447 : Keywords - TypeCobol
-        TypeCobolKeyword = 443,
+        // 440 -> 441 : Keywords - Cobol 2002
+        Cobol2002Keyword = 440,
+        // 442 -> 446 : Keywords - TypeCobol
+        TypeCobolKeyword = 442,
 
-        // 448-> 448 : Operators - TypeCobol
-        TypeCobolOperators= 448, 
+        // 447-> 447 : Operators - TypeCobol
+        TypeCobolOperators= 447, 
 
-        // 449 -> 451 : Compiler directives
-        CompilerDirective = 449,
-        // 452 -> 452 : Internal token groups - used by the preprocessor only
-        InternalTokenGroup = 452
+        // 448 -> 450 : Compiler directives
+        CompilerDirective = 448,
+        // 451 -> 451 : Internal token groups - used by the preprocessor only
+        InternalTokenGroup = 451
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -501,20 +501,18 @@ namespace TypeCobol.Compiler.Scanner
         WRITE_ONLY = 437,
         XML_SCHEMA = 438,
         YYYYDDD = 439,
-        YYYYMMDD = 440,
-        TYPEDEF = 441,
-        STRONG = 442,
-        UNSAFE = 443,
-        PUBLIC = 444,
-        PRIVATE = 445,
-        IN_OUT = 446,
-        STRICT = 447,
-        QuestionMark = 448,
-        CompilerDirective = 449,
-        CopyImportDirective = 450,
-        ReplaceDirective = 451,
-        ContinuationTokenGroup = 452,
-
+        TYPEDEF = 440,
+        STRONG = 441,
+        UNSAFE = 442,
+        PUBLIC = 443,
+        PRIVATE = 444,
+        IN_OUT = 445,
+        STRICT = 446,
+        QuestionMark = 447,
+        CompilerDirective = 448,
+        CopyImportDirective = 449,
+        ReplaceDirective = 450,
+        ContinuationTokenGroup = 451,
 
     }
 

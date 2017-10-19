@@ -3840,7 +3840,14 @@ acceptDataTransfer:
 	ACCEPT alphanumericStorageArea (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
 
 acceptSystemDateTime:
-	ACCEPT alphanumericStorageArea FROM ((DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME);
+	ACCEPT alphanumericStorageArea FROM ((DATE yyyyMmDd?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME);
+
+
+yyyyMmDd: (
+				{ string.Equals(CurrentToken.Text, "YYYYMMDD", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				YYYYMMDDFiller=UserDefinedWord
+	  );
+
 
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
