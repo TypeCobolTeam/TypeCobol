@@ -649,7 +649,7 @@ namespace TypeCobol.LanguageServer
 
             if (pargraphs != null)
             {
-                completionItems.AddRange(pargraphs.Select(para => new CompletionItem(para.Name)));
+                completionItems.AddRange(pargraphs.Select(para => new CompletionItem(para.Name) { kind = CompletionItemKind.Reference } ));
             }
             if (variables != null)
             {
@@ -658,6 +658,7 @@ namespace TypeCobol.LanguageServer
                     var completionItem =
                         new CompletionItem(string.Format("{0} PIC{1}", variable.Name, variable.Picture.NormalizedValue));
                     completionItem.insertText = variable.Name;
+                    completionItem.kind = CompletionItemKind.Variable;
                     completionItems.Add(completionItem);
                 }
             }
@@ -706,6 +707,7 @@ namespace TypeCobol.LanguageServer
             {
                 var completionItem = new CompletionItem(string.Format("{0}", variable.Name));
                 completionItem.insertText = variable.Name;
+                completionItem.kind = CompletionItemKind.Variable;
                 completionItems.Add(completionItem);
             }
 
@@ -730,7 +732,7 @@ namespace TypeCobol.LanguageServer
             foreach (var prog in programs)
             {
                 var completionItem = new CompletionItem(prog.Name);
-                completionItem.kind = CompletionItemKind.Class;
+                completionItem.kind = CompletionItemKind.Module;
                 completionItems.Add(completionItem);
             }
 
@@ -1091,7 +1093,7 @@ namespace TypeCobol.LanguageServer
                                 var referenceArrangedQualifiedName = string.Join("::", reference.QualifiedName.ToString().Split(reference.QualifiedName.Separator).Skip(1)); //Skip Program Name
                                 var finalQualifiedName = string.Format("{0}::{1}", referenceArrangedQualifiedName, variable.QualifiedName.Head);
                                 var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, finalQualifiedName);
-                                completionItems.Add(new CompletionItem(variableDisplay) { insertText = finalQualifiedName });
+                                completionItems.Add(new CompletionItem(variableDisplay) { insertText = finalQualifiedName, kind=CompletionItemKind.Variable});
                             }
                             else //If the reference is always in a typedef, let's loop and ride up until we are in a final variable
                             {
@@ -1212,7 +1214,7 @@ namespace TypeCobol.LanguageServer
                 : variable.Name; 
 
             var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
-            return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName };
+            return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind=CompletionItemKind.Variable };
         }
         #endregion
 
