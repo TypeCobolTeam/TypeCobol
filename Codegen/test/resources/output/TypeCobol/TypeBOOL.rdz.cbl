@@ -31,7 +31,7 @@
          88  d-false VALUE 'F'.
                            
 
-000000 01 group.
+000000 01 mygroup.
 000000    05 array occurs 5.
       *      10 checkToDo type bool.
 000000       10  checkToDo-value PIC X VALUE LOW-VALUE.

@@ -39,20 +39,22 @@ namespace TypeCobol.Compiler.Scanner
         FigurativeConstantKeyword=185, 
         // 199 -> 200 : Keywords - Special object identifiers
         SpecialObjetIdentifierKeyword=199,
-        // 201 -> 440 : Keywords - Syntax tokens
+        // 201 -> 494 : Keywords - Syntax tokens
         SyntaxKeyword=201,
-        // 439 -> 440 : Keywords - Cobol 2002
-        Cobol2002Keyword = 439,
-        // 441 -> 445 : Keywords - TypeCobol
-        TypeCobolKeyword = 441,
+        // 495 -> 497 : Keywors - Cobol V6
+        CobolV6Keyword = 495,
+        // 498 -> 499 : Keywords - Cobol 2002
+        Cobol2002Keyword = 498,
+        // 500 -> 504 : Keywords - TypeCobol
+        TypeCobolKeyword = 500,
 
-        // 446-> 446 : Operators - TypeCobol
+        // 505-> 505 : Operators - TypeCobol
         TypeCobolOperators= 446, 
 
-        // 447 -> 449 : Compiler directives
-        CompilerDirective = 447,
-        // 450 -> 450 : Internal token groups - used by the preprocessor only
-        InternalTokenGroup = 450
+        // 506 -> 508 : Compiler directives
+        CompilerDirective = 506,
+        // 509 -> 509 : Internal token groups - used by the preprocessor only
+        InternalTokenGroup = 509
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -500,18 +502,78 @@ namespace TypeCobol.Compiler.Scanner
         WORDS = 436,
         WRITE_ONLY = 437,
         XML_SCHEMA = 438,
-        TYPEDEF = 439,
-        STRONG = 440,
-        UNSAFE = 441,
-        PUBLIC = 442,
-        PRIVATE = 443,
-        IN_OUT = 444,
-        STRICT = 445,
-        QuestionMark = 446,
-        CompilerDirective = 447,
-        CopyImportDirective = 448,
-        ReplaceDirective = 449,
-        ContinuationTokenGroup = 450,
+        ALLOCATE = 439,
+        CD = 440,
+        CF = 441,
+        CH = 442,
+        CLOCK_UNITS = 443,
+        COLUMN = 444,
+        COMMUNICATION = 445,
+        CONTROL = 446,
+        CONTROLS = 447,
+        DE = 448,
+        DEFAULT = 449,
+        DESTINATION = 450,
+        DETAIL = 451,
+        DISABLE = 452,
+        EGI = 453,
+        EMI = 454,
+        ENABLE = 455,
+        END_RECEIVE = 456,
+        ESI = 457,
+        FINAL = 458,
+        FREE = 459,
+        GROUP = 460,
+        HEADING = 461,
+        INDICATE = 462,
+        INITIATE = 463,
+        LAST = 464,
+        LIMIT = 465,
+        LIMITS = 466,
+        LINE_COUNTER = 467,
+        MESSAGE = 468,
+        NUMBER = 469,
+        PAGE_COUNTER = 470,
+        PF = 471,
+        PH = 472,
+        PLUS = 473,
+        PRINTING = 474,
+        PURGE = 475,
+        QUEUE = 476,
+        RD = 477,
+        RECEIVE = 478,
+        REPORT = 479,
+        REPORTING = 480,
+        REPORTS = 481,
+        RF = 482,
+        RH = 483,
+        SEGMENT = 484,
+        SEND = 485,
+        SOURCE = 486,
+        SUB_QUEUE_1 = 487,
+        SUB_QUEUE_2 = 488,
+        SUB_QUEUE_3 = 489,
+        SUM = 490,
+        TABLE = 491,
+        TERMINAL = 492,
+        TERMINATE = 493,
+        TEXT = 494,
+        END_JSON = 495,
+        JSON = 496,
+        VOLATILE = 497,
+        TYPEDEF = 498,
+        STRONG = 499,
+        UNSAFE = 500,
+        PUBLIC = 501,
+        PRIVATE = 502,
+        IN_OUT = 503,
+        STRICT = 504,
+        QuestionMark = 505,
+        CompilerDirective = 506,
+        CopyImportDirective = 507,
+        ReplaceDirective = 508,
+        ContinuationTokenGroup = 509,
+
 
 
     }

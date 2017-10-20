@@ -637,11 +637,11 @@
 
 [[SentenceEnd]] [30,30+:.]<PeriodSeparator> --> [30,30+:.]<PeriodSeparator>
 
-[[IfStatement]] [1,2:IF]<IF> --> [18,19:42]<IntegerLiteral>{42}
+[[IfStatement]] [1,2:IF]<IF> --> [20,21:42]<IntegerLiteral>{42}
 
-[[ContinueStatement]] [21,28:CONTINUE]<CONTINUE> --> [21,28:CONTINUE]<CONTINUE>
+[[ContinueStatement]] [23,30:CONTINUE]<CONTINUE> --> [23,30:CONTINUE]<CONTINUE>
 
-[[IfStatementEnd]] [30,35:END-IF]<END_IF> --> [30,35:END-IF]<END_IF>
+[[IfStatementEnd]] [32,37:END-IF]<END_IF> --> [32,37:END-IF]<END_IF>
 
-[[SentenceEnd]] [36,36+:.]<PeriodSeparator> --> [36,36+:.]<PeriodSeparator>
+[[SentenceEnd]] [38,38+:.]<PeriodSeparator> --> [38,38+:.]<PeriodSeparator>
 

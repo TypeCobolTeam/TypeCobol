@@ -49,7 +49,7 @@ PROGRAM: ProcedureCallOverload common:False initial:False recursive:False
   case14:Alphanumeric
   case15:Alphanumeric
   case15:Alphanumeric
-  group:Alphanumeric
+  mygroup:Alphanumeric
 -- PARAGRAPHS --
   TRAITEMENT
 -- FUNCTIONS ---

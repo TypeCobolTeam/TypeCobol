@@ -26,7 +26,7 @@
       *No case13
        01 case14 pic X.
        01 case15 pic X.
-       01 group.
+       01 mygroup.
             05 case1 pic X.
             05 case2 pic X.
             05 case3 pic X.

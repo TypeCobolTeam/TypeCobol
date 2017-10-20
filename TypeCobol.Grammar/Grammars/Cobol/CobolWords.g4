@@ -493,6 +493,66 @@ tokens
     WORDS,
     WRITE_ONLY,
     XML_SCHEMA,
+	ALLOCATE,
+    CD,
+    CF,
+    CH,
+    CLOCK_UNITS,
+    COLUMN,
+    COMMUNICATION,
+    CONTROL,
+    CONTROLS,
+    DE,
+    DEFAULT,
+    DESTINATION,
+    DETAIL,
+    DISABLE,
+    EGI,
+    EMI,
+    ENABLE,
+    END_RECEIVE,
+    ESI,
+    FINAL,
+    FREE,
+    GROUP,
+    HEADING,
+    INDICATE,
+    INITIATE,
+    LAST,
+    LIMIT,
+    LIMITS,
+    LINE_COUNTER,
+    MESSAGE,
+    NUMBER,
+    PAGE_COUNTER,
+    PF,
+    PH,
+    PLUS,
+    PRINTING,
+    PURGE,
+    QUEUE,
+    RD,
+    RECEIVE,
+    REPORT,
+    REPORTING,
+    REPORTS,
+    RF,
+    RH,
+    SEGMENT,
+    SEND,
+    SOURCE,
+    SUB_QUEUE_1,
+    SUB_QUEUE_2,
+    SUB_QUEUE_3,
+    SUM,
+    TABLE,
+    TERMINAL,
+    TERMINATE,
+    TEXT,
+	// Keywords - Cobol V6
+    END_JSON,
+    JSON,
+    VOLATILE,
     // Keywords - Cobol 2002
     TYPEDEF,
     STRONG,
@@ -1999,6 +2059,66 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     WORDS |
     WRITE_ONLY |
     XML_SCHEMA |
+	ALLOCATE |
+    CD |
+    CF |
+    CH |
+    CLOCK_UNITS |
+    COLUMN |
+    COMMUNICATION |
+    CONTROL |
+    CONTROLS |
+    DE |
+    DEFAULT |
+    DESTINATION |
+    DETAIL |
+    DISABLE |
+    EGI |
+    EMI |
+    ENABLE |
+    END_RECEIVE |
+    ESI |
+    FINAL |
+    FREE |
+    GROUP |
+    HEADING |
+    INDICATE |
+    INITIATE |
+    LAST |
+    LIMIT |
+    LIMITS |
+    LINE_COUNTER |
+    MESSAGE |
+    NUMBER |
+    PAGE_COUNTER |
+    PF |
+    PH |
+    PLUS |
+    PRINTING |
+    PURGE |
+    QUEUE |
+    RD |
+    RECEIVE |
+    REPORT |
+    REPORTING |
+    REPORTS |
+    RF |
+    RH |
+    SEGMENT |
+    SEND |
+    SOURCE |
+    SUB_QUEUE_1 |
+    SUB_QUEUE_2 |
+    SUB_QUEUE_3 |
+    SUM |
+    TABLE |
+    TERMINAL |
+    TERMINATE |
+    TEXT |
+	// Keywords - Cobol V6
+    END_JSON |
+    JSON |
+    VOLATILE |
     // Keywords - Cobol 2002
     TYPEDEF |
     STRONG |

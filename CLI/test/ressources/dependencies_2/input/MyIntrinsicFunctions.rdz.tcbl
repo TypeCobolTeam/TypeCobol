@@ -19,7 +19,7 @@
        PROCEDURE DIVISION.
        
        declare procedure dump public
-          input message pic X(80)
+          input mymessage pic X(80)
          .
          PROCEDURE DIVISION.
            CONTINUE.

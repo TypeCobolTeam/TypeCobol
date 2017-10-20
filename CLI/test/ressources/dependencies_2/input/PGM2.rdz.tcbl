@@ -5,7 +5,7 @@
        Working-STORAGE SECTION.
 
        01  somedate     TYPE Date.
-       01  message      PIC X(80).
+       01  mymessage      PIC X(80).
        01  vect2        TYPE Vect2.
        01  vect2b       TYPE Vect2.
 
@@ -36,10 +36,10 @@
 
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
-          call dump input message
+          call dump input mymessage
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
-          call MyIntrinsicFunctions::dump input message
+          call MyIntrinsicFunctions::dump input mymessage
         .
        END PROGRAM PGM2.
 
