@@ -17,12 +17,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
     public class Cobol85CompleteASTChecker : AbstractAstVisitor
     {
-        public Cobol85CompleteASTChecker(List<Diagnostic> diagnostics)
-        {
-            _Diagnostic = diagnostics;
-        }
-
-        private List<Diagnostic> _Diagnostic;
+        
         private Node CurrentNode {get;set;}
         public override bool BeginNode(Node node)
         {
@@ -49,36 +44,12 @@ namespace TypeCobol.Compiler.Diagnostics {
             RenamesChecker.OnNode(node);
             ReadOnlyPropertiesChecker.OnNode(node);
 
-            if (node.Diagnostics != null)
-                AddDiagnostics(node.Diagnostics);
+          
 
             return true;
         }
 
-        /// <summary>
-        /// Add diagnostic to the list of diag, also check if diagnostic does not exists in the list
-        /// </summary>
-        /// <param name="diagnostic"></param>
-        private void AddDiagnostic(Diagnostic diagnostic)
-        {
-            if(_Diagnostic == null)
-                throw new Exception("Diagnostics list has not been intialized");
 
-            if(!_Diagnostic.Contains(diagnostic))
-                _Diagnostic.Add(diagnostic);
-        }
-
-        /// <summary>
-        /// Add a range of diagnostic, also check if a diagnostic is already present in the list
-        /// </summary>
-        /// <param name="diagnostics"></param>
-        private void AddDiagnostics(List<Diagnostic> diagnostics)
-        {
-            foreach (var diagnostic in diagnostics)
-            {
-                AddDiagnostic(diagnostic);
-            }
-        }
 
         public override bool BeginCodeElement(CodeElement codeElement) {
             //This checker is only for Node after the full AST has been created
@@ -87,37 +58,21 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         public override bool Visit(PerformProcedure performProcedureNode) {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
-
-            if (performProcedureNode.Diagnostics != null)
-                AddDiagnostics(performProcedureNode.Diagnostics);
-
             return true;
         }
 
         public override bool Visit(Paragraph paragraph) {
             SectionOrParagraphUsageChecker.CheckParagraph(paragraph);
-
-            if (paragraph.Diagnostics != null)
-                AddDiagnostics(paragraph.Diagnostics);
-
             return true;
         }
 
         public override bool Visit(ProcedureDivision procedureDivision) {
             LibraryChecker.CheckLibrary(procedureDivision);
-
-            if (procedureDivision.Diagnostics != null)
-                AddDiagnostics(procedureDivision.Diagnostics);
-
             return true;
         }
 
         public override bool Visit(Section section) {
             SectionOrParagraphUsageChecker.CheckSection(section);
-
-            if (section.Diagnostics != null)
-                AddDiagnostics(section.Diagnostics);
-
             return true;
         }
 
@@ -126,20 +81,12 @@ namespace TypeCobol.Compiler.Diagnostics {
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
-
-            if (typeDefinition.Diagnostics != null)
-                AddDiagnostics(typeDefinition.Diagnostics);
-
             return true;
         }
 
 
         public override bool VisitVariableWriter(VariableWriter variableWriter) {
             WriteTypeConsistencyChecker.OnNode(variableWriter, CurrentNode);
-
-            if (CurrentNode.Diagnostics != null)
-                AddDiagnostics(CurrentNode.Diagnostics);
-
             return true;
         }
 
@@ -148,9 +95,6 @@ namespace TypeCobol.Compiler.Diagnostics {
             if(dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
             {
                 CheckPicture(dataDefinition);
-
-                if (dataDefinition.Diagnostics != null)
-                    AddDiagnostics(dataDefinition.Diagnostics);
             }
             return true;
         }

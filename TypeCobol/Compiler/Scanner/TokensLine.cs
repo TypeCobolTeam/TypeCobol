@@ -136,7 +136,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal IEnumerable<Diagnostic> GetDiagnosticsForToken(Token filterToken)
         {
-            return ScannerDiagnostics.Where(diag => diag is TokenDiagnostic && ((TokenDiagnostic)diag).Token == filterToken );
+            return _ScannerDiagnostics.Where(diag => diag is TokenDiagnostic && ((TokenDiagnostic)diag).Token == filterToken );
         }
 
 
@@ -158,7 +158,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             if (token != null)
             {
-                foreach (Diagnostic diag in _ScannerDiagnostics.Where(diag => diag is TokenDiagnostic && ((TokenDiagnostic)diag).Token == token).ToArray())
+                foreach (Diagnostic diag in GetDiagnosticsForToken(token))
                 {
                     _ScannerDiagnostics.Remove(diag);
                 }

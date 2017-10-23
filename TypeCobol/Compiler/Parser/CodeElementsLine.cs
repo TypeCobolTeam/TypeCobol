@@ -115,11 +115,10 @@ namespace TypeCobol.Compiler.Parser
             //Update ParserDiag lines index
             if (_ParserDiagnostics != null)
             {
-                _ParserDiagnostics = _ParserDiagnostics.Select(d =>
+                foreach (var parserDiagnostic in _ParserDiagnostics)
                 {
-                    d.Line = LineIndex+1;
-                    return d;
-                }).ToList();
+                    parserDiagnostic.Line = LineIndex + 1;
+                }
             }
 
             //Update CodeElements Diags lines index
@@ -129,11 +128,10 @@ namespace TypeCobol.Compiler.Parser
                 {
                     if (codeElement.Diagnostics != null)
                     {
-                        codeElement.Diagnostics = codeElement.Diagnostics.Select(d =>
+                        foreach (var codeElementDiagnostic in codeElement.Diagnostics)
                         {
-                            d.Line = LineIndex+1;
-                            return d;
-                        }).ToList();
+                            codeElementDiagnostic.Line = LineIndex + 1;
+                        }
                     }
                 }
             }
