@@ -93,6 +93,8 @@ namespace TypeCobol.LanguageServices.Editor
 
             //fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
             //fileCompiler.StartContinuousBackgroundCompilation(200, 500, 1000, 3000); //TODO: create a better refresh compilation
+
+            fileCompiler.CompileOnce(); //Let's parse file for the first time after openning. 
         }
 
         /// <summary>

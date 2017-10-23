@@ -65,14 +65,13 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(parameters.textDocument.uri);
             if (objUri.IsFile)
             {
-
-                typeCobolWorkspace.OpenSourceFile(objUri,
-                    parameters.text != null ? parameters.text : parameters.textDocument.text);
-
                 //Subscribe to diagnostics event
                 typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
 
+                typeCobolWorkspace.OpenSourceFile(objUri,
+                    parameters.text != null ? parameters.text : parameters.textDocument.text);
+                
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + objUri.LocalPath);
             }
