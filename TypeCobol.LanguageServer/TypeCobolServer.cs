@@ -113,12 +113,14 @@ namespace TypeCobol.LanguageServer
                         try
                         {
                             typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text);
+                            return;
                         }
                         catch (Exception e)
                         {
 //Don't rethow an exception on save.
                             RemoteConsole.Error(string.Format("Error while handling notification {0} : {1}",
                                 "textDocument/didChange", e.Message));
+                            return;
                         }
                     }
                     // Document updated
