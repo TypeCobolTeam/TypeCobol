@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="ConfigurationChanged">
+  <useCaseModelRootMoniker Id="592a4652-42e8-47fd-b8a2-1ff21ea7c34b" />
+  <nestedChildShapes>
+    <actorShape Id="a51f404a-d50e-4dba-92a6-d896b1b4fa0d" absoluteBounds="0.75, 3.625, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="26f5040d-c765-43a3-ae47-8f8a91a7f0d7" LastKnownName="TypeCobol.LanguageClient2" />
+      <relativeChildShapes />
+    </actorShape>
+    <actorShape Id="06e92071-4f31-40aa-9a98-1fe912216a92" absoluteBounds="4.375, 4.25, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="4bfc345c-a20d-4b80-bf69-95ff78fa11a8" LastKnownName="TypeCobol.LanguageServer2" />
+      <relativeChildShapes />
+    </actorShape>
+    <useCaseShape Id="a089939c-1ded-4e75-abb3-f110497ab038" absoluteBounds="1, 4.625, 2.75, 0.875" customColor="238, 237, 131" heightOffset="0">
+      <useCaseMoniker Id="95cd41ae-cb73-42fc-8be1-26b15d16680a" LastKnownName="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams " />
+      <relativeChildShapes />
+    </useCaseShape>
+    <useCaseAssociationConnector edgePoints="[(3.45618771588083 : 4.79220307102979); (4.375 : 4.5625)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="41de6168-af7a-4d0f-a84d-2b6af49c37d6" />
+      <relativeChildShapes />
+      <nodes>
+        <useCaseShapeMoniker Id="a089939c-1ded-4e75-abb3-f110497ab038" />
+        <actorShapeMoniker Id="06e92071-4f31-40aa-9a98-1fe912216a92" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseAssociationConnector edgePoints="[(1.25 : 4.09090909090909); (1.89965513161239 : 4.65197488639251)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="ae565a2f-b3de-4add-a6b9-2d9596404252" />
+      <relativeChildShapes />
+      <nodes>
+        <actorShapeMoniker Id="a51f404a-d50e-4dba-92a6-d896b1b4fa0d" />
+        <useCaseShapeMoniker Id="a089939c-1ded-4e75-abb3-f110497ab038" />
+      </nodes>
+    </useCaseAssociationConnector>
+  </nestedChildShapes>
+</useCaseDiagram>

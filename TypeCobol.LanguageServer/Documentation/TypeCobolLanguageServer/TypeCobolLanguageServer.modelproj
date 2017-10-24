@@ -23,6 +23,69 @@
   <Import Project="$(VSToolsPath)\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\ArchitectureTools\Microsoft.VisualStudio.TeamArchitect.ModelingProject.targets" Condition="false" />
   <ItemGroup>
+    <Content Include="Completion Resolve\CompletionResolve.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Completion Resolve\CompletionResolve.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Completion Resolve\CompletionResolve.usecasediagram</DependentUpon>
+    </Content>
+    <Content Include="Completion\Completionusecasediagram.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Completion\Completionusecasediagram.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Completion\Completionusecasediagram.usecasediagram</DependentUpon>
+    </Content>
+    <Content Include="Completion\LibraryCompletion.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Completion\LibraryCompletion.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Completion\LibraryCompletion.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Completion\ParagraphCompletion.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Completion\ParagraphCompletion.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Completion\ParagraphCompletion.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Completion\ProcedureCompletion.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Completion\ProcedureCompletion.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Completion\ProcedureCompletion.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Completion\ProcParametersCompletion.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Completion\ProcParametersCompletion.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Completion\ProcParametersCompletion.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Completion\TypesCompletion.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Completion\TypesCompletion.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Completion\TypesCompletion.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="ConfigurationChanged\ConfigurationChanged.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConfigurationChanged\ConfigurationChanged.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>ConfigurationChanged\ConfigurationChanged.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="ConfigurationChanged\ConfigurationChanged.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="ConfigurationChanged\ConfigurationChanged.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>ConfigurationChanged\ConfigurationChanged.usecasediagram</DependentUpon>
+    </Content>
     <Content Include="Demarrage.usecasediagram">
       <SubType>Content</SubType>
     </Content>
@@ -51,6 +114,20 @@
       <SubType>Content</SubType>
       <DependentUpon>DIAGNOSTICS.usecasediagram</DependentUpon>
     </Content>
+    <Content Include="Diagnostics\Diagnostics.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Diagnostics\Diagnostics.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Diagnostics\Diagnostics.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Diagnostics\Diagnostics.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Diagnostics\Diagnostics.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Diagnostics\Diagnostics.usecasediagram</DependentUpon>
+    </Content>
     <Content Include="DidChangeConfiguration.usecasediagram">
       <SubType>Content</SubType>
     </Content>
@@ -71,6 +148,20 @@
     <Content Include="EDITOR_DIAGNOSTICS.sequencediagram.layout">
       <SubType>Content</SubType>
       <DependentUpon>EDITOR_DIAGNOSTICS.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Go to definition\GotoDefinition.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Go to definition\GotoDefinition.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Go to definition\GotoDefinition.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Go to definition\GoToDefinition.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Go to definition\GoToDefinition.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Go to definition\GoToDefinition.usecasediagram</DependentUpon>
     </Content>
     <Content Include="GotoSymbolAction.sequencediagram">
       <SubType>Content</SubType>
@@ -100,6 +191,20 @@
       <SubType>Content</SubType>
       <DependentUpon>Initialisation.usecasediagram</DependentUpon>
     </Content>
+    <Content Include="MissingCopies\MissingCopies.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="MissingCopies\MissingCopies.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>MissingCopies\MissingCopies.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="MissingCopies\MissingCopies.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="MissingCopies\MissingCopies.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>MissingCopies\MissingCopies.usecasediagram</DependentUpon>
+    </Content>
     <Content Include="MissingCOPYs.sequencediagram">
       <SubType>Content</SubType>
     </Content>
@@ -128,6 +233,20 @@
       <SubType>Content</SubType>
       <DependentUpon>ShutdownExitServer.usecasediagram</DependentUpon>
     </Content>
+    <Content Include="Source Code Update\SourceCodeUpdate.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Source Code Update\SourceCodeUpdate.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Source Code Update\SourceCodeUpdate.sequencediagram</DependentUpon>
+    </Content>
+    <Content Include="Source Code Update\SourceCodeUpdate.usecasediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Source Code Update\SourceCodeUpdate.usecasediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>Source Code Update\SourceCodeUpdate.usecasediagram</DependentUpon>
+    </Content>
     <Content Include="UMLSequenceDiagram1.sequencediagram">
       <SubType>Content</SubType>
     </Content>
@@ -153,5 +272,12 @@
     <Content Include="ModelDefinition\TypeCobolLanguageServer.uml">
       <SubType>Content</SubType>
     </Content>
+    <Folder Include="Completion" />
+    <Folder Include="ConfigurationChanged" />
+    <Folder Include="Diagnostics" />
+    <Folder Include="Go to definition" />
+    <Folder Include="MissingCopies" />
+    <Folder Include="Completion Resolve" />
+    <Folder Include="Source Code Update" />
   </ItemGroup>
 </Project>

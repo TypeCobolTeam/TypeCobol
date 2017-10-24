@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm11="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" dslVersion="1.0.0.0" Id="ddb1f73f-951f-4385-8727-0c4ce2368554" name="Diagnostics" linkedPackageId="0c9797f3-5513-4864-b2e6-870d02ff6d3f" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+  <packagedElements>
+    <useCaseModelRootHasTypes>
+      <actor Id="f4e996eb-ead0-447b-b1c4-4995e48ba503" name="TypeCobol. LanguageClient" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="05cba109-fa50-4f1d-9221-93b037d317a7" />
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <artifact Id="71d64793-1678-4067-9a5c-3225cc1129ae" name="TypeCobol Source Code" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="6b64451b-cb30-475e-b5c5-066bee3bfb55" />
+      </artifact>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="10d16106-007a-4f5b-812a-e39b3bdec7a1" name="TypeCobol.LanguageServer3" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="cba95b5f-5570-4aea-8649-94da293a0f34" />
+        <targetEnds>
+          <association Id="6bc9cf7c-67e2-4d0b-8acc-0cac1ed95849" isDerived="false" sourceEndRoleName="TypeCobol.LanguageServer" targetEndRoleName="Lecture de la liste de copies manquantes" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="07877cf1-ddc5-46db-9fa8-7ffa1f8c3afc" LastKnownName="Lecture des diagnostics" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="228aef19-6b6c-467e-ad21-23755132eaf2" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="cff0568c-e723-4a7d-902b-770340ee5cad" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d5959bd3-781f-4c35-9648-7bfb7636265a" name="Lecture de la liste de copies manquantes" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="8ad9854c-9edf-4386-b654-8632ecafacd7" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="75b91b04-1735-40df-9046-30c0b2acbeb4" />
+          </association>
+          <association Id="0f20929e-3384-4cf1-89bf-b5ce9e8c5e13" isDerived="false" sourceEndRoleName="TypeCobol.LanguageServer" targetEndRoleName="Envoie de la notification des copies manquantes" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="c1c78775-9258-4141-8729-5b234bd74786" LastKnownName="Envoie d'une notification contenant la liste des diagnostics" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8d4983e2-48f4-4ba0-bd53-01098de71827" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="5cfb5d32-2d21-4446-a4b0-155430a83d46" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7f29482a-a0d9-45df-bf89-de1a691676c4" name="Envoie de la notification des copies manquantes" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="67913db5-894e-4383-981d-4db21e55007c" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e9cccd45-eb9e-4f53-8201-90873ac9629d" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="655d276f-d6b5-4880-86de-2d506d582040" name="User" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="1eb29174-86cb-47cb-bef6-c0c8bb2452fb" />
+        <targetEnds>
+          <association Id="01f20acf-fdc3-4d54-9e3d-b2d7be94312b" isDerived="false" sourceEndRoleName="User" targetEndRoleName="Edition du code TypeCobol" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="d48bce6e-c1b1-42ef-bb2b-e5d4600b95e2" LastKnownName="Edition du code TypeCobol1" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="90625940-5901-492d-ab33-6c552455b591" name="User" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="8b8ca0b6-7b8e-4e88-a6db-e588939711f7" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="1b7b0b0e-ef52-45b1-9f76-0d506663fb47" name="Edition du code TypeCobol" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="914c7da7-9c79-4735-ac9e-c20a698a755d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="2090291b-0cdf-4f4b-93b1-0c8d8a4eaa74" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="d48bce6e-c1b1-42ef-bb2b-e5d4600b95e2" name="Edition du code TypeCobol1" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="48088154-2b37-45ff-adea-8e818b33f077" />
+        <targetEnds>
+          <association Id="04b959a9-5c92-4fe5-b6ca-836ba88e3174" isDerived="false" sourceEndRoleName="Edition du code TypeCobol" targetEndRoleName="TypeCobol Source Code" isLeaf="false" isAbstract="false">
+            <artifactMoniker Id="71d64793-1678-4067-9a5c-3225cc1129ae" LastKnownName="TypeCobol Source Code" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="ac384c84-bff0-40be-b1af-6abce634ab8d" name="Edition du code TypeCobol" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="1451c385-6f11-48e5-b658-d7d454d91e25" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8786d61b-5f59-4372-8557-c9b3a28caa40" name="TypeCobol Source Code" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="a7c94a9e-bd3e-4f26-8191-746f7fc001cf" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e5a6f080-253a-4f60-9116-f439a9d4a1c8" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="ad57da39-306f-4cbd-ab6a-8b3a7c8c1e9f" name="Analyse du code TypeCobol" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="8df557ac-8526-4b65-98b0-16fe92df45b3" />
+        <targetEnds>
+          <association Id="14d329f0-e717-4a6d-86c7-5bf11cf4d1f6" isDerived="false" sourceEndRoleName="Analyse du code TypeCobol" targetEndRoleName="TypeCobol Source Code" isLeaf="false" isAbstract="false">
+            <artifactMoniker Id="71d64793-1678-4067-9a5c-3225cc1129ae" LastKnownName="TypeCobol Source Code" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f8ac1158-c60b-4542-8e13-696097b2fdce" name="Analyse du code TypeCobol" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="c3cdcafb-d022-49f3-95bc-9dfc3a37d824" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="6e8ee526-287d-4e84-9fb4-6773bfe22359" name="TypeCobol Source Code" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="7d5517ca-2119-43c3-855a-f5092f7edd17" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="d9e9b33b-f0c5-430d-8929-07aa18e74f60" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="c1c78775-9258-4141-8729-5b234bd74786" name="Envoie d'une notification contenant la liste des diagnostics" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="811413ab-ed2f-4dad-9266-863396e54b92" />
+        <targetEnds>
+          <association Id="b943c528-7218-413c-afb1-a3c8c50f4525" isDerived="false" sourceEndRoleName="Envoie de la notification des copies manquantes" targetEndRoleName="TypeCobol. LanguageClient" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="f4e996eb-ead0-447b-b1c4-4995e48ba503" LastKnownName="TypeCobol. LanguageClient" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="070ab4d2-4dd8-44cd-bd15-0f6839a4618e" name="Envoie de la notification des copies manquantes" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="712a704d-ac08-41a5-abb1-a3aa3a51ee03" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a9611852-e505-4256-bae3-3785e41b749c" name="TypeCobol. LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="b0d1b526-7390-4a6c-bd7b-351e53123b25" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e81eb690-bd4e-43fb-ab57-199444be9b91" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="b1887e69-910c-4590-a693-30ac993a3cbb" name="TypeCobol Parser" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="0e8c82ac-d230-48e9-8ab1-fae255f534bb" />
+        <targetEnds>
+          <association Id="491334bc-451a-45b3-881e-00ee63a310c3" isDerived="false" sourceEndRoleName="TypeCobol Parser" targetEndRoleName="Analyse du code TypeCobol" isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="ad57da39-306f-4cbd-ab6a-8b3a7c8c1e9f" LastKnownName="Analyse du code TypeCobol" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f6ea30f4-45dc-4333-a472-86baf111309d" name="TypeCobol Parser" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="73be44a2-5db2-43e7-a6ca-b355f97939dd" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="336e6eb4-93a5-4585-a1f3-7909367586e9" name="Analyse du code TypeCobol" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="6035ab22-587d-4f55-a02f-5d1d3616202a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="a5615786-3fbe-469d-8c18-d59c6d2624d1" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="07877cf1-ddc5-46db-9fa8-7ffa1f8c3afc" name="Lecture des diagnostics" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="5ed05631-1053-4b87-8c0a-2817581e2b9a" />
+        <targetEnds>
+          <association Id="69bd71c7-f3c3-4f9a-b2d0-44ea551cd8f7" isDerived="false" sourceEndRoleName="Lecture de la liste de copies manquantes" targetEndRoleName="TypeCobol Parser" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="b1887e69-910c-4590-a693-30ac993a3cbb" LastKnownName="TypeCobol Parser" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="811cf00d-4e62-43e1-b3b4-0a8b9577dced" name="Lecture de la liste de copies manquantes" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="1c3fa168-99cf-4f86-89d3-206be4b4550a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="28f89d99-abd6-4c71-9c90-7a4c9bc22b8c" name="TypeCobol Parser" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="3bdfc03d-318d-4c28-81b4-a6157438f476" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="23c4dd13-2c52-4301-afcb-728ed2f2d9d0" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+  </packagedElements>
+  <package Id="0c9797f3-5513-4864-b2e6-870d02ff6d3f" name="TypeCobolLanguageServer">
+    <elementDefinition Id="5d09ded1-4567-4003-bfe3-37cf35f27636" />
+  </package>
+</useCaseModelRoot>
