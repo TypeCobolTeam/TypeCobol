@@ -24,9 +24,7 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     class TypeCobolServer : TypeCobolCustomLanguageServer
     {
-        public TypeCobolServer(IRPCServer rpcServer) : base(rpcServer)
-        {
-        }
+        public TypeCobolServer(IRPCServer rpcServer) : base(rpcServer) { }
 
         // -- Initialization : create workspace and return language server capabilities --
         private Workspace typeCobolWorkspace;
@@ -41,9 +39,6 @@ namespace TypeCobol.LanguageServer
             // Initialize the workspace
             typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName);
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
-
-            //Simulate Configuration change
-            //typeCobolWorkspace.DidChangeConfigurationParams(@"-o C:\TypeCobol\Test.cee -d C:\TypeCobol\Test.xml -s C:\TypeCobol\Sources\##Latest_Release##\skeletons.xml -e rdz -y C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt --autoremarks --dependencies C:\TypeCobol\Sources\##Latest_Release##\Dependencies\*.tcbl");
 
             // DEBUG information
             RemoteWindow.ShowInformationMessage("TypeCobol language server was launched !");
@@ -117,7 +112,7 @@ namespace TypeCobol.LanguageServer
                         }
                         catch (Exception e)
                         {
-//Don't rethow an exception on save.
+                            //Don't rethow an exception on save.
                             RemoteConsole.Error(string.Format("Error while handling notification {0} : {1}",
                                 "textDocument/didChange", e.Message));
                             return;
@@ -253,7 +248,6 @@ namespace TypeCobol.LanguageServer
         {
             if (parameters.text != null)
             {
-//So Call OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
                 DidChangeTextDocumentParams dctdp = new DidChangeTextDocumentParams(parameters.textDocument.uri);
                 TextDocumentContentChangeEvent tdcce = new TextDocumentContentChangeEvent();
                 tdcce.text = parameters.text;
@@ -348,7 +342,7 @@ namespace TypeCobol.LanguageServer
 
                             foreach (var tempCodeElement in tempCodeElements.Reverse())
                             {
-                                if (!tempCodeElement.ConsumedTokens.Any(t => IsCompletionElligibleToken(t) &&
+                                if (!tempCodeElement.ConsumedTokens.Any(t => CompletionElligibleTokens.IsCompletionElligibleToken(t) &&
                                 ((t.Line == parameters.position.line +1 && t.StopIndex +1 <= parameters.position.character) || t.Line < parameters.position.line + 1)))
                                     ignoredCodeElements.Add(tempCodeElement);
                                 else
@@ -374,7 +368,7 @@ namespace TypeCobol.LanguageServer
                     Token userFilterToken = null;
                     Token lastSignificantToken = null;
                     //Try to get a significant token for competion and return the codeelement containing the matching token.
-                    CodeElement matchingCodeElement = MatchCompletionCodeElement(parameters.position, finalList,
+                    CodeElement matchingCodeElement = CodeElementMatcher.MatchCompletionCodeElement(parameters.position, finalList,
                         out userFilterToken, out lastSignificantToken); //Magic happens here
                     if (lastSignificantToken != null)
                     {
@@ -384,37 +378,37 @@ namespace TypeCobol.LanguageServer
                         {
                             case TokenType.PERFORM:
                             {
-                                items.AddRange(GetCompletionPerformParagraph(fileCompiler, matchingCodeElement, userFilterToken));
+                                items.AddRange(CompletionFactory.GetCompletionPerformParagraph(fileCompiler, matchingCodeElement, userFilterToken));
                                 break;
                             }
                             case TokenType.CALL:
                             {
-                                items.AddRange(GetCompletionForProcedure(fileCompiler, matchingCodeElement, userFilterToken));
-                                items.AddRange(GetCompletionForLibrary(fileCompiler, matchingCodeElement, userFilterToken));
+                                items.AddRange(CompletionFactory.GetCompletionForProcedure(fileCompiler, matchingCodeElement, userFilterToken));
+                                items.AddRange(CompletionFactory.GetCompletionForLibrary(fileCompiler, matchingCodeElement, userFilterToken));
                                 break;
                             }
                             case TokenType.TYPE:
                             {
-                                items.AddRange(GetCompletionForType(fileCompiler, matchingCodeElement, userFilterToken));
-                                items.AddRange(GetCompletionForLibrary(fileCompiler, matchingCodeElement, userFilterToken));
+                                items.AddRange(CompletionFactory.GetCompletionForType(fileCompiler, matchingCodeElement, userFilterToken));
+                                items.AddRange(CompletionFactory.GetCompletionForLibrary(fileCompiler, matchingCodeElement, userFilterToken));
                                 break;
                             }
                             case TokenType.QualifiedNameSeparator:
                             {
-                                items.AddRange(GetCompletionForQualifiedName(parameters.position, fileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken));
+                                items.AddRange(CompletionFactory.GetCompletionForQualifiedName(parameters.position, fileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken));
                                 break;
                             }
                             case TokenType.INPUT:
                             case TokenType.OUTPUT:
                             case TokenType.IN_OUT:
                             {
-                                items.AddRange(GetCompletionForProcedureParameter(parameters.position, fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
+                                items.AddRange(CompletionFactory.GetCompletionForProcedureParameter(parameters.position, fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
                                 break;
                             }
                             case TokenType.MOVE:
                             {
                                 var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                                items.AddRange(GetCompletionForVariable(fileCompiler, matchingCodeElement,
+                                items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
                                     da =>
                                         da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
                                         (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88)); //Ignore 88 level variable
@@ -422,14 +416,14 @@ namespace TypeCobol.LanguageServer
                             }
                             case TokenType.TO:
                             {
-                                items.AddRange(GetCompletionForTo(fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
+                                items.AddRange(CompletionFactory.GetCompletionForTo(fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
                                 break;
                             }
                             case TokenType.IF:
                             case TokenType.DISPLAY:
                             {
                                 var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                                items.AddRange(GetCompletionForVariable(fileCompiler, matchingCodeElement,
+                                items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
                                     da =>
                                         da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
                                 break;
@@ -494,7 +488,7 @@ namespace TypeCobol.LanguageServer
                     Token lastSignificantToken = null;
                     var potentialDefinitionNodes = new List<Node>();
 
-                    MatchCompletionCodeElement(parameters.position, new List<CodeElementWrapper>() {new CodeElementWrapper(matchingCodeElement)}, out userFilterToken, out lastSignificantToken); //Magic happens here
+                    CodeElementMatcher.MatchCompletionCodeElement(parameters.position, new List<CodeElementWrapper>() {new CodeElementWrapper(matchingCodeElement)}, out userFilterToken, out lastSignificantToken); //Magic happens here
                     if (lastSignificantToken != null)
                     {
                         switch (lastSignificantToken.TokenType)
@@ -617,862 +611,7 @@ namespace TypeCobol.LanguageServer
             SendLoadingIssue(new LoadingIssueParams() {Message = loadingIssueEvent.Message});
         }
 
-        #region Completion Methods
-
-        /// <summary>
-        /// Get the paragraph that can be associated to PERFORM Completion token.
-        /// </summary>
-        /// <param name="fileCompiler">The target FileCompiler instance</param>
-        /// <param name="performToken">The PERFORM token</param>
-        /// <returns></returns>
-        private IEnumerable<CompletionItem> GetCompletionPerformParagraph(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
-        {
-            var performNode = GetMatchingNode(fileCompiler, codeElement);
-            List<Paragraph> pargraphs = null;
-            List<DataDefinition> variables = null;
-            var completionItems = new List<CompletionItem>();
-
-            if (performNode != null)
-            {
-                if (performNode.SymbolTable != null)
-                {
-                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                    pargraphs = performNode.SymbolTable.GetParagraphs(p => p.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase));
-                    variables = performNode.SymbolTable.GetVariables(da => da.Picture != null &&
-                                                                           da.DataType ==
-                                                                           Compiler.CodeElements.DataType.Numeric &&
-                                                                           da.Name.StartsWith(userFilterText,
-                                                                               StringComparison
-                                                                                   .InvariantCultureIgnoreCase),
-                        new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
-                }
-            }
-
-            if (pargraphs != null)
-            {
-                completionItems.AddRange(pargraphs.Select(para => new CompletionItem(para.Name) { kind = CompletionItemKind.Reference } ));
-            }
-            if (variables != null)
-            {
-                foreach (var variable in variables)
-                {
-                    var completionItem =
-                        new CompletionItem(string.Format("{0} PIC{1}", variable.Name, variable.Picture.NormalizedValue));
-                    completionItem.insertText = variable.Name;
-                    completionItem.kind = CompletionItemKind.Variable;
-                    completionItems.Add(completionItem);
-                }
-            }
-
-            return completionItems;
-        }
-
-        private IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
-        {
-            var node = GetMatchingNode(fileCompiler, codeElement);
-            var procedures = new List<FunctionDeclaration>();
-            var variables = new List<DataDefinition>();
-            var completionItems = new List<CompletionItem>();
-
-            if (node != null)
-            {
-                if (node.SymbolTable != null)
-                {
-                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                    procedures =
-                        node.SymbolTable.GetFunctions(
-                            f =>
-                                f.QualifiedName.ToString()
-                                    .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
-                                || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                            new List<SymbolTable.Scope>
-                            {
-                                SymbolTable.Scope.Declarations,
-                                SymbolTable.Scope.Intrinsic,
-                                SymbolTable.Scope.Namespace
-                            });
-                    variables = node.SymbolTable.GetVariables(da => da.Picture != null &&
-                                                                    da.DataType ==
-                                                                    Compiler.CodeElements.DataType.Alphanumeric &&
-                                                                    da.Name.StartsWith(userFilterText,
-                                                                        StringComparison.InvariantCultureIgnoreCase),
-                        new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
-                }
-            }
-
-
-
-            completionItems = CreateCompletionItemsForProcedures(procedures, node).ToList();
-
-            foreach (var variable in variables)
-            {
-                var completionItem = new CompletionItem(string.Format("{0}", variable.Name));
-                completionItem.insertText = variable.Name;
-                completionItem.kind = CompletionItemKind.Variable;
-                completionItems.Add(completionItem);
-            }
-
-
-            return completionItems;
-        }
-
-        private IEnumerable<CompletionItem> GetCompletionForLibrary(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
-        {
-            var callNode = GetMatchingNode(fileCompiler, codeElement);
-            List<Program> programs = new List<Program>();
-            if (callNode != null)
-            {
-                if (callNode.SymbolTable != null)
-                {
-                    programs =
-                        callNode.SymbolTable.GetPrograms(userFilterToken != null ? userFilterToken.Text : string.Empty);
-                }
-            }
-
-            var completionItems = new List<CompletionItem>();
-            foreach (var prog in programs)
-            {
-                var completionItem = new CompletionItem(prog.Name);
-                completionItem.kind = CompletionItemKind.Module;
-                completionItems.Add(completionItem);
-            }
-
-
-            return completionItems;
-        }
-
-        private IEnumerable<CompletionItem> GetCompletionForType(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
-        {
-            var node = GetMatchingNode(fileCompiler, codeElement);
-            var types = new List<TypeDefinition>();
-            var completionItems = new List<CompletionItem>();
-
-            if (node != null)
-            {
-                if (node.SymbolTable != null)
-                {
-                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                    types =
-                        node.SymbolTable.GetTypes(
-                            t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
-                                 ||
-                                 t.QualifiedName.ToString()
-                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                            new List<SymbolTable.Scope>
-                            {
-                                SymbolTable.Scope.Declarations,
-                                SymbolTable.Scope.Global,
-                                SymbolTable.Scope.Intrinsic,
-                                SymbolTable.Scope.Namespace
-                            });
-                }
-            }
-
-            return CreateCompletionItemsForType(types, node);
-        }
-
-        private IEnumerable<CompletionItem> GetCompletionForQualifiedName(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token qualifiedNameSeparatorToken, Token userFilterToken)
-        {
-            var completionItems = new List<CompletionItem>();
-            var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
-            var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-
-            //Get the token before MatchingToken 
-            var userTokenToSeek =
-                arrangedCodeElement.ArrangedConsumedTokens.ElementAt(
-                    arrangedCodeElement.ArrangedConsumedTokens.IndexOf(qualifiedNameSeparatorToken) - 1);
-            var qualifiedNameTokens = new List<Token>();
-            qualifiedNameTokens.AddRange(
-                    arrangedCodeElement.ArrangedConsumedTokens.Where(
-                        t => t.TokenType == TokenType.UserDefinedWord || t.TokenType == TokenType.QualifiedNameSeparator));
-            //Remove all the userdefinedword token and also QualifiedNameToken
-            arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(qualifiedNameTokens).ToList();
-            //We only wants the token that in front of any QualifiedName 
-            //Get the first significant token (i.e CALL/TYPE/...)
-            Token firstSignificantToken, tempUserFilterToken;
-            MatchCompletionCodeElement(position, new List<CodeElementWrapper> {arrangedCodeElement}, out tempUserFilterToken, 
-                out firstSignificantToken);
-
-            //For MOVE INPUT OUTPUT variables etc.. , get all the childrens of a variable that are accessible
-            //Try to find corresponding variables
-            string qualifiedName = string.Join(".",
-                        qualifiedNameTokens.Where(
-                                t =>
-                                    t.TokenType == TokenType.UserDefinedWord &&
-                                    !(t.Text == userFilterText && userFilterToken != null && t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
-                                    ((t.StartIndex >= firstSignificantToken.EndColumn &&
-                                      t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line) &&
-                                      ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
-                            .Select(t => t.Text));
-            var possibleVariables = node.SymbolTable.GetVariableExplicit(new URI(qualifiedName));
-            
-            if (possibleVariables != null && possibleVariables.Count > 0)
-            {
-                //Get childrens of a type to get completion possibilities
-                foreach (var variable in possibleVariables)
-                {
-                    var childrens = new List<Node>();
-                    if (variable.Children != null && variable.Children.Count > 0) //It's a variable with levels inside
-                        childrens.AddRange(variable.Children);
-                    else //It's a typed variable, we have to search for childrens in the type
-                    {
-                        var typeChildrens = GetTypeChildrens(node.SymbolTable, variable);
-                        if (typeChildrens != null)
-                            childrens.AddRange(typeChildrens.Where(t => t.Name != null));
-                    }
-
-                    completionItems.AddRange(CreateCompletionItemsForVariables(
-                        childrens.Where(
-                                c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                            .Select(child => child as DataDefinition), false));
-                }
-            }
-            else
-            { //If no variables found, it's could be a children declared in a typedef..
-                var childrens = new List<Node>();
-                var potentialTypes =
-                    node.SymbolTable.GetTypes(
-                        t =>
-                            t.Children != null &&
-                            t.Children.Any(
-                                tc => tc.Name != null && tc.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)),
-                        new List<SymbolTable.Scope>
-                        {
-                            SymbolTable.Scope.Declarations,
-                            SymbolTable.Scope.Global,
-                            SymbolTable.Scope.Intrinsic,
-                            SymbolTable.Scope.Namespace
-                        });
-
-                foreach (var nodeType in potentialTypes.SelectMany(t=> t.Children).Where(c => c != null && c.Name != null && c.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)))
-                {
-
-                    var nodeDataDef = nodeType as DataDefinition;
-                    if (nodeDataDef == null) continue;
-
-                    var typeChildrens = GetTypeChildrens(node.SymbolTable, nodeDataDef);
-                    if (typeChildrens != null)
-                        childrens.AddRange(typeChildrens);
-                }
-
-                completionItems.AddRange(CreateCompletionItemsForVariables(
-                        childrens.Where(
-                                c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                            .Select(child => child as DataDefinition), false));
-            }
-
-            if (firstSignificantToken != null)
-            {
-                switch (firstSignificantToken.TokenType)
-                {
-                    case TokenType.CALL:
-                    {
-                        //On CALL get possible procedures and functions in the seeked program
-                        var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
-                        if (programs != null && programs.Count > 0)
-                        {
-                            var procedures =
-                                programs.First()
-                                    .SymbolTable.GetFunctions(
-                                        f =>
-                                            f.Name.StartsWith(userFilterText,
-                                                StringComparison.InvariantCultureIgnoreCase) ||
-                                            f.QualifiedName.ToString()
-                                                .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                        new List<SymbolTable.Scope>
-                                        {
-                                            SymbolTable.Scope.Declarations
-                                        });
-                            completionItems.AddRange(CreateCompletionItemsForProcedures(procedures, node, false));
-
-                        }
-                        break;
-                    }
-                    case TokenType.TYPE:
-                    {
-                        //On TYPE get possible public types in the seeked program
-                        var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
-                        if (programs != null && programs.Count > 0)
-                        {
-                            var types =
-                                programs.First()
-                                    .SymbolTable.GetTypes(
-                                        t =>
-                                            t.Name.StartsWith(userFilterText,
-                                                StringComparison.InvariantCultureIgnoreCase),
-                                        new List<SymbolTable.Scope>
-                                        {
-                                            SymbolTable.Scope.Declarations,
-                                            SymbolTable.Scope.Global
-                                        });
-                            completionItems.AddRange(CreateCompletionItemsForType(types, node, false));
-                        }
-                        break;
-                    }
-                }
-            }
-
-            return completionItems.Distinct();
-        }
-
-        private IEnumerable<CompletionItem> GetCompletionForProcedureParameter(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
-        {
-            var completionItems = new List<CompletionItem>();
-            var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
-            var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-
-            //Get procedure name or qualified name
-            string procedureName = string.Join(".", arrangedCodeElement.ArrangedConsumedTokens
-                                            .Skip(1) //Skip the CALL token
-                                            .TakeWhile(t => t.TokenType != TokenType.INPUT
-                                                            && t.TokenType != TokenType.OUTPUT
-                                                            && t.TokenType != TokenType.IN_OUT) // Take tokens until keyword found
-                                            .Where(t => t.TokenType == TokenType.UserDefinedWord)
-                                            .Select(t => t.Text));
-
-            //Try to get procedure by its name
-            var calledProcedures =
-                node.SymbolTable.GetFunctions(
-                    p =>
-                        p.Name.Equals(procedureName) ||
-                        p.QualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
-                    {
-                        SymbolTable.Scope.Declarations,
-                        SymbolTable.Scope.Intrinsic,
-                        SymbolTable.Scope.Namespace
-                    });
-
-
-            var alreadyGivenTokens = arrangedCodeElement.ArrangedConsumedTokens
-                .SkipWhile(t => t != lastSignificantToken).Skip(1)
-                .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
-                .Except(new List<Token>() {userFilterToken})
-                .Where(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line <= position.line + 1);
-
-            int alreadyGivenParametersCount = 0;
-            TokenType? previousTokenType = null;
-
-            foreach (var givenToken in alreadyGivenTokens)
-            {
-                if (givenToken.TokenType == TokenType.UserDefinedWord && (previousTokenType == null || previousTokenType.Value == TokenType.UserDefinedWord))
-                    alreadyGivenParametersCount++;
-                previousTokenType = givenToken.TokenType;
-            }
-
-
-            var potentialVariablesForCompletion = new List<DataDefinition>();
-            foreach (var procedure in calledProcedures)
-            {
-                IEnumerable<ParameterDescription> procParams = null;
-                //Switch to select the correct parameters profile
-                #region Selective parameters Switch
-                switch (lastSignificantToken.TokenType)
-                {
-                    case TokenType.INPUT:
-                    {
-                        procParams = procedure.Profile.InputParameters;
-                        break;
-                    }
-                    case TokenType.OUTPUT:
-                    {
-                        procParams = procedure.Profile.OutputParameters;
-                        break;
-                    }
-                    case TokenType.IN_OUT:
-                    {
-                        procParams = procedure.Profile.InoutParameters;
-                        break;
-                    }
-                    default:
-                        procParams = new List<ParameterDescription>();
-                        break;
-                }
-
-                #endregion
-
-                //If the user already written all or more parameters than required let's check for an other proc signature
-                if (alreadyGivenParametersCount >= procParams.Count())
-                    continue;
-                
-                //Else see which parameter could be filled
-                var parameterToFill = procParams.ToArray()[alreadyGivenParametersCount];
-                //Get local/global variable that could correspond to the parameter
-
-                node.SymbolTable.GetVariablesByType(parameterToFill.DataType, ref potentialVariablesForCompletion, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
-
-            }
-
-            foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct()) 
-                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems
-
-            return completionItems;
-        }
-
-        private IEnumerable<CompletionItem> GetCompletionForVariable(FileCompiler fileCompiler, CodeElement codeElement, Expression<Func<DataDefinition, bool>> predicate)
-        {
-            var completionItems = new List<CompletionItem>();
-            var node = GetMatchingNode(fileCompiler, codeElement);
-            List<DataDefinition> variables = null;
-
-            variables = node.SymbolTable.GetVariables(predicate, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
-            completionItems.AddRange(CreateCompletionItemsForVariables(variables));
-
-            return completionItems;
-        }
-
-        private IEnumerable<CompletionItem> GetCompletionForTo(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
-        {
-            var completionItems = new List<CompletionItem>();
-            var arrangedCodeElement = codeElement as CodeElementWrapper;
-            var node = GetMatchingNode(fileCompiler, codeElement);
-            List<DataDefinition> potentialVariables = new List<DataDefinition>();
-            var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-
-            var qualifiedNameTokens = arrangedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.UserDefinedWord).TakeWhile(t => t != lastSignificantToken).Where(t => t.TokenType != TokenType.QualifiedNameSeparator);
-            if (!qualifiedNameTokens.Any()) 
-                return completionItems;
-
-
-            DataType seekedDataType = null;
-            var foundedVar = node.SymbolTable.GetVariableExplicit(new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
-
-
-            if (foundedVar.Count != 1) //If no varaible or more than one founded stop process
-                return completionItems;
-
-            seekedDataType = foundedVar.First().DataType;
-
-            node.SymbolTable.GetVariablesByType(seekedDataType, ref potentialVariables, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
-            potentialVariables = potentialVariables.Where(da => (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88).ToList(); //Ignore variable of level 88. 
-
-            foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
-            {
-                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems);
-            }
-
-            completionItems.Remove(
-                completionItems.FirstOrDefault(
-                    c => c.label.Contains(string.Join("::", qualifiedNameTokens.Select(t => t.Text)))));
-
-            return completionItems.Where(c => c.insertText.IndexOf(userFilterText, StringComparison.InvariantCultureIgnoreCase) >= 0);
-        }
-
-        private void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, ref List<CompletionItem> completionItems)
-        {
-            var symbolTable = node.SymbolTable;
-            if (variable.GetParentTypeDefinition == null)  //Variable is not comming from a type. 
-            {
-                if (symbolTable.GetVariableExplicit(new URI(variable.Name)).Count > 0)   //Check if this variable is present locally. 
-                {
-                    completionItems.Add(CreateCompletionItemForVariable(variable));
-                }
-            }
-            else
-            {
-                if (symbolTable.TypesReferences != null) //We are in a typedef, get references of this type
-                {
-                    var types = symbolTable.GetType(variable.GetParentTypeDefinition.DataType);
-                    IEnumerable<DataDefinition> references = null;
-                    if (types.Count == 0)
-                    {
-                        references = symbolTable.TypesReferences.SelectMany(t => t.Value);
-                    }
-                    else
-                    {
-                        var type = types.First();
-                        references = symbolTable.TypesReferences.Where(t => t.Key == type).SelectMany(r => r.Value);
-                    }
-
-                    foreach (var reference in references)
-                    {
-                        if (symbolTable.GetVariableExplicit(new URI(reference.Name)).Count > 0)  //Check if this variable is present locally. If not just ignore it
-                        {
-                            if (reference.GetParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final varaible
-                            {
-                                var referenceArrangedQualifiedName = string.Join("::", reference.QualifiedName.ToString().Split(reference.QualifiedName.Separator).Skip(1)); //Skip Program Name
-                                var finalQualifiedName = string.Format("{0}::{1}", referenceArrangedQualifiedName, variable.QualifiedName.Head);
-                                var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, finalQualifiedName);
-                                completionItems.Add(new CompletionItem(variableDisplay) { insertText = finalQualifiedName, kind=CompletionItemKind.Variable});
-                            }
-                            else //If the reference is always in a typedef, let's loop and ride up until we are in a final variable
-                            {
-                                var tempCompletionItems = new List<CompletionItem>();
-                                SearchVariableInTypesAndLevels(node, reference, ref tempCompletionItems);
-
-                                if (tempCompletionItems.Count > 0)
-                                {
-                                    foreach (var tempComp in tempCompletionItems)
-                                    {
-                                        tempComp.insertText += "::" + variable.QualifiedName.Head;
-                                        tempComp.label = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, tempComp.insertText);
-                                        completionItems.Add(tempComp);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private IEnumerable<CompletionItem> CreateCompletionItemsForType(List<TypeDefinition> types, Node node, bool enablePublicFlag = true)
-        {
-            var completionItems = new List<CompletionItem>();
-
-            foreach (var type in types)
-            {
-                bool typeIsPublic = false;
-                if (enablePublicFlag)
-                    typeIsPublic = (type.CodeElement as DataTypeDescriptionEntry).Visibility ==
-                                   Compiler.CodeElements.AccessModifier.Public
-                                   &&
-                                   !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
-                                         .Types.Values.Any(t => t.Contains(type))
-                                     //Ignore public if type is in the current program
-                                     || type.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if type is in intrinsic
-
-                var typeDisplayName = typeIsPublic ? type.QualifiedName.ToString() : type.Name;
-                var completionItem = new CompletionItem(typeDisplayName);
-                completionItem.insertText = typeIsPublic
-                    ? string.Format("{0}::{1}", type.QualifiedName.Tail, type.QualifiedName.Head)
-                    : type.Name;
-                completionItem.kind = CompletionItemKind.Class;
-                completionItems.Add(completionItem);
-            }
-            return completionItems;
-        }
-
-        private IEnumerable<CompletionItem> CreateCompletionItemsForProcedures(List<FunctionDeclaration> procedures, Node node, bool enablePublicFlag = true)
-        {
-            var completionItems = new List<CompletionItem>();
-
-            foreach (var proc in procedures)
-            {
-                string inputParams = null, outputParams = null, inoutParams = null;
-
-                if (proc.Profile != null)
-                {
-                    if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
-                        inputParams = string.Format("INPUT: {0}",
-                            string.Join(", ",
-                                proc.Profile.InputParameters.Select(
-                                    p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                    if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
-                        outputParams = string.Format("| OUTPUT: {0}",
-                            string.Join(", ",
-                                proc.Profile.OutputParameters.Select(
-                                    p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                    if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
-                        inoutParams = string.Format("| INOUT: {0}",
-                            string.Join(", ",
-                                proc.Profile.InoutParameters.Select(
-                                    p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                }
-                bool procIsPublic = false;
-                if (enablePublicFlag)
-                    procIsPublic = (proc.CodeElement as FunctionDeclarationHeader).Visibility ==
-                                   Compiler.CodeElements.AccessModifier.Public
-                                   &&
-                                   !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
-                                         .Functions.Values.Any(t => t.Contains(proc))
-                                     //Ignore public if proc is in the current program
-                                     || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
-                var procDisplayName = procIsPublic ? proc.QualifiedName.ToString() : proc.Name;
-                var completionItem =
-                    new CompletionItem(string.Format("{0} ({1} {2} {3})", procDisplayName, inputParams, outputParams,
-                        inoutParams));
-                completionItem.insertText = procIsPublic
-                    ? string.Format("{0}::{1}", proc.QualifiedName.Tail, proc.QualifiedName.Head)
-                    : proc.Name;
-                completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
-                completionItems.Add(completionItem);
-            }
-
-            return completionItems;
-        }
-
-        private IEnumerable<CompletionItem> CreateCompletionItemsForVariables(IEnumerable<DataDefinition> variables, bool useQualifiedName = true)
-        {
-            var completionItems = new List<CompletionItem>();
-
-            foreach (var variable in variables)
-            {
-                completionItems.Add(CreateCompletionItemForVariable(variable, useQualifiedName));
-            }
-
-            return completionItems;
-        }
-
-        private CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
-        {
-            var variableArrangedQualifiedName = useQualifiedName
-                ? string.Join("::",
-                    variable.QualifiedName.ToString()
-                        .Split(variable.QualifiedName.Separator)
-                        .Skip(variable.QualifiedName.Count > 1 ? 1 : 0)) //Skip Program Name
-                : variable.Name; 
-
-            var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
-            return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind=CompletionItemKind.Variable };
-        }
-        #endregion
-
-        #region Helpers
-
-        private IReadOnlyList<Node> GetTypeChildrens(SymbolTable symbolTable, DataDefinition dataDefNode)
-        {
-            if (symbolTable == null || dataDefNode == null)
-                return null;
-
-            var type = symbolTable.GetTypes(
-                t => t.Name.Equals(dataDefNode.DataType.Name, StringComparison.InvariantCultureIgnoreCase)
-                     ||
-                     t.QualifiedName.ToString()
-                         .Equals(dataDefNode.DataType.Name, StringComparison.InvariantCultureIgnoreCase),
-                new List<SymbolTable.Scope>
-                {
-                    SymbolTable.Scope.Declarations,
-                    SymbolTable.Scope.Global,
-                    SymbolTable.Scope.Intrinsic,
-                    SymbolTable.Scope.Namespace
-                }).FirstOrDefault();
-
-            if (type != null)
-                return type.Children;
-            else
-                return null;
-        }
-
-        /// <summary>
-        /// Get the matchig node for a given Token and a gien completion mode. Returning a matching Node or null.
-        /// </summary>
-        /// <param name="fileCompiler"></param>
-        /// <param name="codeElement"></param>
-        /// <returns></returns>
-        private Node GetMatchingNode(FileCompiler fileCompiler, CodeElement codeElement)
-        {
-            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot != null
-                && fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers != null)
-            {
-                return
-                    fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers
-                        .FirstOrDefault(t => t.Key.Equals(codeElement)).Value;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Completion Tokens is an array of Tuple<TokenType, AllowLastPos> for each token that can target a completion.
-        /// The Flag AllowLastPos says that if the cursor is at the last position of a token that the token can
-        /// be conidered a completion token. For instance the for PERFORM token the last position is not allowed:
-        /// PERFORM
-        ///        ^
-        /// that is to say if the cursor is just after the M that no completion should occurs.
-        /// </summary>
-        private static Tuple<TokenType, bool>[] elligibleCompletionTokens = {
-            new Tuple<TokenType, bool>(TokenType.PERFORM, false),
-            new Tuple<TokenType, bool>(TokenType.CALL, false),
-            new Tuple<TokenType, bool>(TokenType.TYPE, false),
-            new Tuple<TokenType, bool>(TokenType.QualifiedNameSeparator, true),
-            new Tuple<TokenType, bool>(TokenType.INPUT, false),
-            new Tuple<TokenType, bool>(TokenType.OUTPUT, false),
-            new Tuple<TokenType, bool>(TokenType.IN_OUT, false),
-            new Tuple<TokenType, bool>(TokenType.MOVE, false),
-            new Tuple<TokenType, bool>(TokenType.TO, false),
-            new Tuple<TokenType, bool>(TokenType.IF, false),
-            new Tuple<TokenType, bool>(TokenType.DISPLAY, false),
-        };
-
-        /// <summary>
-        /// Determines if the given token is elligible for a completion
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="bAllowLastPos"></param>
-        /// <returns></returns>
-        private static bool IsCompletionElligibleToken(Token token)
-        {
-            for (int i = 0; i < elligibleCompletionTokens.Length; i++)
-            {
-                if (elligibleCompletionTokens[i].Item1 == token.TokenType)
-                    return true;
-            }
-            return false;
-        }
-
-        private static bool DoesTokenAllowLastPos(Token token)
-        {
-            var potentialToken = elligibleCompletionTokens.FirstOrDefault(t => t.Item1 == token.TokenType);
-            if (potentialToken != null)
-                return potentialToken.Item2;
-            else
-                return false;
-        }
-
-        /// <summary>
-        /// This method will try to found the best significant token that code be used fo completion. It depends on the given CodeELements and Position. 
-        /// It will also return the CodeElemet that contains the significant token detected. 
-        /// </summary>
-        /// <param name="position">Parameter that specifie the position of the cursor in the document</param>
-        /// <param name="codeElements">List of codeElements that are concerned by the completion</param>
-        /// <param name="userFilterToken">Out parameter that returns a UserDefinedWork token</param>
-        /// <param name="lastSignificantToken">Out parameter that returns the Significant token detected for completion</param>
-        /// <returns></returns>
-        private static CodeElement MatchCompletionCodeElement(Position position,
-            IEnumerable<CodeElementWrapper> codeElements, out Token userFilterToken, out Token lastSignificantToken)
-        {
-            lastSignificantToken = null;
-            CodeElement significantCodeElement = null;
-            userFilterToken = null;
-
-            //Filter CodeElements 
-            codeElements =
-                codeElements.Where(
-                    c =>
-                        c.ArrangedConsumedTokens.Any(
-                            t =>
-                                (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) ||
-                                (t.Line <= position.line + 1))).ToList();
-                //Select all the code elements that have a Consumed Tokens before the cursor.
-            var closestTokenToCursor =
-                codeElements.Select(
-                        c =>
-                            c.ArrangedConsumedTokens.LastOrDefault(
-                                t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character))).Where(t => t!=null)
-                    .OrderBy(t =>  Math.Abs(position.character - t.StopIndex + 1)) //Allows to get the token closest to the cursor
-                    .FirstOrDefault();
-
-            if (closestTokenToCursor != null && closestTokenToCursor.Line == position.line + 1 &&
-                position.character > closestTokenToCursor.StartIndex &&
-                closestTokenToCursor.StopIndex + 1 >= position.character)
-                //the cursor is at the end or in the middle of a token. 
-            {
-                if (closestTokenToCursor.StopIndex + 1 == position.character &&
-                    IsCompletionElligibleToken(closestTokenToCursor) && DoesTokenAllowLastPos(closestTokenToCursor))
-                    //Detect if token is eligible and if the cursor is at the end of the token
-                {
-                    //the completion has to start from this token and this codeElement
-                    codeElements =
-                        codeElements.ToList()
-                            .SkipWhile(c => !c.ArrangedConsumedTokens.Contains(closestTokenToCursor))
-                            .ToList();
-                }
-                else
-                {
-                    var tempCodeElements =
-                        codeElements.TakeWhile(c => !c.ArrangedConsumedTokens.Contains(closestTokenToCursor)).ToList();
-
-                    if (!tempCodeElements.Any())
-                        //In case there is only one codeElement the TakeWhile will not be able to get the last CodeElement, so we have to do it manually.
-                        tempCodeElements.Add(codeElements.FirstOrDefault());
-                    else
-                        codeElements = tempCodeElements;
-
-                    //The closestToken to cursor as to be added to this codeElement as a userdefinedword
-                    if (closestTokenToCursor.TokenType != TokenType.UserDefinedWord)
-                    {
-                        codeElements.LastOrDefault()
-                            .ArrangedConsumedTokens.Add(new Token(TokenType.UserDefinedWord,
-                                                        closestTokenToCursor.StartIndex,
-                                                        closestTokenToCursor.StopIndex, closestTokenToCursor.TokensLine));
-
-                        foreach (var codeElement in codeElements)
-                        {
-                            if (codeElement.ArrangedConsumedTokens.Contains(closestTokenToCursor) && closestTokenToCursor.TokenType != TokenType.UserDefinedWord)
-                                codeElement.ArrangedConsumedTokens.Remove(closestTokenToCursor);
-                        }
-                       
-                    }
-               
-                }
-            }
-            else if (closestTokenToCursor != null)
-            {
-                //the completion has to start from this token and this codeElement
-                codeElements =
-                    codeElements.ToList()
-                        .SkipWhile(c => !c.ArrangedConsumedTokens.Contains(closestTokenToCursor))
-                        .ToList();
-            }
-
-            foreach (var codeElement in codeElements)
-            {
-                var consumedTokens =
-                    codeElement.ArrangedConsumedTokens.Where(
-                        t =>
-                            ((t.StartIndex <= position.character && t.Line <= position.line + 1) ||
-                            t.Line < position.line + 1) &&
-                            t.TokenFamily != TokenFamily.Whitespace);
-
-                var significantTokensDectected = new Stack<Token>();
-                bool significantTokenChanged = false; 
-
-                if (consumedTokens != null && consumedTokens.Any())
-                {
-                    foreach (var finalToken in consumedTokens)
-                    {
-                        if (finalToken.StartIndex > position.character && !(finalToken.Line < position.line + 1))
-                            break;
-
-                        if (IsCompletionElligibleToken(finalToken) &&
-                            (finalToken.StopIndex + 1 <= position.character || finalToken.Line <= position.line + 1))
-                        {
-                            lastSignificantToken = finalToken;
-                            significantTokensDectected.Push(lastSignificantToken);
-                            //If eveyrhing is Ok add the final token as LastSinificantToken
-                            significantCodeElement = codeElement;
-                            significantTokenChanged = true;
-                        }
-                    }
-
-                    if (significantTokenChanged) //In case many codeElements are analysed
-                    {
-                        //Get the userdefinedword associated to the cursor position in the document
-                        userFilterToken =
-                            consumedTokens.FirstOrDefault(
-                                t =>
-                                    position.character <= t.StopIndex + 1 && position.character > t.StartIndex
-                                    && t.Line == position.line + 1
-                                    && t.TokenType == TokenType.UserDefinedWord);
-                    }
-
-
-                    var isCorrectTokenFound = false;
-                    while (!isCorrectTokenFound && significantTokensDectected.Count >= 0)
-                    {
-                        //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
-                        if ((lastSignificantToken != null &&
-                              (!DoesTokenAllowLastPos(lastSignificantToken) && lastSignificantToken.StopIndex + 1 == position.character &&
-                               lastSignificantToken.Line == position.line + 1)) ||
-                             (consumedTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord &&
-                              !(position.character <= consumedTokens.LastOrDefault().StopIndex + 1 &&
-                                position.character >= consumedTokens.LastOrDefault().StartIndex)
-                              &&
-                              !(lastSignificantToken.TokenType == TokenType.INPUT ||
-                                lastSignificantToken.TokenType == TokenType.OUTPUT ||
-                                lastSignificantToken.TokenType == TokenType.IN_OUT)))
-                        {
-                            significantTokensDectected.Pop();
-                            lastSignificantToken = significantTokensDectected.Peek();
-                        }
-                        else
-                        {
-                            isCorrectTokenFound = true;
-                        }
-                    }
-                    
-                }
-            }
-
-
-            return significantCodeElement;
-        }
-
-        #endregion
     }
-
     public class CodeElementWrapper : CodeElement
     {
         public CodeElementWrapper(CodeElement codeElement)

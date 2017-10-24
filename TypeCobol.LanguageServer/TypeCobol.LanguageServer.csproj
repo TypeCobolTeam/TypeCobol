@@ -90,6 +90,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Completion Factory\CodeElementMatcher.cs" />
+    <Compile Include="Completion Factory\CompletionElligibleTokens.cs" />
+    <Compile Include="Completion Factory\CompletionFactory.cs" />
+    <Compile Include="Completion Factory\CompletionFactoryHelpers.cs" />
     <Compile Include="JsonRPC\ErrorCodes.cs" />
     <Compile Include="JsonRPC\IRPCHandler.cs" />
     <Compile Include="JsonRPC\IRPCServer.cs" />
