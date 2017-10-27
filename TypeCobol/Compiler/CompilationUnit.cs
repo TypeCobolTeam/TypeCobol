@@ -224,9 +224,15 @@ namespace TypeCobol.Compiler
             {
                 allDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
             }
-            if (ProgramClassDocumentSnapshot != null && ProgramClassDocumentSnapshot.Diagnostics != null)
+
+            if (ProgramClassDocumentSnapshot != null)
             {
-                allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+                //Get all nodes diagnostics using visitor. 
+                if (ProgramClassDocumentSnapshot.Root != null)
+                    ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
+
+                if (ProgramClassDocumentSnapshot.Diagnostics != null)
+                    allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
             }
 
             if (CodeElementsDocumentSnapshot != null)

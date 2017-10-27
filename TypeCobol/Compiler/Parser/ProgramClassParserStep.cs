@@ -88,7 +88,6 @@ namespace TypeCobol.Compiler.Parser
             programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new TypeCobolLinker());
             //Complete some information on Node and run checker that need a full AST
             programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
-            programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new DiagnosticsChecker(diagnostics));
 
 
             //Stop measuring tree building performance
