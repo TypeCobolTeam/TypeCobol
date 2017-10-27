@@ -443,6 +443,25 @@ namespace TypeCobol.Compiler.Parser
             }
             //else do nothing, it's an error that will be treated by a Checker (Cobol2002Checker obviously).
 
+            var parent = node.Parent;
+            while(parent !=null)
+            {
+                if (parent is WorkingStorageSection)
+                {
+                    //Set flag to know that this node belongs to working storage section
+                    node.SetFlag(Node.Flag.WorkingSectionNode, true); 
+                    break;
+                }
+                else if (parent is LinkageSection)
+                {
+                    //Set flag to know that this node belongs to linkage section
+                    node.SetFlag(Node.Flag.LinkageSectionNode, true);
+                    break;
+                }
+                parent = parent.Parent;
+            }
+
+
             AddToSymbolTable(node);
         }
 
@@ -558,6 +577,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.InputParameters.Add(paramNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
@@ -565,6 +585,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.OutputParameters.Add(paramNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
@@ -572,6 +593,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.InoutParameters.Add(paramNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
@@ -580,6 +602,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 ((FunctionDeclaration)CurrentNode).Profile.ReturningParameter = paramNode;
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }

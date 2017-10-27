@@ -128,6 +128,16 @@ namespace TypeCobol.Compiler.Nodes {
             /// Flag the node as a node comming from intrinsic files
             /// </summary>
             NodeIsIntrinsic = 0x01 <<13,
+            /// <summary>
+            /// Flag the node that belongs to the working stoage section (Usefull for DataDefinition)
+            /// </summary>
+            WorkingSectionNode = 0x01 << 14,
+            /// <summary>
+            /// Flage the node that belongs to the linkage section (usefull for DataDefinition)
+            /// </summary>
+            LinkageSectionNode = 0x01 << 15,
+
+
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node
