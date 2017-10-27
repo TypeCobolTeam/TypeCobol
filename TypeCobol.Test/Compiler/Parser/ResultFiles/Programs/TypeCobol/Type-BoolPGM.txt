@@ -16,3 +16,4 @@ PROGRAM: TEST-BOOL common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  STRING:STRING

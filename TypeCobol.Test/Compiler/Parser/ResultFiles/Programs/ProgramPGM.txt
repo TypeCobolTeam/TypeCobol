@@ -32,3 +32,4 @@ PROGRAM: Simple common:False initial:True recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  STRING:STRING

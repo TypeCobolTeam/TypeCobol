@@ -16,6 +16,7 @@ PROGRAM: TYPEPGM common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  STRING:STRING
 --- Program ---
 PROGRAM: Stacked common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
@@ -29,3 +30,4 @@ PROGRAM: Stacked common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  STRING:STRING

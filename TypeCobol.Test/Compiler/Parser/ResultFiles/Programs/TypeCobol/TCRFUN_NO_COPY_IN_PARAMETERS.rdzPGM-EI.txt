@@ -28,3 +28,4 @@ PROGRAM: TCRFUN_NO_COPY_IN_PARAMETERS common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  STRING:STRING

@@ -134,8 +134,10 @@ namespace TypeCobol.Compiler.CodeElements
         public static readonly DataType Boolean            = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
         //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
         public static readonly DataType Date               = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+        //String built in type
+        public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
-		public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
+        public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
 		{
             var builtInNode = type == DataType.Date ? CreateDate() : CreateBase(type);
             builtInNode.SetFlag(Node.Flag.NodeIsIntrinsic, true); //Mark BuiltIn Type as Instrinsic
@@ -160,12 +162,12 @@ namespace TypeCobol.Compiler.CodeElements
 			var data = new DataDescriptionEntry();
 			data.LevelNumber = new GeneratedIntegerValue(level);
 			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
-			data.Picture = new GeneratedAlphanumericValue(String.Format("{0}({1})", type, length));
+			data.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", type, length));
 			data.DataType = DataType.Create(data.Picture.Value);
 			return new Nodes.DataDescription(data);
 		}
 
-		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, };
+		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.String};
         // [/TYPECOBOL]
     }
     public enum RestrictionLevel

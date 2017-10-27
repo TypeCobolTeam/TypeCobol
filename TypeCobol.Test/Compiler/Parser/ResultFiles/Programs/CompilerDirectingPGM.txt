@@ -56,3 +56,4 @@ PROGRAM: compiler-directing common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  STRING:STRING
