@@ -374,6 +374,7 @@ namespace TypeCobol.LanguageServer
                     {
                         AnalyticsWrapper.Telemetry.TrackEvent("[Completion] " + lastSignificantToken.TokenType);
                         List<CompletionItem> items = new List<CompletionItem>();
+                        var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                         switch (lastSignificantToken.TokenType)
                         {
                             case TokenType.PERFORM:
@@ -407,7 +408,6 @@ namespace TypeCobol.LanguageServer
                             }
                             case TokenType.MOVE:
                             {
-                                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
                                     da =>
                                         da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
@@ -422,11 +422,29 @@ namespace TypeCobol.LanguageServer
                             case TokenType.IF:
                             case TokenType.DISPLAY:
                             {
-                                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                               
                                 items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
                                     da =>
                                         da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
                                 break;
+                            }
+                            case TokenType.SET:
+                            {
+                                    items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement, 
+                                        v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
+                                             && (((v.CodeElement as DataDefinitionEntry) != null && (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 88) //Level 88 Variable
+                                             || v.DataType == DataType.Numeric //Numeric Integer Variable
+                                             || v.Usage == DataUsage.Pointer) //Or usage is pointer 
+                                             ));
+
+                                    //Add completion item for indexes
+                                    items.AddRange(CompletionFactory.GetCompletionForIndexes(fileCompiler, matchingCodeElement, userFilterText));
+                                break;
+                            }
+                            case TokenType.OF:
+                            {
+                                    items.AddRange(CompletionFactory.GetCompletionForOf(fileCompiler, matchingCodeElement, userFilterToken));
+                                    break;
                             }
                             default:
                                 break;

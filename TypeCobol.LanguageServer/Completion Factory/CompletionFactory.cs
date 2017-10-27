@@ -433,6 +433,32 @@ namespace TypeCobol.LanguageServer
 
             return completionItems;
         }
+
+        public static IEnumerable<CompletionItem> GetCompletionForIndexes(FileCompiler fileCompiler, CodeElement codeElement, string userFilterText)
+        {
+            var completionItems = new List<CompletionItem>();
+            var node = GetMatchingNode(fileCompiler, codeElement);
+            List<DataDefinition> Indexes = null;
+
+            var variableContainingIndexes =
+                node.SymbolTable.GetVariables(
+                    v =>
+                        (v.CodeElement as CommonDataDescriptionAndDataRedefines) != null &&
+                        (v.CodeElement as CommonDataDescriptionAndDataRedefines).Indexes != null  &&
+                        (v.CodeElement as CommonDataDescriptionAndDataRedefines).Indexes.Any(),
+                    new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
+
+            foreach (var variable in variableContainingIndexes)
+            {
+                var indexes = (variable.CodeElement as CommonDataDescriptionAndDataRedefines).Indexes;
+                foreach (var index in indexes)
+                {
+                    completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForIndex(index, variable));
+                }
+            }
+
+            return completionItems;
+        }
         #endregion
 
         #region TO Completion
@@ -474,7 +500,66 @@ namespace TypeCobol.LanguageServer
         }
         #endregion
 
+        #region OF Completion
+        /// <summary>
+        /// Get completion after OF Cobol Keyword. This method also adjust take in account the token before OF.
+        /// </summary>
+        /// <param name="fileCompiler"></param>
+        /// <param name="codeElement"></param>
+        /// <param name="userFilterToken"></param>
+        /// <returns></returns>
+        public static IEnumerable<CompletionItem> GetCompletionForOf(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
+        {
+            var completionItems = new List<CompletionItem>();
+            var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+            var arrangedCodeElement = codeElement as CodeElementWrapper;
+            var node = GetMatchingNode(fileCompiler, codeElement);
+
+            //Detect wath's before the OF token
+            var tokenBeforeOf = arrangedCodeElement.ArrangedConsumedTokens.TakeWhile(t => t.TokenType != TokenType.OF).LastOrDefault();
+
+            if (tokenBeforeOf == null || tokenBeforeOf.TokenType != TokenType.ADDRESS) //For now we only need to filter on adress. 
+                return null;
+
+            switch (tokenBeforeOf.TokenType) //In the future, this will allow to switch between different token declared before OF. 
+            {
+                case TokenType.ADDRESS:
+                {
+                    GetCompletionForAddressOf(ref completionItems, node, userFilterText);
+                    break;
+                }  
+            }
+
+            return completionItems;
+        }
+
+        /// <summary>
+        /// Get completion Item for a types ADDRESS OF demand. 
+        /// This meythod will modify the completionItems ref parameter.
+        /// CompletionItems will be filtered on varaibles declared in LINKAGE SECTION and with LevelNumber equal to 01 or 77. 
+        /// </summary>
+        /// <param name="completionItems"></param>
+        /// <param name="aarangedCodeElement"></param>
+        /// <param name="matchingNode"></param>
+        /// <param name="userFilterText"></param>
+        public static void GetCompletionForAddressOf(ref List<CompletionItem> completionItems, Node node, string userFilterText)
+        {
+            var potentialVariable = new List<DataDefinition>();
+
+            //Get all the varaibles in Linkage section with Level 01 or 77 and starting by userFilterText. 
+            potentialVariable.AddRange(node.SymbolTable.GetVariables(v => v.IsFlagSet(Node.Flag.LinkageSectionNode) 
+                                            && ( (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 1 || (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 77)
+                                            && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                            new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
+
+            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable));
+        }
+        #endregion
+
+
+
         #region Helpers
+
         public static IReadOnlyList<Node> GetTypeChildrens(SymbolTable symbolTable, DataDefinition dataDefNode)
         {
             if (symbolTable == null || dataDefNode == null)

@@ -1980,6 +1980,11 @@ namespace TypeCobol.Compiler.Parser
 				Context = context.setStatementForConditions();
 				CodeElement = CobolStatementsBuilder.CreateSetStatementForConditions(context.setStatementForConditions());
 			}
+            else
+		    {
+		        Context = context;
+		        CodeElement = new SetStatementPartial();
+		    }
 		}
 
 

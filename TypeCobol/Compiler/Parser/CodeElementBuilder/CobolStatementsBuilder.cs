@@ -1025,7 +1025,10 @@ namespace TypeCobol.Compiler.Parser
 		///////////////////
 
 		internal CodeElement CreateSetStatementForAssignment(CodeElementsParser.SetStatementForAssignmentContext context) {
-			var statement = new SetStatementForAssignment();
+            if (context.dataOrIndexStorageArea() == null || context.setSendingField() == null)
+                return new SetStatementPartial();
+
+            var statement = new SetStatementForAssignment();
 			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.dataOrIndexStorageArea(), ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
 			statement.SendingVariable = CreateSendingVariable(context.setSendingField());
 			return statement;
@@ -1093,12 +1096,18 @@ namespace TypeCobol.Compiler.Parser
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
             return statement;
 		}
-		
-		  ////////////////////
-		 // SORT STATEMENT //
-		////////////////////
 
-		internal SortStatement CreateSortStatement(CodeElementsParser.SortStatementContext context)
+	    internal CodeElement CreatePartialSetStatement(CodeElementsParser.SetStatementContext context)
+	    {
+	        var statement = new SetStatementPartial();
+	        return statement;
+	    }
+
+          ////////////////////
+          // SORT STATEMENT //
+          ////////////////////
+
+        internal SortStatement CreateSortStatement(CodeElementsParser.SortStatementContext context)
 		{
 			var statement = new SortStatement();
 

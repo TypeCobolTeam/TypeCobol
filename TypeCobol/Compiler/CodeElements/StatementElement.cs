@@ -111,6 +111,7 @@ namespace TypeCobol.Compiler.CodeElements
         SetStatementForIndexes,
         SetStatementForSwitches,
         SetStatementForConditions,
+        SetStatementPartial,
         SortStatement,
         StartStatement,
         StopStatement,

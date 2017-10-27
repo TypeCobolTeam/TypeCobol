@@ -112,5 +112,11 @@ namespace TypeCobol.LanguageServer
             var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
             return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind = CompletionItemKind.Variable };
         }
+
+        public static CompletionItem CreateCompletionItemForIndex(Compiler.CodeElements.SymbolInformation index, DataDefinition variable)
+        {
+            var display = string.Format("{0} (from {1})", index.Name, variable.Name);
+            return new CompletionItem(display) {insertText = index.Name, kind = CompletionItemKind.Variable};
+        }
     }
 }
