@@ -312,7 +312,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             ResponseResultOrError resultOrError = null;
             try
             {
-                SignatureHelp result = OnSignatureHelp((TextDocumentIdentifier)parameters);
+                SignatureHelp result = OnSignatureHelp((TextDocumentPosition)parameters);
                 resultOrError = new ResponseResultOrError() { result = result };
             }
             catch (Exception e)
@@ -593,7 +593,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// callable. There can be multiple signature but only one
         /// active and only one active parameter.
         /// </summary>
-        public virtual SignatureHelp OnSignatureHelp(TextDocumentIdentifier parameters)
+        public virtual SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
             return null;
         }
