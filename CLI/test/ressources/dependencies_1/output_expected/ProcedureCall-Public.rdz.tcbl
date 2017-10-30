@@ -20,9 +20,10 @@
        01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::MyPublicProcedure
-        01 TC-Callee-ebb060ea PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-ebb060ea-MyPublicProcedure PROCEDURE-POINTER EXTERN
+      -    AL.
       *Callee::check
-        01 TC-Callee-ca0ab46c PROCEDURE-POINTER EXTERNAL.
+        01 TC-Callee-ca0ab46c-check PROCEDURE-POINTER EXTERNAL.
 
 
        PROCEDURE DIVISION.
@@ -48,7 +49,7 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL TC-Callee-ebb060ea USING
+           CALL TC-Callee-ebb060ea-MyPublicProcedure USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -59,7 +60,7 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL TC-Callee-ebb060ea USING
+           CALL TC-Callee-ebb060ea-MyPublicProcedure USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -72,7 +73,7 @@
       *    CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+           CALL 'fde394fb-Pgm1PrivateValidateDateFormat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -84,7 +85,7 @@
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+           CALL 'fde394fb-Pgm1PrivateValidateDateFormat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -95,19 +96,19 @@
 
       *OK  call check of PGM1
       *   call check input somedate
-          CALL 'a0508f35' USING
+          CALL 'a0508f35-check' USING
                                  somedate
            end-call
                                    
       *OK 
       *   call PGM1::check input somedate
-          CALL 'a0508f35' USING
+          CALL 'a0508f35-check' USING
                                  somedate
            end-call
                                          
       *OK 
       *   call Callee::check input somedate
-          CALL TC-Callee-ca0ab46c USING
+          CALL TC-Callee-ca0ab46c-check USING
                                  somedate
            end-call
                                            
@@ -128,7 +129,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35.
+       PROGRAM-ID. a0508f35-check.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -139,7 +140,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM a0508f35.
+       END PROGRAM a0508f35-check.
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -149,7 +150,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fde394fb.
+       PROGRAM-ID. fde394fb-Pgm1PrivateValidateDateFormat.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -168,4 +169,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM fde394fb.
+       END PROGRAM fde394fb-Pgm1PrivateValidateDateFormat.

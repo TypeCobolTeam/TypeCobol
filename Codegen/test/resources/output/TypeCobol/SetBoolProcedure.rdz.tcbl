@@ -23,7 +23,7 @@
       *DECLARE PROCEDURE IsDateValid.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ee0864c9.
+       PROGRAM-ID. ee0864c9-IsDateValid.
        DATA DIVISION .
        working-storage section.
       *01  Result type bool.
@@ -39,4 +39,4 @@
                SET Result-false TO TRUE
                                    
            .
-       END PROGRAM ee0864c9.
+       END PROGRAM ee0864c9-IsDateValid.

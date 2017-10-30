@@ -66,7 +66,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'df9b9795' USING
+           CALL 'df9b9795-ValidateDateFormat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -77,7 +77,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
-           CALL 'df9b9795' USING
+           CALL 'df9b9795-ValidateDateFormat' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -89,14 +89,14 @@
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
       *    CALL ValidateDateFormat END-CALL
-           CALL 'f0da699b'
+           CALL 'f0da699b-ValidateDateFormat'
                                    END-CALL
       * __________________________________________________
       * OK with INPUT on the same line as call
       *    CALL ValidateDateFormat INPUT      somedate
       *                                       by content 'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'df9b9795' USING
+           CALL 'df9b9795-ValidateDateFormat' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -109,7 +109,7 @@
       *    CALL ValidateDateFormat INPUT     by content somedate
       *                                        'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'df9b9795' USING
+           CALL 'df9b9795-ValidateDateFormat' USING
                     by content   somedate
                                  'YYYYMMDD'
                     by reference flag-value
@@ -125,7 +125,7 @@
       *                           address of myDate2
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
-           CALL 'e6e45a7d' USING
+           CALL 'e6e45a7d-myProc' USING
                     by content   somedate
                                  'YYYYMMDD'
                                  myDate2
@@ -146,7 +146,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7d' USING
+           CALL 'e6e45a7d-myProc' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -167,7 +167,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7d' USING
+           CALL 'e6e45a7d-myProc' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -185,8 +185,8 @@
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f0da699b.
-       END PROGRAM f0da699b.
+       PROGRAM-ID. f0da699b-ValidateDateFormat.
+       END PROGRAM f0da699b-ValidateDateFormat.
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -196,7 +196,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. df9b9795.
+       PROGRAM-ID. df9b9795-ValidateDateFormat.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -215,7 +215,7 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM df9b9795.
+       END PROGRAM df9b9795-ValidateDateFormat.
       *
       *DECLARE PROCEDURE myProc PRIVATE
       *   INPUT  mydate        TYPE Date
@@ -229,7 +229,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e6e45a7d.
+       PROGRAM-ID. e6e45a7d-myProc.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -265,4 +265,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM e6e45a7d.
+       END PROGRAM e6e45a7d-myProc.

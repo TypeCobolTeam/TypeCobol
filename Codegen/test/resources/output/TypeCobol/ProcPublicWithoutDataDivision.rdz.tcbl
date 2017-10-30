@@ -10,8 +10,9 @@
        01 TC-TestMe-PntTab.
            05 TC-TestMe-PntNbr         PIC S9(04) COMP VALUE 1.
       *TestMe::StartCheckpoint
-           05 TC-TestMe-f18df3d0-Idt   PIC X(08) VALUE 'f18df3d0'.
-           05 TC-TestMe-f18df3d0 PROCEDURE-POINTER.
+           05 TC-TestMe-f18df3d0-StartCheckpoint-Idt   PIC X(08) VALUE '
+      -    f18df3d0-StartCheckpoint'.
+           05 TC-TestMe-f18df3d0-StartCheckpoint PROCEDURE-POINTER.
 
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
@@ -30,7 +31,8 @@
 
         FctList-Process-Mode.
             IF NOT TC-TestMe-FctList-IsLoaded
-              SET TC-TestMe-f18df3d0   TO ENTRY 'f18df3d0'
+              SET TC-TestMe-f18df3d0-StartCheckpoint   TO ENTRY 'f18df3d
+      -    0-StartCheckpoint'
 
               SET TC-TestMe-FctList-IsLoaded TO TRUE
             END-IF
@@ -51,7 +53,7 @@
       *    input  PgmName          pic X(08).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f18df3d0.
+       PROGRAM-ID. f18df3d0-StartCheckpoint.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
-       END PROGRAM f18df3d0.
+       END PROGRAM f18df3d0-StartCheckpoint.
