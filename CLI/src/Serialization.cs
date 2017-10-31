@@ -222,7 +222,7 @@ namespace TypeCobol.Server.Serialization
             if (lines == null)
                 //return token.Line;
                 throw new System.ArgumentNullException("this.Line must be set from the source document snapshot");
-            return lines.IndexOf(token.TokensLine, token.TokensLine.InitialLineIndex);
+            return lines.IndexOf(token.TokensLine, token.TokensLine.LineIndex);
         }
 
         internal override CodeElement Decode() {

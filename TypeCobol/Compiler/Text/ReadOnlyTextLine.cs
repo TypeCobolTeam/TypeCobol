@@ -15,9 +15,9 @@ namespace TypeCobol.Compiler.Text
         }
 
         /// <summary>
-        /// In a read-only document, the current LineIndex is always equal to the InitialLineIndex
+        /// In a read-only document, the current LineIndex is always equal to the LineIndex
         /// </summary>
-        public int LineIndex { get { return InitialLineIndex; } }
+        public int LineIndex { get { return base.LineIndex; } }
 
         /// <summary>
         /// Offset of the first char of this line in the document 

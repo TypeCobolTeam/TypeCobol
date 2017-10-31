@@ -84,6 +84,9 @@ namespace TypeCobol.Compiler.CodeElements
 
         public IList<Diagnostic> Diagnostics { get; set; }
 
+        /// <summary>
+        /// Return true if code element has diagnostics.
+        /// </summary>
         public bool IsInError
         {
             get { return Diagnostics != null && Diagnostics.Count > 0; }

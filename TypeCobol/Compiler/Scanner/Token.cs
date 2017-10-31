@@ -166,11 +166,11 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// --- Necessary implementation of the interface Antlr4.Runtime.IToken ---
         /// WARNING, this property always returns the INITIAL line number, before any change was applied to the current document :
-        /// => this.TokensLine.InitialLineIndex + 1 
+        /// => this.TokensLine.LineIndex + 1 
         /// The CURRENT line index is only defined in the context of a snapshot of the source document :
-        /// => ISearchableReandOnlyList.IndexOf(token.TokensLine, token.TokensLine.InitialLineIndex)
+        /// => ISearchableReandOnlyList.IndexOf(token.TokensLine, token.TokensLine.LineIndex)
         /// </summary>
-        public int Line { get { return this.TokensLine.InitialLineIndex + 1; } }
+        public int Line { get { return this.TokensLine.LineIndex + 1; } }
 
         /// <summary>
         /// Column number (starting count at 1) where the first character of the token was found in the source text.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
@@ -68,34 +69,72 @@ namespace TypeCobol.Compiler.Parser
         internal void ResetCodeElements()
         {
             CodeElements = null;
-            ParserDiagnostics = null;
+            _ParserDiagnostics = null;
         }
 
         /// <summary>
         /// Error and warning messages produced while parsing the source text line
         /// </summary>
-        public IList<Diagnostic> ParserDiagnostics { get; private set; }
+        public IList<Diagnostic> ParserDiagnostics
+        {
+            get { return _ParserDiagnostics; }
+        }
 
+        private IList<Diagnostic> _ParserDiagnostics;
         /// <summary>
         /// Lazy initialization of diagnostics list
         /// </summary>
         internal void AddParserDiagnostic(Diagnostic diag)
         {
             // Lazy list instantiation
-            if (ParserDiagnostics == null)
+            if (_ParserDiagnostics == null)
             {
-                ParserDiagnostics = new List<Diagnostic>();
+                _ParserDiagnostics = new List<Diagnostic>();
             }
 
-            ParserDiagnostics.Add(diag);
+            _ParserDiagnostics.Add(diag);
         }
 
         /// <summary>
-        /// Reset ParserDiagnostics property of this current line
+        /// Reset all diagnostics for the current line
         /// </summary>
         internal void ResetDiagnostics()
         {
-            ParserDiagnostics = null;
+            _ParserDiagnostics = null;
+            if (CodeElements != null)
+            {
+                foreach (var codeElement in CodeElements)
+                {
+                    codeElement.Diagnostics = null; //Delete all diganostics on every codeelement of this line
+                }
+            }
+        }
+
+        internal void UpdateDiagnositcsLine()
+        {
+            //Update ParserDiag lines index
+            if (_ParserDiagnostics != null)
+            {
+                foreach (var parserDiagnostic in _ParserDiagnostics)
+                {
+                    parserDiagnostic.Line = LineIndex + 1;
+                }
+            }
+
+            //Update CodeElements Diags lines index
+            if (CodeElements != null)
+            {
+                foreach (var codeElement in CodeElements)
+                {
+                    if (codeElement.Diagnostics != null)
+                    {
+                        foreach (var codeElementDiagnostic in codeElement.Diagnostics)
+                        {
+                            codeElementDiagnostic.Line = LineIndex + 1;
+                        }
+                    }
+                }
+            }
         }
     }
 }

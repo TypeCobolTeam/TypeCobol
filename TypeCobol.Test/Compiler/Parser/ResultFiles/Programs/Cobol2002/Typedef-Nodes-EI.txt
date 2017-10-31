@@ -21,28 +21,34 @@ Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPED
 Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
+Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
+Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
+Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
+Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
+Line 70[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
+Line 73[1,49] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
+Line 75[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
+Line 82[5,57] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
+Line 90[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
+Line 114[5,35] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP'
+Line 115[5,34] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP'
+Line 132[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed
+Line 145[6,66] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
+Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
+Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
 Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
 Line 40[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries
 Line 45[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword}
-Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
 Line 53[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 57[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
 Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
-Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
 Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
-Line 70[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
 Line 73[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
-Line 73[1,49] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
-Line 75[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
 Line 80[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 82[5,57] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
 Line 84[20,26] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 90[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
 Line 93[26,33] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause
 Line 93[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 96[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
@@ -50,15 +56,9 @@ Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for
 Line 101[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 109[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 114[5,35] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP'
-Line 115[5,34] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP'
 Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 132[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed
-Line 145[6,66] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
 Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
 Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed.
-Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
-Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
 --- Nodes ---
 ?
   TypeCobol

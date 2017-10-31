@@ -35,13 +35,8 @@ namespace TypeCobol.Compiler.Text
 
         /// <summary>
         /// Index of this line when it first appeared in the document.
-        /// WARNING : if lines are later inserted or removed in the document before it,
-        /// InitialLineIndex no longer reflects the current position of the line.
-        /// It can however provide a good starting point to start searching for a line
-        /// in a snapshot of the document at a given point in time.
-        /// When a line is created outside of a document, InitialLineIndex = -1.
         /// </summary>
-        int InitialLineIndex { get; }
+        int LineIndex { get; set; }
 
         /// <summary>
         /// A text line instance can be reused simultaneously in different snapshots of the document

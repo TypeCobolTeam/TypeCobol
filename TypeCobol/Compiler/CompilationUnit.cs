@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Castle.Components.DictionaryAdapter;
 using TypeCobol.Compiler.AntlrUtils;
@@ -87,26 +88,6 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    ////Reset all diagnostics in modified lines
-                    foreach (var change in processedTokensLineChanges)
-                    {   
-                        var lines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines);
-                        if (lines != null && lines.Count > 0)
-                        {
-                            if (change.LineIndex + 1 <= lines.Count - 1)        //Temporary workaround until issue #611 is fixed
-                            {                                                   //Temporary workaround until issue #611 is fixed
-                                var lineIndex = change.LineIndex;
-                                while (lineIndex < lines.Count-1 && lines[lineIndex].ParserDiagnostics == null)
-                                    lineIndex++;
-
-                                lines[lineIndex].ResetDiagnostics();
-                            }                                                   //Temporary workaround until issue #611 is fixed
-                            else                                                //Temporary workaround until issue #611 is fixed
-                                lines[change.LineIndex].ResetDiagnostics();
-                        }
-                           
-                    }
-
                     ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
                     IList<DocumentChange<ICodeElementsLine>> documentChanges = CodeElementsParserStep.ParseProcessedTokensLinesChanges(TextSourceInfo, codeElementsDocumentLines, processedTokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, perfStatsForParserInvocation);
 
@@ -194,7 +175,7 @@ namespace TypeCobol.Compiler
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root;
-                    IList<ParserDiagnostic> newDiagnostics;
+                    List<Diagnostic> newDiagnostics;
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
@@ -243,9 +224,15 @@ namespace TypeCobol.Compiler
             {
                 allDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
             }
-            if (ProgramClassDocumentSnapshot != null && ProgramClassDocumentSnapshot.Diagnostics != null)
+
+            if (ProgramClassDocumentSnapshot != null)
             {
-                allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+                //Get all nodes diagnostics using visitor. 
+                if (ProgramClassDocumentSnapshot.Root != null)
+                    ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
+
+                if (ProgramClassDocumentSnapshot.Diagnostics != null)
+                    allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
             }
 
             if (CodeElementsDocumentSnapshot != null)

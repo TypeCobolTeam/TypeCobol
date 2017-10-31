@@ -81,7 +81,7 @@
 
             if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1) {
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
-                DiagnosticUtils.AddError(typeDefinition.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
             if (typeDefinition.RestrictionLevel == RestrictionLevel.STRONG) {
                 foreach (var sub in typeDefinition.Children) {
@@ -94,7 +94,7 @@
             var codeElement = node.CodeElement as DataDescriptionEntry;
             if (codeElement != null && codeElement.InitialValue != null) {
                 string message = "Illegal VALUE clause for subordinate \'"+node.Name+"\' of STRONG TYPEDEF \'"+typedef.Head+"\'";
-                DiagnosticUtils.AddError(codeElement, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
             foreach(var sub in node.Children) CheckForValueClause(sub, typedef);
         }
@@ -108,7 +108,7 @@
                 return; //not my job
             }
             if (redefinesNode.IsPartOfATypeDef) {
-                DiagnosticUtils.AddError(node.CodeElement, "Illegal REDEFINES as part of a TYPEDEF", MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, "Illegal REDEFINES as part of a TYPEDEF", MessageCode.SemanticTCErrorInParser);
                 return;
             }
             var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
@@ -117,14 +117,14 @@
             if (redefinedVariable == null)
             {
                 string message = "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced";
-                DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                 return;
             }
 
             if (redefinedVariable.IsStronglyTyped || redefinedVariable.IsStrictlyTyped)
             {
                 string message = string.Format("Illegal REDEFINES: '{0}' is {1}", redefinesSymbolReference, redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
-                DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
         }
     }
@@ -142,17 +142,17 @@ class RenamesChecker {
 		var found = node.SymbolTable.GetVariable(renames);
 		if (found.Count > 1) {
 			string message = "Illegal RENAMES: Ambiguous reference to symbol \'"+renames+"\'";
-			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+			DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
 		}
 		if (found.Count < 1) {
 			string message = "Illegal RENAMES: Symbol \'"+renames+"\' is not referenced";
-			DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+			DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
 		}
 		foreach(var v in found) {
                 if (v.IsStronglyTyped || v.IsStrictlyTyped)
                 {
                     string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames, v.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
-                    DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                    DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                 }
 		}
 	}
@@ -170,7 +170,7 @@ class TypedDeclarationChecker {
 		var data = dataDefinition.CodeElement as DataDescriptionEntry;
 		if (data != null && data.UserDefinedDataType != null && data.Picture != null) {
 			string message = "PICTURE clause incompatible with TYPE clause";
-			DiagnosticUtils.AddError(node.CodeElement, message, data.Picture.Token);
+			DiagnosticUtils.AddError(node, message, data.Picture.Token);
 		}
 		var type = dataDefinition.DataType;
         TypeDefinitionHelper.Check(node, type); //Check if the type exists and is not ambiguous
@@ -191,13 +191,13 @@ class TypedDeclarationChecker {
             var found = node.SymbolTable.GetType(type);
             if (found.Count < 1)
             {
-                string message = "TYPE \'" + type.Name + "\' is not referenced";
-                DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                 string message = "TYPE \'" + type.Name + "\' is not referenced";
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
             else if (found.Count > 1)
             {
                 string message = "Ambiguous reference to TYPE \'" + type.Name + "\'";
-                DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
         }
     }
@@ -228,7 +228,7 @@ class TypedDeclarationChecker {
                             sending = str.ToString();
                         }
                         string message = "Cannot write "+sending+" to strongly typed variable "+name.Name+":"+((Typed)name).DataType.Name;
-                        DiagnosticUtils.AddError(node.CodeElement, message, MessageCode.SemanticTCErrorInParser);
+                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                     }
                 }
             }

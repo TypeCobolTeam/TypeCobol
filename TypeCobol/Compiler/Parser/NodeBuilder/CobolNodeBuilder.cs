@@ -12,6 +12,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Tools;
 using Analytics;
 using Castle.Core.Internal;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -100,9 +101,9 @@ namespace TypeCobol.Compiler.Parser
             SyntaxTree.Exit();
         }
 
-        public IList<ParserDiagnostic> GetDiagnostics(ProgramClassParser.CobolCompilationUnitContext context)
+        public List<Diagnostic> GetDiagnostics(ProgramClassParser.CobolCompilationUnitContext context)
         {
-            IList<ParserDiagnostic> diagnostics = new List<ParserDiagnostic>();
+            List<Diagnostic> diagnostics = new List<Diagnostic>();
             AddDiagnosticsAttachedInContext(diagnostics, context);
             if (diagnostics.Count > 0)
             {
@@ -114,14 +115,14 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
-        private void AddDiagnosticsAttachedInContext(IList<ParserDiagnostic> diagnostics, ParserRuleContext context)
+        private void AddDiagnosticsAttachedInContext(List<Diagnostic> diagnostics, ParserRuleContext context)
         {
             var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
             if (ruleNodeWithDiagnostics.Diagnostics != null)
             {
                 foreach (var ruleDiagnostic in ruleNodeWithDiagnostics.Diagnostics)
                 {
-                    diagnostics.Add((ParserDiagnostic)ruleDiagnostic);
+                    diagnostics.Add(ruleDiagnostic);
                 }
             }
             if (context.children != null)

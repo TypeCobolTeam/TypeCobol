@@ -281,7 +281,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (concatenatedLine.Length > 0)
                 {
                     // Scan the continuation text, and get its last token so far
-                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
+                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
                     Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
                     Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count - 1];
 
@@ -350,7 +350,7 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             // Scan the complete continuation text as a whole
-            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
+            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
             Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
 
             // Then attribute each token and diagnostic to its corresponding tokens line

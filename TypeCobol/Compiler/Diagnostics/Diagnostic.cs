@@ -45,5 +45,21 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             return string.Format("Line {0}[{1},{2}] <{3}, {4}, {5}> - {6}", Line, ColumnStart, ColumnEnd, Info.Code, Info.Severity, Info.Category, Message);
         }
+
+        public override bool Equals(object obj)
+        {
+            Diagnostic diag = obj as Diagnostic;
+            if (diag == null)
+                return false;
+
+            return diag.Line == this.Line &&
+                   diag.ColumnStart == this.ColumnStart &&
+                   diag.ColumnEnd == this.ColumnEnd &&
+                   diag.Message == this.Message &&
+                   (diag.Info != null && this.Info != null) &&
+                   diag.Info.Code == this.Info.Code &&
+                   diag.Info.Severity == this.Info.Severity;
+
+        }
     }
 }

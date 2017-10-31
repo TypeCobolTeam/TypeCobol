@@ -7,16 +7,16 @@ namespace TypeCobol.Compiler.Text
     /// </summary>
     public class TextLineSnapshot : ITextLine
     {
-        public TextLineSnapshot(int initialLineIndex, string text, object lineTrackingReferenceInSourceDocument)
+        public TextLineSnapshot(int lineIndex, string text, object lineTrackingReferenceInSourceDocument)
         {
-            InitialLineIndex = initialLineIndex;
+            LineIndex = lineIndex;
             Text = text;
             LineTrackingReferenceInSourceDocument = lineTrackingReferenceInSourceDocument;
         }
 
         public TextLineSnapshot(ITextLine mutableTextLine)
         {
-            InitialLineIndex = mutableTextLine.InitialLineIndex;
+            LineIndex = mutableTextLine.LineIndex;
             Text = mutableTextLine.Text;
             LineTrackingReferenceInSourceDocument = mutableTextLine.LineTrackingReferenceInSourceDocument;
         }
@@ -57,13 +57,8 @@ namespace TypeCobol.Compiler.Text
 
         /// <summary>
         /// Index of this line when it first appeared in the document.
-        /// WARNING : if lines are later inserted or removed in the document before it,
-        /// InitialLineIndex no longer reflects the current position of the line.
-        /// It can however provide a good starting point to start searching for a line
-        /// in a snapshot of the document at a given point in time.
-        /// When a line is created outside of a document, InitialLineIndex = -1.
         /// </summary>
-        public int InitialLineIndex { get; private set; }
+        public int LineIndex { get; set; }
 
         /// <summary>
         /// A text line instance can be reused simultaneously in different snapshots of the document

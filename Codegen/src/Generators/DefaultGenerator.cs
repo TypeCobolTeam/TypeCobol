@@ -526,7 +526,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 if (Layout == ColumnsLayout.CobolReferenceFormat)
                 {
-                    var lines = CobolTextLine.Create(line.Text, Layout, line.InitialLineIndex);
+                    var lines = CobolTextLine.Create(line.Text, Layout, line.LineIndex);
                     foreach (var l in lines) results.Add(SetComment(l, isComment));
                 }
                 else
@@ -572,13 +572,13 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder text = new StringBuilder(cobol.Text);
                 if(text.Length > 6) 
                     text[6] = '*';
-                var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, cobol.InitialLineIndex);
+                var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, cobol.LineIndex);
                 foreach (var l in lines) return l;// there's only one in the collection
                 throw new System.NotImplementedException("I should have at least one item!");
             }
             else
             {
-                return new TextLineSnapshot(line.InitialLineIndex, "*" + line.Text, null);
+                return new TextLineSnapshot(line.LineIndex, "*" + line.Text, null);
             }
         }
 
@@ -594,7 +594,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 StringBuilder text = new StringBuilder(cobol.Text);
                 text[6] = ' ';
-                var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, cobol.InitialLineIndex);
+                var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, cobol.LineIndex);
                 foreach (var l in lines) 
                     return l;// there's only one in the collection
                 throw new System.NotImplementedException("I should have at least one item!");
@@ -604,7 +604,7 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder text = new StringBuilder(line.Text);
                 int index = line.Text.IndexOf('*');
                 text[index] = ' ';
-                return new TextLineSnapshot(line.InitialLineIndex, text.ToString(), null);
+                return new TextLineSnapshot(line.LineIndex, text.ToString(), null);
             }
         }
     }

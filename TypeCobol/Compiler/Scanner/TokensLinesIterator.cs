@@ -168,7 +168,7 @@ namespace TypeCobol.Compiler.Scanner
         public void SeekToToken(Token startToken)
         {
             // Find line for the start token
-            currentPosition.LineIndex = tokensLines.IndexOf(startToken.TokensLine, startToken.TokensLine.InitialLineIndex);
+            currentPosition.LineIndex = tokensLines.IndexOf(startToken.TokensLine, startToken.TokensLine.LineIndex);
             currentLine = startToken.TokensLine;
             // Find index in line for the start token
             currentPosition.TokenIndexInLine = currentLine.SourceTokens.IndexOf(startToken);
@@ -376,9 +376,9 @@ namespace TypeCobol.Compiler.Scanner
         {
             // Check parameters
             ITokensLine startLine = startToken.TokensLine;
-            int startLineIndex = tokensLines.IndexOf(startLine, startLine.InitialLineIndex);
+            int startLineIndex = tokensLines.IndexOf(startLine, startLine.LineIndex);
             ITokensLine stopLine = stopToken.TokensLine;
-            int stopLineIndex = tokensLines.IndexOf(stopLine, stopLine.InitialLineIndex);
+            int stopLineIndex = tokensLines.IndexOf(stopLine, stopLine.LineIndex);
             if (startLineIndex < 0 || stopLineIndex < 0 || stopLineIndex < startLineIndex || 
                 ((startLineIndex == stopLineIndex) && (stopToken.StartIndex < startToken.StartIndex)))
             {
