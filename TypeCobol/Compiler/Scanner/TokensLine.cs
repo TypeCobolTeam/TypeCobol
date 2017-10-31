@@ -158,7 +158,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             if (token != null)
             {
-                foreach (Diagnostic diag in GetDiagnosticsForToken(token))
+                foreach (Diagnostic diag in GetDiagnosticsForToken(token).ToArray()) //ToArray in order to remove reference
                 {
                     _ScannerDiagnostics.Remove(diag);
                 }
