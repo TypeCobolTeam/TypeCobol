@@ -418,7 +418,7 @@ namespace TypeCobol.Codegen.Actions
             public string ReplaceCode
             {
                 get;
-                private set;
+                set;
             }
 
 

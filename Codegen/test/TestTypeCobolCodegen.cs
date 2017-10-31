@@ -317,6 +317,24 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefFixedFormatCutLine") + ".rdz.tcbl", skeletons);
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TypedefQualifBoolSet()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifBoolSet") + ".rdz.tcbl", skeletons);
+        }
+        
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TypedefQualifBoolSetOverCol72()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifBoolSetOverCol72") + ".rdz.tcbl", skeletons);
+        }
+
 
 #if EUROINFO_RULES
         [TestMethod]

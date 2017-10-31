@@ -1,0 +1,20 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TypDefQualBoolSet.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 Person TYPEDEF STRICT.
+           05 Registered type Bool.
+
+       01 Person2 TYPEDEF STRICT.
+           05 Registered2 type Bool.       
+           05 W-Person2 Type Person.
+
+       01 Person3 TYPEDEF STRICT.
+           05 Registered3 type Bool.       
+           05 W-Person3 Type Person2.
+       01 W-Person4 Type Person3.
+
+       procedure division.
+           set W-Person4::W-Person3::W-Person2::Registered to false.
+
+       END PROGRAM TypDefQualBoolSet.

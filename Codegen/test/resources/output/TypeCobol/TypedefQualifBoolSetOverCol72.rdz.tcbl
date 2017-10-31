@@ -1,0 +1,36 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TypDefQualBoolSet.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01 Person TYPEDEF STRICT.
+      *    05 Registered type Bool.
+
+      *01 Person2 TYPEDEF STRICT.
+      *    05 Registered2 type Bool.
+      *    05 W-Person2 Type Person.
+
+      *01 Person3 TYPEDEF STRICT.
+      *    05 Registered3 type Bool.
+      *    05 W-Person3 Type Person2.
+      *01 W-Person4 Type Person3.
+       01 W-Person4.
+          02  Registered3-value PIC X VALUE LOW-VALUE.
+              88  Registered3       VALUE 'T'.
+              88  Registered3-false VALUE 'F'.
+           02 W-Person3.
+            03  Registered2-value PIC X VALUE LOW-VALUE.
+                88  Registered2       VALUE 'T'.
+                88  Registered2-false VALUE 'F'.
+             03 W-Person2.
+              04  Registered-value PIC X VALUE LOW-VALUE.
+                  88  Registered       VALUE 'T'.
+                  88  Registered-false VALUE 'F'.
+                                 
+
+       procedure division.
+      *    set W-Person4::W-Person3::W-Person2::Registered to false.
+           set Registered-false OF W-Person2 OF W-Person3 OF W-Person4 to TRUE.
+
+       END PROGRAM TypDefQualBoolSet.
+      * 1 errors
+      * Line 18[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns

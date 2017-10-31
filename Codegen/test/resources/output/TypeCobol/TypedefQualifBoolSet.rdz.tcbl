@@ -1,0 +1,39 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TypDefQualBoolSet.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01 Person TYPEDEF STRICT.
+      *    05 Registered type Bool.
+      *01 W-Person1 Type Person.
+       01 W-Person1.
+          02  Registered-value PIC X VALUE LOW-VALUE.
+              88  Registered       VALUE 'T'.
+              88  Registered-false VALUE 'F'.
+                                
+
+      *01 Person2 TYPEDEF STRICT.
+      *    05 Registered2 type Bool.
+      *    05 W-Person2 Type Person.
+      * 01 W-Person3 Type Person2.
+        01 W-Person3.
+          02  Registered2-value PIC X VALUE LOW-VALUE.
+              88  Registered2       VALUE 'T'.
+              88  Registered2-false VALUE 'F'.
+           02 W-Person2.
+            03  Registered-value PIC X VALUE LOW-VALUE.
+                88  Registered       VALUE 'T'.
+                88  Registered-false VALUE 'F'.
+                                  
+
+       procedure division.
+      *    set W-Person1::Registered to false.
+           set Registered-false OF W-Person1 to TRUE.
+      *    set W-Person1::Registered to true.
+           set Registered OF W-Person1 to true.
+
+      *    set W-Person3::Registered to false.
+           set Registered-false OF W-Person3 to TRUE.
+      *    set W-Person3::W-Person2::Registered to false.
+           set Registered-false OF W-Person2 OF W-Person3 to TRUE.
+
+       END PROGRAM TypDefQualBoolSet.
