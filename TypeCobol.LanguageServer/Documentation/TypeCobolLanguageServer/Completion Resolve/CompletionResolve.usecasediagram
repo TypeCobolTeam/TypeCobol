@@ -10,7 +10,7 @@
             <elementDefinition Id="6541c49f-1423-494c-9601-7fa83841dcbf" />
           </dependency>
           <dependency Id="f346beeb-0597-4e16-9fcf-a09080b812e0">
-            <useCaseMoniker Id="5f466d83-672a-4d1d-8149-133213e01c02" LastKnownName="Call SignatureHelper for selectd procedure" />
+            <useCaseMoniker Id="5f466d83-672a-4d1d-8149-133213e01c02" LastKnownName="Call SignatureHelper " />
             <elementDefinition Id="63720053-6310-499c-993b-72d89ac72d24" />
           </dependency>
           <dependency Id="b76ea055-7c65-4106-8c15-a4d72962bc10">
@@ -73,7 +73,7 @@
       </useCase>
     </useCaseModelRootHasTypes>
     <useCaseModelRootHasTypes>
-      <useCase Id="5f466d83-672a-4d1d-8149-133213e01c02" name="Call SignatureHelper for selectd procedure" isAbstract="false" isLeaf="false">
+      <useCase Id="5f466d83-672a-4d1d-8149-133213e01c02" name="Call SignatureHelper " isAbstract="false" isLeaf="false">
         <elementDefinition Id="b1319716-018a-425e-a67b-b5d8980547f0" />
         <suppliersInternal>
           <dependency Id="4cd04c0f-9081-42c1-b2e3-45ca8e39400d">

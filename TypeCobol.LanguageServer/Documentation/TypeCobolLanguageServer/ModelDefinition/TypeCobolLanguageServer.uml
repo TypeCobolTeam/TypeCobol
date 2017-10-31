@@ -39898,7 +39898,7 @@ This action will create RemoteErrorList markers and editor annotations asynchron
             Id="63720053-6310-499c-993b-72d89ac72d24">
             <useCaseMoniker
               Id="b1319716-018a-425e-a67b-b5d8980547f0"
-              LastKnownName="Call SignatureHelper for selectd procedure"
+              LastKnownName="Call SignatureHelper "
               LastKnownLocation="TypeCobolLanguageServer.uml" />
           </dependency>
           <dependency
@@ -39996,7 +39996,7 @@ This action will create RemoteErrorList markers and editor annotations asynchron
     <packageHasNamedElement>
       <useCase
         Id="b1319716-018a-425e-a67b-b5d8980547f0"
-        name="Call SignatureHelper for selectd procedure"
+        name="Call SignatureHelper "
         isAbstract="false"
         isLeaf="false">
         <suppliersInternal>
