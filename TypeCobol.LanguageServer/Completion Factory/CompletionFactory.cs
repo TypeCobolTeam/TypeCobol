@@ -508,15 +508,19 @@ namespace TypeCobol.LanguageServer
         /// <param name="codeElement"></param>
         /// <param name="userFilterToken"></param>
         /// <returns></returns>
-        public static IEnumerable<CompletionItem> GetCompletionForOf(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
+        public static IEnumerable<CompletionItem> GetCompletionForOf(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Position position)
         {
             var completionItems = new List<CompletionItem>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(fileCompiler, codeElement);
 
-            //Detect wath's before the OF token
-            var tokenBeforeOf = arrangedCodeElement.ArrangedConsumedTokens.TakeWhile(t => t.TokenType != TokenType.OF).LastOrDefault();
+            var tokensUntilCursor = arrangedCodeElement.ArrangedConsumedTokens
+            .Except(new List<Token>() { userFilterToken })
+            .Where(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1).Reverse();
+            
+            //Detect what's before the OF token
+            var tokenBeforeOf = tokensUntilCursor.Skip(1).FirstOrDefault(); //Skip(1) will skip the OF token
 
             if (tokenBeforeOf == null || tokenBeforeOf.TokenType != TokenType.ADDRESS) //For now we only need to filter on adress. 
                 return null;
@@ -525,7 +529,8 @@ namespace TypeCobol.LanguageServer
             {
                 case TokenType.ADDRESS:
                 {
-                    GetCompletionForAddressOf(ref completionItems, node, userFilterText);
+                    var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
+                    GetCompletionForAddressOf(ref completionItems, node, contextToken, userFilterText);
                     break;
                 }  
             }
@@ -542,15 +547,28 @@ namespace TypeCobol.LanguageServer
         /// <param name="aarangedCodeElement"></param>
         /// <param name="matchingNode"></param>
         /// <param name="userFilterText"></param>
-        public static void GetCompletionForAddressOf(ref List<CompletionItem> completionItems, Node node, string userFilterText)
+        public static void GetCompletionForAddressOf(ref List<CompletionItem> completionItems, Node node, Token contextToken, string userFilterText)
         {
             var potentialVariable = new List<DataDefinition>();
 
-            //Get all the varaibles in Linkage section with Level 01 or 77 and starting by userFilterText. 
-            potentialVariable.AddRange(node.SymbolTable.GetVariables(v => v.IsFlagSet(Node.Flag.LinkageSectionNode) 
-                                            && ( (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 1 || (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 77)
-                                            && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                            new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
+            if (contextToken != null && contextToken.TokenType == TokenType.SET)
+            {
+                //Get all the varaibles in Linkage section with Level 01 or 77 and starting by userFilterText. 
+                potentialVariable.AddRange(node.SymbolTable.GetVariables(v => v.IsFlagSet(Node.Flag.LinkageSectionNode)
+                                                && ((v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 1 || (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 77)
+                                                && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                                new List<SymbolTable.Scope>() { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global }));
+            }
+            else 
+            {
+                //Get all the variables from any section with level 01 or 77 and starting by userFilterText.
+                potentialVariable.AddRange(node.SymbolTable.GetVariables(
+                        v => ((v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 1 ||
+                             (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 77) &&
+                             v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                        new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
+            }
+           
 
             completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable));
         }

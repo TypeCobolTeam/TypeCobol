@@ -420,7 +420,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.OF:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForOf(fileCompiler, matchingCodeElement,
-                                userFilterToken));
+                                userFilterToken, parameters.position));
                             break;
                         }
                         default:
