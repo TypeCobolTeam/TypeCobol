@@ -441,7 +441,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 data.DataType.RestrictionLevel = types[0].DataType.RestrictionLevel;
             }
-            //else do nothing, it's an error that will be treated by a Checker (Cobol2002Checker obviously).
+            //else do nothing, it's an error that will be handled by Cobol2002Checker
 
             var parent = node.Parent;
             while(parent !=null)
@@ -458,9 +458,19 @@ namespace TypeCobol.Compiler.Parser
                     node.SetFlag(Node.Flag.LinkageSectionNode, true);
                     break;
                 }
+                else if (parent is LocalStorageSection)
+                {
+                    //Set flag to know that this node belongs to local storage section
+                    node.SetFlag(Node.Flag.LocalStorageSectionNode, true);
+                    break;
+                }
+                else if (parent is FileSection)
+                {
+                    node.SetFlag(Node.Flag.FileSectionNode, true);
+                    break;
+                }
                 parent = parent.Parent;
             }
-
 
             AddToSymbolTable(node);
         }

@@ -133,9 +133,17 @@ namespace TypeCobol.Compiler.Nodes {
             /// </summary>
             WorkingSectionNode = 0x01 << 14,
             /// <summary>
-            /// Flage the node that belongs to the linkage section (usefull for DataDefinition)
+            /// Flag the node that belongs to the linkage section (usefull for DataDefinition)
             /// </summary>
             LinkageSectionNode = 0x01 << 15,
+            /// <summary>
+            /// Flag node belongs to Local Storage Section (usefull for DataDefinition)
+            /// </summary>
+            LocalStorageSectionNode = 0x01 << 16,
+            /// <summary>
+            /// Flag node belongs to File Section (usefull for DataDefinition)
+            /// </summary>
+            FileSectionNode = 0x01 << 17,
 
 
         };
