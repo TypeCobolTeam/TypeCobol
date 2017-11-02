@@ -59,54 +59,34 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="variables">The substitution Variable for the new GenerateNode based on the template</param>
         /// <param name="group"></param>
         /// <param name="delimiter">Aragument variable delimiter</param>
-        /// <param name="bUseRazor">true to force to generate a Razor template, false otherwise</param>
         /// <returns>The new template to apply for a customization, or the same template otherwise</returns>
-        private string CheckCustomReplace(Node node, string template, Dictionary<string, object> variables, string group, string delimiter, bool bUseRazor)
+        private string CheckCustomReplace(Node node, string template, Dictionary<string, object> variables, string group, string delimiter)
         {
             IsReplaceSetBool = IsSetBoolVarTemplate(node, template, variables) && IsQualifiedNodeReceiver(node);
             if (IsReplaceSetBool)
-            {//So we must use another template in this situation, and other variables
-                if (bUseRazor)
-                {//Method1 using razor ==> create a new template
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    int count = node.Children.Count;
-                    TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = node.Children[0] as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
-                    sb.Append("SET %receiver-false");
-                    variables["receiver"] = token.ReplaceCode;//The the receiver variable value.
-                    for (int i = 1; i < count; i++)
-                    {
-                        sb.Append(' ');
-                        token = node.Children[i] as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
-                        sb.Append(token.ReplaceCode);
+            {
+              //Method : Optimization don't use Razor just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
+              //In addition this method can allow the Code Generator to detect a column 72 overflow.
+                int count = node.Children.Count;
+                TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = node.Children[0] as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
+                //Add the -false
+                token.ReplaceCode = token.ReplaceCode + "-false";
+                //Create a Token to replase the "false" to TRUE ==> lookup for the last one;
+                var consumedTokens = node.CodeElement.ConsumedTokens;
+                count = consumedTokens.Count;
+                for (int i = count - 1; i >= 0; i--)
+                {
+                    var consumed_token = consumedTokens[i];
+                    if (consumed_token.TokenType == Compiler.Scanner.TokenType.FALSE)
+                    {//Add a GenerateNode to replace false by TRUE
+                        TypeCobol.Codegen.Actions.Qualifier.GenerateToken trueToken =
+                            new TypeCobol.Codegen.Actions.Qualifier.GenerateToken(
+                                new TypeCobol.Codegen.Actions.Qualifier.TokenCodeElement(consumed_token), "TRUE", null);
+                        node.Add(trueToken);
+                        break;
                     }
-                    sb.Append(" TO TRUE");
-                    template = sb.ToString();
-                    UseRazor = true;
                 }
-                else
-                {//Method2 : Optimization don't use Razor just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
-                 //In addition this method can deteted a column 72 overflow during Code Generation.
-                    int count = node.Children.Count;
-                    TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = node.Children[0] as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
-                    //Add the -false
-                    token.ReplaceCode = token.ReplaceCode + "-false";
-                    //Create a Token to replase the "false" to TRUE ==> lookup for the last one;
-                    var consumedTokens = node.CodeElement.ConsumedTokens;
-                    count = consumedTokens.Count;
-                    for (int i = count - 1; i >= 0; i--)
-                    {
-                        var consumed_token = consumedTokens[i];
-                        if (consumed_token.TokenType == Compiler.Scanner.TokenType.FALSE)
-                        {//Add a GenerateNode to replace false by TRUE
-                            TypeCobol.Codegen.Actions.Qualifier.GenerateToken trueToken =
-                                new TypeCobol.Codegen.Actions.Qualifier.GenerateToken(
-                                    new TypeCobol.Codegen.Actions.Qualifier.TokenCodeElement(consumed_token), "TRUE", null);
-                            node.Add(trueToken);
-                            break;
-                        }
-                    }
-                    UseRazor = false;
-                }
+                UseRazor = false;
             }
             return template;
         }
@@ -122,7 +102,7 @@ namespace TypeCobol.Codegen.Actions
         {
             this.Old = node;
             UseRazor = true;
-            template = CheckCustomReplace(node, template, variables, group, delimiter, false);
+            template = CheckCustomReplace(node, template, variables, group, delimiter);
             //Substitute any group code
             if (UseRazor)
             {
