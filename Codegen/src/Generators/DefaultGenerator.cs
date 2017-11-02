@@ -27,6 +27,10 @@ namespace TypeCobol.Codegen.Generators
         /// The Set of Exceed Lines over column 72
         /// </summary>
         private HashSet<int> ExceedLines;
+        /// <summary>
+        /// The ByteArray to indicates which line number has alreday been checked for characters that were in column 73-80.
+        /// </summary>
+        private BitArray Lines_73_80_Flags;
 
         /// <summary>
         /// Constructor
@@ -36,7 +40,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="skeletons">All skeletons pattern for code generation </param>
         public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons)
             : base(document, destination, skeletons)
-        {
+        {            
         }
 
         /// <summary>
@@ -73,6 +77,8 @@ namespace TypeCobol.Codegen.Generators
             Stack<SourceText> stackLocalBuffer = new Stack<SourceText>();
             //Bit Array of Generated Nodes.
             BitArray generated_node = new BitArray(mapper.NodeCount);
+            //For detecting line having characters in columns [73-80]
+            Lines_73_80_Flags = new BitArray(mapper.LineData.Length);
             //The previous line generation buffer 
             StringSourceText previousBuffer = null;
             for (int i = 0; i < mapper.LineData.Length; i++)
@@ -300,35 +306,54 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="code">The code to insert</param>
         /// <param name="lineNumber">The current lien number</param>
         private void GenerateIntoBufferCheckLineExceed(Position from, Position to, SourceText buffer, string code, int lineNumber)
-        {
+        {   //Lines_73_80_Map
+            int start = Math.Min(from.Pos, buffer.Size);
+            int end = Math.Min(to.Pos, buffer.Size);
+            if (this.Layout != ColumnsLayout.CobolReferenceFormat)
+            {//Maybe Free Format
+                buffer.Insert(code, start, end);
+                return;
+            }
             int lineLen = -1;
             int lineStartOffset = -1;
             int lineEndOffset = -1;
-            int start = Math.Min(from.Pos, buffer.Size);
-            int end = Math.Min(to.Pos, buffer.Size);
             if (ExceedLines != null)
             {
                 ExceedLines.Remove(lineNumber);
             }
             lineLen = buffer.GetLineInfo(start, out lineStartOffset, out lineEndOffset);
-            buffer.Insert(code, start, end);
-
+            if (!Lines_73_80_Flags[lineNumber-1])
+            {//Replace by spaces any characters in columns[73-80]
+                Lines_73_80_Flags[lineNumber - 1] = true;
+                if (lineLen > LEGAL_COBOL_LINE_LENGTH)
+                {
+                    int replace_len = lineLen - LEGAL_COBOL_LINE_LENGTH;
+                    buffer.Insert(new string(' ', replace_len), LEGAL_COBOL_LINE_LENGTH, lineLen);
+                }
+            }
+            buffer.Insert(code, start, end);        
             int delta = -(end - start) + code.Length;
             int newLineLen = lineLen + delta;
             bool newHas73Chars = false;
             if (newLineLen > LEGAL_COBOL_LINE_LENGTH)
             {
-                for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++)
-                    newHas73Chars = !Char.IsWhiteSpace(buffer[lineStartOffset + k]);
+                for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++) {
+                    char ch = buffer[lineStartOffset + k];
+                    newHas73Chars = !(ch == '\r' || ch == '\n' || Char.IsWhiteSpace(ch));
+                }
                 //Error
                 //Emit an error.
-                if ((newLineLen > MAX_COBOL_LINE_LENGTH) || newHas73Chars)
+                if (newHas73Chars)
                 {
                     if (ExceedLines == null)
                     {
                         ExceedLines = new HashSet<int>();
                     }
                     ExceedLines.Add(lineNumber);
+                }
+                else if (newLineLen > MAX_COBOL_LINE_LENGTH)
+                {//Here we know that the line the line exceed with only white characters. ==> Remove extra white characters
+                    buffer.Delete(LEGAL_COBOL_LINE_LENGTH, newLineLen);
                 }
             }
         }

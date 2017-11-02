@@ -1,0 +1,17 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. No72ColOverflowCheck.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PERSON TYPEDEF STRICT.
+         05 FirstName              PIC X(30).
+         05 LastName               PIC X(30).
+         05 Birthday               TYPE Date.
+         05 Registered             TYPE Bool.
+       01 W-PERSON1      TYPE PERSON.
+       01 W-PERSON2      TYPE PERSON.
+
+       procedure division.
+
+       move W-Person2::LastName  to W-Person1::LastName.                999999
+
+       END PROGRAM No72ColOverflowCheck.

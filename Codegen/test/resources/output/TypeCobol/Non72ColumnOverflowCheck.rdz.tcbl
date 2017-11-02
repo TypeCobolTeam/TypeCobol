@@ -1,0 +1,40 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. No72ColOverflowCheck.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01 PERSON TYPEDEF STRICT.
+      *  05 FirstName              PIC X(30).
+      *  05 LastName               PIC X(30).
+      *  05 Birthday               TYPE Date.
+      *  05 Registered             TYPE Bool.
+      *01 W-PERSON1      TYPE PERSON.
+       01 W-PERSON1.
+           02 FirstName PIC X(30).
+           02 LastName PIC X(30).
+           02 Birthday.
+             03 YYYY PIC 9(4).
+             03 MM PIC 9(2).
+             03 DD PIC 9(2).
+          02  Registered-value PIC X VALUE LOW-VALUE.
+              88  Registered       VALUE 'T'.
+              88  Registered-false VALUE 'F'.
+                                     
+      *01 W-PERSON2      TYPE PERSON.
+       01 W-PERSON2.
+           02 FirstName PIC X(30).
+           02 LastName PIC X(30).
+           02 Birthday.
+             03 YYYY PIC 9(4).
+             03 MM PIC 9(2).
+             03 DD PIC 9(2).
+          02  Registered-value PIC X VALUE LOW-VALUE.
+              88  Registered       VALUE 'T'.
+              88  Registered-false VALUE 'F'.
+                                     
+
+       procedure division.
+
+      *move W-Person2::LastName  to W-Person1::LastName.
+       move LastName OF W-Person2  to LastName OF W-Person1.             
+
+       END PROGRAM No72ColOverflowCheck.
