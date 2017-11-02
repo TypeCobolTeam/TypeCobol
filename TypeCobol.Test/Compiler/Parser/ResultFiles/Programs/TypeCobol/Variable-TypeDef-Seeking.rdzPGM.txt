@@ -1,0 +1,22 @@
+﻿--- Diagnostics ---
+Line 24[12,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol HolderNumber
+
+--- Program ---
+PROGRAM: VariableSeeking common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  Holders:Alphanumeric
+  Holders:Alphanumeric
+  Account1:Account
+  Account2:Account
+  HolderNumber:Numeric
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  Account:Account
+  Account2:Account2
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

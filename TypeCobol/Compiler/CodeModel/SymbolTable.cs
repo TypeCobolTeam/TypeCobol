@@ -169,7 +169,7 @@ namespace TypeCobol.Compiler.CodeModel
             return GetVariable(new URI(variable.ToString()));
         }
 
-        public List<DataDefinition> GetVariable(StorageArea storageArea)
+        public List<DataDefinition> GetVariable(StorageArea storageArea, TypeDefinition typeDefContext = null)
         {
             URI uri;
             if (storageArea.SymbolReference != null)
@@ -180,7 +180,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 uri = new URI(storageArea.ToString());
             }
-            return GetVariable(uri);
+            return GetVariable(uri, typeDefContext);
         }
 
         public List<DataDefinition> GetVariable(SymbolReference symbolReference)
@@ -220,9 +220,12 @@ namespace TypeCobol.Compiler.CodeModel
             return null;
         }
 
-        public List<DataDefinition> GetVariable(QualifiedName name)
+        public List<DataDefinition> GetVariable(QualifiedName name, TypeDefinition typeDefContext = null)
         {
-            return GetVariableExplicit(name);
+            if (typeDefContext != null)
+                return typeDefContext.GetChildren<DataDefinition>(name.Head, true).ToList();
+            else
+                return GetVariableExplicit(name);
         }
 
         private IList<DataDefinition> GetVariable(string name)
@@ -330,7 +333,6 @@ namespace TypeCobol.Compiler.CodeModel
             var found = new List<DataDefinition>();
             var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
             candidates.AddRange(GetVariable(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
-            
 
             foreach (var candidate in candidates) {
                 //if name doesn't match then name.Head match one property inside the DataDefinition
@@ -351,7 +353,6 @@ namespace TypeCobol.Compiler.CodeModel
                         break;
                     }
                     throw new NotImplementedException();
-                    
                 }
                 MatchVariable(found, candidate, name, name.Count-1, candidate);
             }
@@ -359,7 +360,7 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public void MatchVariable(IList<DataDefinition> found, DataDefinition heaDataDefinition, QualifiedName name,
+        public void MatchVariable(IList<DataDefinition> found, DataDefinition headDataDefinition, QualifiedName name,
             int nameIndex, DataDefinition currentDataDefinition) {
 
 
@@ -375,9 +376,9 @@ namespace TypeCobol.Compiler.CodeModel
                     var parentTypeDef = currentDataDefinition.GetParentTypeDefinition;
                     if (parentTypeDef != null) { //We are under a TypeDefinition
                         //For each variable declared with this type (or a type that use this type), we need to add the headDataDefinition
-                        AddAllReference(found, heaDataDefinition, parentTypeDef);
+                        AddAllReference(found, headDataDefinition, parentTypeDef);
                     } else { //we are on a variable
-                        found.Add(heaDataDefinition);
+                        found.Add(headDataDefinition);
                     }
 
                     //End here
@@ -392,7 +393,7 @@ namespace TypeCobol.Compiler.CodeModel
             var parent = currentDataDefinition.Parent as DataDefinition;
             if (parent != null)
             {
-                MatchVariable(found, heaDataDefinition, name, nameIndex, parent);
+                MatchVariable(found, headDataDefinition, name, nameIndex, parent);
                 return;
             }
 
@@ -408,7 +409,7 @@ namespace TypeCobol.Compiler.CodeModel
                     //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable
                     if (reference.IsPartOfATypeDef || GetVariable(reference.Name).Contains(reference))
-                        MatchVariable(found, heaDataDefinition, name, nameIndex, reference);
+                        MatchVariable(found, headDataDefinition, name, nameIndex, reference);
                 }
                 return;
             }
@@ -419,7 +420,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 
         /// <summary>
-        /// For all usage of this type by a variable (outside a TypeDefinition), add heaDataDefinition to found
+        /// For all usage of this type by a variable (outside a TypeDefinition), add headDataDefinition to found
         /// 
         /// 
         /// Technical note: this method should be declared under MatchVariable because there is no use for it outside.

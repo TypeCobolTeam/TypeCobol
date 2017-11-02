@@ -138,11 +138,13 @@ namespace TypeCobol.Compiler.Diagnostics {
             //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return;
 
-            var found = node.SymbolTable.GetVariable(area);
+            var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition) node).IsPartOfATypeDef;
+            var found = node.SymbolTable.GetVariable(area, (node as DataDefinition) != null && ((DataDefinition)node).IsPartOfATypeDef ? (node as DataDefinition).GetParentTypeDefinition : null);
             if (found.Count < 1)
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node.CodeElement, "Symbol " + area + " is not referenced");
-            if (found.Count > 1) DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + area);
+            if (found.Count > 1)
+                DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + area);
 
         }
         }

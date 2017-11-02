@@ -1,0 +1,32 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. VariableSeeking.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      *OK HolderNumber is only seekend in this TypeDef
+       01 Account TYPEDEF STRICT.
+           05 HolderNumber PIC 9(04) COMP-5.
+           05 Holders      pic X(30)
+                           OCCURS 99 TIMES
+                           DEPENDING ON HolderNumber
+                           INDEXED BY Idx.
+        
+       01 Account1 type Account.
+       01 Account2 type Account.
+      *Nothing to worry about here HolderNumber is not declared
+      * inside Typedef context
+       01 HolderNumber PIC 9(04) COMP-5.
+
+      *KO HolderNumber is declared twice in this TypeDef
+       01 Account2 TYPEDEF STRICT.
+           05 HolderNumber PIC 9(04) COMP-5.
+           05 HolderNumber PIC 9(04) COMP-5.
+           05 Holders      pic X(30)
+                           OCCURS 99 TIMES
+                           DEPENDING ON HolderNumber
+                           INDEXED BY Idx.
+
+
+
+       PROCEDURE DIVISION.
+       END PROGRAM VariableSeeking.
