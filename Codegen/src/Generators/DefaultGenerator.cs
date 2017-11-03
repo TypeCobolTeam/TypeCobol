@@ -28,9 +28,9 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         private HashSet<int> ExceedLines;
         /// <summary>
-        /// The ByteArray to indicates which line number has alreday been checked for characters that were in column 73-80.
+        /// The Set to indicates which line number has alreday been checked for characters that were in column 73-80.
         /// </summary>
-        private BitArray Lines_73_80_Flags;
+        private HashSet<int> Lines_73_80_Flags;
 
         /// <summary>
         /// Constructor
@@ -78,7 +78,7 @@ namespace TypeCobol.Codegen.Generators
             //Bit Array of Generated Nodes.
             BitArray generated_node = new BitArray(mapper.NodeCount);
             //For detecting line having characters in columns [73-80]
-            Lines_73_80_Flags = new BitArray(mapper.LineData.Length);
+            Lines_73_80_Flags = new HashSet<int>();
             //The previous line generation buffer 
             StringSourceText previousBuffer = null;
             for (int i = 0; i < mapper.LineData.Length; i++)
@@ -322,9 +322,9 @@ namespace TypeCobol.Codegen.Generators
                 ExceedLines.Remove(lineNumber);
             }
             lineLen = buffer.GetLineInfo(start, out lineStartOffset, out lineEndOffset);
-            if (!Lines_73_80_Flags[lineNumber-1])
+            if (!Lines_73_80_Flags.Contains(lineNumber))
             {//Replace by spaces any characters in columns[73-80]
-                Lines_73_80_Flags[lineNumber - 1] = true;
+                Lines_73_80_Flags.Add(lineNumber);
                 if (lineLen > LEGAL_COBOL_LINE_LENGTH)
                 {
                     int replace_len = lineLen - LEGAL_COBOL_LINE_LENGTH;
