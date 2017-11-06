@@ -5,12 +5,12 @@ PROGRAM: IndexTester common:False initial:False recursive:False
 -- DATA --------
   ZONE:Alphanumeric
   TB-1:Alphanumeric
-  EL-1:Alphanumeric
+  IND-1:Numeric
   EL-1:Alphanumeric
   ZONEBIS:Alphanumeric
   TB-2:Alphanumeric
-  EL-2:Alphanumeric
-  EL-2:Alphanumeric
+  IND-2:Numeric
+  IND-3:Numeric
   EL-2:Alphanumeric
 --- Intrinsic
 -- TYPES -------

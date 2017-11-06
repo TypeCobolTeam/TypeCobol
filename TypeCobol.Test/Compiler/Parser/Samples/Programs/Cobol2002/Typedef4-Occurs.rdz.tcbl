@@ -35,8 +35,11 @@
       *OK
            set td-var20Ind to 1
 
-      *KO, because 2 vars use Typedef3
+      *KO, because OF or IN are not authorized with index
            set td-var30Ind of Var3a to 1
+
+      *KO, Typedef3 is used 2 times
+           set td-var30Ind to 1
 
 
            .

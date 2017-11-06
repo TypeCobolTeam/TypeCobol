@@ -433,7 +433,10 @@ namespace TypeCobol.Compiler.Parser
                     if (node.CodeElement().IsGlobal)
                         table = table.GetTableFromScope(SymbolTable.Scope.Global);
 
-                    table.AddVariable(index.Name, node);
+                    var indexNode = new IndexDefinition(index);
+                    Enter(indexNode, null, table);
+                    table.AddVariable(indexNode);
+                    Exit();
                 }
             }
 

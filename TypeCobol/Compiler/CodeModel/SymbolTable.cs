@@ -147,18 +147,7 @@ namespace TypeCobol.Compiler.CodeModel
             found.Add(data);
         }
 
-        private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node
-        {
-            string key = symbol.QualifiedName.Head;
-            List<T> found;
-            bool present = table.TryGetValue(key, out found);
-            if (!present)
-            {
-                found = new List<T>();
-                table.Add(key, found);
-            }
-            found.Add(symbol);
-        }
+        
 
         public List<DataDefinition> GetVariable(VariableBase variable)
         {
@@ -334,7 +323,7 @@ namespace TypeCobol.Compiler.CodeModel
             var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
             candidates.AddRange(GetVariable(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
 
-            foreach (var candidate in candidates) {
+            foreach (var candidate in candidates.Distinct()) {
                 //if name doesn't match then name.Head match one property inside the DataDefinition
                 if (!name.Head.Equals(candidate.Name, StringComparison.InvariantCultureIgnoreCase)) {
 
@@ -984,6 +973,26 @@ namespace TypeCobol.Compiler.CodeModel
 
 
         #region Helpers
+
+        /// <summary>
+        /// Generic Add method
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="symbol"></param>
+        private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node
+        {
+            string key = symbol.QualifiedName.Head;
+            List<T> found;
+            bool present = table.TryGetValue(key, out found);
+            if (!present)
+            {
+                found = new List<T>();
+                table.Add(key, found);
+            }
+            found.Add(symbol);
+        }
+
 
         /// <summary>
         /// Cobol has compile time binding for variables, sometimes called static scope.

@@ -128,7 +128,7 @@ namespace TypeCobol.Compiler.Nodes {
             return astVisitor.Visit(this);
         }
 
-        public DataType DataType
+        public virtual DataType DataType
         {
             get
             {
@@ -215,6 +215,8 @@ namespace TypeCobol.Compiler.Nodes {
                 return parent != null && parent.IsStrictlyTyped;
             }
         }
+
+        public bool IsIndex { get; internal set; }
 
         #region TypeProperties
         public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
@@ -307,5 +309,31 @@ namespace TypeCobol.Compiler.Nodes {
 
     }
     // [/TYPECOBOL]
+
+    public class IndexDefinition : DataDefinition
+    {
+        public IndexDefinition(SymbolDefinition symbolDefinition) : base(null)
+        {
+            _SymbolDefinition = symbolDefinition;
+            IsIndex = true;
+        }
+
+        private SymbolDefinition _SymbolDefinition;
+
+        public override string Name
+        {
+            get { return _SymbolDefinition.Name; }
+        }
+
+        public override DataType DataType
+        {
+            get { return DataType.Numeric; }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
 
 } // end of namespace TypeCobol.Compiler.Nodes

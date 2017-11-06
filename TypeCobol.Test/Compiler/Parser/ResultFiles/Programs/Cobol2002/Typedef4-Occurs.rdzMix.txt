@@ -35,9 +35,13 @@
       *OK
            set td-var20Ind to 1
 
-      *KO, because 2 vars use Typedef3
-Line 39[12,40] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol Var3a.td-var30Ind
+      *KO, because OF or IN are not authorized with index
+Line 39[12,40] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Var3a.td-var30Ind
            set td-var30Ind of Var3a to 1
+
+      *KO, Typedef3 is used 2 times
+Line 42[12,31] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol td-var30Ind
+           set td-var30Ind to 1
 
 
            .

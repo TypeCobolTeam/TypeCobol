@@ -9,7 +9,7 @@ PROGRAM: TESTPGM1 common:False initial:False recursive:False
 --- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
   W-TAB-LCC-NONCLOSES:Alphanumeric
-  W-TAB-LCC-X:Array
+  W-TAB-LCC-IND:Numeric
   W-TAB-LCC-X:Array
   W-TAB-LCC-CLE:Alphanumeric
   W-TAB-LCC-CLE-RIB:rib

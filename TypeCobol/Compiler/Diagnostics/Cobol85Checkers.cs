@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Linq;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics {
@@ -140,6 +141,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 
             var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition) node).IsPartOfATypeDef;
             var found = node.SymbolTable.GetVariable(area, (node as DataDefinition) != null && ((DataDefinition)node).IsPartOfATypeDef ? (node as DataDefinition).GetParentTypeDefinition : null);
+            if (found.Count == 1 && area.SymbolReference.IsQualifiedReference &&
+                !area.SymbolReference.IsTypeCobolQualifiedReference && found.First().IsIndex)
+            {
+                DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
+            }
             if (found.Count < 1)
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node.CodeElement, "Symbol " + area + " is not referenced");
@@ -565,37 +571,51 @@ namespace TypeCobol.Compiler.Diagnostics {
 	}
 
     //TODO move this method to DataDefinition
-	private static DataType GetTypeDefinition(SymbolTable table, Node symbol) {
-		var data = symbol as DataDefinition;
-		if (data != null) {
-		    var dataCondition = data as DataCondition;
-		    if (dataCondition != null)
-				return dataCondition.CodeElement().DataType;
+        private static DataType GetTypeDefinition(SymbolTable table, Node symbol)
+        {
+            var data = symbol as DataDefinition;
+            if (data != null)
+            {
+                var dataCondition = data as DataCondition;
+                if (dataCondition != null)
+                    return dataCondition.CodeElement().DataType;
 
-			DataDescriptionEntry entry;
-			if (data.CodeElement is DataDescriptionEntry) {
-				entry = (DataDescriptionEntry)data.CodeElement;
-			} else
-			if (data.CodeElement is DataRedefinesEntry) {
-				var redefines = (DataRedefinesEntry)data.CodeElement;
-			    var node = GetSymbol(table, redefines.RedefinesDataName);
-			    if (node is DataDescription) {
-			        entry = (DataDescriptionEntry) node.CodeElement;
-			    } else {
-                    entry = GetDataDescriptionEntry(table, redefines);
-			    }
-			} else throw new NotImplementedException(data.CodeElement.GetType().Name);
-		    if (entry == null) {
-		        return null;
-		    }
-			if (entry.UserDefinedDataType == null) return entry.DataType;//not a custom type
-		}
-        ITypedNode typed = symbol as ITypedNode;
-		if (typed == null) return null;// symbol untyped
-		var types = table.GetType(typed);
-		if (types.Count != 1) return null;// symbol type not found or ambiguous
-		return types[0].DataType;
-	}
+                DataDescriptionEntry entry;
+                if (data.CodeElement is DataDescriptionEntry)
+                {
+                    entry = (DataDescriptionEntry) data.CodeElement;
+                }
+                else if (data.CodeElement is DataRedefinesEntry)
+                {
+                    var redefines = (DataRedefinesEntry) data.CodeElement;
+                    var node = GetSymbol(table, redefines.RedefinesDataName);
+                    if (node is DataDescription)
+                    {
+                        entry = (DataDescriptionEntry) node.CodeElement;
+                    }
+                    else
+                    {
+                        entry = GetDataDescriptionEntry(table, redefines);
+                    }
+                }
+                else if (data is IndexDefinition)
+                {
+                    entry = null;
+                }
+                else
+                    throw new NotImplementedException(data.CodeElement.GetType().Name);
+
+                if (entry == null)
+                    return null;
+
+                if (entry.UserDefinedDataType == null) return entry.DataType; //not a custom type
+            }
+            ITypedNode typed = symbol as ITypedNode;
+            if (typed == null) return null; // symbol untyped
+            var types = table.GetType(typed);
+            if (types.Count != 1) return null; // symbol type not found or ambiguous
+            return types[0].DataType;
+        }
 
         /// <summary>
         /// Quick and dirty method, this checker need to be refactored

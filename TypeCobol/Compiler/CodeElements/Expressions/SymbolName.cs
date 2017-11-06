@@ -140,6 +140,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         public bool IsQualifiedReference { get; protected set; }
 
+        public bool IsTypeCobolQualifiedReference { get; set; }
+
         /// <summary>
         /// Used to resolve the symbol reference in a hierarchy of names
         /// </summary>
@@ -342,7 +344,10 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 	}
 	public class TypeCobolQualifiedSymbolReference: QualifiedSymbolReference {
-		public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head, tail) { }
+	    public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail) : base(head, tail)
+	    {
+	        IsTypeCobolQualifiedReference = true;
+	    }
 
 	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
