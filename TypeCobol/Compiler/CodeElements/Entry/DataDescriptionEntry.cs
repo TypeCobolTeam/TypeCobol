@@ -438,7 +438,7 @@ namespace TypeCobol.Compiler.CodeElements {
         /// DEPENDING ON clause is a variably located item. That is, its location is affected by
         /// the value of the OCCURS DEPENDING ON object.
         /// </summary>
-        public NumericVariable OccursDependingOn { get; set; }
+        public Variable OccursDependingOn { get; set; }
 
         /// <summary>
         /// p192:

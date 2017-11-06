@@ -2687,7 +2687,7 @@ groupUsageClause:
 
 occursClause:
 	OCCURS (minNumberOfOccurences=integerValue TO)? (maxNumberOfOccurences=integerValue | UNBOUNDED) TIMES?
-	(DEPENDING ON? varNumberOfOccurences=numericVariable2)?
+	(DEPENDING ON? varNumberOfOccurences=variable7)?
 	tableSortingKeys*
 	(INDEXED BY? indexNameDefinition+)?;
 

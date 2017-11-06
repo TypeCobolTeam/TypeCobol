@@ -53,6 +53,14 @@ WORKING-STORAGE SECTION.
     10  T4-C2      PIC X.
   05  T4-B2   PIC X.
 
+01 MyArray TYPEDEF STRICT.
+    05 MyValue PIC 2(9).
+01 MyVar TYPE MyArray.
+
+01 MyLevel.
+    05 MyArray occurs 30000
+    DEPENDING ON MyVar::MyValue.
+
 PROCEDURE DIVISION.
 
 

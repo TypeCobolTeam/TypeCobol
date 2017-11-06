@@ -1,12 +1,12 @@
 ﻿--- Diagnostics ---
-Line 81[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
-Line 82[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
-Line 84[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
-Line 85[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
-Line 94[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
-Line 95[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
-Line 97[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-D2.T2-C.T2-B.T2-A is not referenced
-Line 98[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A is not referenced
+Line 89[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
+Line 90[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
+Line 92[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
+Line 93[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
+Line 102[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
+Line 103[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
+Line 105[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-D2.T2-C.T2-B.T2-A is not referenced
+Line 106[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A is not referenced
 
 --- Program ---
 PROGRAM: COLON common:False initial:False recursive:False
@@ -42,12 +42,18 @@ PROGRAM: COLON common:False initial:False recursive:False
   T4-B2:Alphanumeric
   T4-B2:Alphanumeric
   T4-A2:Alphanumeric
+  MyVar:MyArray
+  MyLevel:Alphanumeric
+  MyArray:Array
 -- PARAGRAPHS --
   TEST-1
   TEST-2
   TEST-3
   TEST-4
   TEST-5
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  MyArray:MyArray
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
