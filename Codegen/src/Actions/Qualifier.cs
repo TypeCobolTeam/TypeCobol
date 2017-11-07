@@ -271,6 +271,21 @@ namespace TypeCobol.Codegen.Actions
 
 
             /// <summary>
+            /// Determine if a Data Definition is included a TypeDefintion
+            /// </summary>
+            /// <param name="dataDef">The Data Definition to check</param>
+            /// <returns>true if the DataDefintion is included in a TypeDefinition, false otherwise</returns>
+            internal bool IsTypeDefinition(TypeCobol.Compiler.Nodes.DataDefinition dataDef)
+            {
+                while (dataDef != null)
+                {
+                    if (dataDef is TypeCobol.Compiler.Nodes.TypeDefinition)
+                        return true;
+                    dataDef = dataDef.Parent is TypeCobol.Compiler.Nodes.DataDefinition ? (dataDef.Parent as TypeCobol.Compiler.Nodes.DataDefinition) : null;
+                }
+                return false;
+            }
+            /// <summary>
             /// Perform the qualification action
             /// </summary>
             /// <param name="sourceNode">The source Node on which to perform teh action</param>
@@ -279,6 +294,14 @@ namespace TypeCobol.Codegen.Actions
             {
                 if (sourceNode.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
                     return;
+                TypeCobol.Compiler.Nodes.DataDescription dataDescription = null;
+                if (sourceNode is TypeCobol.Compiler.Nodes.DataDescription && IsTypeDefinition(sourceNode as TypeCobol.Compiler.Nodes.DataDescription))
+                {
+                    dataDescription = sourceNode as TypeCobol.Compiler.Nodes.DataDescription;
+                    if (dataDescription.QualifiedTokenSubsitutionMap == null)
+                        dataDescription.QualifiedTokenSubsitutionMap = new Dictionary<Compiler.Scanner.Token, string>();                    
+                }
+
                 //Now this Node Is Visited
                 sourceNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                 Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(sourceNode);
@@ -345,17 +368,26 @@ namespace TypeCobol.Codegen.Actions
                                     }
                                 }
                                 //We got It ==> Create our Generate Nodes
-                                GenerateToken item = new GenerateToken(
-                                    new TokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
-                                    sourcePositions);
-                                item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-                                sourceNode.Add(item);
-                                if (tokenColonColon != null)
+                                if (dataDescription != null)
                                 {
-                                    item = new GenerateToken(new TokenCodeElement(tokenColonColon), string.Intern(" OF "),
+                                    dataDescription.QualifiedTokenSubsitutionMap[sr.NameLiteral.Token] = Items[j].ToString();
+                                    if (tokenColonColon != null)
+                                        dataDescription.QualifiedTokenSubsitutionMap[tokenColonColon] = "OF";
+                                }
+                                else
+                                {
+                                    GenerateToken item = new GenerateToken(
+                                        new TokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
                                         sourcePositions);
                                     item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                                     sourceNode.Add(item);
+                                    if (tokenColonColon != null)
+                                    {
+                                        item = new GenerateToken(new TokenCodeElement(tokenColonColon), string.Intern(" OF "),
+                                            sourcePositions);
+                                        item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                                        sourceNode.Add(item);
+                                    }
                                 }
                                 break;//We got it
                             }

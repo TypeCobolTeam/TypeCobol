@@ -6,6 +6,7 @@ namespace TypeCobol.Compiler.Nodes {
     using System;
     using System.Collections.Generic;
     using CodeElements.Expressions;
+    using Scanner;
     using TypeCobol.Compiler.CodeElements;
 
 
@@ -245,6 +246,10 @@ namespace TypeCobol.Compiler.Nodes {
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
+        /// <summary>
+        /// A Dictonary that gives for a Token that appears in a qualified name its subtitution.
+        /// </summary>
+        public Dictionary<Token, string> QualifiedTokenSubsitutionMap;
     }
     public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> 
     {

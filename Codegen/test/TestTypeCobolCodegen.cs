@@ -344,6 +344,15 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "Non72ColumnOverflowCheck") + ".rdz.tcbl", skeletons);
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TypedefQualifDependOn()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifDependOn") + ".rdz.tcbl", skeletons);
+        }        
+
 #if EUROINFO_RULES
         [TestMethod]
         [TestCategory("Codegen")]
