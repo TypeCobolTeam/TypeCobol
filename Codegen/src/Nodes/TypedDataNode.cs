@@ -32,8 +32,8 @@
                     var data = this.Node.CodeElement();
                     int level = (int)data.LevelNumber.Value;
                     var customtype = this.Node.SymbolTable.GetType(data.DataType);
-                    _cache.AddRange(CreateDataDefinition(Layout, data.Name, customtype[0], data, level, 0, true, true, customtype[0]));
-                    if (customtype.Count > 0) _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, data.Name, customtype[0], customtype[0], level + 1, 1));
+                    _cache.AddRange(CreateDataDefinition(Layout, new List<string>() { data.Name }, customtype[0], data, level, 0, true, true, customtype[0]));
+                    if (customtype.Count > 0) _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, new List<string>() { data.Name }, customtype[0], customtype[0], level + 1, 1));
                 }
                 return _cache;
             }
@@ -248,7 +248,7 @@
             return lines;
         }
 
-        internal static List<ITextLine> CreateDataDefinition(ColumnsLayout? layout, string rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
+        internal static List<ITextLine> CreateDataDefinition(ColumnsLayout? layout, List<string> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
             if (data != null)
@@ -269,7 +269,7 @@
                             {   //Remove the Type name
                                 dependingOnAccessPath.RemoveAt(0);
                                 dependingOnAccessPath.Reverse();
-                                dependingOnAccessPath.Add(rootVariableName);
+                                dependingOnAccessPath.AddRange(rootVariableName);
                             }
                         }
                         bHasDependingOn = true;
@@ -296,9 +296,9 @@
                                 tokenFilter = (token) =>
                                 {
                                     if (token == data.OccursDependingOn.MainSymbolReference.NameLiteral.Token)
-                                    {return string.Join(" OF ", dependingOnAccessPath.ToArray());}
+                                    { return string.Join(" OF ", dependingOnAccessPath.ToArray()); }
                                     else
-                                    {return token.Text;}
+                                    { return token.Text; }
                                 };
                             else
                                 tokenFilter = (token) =>
@@ -457,7 +457,7 @@
         " {2}    88  {0}       VALUE 'T'.",
         " {2}    88  {0}-false VALUE 'F'.",
     };
-        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, string rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
+        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, List<string> rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
             foreach (var child in type.Children)
@@ -500,7 +500,12 @@
                     System.Diagnostics.Debug.Assert(child.CodeElement is DataDefinitionEntry);
                 }
                 if (isCustomTypeToo)
-                    lines.AddRange(InsertChildren(layout, table, rootVariableName, typed, types[0], level + 1, indent + 1));
+                {
+                    List<string> newRootVariableName = new List<string>();
+                    newRootVariableName.Add(typed.Name);
+                    newRootVariableName.AddRange(rootVariableName);
+                    lines.AddRange(InsertChildren(layout, table, newRootVariableName, typed, types[0], level + 1, indent + 1));
+                }
                 else
                     lines.AddRange(InsertChildren(layout, table, rootVariableName, typed, typed, level + 1, indent + 1));
 
