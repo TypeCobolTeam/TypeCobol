@@ -1,1 +1,3 @@
 ﻿-tcmc input\TypeCobolFile.tcbl input\GeneratedCobolFile.cbl output\EncodedTypeCobol.tcmc
+-tcmc input\TypeCobolFileLine6.tcbl input\TypeCobolFileLine6.cbl output\TypeCobolFileLine6.tcmc
+

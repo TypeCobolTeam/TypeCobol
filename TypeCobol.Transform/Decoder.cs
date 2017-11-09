@@ -62,7 +62,10 @@ namespace TypeCobol.Transform
                             outputWriter.WriteLine("000000*" + typeCobolLine.Substring(7));
                         else
                             outputWriter.WriteLine("000000*");
-                        columns7.Append(typeCobolLine[CommentPos]);
+                        if (typeCobolLine.Length > CommentPos)
+                            columns7.Append(typeCobolLine[CommentPos]);
+                        else
+                            columns7.Append(' ');
                     }
                     else
                     {
