@@ -401,7 +401,7 @@
                     if (data.Children.Count > 0)
                     {
                         List<string> sub_acc = new List<string>();
-                        acc.Add(dataDef.Name);
+                        sub_acc.Add(dataDef.Name);
                         if (AccessPathForName(data, name, sub_acc))
                         {
                             acc.AddRange(sub_acc);
