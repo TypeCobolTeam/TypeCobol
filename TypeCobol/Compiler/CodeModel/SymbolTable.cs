@@ -317,13 +317,22 @@ namespace TypeCobol.Compiler.CodeModel
             return symbolTable.DataEntries;
         }
 
+
         public List<DataDefinition> GetVariableExplicit(QualifiedName name)
         {
+            return GetVariableExplicitWithQualifiedName(name).Select(v => v.Value).ToList(); //Just Ignore CompleteQualifiedName stored as a key
+        }
+
+        public List<KeyValuePair<string, DataDefinition>> GetVariableExplicitWithQualifiedName(QualifiedName name)
+        {
             var found = new List<DataDefinition>();
+            var completeQualifiedNames = new List<List<string>>();
             var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
             candidates.AddRange(GetVariable(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
 
-            foreach (var candidate in candidates.Distinct()) {
+            foreach (var candidate in candidates.Distinct())
+            {
+                completeQualifiedNames.Add(new List<string>());
                 //if name doesn't match then name.Head match one property inside the DataDefinition
                 if (!name.Head.Equals(candidate.Name, StringComparison.InvariantCultureIgnoreCase)) {
 
@@ -334,7 +343,7 @@ namespace TypeCobol.Compiler.CodeModel
                         TypeDefinition parentTypeDef = candidate.GetParentTypeDefinition;
                         if (parentTypeDef != null) {
                             //If index is inside a Type, then add all variables which used this type as found
-                            AddAllReference(found, candidate, parentTypeDef);
+                            AddAllReference(found, candidate, parentTypeDef, completeQualifiedNames);
                         } else {
                             //If we are on a variable, add it
                             found.Add(candidate);
@@ -343,16 +352,27 @@ namespace TypeCobol.Compiler.CodeModel
                     }
                     throw new NotImplementedException();
                 }
-                MatchVariable(found, candidate, name, name.Count-1, candidate);
+                MatchVariable(found, candidate, name, name.Count-1, candidate, completeQualifiedNames);
             }
-            
-            return found;
+
+
+            var foundedVariables = new List<KeyValuePair<string, DataDefinition>>();
+            int i = 0;
+            foreach (var foundedVar in found)
+            {
+                completeQualifiedNames[i].Reverse();
+                foundedVariables.Add(new KeyValuePair<string, DataDefinition>(string.Join(".", completeQualifiedNames[i]), foundedVar));
+                i++;
+            }
+
+
+            return foundedVariables;
         }
 
         public void MatchVariable(IList<DataDefinition> found, DataDefinition headDataDefinition, QualifiedName name,
-            int nameIndex, DataDefinition currentDataDefinition) {
+            int nameIndex, DataDefinition currentDataDefinition, List<List<string>> completeQualifiedNames) {
 
-
+            completeQualifiedNames.Last().Add(currentDataDefinition.Name);
             var currentTypeDef = currentDataDefinition as TypeDefinition;
 
             //Name match ?
@@ -365,9 +385,11 @@ namespace TypeCobol.Compiler.CodeModel
                     var parentTypeDef = currentDataDefinition.GetParentTypeDefinition;
                     if (parentTypeDef != null) { //We are under a TypeDefinition
                         //For each variable declared with this type (or a type that use this type), we need to add the headDataDefinition
-                        AddAllReference(found, headDataDefinition, parentTypeDef);
+                        AddAllReference(found, headDataDefinition, parentTypeDef, completeQualifiedNames);
                     } else { //we are on a variable
                         found.Add(headDataDefinition);
+                        completeQualifiedNames.Last().Remove(currentDataDefinition.Name);
+                        completeQualifiedNames.Last().AddRange(currentDataDefinition.QualifiedName.Reverse());
                     }
 
                     //End here
@@ -382,7 +404,7 @@ namespace TypeCobol.Compiler.CodeModel
             var parent = currentDataDefinition.Parent as DataDefinition;
             if (parent != null)
             {
-                MatchVariable(found, headDataDefinition, name, nameIndex, parent);
+                MatchVariable(found, headDataDefinition, name, nameIndex, parent, completeQualifiedNames);
                 return;
             }
 
@@ -393,12 +415,18 @@ namespace TypeCobol.Compiler.CodeModel
                 if (dataType.Key == null || dataType.Value == null)
                     return;
                 var references = dataType.Value;
+                var primaryPath = completeQualifiedNames.Last().ToArray();
                 foreach (var reference in references)
                 {
                     //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable
                     if (reference.IsPartOfATypeDef || GetVariable(reference.Name).Contains(reference))
-                        MatchVariable(found, headDataDefinition, name, nameIndex, reference);
+                    {
+                        if (found.Count >= 1) //New path found 
+                            completeQualifiedNames.Add(new List<string>(primaryPath));
+                        MatchVariable(found, headDataDefinition, name, nameIndex, reference, completeQualifiedNames);
+                    }
+                       
                 }
                 return;
             }
@@ -417,22 +445,35 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="found"></param>
         /// <param name="heaDataDefinition"></param>
         /// <param name="currentDataDefinition"></param>
-        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition)
+        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition, List<List<string>> completeQualifiedNames)
         {
+            completeQualifiedNames.Last().Add(currentDataDefinition.Name);
             var dataType = TypesReferences.FirstOrDefault(k => k.Key == currentDataDefinition);
             if (dataType.Key == null || dataType.Value == null)
                 return;
             var references = dataType.Value;
 
+            var typePath = completeQualifiedNames.Last().ToArray();
             foreach (var reference in references) {
                 var parentTypeDef = reference.GetParentTypeDefinition;
                 if (parentTypeDef != null) {
-                    AddAllReference(found, heaDataDefinition, parentTypeDef);
+                    completeQualifiedNames.Last().Add(reference.Name);
+                    AddAllReference(found, heaDataDefinition, parentTypeDef, completeQualifiedNames);
                 } else { 
                     //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable
-                    if (GetVariable(reference.Name).Contains(reference)) {
+                    if (GetVariable(reference.Name).Contains(reference))
+                    {
+                        int foundCounter = found.Count;
                         found.Add(heaDataDefinition);
+                        if(found.Count == 1) //If first reference found, add it to the top item of list
+                            completeQualifiedNames.Last().AddRange(reference.QualifiedName.Reverse());
+                        else
+                        {
+                            var newPath = new List<string>(typePath);
+                            newPath.AddRange(reference.QualifiedName.Reverse());
+                            completeQualifiedNames.Add(newPath);
+                        }
                     }
                 }
             }
