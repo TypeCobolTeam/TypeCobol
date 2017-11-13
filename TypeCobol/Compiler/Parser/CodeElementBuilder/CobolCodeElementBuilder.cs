@@ -1184,7 +1184,7 @@ namespace TypeCobol.Compiler.Parser
                 }
                 if (occursClauseContext.varNumberOfOccurences != null)
                 {
-                    entry.OccursDependingOn = CobolExpressionsBuilder.CreateVariable(occursClauseContext.varNumberOfOccurences);
+                    entry.OccursDependingOn = CobolExpressionsBuilder.CreateNumericVariable(occursClauseContext.varNumberOfOccurences);
                 }
                 if (occursClauseContext.tableSortingKeys() != null && occursClauseContext.tableSortingKeys().Length > 0)
                 {
