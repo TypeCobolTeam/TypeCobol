@@ -182,19 +182,26 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         [CanBeNull]
         public TypeDefinition GetParentTypeDefinition {
-            get {
-                Node currentNode = this;
-                while (currentNode != null) {
-                    var typedNode = currentNode as TypeDefinition;
-                    if (typedNode != null) return typedNode;
+            get { return GetParentTypeDefinitionWithPath(new List<string>()); }
+        }
 
-                    //Stop if we reach a Parent which is not a DataDefinion (Working storage section for example)
-                    if (!(currentNode is DataDefinition)) return null;
+        public TypeDefinition GetParentTypeDefinitionWithPath([NotNull] List<string> qualifiedPath)
+        {
+            Node currentNode = this;
+            while (currentNode != null)
+            {
+                var typedNode = currentNode as TypeDefinition;
+                if (typedNode != null) return typedNode;
+                else
+                    qualifiedPath.Add(currentNode.Name); //Store the path and ignore Type Name
 
-                    currentNode = currentNode.Parent;
-                }
-                return null;
+                //Stop if we reach a Parent which is not a DataDefinion (Working storage section for example)
+                if (!(currentNode is DataDefinition)) return null;
+
+                currentNode = currentNode.Parent;
+                
             }
+            return null;
         }
 
         public bool IsStronglyTyped

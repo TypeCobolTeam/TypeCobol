@@ -382,8 +382,11 @@ namespace TypeCobol.Compiler.CodeModel
                 nameIndex--;
                 if (nameIndex < 0) { //We reached the end of the name : it's a complete match
 
-                    var parentTypeDef = currentDataDefinition.GetParentTypeDefinition;
+                    var qualifiedPath = new List<string>();
+                    var parentTypeDef = currentDataDefinition.GetParentTypeDefinitionWithPath(qualifiedPath);
                     if (parentTypeDef != null) { //We are under a TypeDefinition
+                        completeQualifiedNames.Last().Remove(currentDataDefinition.Name);
+                        completeQualifiedNames.Last().AddRange(qualifiedPath);
                         //For each variable declared with this type (or a type that use this type), we need to add the headDataDefinition
                         AddAllReference(found, headDataDefinition, parentTypeDef, completeQualifiedNames);
                     } else { //we are on a variable
@@ -454,10 +457,12 @@ namespace TypeCobol.Compiler.CodeModel
             var references = dataType.Value;
 
             var typePath = completeQualifiedNames.Last().ToArray();
-            foreach (var reference in references) {
-                var parentTypeDef = reference.GetParentTypeDefinition;
+            foreach (var reference in references)
+            {
+                var qualifiedPath = new List<string>();
+                var parentTypeDef = reference.GetParentTypeDefinitionWithPath(qualifiedPath);
                 if (parentTypeDef != null) {
-                    completeQualifiedNames.Last().Add(reference.Name);
+                    completeQualifiedNames.Last().AddRange(qualifiedPath);
                     AddAllReference(found, heaDataDefinition, parentTypeDef, completeQualifiedNames);
                 } else { 
                     //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
