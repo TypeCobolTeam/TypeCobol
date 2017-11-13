@@ -134,18 +134,36 @@ namespace TypeCobol.Compiler.Diagnostics {
                 return;
             }
             var area = storageArea.GetStorageAreaThatNeedDeclaration;
+            List<DataDefinition> found;
+            var foundQualified = new List<KeyValuePair<string, DataDefinition>>();
 
             if (area.SymbolReference == null) return;
             //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return;
 
             var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition) node).IsPartOfATypeDef;
-            var found = node.SymbolTable.GetVariable(area, (node as DataDefinition) != null && ((DataDefinition)node).IsPartOfATypeDef ? (node as DataDefinition).GetParentTypeDefinition : null);
-            if (found.Count == 1 && area.SymbolReference.IsQualifiedReference &&
-                !area.SymbolReference.IsTypeCobolQualifiedReference && found.First().IsIndex)
+            if(isPartOfTypeDef)
+                found = node.SymbolTable.GetVariable(area,((DataDefinition) node).GetParentTypeDefinition);
+            else
             {
-                DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
+                foundQualified = node.SymbolTable.GetVariableExplicitWithQualifiedName(area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString()));
+                found = foundQualified.Select(v => v.Value).ToList();
             }
+
+            if (found.Count == 1 && foundQualified.Count == 1 && found[0].IsIndex)
+            {
+                //Mark this node for generator
+                node.SetFlag(Node.Flag.NodeContainsIndex, true);
+                if (node.QualifiedStorageAreas == null)
+                    node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
+
+                if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
+                    node.QualifiedStorageAreas.Add(storageArea, foundQualified.First().Key);
+
+                if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                    DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
+            }
+
             if (found.Count < 1)
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node.CodeElement, "Symbol " + area + " is not referenced");

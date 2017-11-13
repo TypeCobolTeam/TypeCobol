@@ -145,6 +145,11 @@ namespace TypeCobol.Compiler.Nodes {
             /// Flag node belongs to File Section (usefull for DataDefinition)
             /// </summary>
             FileSectionNode = 0x01 << 17,
+            /// <summary>
+            /// Mark that the node is containing an index, 
+            /// this flag is usefull for generator to know if it has something special to do with index
+            /// </summary>
+            NodeContainsIndex = 0x01 << 18,
 
 
         };
@@ -309,6 +314,9 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get { return _Diagnostics; }
         }
+
+        public Dictionary<StorageArea, string> QualifiedStorageAreas { get; set; }
+
         private List<Diagnostic> _Diagnostics;
 
         /// <summary>

@@ -8,7 +8,6 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using String = System.String;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -425,8 +424,10 @@ namespace TypeCobol.Compiler.CodeModel
                     //So we need to check if we can access this variable
                     if (reference.IsPartOfATypeDef || GetVariable(reference.Name).Contains(reference))
                     {
-                        if (found.Count >= 1) //New path found 
-                            completeQualifiedNames.Add(new List<string>(primaryPath));
+                        if (found.Count == 0)
+                            completeQualifiedNames.Remove(completeQualifiedNames.Last());//InCase nothing was found after first reference checked, we need to reset completeQualifiedName to it's primary value.
+                        completeQualifiedNames.Add(new List<string>(primaryPath));
+
                         MatchVariable(found, headDataDefinition, name, nameIndex, reference, completeQualifiedNames);
                     }
                        
