@@ -19,7 +19,7 @@
          05 MyGroup2.
             10 GCount2 pic 9(05) comp-5.
          05 MyTable PIC X(1) occurs 99 
-            depending on var1::Count2.
+            depending on Count2.
          05 MyTbl2 PIC X(1) occurs 99 
             depending on GCount2.
 

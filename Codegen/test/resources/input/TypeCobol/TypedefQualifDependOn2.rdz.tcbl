@@ -17,7 +17,7 @@
             10 MyGTbl PIC X(1) occurs 99 
                depending on GCount.
          05 MyTable PIC X(1) occurs 99 
-            depending on var1::Count2.
+            depending on Count2.
 
        01 var1 type MyType.
        01 var2 type MyType.
