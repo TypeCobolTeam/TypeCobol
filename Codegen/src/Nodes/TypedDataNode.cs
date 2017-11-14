@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using Actions;
     using TypeCobol.Compiler.CodeElements;
     using TypeCobol.Compiler.CodeElements.Expressions;
     using TypeCobol.Compiler.CodeModel;
@@ -248,6 +249,42 @@
             return lines;
         }
 
+        /// <summary>
+        /// Build the Dictionary that associate a token of an index-name-1 to its hash + name.
+        /// </summary>
+        /// <param name="indexes">The Array of Index Symbol Definition</param>
+        /// <param name="ownerDefinition">The Owner of the definition that contains the INDEXED BY clause</param>
+        /// <returns>The Dictionary</returns>
+        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(List<string> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
+        {
+            Dictionary<Compiler.Scanner.Token, string> map = new Dictionary<Compiler.Scanner.Token, string>(indexes.Length);
+            string qn = ownerDefinition.QualifiedName.ToString();
+            string[] items = qn.Split('.');
+            List<string> list_items = new List<string>();
+            list_items.Add(items[0]);
+            list_items.Add(rootVariableName[0]);
+            for (int i = 1; i < items.Length; i++)
+                list_items.Add(items[i]);
+            qn = string.Join(".", list_items.ToArray());
+            foreach (Node child in ownerDefinition.Children)
+            {
+                if (child is IndexDefinition)
+                {
+                    IndexDefinition index = child as IndexDefinition;
+                    foreach (SymbolDefinition sym in indexes)
+                    {
+                        if (sym.Name.Equals(index.Name))
+                        {
+                            string qualified_name = (qn + '.' + index.Name).ToLower();
+                            string hash_name = Qualifier.ComputeIndexHashName(qualified_name, ownerDefinition);
+                            map[sym.NameLiteral.Token] = hash_name;
+                        }
+                    }
+                }
+            }
+            return map;
+        }
+
         internal static List<ITextLine> CreateDataDefinition(ColumnsLayout? layout, List<string> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
@@ -259,7 +296,9 @@
                 if (!isCustomType)
                 {
                     bool bHasDependingOn = false;
+                    bool bHasIndexes = false;
                     List<string> dependingOnAccessPath = null;
+                    Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
                     if (data.OccursDependingOn != null)
                     {
                         if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
@@ -274,14 +313,20 @@
                         }
                         bHasDependingOn = true;
                     }
-                    string text = !bHasDependingOn ? ExtractPicTokensValues(layout, data, out bHasPeriod) : "";
+                    if (data.Indexes != null)
+                    {
+                        bHasIndexes = true;
+                        //So Children of the owner definition contains all indexes
+                        indexesMap = BuiltIndexMap(rootVariableName, data.Indexes, ownerDefinition);
+                    }
+                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractPicTokensValues(layout, data, out bHasPeriod) : "";
                     if (text.Length > 0)
                     {
                         if (data_def.Name != null)
                             line.Append(' ').Append(data.Name);
                         line.Append(text);
                     }
-                    else if (!bHasDependingOn && data.Picture != null && !string.IsNullOrEmpty(data.Picture.ToString()))
+                    else if (!(bHasDependingOn || bHasIndexes) && data.Picture != null && !string.IsNullOrEmpty(data.Picture.ToString()))
                     {
                         if (data_def.Name != null)
                             line.Append(' ').Append(data.Name);
@@ -289,20 +334,38 @@
                     }
                     else
                     {//Try to extract after a Level.
-                        Func<Compiler.Scanner.Token, string> tokenFilter = null;
+                        Func<Compiler.Scanner.Token, string> depenOnTokenFilter = null;
+                        Func<Compiler.Scanner.Token, string> indexedByTokenFilter = null;
+                        if (bHasIndexes)
+                        {
+                            indexedByTokenFilter = (token) =>
+                            {
+                                return indexesMap.ContainsKey(token) ? indexesMap[token] : token.Text;
+                            };
+                        }
                         if (bHasDependingOn)
                         {
                             if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
-                                tokenFilter = (token) =>
+                                depenOnTokenFilter = (token) =>
                                 {
+                                    if (bHasIndexes)
+                                    {
+                                        if (indexesMap.ContainsKey(token))
+                                            return indexesMap[token];
+                                    }
                                     if (token == data.OccursDependingOn.MainSymbolReference.NameLiteral.Token)
                                     { return string.Join(" OF ", dependingOnAccessPath.ToArray()); }
                                     else
                                     { return token.Text; }
                                 };
                             else
-                                tokenFilter = (token) =>
+                                depenOnTokenFilter = (token) =>
                                 {
+                                    if (bHasIndexes)
+                                    {
+                                        if (indexesMap.ContainsKey(token))
+                                            return indexesMap[token];
+                                    }
                                     DataDescription dataDescription = ownerDefinition as DataDescription;
                                     if (dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
                                     { return dataDescription.QualifiedTokenSubsitutionMap[token]; }
@@ -310,8 +373,8 @@
                                     { return token.Text; }
                                 };
                         }
-
-                        text = ExtractTokensValuesAfterLevel(layout, data, out bHasPeriod, tokenFilter);
+                        text = ExtractTokensValuesAfterLevel(layout, data, out bHasPeriod,
+                            bHasDependingOn ? depenOnTokenFilter : indexedByTokenFilter);
                         if (text.Length > 0)
                         {
                             line.Append(text);
@@ -486,6 +549,9 @@
                         }
                     }
                 }
+
+                if (child is IndexDefinition)
+                    continue;//Ignore Index Definition
 
                 var typed = child is DataDefinition ? (DataDefinition)child : null;
                 var types = table.GetType(typed.DataType);

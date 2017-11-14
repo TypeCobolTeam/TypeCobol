@@ -14,6 +14,19 @@ namespace TypeCobol.Codegen.Actions
     public class Qualifier : EventArgs, Action
     {
         /// <summary>
+        /// Compute the hash+name of the given qualified name index.
+        /// </summary>
+        /// <param name="qualified_name"></param>
+        /// <returns></returns>
+        public static string ComputeIndexHashName(string qualified_name, Node sourceNode)
+        {
+            string[] items = qualified_name.Split('.');
+            string name = items[items.Length - 1];
+            string hash = Tools.Hash.CreateCOBOLNameHash(qualified_name.ToLower(), 8, sourceNode);
+            return hash + name.ToUpper();
+        }
+
+        /// <summary>
         /// Internal visitor class.
         /// </summary>
         internal class TypeCobolCobolQualifierVistor : TypeCobol.Compiler.CodeElements.AbstractAstVisitor
@@ -285,6 +298,44 @@ namespace TypeCobol.Codegen.Actions
                 }
                 return false;
             }
+
+
+            /// <summary>
+            /// Check if the given items are in the source node qualified storage areas.
+            /// </summary>
+            /// <param name="items">The items to check</param>
+            /// <param name="sourceNode">The source node</param>
+            /// <param name="qualified_name">The qualified name that corresponds the the items.</param>
+            /// <returns>true if the items are in the source node storage areas, false otherwise</returns>
+            internal bool AreItemsInNodeQualifiedStorageAreas(IList<SymbolReference> items, Node sourceNode, out string qualified_name)
+            {
+                qualified_name = null;
+                if (sourceNode.QualifiedStorageAreas == null)
+                    return false;
+                foreach (TypeCobol.Compiler.CodeElements.StorageArea storage_area in sourceNode.QualifiedStorageAreas.Keys)
+                {
+                    if (storage_area.SymbolReference.IsTypeCobolQualifiedReference)
+                    {
+                        TypeCobolQualifiedSymbolReference tc_sr = storage_area.SymbolReference as TypeCobolQualifiedSymbolReference;
+                        IList<SymbolReference> tcsr_items = tc_sr.AsList();
+                        int nCountInner = 0;
+                        foreach (SymbolReference item in items)
+                        {
+                            if (tcsr_items.IndexOf(item) >= 0)
+                                nCountInner++;
+                            else
+                                break;
+                        }
+                        if (nCountInner == items.Count)
+                        {
+                            qualified_name = sourceNode.QualifiedStorageAreas[storage_area];
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
             /// <summary>
             /// Perform the qualification action
             /// </summary>
@@ -294,7 +345,7 @@ namespace TypeCobol.Codegen.Actions
             {
                 if (sourceNode.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
                     return;
-                TypeCobol.Compiler.Nodes.DataDescription dataDescription = null;
+                    TypeCobol.Compiler.Nodes.DataDescription dataDescription = null;
                 if (sourceNode is TypeCobol.Compiler.Nodes.DataDescription && IsTypeDefinition(sourceNode as TypeCobol.Compiler.Nodes.DataDescription))
                 {
                     dataDescription = sourceNode as TypeCobol.Compiler.Nodes.DataDescription;
@@ -346,6 +397,34 @@ namespace TypeCobol.Codegen.Actions
                         bWasProcCall = true;//Remember that we have a Procedure Style Call Node.
                         continue;//Continue
                     }
+                    if (sourceNode.IsFlagSet(Node.Flag.NodeContainsIndex))
+                    {
+                        //So we must know if this qualified name is for an Index Name
+                        string qualified_name;
+                        bool bAreIn = AreItemsInNodeQualifiedStorageAreas(items, sourceNode, out qualified_name);
+                        if (bAreIn)
+                        {
+                            GenerateToken item = null;
+                            string hashName = ComputeIndexHashName(qualified_name, sourceNode);
+                            //Now all items in the qualified name must be replaced with the hash name by the Generator.
+                            //So all item except the last are replaced by a blank, the last item will be the HashName
+                            for (int r = i; r <= range.Item2 - 1; r++)
+                            {                                
+                                item = new GenerateToken(
+                                    new TokenCodeElement(nodeTokens[r]), "",
+                                    sourcePositions);
+                                item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                                sourceNode.Add(item);
+                             }
+                            item = new GenerateToken(
+                                new TokenCodeElement(nodeTokens[range.Item2]), hashName,
+                                sourcePositions);
+                            item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                            sourceNode.Add(item);
+                            continue;
+                        }
+                    }
+
                     for (int j = 0; j < Items.Count; j++)
                     {
                         SymbolReference sr = Items[Items.Count - j - 1];
