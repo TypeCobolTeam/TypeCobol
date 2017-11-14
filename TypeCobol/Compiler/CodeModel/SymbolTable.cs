@@ -211,7 +211,7 @@ namespace TypeCobol.Compiler.CodeModel
         public List<DataDefinition> GetVariable(QualifiedName name, TypeDefinition typeDefContext = null)
         {
             if (typeDefContext != null)
-                return typeDefContext.GetChildren<DataDefinition>(name.Head, true).ToList();
+                return GetVariableExplicitWithQualifiedName(name, typeDefContext).Select(v => v.Value).ToList();
             else
                 return GetVariableExplicit(name);
         }
@@ -322,7 +322,7 @@ namespace TypeCobol.Compiler.CodeModel
             return GetVariableExplicitWithQualifiedName(name).Select(v => v.Value).ToList(); //Just Ignore CompleteQualifiedName stored as a key
         }
 
-        public List<KeyValuePair<string, DataDefinition>> GetVariableExplicitWithQualifiedName(QualifiedName name)
+        public List<KeyValuePair<string, DataDefinition>> GetVariableExplicitWithQualifiedName(QualifiedName name, TypeDefinition typeToIgnore = null)
         {
             var found = new List<DataDefinition>();
             var completeQualifiedNames = new List<List<string>>();
@@ -342,7 +342,7 @@ namespace TypeCobol.Compiler.CodeModel
                         TypeDefinition parentTypeDef = candidate.GetParentTypeDefinition;
                         if (parentTypeDef != null) {
                             //If index is inside a Type, then add all variables which used this type as found
-                            AddAllReference(found, candidate, parentTypeDef, completeQualifiedNames);
+                            AddAllReference(found, candidate, parentTypeDef, completeQualifiedNames, typeToIgnore);
                         } else {
                             //If we are on a variable, add it
                             found.Add(candidate);
@@ -351,7 +351,7 @@ namespace TypeCobol.Compiler.CodeModel
                     }
                     throw new NotImplementedException();
                 }
-                MatchVariable(found, candidate, name, name.Count-1, candidate, completeQualifiedNames);
+                MatchVariable(found, candidate, name, name.Count-1, candidate, completeQualifiedNames, typeToIgnore);
             }
 
 
@@ -369,7 +369,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         public void MatchVariable(IList<DataDefinition> found, DataDefinition headDataDefinition, QualifiedName name,
-            int nameIndex, DataDefinition currentDataDefinition, List<List<string>> completeQualifiedNames) {
+            int nameIndex, DataDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext) {
 
             completeQualifiedNames.Last().Add(currentDataDefinition.Name);
             var currentTypeDef = currentDataDefinition as TypeDefinition;
@@ -383,12 +383,21 @@ namespace TypeCobol.Compiler.CodeModel
 
                     var qualifiedPath = new List<string>();
                     var parentTypeDef = currentDataDefinition.GetParentTypeDefinitionWithPath(qualifiedPath);
-                    if (parentTypeDef != null) { //We are under a TypeDefinition
+                    if ((parentTypeDef != null && parentTypeDef != typeDefContext)) //We are in a typeDef bu we have to make sure we are not in the TypeDefContext
+                    {
+                        //We are under a TypeDefinition
                         completeQualifiedNames.Last().Remove(currentDataDefinition.Name);
                         completeQualifiedNames.Last().AddRange(qualifiedPath);
                         //For each variable declared with this type (or a type that use this type), we need to add the headDataDefinition
-                        AddAllReference(found, headDataDefinition, parentTypeDef, completeQualifiedNames);
-                    } else { //we are on a variable
+                        AddAllReference(found, headDataDefinition, parentTypeDef, completeQualifiedNames, typeDefContext);
+                    }
+                    else if (parentTypeDef == null && typeDefContext != null)
+                    {
+                        return; //The variable is not inside a typedef and typeDefContext is setted so we have to ignore this variable
+                    }
+                    else
+                    {
+                        //we are on a variable
                         found.Add(headDataDefinition);
                         completeQualifiedNames.Last().Remove(currentDataDefinition.Name);
                         completeQualifiedNames.Last().AddRange(currentDataDefinition.QualifiedName.Reverse());
@@ -406,7 +415,7 @@ namespace TypeCobol.Compiler.CodeModel
             var parent = currentDataDefinition.Parent as DataDefinition;
             if (parent != null)
             {
-                MatchVariable(found, headDataDefinition, name, nameIndex, parent, completeQualifiedNames);
+                MatchVariable(found, headDataDefinition, name, nameIndex, parent, completeQualifiedNames, typeDefContext);
                 return;
             }
 
@@ -417,6 +426,12 @@ namespace TypeCobol.Compiler.CodeModel
                 if (dataType.Key == null || dataType.Value == null)
                     return;
                 var references = dataType.Value;
+
+                //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
+                //                              + Only takes variable references that are declared inside the typeDefContext
+                if (typeDefContext != null)
+                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.GetParentTypeDefinition == typeDefContext).ToList();
+
                 var primaryPath = completeQualifiedNames.Last().ToArray();
                 foreach (var reference in references)
                 {
@@ -428,7 +443,7 @@ namespace TypeCobol.Compiler.CodeModel
                             completeQualifiedNames.Remove(completeQualifiedNames.Last());//InCase nothing was found after first reference checked, we need to reset completeQualifiedName to it's primary value.
                         completeQualifiedNames.Add(new List<string>(primaryPath));
 
-                        MatchVariable(found, headDataDefinition, name, nameIndex, reference, completeQualifiedNames);
+                        MatchVariable(found, headDataDefinition, name, nameIndex, reference, completeQualifiedNames, typeDefContext);
                     }
                        
                 }
@@ -449,26 +464,29 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="found"></param>
         /// <param name="heaDataDefinition"></param>
         /// <param name="currentDataDefinition"></param>
-        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition, List<List<string>> completeQualifiedNames)
+        private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext)
         {
             completeQualifiedNames.Last().Add(currentDataDefinition.Name);
             var dataType = TypesReferences.FirstOrDefault(k => k.Key == currentDataDefinition);
             if (dataType.Key == null || dataType.Value == null)
                 return;
             var references = dataType.Value;
-
+            //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
+            //                              + Only takes variable references that are declared inside the typeDefContext
+            if (typeDefContext != null)
+                references = references.Where(r => r.DataType != typeDefContext.DataType && r.GetParentTypeDefinition == typeDefContext).ToList();
             var typePath = completeQualifiedNames.Last().ToArray();
             foreach (var reference in references)
             {
                 var qualifiedPath = new List<string>();
                 var parentTypeDef = reference.GetParentTypeDefinitionWithPath(qualifiedPath);
-                if (parentTypeDef != null) {
+                if (parentTypeDef != null && parentTypeDef != typeDefContext) {
                     completeQualifiedNames.Last().AddRange(qualifiedPath);
-                    AddAllReference(found, heaDataDefinition, parentTypeDef, completeQualifiedNames);
+                    AddAllReference(found, heaDataDefinition, parentTypeDef, completeQualifiedNames, typeDefContext);
                 } else { 
                     //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
-                    //So we need to check if we can access this variable
-                    if (GetVariable(reference.Name).Contains(reference))
+                    //So we need to check if we can access this variable OR check if the variable is declared inside the typeDefContext
+                    if (GetVariable(reference.Name).Contains(reference) || typeDefContext.GetChildren<DataDefinition>(reference.Name, true).Contains(reference))
                     {
                         int foundCounter = found.Count;
                         found.Add(heaDataDefinition);
