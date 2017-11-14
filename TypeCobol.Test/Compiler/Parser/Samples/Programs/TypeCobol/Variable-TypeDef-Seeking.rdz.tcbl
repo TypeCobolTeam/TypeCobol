@@ -42,7 +42,7 @@
          05 var2 TYPE Counter2.
       *OK var1 is of type pic 9(05) comp-5.
          05 MyTable  PIC X(1) occurs 99 DEPENDING ON var1.
-      *Should be OK, but KO for now, see issue #717
+      *OK since issue #717
          05 MyTable2 PIC X(1) occurs 99 DEPENDING ON var2::Counter.
 
        PROCEDURE DIVISION.
