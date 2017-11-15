@@ -407,7 +407,7 @@ namespace TypeCobol.Codegen.Actions
                             GenerateToken item = null;
                             string hashName = ComputeIndexHashName(qualified_name, sourceNode);
                             //Now all items in the qualified name must be replaced with the hash name by the Generator.
-                            //So all item except the last are replaced by a blank, the last item will be the HashName
+                            //So all items except the last one are replaced by a blank, the last item will be the HashName
                             for (int r = i; r <= range.Item2 - 1; r++)
                             {                                
                                 item = new GenerateToken(

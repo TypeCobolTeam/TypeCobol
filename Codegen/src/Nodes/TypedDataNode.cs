@@ -33,8 +33,9 @@
                     var data = this.Node.CodeElement();
                     int level = (int)data.LevelNumber.Value;
                     var customtype = this.Node.SymbolTable.GetType(data.DataType);
-                    _cache.AddRange(CreateDataDefinition(Layout, new List<string>() { data.Name }, customtype[0], data, level, 0, true, true, customtype[0]));
-                    if (customtype.Count > 0) _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, new List<string>() { data.Name }, customtype[0], customtype[0], level + 1, 1));
+                    _cache.AddRange(CreateDataDefinition(Layout, new List< Tuple<string,string> >() { new Tuple<string,string>(data.Name, customtype[0].Name) }, customtype[0], data, level, 0, true, true, customtype[0]));
+                    if (customtype.Count > 0) _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, new List< Tuple<string,string> >() { new Tuple<string,string>(data.Name, customtype[0].Name) }, 
+                        customtype[0], customtype[0], level + 1, 1));
                 }
                 return _cache;
             }
@@ -255,14 +256,19 @@
         /// <param name="indexes">The Array of Index Symbol Definition</param>
         /// <param name="ownerDefinition">The Owner of the definition that contains the INDEXED BY clause</param>
         /// <returns>The Dictionary</returns>
-        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(List<string> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
+        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(List<Tuple<string,string> > rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
         {
             Dictionary<Compiler.Scanner.Token, string> map = new Dictionary<Compiler.Scanner.Token, string>(indexes.Length);
             string qn = ownerDefinition.QualifiedName.ToString();
             string[] items = qn.Split('.');
             List<string> list_items = new List<string>();
             list_items.Add(items[0]);
-            list_items.Add(rootVariableName[0]);
+            for (int j = rootVariableName.Count - 1; j >= 0; j--)
+            {
+                list_items.Add(rootVariableName[j].Item1);
+                if (j != 0)
+                    list_items.Add(rootVariableName[j].Item2);
+            }
             for (int i = 1; i < items.Length; i++)
                 list_items.Add(items[i]);
             qn = string.Join(".", list_items.ToArray());
@@ -285,7 +291,7 @@
             return map;
         }
 
-        internal static List<ITextLine> CreateDataDefinition(ColumnsLayout? layout, List<string> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
+        internal static List<ITextLine> CreateDataDefinition(ColumnsLayout? layout, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
             if (data != null)
@@ -308,7 +314,7 @@
                             {   //Remove the Type name
                                 dependingOnAccessPath.RemoveAt(0);
                                 dependingOnAccessPath.Reverse();
-                                dependingOnAccessPath.AddRange(rootVariableName);
+                                dependingOnAccessPath.AddRange(rootVariableName.ConvertAll<string>(vt => vt.Item1));
                             }
                         }
                         bHasDependingOn = true;
@@ -520,7 +526,7 @@
         " {2}    88  {0}       VALUE 'T'.",
         " {2}    88  {0}-false VALUE 'F'.",
     };
-        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, List<string> rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
+        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
             foreach (var child in type.Children)
@@ -567,8 +573,8 @@
                 }
                 if (isCustomTypeToo)
                 {
-                    List<string> newRootVariableName = new List<string>();
-                    newRootVariableName.Add(typed.Name);
+                    List< Tuple<string,string> > newRootVariableName = new List<Tuple<string, string>>();
+                    newRootVariableName.Add(new Tuple<string, string>(typed.Name, types[0].Name));
                     newRootVariableName.AddRange(rootVariableName);
                     lines.AddRange(InsertChildren(layout, table, newRootVariableName, typed, types[0], level + 1, indent + 1));
                 }

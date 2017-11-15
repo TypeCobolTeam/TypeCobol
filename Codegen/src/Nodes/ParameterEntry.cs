@@ -89,7 +89,7 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 					}
 				}
 
-				if (customtype != null) _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, new List<string>() { name }, customtype, customtype, 2, 1));
+                    if (customtype != null) _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, new List<System.Tuple<string, string>>() { new System.Tuple<string, string>(name, customtype.Name) }, customtype, customtype, 2, 1));
 			}
 			return _cache;
 		}
