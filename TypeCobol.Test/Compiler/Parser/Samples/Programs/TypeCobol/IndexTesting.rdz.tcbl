@@ -1,0 +1,39 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. IndexTesting.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 Account TYPEDEF STRICT.
+           05 Holders      pic X(30)
+                           OCCURS 99 INDEXED BY Idx.
+
+       01 BadType TYPEDEF STRICT.
+          05 BadVar pic x(2) occurs 5 indexed by BadIdx.
+          05 BadVar2 pic x(2) occurs 5 indexed by BadIdx.
+        
+       01 Account1 type Account.
+       01 Bad        TYPE BadType.
+
+      *OK : Index Name is over 22 characters 
+      *- but not duplicated and not inside TypeDef
+       01 ToLingIndx PIC X(6) OCCURS 5 
+       INDEXED BY ThisIndexNameIsClearlyToLong.
+
+       01 IndexType TYPEDEF STRICT.
+      *KO Index is over 22 chars and decared in Typedef
+            05 someVar pic x(2) occurs 5
+            indexed by ThisIndexNameIsClearlyToLong2.
+
+       PROCEDURE DIVISION.
+
+      *OK : Qualified Index works
+       SET Account1::Holders::Idx TO 1.
+
+      *KO : Qualified Index with OF
+       SET Idx OF Holders OF Account1 TO 1.
+
+      *KO : BadIdx is duplicated inside TypeDef
+       SET BadIdx TO 1.
+
+
+       END PROGRAM IndexTesting.

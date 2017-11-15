@@ -45,8 +45,6 @@ namespace TypeCobol.Compiler.Diagnostics {
             RenamesChecker.OnNode(node);
             ReadOnlyPropertiesChecker.OnNode(node);
 
-          
-
             return true;
         }
 
@@ -97,6 +95,26 @@ namespace TypeCobol.Compiler.Diagnostics {
             {
                 CheckPicture(dataDefinition);
             }
+            return true;
+        }
+
+        public override bool Visit(IndexDefinition indexDefinition)
+        {
+            var found = indexDefinition.SymbolTable.GetVariable(new URI(indexDefinition.Name));
+
+            if (indexDefinition.Name.Length > 22 && (found.Count > 1 || indexDefinition.GetParentTypeDefinition != null))
+            {
+                //If indexdefinition is NOT unique or is declared inside a typedef it'll limited to 22 chars. 
+                DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement, "Index name is over 22 characters.");
+            }
+            if (indexDefinition.GetParentTypeDefinition == null) //Detect index and make sure it's not inside a TypeDef
+            {
+                if (found != null && found.Count > 1) //If multiple index with same name found, display a warning.
+                {
+                    DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement, "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
+                }
+            }
+
             return true;
         }
 
