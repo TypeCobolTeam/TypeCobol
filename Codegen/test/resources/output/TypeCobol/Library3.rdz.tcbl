@@ -7,9 +7,8 @@
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 1.
       *DVZZDATE::currentDateString
-           05 TC-DVZZDATE-b8721d20-currentDateString-Idt   PIC X(08) VAL
-      -    UE 'b8721d20-currentDateString'.
-           05 TC-DVZZDATE-b8721d20-currentDateString PROCEDURE-POINTER.
+           05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
+           05 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER.
 
                       local-STORAGE SECTION.
       *01  dateString    TYPEDEF strict PIC 9(08).
@@ -32,8 +31,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-DVZZDATE-FctList-IsLoaded
-              SET TC-DVZZDATE-b8721d20-currentDateString   TO ENTRY 'b87
-      -    21d20-currentDateString'
+              SET TC-DVZZDATE-b8721d20   TO ENTRY 'b8721d20'
 
               SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
             END-IF

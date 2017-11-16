@@ -81,7 +81,7 @@ namespace TypeCobol.Compiler.Nodes {
 			    encode(hash, Profile.InoutParameters).Append(':');
 			    encode(hash, Profile.OutputParameters).Append(':');
 			    hash.Append(encode(Profile.ReturningParameter));
-			    return string.Format("{0}-{1}", Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8, this), Name);
+			    return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8, this);
 		    }
 	    }
 	    private StringBuilder encode(StringBuilder str, IList<ParameterDescription> parameters) {

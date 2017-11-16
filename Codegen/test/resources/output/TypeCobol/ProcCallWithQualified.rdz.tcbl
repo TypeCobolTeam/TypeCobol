@@ -9,14 +9,14 @@
        procedure division.
       *    call DVZZOSM5::DisplayCounter
       *             input Disp::LIG-DET
-           CALL 'e08dc03a-DisplayCounter' USING
+           CALL 'e08dc03a' USING
                                  LIG-DET IN Disp
            end-call
                                        
                                      
       *    call DisplayCounter
       *             input Disp::LIG-DET
-           CALL 'e08dc03a-DisplayCounter' USING
+           CALL 'e08dc03a' USING
                                  LIG-DET IN Disp
            end-call
                                        

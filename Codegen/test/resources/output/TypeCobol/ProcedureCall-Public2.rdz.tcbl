@@ -33,17 +33,17 @@
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
       *Callee::MyPublicProcedure
-       01 TC-Callee-ebb060ea-MyPublicProcedure-Item.
-          05 TC-Callee-ebb060ea-MyPublicProcedure-Idt PIC X(08).
-          05 TC-Callee-ebb060ea-MyPublicProcedure PROCEDURE-POINTER.
+       01 TC-Callee-ebb060ea-Item.
+          05 TC-Callee-ebb060ea-Idt PIC X(08).
+          05 TC-Callee-ebb060ea PROCEDURE-POINTER.
       *Callee::check
-       01 TC-Callee-ca0ab46c-check-Item.
-          05 TC-Callee-ca0ab46c-check-Idt PIC X(08).
-          05 TC-Callee-ca0ab46c-check PROCEDURE-POINTER.
+       01 TC-Callee-ca0ab46c-Item.
+          05 TC-Callee-ca0ab46c-Idt PIC X(08).
+          05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
       *Callee::check2
-       01 TC-Callee-d0a59141-check2-Item.
-          05 TC-Callee-d0a59141-check2-Idt PIC X(08).
-          05 TC-Callee-d0a59141-check2 PROCEDURE-POINTER.
+       01 TC-Callee-d0a59141-Item.
+          05 TC-Callee-d0a59141-Idt PIC X(08).
+          05 TC-Callee-d0a59141 PROCEDURE-POINTER.
 
 
        PROCEDURE DIVISION.
@@ -70,10 +70,10 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           IF TC-Callee-ebb060ea-MyPublicProcedure-Idt not = 'ebb060ea-MyPublicProcedure'
+           IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-           CALL TC-Callee-ebb060ea-MyPublicProcedure USING
+           CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -84,10 +84,10 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           IF TC-Callee-ebb060ea-MyPublicProcedure-Idt not = 'ebb060ea-MyPublicProcedure'
+           IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-           CALL TC-Callee-ebb060ea-MyPublicProcedure USING
+           CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -100,7 +100,7 @@
       *    CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb-Pgm1PrivateValidateDateFormat' USING
+           CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -112,7 +112,7 @@
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb-Pgm1PrivateValidateDateFormat' USING
+           CALL 'fde394fb' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -123,31 +123,31 @@
 
       *OK  call check of PGM1
       *   call check input somedate
-          CALL 'a0508f35-check' USING
+          CALL 'a0508f35' USING
                                  somedate
            end-call
                                    
       *OK 
       *   call PGM1::check input somedate
-          CALL 'a0508f35-check' USING
+          CALL 'a0508f35' USING
                                  somedate
            end-call
                                          
       *OK 
       *   call Callee::check input somedate
-          IF TC-Callee-ca0ab46c-check-Idt not = 'ca0ab46c-check'
+          IF TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-           CALL TC-Callee-ca0ab46c-check USING
+           CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
                                            
       *OK 
       *   call Callee::check2 input somedate
-          IF TC-Callee-d0a59141-check2-Idt not = 'd0a59141-check2'
+          IF TC-Callee-d0a59141-Idt not = 'd0a59141'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
-           CALL TC-Callee-d0a59141-check2 USING
+           CALL TC-Callee-d0a59141 USING
                                  somedate
            end-call
                                             
@@ -165,19 +165,19 @@
             PERFORM VARYING TC-Library-Idx FROM 1 BY 1
             UNTIL TC-Library-Idx > TC-Library-PntNbr
                 EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'ebb060ea-MyPublicProcedure'
+                WHEN 'ebb060ea'
                      SET ADDRESS OF
-                     TC-Callee-ebb060ea-MyPublicProcedure-Item
+                     TC-Callee-ebb060ea-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
-                WHEN 'ca0ab46c-check'
+                WHEN 'ca0ab46c'
                      SET ADDRESS OF
-                     TC-Callee-ca0ab46c-check-Item
+                     TC-Callee-ca0ab46c-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
-                WHEN 'd0a59141-check2'
+                WHEN 'd0a59141'
                      SET ADDRESS OF
-                     TC-Callee-d0a59141-check2-Item
+                     TC-Callee-d0a59141-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
                 END-EVALUATE
@@ -211,21 +211,17 @@
        01 TC-Callee-PntTab.
            05 TC-Callee-PntNbr         PIC S9(04) COMP VALUE 4.
       *Callee::check
-           05 TC-Callee-ca0ab46c-check-Idt   PIC X(08) VALUE 'ca0ab46c-c
-      -    heck'.
-           05 TC-Callee-ca0ab46c-check PROCEDURE-POINTER.
+           05 TC-Callee-ca0ab46c-Idt   PIC X(08) VALUE 'ca0ab46c'.
+           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
       *Callee::check2
-           05 TC-Callee-d0a59141-check2-Idt   PIC X(08) VALUE 'd0a59141-
-      -    check2'.
-           05 TC-Callee-d0a59141-check2 PROCEDURE-POINTER.
+           05 TC-Callee-d0a59141-Idt   PIC X(08) VALUE 'd0a59141'.
+           05 TC-Callee-d0a59141 PROCEDURE-POINTER.
       *Callee::check2
-           05 TC-Callee-e5b741a8-check2-Idt   PIC X(08) VALUE 'e5b741a8-
-      -    check2'.
-           05 TC-Callee-e5b741a8-check2 PROCEDURE-POINTER.
+           05 TC-Callee-e5b741a8-Idt   PIC X(08) VALUE 'e5b741a8'.
+           05 TC-Callee-e5b741a8 PROCEDURE-POINTER.
       *Callee::MyPublicProcedure
-           05 TC-Callee-ebb060ea-MyPublicProcedure-Idt   PIC X(08) VALUE
-      -     'ebb060ea-MyPublicProcedure'.
-           05 TC-Callee-ebb060ea-MyPublicProcedure PROCEDURE-POINTER.
+           05 TC-Callee-ebb060ea-Idt   PIC X(08) VALUE 'ebb060ea'.
+           05 TC-Callee-ebb060ea PROCEDURE-POINTER.
 
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
@@ -245,11 +241,10 @@
 
         FctList-Process-Mode.
             IF NOT TC-Callee-FctList-IsLoaded
-              SET TC-Callee-ca0ab46c-check   TO ENTRY 'ca0ab46c-check'
-              SET TC-Callee-d0a59141-check2   TO ENTRY 'd0a59141-check2'
-              SET TC-Callee-e5b741a8-check2   TO ENTRY 'e5b741a8-check2'
-              SET TC-Callee-ebb060ea-MyPublicProcedure   TO ENTRY 'ebb06
-      -    0ea-MyPublicProcedure'
+              SET TC-Callee-ca0ab46c   TO ENTRY 'ca0ab46c'
+              SET TC-Callee-d0a59141   TO ENTRY 'd0a59141'
+              SET TC-Callee-e5b741a8   TO ENTRY 'e5b741a8'
+              SET TC-Callee-ebb060ea   TO ENTRY 'ebb060ea'
 
               SET TC-Callee-FctList-IsLoaded TO TRUE
             END-IF

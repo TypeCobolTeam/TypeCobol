@@ -15,9 +15,8 @@
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
       *PGM1::GetPersonById
-           05 TC-PGM1-efe09ace-GetPersonById-Idt   PIC X(08) VALUE 'efe0
-      -    9ace-GetPersonById'.
-           05 TC-PGM1-efe09ace-GetPersonById PROCEDURE-POINTER.
+           05 TC-PGM1-efe09ace-Idt   PIC X(08) VALUE 'efe09ace'.
+           05 TC-PGM1-efe09ace PROCEDURE-POINTER.
 
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
@@ -37,8 +36,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-PGM1-FctList-IsLoaded
-              SET TC-PGM1-efe09ace-GetPersonById   TO ENTRY 'efe09ace-Ge
-      -    tPersonById'
+              SET TC-PGM1-efe09ace   TO ENTRY 'efe09ace'
 
               SET TC-PGM1-FctList-IsLoaded TO TRUE
             END-IF
@@ -59,7 +57,7 @@
        TRAITEMENT.
       *OK  call check of PGM1
       *   call check input mydate1
-          CALL 'a0508f35-check' USING
+          CALL 'a0508f35' USING
                                  mydate1
            end-call
                                   
@@ -87,7 +85,7 @@
              USING BY REFERENCE mydate
            .
       *    Call GetPersonById input mydate
-           CALL 'efe09ace-GetPersonById' USING
+           CALL 'efe09ace' USING
                                  mydate
            end-call
                                           

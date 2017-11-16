@@ -38,26 +38,20 @@
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 5.
       *DVZZDATE::currentDate
-           05 TC-DVZZDATE-db42865c-currentDate-Idt   PIC X(08) VALUE 'db
-      -    42865c-currentDate'.
-           05 TC-DVZZDATE-db42865c-currentDate PROCEDURE-POINTER.
+           05 TC-DVZZDATE-db42865c-Idt   PIC X(08) VALUE 'db42865c'.
+           05 TC-DVZZDATE-db42865c PROCEDURE-POINTER.
       *DVZZDATE::currentDateDB2
-           05 TC-DVZZDATE-fa5ee5e9-currentDateDB2-Idt   PIC X(08) VALUE
-      -    'fa5ee5e9-currentDateDB2'.
-           05 TC-DVZZDATE-fa5ee5e9-currentDateDB2 PROCEDURE-POINTER.
+           05 TC-DVZZDATE-fa5ee5e9-Idt   PIC X(08) VALUE 'fa5ee5e9'.
+           05 TC-DVZZDATE-fa5ee5e9 PROCEDURE-POINTER.
       *DVZZDATE::currentDateJulian
-           05 TC-DVZZDATE-cf63e86f-currentDateJulian-Idt   PIC X(08) VAL
-      -    UE 'cf63e86f-currentDateJulian'.
-           05 TC-DVZZDATE-cf63e86f-currentDateJulian PROCEDURE-POINTER.
+           05 TC-DVZZDATE-cf63e86f-Idt   PIC X(08) VALUE 'cf63e86f'.
+           05 TC-DVZZDATE-cf63e86f PROCEDURE-POINTER.
       *DVZZDATE::currentDateFreeFormat
-           05 TC-DVZZDATE-cfc290ce-currentDateFreeFormat-Idt   PIC X(08)
-      -     VALUE 'cfc290ce-currentDateFreeFormat'.
-           05 TC-DVZZDATE-cfc290ce-currentDateFreeFormat PROCEDURE-POINT
-      -    ER.
+           05 TC-DVZZDATE-cfc290ce-Idt   PIC X(08) VALUE 'cfc290ce'.
+           05 TC-DVZZDATE-cfc290ce PROCEDURE-POINTER.
       *DVZZDATE::currentDateString
-           05 TC-DVZZDATE-b8721d20-currentDateString-Idt   PIC X(08) VAL
-      -    UE 'b8721d20-currentDateString'.
-           05 TC-DVZZDATE-b8721d20-currentDateString PROCEDURE-POINTER.
+           05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
+           05 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER.
 
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
@@ -78,16 +72,11 @@
 
         FctList-Process-Mode.
             IF NOT TC-DVZZDATE-FctList-IsLoaded
-              SET TC-DVZZDATE-db42865c-currentDate   TO ENTRY 'db42865c-
-      -    currentDate'
-              SET TC-DVZZDATE-fa5ee5e9-currentDateDB2   TO ENTRY 'fa5ee5
-      -    e9-currentDateDB2'
-              SET TC-DVZZDATE-cf63e86f-currentDateJulian   TO ENTRY 'cf6
-      -    3e86f-currentDateJulian'
-              SET TC-DVZZDATE-cfc290ce-currentDateFreeFormat   TO ENTRY
-      -    'cfc290ce-currentDateFreeFormat'
-              SET TC-DVZZDATE-b8721d20-currentDateString   TO ENTRY 'b87
-      -    21d20-currentDateString'
+              SET TC-DVZZDATE-db42865c   TO ENTRY 'db42865c'
+              SET TC-DVZZDATE-fa5ee5e9   TO ENTRY 'fa5ee5e9'
+              SET TC-DVZZDATE-cf63e86f   TO ENTRY 'cf63e86f'
+              SET TC-DVZZDATE-cfc290ce   TO ENTRY 'cfc290ce'
+              SET TC-DVZZDATE-b8721d20   TO ENTRY 'b8721d20'
 
               SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
             END-IF

@@ -66,7 +66,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'df9b9795-ValidateDateFormat' USING
+           CALL 'df9b9795' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -77,7 +77,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
-           CALL 'df9b9795-ValidateDateFormat' USING
+           CALL 'df9b9795' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -89,14 +89,14 @@
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
       *    CALL ValidateDateFormat END-CALL
-           CALL 'f0da699b-ValidateDateFormat'
+           CALL 'f0da699b'
                                    END-CALL
       * __________________________________________________
       * OK with INPUT on the same line as call
       *    CALL ValidateDateFormat INPUT      somedate
       *                                       by content 'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'df9b9795-ValidateDateFormat' USING
+           CALL 'df9b9795' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -109,7 +109,7 @@
       *    CALL ValidateDateFormat INPUT     by content somedate
       *                                        'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'df9b9795-ValidateDateFormat' USING
+           CALL 'df9b9795' USING
                     by content   somedate
                                  'YYYYMMDD'
                     by reference flag-value
@@ -125,7 +125,7 @@
       *                           address of myDate2
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
-           CALL 'e6e45a7d-myProc' USING
+           CALL 'e6e45a7d' USING
                     by content   somedate
                                  'YYYYMMDD'
                                  myDate2
@@ -146,7 +146,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7d-myProc' USING
+           CALL 'e6e45a7d' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -167,7 +167,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7d-myProc' USING
+           CALL 'e6e45a7d' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2

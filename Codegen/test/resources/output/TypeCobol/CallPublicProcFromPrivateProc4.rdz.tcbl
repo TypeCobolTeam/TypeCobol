@@ -8,9 +8,8 @@
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
       *PGM1::StartCheckpoint
-           05 TC-PGM1-f1c0385c-StartCheckpoint-Idt   PIC X(08) VALUE 'f1
-      -    c0385c-StartCheckpoint'.
-           05 TC-PGM1-f1c0385c-StartCheckpoint PROCEDURE-POINTER.
+           05 TC-PGM1-f1c0385c-Idt   PIC X(08) VALUE 'f1c0385c'.
+           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
@@ -30,8 +29,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-PGM1-FctList-IsLoaded
-              SET TC-PGM1-f1c0385c-StartCheckpoint   TO ENTRY 'f1c0385c-
-      -    StartCheckpoint'
+              SET TC-PGM1-f1c0385c   TO ENTRY 'f1c0385c'
 
               SET TC-PGM1-FctList-IsLoaded TO TRUE
             END-IF
@@ -56,9 +54,8 @@
        01 TC-PGM2-PntTab.
            05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 1.
       *PGM2::CheckContract
-           05 TC-PGM2-f73481e6-CheckContract-Idt   PIC X(08) VALUE 'f734
-      -    81e6-CheckContract'.
-           05 TC-PGM2-f73481e6-CheckContract PROCEDURE-POINTER.
+           05 TC-PGM2-f73481e6-Idt   PIC X(08) VALUE 'f73481e6'.
+           05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
@@ -78,8 +75,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-PGM2-FctList-IsLoaded
-              SET TC-PGM2-f73481e6-CheckContract   TO ENTRY 'f73481e6-Ch
-      -    eckContract'
+              SET TC-PGM2-f73481e6   TO ENTRY 'f73481e6'
 
               SET TC-PGM2-FctList-IsLoaded TO TRUE
             END-IF
@@ -136,55 +132,55 @@
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
       *PGM1::StartCheckpoint
-       01 TC-PGM1-f1c0385c-StartCheckpoint-Item.
-          05 TC-PGM1-f1c0385c-StartCheckpoint-Idt PIC X(08).
-          05 TC-PGM1-f1c0385c-StartCheckpoint PROCEDURE-POINTER.
+       01 TC-PGM1-f1c0385c-Item.
+          05 TC-PGM1-f1c0385c-Idt PIC X(08).
+          05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
 
       *PGM2::CheckContract
-       01 TC-PGM2-f73481e6-CheckContract-Item.
-          05 TC-PGM2-f73481e6-CheckContract-Idt PIC X(08).
-          05 TC-PGM2-f73481e6-CheckContract PROCEDURE-POINTER.
+       01 TC-PGM2-f73481e6-Item.
+          05 TC-PGM2-f73481e6-Idt PIC X(08).
+          05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
            PERFORM TC-Initializations
       *    call PGM1::StartCheckpoint input var1
-           IF TC-PGM1-f1c0385c-StartCheckpoint-Idt not = 'f1c0385c-StartCheckpoint'
+           IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
-           CALL TC-PGM1-f1c0385c-StartCheckpoint USING
+           CALL TC-PGM1-f1c0385c USING
                                  var1
            end-call
                                                 
       *    call PGM2::CheckContract input var1
-           IF TC-PGM2-f73481e6-CheckContract-Idt not = 'f73481e6-CheckContract'
+           IF TC-PGM2-f73481e6-Idt not = 'f73481e6'
                PERFORM TC-LOAD-POINTERS-PGM2
            END-IF
-           CALL TC-PGM2-f73481e6-CheckContract USING
+           CALL TC-PGM2-f73481e6 USING
                                  var1
            end-call
                                               
       *    call PGM1::StartCheckpoint input var1
-           IF TC-PGM1-f1c0385c-StartCheckpoint-Idt not = 'f1c0385c-StartCheckpoint'
+           IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
-           CALL TC-PGM1-f1c0385c-StartCheckpoint USING
+           CALL TC-PGM1-f1c0385c USING
                                  var1
            end-call
                                                 
 
       *    call PGM2::CheckContract input var1
-           IF TC-PGM2-f73481e6-CheckContract-Idt not = 'f73481e6-CheckContract'
+           IF TC-PGM2-f73481e6-Idt not = 'f73481e6'
                PERFORM TC-LOAD-POINTERS-PGM2
            END-IF
-           CALL TC-PGM2-f73481e6-CheckContract USING
+           CALL TC-PGM2-f73481e6 USING
                                  var1
            end-call
                                               
       *    call PGM2::CheckContract input var1
-           IF TC-PGM2-f73481e6-CheckContract-Idt not = 'f73481e6-CheckContract'
+           IF TC-PGM2-f73481e6-Idt not = 'f73481e6'
                PERFORM TC-LOAD-POINTERS-PGM2
            END-IF
-           CALL TC-PGM2-f73481e6-CheckContract USING
+           CALL TC-PGM2-f73481e6 USING
                                  var1
            end-call
                                               
@@ -201,9 +197,9 @@
             PERFORM VARYING TC-Library-Idx FROM 1 BY 1
             UNTIL TC-Library-Idx > TC-Library-PntNbr
                 EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'f1c0385c-StartCheckpoint'
+                WHEN 'f1c0385c'
                      SET ADDRESS OF
-                     TC-PGM1-f1c0385c-StartCheckpoint-Item
+                     TC-PGM1-f1c0385c-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
                 END-EVALUATE
@@ -217,9 +213,9 @@
             PERFORM VARYING TC-Library-Idx FROM 1 BY 1
             UNTIL TC-Library-Idx > TC-Library-PntNbr
                 EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'f73481e6-CheckContract'
+                WHEN 'f73481e6'
                      SET ADDRESS OF
-                     TC-PGM2-f73481e6-CheckContract-Item
+                     TC-PGM2-f73481e6-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
                 END-EVALUATE
