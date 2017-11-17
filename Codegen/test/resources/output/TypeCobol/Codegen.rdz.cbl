@@ -53,7 +53,7 @@
       *                 RETURNING result PIC 9(32).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c0ca92c2-GetValue.
+       PROGRAM-ID. c0ca92c2GetValue.
        DATA DIVISION.
        LINKAGE SECTION.
        01 ikey PIC X(04).
@@ -70,4 +70,4 @@
 000170                                                                  000170
 000180     display "test codegen"
 000180     CONTINUE.                                                    000180
-       END PROGRAM c0ca92c2-GetValue.
+       END PROGRAM c0ca92c2GetValue.

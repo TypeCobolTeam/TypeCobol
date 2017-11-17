@@ -1,5 +1,6 @@
 ﻿
 
+using System;
 using TypeCobol.Codegen.Extensions.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 
@@ -77,6 +78,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
 				var hash = Node.FunctionDeclaration.Hash;
+                var originalProcName = Node.FunctionDeclaration.Name.Substring(0, Math.Min(Node.FunctionDeclaration.Name.Length, 22));
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL
                 TypeCobol.Compiler.Nodes.FunctionDeclaration fun_decl = this.Node.FunctionDeclaration;
                 string callString = null;
@@ -110,7 +112,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
                 }
                 else
                 {
-                     callString = string.Format("CALL '{0}'{1}", hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                     callString = string.Format("CALL '{0}{1}'{2}", hash, originalProcName, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
                      var callTextLine = new TextLineSnapshot(-1, callString, null);
                      _cache.Add(callTextLine);
 

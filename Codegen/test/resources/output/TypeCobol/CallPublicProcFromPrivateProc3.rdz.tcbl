@@ -54,13 +54,13 @@
       *        input param1 pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b179d81b-StartCheckpoint.
-       END PROGRAM b179d81b-StartCheckpoint.
+       PROGRAM-ID. b179d81bStartCheckpoint.
+       END PROGRAM b179d81bStartCheckpoint.
       *
       *declare procedure testos private.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d58351d5-testos.
+       PROGRAM-ID. d58351d5testos.
        data division.
        working-storage section.
        01 var1 pic X.
@@ -112,4 +112,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM d58351d5-testos.
+       END PROGRAM d58351d5testos.

@@ -105,7 +105,7 @@
       *    CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+           CALL 'fde394fbPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -128,7 +128,7 @@
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+           CALL 'fde394fbPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -139,13 +139,13 @@
 
       *OK  call check of PGM1
       *   call check input somedate
-          CALL 'a0508f35' USING
+          CALL 'a0508f35check' USING
                                  somedate
            end-call
                                    
       *OK 
       *   call PGM1::check input somedate
-          CALL 'a0508f35' USING
+          CALL 'a0508f35check' USING
                                  somedate
            end-call
                                          
@@ -354,7 +354,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ca0ab46c-check.
+       PROGRAM-ID. ca0ab46ccheck.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -365,14 +365,14 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM ca0ab46c-check.
+       END PROGRAM ca0ab46ccheck.
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d0a59141-check2.
+       PROGRAM-ID. d0a59141check2.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -383,7 +383,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM d0a59141-check2.
+       END PROGRAM d0a59141check2.
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
@@ -391,7 +391,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e5b741a8-check2.
+       PROGRAM-ID. e5b741a8check2.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -407,7 +407,7 @@
                    BY REFERENCE myDate2
            .
            CONTINUE.
-       END PROGRAM e5b741a8-check2.
+       END PROGRAM e5b741a8check2.
       *
       *DECLARE PROCEDURE MyPublicProcedure PUBLIC
       *    INPUT mydate        TYPE Date
@@ -417,7 +417,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ebb060ea-MyPublicProcedure.
+       PROGRAM-ID. ebb060eaMyPublicProcedure.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -436,7 +436,7 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM ebb060ea-MyPublicProcedure.
+       END PROGRAM ebb060eaMyPublicProcedure.
       *
       *declare procedure GetPersonById public
       *   input  personId  pic 9(10)
@@ -444,7 +444,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d2b57642-GetPersonById.
+       PROGRAM-ID. d2b57642GetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
        01 personId PIC 9(10).
@@ -457,14 +457,14 @@
                    BY REFERENCE person
            .
            CONTINUE.
-       END PROGRAM d2b57642-GetPersonById.
+       END PROGRAM d2b57642GetPersonById.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35-check.
+       PROGRAM-ID. a0508f35check.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -475,7 +475,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM a0508f35-check.
+       END PROGRAM a0508f35check.
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -485,7 +485,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fde394fb-Pgm1PrivateValidateDateFormat.
+       PROGRAM-ID. fde394fbPgm1PrivateValidateDat.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -504,4 +504,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM fde394fb-Pgm1PrivateValidateDateFormat.
+       END PROGRAM fde394fbPgm1PrivateValidateDat.

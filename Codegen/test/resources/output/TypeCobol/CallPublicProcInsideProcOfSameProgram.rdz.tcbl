@@ -57,7 +57,7 @@
        TRAITEMENT.
       *OK  call check of PGM1
       *   call check input mydate1
-          CALL 'a0508f35' USING
+          CALL 'a0508f35check' USING
                                  mydate1
            end-call
                                   
@@ -73,7 +73,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35-check.
+       PROGRAM-ID. a0508f35check.
        data division.
        working-storage section.
        linkage section.
@@ -85,18 +85,18 @@
              USING BY REFERENCE mydate
            .
       *    Call GetPersonById input mydate
-           CALL 'efe09ace' USING
+           CALL 'efe09aceGetPersonById' USING
                                  mydate
            end-call
                                           
            .
-       END PROGRAM a0508f35-check.
+       END PROGRAM a0508f35check.
       *
       *declare procedure GetPersonById public
       *   input  personId  type date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. efe09ace-GetPersonById.
+       PROGRAM-ID. efe09aceGetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
        01 personId.
@@ -107,4 +107,4 @@
              USING BY REFERENCE personId
            .
            CONTINUE.
-       END PROGRAM efe09ace-GetPersonById.
+       END PROGRAM efe09aceGetPersonById.

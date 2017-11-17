@@ -55,7 +55,7 @@
       *declare procedure StartCheckpoint public.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a711ebb5-StartCheckpoint.
+       PROGRAM-ID. a711ebb5StartCheckpoint.
        data division.
        working-storage section.
       
@@ -91,4 +91,4 @@
            end-if
       
            .
-       END PROGRAM a711ebb5-StartCheckpoint.
+       END PROGRAM a711ebb5StartCheckpoint.

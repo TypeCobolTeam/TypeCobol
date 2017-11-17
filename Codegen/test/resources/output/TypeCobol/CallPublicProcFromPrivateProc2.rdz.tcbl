@@ -52,13 +52,13 @@
       *declare procedure StartCheckpoint public.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ed8db690-StartCheckpoint.
-       END PROGRAM ed8db690-StartCheckpoint.
+       PROGRAM-ID. ed8db690StartCheckpoint.
+       END PROGRAM ed8db690StartCheckpoint.
       *
       *declare procedure testos private.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d58351d5-testos.
+       PROGRAM-ID. d58351d5testos.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
@@ -108,4 +108,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM d58351d5-testos.
+       END PROGRAM d58351d5testos.

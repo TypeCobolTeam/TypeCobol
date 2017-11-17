@@ -100,14 +100,14 @@
       *        input param1 pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f1c0385c-StartCheckpoint.
-       END PROGRAM f1c0385c-StartCheckpoint.
+       PROGRAM-ID. f1c0385cStartCheckpoint.
+       END PROGRAM f1c0385cStartCheckpoint.
       *
       *declare procedure CheckContract public
       *        input param1 pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f73481e6-CheckContract.
+       PROGRAM-ID. f73481e6CheckContract.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 TC-PGM1 pic X(08) value 'PGM1'.
@@ -160,12 +160,12 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM f73481e6-CheckContract.
+       END PROGRAM f73481e6CheckContract.
       *
       *declare procedure testos private.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bfc74757-testos.
+       PROGRAM-ID. bfc74757testos.
        data division.
        working-storage section.
        01 var1 pic X.
@@ -249,4 +249,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM bfc74757-testos.
+       END PROGRAM bfc74757testos.

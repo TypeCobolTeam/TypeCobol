@@ -40,6 +40,8 @@
 
        PROCEDURE DIVISION.
 
+      *DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
+
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
 
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
@@ -61,12 +63,18 @@
       *  .
 
        TRAITEMENT.
+
+      *CALL ProcedureWithANameOver22Chars.
+       CALL 'eb292c28ProcedureWithANameOver'
+           end-call
+                                         .
+
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
       *    CALL ValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'df9b9795' USING
+           CALL 'df9b9795ValidateDateFormat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -77,7 +85,7 @@
       *    CALL ValidateDateFormat
       *             INPUT      somedate by content 'YYYYMMDD'
       *             OUTPUT     flag     realformat
-           CALL 'df9b9795' USING
+           CALL 'df9b9795ValidateDateFormat' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -89,14 +97,14 @@
       *      however, this is parsed as a standard COBOL call
       *    Will change after issue #366
       *    CALL ValidateDateFormat END-CALL
-           CALL 'f0da699b'
+           CALL 'f0da699bValidateDateFormat'
                                    END-CALL
       * __________________________________________________
       * OK with INPUT on the same line as call
       *    CALL ValidateDateFormat INPUT      somedate
       *                                       by content 'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'df9b9795' USING
+           CALL 'df9b9795ValidateDateFormat' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference flag-value
@@ -109,7 +117,7 @@
       *    CALL ValidateDateFormat INPUT     by content somedate
       *                                        'YYYYMMDD'
       *                            OUTPUT     flag     realformat
-           CALL 'df9b9795' USING
+           CALL 'df9b9795ValidateDateFormat' USING
                     by content   somedate
                                  'YYYYMMDD'
                     by reference flag-value
@@ -125,7 +133,7 @@
       *                           address of myDate2
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
-           CALL 'e6e45a7d' USING
+           CALL 'e6e45a7dmyProc' USING
                     by content   somedate
                                  'YYYYMMDD'
                                  myDate2
@@ -146,7 +154,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7d' USING
+           CALL 'e6e45a7dmyProc' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -167,7 +175,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7d' USING
+           CALL 'e6e45a7dmyProc' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -182,11 +190,17 @@
 
        END PROGRAM ProcedureCall.
       *
+      *DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. eb292c28ProcedureWithANameOver.
+       END PROGRAM eb292c28ProcedureWithANameOver.
+      *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f0da699b-ValidateDateFormat.
-       END PROGRAM f0da699b-ValidateDateFormat.
+       PROGRAM-ID. f0da699bValidateDateFormat.
+       END PROGRAM f0da699bValidateDateFormat.
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -196,7 +210,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. df9b9795-ValidateDateFormat.
+       PROGRAM-ID. df9b9795ValidateDateFormat.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -215,7 +229,7 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM df9b9795-ValidateDateFormat.
+       END PROGRAM df9b9795ValidateDateFormat.
       *
       *DECLARE PROCEDURE myProc PRIVATE
       *   INPUT  mydate        TYPE Date
@@ -229,7 +243,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e6e45a7d-myProc.
+       PROGRAM-ID. e6e45a7dmyProc.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -265,4 +279,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM e6e45a7d-myProc.
+       END PROGRAM e6e45a7dmyProc.

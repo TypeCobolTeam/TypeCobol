@@ -10,7 +10,7 @@ using TypeCobol.Compiler.Text;
 internal class ProgramEnd: Compiler.Nodes.End, Generated {
 
 	private QualifiedName ProgramHashName;
-    private string OriginalProcName;
+    private string OriginalProcName; //Limited to 22 chars
 
     public ProgramEnd(QualifiedName programHashName, string originalProcName) : base(new Compiler.CodeElements.ProgramEnd()) {
 		this.ProgramHashName = programHashName;
@@ -24,7 +24,7 @@ internal class ProgramEnd: Compiler.Nodes.End, Generated {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-			    _cache.Add(new TextLineSnapshot(-1, "END PROGRAM " + ProgramHashName.Head + "-" + OriginalProcName + ".", null));
+			    _cache.Add(new TextLineSnapshot(-1, "END PROGRAM " + ProgramHashName.Head + OriginalProcName + ".", null));
 			}
 			return _cache;
 		}
