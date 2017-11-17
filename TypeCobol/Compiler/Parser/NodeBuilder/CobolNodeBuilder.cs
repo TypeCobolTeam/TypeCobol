@@ -435,7 +435,8 @@ namespace TypeCobol.Compiler.Parser
 
                     var indexNode = new IndexDefinition(index);
                     Enter(indexNode, null, table);
-                    table.AddVariable(indexNode);
+                    if (!indexNode.IsPartOfATypeDef) //If index is inside a Typedef do not add to symboltable
+                        table.AddVariable(indexNode);
                     Exit();
                 }
             }
