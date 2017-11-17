@@ -433,32 +433,6 @@ namespace TypeCobol.LanguageServer
 
             return completionItems;
         }
-
-        public static IEnumerable<CompletionItem> GetCompletionForIndexes(FileCompiler fileCompiler, CodeElement codeElement, string userFilterText)
-        {
-            var completionItems = new List<CompletionItem>();
-            var node = GetMatchingNode(fileCompiler, codeElement);
-            List<DataDefinition> Indexes = null;
-
-            var variableContainingIndexes =
-                node.SymbolTable.GetVariables(
-                    v =>
-                        (v.CodeElement as CommonDataDescriptionAndDataRedefines) != null &&
-                        (v.CodeElement as CommonDataDescriptionAndDataRedefines).Indexes != null  &&
-                        (v.CodeElement as CommonDataDescriptionAndDataRedefines).Indexes.Any(),
-                    new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
-
-            foreach (var variable in variableContainingIndexes)
-            {
-                var indexes = (variable.CodeElement as CommonDataDescriptionAndDataRedefines).Indexes;
-                foreach (var index in indexes)
-                {
-                    completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForIndex(index, variable));
-                }
-            }
-
-            return completionItems;
-        }
         #endregion
 
         #region TO Completion
@@ -485,7 +459,7 @@ namespace TypeCobol.LanguageServer
             seekedDataType = foundedVar.First().DataType;
 
             node.SymbolTable.GetVariablesByType(seekedDataType, ref potentialVariables, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
-            potentialVariables = potentialVariables.Where(da => (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88).ToList(); //Ignore variable of level 88. 
+            potentialVariables = potentialVariables.Where(da => (da.CodeElement != null && ((DataDefinitionEntry) da.CodeElement).LevelNumber.Value < 88) || (da.CodeElement == null && da is IndexDefinition)).ToList(); //Ignore variable of level 88. 
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
             {
