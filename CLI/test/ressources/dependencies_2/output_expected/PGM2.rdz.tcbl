@@ -27,6 +27,11 @@
            02 Coord3d.
              03 Z PIC 9.
                                    
+      *01  MyVar        TYPE TechnicalContext.
+       01 MyVar.
+           02 Site.
+             03 SiteName PIC X(8).
+                                              
        01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::MyPublicProcedure
@@ -44,8 +49,10 @@
            PERFORM TC-Initializations
 
                           
-      *    move vect2::Coord2d to Vect2b::Coord2d
-           move Coord2d OF vect2 to Coord2d OF Vect2b
+      *    move vect2::Coord2d to Vect2b::Coord2d.
+           move Coord2d OF vect2 to Coord2d OF Vect2b.
+      *    move MyVar::Site::SiteName to message.
+           move SiteName OF Site OF MyVar to message.
            .
       *declare procedure check private
       *   input mydate        TYPE Date.

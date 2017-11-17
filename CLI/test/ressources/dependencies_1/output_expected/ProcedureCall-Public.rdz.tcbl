@@ -17,6 +17,12 @@
            88  flag-false VALUE 'F'.
                                   
        01  realformat   PIC X(08).
+      *01  W-TechCtx    TYPE CALLEE::TechnicalContext.
+       01 W-TechCtx.
+           02 TechName PIC X(8).
+           02 Site.
+             03 SiteName PIC X(8).
+                                                      
        01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::MyPublicProcedure
@@ -26,6 +32,14 @@
 
 
        PROCEDURE DIVISION.
+      *
+           PERFORM TC-Initializations
+
+                          
+
+
+      *MOVE W-TechCtx::Site::SiteName TO someformat.
+       MOVE SiteName OF Site OF W-TechCtx TO someformat.
 
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -39,10 +53,6 @@
       *  .
 
        TRAITEMENT.
-      *
-           PERFORM TC-Initializations
-
-                  
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PUBLIC_ANY_PGM)
       *    CALL Callee::MyPublicProcedure

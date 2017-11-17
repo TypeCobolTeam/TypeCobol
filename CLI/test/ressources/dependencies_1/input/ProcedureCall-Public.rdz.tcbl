@@ -8,8 +8,12 @@
        01  someformat   PIC X(08).
        01  flag         TYPE Bool.
        01  realformat   PIC X(08).
+       01  W-TechCtx    TYPE CALLEE::TechnicalContext.
 
        PROCEDURE DIVISION.
+
+
+       MOVE W-TechCtx::Site::SiteName TO someformat.
 
        declare procedure check private
           input mydate        TYPE Date

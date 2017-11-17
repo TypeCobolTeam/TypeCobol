@@ -23,7 +23,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(DataDescription dataEntry)
         {
-            TypeReferencer(dataEntry);
+            TypeReferencer(dataEntry, dataEntry.SymbolTable);
             return base.Visit(dataEntry);
         }
 
@@ -36,28 +36,33 @@ namespace TypeCobol.Compiler.Diagnostics
 
             foreach (var dataEntry in parameters)
             {
-                TypeReferencer(dataEntry);
+                TypeReferencer(dataEntry, dataEntry.SymbolTable);
             }
 
             return base.Visit(funcDeclare);
         }
 
-        private void TypeReferencer(DataDescription dataEntry)
+        private void TypeReferencer(DataDescription dataEntry, SymbolTable symbolTable)
         {
-            //Check SymbolTable for dataEntry DataType.Name
-            var symbolTable = dataEntry.SymbolTable;
+            if (symbolTable == null) return;
             var types = symbolTable.GetType(dataEntry.DataType);
             if (types.Count != 1) return;
 
             var type = types.First();
-            
             if (symbolTable.TypesReferences.ContainsKey(type)) //If datatype already exists, add ref to the list
             {
-                symbolTable.TypesReferences[type].Add(dataEntry);
+                if (!symbolTable.TypesReferences[type].Contains(dataEntry))
+                    symbolTable.TypesReferences[type].Add(dataEntry);
             }
             else
             {
                 symbolTable.TypesReferences.Add(type, new List<DataDefinition> {dataEntry});
+            }
+
+            //Also add all the typedChildren to reference list
+            foreach (var dataDescTypeChild in type.Children.Where(c => c is DataDescription))
+            {
+                TypeReferencer(dataDescTypeChild as DataDescription, symbolTable);
             }
         }
       

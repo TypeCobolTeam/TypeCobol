@@ -8,9 +8,11 @@
        01  message      PIC X(80).
        01  vect2        TYPE Vect2.
        01  vect2b       TYPE Vect2.
+       01  MyVar        TYPE TechnicalContext.
 
        PROCEDURE DIVISION.
-           move vect2::Coord2d to Vect2b::Coord2d
+           move vect2::Coord2d to Vect2b::Coord2d.
+           move MyVar::Site::SiteName to message.
            .
        declare procedure check private
           input mydate        TYPE Date.
