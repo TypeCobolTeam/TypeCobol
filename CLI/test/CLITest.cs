@@ -26,16 +26,6 @@ namespace CLI.Test
         }
 
         [TestMethod]
-        public void TestEmptyFile_1()
-        {
-            #if DEBUG
-                CLITestHelper.Test("emptyFile_1_debug", ReturnCode.FatalError);
-            #else
-                CLITestHelper.Test("emptyFile_1_release", ReturnCode.FatalError);
-            #endif
-        }
-
-        [TestMethod]
         public void TestGenerate_1() {
             CLITestHelper.Test("generate_1", ReturnCode.Success);
         }

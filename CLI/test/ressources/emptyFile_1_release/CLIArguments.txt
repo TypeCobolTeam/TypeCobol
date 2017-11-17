@@ -1,1 +1,0 @@
-﻿-1 -i input\empty.rdz.tcbl -d output\error.txt -e rdz

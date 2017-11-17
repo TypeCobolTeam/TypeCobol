@@ -171,11 +171,6 @@ namespace TypeCobol.Compiler
                 TextDocument = textDocument;
             }
 
-            if (TextDocument != null && TextDocument.LineCount == 0)
-            {
-                throw new Exception(string.Format("Source file {0} is empty", fileName));
-            }
-
             chrono.Stop();
             SourceFileLoadTime = (int)chrono.ElapsedMilliseconds;
             chrono.Reset();
