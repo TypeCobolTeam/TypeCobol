@@ -77,14 +77,14 @@
       * __________________________________________________
       *procedure declared in this program
       *    CALL PGM2::check INPUT      somedate
-           CALL 'c2c7ee3a' USING
+           CALL 'c2c7ee3acheck' USING
                                  somedate
            end-call
                                                
 
       *procedure declared in this program
       *   CALL check         INPUT      somedate
-          CALL 'c2c7ee3a' USING
+          CALL 'c2c7ee3acheck' USING
                                  somedate
            end-call
                                                 
@@ -122,7 +122,7 @@
       *   input mydate        TYPE Date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c2c7ee3a-check.
+       PROGRAM-ID. c2c7ee3acheck.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -133,4 +133,4 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM c2c7ee3a-check.
+       END PROGRAM c2c7ee3acheck.

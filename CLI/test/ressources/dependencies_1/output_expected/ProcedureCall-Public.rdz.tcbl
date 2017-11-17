@@ -82,7 +82,7 @@
       *    CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+           CALL 'fde394fbPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -94,7 +94,7 @@
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+           CALL 'fde394fbPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -105,13 +105,13 @@
 
       *OK  call check of PGM1
       *   call check input somedate
-          CALL 'a0508f35' USING
+          CALL 'a0508f35check' USING
                                  somedate
            end-call
                                    
       *OK 
       *   call PGM1::check input somedate
-          CALL 'a0508f35' USING
+          CALL 'a0508f35check' USING
                                  somedate
            end-call
                                          
@@ -138,7 +138,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35-check.
+       PROGRAM-ID. a0508f35check.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -149,7 +149,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM a0508f35-check.
+       END PROGRAM a0508f35check.
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -159,7 +159,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fde394fb-Pgm1PrivateValidateDateFormat.
+       PROGRAM-ID. fde394fbPgm1PrivateValidateDat.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -178,4 +178,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM fde394fb-Pgm1PrivateValidateDateFormat.
+       END PROGRAM fde394fbPgm1PrivateValidateDat.
