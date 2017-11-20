@@ -477,13 +477,28 @@ class FunctionDeclarationChecker: NodeListener {
 		}
 	}
 
-	private void CheckParameters([NotNull] ParametersProfile profile, ParserRuleContext context, Node node) {
-		foreach(var parameter in profile.InputParameters)  CheckParameter(parameter, context, node);
-		foreach(var parameter in profile.InoutParameters)  CheckParameter(parameter, context, node);
-		foreach(var parameter in profile.OutputParameters) CheckParameter(parameter, context, node);
-		if (profile.ReturningParameter != null) CheckParameter(profile.ReturningParameter, context, node);
-	}
-        private void CheckParameter([NotNull] ParameterDescriptionEntry parameter,  ParserRuleContext context, Node node)
+    private void CheckParameters([NotNull] ParametersProfile profile, ParserRuleContext context, Node node)
+    {
+        var parameters = profile.Parameters;
+        foreach (var parameter in profile.InputParameters) CheckParameter(parameter, context, node);
+        foreach (var parameter in profile.InoutParameters) CheckParameter(parameter, context, node);
+        foreach (var parameter in profile.OutputParameters) CheckParameter(parameter, context, node);
+        if (profile.ReturningParameter != null)
+        {
+            CheckParameter(profile.ReturningParameter, context, node);
+            parameters.Add(profile.ReturningParameter);
+        }
+
+        foreach (var duplicatedParameter in parameters.GroupBy(p => p.Name).Where(g => g.Skip(1).Any()).SelectMany(g => g))//Group on parameter.Name //where group contains more than one item //reexpand to get all duplicated parameters 
+        {
+            DiagnosticUtils.AddError(node,
+                string.Format("Parameter with name '{0}' declared multiple times", duplicatedParameter.Name));
+        }
+
+
+    }
+
+    private void CheckParameter([NotNull] ParameterDescriptionEntry parameter,  ParserRuleContext context, Node node)
         {
             // TCRFUN_LEVEL_88_PARAMETERS
             if (parameter.LevelNumber.Value != 1)
