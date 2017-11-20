@@ -24,21 +24,21 @@ Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'mydate' of type DATE and received 'fakeDate' of type Alphanumeric 
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'fakeDate' of type Alphanumeric and received 'myDate' of type DATE 
 Line 167[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case3' expected parameter 'result' of type BOOL and received 'fakeDate' of type Alphanumeric 
-Line 173[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case4' input(Alphanumeric, DATE, ?) output(Alphanumeric, BOOL)
-Line 192[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case7'(no arguments)
-Line 195[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case8'(no arguments)
-Line 198[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case9'(no arguments)
-Line 202[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case10' only takes 0 parameter(s)
-Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'mydate' of type DATE and length 1
-Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'fakeDate' of type Alphanumeric and length 8
-Line 208[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'result' of type BOOL and length 1
-Line 212[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'mydate' of type DATE and length 1
-Line 212[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'fakeDate' of type Alphanumeric and length 8
-Line 212[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'result' of type BOOL and length 1
-Line 215[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case13(no arguments)'
-Line 219[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case14(no arguments)'
-Line 222[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case15(no arguments)'
-Line 225[12,49] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case15.unknown'(no arguments)
+Line 173[12,48] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case4' input(Alphanumeric, DATE, Alphanumeric) output(Alphanumeric, BOOL)
+Line 193[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case7'(no arguments)
+Line 196[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case8'(no arguments)
+Line 199[12,39] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case9'(no arguments)
+Line 203[12,48] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case10' only takes 0 parameter(s)
+Line 209[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'mydate' of type DATE and length 1
+Line 209[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'fakeDate' of type Alphanumeric and length 8
+Line 209[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case11' is missing parameter 'result' of type BOOL and length 1
+Line 213[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'mydate' of type DATE and length 1
+Line 213[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'fakeDate' of type Alphanumeric and length 8
+Line 213[12,40] <27, Error, Syntax> - Syntax error : Function 'PublicProcedures.case12' is missing parameter 'result' of type BOOL and length 1
+Line 216[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case13(no arguments)'
+Line 220[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case14(no arguments)'
+Line 223[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case15(no arguments)'
+Line 226[12,49] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case15.unknown'(no arguments)
 
 --- Program ---
 PROGRAM: CallToPublicProcedure common:False initial:False recursive:False
