@@ -139,7 +139,7 @@ class RenamesChecker {
 	    Check(renames.CodeElement().RenamesToDataName, renames);
 	}
 	private static void Check(SymbolReference renames, Node node) {
-		var found = node.SymbolTable.GetVariable(renames);
+		var found = node.SymbolTable.GetVariables(renames);
 		if (found.Count > 1) {
 			string message = "Illegal RENAMES: Ambiguous reference to symbol \'"+renames+"\'";
 			DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
@@ -215,7 +215,7 @@ class TypedDeclarationChecker {
 
             var variables = ((VariableWriter)node).VariablesWritten;
             foreach (var v in variables) {
-                var names = node.SymbolTable.GetVariable(v.Key);
+                var names = node.SymbolTable.GetVariables(v.Key);
                 foreach (var name in names) {
                     if (name.IsStronglyTyped) {
                         string sending = v.Value.ToString();

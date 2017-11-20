@@ -220,7 +220,7 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
         if (variable != null) {
             if (variable.IsLiteral)
                 return share_mode + name;
-            var found = table.GetVariable(variable);
+            var found = table.GetVariables(variable);
             if (found.Count < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
                 return share_mode + variable.ToCobol85();
             }

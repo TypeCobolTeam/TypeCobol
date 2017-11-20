@@ -29,7 +29,7 @@ class ReadOnlyPropertiesChecker {
 		var table = node.SymbolTable;
 		foreach (var pair in element.VariablesWritten) {
 			if (pair.Key == null) continue; // no receiving item
-			var lr = table.GetVariable(pair.Key);
+			var lr = table.GetVariables(pair.Key);
 			if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
 			var receiving = lr[0];
 			checkReadOnly(node, receiving);
@@ -105,7 +105,7 @@ class ReadOnlyPropertiesChecker {
                 {
                     //call to a TypeCobol function/procedure without arguments or to a Variable
 
-                    var potentialVariables = node.SymbolTable.GetVariable(new URI(functionCaller.FunctionCall.FunctionName));
+                    var potentialVariables = node.SymbolTable.GetVariables(new URI(functionCaller.FunctionCall.FunctionName));
 
                     if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
                     {
@@ -212,7 +212,7 @@ class ReadOnlyPropertiesChecker {
                     }
 
                     var callArgName = actual.MainSymbolReference != null ? actual.MainSymbolReference.Name : null;
-                    var found = table.GetVariable(actual);
+                    var found = table.GetVariables(actual);
                     if (found.Count < 1)
                         DiagnosticUtils.AddError(node, "Parameter " + callArgName + " is not referenced");
                     if (found.Count > 1)

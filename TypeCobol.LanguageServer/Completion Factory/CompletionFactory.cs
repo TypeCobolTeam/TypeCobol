@@ -309,7 +309,7 @@ namespace TypeCobol.LanguageServer
                                       t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line) &&
                                       ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
                             .Select(t => t.Text));
-            var possibleVariables = node.SymbolTable.GetVariableExplicit(new URI(qualifiedName));
+            var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
 
             if (possibleVariables != null && possibleVariables.Count > 0)
             {
@@ -450,7 +450,7 @@ namespace TypeCobol.LanguageServer
 
 
             DataType seekedDataType = null;
-            var foundedVar = node.SymbolTable.GetVariableExplicit(new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
+            var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
 
 
             if (foundedVar.Count != 1) //If no varaible or more than one founded stop process
@@ -600,7 +600,7 @@ namespace TypeCobol.LanguageServer
             var symbolTable = node.SymbolTable;
             if (variable.GetParentTypeDefinition == null)  //Variable is not comming from a type. 
             {
-                if (symbolTable.GetVariableExplicit(new URI(variable.Name)).Count > 0)   //Check if this variable is present locally. 
+                if (symbolTable.GetVariablesExplicit(new URI(variable.Name)).Count > 0)   //Check if this variable is present locally. 
                 {
                     completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(variable));
                 }
@@ -623,7 +623,7 @@ namespace TypeCobol.LanguageServer
 
                     foreach (var reference in references)
                     {
-                        if (symbolTable.GetVariableExplicit(new URI(reference.Name)).Count > 0)  //Check if this variable is present locally. If not just ignore it
+                        if (symbolTable.GetVariablesExplicit(new URI(reference.Name)).Count > 0)  //Check if this variable is present locally. If not just ignore it
                         {
                             if (reference.GetParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final varaible
                             {

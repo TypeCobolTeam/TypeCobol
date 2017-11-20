@@ -446,7 +446,7 @@ namespace TypeCobol.Compiler.CodeElements
                     }
                     else
                     {
-                        var found = table.GetVariable(parameter);
+                        var found = table.GetVariables(parameter);
                         foreach (var item in found)
                         {
                             var data = item as Nodes.DataDescription;
