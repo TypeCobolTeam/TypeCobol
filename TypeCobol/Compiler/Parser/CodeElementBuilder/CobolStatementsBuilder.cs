@@ -1054,7 +1054,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal CodeElement CreateSetStatementForIndexes(CodeElementsParser.SetStatementForIndexesContext context) {
 			var statement = new SetStatementForIndexes();
-			statement.ReceivingIndexes = BuildObjectArrayFromParserRules(context.indexStorageArea(), ctx => CobolExpressionsBuilder.CreateIndexStorageArea(ctx));
+			statement.ReceivingIndexes = BuildObjectArrayFromParserRules(context.dataOrIndexStorageArea(), ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
 			if(context.UP() != null) {
 				statement.IncrementDirection = CreateSyntaxProperty(IndexIncrementDirection.Up, context.UP());
 			} else
