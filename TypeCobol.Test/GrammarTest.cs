@@ -30,11 +30,11 @@ namespace TypeCobol.Test {
 	    }
 
 	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex,
-	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000) {
-            CheckTests(rootFolder, resultFolder, resultFile, regex, include, exclude, new string[] { }, skelPath);
+	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false) {
+            CheckTests(rootFolder, resultFolder, resultFile, regex, include, exclude, new string[] { }, skelPath, stopAfterAsManyErrors, autoRemarks);
         }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors = 10000) { 
+	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors = 10000, bool autoRemarks = false) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
@@ -63,7 +63,15 @@ namespace TypeCobol.Test {
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
                 var document = new Parser();
-                document.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copiesFolder);
+			    var options = new TypeCobolOptions
+			    {
+			        ExecToStep = ExecutionStep.SemanticCheck,
+#if EUROINFO_RULES
+                    AutoRemarksEnable = autoRemarks
+#endif
+                };
+
+                document.Init(path, options, format, copiesFolder);
                 document.Parse(path);
                 
 
