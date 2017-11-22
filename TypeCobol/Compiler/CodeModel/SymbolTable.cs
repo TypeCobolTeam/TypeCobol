@@ -538,7 +538,7 @@ namespace TypeCobol.Compiler.CodeModel
                 } else { 
                     //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable OR check if the variable is declared inside the typeDefContext
-                    if (GetVariables(reference.Name).Contains(reference) || typeDefContext.GetChildren<DataDefinition>(reference.Name, true).Contains(reference))
+                    if (GetVariables(reference.Name).Contains(reference) || (typeDefContext != null && typeDefContext.GetChildren<DataDefinition>(reference.Name, true).Contains(reference)))
                     {
                         found.Add(heaDataDefinition);
                         if(found.Count == 1) //If first reference found, add it to the top item of list
