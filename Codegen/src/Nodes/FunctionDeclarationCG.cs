@@ -10,7 +10,8 @@ namespace TypeCobol.Codegen.Nodes {
     using TypeCobol.Compiler.Text;
 
     internal class FunctionDeclarationCG : Compiler.Nodes.FunctionDeclaration, Generated {
-        string ProgramName = null;
+        private string ProgramHashName = null;
+        private string OriginalProcName = string.Empty; //Limited to 22 characters
         FunctionDeclaration OriginalNode = null;
 
         public FunctionDeclarationCG(Compiler.Nodes.FunctionDeclaration originalNode) : base(originalNode.CodeElement()) {
@@ -22,7 +23,10 @@ namespace TypeCobol.Codegen.Nodes {
             //we'll generate things for public call
             var containsPublicCall = originalNode.ProcStyleCalls != null && originalNode.ProcStyleCalls.Count > 0;
 
-            ProgramName = originalNode.Hash;
+            ProgramHashName = originalNode.Hash;
+            //Get procedure original name and truncate it to 22 chars if over. 
+            OriginalProcName = originalNode.Name.Substring(0,Math.Min(originalNode.Name.Length, 22));
+
             foreach (var child in originalNode.Children) {
                 if (child is Compiler.Nodes.ProcedureDivision) {
                     Compiler.Nodes.LinkageSection linkageSection = null;
@@ -57,7 +61,7 @@ namespace TypeCobol.Codegen.Nodes {
                     }
                 } else {
                     if (child.CodeElement is FunctionDeclarationEnd) {
-                        children.Add(new ProgramEnd(new URI(ProgramName)));
+                        children.Add(new ProgramEnd(new URI(ProgramHashName), OriginalProcName));
                     } else {
                         // TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
                         // TCRFUN_CODEGEN_DATA_SECTION_AS_IS
@@ -236,7 +240,7 @@ namespace TypeCobol.Codegen.Nodes {
                     _cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________",
                         null));
                     _cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
-                    _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + ProgramName + '.', null));
+                    _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + ProgramHashName + OriginalProcName + '.', null));
                     var envDiv = OriginalNode.GetProgramNode().GetChildren<EnvironmentDivision>();
                     if (envDiv != null && envDiv.Count == 1) {
                         _cache.Add(new TextLineSnapshot(-1, "ENVIRONMENT DIVISION. ", null));

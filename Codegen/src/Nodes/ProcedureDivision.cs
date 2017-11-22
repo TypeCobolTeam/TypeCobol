@@ -73,7 +73,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 	}
 	private string CreateName(SymbolReference symbolReference) {
 	    var name = symbolReference.Name;
-        var found = table.GetVariable(symbolReference);
+        var found = table.GetVariables(symbolReference);
 		if (found.Count < 1) return "?NOT_FOUND?";
 		if (found.Count > 1) return name;
 		var pentry = (DataDescriptionEntry)found[0].CodeElement;

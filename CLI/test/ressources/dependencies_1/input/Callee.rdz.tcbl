@@ -10,6 +10,14 @@
        01  flag         TYPE Bool.
        01  realformat   PIC X(08).
 
+       01 TechnicalContext TYPEDEF STRICT PUBLIC.
+            05 TechName PIC X(8).
+      * #723 It's crappy to need CALLEE:: in this situation
+            05 Site TYPE CALLEE::SITE.
+
+       01 SITE TYPEDEF STRICT PUBLIC.
+            05 SiteName PIC X(8).
+
        PROCEDURE DIVISION.
        
        declare procedure check public

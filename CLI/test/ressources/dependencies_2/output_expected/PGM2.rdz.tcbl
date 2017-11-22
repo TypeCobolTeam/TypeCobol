@@ -27,18 +27,21 @@
            02 Coord3d.
              03 Z PIC 9.
                                    
+      *01  MyVar        TYPE TechnicalContext.
+       01 MyVar.
+           02 Site.
+             03 SiteName PIC X(8).
+                                              
        01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
       *Callee::MyPublicProcedure
-        01 TC-Callee-c6db8d4a-MyPublicProcedure PROCEDURE-POINTER EXTERN
-      -    AL.
+        01 TC-Callee-c6db8d4a PROCEDURE-POINTER EXTERNAL.
       *Callee::MySecondPublicProcedure
-        01 TC-Callee-d3faf219-MySecondPublicProcedure PROCEDURE-POINTER
-      -    EXTERNAL.
+        01 TC-Callee-d3faf219 PROCEDURE-POINTER EXTERNAL.
        01  TC-MyIntrin-FctList-Loaded PIC X(02) EXTERNAL.
            88 TC-MyIntrin-FctList-IsLoaded      VALUE 'OK'.
       *MyIntrin::dump
-        01 TC-MyIntrin-f9abcd81-dump PROCEDURE-POINTER EXTERNAL.
+        01 TC-MyIntrin-f9abcd81 PROCEDURE-POINTER EXTERNAL.
 
 
        PROCEDURE DIVISION.
@@ -46,8 +49,10 @@
            PERFORM TC-Initializations
 
                           
-      *    move vect2::Coord2d to Vect2b::Coord2d
-           move Coord2d OF vect2 to Coord2d OF Vect2b
+      *    move vect2::Coord2d to Vect2b::Coord2d.
+           move Coord2d OF vect2 to Coord2d OF Vect2b.
+      *    move MyVar::Site::SiteName to message.
+           move SiteName OF Site OF MyVar to message.
            .
       *declare procedure check private
       *   input mydate        TYPE Date.
@@ -58,28 +63,28 @@
       * OK public procedures declared in "dependencies" file
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate
-           CALL TC-Callee-c6db8d4a-MyPublicProcedure USING
+           CALL TC-Callee-c6db8d4a USING
                                  somedate
            end-call
                                        
 
       *    CALL Callee::MySecondPublicProcedure
       *             INPUT      vect2
-           CALL TC-Callee-d3faf219-MySecondPublicProcedure USING
+           CALL TC-Callee-d3faf219 USING
                                  vect2
            end-call
                                        
       * __________________________________________________
       *procedure declared in this program
       *    CALL PGM2::check INPUT      somedate
-           CALL 'c2c7ee3a-check' USING
+           CALL 'c2c7ee3acheck' USING
                                  somedate
            end-call
                                                
 
       *procedure declared in this program
       *   CALL check         INPUT      somedate
-          CALL 'c2c7ee3a-check' USING
+          CALL 'c2c7ee3acheck' USING
                                  somedate
            end-call
                                                 
@@ -87,14 +92,14 @@
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call dump input message
-          CALL TC-MyIntrinsicFunctions-f9abcd81-dump USING
+          CALL TC-MyIntrinsicFunctions-f9abcd81 USING
                                  message
            end-call
                                  
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call MyIntrinsicFunctions::dump input message
-          CALL TC-MyIntrinsicFunctions-f9abcd81-dump USING
+          CALL TC-MyIntrinsicFunctions-f9abcd81 USING
                                  message
            end-call
                                                        
@@ -117,7 +122,7 @@
       *   input mydate        TYPE Date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c2c7ee3a-check.
+       PROGRAM-ID. c2c7ee3acheck.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -128,4 +133,4 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM c2c7ee3a-check.
+       END PROGRAM c2c7ee3acheck.

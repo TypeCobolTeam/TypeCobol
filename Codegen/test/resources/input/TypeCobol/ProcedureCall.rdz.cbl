@@ -16,6 +16,9 @@
 
        PROCEDURE DIVISION.
 
+       DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
+       END-DECLARE.
+
        DECLARE PROCEDURE ValidateDateFormat PRIVATE.
        END-DECLARE.
 
@@ -44,6 +47,9 @@
        END-DECLARE.
 
        TRAITEMENT.
+
+       CALL ProcedureWithANameOver22Chars.
+
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
            CALL ValidateDateFormat

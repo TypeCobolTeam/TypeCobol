@@ -4,3 +4,9 @@ SET  toto-idx2 DOWN BY 1
 SET  table-idx UP BY augmentation
 SET  table-idx UP BY downBy
 SET  table-idx DOWN BY downBy
+SET  myGroup.table-idx UP BY 1
+SET  myGroup.table-idx UP BY myGroup.var1
+SET  myGroup.table-idx DOWN BY 1
+SET  myGroup.table-idx DOWN BY myGroup.var1
+SET  myGroup.table-idx UP BY 1
+SET  myGroup.table-idx UP BY myGroup.var1

@@ -161,10 +161,10 @@ namespace TypeCobol.Compiler.Diagnostics {
 
             var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition) node).IsPartOfATypeDef;
             if(isPartOfTypeDef)
-                found = node.SymbolTable.GetVariable(area,((DataDefinition) node).GetParentTypeDefinition);
+                found = node.SymbolTable.GetVariables(area,((DataDefinition) node).GetParentTypeDefinition);
             else
             {
-                foundQualified = node.SymbolTable.GetVariableExplicitWithQualifiedName(area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString()));
+                foundQualified = node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString()));
                 found = foundQualified.Select(v => v.Value).ToList();
             }
 
@@ -596,12 +596,12 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 	}
 	private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference) {
-		var found = table.GetVariable(symbolReference);
+		var found = table.GetVariables(symbolReference);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}
     private static DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName) {
-		var found = table.GetVariable(qualifiedName);
+		var found = table.GetVariables(qualifiedName);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
 	}

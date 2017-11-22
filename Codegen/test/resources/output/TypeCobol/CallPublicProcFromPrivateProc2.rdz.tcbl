@@ -8,9 +8,8 @@
        01 TC-TCOZCHKP-PntTab.
            05 TC-TCOZCHKP-PntNbr         PIC S9(04) COMP VALUE 1.
       *TCOZCHKP::StartCheckpoint
-           05 TC-TCOZCHKP-ed8db690-StartCheckpoint-Idt   PIC X(08) VALUE
-      -     'ed8db690-StartCheckpoint'.
-           05 TC-TCOZCHKP-ed8db690-StartCheckpoint PROCEDURE-POINTER.
+           05 TC-TCOZCHKP-ed8db690-Idt   PIC X(08) VALUE 'ed8db690'.
+           05 TC-TCOZCHKP-ed8db690 PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
@@ -30,8 +29,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-TCOZCHKP-FctList-IsLoaded
-              SET TC-TCOZCHKP-ed8db690-StartCheckpoint   TO ENTRY 'ed8db
-      -    690-StartCheckpoint'
+              SET TC-TCOZCHKP-ed8db690   TO ENTRY 'ed8db690'
 
               SET TC-TCOZCHKP-FctList-IsLoaded TO TRUE
             END-IF
@@ -54,13 +52,13 @@
       *declare procedure StartCheckpoint public.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ed8db690-StartCheckpoint.
-       END PROGRAM ed8db690-StartCheckpoint.
+       PROGRAM-ID. ed8db690StartCheckpoint.
+       END PROGRAM ed8db690StartCheckpoint.
       *
       *declare procedure testos private.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d58351d5-testos.
+       PROGRAM-ID. d58351d5testos.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
@@ -76,17 +74,17 @@
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
       *TCOZCHKP::StartCheckpoint
-       01 TC-TCOZCHKP-ed8db690-StartCheckpoint-Item.
-          05 TC-TCOZCHKP-ed8db690-StartCheckpoint-Idt PIC X(08).
-          05 TC-TCOZCHKP-ed8db690-StartCheckpoint PROCEDURE-POINTER.
+       01 TC-TCOZCHKP-ed8db690-Item.
+          05 TC-TCOZCHKP-ed8db690-Idt PIC X(08).
+          05 TC-TCOZCHKP-ed8db690 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
            PERFORM TC-Initializations
       *    call TCOZCHKP::StartCheckpoint
-           IF TC-TCOZCHKP-ed8db690-StartCheckpoint-Idt not = 'ed8db690-StartCheckpoint'
+           IF TC-TCOZCHKP-ed8db690-Idt not = 'ed8db690'
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
            END-IF
-           CALL TC-TCOZCHKP-ed8db690-StartCheckpoint
+           CALL TC-TCOZCHKP-ed8db690
            end-call
                                          
            .
@@ -102,12 +100,12 @@
             PERFORM VARYING TC-Library-Idx FROM 1 BY 1
             UNTIL TC-Library-Idx > TC-Library-PntNbr
                 EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'ed8db690-StartCheckpoint'
+                WHEN 'ed8db690'
                      SET ADDRESS OF
-                     TC-TCOZCHKP-ed8db690-StartCheckpoint-Item
+                     TC-TCOZCHKP-ed8db690-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM d58351d5-testos.
+       END PROGRAM d58351d5testos.

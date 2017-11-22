@@ -381,7 +381,8 @@ namespace TypeCobol.LanguageServer
                             items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
                                     da =>
                                         da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
-                                        (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88));
+                                        ((da.CodeElement != null && (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88 )
+                                        || (da.CodeElement == null && da is IndexDefinition))));
                                 //Ignore 88 level variable
                             break;
                         }
@@ -411,10 +412,6 @@ namespace TypeCobol.LanguageServer
                                       || v.DataType == DataType.Numeric //Numeric Integer Variable
                                       || v.Usage == DataUsage.Pointer) //Or usage is pointer 
                             ));
-
-                            //Add completion item for indexes
-                            items.AddRange(CompletionFactory.GetCompletionForIndexes(fileCompiler, matchingCodeElement,
-                                userFilterText));
                             break;
                         }
                         case TokenType.OF:

@@ -7,9 +7,8 @@
        01 TC-DVZZOSM7-PntTab.
            05 TC-DVZZOSM7-PntNbr         PIC S9(04) COMP VALUE 1.
       *DVZZOSM7::StartCheckpoint
-           05 TC-DVZZOSM7-a711ebb5-StartCheckpoint-Idt   PIC X(08) VALUE
-      -     'a711ebb5-StartCheckpoint'.
-           05 TC-DVZZOSM7-a711ebb5-StartCheckpoint PROCEDURE-POINTER.
+           05 TC-DVZZOSM7-a711ebb5-Idt   PIC X(08) VALUE 'a711ebb5'.
+           05 TC-DVZZOSM7-a711ebb5 PROCEDURE-POINTER.
 
                       
        local-STORAGE SECTION.
@@ -38,8 +37,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-DVZZOSM7-FctList-IsLoaded
-              SET TC-DVZZOSM7-a711ebb5-StartCheckpoint   TO ENTRY 'a711e
-      -    bb5-StartCheckpoint'
+              SET TC-DVZZOSM7-a711ebb5   TO ENTRY 'a711ebb5'
 
               SET TC-DVZZOSM7-FctList-IsLoaded TO TRUE
             END-IF
@@ -57,7 +55,7 @@
       *declare procedure StartCheckpoint public.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a711ebb5-StartCheckpoint.
+       PROGRAM-ID. a711ebb5StartCheckpoint.
        data division.
        working-storage section.
       
@@ -93,4 +91,4 @@
            end-if
       
            .
-       END PROGRAM a711ebb5-StartCheckpoint.
+       END PROGRAM a711ebb5StartCheckpoint.

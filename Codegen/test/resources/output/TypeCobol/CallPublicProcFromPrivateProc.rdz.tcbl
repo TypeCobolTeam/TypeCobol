@@ -20,7 +20,7 @@
        TRAITEMENT.
       *OK  call check of PGM1
       *   call check input mydate1
-          CALL 'a0508f35-check' USING
+          CALL 'a0508f35check' USING
                                  mydate1
            end-call
                                   
@@ -38,9 +38,8 @@
        01 TC-PersonSe-PntTab.
            05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
       *PersonSe::GetPersonById
-           05 TC-PersonSe-cd991005-GetPersonById-Idt   PIC X(08) VALUE '
-      -    cd991005-GetPersonById'.
-           05 TC-PersonSe-cd991005-GetPersonById PROCEDURE-POINTER.
+           05 TC-PersonSe-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
+           05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
@@ -60,8 +59,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-PersonSe-FctList-IsLoaded
-              SET TC-PersonSe-cd991005-GetPersonById   TO ENTRY 'cd99100
-      -    5-GetPersonById'
+              SET TC-PersonSe-cd991005   TO ENTRY 'cd991005'
 
               SET TC-PersonSe-FctList-IsLoaded TO TRUE
             END-IF
@@ -83,7 +81,7 @@
       *   input  personId  type date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd991005-GetPersonById.
+       PROGRAM-ID. cd991005GetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
        01 personId.
@@ -94,14 +92,14 @@
              USING BY REFERENCE personId
            .
            CONTINUE.
-       END PROGRAM cd991005-GetPersonById.
+       END PROGRAM cd991005GetPersonById.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35-check.
+       PROGRAM-ID. a0508f35check.
        data division.
        working-storage section.
        01 TC-PersonSe pic X(08) value 'PersonSe'.
@@ -121,18 +119,18 @@
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
       *PersonSe::GetPersonById
-       01 TC-PersonSe-cd991005-GetPersonById-Item.
-          05 TC-PersonSe-cd991005-GetPersonById-Idt PIC X(08).
-          05 TC-PersonSe-cd991005-GetPersonById PROCEDURE-POINTER.
+       01 TC-PersonSe-cd991005-Item.
+          05 TC-PersonSe-cd991005-Idt PIC X(08).
+          05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
            PERFORM TC-Initializations
       *    Call PersonService::GetPersonById input mydate
-           IF TC-PersonService-cd991005-GetPersonById-Idt not = 'cd991005-GetPersonById'
+           IF TC-PersonService-cd991005-Idt not = 'cd991005'
                PERFORM TC-LOAD-POINTERS-PersonService
            END-IF
-           CALL TC-PersonService-cd991005-GetPersonById USING
+           CALL TC-PersonService-cd991005 USING
                                  mydate
            end-call
                                                          
@@ -149,12 +147,12 @@
             PERFORM VARYING TC-Library-Idx FROM 1 BY 1
             UNTIL TC-Library-Idx > TC-Library-PntNbr
                 EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'cd991005-GetPersonById'
+                WHEN 'cd991005'
                      SET ADDRESS OF
-                     TC-PersonSe-cd991005-GetPersonById-Item
+                     TC-PersonSe-cd991005-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM a0508f35-check.
+       END PROGRAM a0508f35check.

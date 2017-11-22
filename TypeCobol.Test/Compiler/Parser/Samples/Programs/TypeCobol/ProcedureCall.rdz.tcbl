@@ -19,6 +19,15 @@
        01 MyToto Type Toto.
 
        PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE DuplicatedParams PRIVATE
+           INPUT    format            TYPE Date
+                    format            PIC x(8)
+                    var1              TYPE Bool
+           IN-OUT   var1              TYPE Bool
+           OUTPUT   okay              TYPE Bool
+                    format            PIC S9(0000100)V9(2).
+       END-DECLARE.
        
        DECLARE PROCEDURE ValidateDateFormat PRIVATE
            INPUT  mydate        TYPE Date

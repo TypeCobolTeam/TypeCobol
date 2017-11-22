@@ -35,7 +35,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c40368dd-POW.
+       PROGRAM-ID. c40368ddPOW.
        DATA DIVISION.
        LINKAGE SECTION.
        01 x PIC 9(05).
@@ -47,4 +47,4 @@
                    BY REFERENCE result
            .
            CONTINUE.
-       END PROGRAM c40368dd-POW.
+       END PROGRAM c40368ddPOW.

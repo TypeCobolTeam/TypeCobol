@@ -8,9 +8,8 @@
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 1.
       *DVZZDATE::currentDateString
-           05 TC-DVZZDATE-b173dd7b-currentDateString-Idt   PIC X(08) VAL
-      -    UE 'b173dd7b-currentDateString'.
-           05 TC-DVZZDATE-b173dd7b-currentDateString PROCEDURE-POINTER.
+           05 TC-DVZZDATE-b173dd7b-Idt   PIC X(08) VALUE 'b173dd7b'.
+           05 TC-DVZZDATE-b173dd7b PROCEDURE-POINTER.
 
        
        LINKAGE SECTION.
@@ -32,8 +31,7 @@
 
         FctList-Process-Mode.
             IF NOT TC-DVZZDATE-FctList-IsLoaded
-              SET TC-DVZZDATE-b173dd7b-currentDateString   TO ENTRY 'b17
-      -    3dd7b-currentDateString'
+              SET TC-DVZZDATE-b173dd7b   TO ENTRY 'b173dd7b'
 
               SET TC-DVZZDATE-FctList-IsLoaded TO TRUE
             END-IF
@@ -52,7 +50,7 @@
       *    RETURNING Result PIC 9(08).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b173dd7b-currentDateString.
+       PROGRAM-ID. b173dd7bcurrentDateString.
        DATA DIVISION.
        LINKAGE SECTION.
        01 Result PIC 9(08).
@@ -61,4 +59,4 @@
            .
            display "toto"
            .
-       END PROGRAM b173dd7b-currentDateString.
+       END PROGRAM b173dd7bcurrentDateString.

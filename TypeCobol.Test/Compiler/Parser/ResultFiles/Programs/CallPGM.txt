@@ -1,4 +1,9 @@
-﻿--- Program ---
+﻿--- Diagnostics ---
+Line 8[1,28] <27, Error, Syntax> - Syntax error : Symbol x is not referenced
+Line 8[1,28] <27, Error, Syntax> - Syntax error : Symbol y is not referenced
+Line 8[1,28] <27, Error, Syntax> - Syntax error : Symbol z is not referenced
+
+--- Program ---
 PROGRAM: call-program common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic

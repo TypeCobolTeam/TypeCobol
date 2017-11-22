@@ -170,7 +170,8 @@
        
       *KO: case4 doesn't match signature but 2 case4 declared
       *1 error max
-           CALL PublicProcedures::case4 INPUT      fakeDate myDate fakeDate
+           CALL PublicProcedures::case4 INPUT      fakeDate 
+                                                myDate fakeDate
                       OUTPUT     fakeDate result
 
       * Ok: case51 exists with no argument, 
