@@ -8,14 +8,10 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
-  Idx:Numeric
-  BadIdx:Numeric
-  BadIdx:Numeric
   Account1:Account
   Bad:BadType
   ThisIndexNameIsClearlyToLong:Numeric
   ToLingIndx:Alphanumeric
-  ThisIndexNameIsClearlyToLong2:Numeric
 --- Intrinsic:Namespace:Global:Declarations
 -- TYPES -------
   Account:Account

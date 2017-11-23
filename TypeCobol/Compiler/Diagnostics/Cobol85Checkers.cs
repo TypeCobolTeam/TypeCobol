@@ -100,7 +100,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         public override bool Visit(IndexDefinition indexDefinition)
         {
-            var found = indexDefinition.SymbolTable.GetVariable(new URI(indexDefinition.Name));
+            var found = indexDefinition.SymbolTable.GetVariables(new URI(indexDefinition.Name));
 
             if (indexDefinition.Name.Length > 22 && (found.Count > 1 || indexDefinition.GetParentTypeDefinition != null))
             {
