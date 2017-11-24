@@ -25,13 +25,13 @@ namespace TypeCobol.Test {
 
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string resultFile = null) {
-	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, skelPath, 10000, false, true, resultFile);
+	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string expectedResultFile = null) {
+	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, skelPath, 10000, false, expectedResultFile);
 	    }
 
 	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex,
-	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false, bool assertOnError = true, string resultFile = null) {
-            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, skelPath, stopAfterAsManyErrors, autoRemarks, assertOnError, resultFile);
+	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false, string expectedResultFile = null) {
+            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, skelPath, stopAfterAsManyErrors, autoRemarks, expectedResultFile);
         }
 
 	    private static void AppendTextToFiles(string tetxToAppend, params string[] files)
@@ -46,14 +46,15 @@ namespace TypeCobol.Test {
 	            
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, bool assertOnError, string resultFile) { 
+	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+	        string resultFile = "GeneratedResultFile.txt";
 
             //Initialize both files
             File.WriteAllText(timedResultFile, "");
-	        if (resultFile != null)
+	        if (expectedResultFile != null)
 	            File.WriteAllText(resultFile, "");
 
             int tested = 0, nbFilesInError = 0, ignores = 0;
@@ -224,7 +225,14 @@ namespace TypeCobol.Test {
                 message += " + Codegen time: " + codeGenTotalDurationFormatted + "  => Total time: " + totalDurationFormatted;
             }
             AppendTextToFiles(message, timedResultFile);
-			if (nbFilesInError > 0 && assertOnError) Assert.Fail('\n'+message);
+			if (nbFilesInError > 0 && expectedResultFile == null) Assert.Fail('\n'+message); //If no expectedFile to compare throw assert if error
+            else if (expectedResultFile != null) //If expectedFileResult exists compare the DefaultGeneratedFile with expectedFile
+			{
+                StreamReader expectedResultReader = new StreamReader(new FileStream(expectedResultFile, FileMode.Open));
+                StreamReader actualResultReader = new StreamReader(new FileStream(resultFile, FileMode.Open));
+                TestUtils.compareLines("GrammarTestCompareFiles", expectedResultReader.ReadToEnd(), actualResultReader.ReadToEnd()); //The test will fail if result files are different
+            }
+
 		}
 
         private static void displayAndWriteErrorsToGrammarResult(IEnumerable<Diagnostic> diagnostics, params string[] files) {
