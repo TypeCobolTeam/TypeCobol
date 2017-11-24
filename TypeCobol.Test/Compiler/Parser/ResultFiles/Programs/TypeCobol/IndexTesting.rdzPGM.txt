@@ -1,0 +1,24 @@
+﻿--- Diagnostics ---
+Line 24[13,53] <27, Error, Syntax> - Syntax error : Index name is over 22 characters.
+Line 33[8,42] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx
+Line 36[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx
+
+--- Program ---
+PROGRAM: IndexTesting common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  Account1:Account
+  Bad:BadType
+  ThisIndexNameIsClearlyToLong:Numeric
+  ToLingIndx:Alphanumeric
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  Account:Account
+  BadType:BadType
+  IndexType:IndexType
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

@@ -1373,7 +1373,7 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public bool Visit([NotNull] IndexDefinition indexDefinition)
+        public virtual bool Visit([NotNull] IndexDefinition indexDefinition)
         {
             return true;
         }
