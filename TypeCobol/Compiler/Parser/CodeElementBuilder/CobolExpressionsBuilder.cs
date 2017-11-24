@@ -1529,7 +1529,7 @@ namespace TypeCobol.Compiler.Parser
 
 		internal ReceivingStorageArea CreateIndexStorageArea(CodeElementsParser.IndexStorageAreaContext context)
 		{
-			StorageArea indexStorageArea = new IndexStorageArea(CobolWordsBuilder.CreateIndexNameReference(context.indexNameReference()));
+			StorageArea indexStorageArea = new IndexStorageArea(CobolWordsBuilder.CreateIndexNameReference(context.qualifiedIndexName()));
             var receivingStorageArea = new ReceivingStorageArea(StorageDataType.Numeric, indexStorageArea);
 
             // Collect storage area read/writes at the code element level

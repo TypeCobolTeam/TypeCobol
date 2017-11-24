@@ -38,4 +38,8 @@
            SET a00d0571INX-A TO 10.
       *    SET var2::INX-A TO 05.
            SET bf0a1380INX-A TO 05.
+      *    SET var1::INX-A UP BY 1.
+           SET a00d0571INX-A UP BY 1.
+      *    SET var1::INX-A DOWN BY 1.
+           SET a00d0571INX-A DOWN BY 1.
        END PROGRAM TYPDEFQU.

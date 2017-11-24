@@ -18,4 +18,6 @@
        procedure division.
            SET var1::INX-A TO 10.
            SET var2::INX-A TO 05.
+           SET var1::INX-A UP BY 1.
+           SET var1::INX-A DOWN BY 1.
        END PROGRAM TYPDEFQU.

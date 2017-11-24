@@ -1041,7 +1041,7 @@ numericStorageArea: identifier;
 
 alphanumericStorageArea: identifier;
 
-indexStorageArea: indexNameReference;
+indexStorageArea: qualifiedIndexName;
 
 dataOrIndexStorageArea: identifierOrIndexName;
 

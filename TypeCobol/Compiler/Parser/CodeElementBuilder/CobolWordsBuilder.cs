@@ -733,6 +733,36 @@ namespace TypeCobol.Compiler.Parser
             return CreateSymbolReference(context.symbolReference4(), SymbolType.IndexName);
         }
 
+        internal SymbolReference CreateIndexNameReference(CodeElementsParser.QualifiedIndexNameContext context)
+        {
+            CodeElementsParser.SymbolReference4Context head = null;
+
+            //Detect if it's Cobol Qualified (IN|OF)
+            if (context.indexName != null)
+                return new SymbolReference(CreateAlphanumericValue(context.indexName), SymbolType.IndexName);
+            else //Else it typecobol qualified
+            {
+                head = context.TcHeadDefiniiton;
+                if (context.children.Any(x => x.Payload is Token && ((Token)x.Payload).TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
+                    return null; //If not UserDefiedWord or QualifiedSeprator it's a mistake. 
+            }
+            var tail = context.symbolReference4();
+            tail = tail.Where(t => t != head).ToArray();
+                Array.Reverse(tail);
+
+            return CreateQualifiedIndexName(head, tail, false);
+        }
+
+        private SymbolReference CreateQualifiedIndexName(CodeElementsParser.SymbolReference4Context head, CodeElementsParser.SymbolReference4Context[] tail, bool isCOBOL = true)
+        {
+            if (head == null)
+                return null; //If head is null -> retrun null, we can't create the QualifiedReference properly.
+            var reference = CreateQualifiedSymbolReference(new SymbolReference(CreateAlphanumericValue(head), SymbolType.IndexName), new SymbolReference(CreateAlphanumericValue(tail[0]), SymbolType.IndexName), isCOBOL);
+            for (int c = 1; c < tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, new SymbolReference(CreateAlphanumericValue(tail[c]), SymbolType.IndexName), isCOBOL);
+            symbolInformationForTokens[reference.NameLiteral.Token] = reference;
+            return reference;
+        }
+
         internal SymbolDefinition CreateFileNameDefinition(CodeElementsParser.FileNameDefinitionContext context)
         {
             return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.FileName);
