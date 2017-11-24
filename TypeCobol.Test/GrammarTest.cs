@@ -66,9 +66,9 @@ namespace TypeCobol.Test {
 			foreach (var file in files) {
 
 				string filename = Path.GetFileName(file);
-                
-                File.AppendAllText(timedResultFile, (filename + ':'));
-				bool ignore = include.Length > 0 && !include.Contains(filename);
+			    AppendTextToFiles((filename + ':'), timedResultFile, resultFile);
+
+                bool ignore = include.Length > 0 && !include.Contains(filename);
 				if (!ignore) ignore = exclude.Contains(filename);
 				if (ignore) {
 					ignores++;
