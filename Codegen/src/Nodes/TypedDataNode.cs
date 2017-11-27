@@ -373,7 +373,7 @@
                                             return indexesMap[token];
                                     }
                                     DataDescription dataDescription = ownerDefinition as DataDescription;
-                                    if (dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
+                                    if (dataDescription.QualifiedTokenSubsitutionMap != null && dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
                                     { return dataDescription.QualifiedTokenSubsitutionMap[token]; }
                                     else
                                     { return token.Text; }
