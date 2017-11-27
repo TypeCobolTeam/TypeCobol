@@ -38,7 +38,7 @@ namespace TypeCobol.Compiler.CodeElements
         public SyntaxValue<string> NameLiteral { get; private set; }
 
 		/// <summary>Symbol name</summary>
-		public virtual string Name { get { return NameLiteral.Value; } }
+		public virtual string Name { get { return NameLiteral != null ? NameLiteral.Value : null; } }
 
         /// <summary>
         /// Role of this symbol Token

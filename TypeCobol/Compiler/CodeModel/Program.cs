@@ -41,7 +41,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         public override string Name
         {
-            get { return Identification != null ? Identification.ProgramName.Name : ID; }
+            get { return Identification != null ? (Identification.ProgramName.Name != null ? Identification.ProgramName.Name : ID) : ID; }
         }
 
         //TODO: As to change in the future when implementing the full namespace functionnality.
