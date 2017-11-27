@@ -115,6 +115,40 @@ namespace TypeCobol.Codegen.Actions
             }
 
             /// <summary>
+            /// Set of already used storage area.
+            /// </summary>
+            HashSet<TypeCobol.Compiler.CodeElements.StorageArea> UsedStorageArea;
+            public override bool Visit(StorageArea storageArea)
+            {
+                if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsIndex))
+                {
+                    Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(this.CurrentNode);
+                    foreach (TypeCobol.Compiler.CodeElements.StorageArea storage_area in this.CurrentNode.QualifiedStorageAreas.Keys)
+                    {
+                        if (!storage_area.SymbolReference.IsQualifiedReference)
+                        {
+                            if (UsedStorageArea != null && UsedStorageArea.Contains(storage_area))
+                                continue;
+                            string name = storage_area.SymbolReference.Name;
+                            string qualified_name = this.CurrentNode.QualifiedStorageAreas[storage_area];
+                            GenerateToken item = null;
+                            string hashName = ComputeIndexHashName(qualified_name, this.CurrentNode);
+                            item = new GenerateToken(
+                                new TokenCodeElement(storage_area.SymbolReference.NameLiteral.Token), hashName,
+                                sourcePositions);
+                            item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                            this.CurrentNode.Add(item);
+                            if (UsedStorageArea == null)
+                            {
+                                UsedStorageArea = new HashSet<TypeCobol.Compiler.CodeElements.StorageArea>();
+                            }
+                            UsedStorageArea.Add(storage_area);
+                        }
+                    }
+                }
+                return true;
+            }
+            /// <summary>
             /// Checks if the current symbol reference is contained in the aready collected Items list.
             /// </summary>
             /// <param name="sr">The Symbol Reference to Check</param>
