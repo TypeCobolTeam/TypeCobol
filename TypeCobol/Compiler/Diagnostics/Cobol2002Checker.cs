@@ -214,7 +214,7 @@ class RenamesChecker {
             }
         }
 
-        private static long SimulatedTypeDefLevel(long startingLevel, Node node)
+        private static long SimulatedTypeDefLevel(long startingLevel, DataDefinition node)
         {
             var maximalLevelReached = startingLevel;
 
@@ -225,12 +225,12 @@ class RenamesChecker {
                 else
                     browsedTypes.Add(node);
             }
-            foreach (var child in node.Children)
+            foreach (DataDefinition child in node.Children)
             {
                 var calculatedLevel = startingLevel;
-                if (child is DataDefinition && (child as DataDefinition).DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //If variable is typed
+                if (child.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //If variable is typed
                 {
-                    var foundedTypes = node.SymbolTable.GetType((child as DataDefinition).DataType);
+                    var foundedTypes = node.SymbolTable.GetType(child.DataType);
                     if (foundedTypes.Count != 1)
                         continue; //If none or multiple corresponding type, it's useless to check
 
