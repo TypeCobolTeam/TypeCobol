@@ -324,7 +324,7 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Used to properly scan imported documents
         /// </summary>
-        internal Token COPYToken { get; private set; }
+        public Token COPYToken { get; private set; }
 
         /// <summary>
         /// Text-name identifies the copy text. 

@@ -203,6 +203,20 @@ namespace TypeCobol.Server
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path); //Make ParsingException trace back to RunOnce()
                 }
 
+                if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExpandingCopyFilePath))
+                {
+                    try
+                    {
+                        var generator = GeneratorFactoryManager.Instance.Create(TypeCobol.Tools.Options_Config.OutputFormat.ExpandingCopy.ToString(),
+                            parser.Results,
+                            new StreamWriter(config.ExpandingCopyFilePath), null);
+                        generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
+                    }
+                    catch(Exception e)
+                    {
+                        throw new GenerationException(e.Message, path, e);
+                    }
+                }
                 if (config.ExecToStep >= ExecutionStep.Generate) {
 
                     try

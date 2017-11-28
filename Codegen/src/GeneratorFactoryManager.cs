@@ -31,6 +31,7 @@ namespace TypeCobol.Codegen
             Singleton = new GeneratorFactoryManager();
             Instance.RegisterFactory(OutputFormat.Cobol85.ToString(), (id, document, destination, skeletons) => new DefaultGenerator(document, destination, skeletons));
             Instance.RegisterFactory(OutputFormat.PublicSignatures.ToString(), (id, document, destination, skeletons) => new SignaturesGenerator(destination));
+            Instance.RegisterFactory(OutputFormat.ExpandingCopy.ToString(), (id, document, destination, skeletons) => new ExpandingCopyGenerator(document, destination));
         }
 
         /// <summary>
