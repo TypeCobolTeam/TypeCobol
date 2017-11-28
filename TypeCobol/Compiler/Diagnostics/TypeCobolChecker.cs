@@ -516,7 +516,8 @@ class FunctionDeclarationChecker: NodeListener {
             }
 
             var type = parameter.DataType;
-            TypeDefinitionHelper.Check(node, type); //Check if the type exists and is not ambiguous
+            TypeDefinition foundedType;
+            TypeDefinitionHelper.Check(node, type, out foundedType); //Check if the type exists and is not ambiguous
 
         }
 	/// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>

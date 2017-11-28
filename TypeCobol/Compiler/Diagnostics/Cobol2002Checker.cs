@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.Diagnostics {
+﻿using System.Linq;
+
+namespace TypeCobol.Compiler.Diagnostics {
 
     using System;
     using System.Collections.Generic;
@@ -158,25 +160,97 @@ class RenamesChecker {
 	}
 }
 
-class TypedDeclarationChecker {
-	public IList<Type> GetNodes() { return new List<Type>() { typeof(ITypedNode), }; }
+    class TypedDeclarationChecker
+    {
+        public IList<Type> GetNodes()
+        {
+            return new List<Type>() {typeof(ITypedNode),};
+        }
 
-	public static void OnNode(Node node) {
-        DataDefinition dataDefinition = node as DataDefinition;
-	    if (dataDefinition == null || node is TypeDefinition) {
-	        return; //not my job
-	    }
+        private static List<Node> browsedTypes = new List<Node>();
 
-		var data = dataDefinition.CodeElement as DataDescriptionEntry;
-		if (data != null && data.UserDefinedDataType != null && data.Picture != null) {
-			string message = "PICTURE clause incompatible with TYPE clause";
-			DiagnosticUtils.AddError(node, message, data.Picture.Token);
-		}
-		var type = dataDefinition.DataType;
-        TypeDefinitionHelper.Check(node, type); //Check if the type exists and is not ambiguous
-		
-	}
-}
+        public static void OnNode(Node node)
+        {
+            DataDefinition dataDefinition = node as DataDefinition;
+            if (dataDefinition == null || node is TypeDefinition)
+            {
+                return; //not my job
+            }
+
+            var data = dataDefinition.CodeElement as DataDescriptionEntry;
+            if (data != null && data.UserDefinedDataType != null && data.Picture != null)
+            {
+                string message = "PICTURE clause incompatible with TYPE clause";
+                DiagnosticUtils.AddError(node, message, data.Picture.Token);
+            }
+
+            var type = dataDefinition.DataType;
+            TypeDefinition foundedType = null;
+            TypeDefinitionHelper.Check(node, type, out foundedType); //Check if the type exists and is not ambiguous
+
+            if (foundedType == null || data == null || data.LevelNumber == null)
+                return;
+
+            if (data.LevelNumber.Value == 88 || data.LevelNumber.Value == 66)
+            {
+                DiagnosticUtils.AddError(node, string.Format("A {0} level variable cannot be typed", data.LevelNumber.Value), MessageCode.SemanticTCErrorInParser);
+            }
+
+            if (data.LevelNumber.Value == 77 && foundedType.Children.Count > 0)
+            {
+                DiagnosticUtils.AddError(node, "A 77 level variable cannot be typed with a type containing children", MessageCode.SemanticTCErrorInParser);
+            }
+            
+            if (data.LevelNumber.Value <= 49)
+            {
+                browsedTypes.Clear(); //Clear list of browsed types before testing a path
+                long simulatedTypeLevel = SimulatedTypeDefLevel(data.LevelNumber.Value, foundedType);
+                if (simulatedTypeLevel > 49)
+                {
+                    var message = string.Format("Variable '{0}' has to be limited to level {1} because of '{2}' maximum estimated children level",
+                                  data.Name, data.LevelNumber.Value - (simulatedTypeLevel - 49), foundedType.Name);
+                    DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                }
+            }
+        }
+
+        private static long SimulatedTypeDefLevel(long startingLevel, Node node)
+        {
+            var maximalLevelReached = startingLevel;
+
+            if (node is TypeDefinition)
+            {
+                if (browsedTypes.Contains(node))
+                    return maximalLevelReached; //Stop here because of self referencing type
+                else
+                    browsedTypes.Add(node);
+            }
+            foreach (var child in node.Children)
+            {
+                var calculatedLevel = startingLevel;
+                if (child is DataDefinition && (child as DataDefinition).DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //If variable is typed
+                {
+                    var foundedTypes = node.SymbolTable.GetType((child as DataDefinition).DataType);
+                    if (foundedTypes.Count != 1)
+                        continue; //If none or multiple corresponding type, it's useless to check
+
+                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundedTypes.First());
+                }
+                else if (child.Children.Count > 0) //If variable is not typed, check if there is children
+                {
+                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, child);
+                }
+                else //It's a final variable, just add one level
+                {
+                    calculatedLevel++;
+                }
+
+                if (calculatedLevel > maximalLevelReached)
+                    maximalLevelReached = calculatedLevel;
+            }
+            return maximalLevelReached;
+        }
+    }
 
     public static class TypeDefinitionHelper
     {
@@ -185,8 +259,10 @@ class TypedDeclarationChecker {
         /// </summary>
         /// <param name="node"></param>
         /// <param name="type"></param>
-        public static void Check(Node node, DataType type)
+        /// <param name="foundedType"></param>
+        public static void Check(Node node, DataType type, out TypeDefinition foundedType)
         {
+            foundedType = null;
             if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return; //nothing to do, Type exists from Cobol 2002
             var found = node.SymbolTable.GetType(type);
             if (found.Count < 1)
@@ -199,6 +275,8 @@ class TypedDeclarationChecker {
                 string message = "Ambiguous reference to TYPE \'" + type.Name + "\'";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
+            else
+                foundedType = found[0];
         }
     }
     /*
