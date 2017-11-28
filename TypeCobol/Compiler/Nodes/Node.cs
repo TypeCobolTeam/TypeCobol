@@ -146,10 +146,15 @@ namespace TypeCobol.Compiler.Nodes {
             /// </summary>
             FileSectionNode = 0x01 << 17,
             /// <summary>
-            /// Mark that the node is containing an index, 
+            /// Mark that the node contains an index, 
             /// this flag is usefull for generator to know if it has something special to do with index
             /// </summary>
             NodeContainsIndex = 0x01 << 18,
+            /// <summary>
+            /// Mark that the node contains an index that is used with a qualified Name
+            /// It will be used by code generator, to know if the index has to be hashed or not.
+            /// </summary>
+            IndexUsedWithQualifiedName = 0x01 << 19,
 
 
         };

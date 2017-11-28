@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics {
@@ -101,12 +102,6 @@ namespace TypeCobol.Compiler.Diagnostics {
         public override bool Visit(IndexDefinition indexDefinition)
         {
             var found = indexDefinition.SymbolTable.GetVariables(new URI(indexDefinition.Name));
-
-            if (indexDefinition.Name.Length > 22 && (found.Count > 1 || indexDefinition.GetParentTypeDefinition != null))
-            {
-                //If indexdefinition is NOT unique or is declared inside a typedef it'll limited to 22 chars. 
-                DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement, "Index name is over 22 characters.");
-            }
             if (indexDefinition.GetParentTypeDefinition == null) //Detect index and make sure it's not inside a TypeDef
             {
                 if (found != null && found.Count > 1) //If multiple index with same name found, display a warning.
@@ -170,13 +165,30 @@ namespace TypeCobol.Compiler.Diagnostics {
 
             if (found.Count == 1 && foundQualified.Count == 1 && found[0].IsIndex)
             {
-                //Mark this node for generator
-                node.SetFlag(Node.Flag.NodeContainsIndex, true);
-                if (node.QualifiedStorageAreas == null)
-                    node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
+                var index = found[0];
+                if (area.SymbolReference.IsQualifiedReference)
+                {
+                    if(index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
+                        DiagnosticUtils.AddError(index.Parent.CodeElement, "Index name '"+index.Name+"' is over 22 characters.");
+                    if(index.Parent.CodeElement.SymbolInformationForTokens.First().Value.NameLiteral.Token is ImportedToken) //If index comes from a copy, do not support qualification
+                        DiagnosticUtils.AddError(node.CodeElement, "Imported index '" + index.Name + "' cannot be use with qualified symbol");
+                }
 
-                if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
-                    node.QualifiedStorageAreas.Add(storageArea, foundQualified.First().Key);
+                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef) //Index name is qualified or belongs to a typedef
+                {
+                    //Mark this node for generator
+                    node.SetFlag(Node.Flag.NodeContainsIndex, true);
+                    if (node.QualifiedStorageAreas == null)
+                        node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
+
+                    if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
+                        node.QualifiedStorageAreas.Add(storageArea, foundQualified.First().Key);
+                }
+                if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef) //If index is used with qualified name but doesn't belongs to typedef
+                {
+                    //Flag parent's index node for code generator to let it know that this index will need hash.
+                    index.Parent.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
+                }
 
                 if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
                     DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
