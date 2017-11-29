@@ -149,6 +149,49 @@ namespace TypeCobol.Codegen.Actions
                 return true;
             }
             /// <summary>
+            /// The Goal of this override is to generate hash names for pure Cobol85 Indices used as Qualified Names.
+            /// </summary>
+            /// <param name="indexDefinition">The Index Definition instance</param>
+            /// <returns>true do to keep on visiting, false otherwise.</returns>
+            public override bool Visit(IndexDefinition indexDefinition)
+            {
+                if (indexDefinition.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
+                    return true;
+                if (!indexDefinition.IsPartOfATypeDef && indexDefinition.Parent != null && indexDefinition.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
+                {//Check if the parent is a data definition with a type which is not a TypeDef
+                    if (indexDefinition.Parent is DataDefinition)
+                    {
+                        DataDefinition dataDef = indexDefinition.Parent as DataDefinition;
+                        if (dataDef.CodeElement is DataDescriptionEntry)
+                        {
+                            DataDescriptionEntry dde = dataDef.CodeElement as DataDescriptionEntry;
+                            if (dde.Indexes != null)
+                            {
+                                foreach (var index in dde.Indexes)
+                                {
+                                    if (index.Name.Equals(indexDefinition.Name))
+                                    {
+                                        Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(indexDefinition.Parent);
+                                        string name = index.Name;
+                                        string qualified_name = indexDefinition.QualifiedName.ToString();
+                                        GenerateToken item = null;
+                                        string hashName = ComputeIndexHashName(qualified_name, indexDefinition.Parent);
+                                        item = new GenerateToken(
+                                            new TokenCodeElement(index.NameLiteral.Token), hashName,
+                                            sourcePositions);
+                                        item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                                        indexDefinition.Parent.Add(item);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                indexDefinition.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                return true;
+            }
+            /// <summary>
             /// Checks if the current symbol reference is contained in the aready collected Items list.
             /// </summary>
             /// <param name="sr">The Symbol Reference to Check</param>

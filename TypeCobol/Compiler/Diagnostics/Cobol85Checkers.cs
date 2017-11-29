@@ -109,7 +109,6 @@ namespace TypeCobol.Compiler.Diagnostics {
                     DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement, "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
                 }
             }
-
             return true;
         }
 
@@ -186,8 +185,8 @@ namespace TypeCobol.Compiler.Diagnostics {
                 }
                 if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef) //If index is used with qualified name but doesn't belongs to typedef
                 {
-                    //Flag parent's index node for code generator to let it know that this index will need hash.
-                    index.Parent.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
+                    //Flag index node for code generator to let it know that this index will need hash.
+                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
                 }
 
                 if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
