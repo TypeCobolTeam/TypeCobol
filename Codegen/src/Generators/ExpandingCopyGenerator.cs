@@ -439,13 +439,6 @@ namespace TypeCobol.Codegen.Generators
             Compiler.Scanner.ITokensLinesIterator tokensIterator = Compiler.Preprocessor.ProcessedTokensDocument.GetProcessedTokensIterator(
                 compilationUnit.TextSourceInfo, processedTokensDocument.Lines);
 
-            // Create an Antlr compatible token source on top of the token iterator
-            Compiler.AntlrUtils.TokensLinesTokenSource tokenSource = new Compiler.AntlrUtils.TokensLinesTokenSource(
-                compilationUnit.TextSourceInfo.Name,
-                tokensIterator);
-
-            //We work on each line
-            IReadOnlyList<ITokensLine> tokenLines = this.CompilationResults.TokensLines;
             //var date1 = DateTime.Now;
             TypeCobol.Compiler.Scanner.Token curToken = null;
             while ((curToken = (curToken == null ? tokensIterator.NextToken() : curToken)) != null)
@@ -463,8 +456,6 @@ namespace TypeCobol.Codegen.Generators
                 {
                     ReplaceAction(token as TypeCobol.Compiler.Preprocessor.ReplacedPartialCobolWord);                        
                 }
-                //System.Diagnostics.Debug.WriteLine(token);                
-                //System.Console.Out.WriteLine(token);
             }
             //Now Run Actions
             PerformActions();
