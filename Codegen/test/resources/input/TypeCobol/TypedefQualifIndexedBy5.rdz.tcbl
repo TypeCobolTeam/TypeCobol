@@ -1,0 +1,30 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION.
+       working-storage section.
+      
+       01 Var1.
+      *Bug codegen : MyIdx should be prefixed with a hash
+           05 Tab1 PIC X(1) occurs 99 indexed by MyIdx MyIdx2 
+                   MyIdx3.
+      
+       procedure division.
+      *MyIdx should be prefixed with a hash
+           set MyIdx             to 1.
+      *MyIdx should be prefixed with a hash
+           set MyIdx             up by 1.
+           set Var1::MyIdx       to 1.
+           set Var1::MyIdx       up by 1.
+           set Var1::Tab1::MyIdx to 1.
+           set Var1::Tab1::MyIdx up by 1.
+
+           set MyIdx2             to 4.
+
+           set MyIdx3             up by 1.
+           set Var1::MyIdx3       to 1.
+           set Var1::MyIdx3       up by 1.
+           set Var1::Tab1::MyIdx3 to 1.
+           set Var1::Tab1::MyIdx3 up by 1.
+           goback
+           .
+       END PROGRAM DVZF0OSM.

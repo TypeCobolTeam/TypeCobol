@@ -346,7 +346,8 @@ namespace TypeCobol.Codegen.Generators
             do
             {
                 TypeCobol.Compiler.Preprocessor.ImportedToken impToken = currentToken as TypeCobol.Compiler.Preprocessor.ImportedToken;
-                if (impToken.CopyDirective.COPYToken.Line != copyToken.Line)
+                if (impToken.CopyDirective.COPYToken.Line != copyToken.Line ||
+                    impToken.CopyDirective.COPYToken.Column != copyToken.Column)
                     break;//This is from another COPY
                 int nInserPos = buffer.Size;
                 int newLine = currentToken.Line;
