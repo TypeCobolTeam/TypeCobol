@@ -187,8 +187,8 @@ namespace TypeCobol.Compiler.Diagnostics {
                     if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
                         DiagnosticUtils.AddError(index.Parent.CodeElement, "Index name '" + index.Name + "' is over 22 characters.");
                     if (
-                        index.Parent.CodeElement.SymbolInformationForTokens.First().Value.NameLiteral.Token is ImportedToken) //If index comes from a copy, do not support qualification
-                        DiagnosticUtils.AddError(node.CodeElement, "Imported index '" + index.Name + "' cannot be use with qualified symbol");
+                        index.Parent.CodeElement.IsInsideCopy()) //If index comes from a copy, do not support qualification
+                        DiagnosticUtils.AddError(node.CodeElement, "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
                 }
 
                 if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef) //Index name is qualified or belongs to a typedef

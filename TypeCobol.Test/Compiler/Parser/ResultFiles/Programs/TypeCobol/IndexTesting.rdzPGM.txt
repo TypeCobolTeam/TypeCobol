@@ -4,7 +4,7 @@ Line 11[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzeze
 Line 12[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
 Line 41[8,42] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx
 Line 44[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx
-Line 46[8,28] <27, Error, Syntax> - Syntax error : Imported index 'MyIdx' cannot be use with qualified symbol
+Line 46[8,28] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol
 
 --- Program ---
 PROGRAM: IndexTesting common:False initial:False recursive:False
