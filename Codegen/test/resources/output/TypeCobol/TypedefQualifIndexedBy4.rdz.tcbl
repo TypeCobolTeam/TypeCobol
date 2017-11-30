@@ -1,0 +1,23 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION.
+       working-storage section.
+      
+      
+      *01 MyType TYPEDEF STRICT.
+      *    05 MyTab occurs 99 indexed by MyIdx.
+      
+      *01 Var1 type MyType.
+       01 Var1.
+           02 MyTab occurs 99 indexed by ef8248faMyIdx.
+                           
+      
+       procedure division.
+      *    set Var1::MyIdx       to 1
+           set ef8248faMyIdx       to 1
+      *    set Var1::myidx       up by 1
+           set ef8248faMyIdx       up by 1
+      
+           goback
+           .
+       END PROGRAM DVZF0OSM.

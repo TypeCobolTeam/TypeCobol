@@ -23,7 +23,7 @@ namespace TypeCobol.Codegen.Actions
             string[] items = qualified_name.Split('.');
             string name = items[items.Length - 1];
             string hash = Tools.Hash.CreateCOBOLNameHash(qualified_name.ToLower(), 8, sourceNode);
-            return hash + name.ToUpper();
+            return hash + name;
         }
 
         /// <summary>

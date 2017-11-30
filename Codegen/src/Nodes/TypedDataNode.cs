@@ -281,7 +281,7 @@
                     {
                         if (sym.Name.Equals(index.Name))
                         {
-                            string qualified_name = (qn + '.' + index.Name).ToLower();
+                            string qualified_name = qn + '.' + index.Name;
                             string hash_name = Qualifier.ComputeIndexHashName(qualified_name, ownerDefinition);
                             map[sym.NameLiteral.Token] = hash_name;
                         }
