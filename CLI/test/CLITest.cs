@@ -47,6 +47,17 @@ namespace CLI.Test
         }
 
         [TestMethod]
+        public void TestExtractCopies()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("extractUsedCopies_EI", ReturnCode.MissingCopy);
+#else
+            CLITestHelper.Test("extractUsedCopies", ReturnCode.MissingCopy);
+#endif
+
+        }
+
+        [TestMethod]
         public void TestReturnCode() {
             CLITestHelper.Test("return_code_0", ReturnCode.Success);
             CLITestHelper.Test("return_code_1", ReturnCode.FatalError);

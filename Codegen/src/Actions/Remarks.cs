@@ -42,6 +42,7 @@ namespace TypeCobol.Codegen.Actions
 
         public void Execute()
         {
+#if EUROINFO_RULES
             if ((Source as Program).IsNested)
                 return; //We dont have to care about nested program. It prevents from generating REMARKS directive multiple times
 
@@ -70,6 +71,7 @@ namespace TypeCobol.Codegen.Actions
             }
             else
                 Source.Add(fakeRemarksNode);
+#endif
         }
 
         internal class FakeRemars : FakeGeneratedNode
