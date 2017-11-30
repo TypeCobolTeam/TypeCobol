@@ -33,7 +33,7 @@
                     var data = this.Node.CodeElement();
                     int level = (int)data.LevelNumber.Value;
                     var customtype = this.Node.SymbolTable.GetType(data.DataType);
-                    _cache.AddRange(CreateDataDefinition(Layout, new List< Tuple<string,string> >() { new Tuple<string,string>(data.Name, customtype[0].Name) }, customtype[0], data, level, 0, true, true, customtype[0]));
+                    _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, new List< Tuple<string,string> >() { new Tuple<string,string>(data.Name, customtype[0].Name) }, customtype[0], data, level, 0, true, true, customtype[0]));
                     if (customtype.Count > 0) _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, new List< Tuple<string,string> >() { new Tuple<string,string>(data.Name, customtype[0].Name) }, 
                         customtype[0], customtype[0], level + 1, 1));
                 }
@@ -291,7 +291,7 @@
             return map;
         }
 
-        internal static List<ITextLine> CreateDataDefinition(ColumnsLayout? layout, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
+        internal static List<ITextLine> CreateDataDefinition(SymbolTable table, ColumnsLayout? layout, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
             if (data != null)
@@ -310,14 +310,33 @@
                         if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
                         {
                             dependingOnAccessPath = new List<string>();
-                            if (LookupAccessPathForName(ownerDefinition, data.OccursDependingOn.MainSymbolReference.Name.ToLower(), dependingOnAccessPath))
+                            if (LookupAccessPathForName(table, ownerDefinition, data.OccursDependingOn.MainSymbolReference.Name.ToLower(), dependingOnAccessPath))
                             {   //Remove the Type name
                                 dependingOnAccessPath.RemoveAt(0);
                                 dependingOnAccessPath.Reverse();
                                 dependingOnAccessPath.AddRange(rootVariableName.ConvertAll<string>(vt => vt.Item1));
+                                bHasDependingOn = true;
                             }
                         }
-                        bHasDependingOn = true;
+                        else
+                        {
+                            dependingOnAccessPath = new List<string>();
+                            QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data.OccursDependingOn.MainSymbolReference;
+                            string tailName = qualSymRef.Tail.Name;
+                            if (LookupAccessPathForName(table, ownerDefinition, tailName.ToLower(), dependingOnAccessPath))
+                            {
+                                //Remove the type name
+                                dependingOnAccessPath.RemoveAt(0);
+                                //Remove the variable
+                                dependingOnAccessPath.RemoveAt(dependingOnAccessPath.Count - 1);
+                                if (dependingOnAccessPath.Count > 0)
+                                {
+                                    dependingOnAccessPath.Reverse();
+                                    dependingOnAccessPath.AddRange(rootVariableName.ConvertAll<string>(vt => vt.Item1));
+                                    bHasDependingOn = true;
+                                }
+                            }
+                        }                        
                     }
                     if (data.Indexes != null)
                     {
@@ -365,6 +384,7 @@
                                     { return token.Text; }
                                 };
                             else
+                            {   //We have an incomplete qualification to the root variable
                                 depenOnTokenFilter = (token) =>
                                 {
                                     if (bHasIndexes)
@@ -372,12 +392,33 @@
                                         if (indexesMap.ContainsKey(token))
                                             return indexesMap[token];
                                     }
-                                    DataDescription dataDescription = ownerDefinition as DataDescription;
-                                    if (dataDescription.QualifiedTokenSubsitutionMap != null && dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
-                                    { return dataDescription.QualifiedTokenSubsitutionMap[token]; }
+                                    QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data.OccursDependingOn.MainSymbolReference;
+                                    if (qualSymRef.IsTypeCobolQualifiedReference)
+                                    {
+                                        DataDescription dataDescription = ownerDefinition as DataDescription;
+                                        if (dataDescription.QualifiedTokenSubsitutionMap != null && dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
+                                        {
+                                            if (token == qualSymRef.Head.NameLiteral.Token)
+                                                return dataDescription.QualifiedTokenSubsitutionMap[token] + " OF " + string.Join(" OF ", dependingOnAccessPath.ToArray());
+                                            else
+                                                return dataDescription.QualifiedTokenSubsitutionMap[token];
+                                        }
+                                        else
+                                        { return token.Text; }
+                                    }
                                     else
-                                    { return token.Text; }
+                                    {   //Pure Cobol85 Qualification add left qualification to the root
+                                        if (token == qualSymRef.Tail.NameLiteral.Token)
+                                        {
+                                            return token.Text + " OF " + string.Join(" OF ", dependingOnAccessPath.ToArray());
+                                        }
+                                        else
+                                        {
+                                            return token.Text;
+                                        }                                        
+                                    }
                                 };
+                            }
                         }
                         text = ExtractTokensValuesAfterLevel(layout, data, out bHasPeriod,
                             bHasDependingOn ? depenOnTokenFilter : indexedByTokenFilter);
@@ -446,7 +487,7 @@
         /// <param name="name">The name to compute the access path this name must be lowered</param>        
         /// <param name="acc"> The access path accumulator </param>
         /// <returns> if a match has been found, false otherwise</returns>
-        private static bool AccessPathForName(DataDefinition dataDef, string name, List<string> acc)
+        private static bool AccessPathForName(SymbolTable table, DataDefinition dataDef, string name, List<string> acc)
         {
             foreach (var child in dataDef.Children)
             {//First lookup in directly accessible
@@ -458,6 +499,23 @@
                         acc.Add(dataDef.Name);
                         acc.Add(data.Name);
                         return true;
+                    }
+                    var types = table.GetType(data.DataType);
+                    bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
+                    var dataDefinitionEntry = data.CodeElement as DataDefinitionEntry;
+                    if (isCustomTypeToo && dataDefinitionEntry != null)
+                    {                        
+                        DataDefinition typeDef = (DataDefinition)types[0];
+                        List<string> sub_acc = new List<string>();
+                        bool bFound = AccessPathForName(table, typeDef, name, sub_acc);
+                        if (bFound)
+                        {   //Remove the type name
+                            sub_acc.RemoveAt(0);
+                            acc.Add(dataDef.Name);
+                            acc.Add(data.Name);
+                            acc.AddRange(sub_acc);
+                            return true;
+                        }
                     }
                 }
             }
@@ -471,7 +529,7 @@
                     {
                         List<string> sub_acc = new List<string>();
                         sub_acc.Add(dataDef.Name);
-                        if (AccessPathForName(data, name, sub_acc))
+                        if (AccessPathForName(table, data, name, sub_acc))
                         {
                             acc.AddRange(sub_acc);
                             return true;
@@ -490,12 +548,12 @@
         /// <param name="name">The name to look for</param>
         /// <param name="acc">The accumulator of the data access path</param>
         /// <returns>true if an access pathe exists, false otherwise</returns>
-        private static bool LookupAccessPathForName(DataDefinition dataDef, string name, List<string> acc)
+        private static bool LookupAccessPathForName(SymbolTable table, DataDefinition dataDef, string name, List<string> acc)
         {
             DataDefinition root = dataDef;
             do
             {
-                if (AccessPathForName(root, name, acc))
+                if (AccessPathForName(table, root, name, acc))
                 {//Add parrent access path
                     DataDefinition inner_root = root;
                     while (inner_root.Parent is DataDefinition)
@@ -565,7 +623,7 @@
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
                 if (dataDefinitionEntry != null)
                 {
-                    lines.AddRange(CreateDataDefinition(layout, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
+                    lines.AddRange(CreateDataDefinition(table, layout, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
                 }
                 else
                 {//Humm ... It will be a bug.
