@@ -120,10 +120,26 @@ namespace TypeCobol.Compiler.Nodes {
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
 
         private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
-        protected DataDefinition(DataDefinitionEntry entry): base(entry) {  }
+
+        protected DataDefinition(DataDefinitionEntry entry) : base(entry) { }
         public override string ID { get { return "data-definition"; } }
         public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 
+        private Dictionary<StorageArea, Node> _References;
+
+        public void AddReferences(StorageArea storageArea, Node node)
+        {
+            if(_References == null)
+                _References = new Dictionary<StorageArea, Node>();
+
+            if (!_References.ContainsKey(storageArea))
+                _References.Add(storageArea, node);
+        }
+
+        public Dictionary<StorageArea, Node> GetReferences()
+        {
+            return _References ?? (_References = new Dictionary<StorageArea, Node>());
+        }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);

@@ -51,32 +51,38 @@ namespace TypeCobol.Compiler.Diagnostics {
 
 
 
-        public override bool BeginCodeElement(CodeElement codeElement) {
+        public override bool BeginCodeElement(CodeElement codeElement)
+        {
             //This checker is only for Node after the full AST has been created
             return false;
         }
 
-        public override bool Visit(PerformProcedure performProcedureNode) {
+        public override bool Visit(PerformProcedure performProcedureNode)
+        {
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
             return true;
         }
 
-        public override bool Visit(Paragraph paragraph) {
+        public override bool Visit(Paragraph paragraph)
+        {
             SectionOrParagraphUsageChecker.CheckParagraph(paragraph);
             return true;
         }
 
-        public override bool Visit(ProcedureDivision procedureDivision) {
+        public override bool Visit(ProcedureDivision procedureDivision)
+        {
             LibraryChecker.CheckLibrary(procedureDivision);
             return true;
         }
 
-        public override bool Visit(Section section) {
+        public override bool Visit(Section section)
+        {
             SectionOrParagraphUsageChecker.CheckSection(section);
             return true;
         }
 
-        public override bool Visit(TypeDefinition typeDefinition) {
+        public override bool Visit(TypeDefinition typeDefinition)
+        {
             //Cobol 2002 rule
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
@@ -85,14 +91,15 @@ namespace TypeCobol.Compiler.Diagnostics {
         }
 
 
-        public override bool VisitVariableWriter(VariableWriter variableWriter) {
+        public override bool VisitVariableWriter(VariableWriter variableWriter)
+        {
             WriteTypeConsistencyChecker.OnNode(variableWriter, CurrentNode);
             return true;
         }
 
         public override bool Visit(DataDefinition dataDefinition)
         {
-            if(dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
+            if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
             {
                 CheckPicture(dataDefinition);
             }
@@ -106,7 +113,8 @@ namespace TypeCobol.Compiler.Diagnostics {
             {
                 if (found != null && found.Count > 1) //If multiple index with same name found, display a warning.
                 {
-                    DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement, "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
+                    DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement,
+                        "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
                 }
             }
             return true;
@@ -114,7 +122,9 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         public static void CheckPicture(Node node, CommonDataDescriptionAndDataRedefines customCodeElement = null)
         {
-            var codeElement = customCodeElement == null ? node.CodeElement as CommonDataDescriptionAndDataRedefines : customCodeElement;
+            var codeElement = customCodeElement == null
+                ? node.CodeElement as CommonDataDescriptionAndDataRedefines
+                : customCodeElement;
             if (codeElement != null && codeElement.Picture != null)
             {
                 foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
@@ -140,11 +150,11 @@ namespace TypeCobol.Compiler.Diagnostics {
             }
         }
 
-        private void CheckVariable(Node node, StorageArea storageArea) {
+        private void CheckVariable(Node node, StorageArea storageArea)
+        {
             if (!storageArea.NeedDeclaration)
-            {
                 return;
-            }
+
             var area = storageArea.GetStorageAreaThatNeedDeclaration;
             List<DataDefinition> found;
             var foundQualified = new List<KeyValuePair<string, DataDefinition>>();
@@ -154,35 +164,53 @@ namespace TypeCobol.Compiler.Diagnostics {
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return;
 
             var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition) node).IsPartOfATypeDef;
-            if(isPartOfTypeDef)
-                found = node.SymbolTable.GetVariables(area,((DataDefinition) node).GetParentTypeDefinition);
+            if (isPartOfTypeDef)
+                found = node.SymbolTable.GetVariables(area, ((DataDefinition) node).GetParentTypeDefinition);
             else
             {
-                foundQualified = node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString()));
+                foundQualified =
+                    node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
+                        ? area.SymbolReference.URI
+                        : new URI(area.ToString()));
                 found = foundQualified.Select(v => v.Value).ToList();
             }
 
             if (found.Count == 1 && foundQualified.Count == 1 && found[0].IsIndex)
             {
                 var index = found[0];
+                string completeQualifiedName = foundQualified.First().Key;
+
+                index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
+
                 if (area.SymbolReference.IsQualifiedReference)
                 {
-                    if(index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
-                        DiagnosticUtils.AddError(index.Parent.CodeElement, "Index name '"+index.Name+"' is over 22 characters.");
-                    if(index.Parent.CodeElement.SymbolInformationForTokens.First().Value.NameLiteral.Token is ImportedToken) //If index comes from a copy, do not support qualification
+                    if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
+                        DiagnosticUtils.AddError(index.Parent.CodeElement, "Index name '" + index.Name + "' is over 22 characters.");
+                    if (
+                        index.Parent.CodeElement.SymbolInformationForTokens.First().Value.NameLiteral.Token is ImportedToken) //If index comes from a copy, do not support qualification
                         DiagnosticUtils.AddError(node.CodeElement, "Imported index '" + index.Name + "' cannot be use with qualified symbol");
                 }
 
                 if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef) //Index name is qualified or belongs to a typedef
                 {
                     //Mark this node for generator
-                    node.SetFlag(Node.Flag.NodeContainsIndex, true);
-                    if (node.QualifiedStorageAreas == null)
-                        node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
+                    FlagNodeAndCreateQualifiedStorageAreas(node, storageArea, completeQualifiedName);
 
-                    if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
-                        node.QualifiedStorageAreas.Add(storageArea, foundQualified.First().Key);
+                    foreach (var reference in index.GetReferences().Where(n => !n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                    {
+                        FlagNodeAndCreateQualifiedStorageAreas(reference.Value, reference.Key, completeQualifiedName);
+                    }
                 }
+                else if (!area.SymbolReference.IsQualifiedReference) //If it's an index but not use with qualified reference 
+                {
+                    //Check the previous references to see if one has been flagged as NodeContainsIndex then flag this node
+                    if (index.GetReferences().Any(n => n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                    {
+                        FlagNodeAndCreateQualifiedStorageAreas(node, storageArea, completeQualifiedName);
+                    }
+                }
+
+                //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
                 if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef) //If index is used with qualified name but doesn't belongs to typedef
                 {
                     //Flag index node for code generator to let it know that this index will need hash.
@@ -200,7 +228,17 @@ namespace TypeCobol.Compiler.Diagnostics {
                 DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + area);
 
         }
+
+        private void FlagNodeAndCreateQualifiedStorageAreas(Node node, StorageArea storageArea, string completeQualifiedName)
+        {
+            node.SetFlag(Node.Flag.NodeContainsIndex, true);
+            if (node.QualifiedStorageAreas == null)
+                node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
+
+            if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
+                node.QualifiedStorageAreas.Add(storageArea, completeQualifiedName);
         }
+    }
 
 
 
