@@ -3,6 +3,20 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
+       01 MyGIdx.
+           05 Counter pic 9.
+           05 MyGIdxTab occurs 99 depending on Counter of MyGIdx
+                             indexed by MyIdxCustom.      
+      
+       01 MyIdxType TYPEDEF STRICT.
+         02 MyGIdx2.
+           05 Counter pic 9.
+           05 MyGIdxTab occurs 99 depending on Counter 
+                             indexed by MyIdxCustom.
+      
+       01 MyFinalIdxVar type MyIdxType.
+      
+
        01 Var1.
            05 Tab3 occurs 99 indexed by MyIdx3azeazeazeazeazeazeazeaz.
        01 MyVar. COPY YCONVEA.

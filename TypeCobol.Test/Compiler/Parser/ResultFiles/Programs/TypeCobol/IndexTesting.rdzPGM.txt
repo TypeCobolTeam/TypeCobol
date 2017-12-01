@@ -1,16 +1,21 @@
 ﻿--- Diagnostics ---
-Line 7[12,70] <27, Error, Syntax> - Syntax error : Index name 'MyIdx3azeazeazeazeazeazeazeaz' is over 22 characters.
-Line 11[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
-Line 12[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
-Line 41[8,42] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx
-Line 44[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx
-Line 46[8,28] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol
+Line 21[12,70] <27, Error, Syntax> - Syntax error : Index name 'MyIdx3azeazeazeazeazeazeazeaz' is over 22 characters.
+Line 25[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
+Line 26[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
+Line 55[8,42] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx
+Line 58[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx
+Line 60[8,28] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol
 
 --- Program ---
 PROGRAM: IndexTesting common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
+  MyGIdx:Alphanumeric
+  Counter:Numeric
+  MyIdxCustom:Numeric
+  MyGIdxTab:Array
+  MyFinalIdxVar:MyIdxType
   Var1:Alphanumeric
   MyIdx3azeazeazeazeazeazeazeaz:Numeric
   Tab3:Array
@@ -30,6 +35,7 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   ToLingIndx:Alphanumeric
 --- Intrinsic:Namespace:Global:Declarations
 -- TYPES -------
+  MyIdxType:MyIdxType
   Account:Account
   BadType:BadType
   IndexType:IndexType

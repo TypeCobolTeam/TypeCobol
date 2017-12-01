@@ -108,7 +108,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         public override bool Visit(IndexDefinition indexDefinition)
         {
-            var found = indexDefinition.SymbolTable.GetVariables(new URI(indexDefinition.Name));
+            var found = indexDefinition.SymbolTable.GetVariables(new URI(indexDefinition.Name)).Where(i => i.GetParentTypeDefinition == null).ToList();
             if (indexDefinition.GetParentTypeDefinition == null) //Detect index and make sure it's not inside a TypeDef
             {
                 if (found != null && found.Count > 1) //If multiple index with same name found, display a warning.
