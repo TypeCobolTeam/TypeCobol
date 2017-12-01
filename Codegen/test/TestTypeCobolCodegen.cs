@@ -374,15 +374,6 @@ namespace TypeCobol.Codegen {
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]
-        public void TypedefQualifIndexedBy()
-        {
-            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifIndexedBy") + ".rdz.tcbl", skeletons);
-        }
-
-        [TestMethod]
-        [TestCategory("Codegen")]
-        [TestProperty("Time", "fast")]
         public void TypedefQualifDependOn4()
         {
             var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
@@ -396,7 +387,25 @@ namespace TypeCobol.Codegen {
         {
             var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifDependOn5") + ".rdz.tcbl", skeletons);
-        }        
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TypedefQualifDependOn6()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifDependOn6") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void TypedefQualifIndexedBy()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifIndexedBy") + ".rdz.tcbl", skeletons);
+        }
 
         [TestMethod]
         [TestCategory("Codegen")]

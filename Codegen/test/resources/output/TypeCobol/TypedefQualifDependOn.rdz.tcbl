@@ -31,7 +31,7 @@
            06 MyGroup.
              07 GCount pic 9(05) comp-5.
              07 MyGTbl PIC X(1) occurs 99
-               depending on GCount OF MyGroup OF var2.
+               depending on GCount OF MyGroup OF var2 OF Group.
                              
       *  05 MyTable3 PIC X(1) occurs 99
       *     depending on Group::Count2.

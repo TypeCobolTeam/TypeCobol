@@ -33,9 +33,19 @@
                     var data = this.Node.CodeElement();
                     int level = (int)data.LevelNumber.Value;
                     var customtype = this.Node.SymbolTable.GetType(data.DataType);
-                    _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, new List< Tuple<string,string> >() { new Tuple<string,string>(data.Name, customtype[0].Name) }, customtype[0], data, level, 0, true, true, customtype[0]));
-                    if (customtype.Count > 0) _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, new List< Tuple<string,string> >() { new Tuple<string,string>(data.Name, customtype[0].Name) }, 
-                        customtype[0], customtype[0], level + 1, 1));
+                    //Collect from level 01 Pure Cobol85 root variables                    
+                    List<Tuple<string, string>> rootVars = new List<Tuple<string, string>>();
+                    rootVars.Add(new Tuple<string, string>(data.Name, customtype[0].Name));
+                    Node parent = this.Parent;
+                    while (parent != null && parent is DataDescription)
+                    {
+                        DataDescription dataParent = parent as DataDescription;
+                        rootVars.Add(new Tuple<string, string>(dataParent.Name, ""));
+                        parent = parent.Parent;
+                    }                    
+                    _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
+                    if (customtype.Count > 0)
+                        _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, rootVars,  customtype[0], customtype[0], level + 1, 1));
                 }
                 return _cache;
             }
