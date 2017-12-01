@@ -276,7 +276,7 @@
             for (int j = rootVariableName.Count - 1; j >= 0; j--)
             {
                 list_items.Add(rootVariableName[j].Item1);
-                if (j != 0)
+                if (j != 0 && rootVariableName[j].Item2 != null && rootVariableName[j].Item2.Trim().Length > 0)
                     list_items.Add(rootVariableName[j].Item2);
             }
             for (int i = 1; i < items.Length; i++)
