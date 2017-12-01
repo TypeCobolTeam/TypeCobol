@@ -81,6 +81,12 @@ namespace TypeCobol.Compiler.Diagnostics {
         public static void CheckTypeDefinition(TypeDefinition typeDefinition) {
             AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name);
 
+            if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
+            {
+                var message = string.Format("TYPE '{0}' has already been declared", typeDefinition.DataType.Name);
+                DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
+            }
+
             if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1) {
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);

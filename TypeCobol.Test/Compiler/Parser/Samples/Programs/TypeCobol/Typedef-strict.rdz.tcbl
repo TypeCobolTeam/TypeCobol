@@ -5,6 +5,13 @@
       
       
        WORKING-STORAGE SECTION.
+
+      *KO Type is already declared in intrinsic
+       01 bool TYPEDEF STRICT PIC X(10).
+
+      *KO Type is duplicated and not used
+       01 DuplicatedType TYPEDEF STRICT PIC X(10).
+       01 DuplicatedType TYPEDEF STRICT PIC X(10).
       
        01 Vect2 TYPEDEF strict.
         11 Coord2d.
