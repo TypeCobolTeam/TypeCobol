@@ -1,28 +1,31 @@
 ﻿--- Diagnostics ---
-Line 39[20,26] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
-Line 45[36,42] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[36,42:TYPEDEF]<TYPEDEF>
-Line 58[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
-Line 64[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
-Line 69[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
-Line 82[27,33] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[27,33:TYPEDEF]<TYPEDEF>
-Line 93[40,47] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[40,47:EXTERNAL]<EXTERNAL>
-Line 99[39,46] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[39,46:EXTERNAL]<EXTERNAL>
-Line 149[37,43] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[37,43:typedef]<TYPEDEF>
-Line 46[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
-Line 52[8,39] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
-Line 60[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
-Line 66[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
-Line 69[8,63] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
-Line 71[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
-Line 80[11,63] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
-Line 89[11,68] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
-Line 134[11,68] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRICT' is strictly-typed
-Line 144[12,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRICT-PART3' is not referenced
-Line 163[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART1 IN usestrictType1' is strictly-typed
-Line 163[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART2 IN usestrictType1' is strictly-typed
-Line 183[12,43] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable varCanBeStrict:canBeStrict.
-Line 185[12,40] <30, Error, Semantics> - Semantic error: Cannot write canBeStrict to strictly typed variable Point2:Vect2.
-Line 187[12,40] <30, Error, Semantics> - Semantic error: Cannot write Vect2 to strictly typed variable varCanBeStrict:canBeStrict.
+Line 46[20,26] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[20,26:TYPEDEF]<TYPEDEF>
+Line 52[36,42] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword} RuleStack=codeElement>dataDescriptionEntry,  OffendingSymbol=[36,42:TYPEDEF]<TYPEDEF>
+Line 65[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
+Line 71[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
+Line 76[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>redefinesClause,  OffendingSymbol=[24,32:REDEFINES]<REDEFINES>
+Line 89[27,33] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[27,33:TYPEDEF]<TYPEDEF>
+Line 100[40,47] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[40,47:EXTERNAL]<EXTERNAL>
+Line 106[39,46] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[39,46:EXTERNAL]<EXTERNAL>
+Line 156[37,43] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[37,43:typedef]<TYPEDEF>
+Line 10[8,40] <30, Error, Semantics> - Semantic error: TYPE 'bool' has already been declared
+Line 13[8,50] <30, Error, Semantics> - Semantic error: TYPE 'DuplicatedType' has already been declared
+Line 14[8,50] <30, Error, Semantics> - Semantic error: TYPE 'DuplicatedType' has already been declared
+Line 53[8,48] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
+Line 59[8,39] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.
+Line 67[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
+Line 73[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
+Line 76[8,63] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
+Line 78[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
+Line 87[11,63] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
+Line 96[11,68] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
+Line 141[11,68] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRICT' is strictly-typed
+Line 151[12,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRICT-PART3' is not referenced
+Line 170[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART1 IN usestrictType1' is strictly-typed
+Line 170[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART2 IN usestrictType1' is strictly-typed
+Line 190[12,43] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable varCanBeStrict:canBeStrict.
+Line 192[12,40] <30, Error, Semantics> - Semantic error: Cannot write canBeStrict to strictly typed variable Point2:Vect2.
+Line 194[12,40] <30, Error, Semantics> - Semantic error: Cannot write Vect2 to strictly typed variable varCanBeStrict:canBeStrict.
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -75,6 +78,9 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   TYPE-GRP-STRICT-REN:?
 --- Intrinsic:Namespace:Global:Declarations
 -- TYPES -------
+  bool:bool
+  DuplicatedType:DuplicatedType
+  DuplicatedType:DuplicatedType
   Vect2:Vect2
   TypeDefinedAfter:TypeDefinedAfter
   LevelKO:LevelKO

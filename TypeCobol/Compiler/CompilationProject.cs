@@ -197,9 +197,11 @@ namespace TypeCobol.Compiler
             }
             else
             {
-
+#if !EUROINFO_RULES
+                if (copyTextNameVariations != null)
+                    copyTextNameVariations.Add(new RemarksDirective.TextNameVariation(textName));
+#endif
                 FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true, scanState, this, copyTextNameVariations);
-                //FileCompiler fileCompiler = new FileCompiler(libraryName, textName, SourceFileProvider, this, ColumnsLayout, CompilationOptions, null, true);
                 fileCompiler.CompileOnce();
                 resultDocument = fileCompiler.CompilationResultsForCopy;
                 perfStats.WasRetrievedFromCache = false;
