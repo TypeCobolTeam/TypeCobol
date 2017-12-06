@@ -6,12 +6,66 @@ using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer
 {
     public static class CompletionFactoryHelpers
     {
+
+        /// <summary>
+        /// Help to resolve procedure name inside consumed tokens.
+        /// Will return a string containing only a proc name or an entire qualified name for the procedure (depending on the given tokens)
+        /// </summary>
+        /// <param name="consumedTokens"></param>
+        /// <returns></returns>
+        public static string GetProcedureNameFromTokens(List<Token> consumedTokens)
+        {
+            //Get procedure name or qualified name
+            return string.Join(".", consumedTokens
+                .Skip(1) //Skip the CALL token
+                .TakeWhile(t => t.TokenType != TokenType.INPUT
+                                && t.TokenType != TokenType.OUTPUT
+                                && t.TokenType != TokenType.IN_OUT) // Take tokens until keyword found
+                .Where(t => t.TokenType == TokenType.UserDefinedWord)
+                .Select(t => t.Text));
+        }
+
+        public static IEnumerable<string> AggregateTokens(IEnumerable<Token> tokensToAggregate)
+        {
+            var aggregatedTokens = new Stack<string>();
+
+            Token previousToken = null;
+            foreach (var token in tokensToAggregate)
+            {
+                if (previousToken != null && previousToken.TokenType == TokenType.UserDefinedWord)
+                {
+                    if (token.TokenType != TokenType.QualifiedNameSeparator)
+                    {
+                        aggregatedTokens.Push(token.Text);
+                    }
+                    else if (previousToken.TokenType == TokenType.UserDefinedWord)
+                    {
+                        var retainedString = aggregatedTokens.Pop();
+                        aggregatedTokens.Push(retainedString + ".");
+                    }
+                }
+                else if (previousToken != null && previousToken.TokenType == TokenType.QualifiedNameSeparator)
+                {
+                    var retainedString = aggregatedTokens.Pop();
+                    aggregatedTokens.Push(retainedString + token.Text);
+                }
+
+                if (previousToken == null && token.TokenType == TokenType.UserDefinedWord)
+                    aggregatedTokens.Push(token.Text);
+
+                previousToken = token;
+            }
+
+            return aggregatedTokens.ToArray().Reverse();
+        }
+
         public static IEnumerable<CompletionItem> CreateCompletionItemsForType(List<TypeDefinition> types, Node node, bool enablePublicFlag = true)
         {
             var completionItems = new List<CompletionItem>();

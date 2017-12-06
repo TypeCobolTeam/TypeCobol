@@ -16,6 +16,8 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.LanguageServer.SignatureHelper;
+using String = System.String;
 
 namespace TypeCobol.LanguageServer
 {
@@ -315,6 +317,8 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
+            OnSignatureHelp(parameters);
+
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
             if (fileCompiler == null)
                 return null;
@@ -556,13 +560,96 @@ namespace TypeCobol.LanguageServer
                 fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
-
-            var wrappedCodeElements = CodeElementFinder(fileCompiler, parameters.position);
-            if (wrappedCodeElements == null) //No codeelements found
+            var wrappedCodeElement = CodeElementFinder(fileCompiler, parameters.position).FirstOrDefault();
+            if (wrappedCodeElement == null) //No codeelements found
                 return null;
 
-            return new SignatureHelp();
+            var node = CompletionFactory.GetMatchingNode(fileCompiler, wrappedCodeElement);
 
+            //Get procedure name or qualified name
+            string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(wrappedCodeElement.ArrangedConsumedTokens);
+
+            //Try to get procedure by its name
+            var calledProcedures =
+                node.SymbolTable.GetFunctions(
+                    p =>
+                        p.Name.Equals(procedureName) ||
+                        p.QualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
+                    {
+                        SymbolTable.Scope.Declarations,
+                        SymbolTable.Scope.Intrinsic,
+                        SymbolTable.Scope.Namespace
+                    });
+            var signatureHelp = new SignatureHelp();
+
+            if (calledProcedures == null)
+                return null;
+
+            if (calledProcedures.Count == 1)
+            {
+                var calledProcedure = calledProcedures.First();
+                //Create and return SignatureHelp object 
+                signatureHelp.signatures = new SignatureInformation[1];
+                signatureHelp.signatures[0] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(calledProcedure);
+                signatureHelp.activeSignature = 0; //Set the active signature as the one just created
+                //Select the current parameter the user is expecting
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position); 
+
+                return signatureHelp;
+            }
+
+            //Else try to find the best matching signature
+            
+            //Get all given INPUT
+            var givenInputParameters = CompletionFactoryHelpers.AggregateTokens(
+                wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.INPUT)
+                    .Skip(1) //Ignore the INPUT Token
+                    .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT))).ToList();
+            //Get all given OUTPUT
+            var givenOutputParameters = CompletionFactoryHelpers.AggregateTokens(
+               wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.OUTPUT)
+                   .Skip(1) //Ignore the INPUT Token
+                   .TakeWhile(t => !(t.TokenType == TokenType.INPUT || t.TokenType == TokenType.IN_OUT))).ToList();
+            //Get all given INOUT
+            var givenInoutParameters = CompletionFactoryHelpers.AggregateTokens(
+              wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.IN_OUT)
+                  .Skip(1) //Ignore the INPUT Token
+                  .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
+
+            signatureHelp.signatures = new SignatureInformation[calledProcedures.Count];
+
+            FunctionDeclaration bestmatchingProcedure = null;
+            int previousMatchingWeight = 0, selectedSignatureIndex = 0;
+            foreach (var procedure in calledProcedures)
+            {
+                int matchingWeight = 0;
+                //Test INPUT parameters
+                var inputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
+                if (inputResult) matchingWeight++;
+
+                //Test OUTPUT parameters
+                var outputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
+                if (outputResult) matchingWeight++;
+                
+                //Test INOUT parameters 
+                var inoutResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
+                if (inoutResult) matchingWeight++;
+
+                signatureHelp.signatures[selectedSignatureIndex] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+
+                if (matchingWeight > previousMatchingWeight)
+                {
+                    previousMatchingWeight = matchingWeight;
+                    signatureHelp.activeSignature = selectedSignatureIndex;
+                    bestmatchingProcedure = procedure;
+                }
+                selectedSignatureIndex++;
+            }
+
+            if(bestmatchingProcedure != null)
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position);
+
+            return signatureHelp;
         }
 
         public override void OnShutdown()
