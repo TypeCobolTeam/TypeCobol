@@ -317,8 +317,6 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public override List<CompletionItem> OnCompletion(TextDocumentPosition parameters)
         {
-            OnSignatureHelp(parameters);
-
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
             if (fileCompiler == null)
                 return null;
