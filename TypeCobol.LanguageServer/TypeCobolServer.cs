@@ -53,6 +53,9 @@ namespace TypeCobol.LanguageServer
             completionOptions.resolveProvider = false;
             completionOptions.triggerCharacters = new string[] {"::"};
             initializeResult.capabilities.completionProvider = completionOptions;
+            SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions();
+            sigHelpOptions.triggerCharacters = new string[0];
+            initializeResult.capabilities.signatureHelpProvider = sigHelpOptions;
 
             return initializeResult;
         }
