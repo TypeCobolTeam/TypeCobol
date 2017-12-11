@@ -383,11 +383,17 @@ namespace TypeCobol.Compiler.CodeModel
             var completeQualifiedNames = new List<List<string>>();
             var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
             candidates.AddRange(GetVariables(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
+            int foundCount = 0;
 
             foreach (var candidate in candidates.Distinct())
             {
                 completeQualifiedNames.Add(new List<string>());
                 MatchVariable(found, candidate, name, name.Count-1, candidate, completeQualifiedNames, typeDefContext);
+
+                if (foundCount == found.Count && completeQualifiedNames.Count > 0) //No changes detected so delete the last completeQualifiedName tested.
+                    completeQualifiedNames.Remove(completeQualifiedNames.Last());
+
+                foundCount = found.Count;
             }
 
             var foundedVariables = new List<KeyValuePair<string, DataDefinition>>();
