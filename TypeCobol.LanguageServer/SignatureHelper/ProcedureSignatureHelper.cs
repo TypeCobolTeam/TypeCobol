@@ -59,16 +59,14 @@ namespace TypeCobol.LanguageServer.SignatureHelper
         {
             int activeParameter = 0;
             var closestTokenToCursor = wrappedCodeElement.ArrangedConsumedTokens.Where(
-                                t => (t.Line == position.line + 1 && t.StartIndex < position.character))
+                                t => (t.Line == position.line + 1 && t.StartIndex <= position.character && t.StopIndex+1 > position.character))
                                 .OrderBy(t => Math.Abs(position.character - t.StopIndex + 1)) //Allows to get the token closest to the cursor and ignoring the one where the cursor is
                                 .FirstOrDefault();
 
             //Get the last significant token before cursor (INPUT / OUTPUT / IN-OUT)
-            var closestSignificantTokenToCursor = wrappedCodeElement.ArrangedConsumedTokens.Where(
-                t => (t.TokenType == TokenType.INPUT || t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT)
-                     && (t.Line == position.line + 1 && t.StopIndex + 1 < position.character))
-                .OrderBy(t => Math.Abs(position.character - t.StopIndex + 1))
-                .FirstOrDefault();
+            var closestSignificantTokenToCursor = wrappedCodeElement.ArrangedConsumedTokens.LastOrDefault(
+                t => (t.TokenType == TokenType.INPUT || t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT) && t.Line <= position.line + 1);
+                
 
             if (closestSignificantTokenToCursor == null)
                 return null;//No argument have to be selected for now we will wait until the user typed (input/output/in-out)
@@ -76,8 +74,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
             var alreadyGivenTokens = wrappedCodeElement.ArrangedConsumedTokens
                 .SkipWhile(t => t != closestSignificantTokenToCursor).Skip(1)
                 .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
-                .Where(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) ||
-                             t.Line <= position.line + 1);
+                .Where(t => (t.StartIndex < position.character && t.Line == position.line + 1) || t.Line < position.line + 1);
 
 
             int alreadyGivenParametersCount = 0;
@@ -110,7 +107,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
                                                 alreadyGivenParametersCount;
             }
 
-            if (closestTokenToCursor != null && closestTokenToCursor.TokenType == TokenType.UserDefinedWord &&
+            if (closestTokenToCursor != null && (closestTokenToCursor.TokenType == TokenType.UserDefinedWord || closestTokenToCursor.TokenType == TokenType.QualifiedNameSeparator) &&
                 position.character <= closestTokenToCursor.StopIndex + 1 && activeParameter > 0)
             {
                 activeParameter--; //The cursor is still on this argument so the user is not willing the next argument. 

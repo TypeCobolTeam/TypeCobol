@@ -616,6 +616,7 @@ namespace TypeCobol.LanguageServer
               wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.IN_OUT)
                   .Skip(1) //Ignore the INPUT Token
                   .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
+            var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
 
             signatureHelp.signatures = new SignatureInformation[calledProcedures.Count];
 
@@ -638,7 +639,7 @@ namespace TypeCobol.LanguageServer
 
                 signatureHelp.signatures[selectedSignatureIndex] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
 
-                if (matchingWeight > previousMatchingWeight)
+                if (matchingWeight > previousMatchingWeight && totalGivenParameters > 0)
                 {
                     previousMatchingWeight = matchingWeight;
                     signatureHelp.activeSignature = selectedSignatureIndex;
@@ -722,7 +723,7 @@ namespace TypeCobol.LanguageServer
                 var codeElementsLine =
                     fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
 
-                if (codeElementsLine != null && codeElementsLine.CodeElements != null)
+                if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
                 {
                     //Ignore all the EndOfFile token 
                     var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
