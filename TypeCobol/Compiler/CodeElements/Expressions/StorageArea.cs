@@ -446,13 +446,19 @@ namespace TypeCobol.Compiler.CodeElements
                     }
                     else
                     {
-                        var found = table.GetVariables(parameter);
-                        foreach (var item in found)
+                        if (table != null)
                         {
-                            var data = item as Nodes.DataDescription;
-                            if (type == null) type = data.DataType;
-                            else if (type != data.DataType) type = DataType.Unknown;
+                            var found = table.GetVariables(parameter);
+                            foreach (var item in found)
+                            {
+                                var data = item as Nodes.DataDescription;
+                                if (data == null)
+                                    type = DataType.Unknown;
+                                else if (type == null) type = data.DataType;
+                                else if (type != data.DataType) type = DataType.Unknown;
+                            }
                         }
+                       
                         if (type == null) type = DataType.Unknown;
                     }
                     return type;
