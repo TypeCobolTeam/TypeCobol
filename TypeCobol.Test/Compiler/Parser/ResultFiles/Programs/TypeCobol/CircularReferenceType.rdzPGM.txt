@@ -1,0 +1,25 @@
+﻿--- Diagnostics ---
+Line 8[13,35] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 13[13,41] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 14[13,42] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 17[12,33] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 47 because of 'myType' maximum estimated children level
+Line 24[13,38] <30, Error, Semantics> - Semantic error: Type circular reference detected
+
+--- Program ---
+PROGRAM: CircularRefCheck common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  MyGroup:Alphanumeric
+  MyVar1:myType
+  MyVar2:myType
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  ThirdType:ThirdType
+  myType:myType
+  MySendType:MySendType
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING
