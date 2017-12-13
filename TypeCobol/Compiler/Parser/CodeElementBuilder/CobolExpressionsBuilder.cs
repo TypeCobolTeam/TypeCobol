@@ -164,7 +164,12 @@ namespace TypeCobol.Compiler.Parser
 					subscriptExpressions[i] = new SubscriptExpression(
 						ParseTreeUtils.GetFirstToken(context.ALL()));
 				}
-				else
+                else if (context.TALLY() != null)
+                {
+                    subscriptExpressions[i] = new SubscriptExpression(
+                        ParseTreeUtils.GetFirstToken(context.TALLY()));
+                }
+                else
 				{
 					IntegerVariable integerVariable = CreateIntegerVariableOrIndex(context.integerVariableOrIndex2());
 					ArithmeticExpression arithmeticExpression = new NumericVariableOperand(integerVariable);
