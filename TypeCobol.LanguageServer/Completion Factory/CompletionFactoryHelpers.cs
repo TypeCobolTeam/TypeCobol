@@ -108,16 +108,17 @@ namespace TypeCobol.LanguageServer
                             string.Join(", ",
                                 proc.Profile.InputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                    if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
+                        inoutParams = string.Format("| IN-OUT: {0}",
+                            string.Join(", ",
+                                proc.Profile.InoutParameters.Select(
+                                    p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
                         outputParams = string.Format("| OUTPUT: {0}",
                             string.Join(", ",
                                 proc.Profile.OutputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
-                    if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
-                        inoutParams = string.Format("| INOUT: {0}",
-                            string.Join(", ",
-                                proc.Profile.InoutParameters.Select(
-                                    p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
+                   
                 }
                 bool procIsPublic = false;
                 if (enablePublicFlag)
@@ -130,8 +131,7 @@ namespace TypeCobol.LanguageServer
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.QualifiedName.ToString() : proc.Name;
                 var completionItem =
-                    new CompletionItem(string.Format("{0} ({1} {2} {3})", procDisplayName, inputParams, outputParams,
-                        inoutParams));
+                    new CompletionItem(string.Format("{0} ({1} {2} {3})", procDisplayName, inputParams, inoutParams, outputParams));
                 completionItem.insertText = procIsPublic
                     ? string.Format("{0}::{1}", proc.QualifiedName.Tail, proc.QualifiedName.Head)
                     : proc.Name;
