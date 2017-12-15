@@ -163,7 +163,8 @@
         /// <param name="customtype">The Type definition node</param>
         /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
         /// <returns>The string representing the Tokens after TYPE Name</returns>
-        internal static string ExtractTokensValuesAfterTypeName(ColumnsLayout? layout, DataDescriptionEntry dataDescEntry, out bool bHasPeriod)
+        internal static string ExtractTokensValuesAfterTypeName(ColumnsLayout? layout, DataDescriptionEntry dataDescEntry, out bool bHasPeriod,
+            Func<Compiler.Scanner.Token, string> tokenFilter = null)
         {
             bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
@@ -183,7 +184,7 @@
                     i += 2; //skip  :: and the next type name
                 }
 
-                FlushConsumedTokens(layout, i - 1, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
+                FlushConsumedTokens(layout, i - 1, dataDescEntry.ConsumedTokens, sb, out bHasPeriod, tokenFilter);
             }
             return sb.ToString();
         }
@@ -301,6 +302,150 @@
             return map;
         }
 
+        /// <summary>
+        /// Pre Generation calculation for collection variable path access and index variable map.
+        /// </summary>
+        /// <param name="table">The Current Symbol Table</param>
+        /// <param name="rootVariableName">All current root variable</param>
+        /// <param name="ownerDefinition">The Owner of the current definition</param>
+        /// <param name="data_def">The current definition</param>
+        /// <param name="bHasDependingOn">[out] true if the current variable hace depending on variables, false otherwise</param>
+        /// <param name="bHasIndexes">[out] true if the current variable definition have indexed variables, fals eotherwise.</param>
+        /// <param name="dependingOnAccessPath">[out] depending on variables access path list</param>
+        /// <param name="indexesMap">[out] Indexed variable map to tokens</param>
+        internal static void PreGenDepeningOnAndIndexed(SymbolTable table, List<Tuple<string, string>> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,
+            out bool bHasDependingOn,
+            out bool bHasIndexes,
+            out List<string> dependingOnAccessPath,
+            out Dictionary<Compiler.Scanner.Token, string> indexesMap
+            )
+        {
+            var data = data_def as DataDescriptionEntry;
+            bHasDependingOn = false;
+            bHasIndexes = false;
+            dependingOnAccessPath = null;
+            indexesMap = null;
+            if (data.OccursDependingOn != null)
+            {
+                if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
+                {
+                    dependingOnAccessPath = new List<string>();
+                    if (LookupAccessPathForName(table, ownerDefinition, data.OccursDependingOn.MainSymbolReference.Name.ToLower(), dependingOnAccessPath))
+                    {   //Remove the Type name
+                        dependingOnAccessPath.RemoveAt(0);
+                        dependingOnAccessPath.Reverse();
+                        dependingOnAccessPath.AddRange(rootVariableName.ConvertAll<string>(vt => vt.Item1));
+                        bHasDependingOn = true;
+                    }
+                }
+                else
+                {
+                    dependingOnAccessPath = new List<string>();
+                    QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data.OccursDependingOn.MainSymbolReference;
+                    string tailName = qualSymRef.Tail.Name;
+                    if (LookupAccessPathForName(table, ownerDefinition, tailName.ToLower(), dependingOnAccessPath))
+                    {
+                        //Remove the type name
+                        dependingOnAccessPath.RemoveAt(0);
+                        //Remove the variable
+                        dependingOnAccessPath.RemoveAt(dependingOnAccessPath.Count - 1);
+                        if (dependingOnAccessPath.Count > 0)
+                        {
+                            dependingOnAccessPath.Reverse();
+                            dependingOnAccessPath.AddRange(rootVariableName.ConvertAll<string>(vt => vt.Item1));
+                            bHasDependingOn = true;
+                        }
+                    }
+                }
+            }
+            if (data.Indexes != null)
+            {
+                bHasIndexes = true;
+                //So Children of the owner definition contains all indexes
+                indexesMap = BuiltIndexMap(rootVariableName, data.Indexes, ownerDefinition);
+            }
+        }
+
+        /// <summary>
+        /// Post generation calculation of data definition having depending on or indexed variables.
+        /// </summary>
+        /// <param name="ownerDefinition">The Owner of the current definition</param>
+        /// <param name="data_def">The current definition</param>
+        /// <param name="bHasDependingOn">true if the current variable hace depending on variables, false otherwise</param>
+        /// <param name="bHasIndexes">true if the current variable definition have indexed variables, fals eotherwise.</param>
+        /// <param name="dependingOnAccessPath">Depending on variables access path list</param>
+        /// <param name="indexesMap">Indexed variable map to tokens</param>
+        internal static void PostGenDepeningOnAndIndexed(TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,  bool bHasDependingOn, bool bHasIndexes,
+            List<string> dependingOnAccessPath,
+            Dictionary<Compiler.Scanner.Token, string> indexesMap,
+            out Func<Compiler.Scanner.Token, string> depenOnTokenFilter,
+            out Func<Compiler.Scanner.Token, string> indexedByTokenFilter
+            )
+        {
+            var data = data_def as DataDescriptionEntry;
+            depenOnTokenFilter = null;
+            indexedByTokenFilter = null;
+            if (bHasIndexes)
+            {
+                indexedByTokenFilter = (token) =>
+                {
+                    return indexesMap.ContainsKey(token) ? indexesMap[token] : token.Text;
+                };
+            }
+            if (bHasDependingOn)
+            {
+                if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
+                    depenOnTokenFilter = (token) =>
+                    {
+                        if (bHasIndexes)
+                        {
+                            if (indexesMap.ContainsKey(token))
+                                return indexesMap[token];
+                        }
+                        if (token == data.OccursDependingOn.MainSymbolReference.NameLiteral.Token)
+                        { return string.Join(" OF ", dependingOnAccessPath.ToArray()); }
+                        else
+                        { return token.Text; }
+                    };
+                else
+                {   //We have an incomplete qualification to the root variable
+                    depenOnTokenFilter = (token) =>
+                    {
+                        if (bHasIndexes)
+                        {
+                            if (indexesMap.ContainsKey(token))
+                                return indexesMap[token];
+                        }
+                        QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data.OccursDependingOn.MainSymbolReference;
+                        if (qualSymRef.IsTypeCobolQualifiedReference)
+                        {
+                            DataDescription dataDescription = ownerDefinition as DataDescription;
+                            if (dataDescription.QualifiedTokenSubsitutionMap != null && dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
+                            {
+                                if (token == qualSymRef.Head.NameLiteral.Token)
+                                    return dataDescription.QualifiedTokenSubsitutionMap[token] + " OF " + string.Join(" OF ", dependingOnAccessPath.ToArray());
+                                else
+                                    return dataDescription.QualifiedTokenSubsitutionMap[token];
+                            }
+                            else
+                            { return token.Text; }
+                        }
+                        else
+                        {   //Pure Cobol85 Qualification add left qualification to the root
+                            if (token == qualSymRef.Tail.NameLiteral.Token)
+                            {
+                                return token.Text + " OF " + string.Join(" OF ", dependingOnAccessPath.ToArray());
+                            }
+                            else
+                            {
+                                return token.Text;
+                            }
+                        }
+                    };
+                }
+            }
+        }
+
         internal static List<ITextLine> CreateDataDefinition(SymbolTable table, ColumnsLayout? layout, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
@@ -315,45 +460,10 @@
                     bool bHasIndexes = false;
                     List<string> dependingOnAccessPath = null;
                     Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
-                    if (data.OccursDependingOn != null)
-                    {
-                        if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
-                        {
-                            dependingOnAccessPath = new List<string>();
-                            if (LookupAccessPathForName(table, ownerDefinition, data.OccursDependingOn.MainSymbolReference.Name.ToLower(), dependingOnAccessPath))
-                            {   //Remove the Type name
-                                dependingOnAccessPath.RemoveAt(0);
-                                dependingOnAccessPath.Reverse();
-                                dependingOnAccessPath.AddRange(rootVariableName.ConvertAll<string>(vt => vt.Item1));
-                                bHasDependingOn = true;
-                            }
-                        }
-                        else
-                        {
-                            dependingOnAccessPath = new List<string>();
-                            QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data.OccursDependingOn.MainSymbolReference;
-                            string tailName = qualSymRef.Tail.Name;
-                            if (LookupAccessPathForName(table, ownerDefinition, tailName.ToLower(), dependingOnAccessPath))
-                            {
-                                //Remove the type name
-                                dependingOnAccessPath.RemoveAt(0);
-                                //Remove the variable
-                                dependingOnAccessPath.RemoveAt(dependingOnAccessPath.Count - 1);
-                                if (dependingOnAccessPath.Count > 0)
-                                {
-                                    dependingOnAccessPath.Reverse();
-                                    dependingOnAccessPath.AddRange(rootVariableName.ConvertAll<string>(vt => vt.Item1));
-                                    bHasDependingOn = true;
-                                }
-                            }
-                        }                        
-                    }
-                    if (data.Indexes != null)
-                    {
-                        bHasIndexes = true;
-                        //So Children of the owner definition contains all indexes
-                        indexesMap = BuiltIndexMap(rootVariableName, data.Indexes, ownerDefinition);
-                    }
+
+                    PreGenDepeningOnAndIndexed(table, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
+                        out dependingOnAccessPath, out indexesMap);
+
                     string text = !(bHasDependingOn || bHasIndexes) ? ExtractPicTokensValues(layout, data, out bHasPeriod) : "";
                     if (text.Length > 0)
                     {
@@ -371,65 +481,10 @@
                     {//Try to extract after a Level.
                         Func<Compiler.Scanner.Token, string> depenOnTokenFilter = null;
                         Func<Compiler.Scanner.Token, string> indexedByTokenFilter = null;
-                        if (bHasIndexes)
-                        {
-                            indexedByTokenFilter = (token) =>
-                            {
-                                return indexesMap.ContainsKey(token) ? indexesMap[token] : token.Text;
-                            };
-                        }
-                        if (bHasDependingOn)
-                        {
-                            if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
-                                depenOnTokenFilter = (token) =>
-                                {
-                                    if (bHasIndexes)
-                                    {
-                                        if (indexesMap.ContainsKey(token))
-                                            return indexesMap[token];
-                                    }
-                                    if (token == data.OccursDependingOn.MainSymbolReference.NameLiteral.Token)
-                                    { return string.Join(" OF ", dependingOnAccessPath.ToArray()); }
-                                    else
-                                    { return token.Text; }
-                                };
-                            else
-                            {   //We have an incomplete qualification to the root variable
-                                depenOnTokenFilter = (token) =>
-                                {
-                                    if (bHasIndexes)
-                                    {
-                                        if (indexesMap.ContainsKey(token))
-                                            return indexesMap[token];
-                                    }
-                                    QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data.OccursDependingOn.MainSymbolReference;
-                                    if (qualSymRef.IsTypeCobolQualifiedReference)
-                                    {
-                                        DataDescription dataDescription = ownerDefinition as DataDescription;
-                                        if (dataDescription.QualifiedTokenSubsitutionMap != null && dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
-                                        {
-                                            if (token == qualSymRef.Head.NameLiteral.Token)
-                                                return dataDescription.QualifiedTokenSubsitutionMap[token] + " OF " + string.Join(" OF ", dependingOnAccessPath.ToArray());
-                                            else
-                                                return dataDescription.QualifiedTokenSubsitutionMap[token];
-                                        }
-                                        else
-                                        { return token.Text; }
-                                    }
-                                    else
-                                    {   //Pure Cobol85 Qualification add left qualification to the root
-                                        if (token == qualSymRef.Tail.NameLiteral.Token)
-                                        {
-                                            return token.Text + " OF " + string.Join(" OF ", dependingOnAccessPath.ToArray());
-                                        }
-                                        else
-                                        {
-                                            return token.Text;
-                                        }                                        
-                                    }
-                                };
-                            }
-                        }
+
+                        PostGenDepeningOnAndIndexed(ownerDefinition, data_def, bHasDependingOn, bHasIndexes, dependingOnAccessPath, indexesMap,
+                            out depenOnTokenFilter, out indexedByTokenFilter);
+                            
                         text = ExtractTokensValuesAfterLevel(layout, data, out bHasPeriod,
                             bHasDependingOn ? depenOnTokenFilter : indexedByTokenFilter);
                         if (text.Length > 0)
@@ -446,16 +501,33 @@
                 else if (customtype != null)
                 {   //This variable will have no subtypes as children at all
                     //So Auto detect a type based on scalar COBOL typedef.            
+
+                    bool bHasDependingOn = false;
+                    bool bHasIndexes = false;
+                    List<string> dependingOnAccessPath = null;
+                    Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
+
+                    PreGenDepeningOnAndIndexed(table, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
+                        out dependingOnAccessPath, out indexesMap);
+
+                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod) : "";
+
                     if (data_def.Name != null)
-                        line.Append(' ').Append(data.Name);
-                    string text = ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod);
+                        line.Append(' ').Append(data.Name);                    
                     if (text.Length != 0)
                     {
                         line.Append(text);
                     }
                     else
                     {
-                        text = ExtractTokensValuesAfterTypeName(layout, data, out bHasPeriod);
+                        Func<Compiler.Scanner.Token, string> depenOnTokenFilter = null;
+                        Func<Compiler.Scanner.Token, string> indexedByTokenFilter = null;
+
+                        PostGenDepeningOnAndIndexed(ownerDefinition, data_def, bHasDependingOn, bHasIndexes, dependingOnAccessPath, indexesMap,
+                            out depenOnTokenFilter, out indexedByTokenFilter);
+
+                        text = ExtractTokensValuesAfterTypeName(layout, data, out bHasPeriod, 
+                            bHasDependingOn ? depenOnTokenFilter : indexedByTokenFilter);
                         if (text.Length != 0)
                             line.Append(text);
                     }
