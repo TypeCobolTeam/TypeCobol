@@ -37,10 +37,19 @@
                     List<Tuple<string, string>> rootVars = new List<Tuple<string, string>>();
                     rootVars.Add(new Tuple<string, string>(data.Name, customtype[0].Name));
                     Node parent = this.Parent;
-                    while (parent != null && parent is DataDescription)
+                    while (parent != null)
                     {
-                        DataDescription dataParent = parent as DataDescription;
-                        rootVars.Add(new Tuple<string, string>(dataParent.Name, ""));
+                        if (parent is DataDescription)
+                        {
+                            DataDescription dataParent = parent as DataDescription;
+                            rootVars.Add(new Tuple<string, string>(dataParent.Name, ""));
+                        }
+                        if (parent is TypeCobol.Compiler.Nodes.FunctionDeclaration)
+                        {
+                            TypeCobol.Compiler.Nodes.FunctionDeclaration funParent = (TypeCobol.Compiler.Nodes.FunctionDeclaration)parent;
+                            rootVars.Add(new System.Tuple<string, string>(funParent.Name, ""));
+                            break;
+                        }
                         parent = parent.Parent;
                     }                    
                     _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
@@ -313,7 +322,7 @@
         /// <param name="bHasIndexes">[out] true if the current variable definition have indexed variables, fals eotherwise.</param>
         /// <param name="dependingOnAccessPath">[out] depending on variables access path list</param>
         /// <param name="indexesMap">[out] Indexed variable map to tokens</param>
-        internal static void PreGenDepeningOnAndIndexed(SymbolTable table, List<Tuple<string, string>> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,
+        internal static void PreGenDependingOnAndIndexed(SymbolTable table, List<Tuple<string, string>> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,
             out bool bHasDependingOn,
             out bool bHasIndexes,
             out List<string> dependingOnAccessPath,
@@ -375,7 +384,7 @@
         /// <param name="bHasIndexes">true if the current variable definition have indexed variables, fals eotherwise.</param>
         /// <param name="dependingOnAccessPath">Depending on variables access path list</param>
         /// <param name="indexesMap">Indexed variable map to tokens</param>
-        internal static void PostGenDepeningOnAndIndexed(TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,  bool bHasDependingOn, bool bHasIndexes,
+        internal static void PostGenDependingOnAndIndexed(TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,  bool bHasDependingOn, bool bHasIndexes,
             List<string> dependingOnAccessPath,
             Dictionary<Compiler.Scanner.Token, string> indexesMap,
             out Func<Compiler.Scanner.Token, string> depenOnTokenFilter,
@@ -461,7 +470,7 @@
                     List<string> dependingOnAccessPath = null;
                     Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
 
-                    PreGenDepeningOnAndIndexed(table, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
+                    PreGenDependingOnAndIndexed(table, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
                     string text = !(bHasDependingOn || bHasIndexes) ? ExtractPicTokensValues(layout, data, out bHasPeriod) : "";
@@ -482,7 +491,7 @@
                         Func<Compiler.Scanner.Token, string> depenOnTokenFilter = null;
                         Func<Compiler.Scanner.Token, string> indexedByTokenFilter = null;
 
-                        PostGenDepeningOnAndIndexed(ownerDefinition, data_def, bHasDependingOn, bHasIndexes, dependingOnAccessPath, indexesMap,
+                        PostGenDependingOnAndIndexed(ownerDefinition, data_def, bHasDependingOn, bHasIndexes, dependingOnAccessPath, indexesMap,
                             out depenOnTokenFilter, out indexedByTokenFilter);
                             
                         text = ExtractTokensValuesAfterLevel(layout, data, out bHasPeriod,
@@ -507,7 +516,7 @@
                     List<string> dependingOnAccessPath = null;
                     Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
 
-                    PreGenDepeningOnAndIndexed(table, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
+                    PreGenDependingOnAndIndexed(table, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
                     string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod) : "";
@@ -523,7 +532,7 @@
                         Func<Compiler.Scanner.Token, string> depenOnTokenFilter = null;
                         Func<Compiler.Scanner.Token, string> indexedByTokenFilter = null;
 
-                        PostGenDepeningOnAndIndexed(ownerDefinition, data_def, bHasDependingOn, bHasIndexes, dependingOnAccessPath, indexesMap,
+                        PostGenDependingOnAndIndexed(ownerDefinition, data_def, bHasDependingOn, bHasIndexes, dependingOnAccessPath, indexesMap,
                             out depenOnTokenFilter, out indexedByTokenFilter);
 
                         text = ExtractTokensValuesAfterTypeName(layout, data, out bHasPeriod, 

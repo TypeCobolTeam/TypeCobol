@@ -88,8 +88,29 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 						_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 					}
 				}
+                if (customtype != null)
+                {
+                    List<System.Tuple<string, string>> rootVars = new List<System.Tuple<string, string>>();
+                    rootVars.Add(new System.Tuple<string, string>(name, customtype.Name));
 
-                    if (customtype != null) _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, new List<System.Tuple<string, string>>() { new System.Tuple<string, string>(name, customtype.Name) }, customtype, customtype, 2, 1));
+                    Node parent = this.Parent;
+                    while (parent != null)
+                    {
+                        if (parent is DataDescription)
+                        {
+                            DataDescription dataParent = parent as DataDescription;
+                            rootVars.Add(new System.Tuple<string, string>(dataParent.Name, ""));
+                        }
+                        if (parent is TypeCobol.Compiler.Nodes.FunctionDeclaration)
+                        {
+                            TypeCobol.Compiler.Nodes.FunctionDeclaration funParent = (TypeCobol.Compiler.Nodes.FunctionDeclaration)parent;
+                            rootVars.Add(new System.Tuple<string, string>(funParent.Name, ""));
+                            break;
+                        }
+                        parent = parent.Parent;
+                    }
+                    _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, rootVars, customtype, customtype, 2, 1));
+                }
 			}
 			return _cache;
 		}
