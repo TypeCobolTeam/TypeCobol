@@ -217,7 +217,7 @@ namespace TypeCobol.Server {
 		}
 
 		static int exit(ReturnCode code, string message) {
-			string errmsg = PROGNAME+": "+message+"\n";
+			string errmsg = "Code: "+ (int)code + " " + PROGNAME+": "+message+"\n";
 			errmsg += "Try "+PROGNAME+" --help for usage information.";
 			Console.WriteLine(errmsg);
 
