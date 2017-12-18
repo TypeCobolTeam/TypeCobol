@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.LanguageServer.SignatureHelper;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer
@@ -104,17 +105,17 @@ namespace TypeCobol.LanguageServer
                 if (proc.Profile != null)
                 {
                     if (proc.Profile.InputParameters != null && proc.Profile.InputParameters.Count > 0)
-                        inputParams = string.Format("INPUT: {0}",
+                        inputParams = string.Format("INPUT {0}",
                             string.Join(", ",
                                 proc.Profile.InputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.InoutParameters != null && proc.Profile.InoutParameters.Count > 0)
-                        inoutParams = string.Format("| IN-OUT: {0}",
+                        inoutParams = string.Format("IN-OUT {0}",
                             string.Join(", ",
                                 proc.Profile.InoutParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
                     if (proc.Profile.OutputParameters != null && proc.Profile.OutputParameters.Count > 0)
-                        outputParams = string.Format("| OUTPUT: {0}",
+                        outputParams = string.Format("OUTPUT {0}",
                             string.Join(", ",
                                 proc.Profile.OutputParameters.Select(
                                     p => string.Format("{0}({1})", p.DataName, p.DataType.Name))));
@@ -131,11 +132,13 @@ namespace TypeCobol.LanguageServer
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.QualifiedName.ToString() : proc.Name;
                 var completionItem =
-                    new CompletionItem(string.Format("{0} ({1} {2} {3})", procDisplayName, inputParams, inoutParams, outputParams));
+                    new CompletionItem(string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams));
                 completionItem.insertText = procIsPublic
                     ? string.Format("{0}::{1}", proc.QualifiedName.Tail, proc.QualifiedName.Head)
                     : proc.Name;
                 completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
+                //Add specific data for eclipse completion & signatureHelper context
+                completionItem.data = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
                 completionItems.Add(completionItem);
             }
 
