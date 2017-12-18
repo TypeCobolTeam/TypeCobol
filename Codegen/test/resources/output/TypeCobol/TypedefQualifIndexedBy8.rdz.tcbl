@@ -1,0 +1,60 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPDEFQU.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      
+      *01 Event TYPEDEF STRICT.
+      *   05 IDT pic X(05).
+      *   05 Periodicity pic 9(03).
+      
+      *01 _EVENT_LIST_ TYPEDEF STRICT.
+      *   05 Counter pic 9(04) comp-5.
+      *   05 EventTab.
+      *      10 Event TYPE Event occurs 10
+      *               depending on Counter
+      *               indexed by Idx.
+      *01 toto type _EVENT_LIST_.
+       01 toto.
+           02 Counter pic 9(04) comp-5.
+           02 EventTab.
+             03 Event occurs 10
+                      depending on Counter OF toto
+                      indexed by d004576fIdx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                 
+       PROCEDURE DIVISION.
+           set d004576fIdx to 1.
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *    INPUT EventList type _EVENT_LIST_.
+      
+       END PROGRAM TYPDEFQU.
+      *
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *    INPUT EventList type _EVENT_LIST_.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bd8b7be7DisplayEventList.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 EventList.
+           02 Counter pic 9(04) comp-5.
+           02 EventTab.
+             03 Event occurs 10
+                      depending on Counter OF EventList OF DisplayEventL
+      -    ist
+                      indexed by c29789fbIdx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+       PROCEDURE DIVISION
+             USING BY REFERENCE EventList
+           .
+      
+      *    PERFORM VARYING Idx FROM 1 BY 1
+      *    UNTIL Idx > EventList::Counter
+           PERFORM VARYING c29789fbIdx FROM 1 BY 1
+           UNTIL c29789fbIdx > Counter OF EventList
+              display "test"
+           END-PERFORM.
+           GOBACK.
+       END PROGRAM bd8b7be7DisplayEventList.

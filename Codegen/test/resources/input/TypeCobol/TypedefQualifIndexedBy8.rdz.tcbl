@@ -1,0 +1,30 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPDEFQU.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      
+       01 Event TYPEDEF STRICT.
+          05 IDT pic X(05).
+          05 Periodicity pic 9(03).
+      
+       01 _EVENT_LIST_ TYPEDEF STRICT.
+          05 Counter pic 9(04) comp-5.
+          05 EventTab.
+             10 Event TYPE Event occurs 10
+                      depending on Counter
+                      indexed by Idx.
+       01 toto type _EVENT_LIST_.
+       PROCEDURE DIVISION.
+           set Idx to 1.
+       DECLARE PROCEDURE DisplayEventList PRIVATE
+           INPUT EventList type _EVENT_LIST_.
+      
+       PROCEDURE DIVISION.
+           PERFORM VARYING Idx FROM 1 BY 1
+           UNTIL Idx > EventList::Counter
+              display "test"
+           END-PERFORM.
+           GOBACK.
+       end-declare.
+      
+       END PROGRAM TYPDEFQU.
