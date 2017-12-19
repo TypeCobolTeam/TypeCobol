@@ -82,7 +82,6 @@
           05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
-           PERFORM TC-Initializations
       *    call TCOZCHKP::StartCheckpoint input var1
            IF TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
@@ -92,10 +91,6 @@
            end-call
                                                     
            .
-      *=================================================================
-       TC-Initializations.
-           .
-      *=================================================================
       *=================================================================
        TC-LOAD-POINTERS-TCOZCHKP.
       *=================================================================

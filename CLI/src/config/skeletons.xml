@@ -326,7 +326,7 @@
 @items
       </pattern>
       
-      <pattern location="program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
+      <!--<pattern location="program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>
@@ -337,10 +337,10 @@
         }
         }
 @clause
-      </pattern>
+      </pattern>-->
 
       <!-- TC-Initializations-->
-      <pattern location="program.procedure-division.end" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
+      <!--<pattern location="program.procedure-division.end" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>
@@ -348,19 +348,19 @@
  TC-Initializations.
 *=================================================================
      .
-      </pattern>
+      </pattern>-->
       
       <!-- CALLER PROCEDURE DIVISION WITH EXTERNAL-->
-      <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="true">
+      <!--<pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="true">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>
         @{
         var clause = "";
         if (!%imports.IsEmpty) {
-        clause += "*=================================================================\n";
+        --><!--clause += "*=================================================================\n";
         clause += " TC-Initializations.\n";
-        clause += "*=================================================================\n";
+        clause += "*=================================================================\n";--><!--
         foreach (var pgm in %imports.Programs.Values) {
         clause += "     IF NOT TC-" + pgm.Name + "-FctList-IsLoaded\n";
         clause += "         CALL 'ZCALLPGM' USING TC-"+ pgm.Name +"\n";
@@ -370,7 +370,7 @@
         }
         }
         @clause
-      </pattern>
+      </pattern>-->
 
       <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
       <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="false">
