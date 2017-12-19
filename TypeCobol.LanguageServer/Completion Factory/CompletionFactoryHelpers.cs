@@ -138,7 +138,8 @@ namespace TypeCobol.LanguageServer
                     : proc.Name;
                 completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
-                completionItem.data = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
+                completionItem.data = new object[2];
+                ((object[])completionItem.data)[1] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
                 completionItems.Add(completionItem);
             }
 

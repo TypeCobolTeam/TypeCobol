@@ -432,11 +432,14 @@ namespace TypeCobol.LanguageServer
                     if (userFilterToken != null)
                     {
                         //Add the range object to let the client know the position of the user filter token
+                        var range = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
+                                userFilterToken.Line - 1, userFilterToken.StopIndex + 1); //-1 on lne to 0 based / +1 on stop index to include the last character
                         items = items.Select(c =>
                         {
-                            //-1 on lne to 0 based / +1 on stop index to include the last character
-                            c.data = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
-                                userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
+                            if (c.data != null && c.data.GetType().IsArray)
+                                ((object[]) c.data)[0] = range;
+                            else
+                                c.data = range;
                             return c;
                         }).ToList();
                     }
