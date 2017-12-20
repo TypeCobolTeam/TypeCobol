@@ -41,8 +41,7 @@
            02 Counter pic 9(04) comp-5.
            02 EventTab.
              03 Event occurs 10
-                      depending on Counter OF EventList OF DisplayEventL
-      -    ist
+                      depending on Counter OF EventList
                       indexed by c29789fbIdx.
                04 IDT pic X(05).
                04 Periodicity pic 9(03).

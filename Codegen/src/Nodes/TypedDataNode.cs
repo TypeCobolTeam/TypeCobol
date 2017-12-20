@@ -33,6 +33,9 @@
                     var data = this.Node.CodeElement();
                     int level = (int)data.LevelNumber.Value;
                     var customtype = this.Node.SymbolTable.GetType(data.DataType);
+                    //collect root procedure
+                    List<string> rootProcedures = new List<string>();
+
                     //Collect from level 01 Pure Cobol85 root variables                    
                     List<Tuple<string, string>> rootVars = new List<Tuple<string, string>>();
                     rootVars.Add(new Tuple<string, string>(data.Name, customtype[0].Name));
@@ -45,16 +48,16 @@
                             rootVars.Add(new Tuple<string, string>(dataParent.Name, ""));
                         }
                         if (parent is TypeCobol.Compiler.Nodes.FunctionDeclaration)
-                        {
+                        {                            
                             TypeCobol.Compiler.Nodes.FunctionDeclaration funParent = (TypeCobol.Compiler.Nodes.FunctionDeclaration)parent;
-                            rootVars.Add(new System.Tuple<string, string>(funParent.Name, ""));
+                            rootProcedures.Add(funParent.Name);                            
                             break;
                         }
                         parent = parent.Parent;
                     }                    
-                    _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
+                    _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
                     if (customtype.Count > 0)
-                        _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, rootVars,  customtype[0], customtype[0], level + 1, 1));
+                        _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, rootProcedures, rootVars,  customtype[0], customtype[0], level + 1, 1));
                 }
                 return _cache;
             }
@@ -276,13 +279,22 @@
         /// <param name="indexes">The Array of Index Symbol Definition</param>
         /// <param name="ownerDefinition">The Owner of the definition that contains the INDEXED BY clause</param>
         /// <returns>The Dictionary</returns>
-        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(List<Tuple<string,string> > rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
+        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(List<string> rootProcedures, List<Tuple<string,string> > rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
         {
             Dictionary<Compiler.Scanner.Token, string> map = new Dictionary<Compiler.Scanner.Token, string>(indexes.Length);
             string qn = ownerDefinition.QualifiedName.ToString();
             string[] items = qn.Split('.');
             List<string> list_items = new List<string>();
             list_items.Add(items[0]);
+
+            //Add root procedures
+            
+            for (int j = rootProcedures.Count - 1; j >= 0; j--)
+            {
+                list_items.Add(rootProcedures[j]);
+            }
+
+            //Add Root variables
             for (int j = rootVariableName.Count - 1; j >= 0; j--)
             {
                 list_items.Add(rootVariableName[j].Item1);
@@ -315,6 +327,7 @@
         /// Pre Generation calculation for collection variable path access and index variable map.
         /// </summary>
         /// <param name="table">The Current Symbol Table</param>
+        /// <param name="rootProcedures">Root procedures</param>
         /// <param name="rootVariableName">All current root variable</param>
         /// <param name="ownerDefinition">The Owner of the current definition</param>
         /// <param name="data_def">The current definition</param>
@@ -322,7 +335,7 @@
         /// <param name="bHasIndexes">[out] true if the current variable definition have indexed variables, fals eotherwise.</param>
         /// <param name="dependingOnAccessPath">[out] depending on variables access path list</param>
         /// <param name="indexesMap">[out] Indexed variable map to tokens</param>
-        internal static void PreGenDependingOnAndIndexed(SymbolTable table, List<Tuple<string, string>> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,
+        internal static void PreGenDependingOnAndIndexed(SymbolTable table, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,
             out bool bHasDependingOn,
             out bool bHasIndexes,
             out List<string> dependingOnAccessPath,
@@ -371,7 +384,7 @@
             {
                 bHasIndexes = true;
                 //So Children of the owner definition contains all indexes
-                indexesMap = BuiltIndexMap(rootVariableName, data.Indexes, ownerDefinition);
+                indexesMap = BuiltIndexMap(rootProcedures, rootVariableName, data.Indexes, ownerDefinition);
             }
         }
 
@@ -455,7 +468,7 @@
             }
         }
 
-        internal static List<ITextLine> CreateDataDefinition(SymbolTable table, ColumnsLayout? layout, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
+        internal static List<ITextLine> CreateDataDefinition(SymbolTable table, ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
             if (data != null)
@@ -470,7 +483,7 @@
                     List<string> dependingOnAccessPath = null;
                     Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
 
-                    PreGenDependingOnAndIndexed(table, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
+                    PreGenDependingOnAndIndexed(table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
                     string text = !(bHasDependingOn || bHasIndexes) ? ExtractPicTokensValues(layout, data, out bHasPeriod) : "";
@@ -516,7 +529,7 @@
                     List<string> dependingOnAccessPath = null;
                     Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
 
-                    PreGenDependingOnAndIndexed(table, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
+                    PreGenDependingOnAndIndexed(table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
                     string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod) : "";
@@ -675,7 +688,7 @@
         " {2}    88  {0}       VALUE 'T'.",
         " {2}    88  {0}-false VALUE 'F'.",
     };
-        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
+        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
             foreach (var child in type.Children)
@@ -714,7 +727,7 @@
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
                 if (dataDefinitionEntry != null)
                 {
-                    lines.AddRange(CreateDataDefinition(table, layout, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
+                    lines.AddRange(CreateDataDefinition(table, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
                 }
                 else
                 {//Humm ... It will be a bug.
@@ -725,10 +738,10 @@
                     List< Tuple<string,string> > newRootVariableName = new List<Tuple<string, string>>();
                     newRootVariableName.Add(new Tuple<string, string>(typed.Name, types[0].Name));
                     newRootVariableName.AddRange(rootVariableName);
-                    lines.AddRange(InsertChildren(layout, table, newRootVariableName, typed, types[0], level + 1, indent + 1));
+                    lines.AddRange(InsertChildren(layout, table, rootProcedures, newRootVariableName, typed, types[0], level + 1, indent + 1));
                 }
                 else
-                    lines.AddRange(InsertChildren(layout, table, rootVariableName, typed, typed, level + 1, indent + 1));
+                    lines.AddRange(InsertChildren(layout, table, rootProcedures, rootVariableName, typed, typed, level + 1, indent + 1));
 
             }
             return lines;

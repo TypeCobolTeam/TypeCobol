@@ -401,6 +401,15 @@ namespace TypeCobol.Codegen {
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]
+        public void TypedefQualifDependOn7()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifDependOn7") + ".rdz.tcbl", skeletons);
+        }        
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
         public void TypedefQualifIndexedBy()
         {
             var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
