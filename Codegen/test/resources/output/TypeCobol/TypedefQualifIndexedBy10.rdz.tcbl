@@ -1,0 +1,203 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OS3.
+       data DIVISION.
+       working-storage section.
+      
+      *01 Event TYPEDEF STRICT public global.
+      *   05 IDT pic X(05).
+      *   05 Periodicity pic 9(03).
+      
+      *01 EventList TYPEDEF STRICT public global.
+      *   05 Counter pic 9(04) comp-5.
+      *   05 EventArray.
+      *      10 Event TYPE DVZF0OS3::Event occurs 10
+      *                      depending on Counter
+      *                      indexed by Idx.
+      
+      *01 MyEventList type EventList.
+       01 MyEventList global.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF MyEventList
+                             indexed by bd95262aIdx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                     
+      
+       procedure division.
+      
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *     INPUT EventList type EventList.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Imbrique.
+       data DIVISION.
+       working-storage section.
+      
+      *01 MyEventList type EventList.
+       01 MyEventList global.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF MyEventList
+                             indexed by bd95262aIdx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                     
+      
+       procedure division.
+      *    call DisplayEventList input MyEventList
+           CALL 'f40b025bDisplayEventList' USING
+                                 MyEventList
+           end-call
+                                                  
+           .
+      
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *     INPUT EventList type DVZF0OS3::EventList.
+       END PROGRAM Imbrique.
+       END PROGRAM DVZF0OS3.
+      
+      
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OS3bis.
+       data DIVISION.
+       working-storage section.
+      
+      
+      
+      *01 MyEventList type DVZF0OS3::EventList.
+       01 MyEventList global.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF MyEventList
+                             indexed by bd95262aIdx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                               
+      
+       procedure division.
+      
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *     INPUT EventList type DVZF0OS3::EventList.
+       END PROGRAM DVZF0OS3bis.
+      *
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *     INPUT EventList type DVZF0OS3::EventList.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. f40b025bDisplayEventList.
+       data division.
+       working-storage section.
+      *01 EventList2 type EventList.
+       01 EventList2 global.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF EventList2
+                             indexed by b179404cIdx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                    
+       LINKAGE SECTION.
+       01 EventList.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF EventList
+                             indexed by bc4d8f27Idx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+       PROCEDURE DIVISION
+             USING BY REFERENCE EventList
+           .
+      *   Dans pgm Imbrique
+      *    PERFORM VARYING EventList::Idx FROM 1 BY 1
+      *    UNTIL EventList::Idx > EventList2::Idx
+           PERFORM VARYING bc4d8f27Idx FROM 1 BY 1
+           UNTIL bc4d8f27Idx > b179404cIdx
+             display "test"
+           END-PERFORM
+           GOBACK.
+       END PROGRAM f40b025bDisplayEventList.
+      *
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *     INPUT EventList type EventList.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c715cbccDisplayEventList.
+       data division.
+       working-storage section.
+      *01 EventList2 type EventList.
+       01 EventList2 global.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF EventList2
+                             indexed by b179404cIdx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                    
+       LINKAGE SECTION.
+       01 EventList.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF EventList
+                             indexed by bc4d8f27Idx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+       PROCEDURE DIVISION
+             USING BY REFERENCE EventList
+           .
+      *    PERFORM VARYING EventList::Idx FROM 1 BY 1
+      *    UNTIL EventList::Idx > EventList2::Idx
+           PERFORM VARYING bc4d8f27Idx FROM 1 BY 1
+           UNTIL bc4d8f27Idx > b179404cIdx
+             display "test"
+           END-PERFORM
+           GOBACK.
+       END PROGRAM c715cbccDisplayEventList.
+      *
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *     INPUT EventList type DVZF0OS3::EventList.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c9dd225cDisplayEventList.
+       data division.
+       working-storage section.
+      *01 EventList2 type DVZF0OS3::EventList.
+       01 EventList2 global.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF EventList2 OF Displ
+      -    ayEventList
+                             indexed by a1b0660bIdx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+                                              
+       LINKAGE SECTION.
+       01 EventList.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event occurs 10
+                             depending on Counter OF EventList OF Displa
+      -    yEventList
+                             indexed by cae3b2c8Idx.
+               04 IDT pic X(05).
+               04 Periodicity pic 9(03).
+       PROCEDURE DIVISION
+             USING BY REFERENCE EventList
+           .
+      * Dans Pgm superposé
+      *    PERFORM VARYING EventList::Idx FROM 1 BY 1
+      *    UNTIL EventList::Idx > EventList2::Idx
+           PERFORM VARYING cae3b2c8Idx FROM 1 BY 1
+           UNTIL cae3b2c8Idx > a1b0660bIdx
+             display "test"
+           END-PERFORM
+           GOBACK.
+       END PROGRAM c9dd225cDisplayEventList.
