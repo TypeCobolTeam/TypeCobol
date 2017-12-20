@@ -218,6 +218,12 @@ class RenamesChecker {
                     DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                 }
             }
+             
+            //Check if initial value equals true/false for boolean TYPEDEF
+            if (type == DataType.Boolean && data.InitialValue != null && data.InitialValue.LiteralType != Value.ValueLiteralType.Boolean)
+            {
+                DiagnosticUtils.AddError(node, "Boolean type requires TRUE/FALSE value clause", MessageCode.SemanticTCErrorInParser);
+            }
         }
 
         private static long SimulatedTypeDefLevel(long startingLevel, DataDefinition node)

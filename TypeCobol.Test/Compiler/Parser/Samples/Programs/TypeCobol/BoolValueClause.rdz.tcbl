@@ -1,0 +1,12 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. BoolValueClause.
+       data DIVISION.
+       working-storage section.
+       01 A TYPE BOOL value true.
+       01 B TYPE BOOL value false.
+       01 C TYPE BOOL value 1.
+       01 D TYPE BOOL value 0.
+      
+       procedure division.
+           .
+       END PROGRAM BoolValueClause.

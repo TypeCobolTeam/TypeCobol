@@ -723,12 +723,18 @@ namespace TypeCobol.Compiler.CodeElements
 		    NullPointerValue = value;
 	    }
 
+        public Value(BooleanValue value) {
+            LiteralType = ValueLiteralType.Boolean;
+            BooleanValue = value;
+        }
+
 	    public enum ValueLiteralType {
 		    Numeric,
 		    Alphanumeric,
 		    RepeatedAlphanumeric,
-		    NullPointer
-	    }
+		    NullPointer,
+            Boolean
+        }
 
 	    public ValueLiteralType LiteralType { get; private set; }
 
@@ -736,6 +742,7 @@ namespace TypeCobol.Compiler.CodeElements
 	    public AlphanumericValue AlphanumericValue { get; private set; }
 	    public RepeatedCharacterValue RepeatedAlphanumericValue { get; private set; }
 	    public NullPointerValue NullPointerValue { get; private set; }
+        public BooleanValue BooleanValue { get; set; }
 
 
         public override string ToString() {
@@ -744,6 +751,7 @@ namespace TypeCobol.Compiler.CodeElements
 			    case ValueLiteralType.Alphanumeric: return AlphanumericValue.Value;
 			    case ValueLiteralType.RepeatedAlphanumeric: return RepeatedAlphanumericValue.Value;
 			    case ValueLiteralType.NullPointer: return NullPointerValue.Token.SourceText;
+                case ValueLiteralType.Boolean: return BooleanValue.Token.SourceText;
 			    default: return base.ToString();
 		    }
 	    }
@@ -753,7 +761,7 @@ namespace TypeCobol.Compiler.CodeElements
                 && this.ContinueVisitToChildren(astVisitor, NumericValue,
                 AlphanumericValue,
                 RepeatedAlphanumericValue,
-                NullPointerValue);
+                NullPointerValue, BooleanValue);
         }
     }
 

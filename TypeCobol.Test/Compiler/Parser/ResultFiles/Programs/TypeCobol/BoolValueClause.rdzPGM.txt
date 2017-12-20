@@ -1,0 +1,18 @@
+﻿--- Diagnostics ---
+Line 7[8,30] <30, Error, Semantics> - Semantic error: Boolean type requires TRUE/FALSE value clause
+Line 8[8,30] <30, Error, Semantics> - Semantic error: Boolean type requires TRUE/FALSE value clause
+
+--- Program ---
+PROGRAM: BoolValueClause common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  A:BOOL
+  B:BOOL
+  C:BOOL
+  D:BOOL
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING
