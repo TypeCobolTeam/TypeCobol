@@ -14,19 +14,6 @@ namespace TypeCobol.Codegen.Actions
     public class Qualifier : EventArgs, Action
     {
         /// <summary>
-        /// Compute the hash+name of the given qualified name index.
-        /// </summary>
-        /// <param name="qualified_name"></param>
-        /// <returns></returns>
-        public static string ComputeIndexHashName(string qualified_name, Node sourceNode)
-        {
-            string[] items = qualified_name.Split('.');
-            string name = items[items.Length - 1];
-            string hash = Tools.Hash.CreateCOBOLNameHash(qualified_name.ToLower(), 8, sourceNode);
-            return hash + name;
-        }
-
-        /// <summary>
         /// Internal visitor class.
         /// </summary>
         internal class TypeCobolCobolQualifierVistor : TypeCobol.Compiler.CodeElements.AbstractAstVisitor
@@ -132,7 +119,7 @@ namespace TypeCobol.Codegen.Actions
                             string name = storage_area.SymbolReference.Name;
                             string qualified_name = this.CurrentNode.QualifiedStorageAreas[storage_area];
                             GenerateToken item = null;
-                            string hashName = ComputeIndexHashName(qualified_name, this.CurrentNode);
+                            string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, this.CurrentNode);
                             item = new GenerateToken(
                                 new TokenCodeElement(storage_area.SymbolReference.NameLiteral.Token), hashName,
                                 sourcePositions);
@@ -175,7 +162,7 @@ namespace TypeCobol.Codegen.Actions
                                         string name = index.Name;
                                         string qualified_name = indexDefinition.QualifiedName.ToString();
                                         GenerateToken item = null;
-                                        string hashName = ComputeIndexHashName(qualified_name, indexDefinition.Parent);
+                                        string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, indexDefinition.Parent);
                                         item = new GenerateToken(
                                             new TokenCodeElement(index.NameLiteral.Token), hashName,
                                             sourcePositions);
@@ -482,7 +469,7 @@ namespace TypeCobol.Codegen.Actions
                         if (bAreIn)
                         {
                             GenerateToken item = null;
-                            string hashName = ComputeIndexHashName(qualified_name, sourceNode);
+                            string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, sourceNode);
                             //Now all items in the qualified name must be replaced with the hash name by the Generator.
                             //So all items except the last one are replaced by a blank, the last item will be the HashName
                             for (int r = i; r <= range.Item2 - 1; r++)

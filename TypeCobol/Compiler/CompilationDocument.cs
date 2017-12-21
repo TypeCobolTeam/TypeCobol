@@ -55,22 +55,6 @@ namespace TypeCobol.Compiler
         public List<CopyDirective> MissingCopies { get; set; }
 
         /// <summary>
-        /// Register a new symbolic character name found in the source file
-        /// </summary>
-        internal void AddCopyTextNamesVariations(IList<RemarksDirective.TextNameVariation> textNamesVariations)
-        {
-            if (CopyTextNamesVariations == null)
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
-            }
-            else
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
-            }
-            CopyTextNamesVariations.AddRange(textNamesVariations);
-        }
-
-        /// <summary>
         /// Issue #315
         /// </summary>
         private MultilineScanState initialScanStateForCopy;

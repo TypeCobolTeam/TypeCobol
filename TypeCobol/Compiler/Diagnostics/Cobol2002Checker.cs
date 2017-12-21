@@ -81,6 +81,12 @@ namespace TypeCobol.Compiler.Diagnostics {
         public static void CheckTypeDefinition(TypeDefinition typeDefinition) {
             AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name);
 
+            if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
+            {
+                var message = string.Format("TYPE '{0}' has already been declared", typeDefinition.DataType.Name);
+                DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
+            }
+
             if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1) {
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
@@ -211,6 +217,12 @@ class RenamesChecker {
                                   data.Name, data.LevelNumber.Value - (simulatedTypeLevel - 49), foundedType.Name);
                     DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                 }
+            }
+             
+            //Check if initial value equals true/false for boolean TYPEDEF
+            if (type == DataType.Boolean && data.InitialValue != null && data.InitialValue.LiteralType != Value.ValueLiteralType.Boolean)
+            {
+                DiagnosticUtils.AddError(node, "Boolean type requires TRUE/FALSE value clause", MessageCode.SemanticTCErrorInParser);
             }
         }
 

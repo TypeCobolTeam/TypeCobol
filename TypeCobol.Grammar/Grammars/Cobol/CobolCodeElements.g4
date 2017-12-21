@@ -3126,6 +3126,9 @@ usageClause:
 
 valueClause:
 	VALUE IS? value2;
+
+valueClauseWithBoolean:
+	VALUE (value2 | booleanValue);
 			   
 // p239: Format 2: condition-name value
 // This format associates a value, values, or ranges of values with a condition-name.

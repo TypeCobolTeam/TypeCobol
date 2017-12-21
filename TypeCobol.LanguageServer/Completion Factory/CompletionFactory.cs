@@ -126,13 +126,7 @@ namespace TypeCobol.LanguageServer
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
 
             //Get procedure name or qualified name
-            string procedureName = string.Join(".", arrangedCodeElement.ArrangedConsumedTokens
-                                            .Skip(1) //Skip the CALL token
-                                            .TakeWhile(t => t.TokenType != TokenType.INPUT
-                                                            && t.TokenType != TokenType.OUTPUT
-                                                            && t.TokenType != TokenType.IN_OUT) // Take tokens until keyword found
-                                            .Where(t => t.TokenType == TokenType.UserDefinedWord)
-                                            .Select(t => t.Text));
+            string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(arrangedCodeElement.ArrangedConsumedTokens);
 
             //Try to get procedure by its name
             var calledProcedures =
@@ -151,11 +145,12 @@ namespace TypeCobol.LanguageServer
                 .SkipWhile(t => t != lastSignificantToken).Skip(1)
                 .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
                 .Except(new List<Token>() { userFilterToken })
-                .Where(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line <= position.line + 1);
+                .Where(t => (t.StartIndex < position.character && t.Line == position.line + 1) || t.Line < position.line + 1);
 
             int alreadyGivenParametersCount = 0;
             TokenType? previousTokenType = null;
 
+            //Loop that allows to ignore qualified name parameters. 
             foreach (var givenToken in alreadyGivenTokens)
             {
                 if (givenToken.TokenType == TokenType.UserDefinedWord && (previousTokenType == null || previousTokenType.Value == TokenType.UserDefinedWord))

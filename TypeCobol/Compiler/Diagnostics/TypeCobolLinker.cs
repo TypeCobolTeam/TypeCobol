@@ -7,6 +7,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -47,8 +48,23 @@ namespace TypeCobol.Compiler.Diagnostics
             if (symbolTable == null) return;
             var types = symbolTable.GetType(dataEntry.DataType);
             if (types.Count != 1) return;
-
             var type = types.First();
+
+
+            var circularRefInsideChildren = type.Children.Any(c =>
+            {
+                var dataChild = c as DataDescription;
+                if (dataChild == null) return false;
+                var childrenType = symbolTable.GetType(dataChild.DataType).FirstOrDefault();
+                if (childrenType == null) return false;
+                return dataEntry.GetParentTypeDefinition == childrenType; //Circular reference detected will return true
+            });
+            if (type == dataEntry.GetParentTypeDefinition || circularRefInsideChildren) 
+            {
+                DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", MessageCode.SemanticTCErrorInParser);
+                return; //Do not continue to prevent further work/crash with circular references
+            }
+
             if (symbolTable.TypesReferences.ContainsKey(type)) //If datatype already exists, add ref to the list
             {
                 if (!symbolTable.TypesReferences[type].Contains(dataEntry))

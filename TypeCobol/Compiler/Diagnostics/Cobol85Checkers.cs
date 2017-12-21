@@ -260,8 +260,15 @@ namespace TypeCobol.Compiler.Diagnostics {
 				if (data.IsGlobal)
 					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the GLOBAL clause", global);
 			} else {
-				if (data.IsExternal && data.LevelNumber.Value != 01)
+				if (data.LevelNumber != null && data.IsExternal && data.LevelNumber.Value != 01)
 					DiagnosticUtils.AddError(data, "External is only allowed for level 01", external);
+
+			    if (data.LevelNumber != null &&
+			        !((data.LevelNumber.Value >= 01 && data.LevelNumber.Value <= 49) 
+                       || data.LevelNumber.Value == 66 || data.LevelNumber.Value == 77 || data.LevelNumber.Value == 88))
+			    {
+			        DiagnosticUtils.AddError(data, "Data must be declared between level 01 to 49, or equals to 66, 77, 88", context.dataNameDefinition());
+			    }
 			}
 		}
 		/// <summary>

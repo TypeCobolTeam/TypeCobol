@@ -130,7 +130,6 @@
        PROCEDURE DIVISION
              USING BY REFERENCE param1
            .
-           PERFORM TC-Initializations
       *    call PGM1::StartCheckpoint input param1
            IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
@@ -140,10 +139,6 @@
            end-call
                                                   
            .
-      *=================================================================
-       TC-Initializations.
-           .
-      *=================================================================
       *=================================================================
        TC-LOAD-POINTERS-PGM1.
       *=================================================================
@@ -194,7 +189,6 @@
           05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
-           PERFORM TC-Initializations
       *    call PGM1::StartCheckpoint input var1
            IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
@@ -213,10 +207,6 @@
            end-call
                                               
            .
-      *=================================================================
-       TC-Initializations.
-           .
-      *=================================================================
       *=================================================================
        TC-LOAD-POINTERS-PGM1.
       *=================================================================

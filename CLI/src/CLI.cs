@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Text;
 using Analytics;
 using TypeCobol.CLI.CustomExceptions;
 using System.Linq;
+using System.Text;
 using TypeCobol.Codegen;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Tools.Options_Config;
@@ -151,7 +152,6 @@ namespace TypeCobol.Server
                 }
 
                 parser.Parse(path);
-
                 
                 bool copyAreMissing = false;
                 if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
@@ -167,6 +167,22 @@ namespace TypeCobol.Server
                         //Delete the file
                         File.Delete(config.HaltOnMissingCopyFilePath);
                     }
+                }
+                if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
+                {
+                    if (parser.Results.CopyTextNamesVariations.Count > 0)
+                    {
+#if EUROINFO_RULES
+                        var copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextName).Distinct(); //Get copies without suffix
+#else
+                        var copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct(); //Get copies with suffix
+#endif
+                        //Create an output document of all the copy encountered by the parser
+                        File.WriteAllLines(config.ExtractedCopiesFilePath, copiesName);
+                    }
+
+                    else
+                        File.Delete(config.ExtractedCopiesFilePath);
                 }
 
                 var allDiags = parser.Results.AllDiagnostics();

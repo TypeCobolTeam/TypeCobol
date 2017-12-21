@@ -103,6 +103,7 @@
     <Compile Include="JsonRPC\ResponseError.cs" />
     <Compile Include="JsonRPC\ResponseWaitState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SignatureHelper\ProcedureSignatureHelper.cs" />
     <Compile Include="StdioHttp\IMessageHandler.cs" />
     <Compile Include="StdioHttp\IMessageServer.cs" />
     <Compile Include="StdioHttp\ServerLogLevel.cs" />

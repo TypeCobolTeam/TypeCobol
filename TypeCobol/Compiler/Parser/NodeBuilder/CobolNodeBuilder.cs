@@ -594,6 +594,8 @@ namespace TypeCobol.Compiler.Parser
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.InputParameters.Add(paramNode);
+
+                paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
             foreach (var parameter in declaration.Profile.OutputParameters) //Set Output Parameters
@@ -602,6 +604,8 @@ namespace TypeCobol.Compiler.Parser
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.OutputParameters.Add(paramNode);
+
+                paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
             foreach (var parameter in declaration.Profile.InoutParameters) //Set Inout Parameters
@@ -610,6 +614,8 @@ namespace TypeCobol.Compiler.Parser
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.InoutParameters.Add(paramNode);
+
+                paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
 
@@ -619,6 +625,8 @@ namespace TypeCobol.Compiler.Parser
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 ((FunctionDeclaration)CurrentNode).Profile.ReturningParameter = paramNode;
+
+                paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
 

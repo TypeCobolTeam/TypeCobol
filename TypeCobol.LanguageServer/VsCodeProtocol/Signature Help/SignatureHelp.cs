@@ -20,11 +20,11 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// <summary>
         /// The active signature.
         /// </summary>
-        public int activeSignature { get; set; }
+        public int? activeSignature { get; set; }
 
         /// <summary>
         /// The active parameter of the active signature.
         /// </summary>
-        public int activeParameter { get; set; }
+        public int? activeParameter { get; set; }
     }
 }

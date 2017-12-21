@@ -256,8 +256,12 @@ namespace TypeCobol.Codegen.Generators
                                 AppendBufferContent(targetSourceText, previousBuffer);
                             previousBuffer = null;
                         }
-                        targetSourceText = stackOuterBuffer.Pop();
-                        curSourceText = (StringSourceText)stackLocalBuffer.Pop();
+                        System.Diagnostics.Debug.Assert(stackOuterBuffer.Count > 0 && stackLocalBuffer.Count > 0);
+                        if (stackOuterBuffer.Count > 0 && stackLocalBuffer.Count > 0)
+                        {
+                            targetSourceText = stackOuterBuffer.Pop();
+                            curSourceText = (StringSourceText)stackLocalBuffer.Pop();
+                        }
                         previousBuffer = curSourceText;
                     }
                     else

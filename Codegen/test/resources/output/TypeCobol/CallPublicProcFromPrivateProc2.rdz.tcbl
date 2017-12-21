@@ -79,7 +79,6 @@
           05 TC-TCOZCHKP-ed8db690 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
-           PERFORM TC-Initializations
       *    call TCOZCHKP::StartCheckpoint
            IF TC-TCOZCHKP-ed8db690-Idt not = 'ed8db690'
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
@@ -88,10 +87,6 @@
            end-call
                                          
            .
-      *=================================================================
-       TC-Initializations.
-           .
-      *=================================================================
       *=================================================================
        TC-LOAD-POINTERS-TCOZCHKP.
       *=================================================================

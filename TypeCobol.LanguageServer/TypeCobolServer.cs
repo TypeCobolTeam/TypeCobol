@@ -16,6 +16,8 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.LanguageServer.SignatureHelper;
+using String = System.String;
 
 namespace TypeCobol.LanguageServer
 {
@@ -51,6 +53,9 @@ namespace TypeCobol.LanguageServer
             completionOptions.resolveProvider = false;
             completionOptions.triggerCharacters = new string[] {"::"};
             initializeResult.capabilities.completionProvider = completionOptions;
+            SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions();
+            sigHelpOptions.triggerCharacters = new string[0];
+            initializeResult.capabilities.signatureHelpProvider = sigHelpOptions;
 
             return initializeResult;
         }
@@ -427,11 +432,14 @@ namespace TypeCobol.LanguageServer
                     if (userFilterToken != null)
                     {
                         //Add the range object to let the client know the position of the user filter token
+                        var range = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
+                                userFilterToken.Line - 1, userFilterToken.StopIndex + 1); //-1 on lne to 0 based / +1 on stop index to include the last character
                         items = items.Select(c =>
                         {
-                            //-1 on lne to 0 based / +1 on stop index to include the last character
-                            c.data = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
-                                userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
+                            if (c.data != null && c.data.GetType().IsArray)
+                                ((object[]) c.data)[0] = range;
+                            else
+                                c.data = range;
                             return c;
                         }).ToList();
                     }
@@ -556,13 +564,97 @@ namespace TypeCobol.LanguageServer
                 fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
-
-            var wrappedCodeElements = CodeElementFinder(fileCompiler, parameters.position);
-            if (wrappedCodeElements == null) //No codeelements found
+            var wrappedCodeElement = CodeElementFinder(fileCompiler, parameters.position).FirstOrDefault();
+            if (wrappedCodeElement == null) //No codeelements found
                 return null;
 
-            return new SignatureHelp();
+            var node = CompletionFactory.GetMatchingNode(fileCompiler, wrappedCodeElement);
 
+            //Get procedure name or qualified name
+            string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(wrappedCodeElement.ArrangedConsumedTokens);
+
+            //Try to get procedure by its name
+            var calledProcedures =
+                node.SymbolTable.GetFunctions(
+                    p =>
+                        p.Name.Equals(procedureName) ||
+                        p.QualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
+                    {
+                        SymbolTable.Scope.Declarations,
+                        SymbolTable.Scope.Intrinsic,
+                        SymbolTable.Scope.Namespace
+                    });
+            var signatureHelp = new SignatureHelp();
+
+            if (calledProcedures == null)
+                return null;
+
+            if (calledProcedures.Count == 1)
+            {
+                var calledProcedure = calledProcedures.First();
+                //Create and return SignatureHelp object 
+                signatureHelp.signatures = new SignatureInformation[1];
+                signatureHelp.signatures[0] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(calledProcedure);
+                signatureHelp.activeSignature = 0; //Set the active signature as the one just created
+                //Select the current parameter the user is expecting
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position); 
+
+                return signatureHelp;
+            }
+
+            //Else try to find the best matching signature
+            
+            //Get all given INPUT
+            var givenInputParameters = CompletionFactoryHelpers.AggregateTokens(
+                wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.INPUT)
+                    .Skip(1) //Ignore the INPUT Token
+                    .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.IN_OUT))).ToList();
+            //Get all given OUTPUT
+            var givenOutputParameters = CompletionFactoryHelpers.AggregateTokens(
+               wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.OUTPUT)
+                   .Skip(1) //Ignore the INPUT Token
+                   .TakeWhile(t => !(t.TokenType == TokenType.INPUT || t.TokenType == TokenType.IN_OUT))).ToList();
+            //Get all given INOUT
+            var givenInoutParameters = CompletionFactoryHelpers.AggregateTokens(
+              wrappedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.IN_OUT)
+                  .Skip(1) //Ignore the INPUT Token
+                  .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
+            var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
+
+            signatureHelp.signatures = new SignatureInformation[calledProcedures.Count];
+
+            FunctionDeclaration bestmatchingProcedure = null;
+            int previousMatchingWeight = 0, selectedSignatureIndex = 0;
+            foreach (var procedure in calledProcedures)
+            {
+                int matchingWeight = 0;
+                //Test INPUT parameters
+                var inputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
+                if (inputResult) matchingWeight++;
+
+                //Test OUTPUT parameters
+                var outputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
+                if (outputResult) matchingWeight++;
+                
+                //Test INOUT parameters 
+                var inoutResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
+                if (inoutResult) matchingWeight++;
+
+                signatureHelp.signatures[selectedSignatureIndex] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+
+                if (matchingWeight > previousMatchingWeight && totalGivenParameters > 0)
+                {
+                    previousMatchingWeight = matchingWeight;
+                    signatureHelp.activeSignature = selectedSignatureIndex;
+                    bestmatchingProcedure = procedure;
+                }
+                selectedSignatureIndex++;
+            }
+
+            if(bestmatchingProcedure != null)
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position);
+
+            return signatureHelp;
         }
 
         public override void OnShutdown()
@@ -634,7 +726,7 @@ namespace TypeCobol.LanguageServer
                 var codeElementsLine =
                     fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
 
-                if (codeElementsLine != null && codeElementsLine.CodeElements != null)
+                if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
                 {
                     //Ignore all the EndOfFile token 
                     var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));

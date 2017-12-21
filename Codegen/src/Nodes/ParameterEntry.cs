@@ -88,8 +88,13 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 						_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 					}
 				}
-
-                    if (customtype != null) _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, new List<System.Tuple<string, string>>() { new System.Tuple<string, string>(name, customtype.Name) }, customtype, customtype, 2, 1));
+                if (customtype != null)
+                {
+                    List<string> rootProcedures;
+                    List<System.Tuple<string, string>> rootVars;
+                    GeneratorHelper.ComputeTypedProperPaths(this, this.CodeElement(), customtype, out rootProcedures, out rootVars);
+                    _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, rootProcedures, rootVars, customtype, customtype, 2, 1));
+                }
 			}
 			return _cache;
 		}

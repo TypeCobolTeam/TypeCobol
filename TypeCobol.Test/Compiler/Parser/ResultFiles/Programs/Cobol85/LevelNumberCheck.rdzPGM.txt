@@ -1,0 +1,33 @@
+﻿--- Diagnostics ---
+Line 8[11,15] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[11,15:myVar]<UserDefinedWord>
+Line 9[11,15] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[11,15:myVar]<UserDefinedWord>
+Line 10[11,15] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[11,15:myVar]<UserDefinedWord>
+Line 11[11,15] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[11,15:myVar]<UserDefinedWord>
+Line 12[11,15] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[11,15:myVar]<UserDefinedWord>
+Line 13[11,15] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[11,15:myVar]<UserDefinedWord>
+Line 14[11,15] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[11,15:myVar]<UserDefinedWord>
+Line 15[17,21] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[17,21:myVar]<UserDefinedWord>
+Line 16[20,24] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88 RuleStack=codeElement>dataDescriptionEntry>dataNameDefinition,  OffendingSymbol=[20,24:myVar]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: LevelNumber common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+  myVar:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

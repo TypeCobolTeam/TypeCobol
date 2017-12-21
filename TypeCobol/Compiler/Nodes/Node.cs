@@ -219,8 +219,8 @@ namespace TypeCobol.Compiler.Nodes {
                     if (!string.IsNullOrEmpty(parent.Name)) {
                         qn = parent.Name + "." + qn;
                     }
-                    if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
-                        break;
+                    //if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
+                    //    break;
                     parent = parent.Parent;
                 }
                 
@@ -398,6 +398,15 @@ namespace TypeCobol.Compiler.Nodes {
             if (index < 0) children.Add(child);
             else children.Insert(index, child);
             child.Parent = this;
+        }
+
+        /// <summary>
+        /// Allow to manually set the parent node
+        /// </summary>
+        /// <param name="parent">Parent node</param>
+        public virtual void SetParent(Node parent)
+        {
+            this.Parent = parent;
         }
 
         /// <summary>Removes a child from this node.</summary>

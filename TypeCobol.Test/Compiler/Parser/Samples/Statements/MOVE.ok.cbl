@@ -7,6 +7,8 @@ MOVE LENGTH OF x TO x
 MOVE LENGTH x TO x
 MOVE x TO LENGTH OF x
 MOVE x TO LENGTH x
+MOVE x TO Tab(TALLY)
+MOVE x TO Tab(ALL)
 * continuations
                  MOVE 'Lorem ipsum dolor sit amet, consectetur adi
 -               'piscing elit, sed do eiusmod tempor incididunt ut

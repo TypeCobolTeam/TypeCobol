@@ -133,7 +133,6 @@ namespace TypeCobol.Codegen.Nodes {
             Node whereToGenerate;
 
             //Generate a PERFORM, this must be the first instruction unless we have a Paragraph or a section
-            //TODO manage declaratives, see #655
             var firstChildOfPDiv = procedureDivision.Children.First();
             if (firstChildOfPDiv is Section) {
                 var temp = firstChildOfPDiv.Children.First();
@@ -147,14 +146,16 @@ namespace TypeCobol.Codegen.Nodes {
             } else {
                 whereToGenerate = procedureDivision;
             }
-            whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-Initializations", true), 0);
+
+            //After #655, TC-Initializations is not used
+            //whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-Initializations", true), 0);
 
 
-            //Generate "TC-Initializations" paragraph
-            procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
-            procedureDivision.Add(new ParagraphGen("TC-Initializations"));
-            procedureDivision.Add(new SentenceEnd());
-            procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
+            ////Generate "TC-Initializations" paragraph
+            //procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
+            //procedureDivision.Add(new ParagraphGen("TC-Initializations"));
+            //procedureDivision.Add(new SentenceEnd());
+            //procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
 
 
             //Generate "TC-LOAD-POINTERS-" paragraph

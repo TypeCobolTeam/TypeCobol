@@ -74,6 +74,12 @@ namespace TypeCobol.Codegen.Actions
             {                
                 nodegen = (Node)Activator.CreateInstance(typegen, this.Source);
                 this.Destination.Parent.Add(nodegen, index + 1);
+                if (nodegen is TypeCobol.Codegen.Nodes.FunctionDeclarationCG)
+                {   //This is a workaround, the TypeCobol.Codegen.Nodes.FunctionDeclarationCG must have
+                    //Its destination has parent.
+                    nodegen.SetParent(Destination);
+                }
+
             }
             // comment out original "line" (=~ non expanded node)
             this.Source.Comment = true;

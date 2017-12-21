@@ -42,8 +42,24 @@ namespace CLI.Test
         }
 
         [TestMethod]
-        public void TestHaltOnMissingCopy_1() {
-            CLITestHelper.Test("haltOnMissingCopy_1", ReturnCode.MissingCopy);
+        public void TestHaltOnMissingCopy_1()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("haltOnMissingCopy_1_EI", ReturnCode.MissingCopy);
+#else
+             CLITestHelper.Test("haltOnMissingCopy_1", ReturnCode.MissingCopy);
+#endif
+        }
+
+        [TestMethod]
+        public void TestExtractCopies()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("extractUsedCopies_EI", ReturnCode.MissingCopy);
+#else
+            CLITestHelper.Test("extractUsedCopies", ReturnCode.MissingCopy);
+#endif
+
         }
 
         [TestMethod]

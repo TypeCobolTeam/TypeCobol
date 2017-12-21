@@ -13,5 +13,9 @@
 
 [[MoveStatement]] [1,4:MOVE]<MOVE> --> [18,18:x]<UserDefinedWord>
 
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [20,20:)]<RightParenthesisSeparator>
+
+[[MoveStatement]] [1,4:MOVE]<MOVE> --> [18,18:)]<RightParenthesisSeparator>
+
 [[MoveStatement]] [18,21:MOVE]<MOVE> --> [46,54:SOMEWHERE]<UserDefinedWord>
 
