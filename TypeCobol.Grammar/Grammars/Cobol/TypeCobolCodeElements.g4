@@ -158,3 +158,29 @@ typeNameReference: (UserDefinedWord | DATE);
 // When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
 cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? (PRIVATE | PUBLIC)?;
 cobol2002TypeClause:    TYPE (programNameReference3 QualifiedNameSeparator)? typeNameReference;
+
+//Similar to valueClause but add the possibility to set value as a boolean (TRUE/FALSE)
+valueClauseWithBoolean:
+	VALUE (value2 | booleanValue);
+
+
+dataDescriptionEntry:
+	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
+
+		levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
+		( pictureClause
+		| blankWhenZeroClause
+		| externalClause
+		| globalClause
+		| justifiedClause
+		| groupUsageClause
+		| occursClause
+		| signClause
+		| synchronizedClause
+		| usageClause
+		| valueClause
+		| (cobol2002TypeClause valueClauseWithBoolean?)
+		)* PeriodSeparator
+	)
+	| dataRenamesEntry
+	| dataConditionEntry;
