@@ -90,26 +90,9 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 				}
                 if (customtype != null)
                 {
-                    List<string> rootProcedures = new List<string>();
-                    List<System.Tuple<string, string>> rootVars = new List<System.Tuple<string, string>>();
-                    rootVars.Add(new System.Tuple<string, string>(name, customtype.Name));
-
-                    Node parent = this.Parent;
-                    while (parent != null)
-                    {
-                        if (parent is DataDescription)
-                        {
-                            DataDescription dataParent = parent as DataDescription;
-                            rootVars.Add(new System.Tuple<string, string>(dataParent.Name, ""));
-                        }
-                        if (parent is TypeCobol.Compiler.Nodes.FunctionDeclaration)
-                        {
-                            TypeCobol.Compiler.Nodes.FunctionDeclaration funParent = (TypeCobol.Compiler.Nodes.FunctionDeclaration)parent;
-                            rootProcedures.Add(funParent.Name);
-                                break;
-                        }
-                        parent = parent.Parent;
-                    }
+                    List<string> rootProcedures;
+                    List<System.Tuple<string, string>> rootVars;
+                    GeneratorHelper.ComputeTypedProperPaths(this, this.CodeElement(), customtype, out rootProcedures, out rootVars);
                     _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, rootProcedures, rootVars, customtype, customtype, 2, 1));
                 }
 			}

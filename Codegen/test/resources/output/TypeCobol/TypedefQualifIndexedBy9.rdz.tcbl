@@ -51,7 +51,7 @@
            02 EventArray.
              03 Event occurs 10
                              depending on Counter OF MyEventList
-                             indexed by cf5bd399Idx.
+                             indexed by ad8947f9Idx.
                04 IDT pic X(05).
                04 Periodicity pic 9(03).
                                      
@@ -117,7 +117,7 @@
            02 EventArray.
              03 Event occurs 10
                              depending on Counter OF EventList2
-                             indexed by d619588cIdx.
+                             indexed by dc466042Idx.
                04 IDT pic X(05).
                04 Periodicity pic 9(03).
                                     
@@ -127,7 +127,7 @@
            02 EventArray.
              03 Event occurs 10
                              depending on Counter OF EventList
-                             indexed by ee550a3aIdx.
+                             indexed by a23b5481Idx.
                04 IDT pic X(05).
                04 Periodicity pic 9(03).
        PROCEDURE DIVISION
@@ -136,8 +136,8 @@
       *   Dans pgm Imbrique
       *    PERFORM VARYING EventList::Idx FROM 1 BY 1
       *    UNTIL EventList::Idx > EventList2::Idx
-           PERFORM VARYING ee550a3aIdx FROM 1 BY 1
-           UNTIL ee550a3aIdx > d619588cIdx
+           PERFORM VARYING a23b5481Idx FROM 1 BY 1
+           UNTIL a23b5481Idx > dc466042Idx
              display "test"
            END-PERFORM
            GOBACK.

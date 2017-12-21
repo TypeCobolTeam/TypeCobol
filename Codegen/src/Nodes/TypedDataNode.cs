@@ -34,27 +34,10 @@
                     int level = (int)data.LevelNumber.Value;
                     var customtype = this.Node.SymbolTable.GetType(data.DataType);
                     //collect root procedure
-                    List<string> rootProcedures = new List<string>();
-
+                    List<string> rootProcedures;
                     //Collect from level 01 Pure Cobol85 root variables                    
-                    List<Tuple<string, string>> rootVars = new List<Tuple<string, string>>();
-                    rootVars.Add(new Tuple<string, string>(data.Name, customtype[0].Name));
-                    Node parent = this.Parent;
-                    while (parent != null)
-                    {
-                        if (parent is DataDescription)
-                        {
-                            DataDescription dataParent = parent as DataDescription;
-                            rootVars.Add(new Tuple<string, string>(dataParent.Name, ""));
-                        }
-                        if (parent is TypeCobol.Compiler.Nodes.FunctionDeclaration)
-                        {                            
-                            TypeCobol.Compiler.Nodes.FunctionDeclaration funParent = (TypeCobol.Compiler.Nodes.FunctionDeclaration)parent;
-                            rootProcedures.Add(funParent.Name);                            
-                            break;
-                        }
-                        parent = parent.Parent;
-                    }                    
+                    List<Tuple<string, string>> rootVars;
+                    GeneratorHelper.ComputeTypedProperPaths(this, data, customtype[0], out rootProcedures, out rootVars);
                     _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
                     if (customtype.Count > 0)
                         _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, rootProcedures, rootVars,  customtype[0], customtype[0], level + 1, 1));
@@ -279,16 +262,17 @@
         /// <param name="indexes">The Array of Index Symbol Definition</param>
         /// <param name="ownerDefinition">The Owner of the definition that contains the INDEXED BY clause</param>
         /// <returns>The Dictionary</returns>
-        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(List<string> rootProcedures, List<Tuple<string,string> > rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
+        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
         {
             Dictionary<Compiler.Scanner.Token, string> map = new Dictionary<Compiler.Scanner.Token, string>(indexes.Length);
-            string qn = ownerDefinition.QualifiedName.ToString();
-            string[] items = qn.Split('.');
+            List<string> pathProcedures;
+            List<string> pathVariables;
+            GeneratorHelper.ComputeProperPaths(ownerDefinition, out pathProcedures, out pathVariables);
             List<string> list_items = new List<string>();
-            list_items.Add(items[0]);
+            //list_items.AddRange(pathProcedures);
 
             //Add root procedures
-            
+
             for (int j = rootProcedures.Count - 1; j >= 0; j--)
             {
                 list_items.Add(rootProcedures[j]);
@@ -301,9 +285,9 @@
                 if (j != 0 && rootVariableName[j].Item2 != null && rootVariableName[j].Item2.Trim().Length > 0)
                     list_items.Add(rootVariableName[j].Item2);
             }
-            for (int i = 1; i < items.Length; i++)
-                list_items.Add(items[i]);
-            qn = string.Join(".", list_items.ToArray());
+
+            list_items.AddRange(pathVariables);
+            string qn = string.Join(".", list_items.ToArray());
             foreach (Node child in ownerDefinition.Children)
             {
                 if (child is IndexDefinition)
@@ -314,7 +298,7 @@
                         if (sym.Name.Equals(index.Name))
                         {
                             string qualified_name = qn + '.' + index.Name;
-                            string hash_name = Qualifier.ComputeIndexHashName(qualified_name, ownerDefinition);
+                            string hash_name = GeneratorHelper.ComputeIndexHashName(qualified_name, ownerDefinition);
                             map[sym.NameLiteral.Token] = hash_name;
                         }
                     }
