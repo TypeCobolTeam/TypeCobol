@@ -13,12 +13,19 @@
        01  varC         PIC X(8).
       * KO PIC value is not correct
        01  varD         PIC X(00ABC100).
+       01 funcPointer function-pointer.
+       01 procPointer procedure-pointer.
 
        01 Toto typedef strict public.
            05 varTo pic X.
        01 MyToto Type Toto.
 
        PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE GetPtrFn
+           INPUT  ptrFn function-pointer
+                  ptrPr procedure-pointer.
+       END-DECLARE.
 
        DECLARE PROCEDURE DuplicatedParams PRIVATE
            INPUT    format            TYPE Date
@@ -109,6 +116,17 @@
        end-declare.
 
        TRAITEMENT.
+
+      * __________________________________________________
+      * OK : function-pointer procedure-pointer
+       CALL GetPtrFn 
+             INPUT funcPointer procPointer.
+
+      * __________________________________________________
+      * KO : wrong params awaited func/proc-pointer
+       CALL GetPtrFn 
+             INPUT someformat someformat.
+
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
            CALL ValidateDateFormat

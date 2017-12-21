@@ -95,7 +95,7 @@ functionReturningPhrase: RETURNING parameterDescription;
 parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
 
 functionDataParameter:
-	dataNameDefinition QuestionMark? (pictureClause | POINTER | cobol2002TypeClause)
+	dataNameDefinition QuestionMark? (pictureClause | POINTER | cobol2002TypeClause | FUNCTION_POINTER | PROCEDURE_POINTER)
 		blankWhenZeroClause?
 		justifiedClause?
 		synchronizedClause?
