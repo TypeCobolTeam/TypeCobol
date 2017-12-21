@@ -83,10 +83,10 @@ namespace TypeCobol.LanguageServer
                                      //Ignore public if type is in the current program
                                      || type.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if type is in intrinsic
 
-                var typeDisplayName = typeIsPublic ? type.QualifiedName.ToString() : type.Name;
+                var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
                 completionItem.insertText = typeIsPublic
-                    ? string.Format("{0}::{1}", type.QualifiedName.Tail, type.QualifiedName.Head)
+                    ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
                     : type.Name;
                 completionItem.kind = CompletionItemKind.Class;
                 completionItems.Add(completionItem);
@@ -130,11 +130,11 @@ namespace TypeCobol.LanguageServer
                                          .Functions.Values.Any(t => t.Contains(proc))
                                      //Ignore public if proc is in the current program
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
-                var procDisplayName = procIsPublic ? proc.QualifiedName.ToString() : proc.Name;
+                var procDisplayName = procIsPublic ? proc.VisualQualifiedName.ToString() : proc.Name;
                 var completionItem =
                     new CompletionItem(string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams));
                 completionItem.insertText = procIsPublic
-                    ? string.Format("{0}::{1}", proc.QualifiedName.Tail, proc.QualifiedName.Head)
+                    ? string.Format("{0}::{1}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
                     : proc.Name;
                 completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
@@ -162,9 +162,9 @@ namespace TypeCobol.LanguageServer
         {
             var variableArrangedQualifiedName = useQualifiedName
                 ? string.Join("::",
-                    variable.QualifiedName.ToString()
-                        .Split(variable.QualifiedName.Separator)
-                        .Skip(variable.QualifiedName.Count > 1 ? 1 : 0)) //Skip Program Name
+                    variable.VisualQualifiedName.ToString()
+                        .Split(variable.VisualQualifiedName.Separator)
+                        .Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0)) //Skip Program Name
                 : variable.Name;
 
             var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);

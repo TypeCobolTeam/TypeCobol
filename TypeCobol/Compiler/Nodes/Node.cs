@@ -219,11 +219,32 @@ namespace TypeCobol.Compiler.Nodes {
                     if (!string.IsNullOrEmpty(parent.Name)) {
                         qn = parent.Name + "." + qn;
                     }
-                    //if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
-                    //    break;
                     parent = parent.Parent;
                 }
                 
+                return new URI(qn);
+            }
+        }
+
+        public virtual QualifiedName VisualQualifiedName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Name)) return null;
+
+                var qn = Name;
+                var parent = this.Parent;
+                while (parent != null)
+                {
+                    if (!string.IsNullOrEmpty(parent.Name))
+                    {
+                        qn = parent.Name + "." + qn;
+                    }
+                    if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
+                        break;
+                    parent = parent.Parent;
+                }
+
                 return new URI(qn);
             }
         }

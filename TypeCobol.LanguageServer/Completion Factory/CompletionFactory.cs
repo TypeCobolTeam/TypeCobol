@@ -85,7 +85,7 @@ namespace TypeCobol.LanguageServer
                     procedures =
                         node.SymbolTable.GetFunctions(
                             f =>
-                                f.QualifiedName.ToString()
+                                f.VisualQualifiedName.ToString()
                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
                                 || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                             new List<SymbolTable.Scope>
@@ -133,7 +133,7 @@ namespace TypeCobol.LanguageServer
                 node.SymbolTable.GetFunctions(
                     p =>
                         p.Name.Equals(procedureName) ||
-                        p.QualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
+                        p.VisualQualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
                     {
                         SymbolTable.Scope.Declarations,
                         SymbolTable.Scope.Intrinsic,
@@ -253,7 +253,7 @@ namespace TypeCobol.LanguageServer
                         node.SymbolTable.GetTypes(
                             t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
                                  ||
-                                 t.QualifiedName.ToString()
+                                 t.VisualQualifiedName.ToString()
                                      .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                             new List<SymbolTable.Scope>
                             {
@@ -377,7 +377,7 @@ namespace TypeCobol.LanguageServer
                                             f =>
                                                 f.Name.StartsWith(userFilterText,
                                                     StringComparison.InvariantCultureIgnoreCase) ||
-                                                f.QualifiedName.ToString()
+                                                f.VisualQualifiedName.ToString()
                                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                                             new List<SymbolTable.Scope>
                                             {
@@ -555,7 +555,7 @@ namespace TypeCobol.LanguageServer
             var type = symbolTable.GetTypes(
                 t => t.Name.Equals(dataDefNode.DataType.Name, StringComparison.InvariantCultureIgnoreCase)
                      ||
-                     t.QualifiedName.ToString()
+                     t.VisualQualifiedName.ToString()
                          .Equals(dataDefNode.DataType.Name, StringComparison.InvariantCultureIgnoreCase),
                 new List<SymbolTable.Scope>
                 {
@@ -622,8 +622,8 @@ namespace TypeCobol.LanguageServer
                         {
                             if (reference.GetParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final varaible
                             {
-                                var referenceArrangedQualifiedName = string.Join("::", reference.QualifiedName.ToString().Split(reference.QualifiedName.Separator).Skip(1)); //Skip Program Name
-                                var finalQualifiedName = string.Format("{0}::{1}", referenceArrangedQualifiedName, variable.QualifiedName.Head);
+                                var referenceArrangedQualifiedName = string.Join("::", reference.VisualQualifiedName.ToString().Split(reference.VisualQualifiedName.Separator).Skip(1)); //Skip Program Name
+                                var finalQualifiedName = string.Format("{0}::{1}", referenceArrangedQualifiedName, variable.VisualQualifiedName.Head);
                                 var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, finalQualifiedName);
                                 completionItems.Add(new CompletionItem(variableDisplay) { insertText = finalQualifiedName, kind = CompletionItemKind.Variable });
                             }
@@ -636,7 +636,7 @@ namespace TypeCobol.LanguageServer
                                 {
                                     foreach (var tempComp in tempCompletionItems)
                                     {
-                                        tempComp.insertText += "::" + variable.QualifiedName.Head;
+                                        tempComp.insertText += "::" + variable.VisualQualifiedName.Head;
                                         tempComp.label = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, tempComp.insertText);
                                         completionItems.Add(tempComp);
                                     }
