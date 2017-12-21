@@ -42,9 +42,6 @@ namespace TypeCobol.LanguageServer
             typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName);
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
 
-            // DEBUG information
-            RemoteWindow.ShowInformationMessage("TypeCobol language server was launched !");
-
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
             initializeResult.capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
