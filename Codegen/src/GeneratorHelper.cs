@@ -92,9 +92,9 @@ namespace TypeCobol.Codegen
             string hash = Tools.Hash.CreateCOBOLNameHash(qualified_name.ToLower(), 8, sourceNode);
             string hashName = hash + name;
 #if DEBUG
-            System.Diagnostics.StackFrame sf = new System.Diagnostics.StackFrame(1, false);
-            System.Reflection.MethodBase method = sf.GetMethod();
-            System.Diagnostics.Debug.WriteLine(string.Format("[#####]ComputeIndexHashName[#####] Called By: {0} : HASH NAME = {1}({2})", method.Name, qualified_name, hashName));
+            //System.Diagnostics.StackFrame sf = new System.Diagnostics.StackFrame(1, false);
+            //System.Reflection.MethodBase method = sf.GetMethod();
+            //System.Diagnostics.Debug.WriteLine(string.Format("[#####]ComputeIndexHashName[#####] Called By: {0} : HASH NAME = {1}({2})", method.Name, qualified_name, hashName));
 #endif
             return hashName;
         }
