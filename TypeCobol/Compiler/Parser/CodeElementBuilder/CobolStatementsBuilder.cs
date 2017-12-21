@@ -262,7 +262,8 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateComputeStatement(CodeElementsParser.ComputeStatementContext context) {
 			var statement = new ComputeStatement();
 			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
-			statement.ArithmeticExpression = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression());
+            if(context.arithmeticExpression() != null)
+			    statement.ArithmeticExpression = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression());
 			return statement;
 		}
 

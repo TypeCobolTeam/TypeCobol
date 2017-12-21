@@ -482,6 +482,9 @@ namespace TypeCobol.Compiler.Parser
 
 		internal ArithmeticExpression CreateArithmeticExpression(CodeElementsParser.ArithmeticExpressionContext context)
 		{
+		    if (context == null)
+		        return null;
+
 			if(context.numericVariable3() != null)
 			{
 				return new NumericVariableOperand(
