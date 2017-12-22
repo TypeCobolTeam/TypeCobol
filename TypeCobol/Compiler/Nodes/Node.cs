@@ -341,6 +341,9 @@ namespace TypeCobol.Compiler.Nodes {
             get { return _Diagnostics; }
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         public Dictionary<StorageArea, string> QualifiedStorageAreas { get; set; }
 
         private List<Diagnostic> _Diagnostics;

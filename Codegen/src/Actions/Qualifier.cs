@@ -146,12 +146,12 @@ namespace TypeCobol.Codegen.Actions
                     return true;
                 if (!indexDefinition.IsPartOfATypeDef && indexDefinition.Parent != null && indexDefinition.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
                 {//Check if the parent is a data definition with a type which is not a TypeDef
-                    if (indexDefinition.Parent is DataDefinition)
-                    {
-                        DataDefinition dataDef = indexDefinition.Parent as DataDefinition;
-                        if (dataDef.CodeElement is DataDescriptionEntry)
+
+                    var dataDef = indexDefinition.Parent as DataDefinition;
+                    if (dataDef != null) {
+                        var dde = dataDef.CodeElement as DataDescriptionEntry;
+                        if (dde != null)
                         {
-                            DataDescriptionEntry dde = dataDef.CodeElement as DataDescriptionEntry;
                             if (dde.Indexes != null)
                             {
                                 foreach (var index in dde.Indexes)
@@ -358,7 +358,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     if (dataDef is TypeCobol.Compiler.Nodes.TypeDefinition)
                         return true;
-                    dataDef = dataDef.Parent is TypeCobol.Compiler.Nodes.DataDefinition ? (dataDef.Parent as TypeCobol.Compiler.Nodes.DataDefinition) : null;
+                    dataDef = dataDef.Parent as TypeCobol.Compiler.Nodes.DataDefinition;
                 }
                 return false;
             }
