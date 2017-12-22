@@ -193,11 +193,10 @@ namespace TypeCobol.Test.Compiler.Parser
 				            System.IO.File.WriteAllLines(filename + ".json", lines);
 				        }
 
-				        try
+                        _nbOfTests++;
+                        try
 				        {
 				            unit.Compare();
-				            _nbOfTests++;
-
 				        }
 				        catch (Exception ex)
 				        {
