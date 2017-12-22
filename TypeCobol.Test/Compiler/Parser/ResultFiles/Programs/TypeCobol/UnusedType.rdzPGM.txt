@@ -4,6 +4,8 @@ Line 19[12,55] <27, Error, Syntax> - Syntax error : Symbol var3 is not reference
 Line 20[12,36] <27, Error, Syntax> - Syntax error : Symbol type3.var3 is not referenced
 Line 20[12,36] <27, Error, Syntax> - Syntax error : Symbol var3 is not referenced
 Line 21[12,29] <27, Error, Syntax> - Syntax error : Symbol var2 is not referenced
+Line 21[12,29] <27, Error, Syntax> - Syntax error : Symbol var2 is not referenced
+Line 22[12,29] <27, Error, Syntax> - Syntax error : Symbol var1 is not referenced
 Line 22[12,29] <27, Error, Syntax> - Syntax error : Symbol var1 is not referenced
 
 --- Program ---

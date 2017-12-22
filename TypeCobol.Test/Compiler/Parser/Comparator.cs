@@ -8,10 +8,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
-using TypeCobol.Compiler.File;
-using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
-using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Test.Compiler.Parser
 {
@@ -30,7 +27,7 @@ namespace TypeCobol.Test.Compiler.Parser
         public void Init(string[] extensions = null, bool autoRemarks = false, bool AntlrProfiler = false)
         {
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator.paths.SamplePath));
-            DocumentFormat format = Comparator.getSampleFormat();
+            DocumentFormat format = Comparator.GetSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;
@@ -266,16 +263,17 @@ namespace TypeCobol.Test.Compiler.Parser
 		}
 
 		public virtual void Compare(CompilationUnit result, StreamReader reader) {
-			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.CodeElementsDocumentSnapshot.ParserDiagnostics, reader);
+            //Warning by default we only want All codeElementDiagnostics EXCEPT Node Diagnostics
+			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(false), reader);
 		}
 
-		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected) {
-			string result = ParserUtils.DumpResult(elements, diagnostics);
+		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected) {
+			string result = ParserUtils.DumpResult(elements, codeElementDiagnostics);
 			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
 			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
 		}
 
-		internal DocumentFormat getSampleFormat() {
+		internal DocumentFormat GetSampleFormat() {
 			if (paths.SamplePath.Contains(".rdz"))
 				return DocumentFormat.RDZReferenceFormat;
 			return DocumentFormat.FreeUTF8Format;
@@ -285,7 +283,7 @@ namespace TypeCobol.Test.Compiler.Parser
     internal class ArithmeticComparator : FilesComparator
     {
         public ArithmeticComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected)
         {
             var errors = new System.Text.StringBuilder();
             int c = 0, line = 1;
@@ -324,18 +322,18 @@ namespace TypeCobol.Test.Compiler.Parser
     {
         public NYComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected)
         {
             int c = 0;
             StringBuilder errors = new StringBuilder();
             foreach (var e in elements)
             {
-                if ((e as SentenceEnd) != null) continue;
+                if (e is SentenceEnd) continue;
                 string line = expected.ReadLine();
                 if (line != "Y") errors.AppendFormat("line {0}: \"Y\", expected \"{1}\"\n", c, line);
                 c++;
             }
-            foreach (var d in diagnostics)
+            foreach (var d in codeElementDiagnostics)
             {
                 string line = expected.ReadLine();
                 if (line != "N") errors.AppendFormat("line {0}: \"N\", expected \"{1}\"\n", c, line);
@@ -355,7 +353,7 @@ namespace TypeCobol.Test.Compiler.Parser
 
         public Outputter(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> diagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected)
         {
             foreach (var e in elements)
             {

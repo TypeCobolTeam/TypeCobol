@@ -90,25 +90,15 @@ namespace TypeCobol.Test.Compiler.Parser
 
 		public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics, bool printDiagnosticLine = true) {
 			StringBuilder builder = new StringBuilder();
-			bool hasDiagnostic = false;
-			var done = new List<string>();
-			foreach (Diagnostic d in diagnostics) {
-				string errmsg;
-				if (d is ParserDiagnostic)
-					 errmsg = ((ParserDiagnostic)d).ToStringWithRuleStack();
-				else errmsg = d.ToString();
+            //Sort diagnostics by line order
+            foreach (Diagnostic d in diagnostics.OrderBy(d => d.Line)) {
+			    var diagnostic = d as ParserDiagnostic;
+			    var errmsg = diagnostic != null ? diagnostic.ToStringWithRuleStack() : d.ToString();
+                
 
-				// don't add same error twice
-				bool found = false;
-				foreach(var other in done)
-					if (errmsg.Equals(other)) found = true;
-				if (found) continue;
-				done.Add(errmsg);
-
-				builder.AppendLine(errmsg);
-				hasDiagnostic = true;
+                builder.AppendLine(errmsg);
 			}
-			if(hasDiagnostic) {
+			if(builder.Length > 0) {
 			    if (printDiagnosticLine) {
 			        builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
 			    }
@@ -140,14 +130,14 @@ namespace TypeCobol.Test.Compiler.Parser
             if (diagnostics != null && diagnostics.Count > 0) {
                 builder.AppendLine(DiagnosticsToString(diagnostics));
             }
-            if (programs != null && programs.Any()) {
+            if (programs != null) {
                 foreach (var program in programs)
                 {
                     builder.AppendLine("--- Program ---");
                     Dump(builder, program);
                 }
             }
-            if (classes != null && classes.Any()) {
+            if (classes != null) {
                 foreach (var cls in classes)
                 {
                     builder.AppendLine("--- Class ---");
@@ -231,7 +221,7 @@ namespace TypeCobol.Test.Compiler.Parser
 			string header = "CUSTOM TYPES:\n";
 			str.Append(header);
 			foreach(var typedef in typedefs) {
-				str.Append(" * ").AppendLine(typedef.DataType.Name.ToString());
+				str.Append(" * ").AppendLine(typedef.DataType.Name);
 				foreach(var sub in typedef.Children)
 					DumpInTypeDef(str, (TypeCobol.Compiler.Nodes.DataDescription)sub, 2);
 				c++;
@@ -245,82 +235,82 @@ namespace TypeCobol.Test.Compiler.Parser
 				DumpInTypeDef(str, (TypeCobol.Compiler.Nodes.DataDescription)sub, indent+1);
 		}
 
-/*TODO#249
-		private static void Dump(StringBuilder str, IList<Function> functions) {
-			if (functions == null || functions.Count < 1) return;
-			str.AppendLine("FUNCTIONS:");
-			foreach(var function in functions) {
-				str.Append(" £ ").Append(function.Name).Append(':').Append(function.Visibility);
-				str.AppendLine();
-				foreach(var parameter in function.Profile.InputParameters) {
-					str.Append("        in: ");
-					Dump(str, parameter);
-					str.AppendLine();
-				}
-				foreach(var parameter in function.Profile.OutputParameters) {
-					str.Append("       out: ");
-					Dump(str, parameter);
-					str.AppendLine();
-				}
-				foreach(var parameter in function.Profile.InoutParameters) {
-					str.Append("        io: ");
-					Dump(str, parameter);
-					str.AppendLine();
-				}
-				if (function.Profile.ReturningParameter != null) {
-					str.Append("    return: ");
-					Dump(str, function.Profile.ReturningParameter);
-					str.AppendLine();
-				}
-			}
-		}
-		private static void Dump(StringBuilder str, ParameterDescription parameter) {
-			str.Append(parameter.Name).Append(':');
-			var entry = (ParameterDescriptionEntry)parameter.CodeElement;
-			if (entry.CustomType != null) str.Append(entry.CustomType);
-			else
-			if (entry.Picture != null) str.Append(entry.Picture);
-			else str.Append("?");
-		}
-// [/TYPECOBOL]
+        /*TODO#249
+                private static void Dump(StringBuilder str, IList<Function> functions) {
+                    if (functions == null || functions.Count < 1) return;
+                    str.AppendLine("FUNCTIONS:");
+                    foreach(var function in functions) {
+                        str.Append(" £ ").Append(function.Name).Append(':').Append(function.Visibility);
+                        str.AppendLine();
+                        foreach(var parameter in function.Profile.InputParameters) {
+                            str.Append("        in: ");
+                            Dump(str, parameter);
+                            str.AppendLine();
+                        }
+                        foreach(var parameter in function.Profile.OutputParameters) {
+                            str.Append("       out: ");
+                            Dump(str, parameter);
+                            str.AppendLine();
+                        }
+                        foreach(var parameter in function.Profile.InoutParameters) {
+                            str.Append("        io: ");
+                            Dump(str, parameter);
+                            str.AppendLine();
+                        }
+                        if (function.Profile.ReturningParameter != null) {
+                            str.Append("    return: ");
+                            Dump(str, function.Profile.ReturningParameter);
+                            str.AppendLine();
+                        }
+                    }
+                }
+                private static void Dump(StringBuilder str, ParameterDescription parameter) {
+                    str.Append(parameter.Name).Append(':');
+                    var entry = (ParameterDescriptionEntry)parameter.CodeElement;
+                    if (entry.CustomType != null) str.Append(entry.CustomType);
+                    else
+                    if (entry.Picture != null) str.Append(entry.Picture);
+                    else str.Append("?");
+                }
+        // [/TYPECOBOL]
 
-private static void Dump(StringBuilder str, Dictionary<string, List<Named>> map) {
-foreach(string key in map.Keys) {
-    foreach (var data in map[key]) {
-        Dump(str, data, 1);
-        str.Append("\n");
-    }
-}
-}
+        private static void Dump(StringBuilder str, Dictionary<string, List<Named>> map) {
+        foreach(string key in map.Keys) {
+            foreach (var data in map[key]) {
+                Dump(str, data, 1);
+                str.Append("\n");
+            }
+        }
+        }
 
-private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0)
-{
-DumpIndent(str, indent);
-str.Append(data.Name);
-return str;
-}
+        private static StringBuilder Dump(StringBuilder str, Named data, int indent = 0)
+        {
+        DumpIndent(str, indent);
+        str.Append(data.Name);
+        return str;
+        }
 
-private static StringBuilder DumpIndent(StringBuilder str, int indent)
-{
-for (int c=0; c<indent; c++) str.Append("  ");
-return str;
-}
-*/
+        private static StringBuilder DumpIndent(StringBuilder str, int indent)
+        {
+        for (int c=0; c<indent; c++) str.Append("  ");
+        return str;
+        }
+        */
+        
+        public static void CheckWithResultFile(string result, string testName)
+        {
+            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
+            {
+                CheckWithResultReader(testName, result, reader);
+            }
+        }
 
-public static void CheckWithResultFile(string result, string testName)
-{
-using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Compiler\Parser\ResultFiles\" + testName + ".txt")))
-{
-    CheckWithResultReader(testName, result, reader);
-}
-}
-
-public static void CheckWithResultReader(string testName, string result, StreamReader reader)
-{
-string expectedResult = reader.ReadToEnd();
-TestUtils.compareLines(testName, result, expectedResult);
-}
-}
+        public static void CheckWithResultReader(string testName, string result, StreamReader reader)
+        {
+            string expectedResult = reader.ReadToEnd();
+            TestUtils.compareLines(testName, result, expectedResult);
+        }
+        }
 
 public class TestErrorListener : BaseErrorListener
 {

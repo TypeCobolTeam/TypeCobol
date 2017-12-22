@@ -1,4 +1,7 @@
-﻿--- Code Elements ---
+﻿--- Diagnostics ---
+Line 1[1,11] <27, Error, Syntax> - Syntax error : Symbol c is not referenced
+Line 1[1,11] <27, Error, Syntax> - Syntax error : Symbol d is not referenced
+--- Code Elements ---
 [[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [22,22+:.]<PeriodSeparator>
 - ProgramName = TypeCobol
 - IsInitial = False

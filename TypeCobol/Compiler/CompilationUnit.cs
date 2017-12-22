@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Castle.Components.DictionaryAdapter;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -212,27 +208,18 @@ namespace TypeCobol.Compiler
         public ProgramClassDocument ProgramClassDocumentSnapshot { get; private set; }
 
 
+
         /// <summary>
-        /// Return all diagnostics from all snaphost
+        /// Return diagnostics attached directly to a CodeElement or to CodeElementsDocumentSnapshot
         /// </summary>
         /// <returns></returns>
-        public override IList<Diagnostic> AllDiagnostics()
-        {
-            var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
+
+        private IList<Diagnostic> OnlyCodeElementDiagnostics() {
+            var codeElementDiagnostics = new List<Diagnostic>();
 
             if (CodeElementsDocumentSnapshot != null && CodeElementsDocumentSnapshot.ParserDiagnostics != null)
             {
-                allDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
-            }
-
-            if (ProgramClassDocumentSnapshot != null)
-            {
-                //Get all nodes diagnostics using visitor. 
-                if (ProgramClassDocumentSnapshot.Root != null)
-                    ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
-
-                if (ProgramClassDocumentSnapshot.Diagnostics != null)
-                    allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+                codeElementDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
             }
 
             if (CodeElementsDocumentSnapshot != null)
@@ -241,12 +228,44 @@ namespace TypeCobol.Compiler
                 {
                     if (ce.Diagnostics != null)
                     {
-                        allDiagnostics.AddRange(ce.Diagnostics);
+                        codeElementDiagnostics.AddRange(ce.Diagnostics);
                     }
                 }
             }
 
+            return codeElementDiagnostics;
+        }
+
+        /// <summary>
+        /// Return All diagnostics (token, CodeElement, Node, ...) with the possibily to exclude Node diagnostics
+        /// </summary>
+        /// <param name="includeNodeDiagnostics"></param>
+        /// <returns></returns>
+        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics) {
+            var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
+
+            allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
+
+            if (includeNodeDiagnostics) {
+                if (ProgramClassDocumentSnapshot != null) {
+                    //Get all nodes diagnostics using visitor. 
+                    if (ProgramClassDocumentSnapshot.Root != null)
+                        ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
+
+                    if (ProgramClassDocumentSnapshot.Diagnostics != null)
+                        allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+                }
+            }
+
             return allDiagnostics;
+        }
+
+        /// <summary>
+        /// Return all diagnostics from all snaphost
+        /// </summary>
+        /// <returns></returns>
+        public override IList<Diagnostic> AllDiagnostics() {
+            return AllDiagnostics(true);
         }
 
         /// <summary>
