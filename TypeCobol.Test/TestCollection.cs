@@ -2,24 +2,25 @@
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Test.Compiler.File;
 using TypeCobol.Test.Compiler.Parser;
-using TypeCobol.Test.Compiler.Preprocessor;
-using TypeCobol.Test.Compiler.Scanner;
-using TypeCobol.Test.Compiler.Text;
+using TypeCobol.Test.Parser;
+using TypeCobol.Test.Parser.FileFormat;
+using TypeCobol.Test.Parser.Performance;
+using TypeCobol.Test.Parser.Preprocessor;
+using TypeCobol.Test.Parser.Scanner;
+using TypeCobol.Test.Parser.Text;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test {
 
     [TestClass]
     public class TestCollection
     {
-        static readonly string root = PlatformUtils.GetPathForProjectFile("Compiler" + Path.DirectorySeparatorChar + "Parser");
-        static readonly string sampleRoot = root + Path.DirectorySeparatorChar + "Samples";
-        static readonly string resultRoot = root + Path.DirectorySeparatorChar + "ResultFiles";
+        static readonly string root = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Programs");
 
         [TestMethod]
         [TestProperty("Time", "fast")]
-        public void CheckFile()
+        public void CheckFileFormat()
         {
             TestIBMCodePages.Check_GetDotNetEncoding();
             TestIBMCodePages.Check_IsEBCDICCodePage();
@@ -121,44 +122,42 @@ namespace TypeCobol.Test {
             TestParserRobustness.CheckProgramCodeElements();
         }
 
+
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckCodeElements() {
+            // Test the recognition of potentially ambiguous CodeElements which begin with the same first Token
+            TestCodeElements.Check_DISPLAYCodeElements();
+
+
+            TestCodeElements.CheckCodeElements();
+        }
+
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void CheckToken() {
+            TestTokenSource.Check_CobolCharStream();
+            TestTokenSource.Check_CobolTokenSource();
+            TestTokenSource.Check_CobolTokenSource_WithStartToken();
+        }
+
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
         public void CheckParserCobol85()
         {
-            TestTokenSource.Check_CobolCharStream();
-            TestTokenSource.Check_CobolTokenSource();
-            TestTokenSource.Check_CobolTokenSource_WithStartToken();
-
-            // Test the recognition of potentially ambiguous CodeElements which begin with the same first Token
-            TestCodeElements.Check("AT");
-            TestCodeElements.Check("END");
-            TestCodeElements.Check("NOT");
-            TestCodeElements.Check("ON");
-            // TO DO -> fix new identifier parsing :
-            TestCodeElements.Check_DISPLAYCodeElements();
-            TestCodeElements.Check_EXITCodeElements();
-            TestCodeElements.Check_IDCodeElements();
-            TestCodeElements.Check_UDWCodeElements();
-            TestCodeElements.Check_WHENCodeElements();
-
-            TestCodeElements.Check_HeaderCodeElements();
-            TestCodeElements.Check_IdentificationCodeElements();
-            TestCodeElements.Check_ParagraphCodeElements();
-            TestCodeElements.Check_EntryCodeElements();
-            TestParser.Check_BeforeAfterInsertion();
-            TestParser.Check_BeforeAfterInsertionBatched();
-
 			var errors = new System.Collections.Generic.List<Exception>();
 			int nbOfTests = 0;
             string[] extensions = { ".cbl", ".pgm" };
             string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
 
-            foreach (string directory in Directory.GetDirectories(sampleRoot)) {
+            foreach (string directory in Directory.GetDirectories(root)) {
                 var dirname = Path.GetFileName(directory);
 
 			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-				var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions, compilerExtensions);
+				var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
 				try { folderTester.Test(); }
 				catch (Exception ex) { errors.Add(ex); }
 				nbOfTests += folderTester.GetTestCount();
@@ -187,12 +186,12 @@ namespace TypeCobol.Test {
 
             string[] extensions = { ".tcbl" };
             string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
-            foreach (string directory in Directory.GetDirectories(sampleRoot))
+            foreach (string directory in Directory.GetDirectories(root))
             {
                 var dirname = Path.GetFileName(directory);
 
                 Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(sampleRoot, resultRoot, directory, extensions, compilerExtensions);
+                var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
                 folderTester.Test();
                 nbOfTests += folderTester.GetTestCount();
                 Console.Write("\n");
@@ -209,26 +208,22 @@ namespace TypeCobol.Test {
         [TestProperty("Time", "fast")]
         public void EILegacyCheck()
         {
-            string tempRoot = root + Path.DirectorySeparatorChar + "EILegacy";
-            string tempSampleRoot = tempRoot + Path.DirectorySeparatorChar + "Samples";
-            string tempResultRoot = tempRoot + Path.DirectorySeparatorChar + "ResultFiles";
+            string tempRoot = PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "EILegacy");
 
             int nbOfTests = 0;
             string[] extensions = { ".tcbl", ".cbl"};
 
             string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
-            foreach (string directory in Directory.GetDirectories(tempRoot))
-            {
-                var dirname = Path.GetFileName(directory);
+            
 
-                Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
-                var folderTester = new FolderTester(tempSampleRoot, tempResultRoot, directory, extensions, compilerExtensions);
+                //Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
+                var folderTester = new FolderTester(tempRoot, tempRoot, tempRoot, extensions, compilerExtensions);
 
                 folderTester.Test(false, false, true);
 
                 nbOfTests += folderTester.GetTestCount();
                 Console.Write("\n");
-            }
+            
             Console.Write("Number of tests: " + nbOfTests + "\n");
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
@@ -241,11 +236,13 @@ namespace TypeCobol.Test {
         //[Ignore]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
-        public void CheckExecToStepParse()
+        public void CheckExecToStep()
         {
             string fileName = "ExecToStepFile.rdz.cbl";
 
-            var compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.Scanner);
+            var folder = "Parser" + Path.DirectorySeparatorChar + "ExecToStep";
+
+            var compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.Scanner);
             //Verify that the option hasn't change during processing and that compilation process didn't go further than defined step
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Scanner 
                 && compileResult.TokensLines.Count == 0 
@@ -254,31 +251,24 @@ namespace TypeCobol.Test {
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Scanner Step failled");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.Preprocessor);
+            compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.Preprocessor);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.Preprocessor 
                 && compileResult.ProcessedTokensDocumentSnapshot == null 
                 && compileResult.CodeElementsDocumentSnapshot != null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("Preprocessor Step failled");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.SyntaxCheck);
+            compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.SyntaxCheck);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SyntaxCheck 
                 && compileResult.CodeElementsDocumentSnapshot == null 
                 && compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SyntaxCheck Step failled");
 
-            compileResult = ParserUtils.ParseCobolFile(fileName, null, null, ExecutionStep.SemanticCheck);
+            compileResult = ParserUtils.ParseCobolFile(fileName, null, folder, ExecutionStep.SemanticCheck);
             if (compileResult.CompilerOptions.ExecToStep != ExecutionStep.SemanticCheck 
                 && !compileResult.ProgramClassDocumentSnapshot.Root.Programs.Any())
                 throw new Exception("SemanticCheck Step failled");
         }
 
-        [TestMethod]
-        [TestCategory("Parsing")]
-        [TestProperty("Time", "fast")]
-        public void AntlrPerformanceProfilerTest()
-        {
-            TestParser.AntlrPerformanceProfiler();
-        }
     }
 }

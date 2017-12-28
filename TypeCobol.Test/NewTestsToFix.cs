@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TypeCobol.Test.Compiler.File;
 using TypeCobol.Test.Compiler.Parser;
-using TypeCobol.Test.Compiler.Preprocessor;
-using TypeCobol.Test.Compiler.Scanner;
-using TypeCobol.Test.Compiler.Text;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test {
 
@@ -46,7 +43,7 @@ namespace TypeCobol.Test {
 
             //This test use TypeChecker which is specific to TypeCobol
             //As specifications of TypeCobol are not final yet this test can't be used
-            //            TestParser.Check_ParserIntegration();
+            //            TestChangeEvent.Check_ParserIntegration();
         }
 
         /// <summary>

@@ -1,4 +1,0 @@
-       DataDescriptionEntry
-       FileControlEntry
-       FileDescriptionEntry
-       IOControlEntry

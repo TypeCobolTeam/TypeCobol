@@ -8,6 +8,7 @@ using System.IO;
 using TypeCobol.Codegen.Config;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test {
 
@@ -78,7 +79,7 @@ namespace TypeCobol.Test {
 				string path = Path.Combine(rootFolder, filename);
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
-                var document = new Parser();
+                var document = new TypeCobol.Parser();
 			    var options = new TypeCobolOptions
 			    {
 			        ExecToStep = ExecutionStep.SemanticCheck,

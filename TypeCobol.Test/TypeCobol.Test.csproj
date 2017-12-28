@@ -115,18 +115,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="**\*.cs" />
-    <Content Include="Compiler\File\Samples\AsciiFreeFormat.cpy" />
-    <Content Include="Compiler\File\Samples\AsciiLinuxFormat.14" />
-    <Content Include="Compiler\File\Samples\AsciiRefFormat.cpy" />
-    <Content Include="Compiler\File\Samples\EbcdicRefFormat.TXT" />
-    <Content Include="Compiler\File\Samples\EbcdicRefFormatWithBadChars.TXT" />
-    <Content Include="Compiler\File\Samples\UTF8Format.txt" />
-    <Content Include="**\*Samples\**" />
-    <Content Include="**\*TestFiles\**" />
-    <Content Include="**\*Preprocessor\**" />
-    <Content Include="**\ResultFiles\**" />
-    <Content Include="**\Antlr\**" />
+	<Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
+    <Content Include="NewTestsToFix\**" />
     <Content Include="ThirdParty\**" />
+    <Content Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codegen\src\Codegen.csproj">
