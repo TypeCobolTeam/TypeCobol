@@ -611,47 +611,76 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         /// <param name="wname">Receiving item; must be found and its type known</param>
         /// <param name="sent">Sending item; must be found and its type known</param>
-        private static void CheckVariable(Node node, QualifiedName wname, object sent) {
-		if (sent == null || wname == null) return;// I need both items
-		var wsymbol = GetSymbol(node.SymbolTable, wname);
-		if (wsymbol == null) return;// receiving symbol name unresolved
-		var receiving = GetTypeDefinition(node.SymbolTable, wsymbol);
-		if (receiving == null) return;// cannot find receiving type
+        private static void CheckVariable(Node node, QualifiedName wname, object sent)
+        {
+            DataDefinition sendingTypeDefinition = null, receivingTypeDefinition = null;
 
-		DataType sending = null;
-		var sname = sent as QualifiedName;
-		if (sname != null) {
-			var ssymbol = GetSymbol(node.SymbolTable, sname);
-			if (ssymbol == null) return;// sending symbol name unresolved
-			sending = GetTypeDefinition(node.SymbolTable, ssymbol);
-			if (sending == null) return;// cannot find sending type
-		} else {
-			bool? sbool = sent as bool?;
-			if (sbool != null) sending = DataType.Boolean;
-			double? sdouble = sent as double?;
-			if (sdouble != null) sending = DataType.Numeric;
-			string sstring = sent as string;
-			if (sstring != null) sending = DataType.Alphanumeric;
-		}
-		if (sending != receiving) {
-			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
-			if (receiving.RestrictionLevel > RestrictionLevel.WEAK) {
-                    if (!IsUnsafe)
+            if (sent == null || wname == null) return; //Both items needed
+            var wsymbol = GetSymbol(node.SymbolTable, wname);
+            if (wsymbol == null) return; // receiving symbol name unresolved
+            receivingTypeDefinition = wsymbol.TypeDefinition;
+            if (receivingTypeDefinition == null) //No TypeDefinition found, try to get DataType
+            {
+                receivingTypeDefinition = GetDataDefinitionType(node.SymbolTable, wsymbol);
+            }
+            
+            var sname = sent as QualifiedName;
+            if (sname != null)
+            {
+                var ssymbol = GetSymbol(node.SymbolTable, sname);
+                if (ssymbol == null) return; // sending symbol name unresolved
+                sendingTypeDefinition = ssymbol.TypeDefinition;
+                if (sendingTypeDefinition == null) //No TypeDefinition found try to get DataType
+                {
+                    sendingTypeDefinition = GetDataDefinitionType(node.SymbolTable, ssymbol);
+                }
+            }
+            else
+            {   //This will resolve the following cases MOVE 1 TO myVar / MOVE true TO myVar / MOVE "test" TO myVar. 
+                if (sent is bool?) sendingTypeDefinition = GeneratedDefinition.BooleanGeneratedDefinition;
+                if (sent is double?) sendingTypeDefinition = GeneratedDefinition.NumericGeneratedDefinition;
+                if (sent is string) sendingTypeDefinition = GeneratedDefinition.AlphanumericGeneratedDefinition;
+            }
+
+            //TypeDefinition Comparison
+            if (receivingTypeDefinition != null && !receivingTypeDefinition.Equals(sendingTypeDefinition))
+            {
+                var isUnsafe = ((VariableWriter) node).IsUnsafe;
+                if (receivingTypeDefinition.DataType.RestrictionLevel > RestrictionLevel.WEAK)
+                {
+                    if (!isUnsafe)
                     {
-                        string message = string.Format("Cannot write {0} to {1} typed variable {2}:{3}."
-                                                      , sending, receiving.RestrictionLevel == RestrictionLevel.STRONG ? "strongly" : "strictly"
-                                                      , wname.Head, receiving);
+                        var sendingName = sendingTypeDefinition != null ? sendingTypeDefinition.DataType.Name : null;
+                        var receivingName = receivingTypeDefinition.DataType.Name;
+
+                        if (sendingTypeDefinition != null &&
+                            sendingTypeDefinition.DataType.Name == receivingTypeDefinition.DataType.Name)
+                            //In case type names are equals
+                        {
+                            sendingName = sendingTypeDefinition.VisualQualifiedName.ToString().Replace(".", "::");
+                            receivingName = receivingTypeDefinition.VisualQualifiedName.ToString().Replace(".", "::");
+                        }
+
+                        var message = string.Format("Cannot write {0} to {1} typed variable {2}:{3}.", sendingName,
+                            receivingTypeDefinition.DataType.RestrictionLevel == RestrictionLevel.STRONG
+                                ? "strongly"
+                                : "strictly", wname.Head, receivingName);
+
                         DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                     }
-			} else {
-				if (IsUnsafe) {
-					string message = "Useless UNSAFE with non strongly typed receiver.";
-					DiagnosticUtils.AddError(node, message, MessageCode.SyntaxWarningInParser);
-				}
-			}
-		}
-	}
-	private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference) {
+                }
+                else
+                {
+                    if (isUnsafe)
+                    {
+                        var message = "Useless UNSAFE with non strongly typed receiver.";
+                        DiagnosticUtils.AddError(node, message, MessageCode.SyntaxWarningInParser);
+                    }
+                }
+            }
+        }
+
+        private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference) {
 		var found = table.GetVariables(symbolReference);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
@@ -663,14 +692,20 @@ namespace TypeCobol.Compiler.Diagnostics {
 	}
 
     //TODO move this method to DataDefinition
-        private static DataType GetTypeDefinition(SymbolTable table, Node symbol)
+    /// <summary>
+    /// Allows to get DataType of a DataDefinition Node
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="symbol"></param>
+    /// <returns></returns>
+        private static DataDefinition GetDataDefinitionType(SymbolTable table, Node symbol)
         {
             var data = symbol as DataDefinition;
             if (data != null)
             {
                 var dataCondition = data as DataCondition;
                 if (dataCondition != null)
-                    return dataCondition.CodeElement().DataType;
+                    return new GeneratedDefinition(dataCondition.CodeElement().DataType.Name, dataCondition.CodeElement().DataType);
 
                 DataDescriptionEntry entry;
                 if (data.CodeElement is DataDescriptionEntry)
@@ -700,13 +735,13 @@ namespace TypeCobol.Compiler.Diagnostics {
                 if (entry == null)
                     return null;
 
-                if (entry.UserDefinedDataType == null) return entry.DataType; //not a custom type
+                if (entry.UserDefinedDataType == null) return new GeneratedDefinition(entry.DataType.Name, entry.DataType);
             }
             ITypedNode typed = symbol as ITypedNode;
             if (typed == null) return null; // symbol untyped
             var types = table.GetType(typed);
             if (types.Count != 1) return null; // symbol type not found or ambiguous
-            return types[0].DataType;
+            return types[0];
         }
 
         /// <summary>

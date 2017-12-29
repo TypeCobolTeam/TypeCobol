@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser.Generated;
 using Object = System.Object;
 using String = System.String;
 
@@ -53,6 +54,21 @@ namespace TypeCobol.Compiler.CodeElements
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
 			return doCreate(picture, basic);
 		}
+
+        /// <summary>
+        /// Allows to create a numeric DataType for TYPEDEF with a usage clause that makes the Data Numeric. 
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <returns></returns>
+	    public static DataType Create(DataUsage usage)
+	    {
+	        if (usage == DataUsage.Binary || usage == DataUsage.NativeBinary || usage == DataUsage.FloatingPoint ||
+	            usage == DataUsage.LongFloatingPoint || usage == DataUsage.PackedDecimal)
+	        {
+	            return DataType.Numeric;
+	        }
+	        return DataType.Unknown;
+	    }
 		public static DataType Create(string picture, char[] currencies) {
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
 			var all = new char[basic.Length + currencies.Length];

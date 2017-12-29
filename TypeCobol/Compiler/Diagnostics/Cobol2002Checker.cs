@@ -288,8 +288,13 @@ class RenamesChecker {
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
             else
+            {
                 foundedType = found[0];
+                node.TypeDefinition = foundedType;
+            }
+                
         }
+
     }
     /*
     class StronglyTypedReceiverChecker: NodeListener {

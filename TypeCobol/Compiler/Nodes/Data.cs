@@ -115,7 +115,8 @@ namespace TypeCobol.Compiler.Nodes {
     ///   DataRedefines
     ///   DataRenames
     ///   TypeDefinition
-    ///   IndexDefinition (TODO)
+    ///   IndexDefinition
+    ///   GeneratedDefinition
     /// </summary>
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
 
@@ -154,6 +155,19 @@ namespace TypeCobol.Compiler.Nodes {
                     return ((DataDefinitionEntry)this.CodeElement).DataType;
                 }
                 return DataType.Unknown;
+            }
+        }
+
+        public virtual DataType PrimitiveDataType
+        {
+            get
+            {
+                if (this.Picture != null) //Get DataType based on Picture clause
+                    return DataType.Create(this.Picture.Value);
+                else if (this.Usage.HasValue) //Get DataType based on Usage clause
+                    return DataType.Create(this.Usage.Value);
+                else
+                    return null;
             }
         }
 
@@ -306,6 +320,25 @@ namespace TypeCobol.Compiler.Nodes {
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
+
+        public override bool Equals(object obj)
+        {
+            if ((obj as TypeDefinition) != null)
+            {
+                var compareTypeDef = (TypeDefinition) obj;
+                return compareTypeDef.DataType == this.DataType &&
+                       compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
+                       compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
+            }
+            else if ((obj as GeneratedDefinition) != null)
+            {
+                if (this.PrimitiveDataType != null)
+                    return this.PrimitiveDataType == ((GeneratedDefinition) obj).DataType;
+                else
+                    return this.DataType == ((GeneratedDefinition) obj).DataType;
+            }
+            return false;
+        }
     }
     // [/COBOL 2002]
 
@@ -361,6 +394,50 @@ namespace TypeCobol.Compiler.Nodes {
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
+        }
+    }
+
+    /// <summary>
+    /// Allow to generate DataDefinition which can take any desired form/type. 
+    /// Give access to GeneratedDefinition of Numeric/Alphanumeric/Boolean/... DataType
+    /// </summary>
+    public class GeneratedDefinition : DataDefinition
+    {
+        private string _Name;
+        private DataType _DataType;
+
+        public static GeneratedDefinition NumericGeneratedDefinition =       new GeneratedDefinition("Numeric", DataType.Numeric);
+        public static GeneratedDefinition AlphanumericGeneratedDefinition =  new GeneratedDefinition("Alphanumeric", DataType.Alphanumeric);
+        public static GeneratedDefinition AlphabeticGeneratedDefinition =    new GeneratedDefinition("Alphabetic", DataType.Alphabetic);
+        public static GeneratedDefinition BooleanGeneratedDefinition =       new GeneratedDefinition("Boolean", DataType.Boolean);
+        public static GeneratedDefinition DBCSGeneratedDefinition =          new GeneratedDefinition("DBCS", DataType.DBCS);
+        public static GeneratedDefinition DateGeneratedDefinition =          new GeneratedDefinition("Date", DataType.Date);
+        public static GeneratedDefinition FloatingPointGeneratedDefinition = new GeneratedDefinition("FloatingPoint", DataType.FloatingPoint);
+        public static GeneratedDefinition OccursGeneratedDefinition =        new GeneratedDefinition("Occurs", DataType.Occurs);
+        public static GeneratedDefinition StringGeneratedDefinition =        new GeneratedDefinition("String", DataType.String);
+        public GeneratedDefinition(string name, DataType dataType) : base(null)
+        {
+            _Name = name;
+            _DataType = dataType;
+        }
+
+        public override string Name
+        {
+            get { return _Name; }
+        }
+
+        public override DataType DataType
+        {
+            get { return _DataType; }
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            //In this case we can only compare the DataType
+            if((obj as DataDefinition) != null)
+                return ((DataDefinition) obj).DataType == _DataType;
+            return false;
         }
     }
 

@@ -296,6 +296,22 @@ namespace TypeCobol.Compiler.Nodes {
 
         public SymbolTable SymbolTable { get; set; }
 
+
+        private TypeDefinition _typeDefinition;
+
+        /// <summary>
+        /// Get the TypeDefinition node associated to this Node
+        /// </summary>
+        public TypeDefinition TypeDefinition
+        {
+            get { return _typeDefinition; }
+            set
+            {
+                if (_typeDefinition == null)
+                    _typeDefinition = value;
+            }
+        }
+
         public object this[string attribute] {
             get { return Attributes.Get(this, attribute); }
         }
@@ -342,7 +358,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
-        /// TODO
+        /// Allows to store the used storage areas and their fully qualified Name. 
         /// </summary>
         public Dictionary<StorageArea, string> QualifiedStorageAreas { get; set; }
 
