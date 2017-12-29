@@ -1,0 +1,50 @@
+﻿--- Diagnostics ---
+Line 22[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
+Line 38[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
+Line 39[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
+Line 52[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
+
+--- Program ---
+PROGRAM: DVZF0OS3 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  MyBoolean:BOOL
+  var1Small:SmallInt
+  realVar:Real
+  floatVar:Float
+  var1:toto
+  var2:DVZF0OS3bis.toto
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  SmallInt:SmallInt
+  Integer:Integer
+  BigInt:BigInt
+  Real:Real
+  Float:Float
+  SmallChar:SmallChar
+--- Intrinsic:Namespace:Global
+-- DATA --------
+  var3:toto
+-- TYPES -------
+  toto:toto
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING
+--- Program ---
+PROGRAM: DVZF0OS3bis common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  var1:DVZF0OS3.toto
+  var2:DVZF0OS3bis.toto
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  toto:toto
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING
