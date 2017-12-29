@@ -74,6 +74,7 @@ namespace TypeCobol.LanguageServer
             foreach (var type in types)
             {
                 bool typeIsPublic = false;
+                bool typeIsIntrinsic = type.IsFlagSet(Node.Flag.NodeIsIntrinsic);
                 if (enablePublicFlag)
                     typeIsPublic = (type.CodeElement as DataTypeDescriptionEntry).Visibility ==
                                    Compiler.CodeElements.AccessModifier.Public
@@ -81,9 +82,9 @@ namespace TypeCobol.LanguageServer
                                    !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
                                          .Types.Values.Any(t => t.Contains(type))
                                      //Ignore public if type is in the current program
-                                     || type.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if type is in intrinsic
+                                     || typeIsIntrinsic); //Ignore public if type is in intrinsic
 
-                var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
+                var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : (typeIsIntrinsic ? "*" : null) + type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
                 completionItem.insertText = typeIsPublic
                     ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)

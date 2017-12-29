@@ -253,8 +253,9 @@ namespace TypeCobol.LanguageServer
                         node.SymbolTable.GetTypes(
                             t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
                                  ||
+                                 ( !t.IsFlagSet(Node.Flag.NodeIsIntrinsic) &&
                                  t.VisualQualifiedName.ToString()
-                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)),
                             new List<SymbolTable.Scope>
                             {
                                 SymbolTable.Scope.Declarations,
