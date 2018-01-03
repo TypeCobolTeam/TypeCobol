@@ -5,6 +5,8 @@
 
        01 Calendar TYPEDEF STRICT PUBLIC pic X.
            88 Gregorian value 'G'.
+       01 CustomDate TYPEDEF STRICT PUBLIC.
+          05 CalendarContainer TYPE Calendar. 
        PROCEDURE DIVISION.
 
 
