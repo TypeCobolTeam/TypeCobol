@@ -668,7 +668,7 @@
         }
 
         private readonly static string[] BoolTypeTemplate = {
-        " {2}{1}  {0}-value PIC X VALUE LOW-VALUE.",
+        " {2}{1}  {0}-value PIC X VALUE {3}.",
         " {2}    88  {0}       VALUE 'T'.",
         " {2}    88  {0}-false VALUE 'F'.",
     };
@@ -691,9 +691,18 @@
                             for (int i = 0; i < indent; i++)
                                 margin += "  ";
                             string slevel = level.ToString("00");
+                            string svalue = "LOW-VALUE";
+                            TypeCobol.Compiler.CodeElements.Value value = ((DataDescriptionEntry)child.CodeElement).InitialValue;
+                            if (value != null)
+                            {
+                                if (value.LiteralType == Value.ValueLiteralType.Boolean)
+                                {
+                                    svalue = value.BooleanValue.Value ? "'T'" : "'F'";
+                                }
+                            }
                             foreach (string str in BoolTypeTemplate)
                             {
-                                string sline = string.Format(str, attr_name, slevel, margin);
+                                string sline = string.Format(str, attr_name, slevel, margin, svalue);
                                 TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
                                 lines.Add(line);
                             }

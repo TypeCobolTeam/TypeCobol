@@ -11,13 +11,22 @@
   </skeleton>
 
   <!-- replace TYPE BOOL declarations -->
-  <skeleton name="BOOL.DECLARE" var="level,name">
+  <skeleton name="BOOL.DECLARE" var="level,name,value">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="BOOL"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
-%level  %name-value PIC X VALUE LOW-VALUE.
+        @{
+        var items = "";
+        if (%value.Length == 0) {
+        items = %level +"  "+%name+"-value PIC X VALUE LOW-VALUE.";
+        }
+        else {
+        items = %level + "  " + %name + "-value PIC X VALUE " +  %value  + ".";
+        }
+        }
+@items
     88  %name       VALUE 'T'.
     88  %name-false VALUE 'F'.
       </pattern>
