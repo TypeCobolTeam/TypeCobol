@@ -691,18 +691,10 @@
                             for (int i = 0; i < indent; i++)
                                 margin += "  ";
                             string slevel = level.ToString("00");
-                            string svalue = "LOW-VALUE";
-                            TypeCobol.Compiler.CodeElements.Value value = ((DataDescriptionEntry)child.CodeElement).InitialValue;
-                            if (value != null)
-                            {
-                                if (value.LiteralType == Value.ValueLiteralType.Boolean)
-                                {
-                                    svalue = value.BooleanValue.Value ? "'T'" : "'F'";
-                                }
-                            }
+                            string svalue = child["value"] as string;
                             foreach (string str in BoolTypeTemplate)
                             {
-                                string sline = string.Format(str, attr_name, slevel, margin, svalue);
+                                string sline = string.Format(str, attr_name, slevel, margin, svalue.Length == 0 ? "LOW-VALUE" : svalue);
                                 TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
                                 lines.Add(line);
                             }
