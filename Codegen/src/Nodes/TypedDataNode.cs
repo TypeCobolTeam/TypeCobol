@@ -705,7 +705,12 @@
                 if (child is IndexDefinition)
                     continue;//Ignore Index Definition
 
+                System.Diagnostics.Debug.Assert(child is DataDefinition);
                 var typed = child is DataDefinition ? (DataDefinition)child : null;
+                if (typed == null)
+                {//Unexpected typed value.                    
+                    continue;
+                }
                 var types = table.GetType(typed.DataType);
                 bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
