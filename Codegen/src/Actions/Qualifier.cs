@@ -57,15 +57,6 @@ namespace TypeCobol.Codegen.Actions
                 }
             }
 
-            public override bool BeginCodeElement(CodeElement codeElement)
-            {
-                    return true;
-            }
-
-            public override void EndCodeElement(CodeElement codeElement)
-            {                
-            }
-
             /// <summary>
             /// Visitor
             /// </summary>
