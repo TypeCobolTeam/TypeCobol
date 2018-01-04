@@ -175,50 +175,62 @@ namespace TypeCobol.Compiler.Diagnostics {
                 found = foundQualified.Select(v => v.Value).ToList();
             }
 
-            if (found.Count == 1 && foundQualified.Count == 1 && found[0].IsIndex)
+            if (found.Count == 1 && foundQualified.Count == 1)
             {
-                var index = found[0];
-                string completeQualifiedName = foundQualified.First().Key;
-
-                index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
-
-                if (area.SymbolReference.IsQualifiedReference)
+                if (found[0].IsIndex)
                 {
-                    if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
-                        DiagnosticUtils.AddError(index.Parent.CodeElement, "Index name '" + index.Name + "' is over 22 characters.");
-                    if (
-                        index.Parent.CodeElement.IsInsideCopy()) //If index comes from a copy, do not support qualification
-                        DiagnosticUtils.AddError(node.CodeElement, "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
-                }
+                    var index = found[0];
+                    string completeQualifiedName = foundQualified.First().Key;
 
-                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef) //Index name is qualified or belongs to a typedef
-                {
-                    //Mark this node for generator
-                    FlagNodeAndCreateQualifiedStorageAreas(node, storageArea, completeQualifiedName);
+                    index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
 
-                    foreach (var reference in index.GetReferences().Where(n => !n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                    if (area.SymbolReference.IsQualifiedReference)
                     {
-                        FlagNodeAndCreateQualifiedStorageAreas(reference.Value, reference.Key, completeQualifiedName);
+                        if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
+                            DiagnosticUtils.AddError(index.Parent.CodeElement, "Index name '" + index.Name + "' is over 22 characters.");
+                        if (
+                            index.Parent.CodeElement.IsInsideCopy()) //If index comes from a copy, do not support qualification
+                            DiagnosticUtils.AddError(node.CodeElement, "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
+                    }
+
+                    if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef) //Index name is qualified or belongs to a typedef
+                    {
+                        //Mark this node for generator
+                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, completeQualifiedName);
+
+                        foreach (var reference in index.GetReferences().Where(n => !n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                        {
+                            FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, reference.Value, reference.Key, completeQualifiedName);
+                        }
+                    }
+                    else if (!area.SymbolReference.IsQualifiedReference) //If it's an index but not use with qualified reference 
+                    {
+                        //Check the previous references to see if one has been flagged as NodeContainsIndex then flag this node
+                        if (index.GetReferences().Any(n => n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                        {
+                            FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, completeQualifiedName);
+                        }
+                    }
+
+                    //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
+                    if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef) //If index is used with qualified name but doesn't belongs to typedef
+                    {
+                        //Flag index node for code generator to let it know that this index will need hash.
+                        index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
+                    }
+
+                    if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                        DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
+                }
+                else if (found[0].DataType == DataType.Boolean)
+                {
+                    if (!(node is Nodes.If || node is Nodes.Set))//Ignore Conditional(If) and Set statement
+                    {
+                        //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
+                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, foundQualified.First().Key);
                     }
                 }
-                else if (!area.SymbolReference.IsQualifiedReference) //If it's an index but not use with qualified reference 
-                {
-                    //Check the previous references to see if one has been flagged as NodeContainsIndex then flag this node
-                    if (index.GetReferences().Any(n => n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
-                    {
-                        FlagNodeAndCreateQualifiedStorageAreas(node, storageArea, completeQualifiedName);
-                    }
-                }
-
-                //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
-                if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef) //If index is used with qualified name but doesn't belongs to typedef
-                {
-                    //Flag index node for code generator to let it know that this index will need hash.
-                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
-                }
-
-                if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
-                    DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
+               
             }
 
             if (found.Count < 1)
@@ -229,9 +241,9 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         }
 
-        private void FlagNodeAndCreateQualifiedStorageAreas(Node node, StorageArea storageArea, string completeQualifiedName)
+        private void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea, string completeQualifiedName)
         {
-            node.SetFlag(Node.Flag.NodeContainsIndex, true);
+            node.SetFlag(flag, true);
             if (node.QualifiedStorageAreas == null)
                 node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
 

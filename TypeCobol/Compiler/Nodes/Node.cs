@@ -155,6 +155,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// It will be used by code generator, to know if the index has to be hashed or not.
             /// </summary>
             IndexUsedWithQualifiedName = 0x01 << 19,
+            /// <summary>
+            /// Mark that this node contains a boolean variable that has to be considered by CodeGen. 
+            /// </summary>
+            NodeContainsBoolean = 0x01 << 20,
 
 
         };

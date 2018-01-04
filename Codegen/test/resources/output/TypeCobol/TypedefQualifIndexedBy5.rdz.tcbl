@@ -10,8 +10,10 @@
       
        procedure division.
       *MyIdx should be prefixed with a hash
+      *    set MyIdx             to 1.
            set ea84b906MyIdx             to 1.
       *MyIdx should be prefixed with a hash
+      *    set MyIdx             up by 1.
            set ea84b906MyIdx             up by 1.
       *    set Var1::MyIdx       to 1.
            set ea84b906MyIdx       to 1.
@@ -24,6 +26,7 @@
 
            set MyIdx2             to 4.
 
+      *    set MyIdx3             up by 1.
            set e5db8047MyIdx3             up by 1.
       *    set Var1::MyIdx3       to 1.
            set e5db8047MyIdx3       to 1.
