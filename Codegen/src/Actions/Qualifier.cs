@@ -35,6 +35,7 @@ namespace TypeCobol.Codegen.Actions
             /// The Stack of Programs encountered
             /// </summary>
             public Stack<IProcCaller> ProcCallerStack;
+            
             /// <summary>
             /// Constructor
             /// </summary>
@@ -54,6 +55,15 @@ namespace TypeCobol.Codegen.Actions
                 {
                     return false;
                 }
+            }
+
+            public override bool BeginCodeElement(CodeElement codeElement)
+            {
+                    return true;
+            }
+
+            public override void EndCodeElement(CodeElement codeElement)
+            {                
             }
 
             /// <summary>
@@ -135,6 +145,69 @@ namespace TypeCobol.Codegen.Actions
                 }
                 return true;
             }
+
+            /// <summary>
+            /// Generate TypeCobol Qualified Symbol Reference node for a given StorageArea.
+            /// </summary>
+            /// <param name="storageArea">The Storage Area to generate the node</param>
+            /// <param name="codeElement">The underlying code element</param>
+            /// <returns>true if some nodes have been generated, false otherwise</returns>
+            private bool GenQualifiedStorage(StorageArea storageArea, CodeElement codeElement)
+            {
+                if (!storageArea.SymbolReference.IsTypeCobolQualifiedReference)
+                    return false;
+                if (CurrentNode == null)
+                    return false;
+                TypeCobolQualifiedSymbolReference tcqsr = storageArea.SymbolReference as TypeCobolQualifiedSymbolReference;
+                int start = -1;
+                for (int i = 0; i < codeElement.ConsumedTokens.Count; i++)
+                {
+                    if (codeElement.ConsumedTokens[i] == tcqsr.Head.NameLiteral.Token)
+                    {
+                        start = i;
+                        break;
+                    }
+                }
+                int end = -1;
+                for (int i = 0; i < codeElement.ConsumedTokens.Count; i++)
+                {
+                    if (codeElement.ConsumedTokens[i] == tcqsr.Tail.NameLiteral.Token)
+                    {
+                        end = i;
+                        break;
+                    }
+                }
+                List<GenerateToken> items = new List<GenerateToken>();
+                List<string> names = new List<string>();
+                for (int i = end; i <= start; i++)
+                {
+                    if (codeElement.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.QualifiedNameSeparator)
+                    {
+                        GenerateToken qns = new GenerateToken(new TokenCodeElement(codeElement.ConsumedTokens[i]), string.Intern(" OF "),
+                            null);
+                        qns.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                        CurrentNode.Add(qns);
+                    }
+                    else
+                    {
+                        GenerateToken item = new GenerateToken(
+                            new TokenCodeElement(codeElement.ConsumedTokens[i]), codeElement.ConsumedTokens[i].Text,
+                            null);
+                        item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                        CurrentNode.Add(item);
+                        items.Add(item);
+                        names.Add(codeElement.ConsumedTokens[i].Text);
+                    }
+                }
+                names.Reverse();
+                for (int i = 0; i < names.Count; i++)
+                {
+                    items[i].ReplaceCode = names[i];
+                }
+                return items.Count > 0;
+            }
+
+
             /// <summary>
             /// The Goal of this override is to generate hash names for pure Cobol85 Indices used as Qualified Names.
             /// </summary>
@@ -239,6 +312,42 @@ namespace TypeCobol.Codegen.Actions
                 }
             }
 
+            /// <summary>
+            /// If the Current Node uses Reads and Writes Storage Areas then if symbol references are
+            /// TypeCobol Symbol References, a substitution node is generated for them.
+            /// </summary>
+            private void GenQualificationForNodeWithReadsWritesStorage()
+            {
+                if (!HasMatch && CurrentNode != null && CurrentNode.CodeElement != null)
+                {//Check if this node has Reads/Writes Storages
+                    if (CurrentNode.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
+                        return;
+
+                    //Don't transform Procedure Call
+                    if (CurrentNode is TypeCobol.Compiler.Nodes.ProcedureStyleCall)
+                        return;
+
+                    CurrentNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                    bool bHasGeNodes = false;
+                    if (CurrentNode.CodeElement.StorageAreaReads != null)
+                        foreach (var storage in CurrentNode.CodeElement.StorageAreaReads)
+                        {
+                            if (GenQualifiedStorage(storage, CurrentNode.CodeElement))
+                                bHasGeNodes = true;
+                        }
+                    if (CurrentNode.CodeElement.StorageAreaWrites != null)
+                        foreach (var storage in CurrentNode.CodeElement.StorageAreaWrites)
+                        {
+                            if (GenQualifiedStorage(storage.StorageArea, CurrentNode.CodeElement))
+                                bHasGeNodes = true;
+                        }
+                    if (bHasGeNodes)
+                    {
+                        CurrentNode.Comment = true;
+                    }
+                }
+            }
+
             private void PerformMatch()
             {
                 if (HasMatch)
@@ -248,6 +357,10 @@ namespace TypeCobol.Codegen.Actions
                     Perform(this.CurrentNode);
                     Items = null;
                     AllItemsList.Clear();
+                }
+                else 
+                {//Check if this node has Reads/Writes Storages
+                    GenQualificationForNodeWithReadsWritesStorage();
                 }
             }
 
