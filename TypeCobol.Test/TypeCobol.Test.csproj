@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\Common.props" />
+  <Import Project="..\TypeCobol.Grammar\Common.props" />
   <PropertyGroup>
     <ProjectGuid>{323CC743-ED21-4A15-AD3F-3B7C937F6332}</ProjectGuid>
     <OutputType>Library</OutputType>
