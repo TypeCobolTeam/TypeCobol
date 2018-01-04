@@ -6,11 +6,13 @@
 
        01 MyGroup.
         05 MySecondLevel.
-            10 levelBool TYPE BOOL. 
+            10 levelBool TYPE BOOL.
+            88 My88Level VALUE 99.
 
 
        01 myBool TYPE BOOL.
        PROCEDURE DIVISION.
+       MOVE My88Level TO My88Level.
        MOVE myBool TO myBool. 
        MOVE MyGroup::levelBool TO myBool. 
        IF myBool = myBool

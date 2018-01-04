@@ -222,7 +222,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                     if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
                         DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
                 }
-                else if (found[0].DataType == DataType.Boolean)
+                else if (found[0].DataType == DataType.Boolean && found[0].CodeElement is DataDefinitionEntry && (found[0].CodeElement as DataDefinitionEntry).LevelNumber.Value != 88)
                 {
                     if (!(node is Nodes.If || node is Nodes.Set))//Ignore Conditional(If) and Set statement
                     {
