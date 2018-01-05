@@ -8,6 +8,7 @@ using System.Threading;
 using Analytics;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
@@ -246,7 +247,8 @@ namespace TypeCobol.LanguageServices.Editor
             DiagnosticsErrorEvent += delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
             {
                 //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
-                diagDetected = true;
+                if(diagEvent.Diagnostic.Info.Severity == Severity.Error)
+                    diagDetected = true;
             };
             CustomSymbols = null;
             try
