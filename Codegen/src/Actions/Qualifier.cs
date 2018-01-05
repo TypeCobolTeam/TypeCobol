@@ -655,18 +655,17 @@ namespace TypeCobol.Codegen.Actions
                                 else
                                 {
                                     GenerateToken item = null;
+                                    string replace_value = Items[j].ToString();
+
                                     if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsBoolean))
                                     {
-                                        if (this.CurrentNode.QualifiedStorageAreas.Keys.Any(flagged_storage_area => flagged_storage_area.SymbolReference.NameLiteral == sr.NameLiteral))
+                                        if (this.CurrentNode.QualifiedStorageAreas.Keys.Any(flagged_storage_area => flagged_storage_area.SymbolReference.NameLiteral.Value == replace_value))
                                         {
-                                            item = new GenerateToken(new TokenCodeElement(sr.NameLiteral.Token), sr.Name + "-value", sourcePositions);
-                                            item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-                                            sourceNode.Add(item);
-                                            break;
+                                            replace_value = replace_value + "-value";
                                         }
                                     }
                                    
-                                    item = new GenerateToken(new TokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),sourcePositions);
+                                    item = new GenerateToken(new TokenCodeElement(sr.NameLiteral.Token), replace_value, sourcePositions);
                                     item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                                     sourceNode.Add(item);
                                     if (tokenColonColon != null)
