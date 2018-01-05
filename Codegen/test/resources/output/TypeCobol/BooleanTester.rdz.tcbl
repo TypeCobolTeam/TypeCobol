@@ -4,6 +4,8 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
+       88 My88Level VALUE 99.
+
        01 MyGroup.
         05 MySecondLevel.
       *     10 levelBool TYPE BOOL.
@@ -11,7 +13,7 @@
            88  levelBool       VALUE 'T'.
            88  levelBool-false VALUE 'F'.
                                    
-            88 My88Level VALUE 99.
+
 
 
       *01 myBool TYPE BOOL.

@@ -28,5 +28,8 @@
       *KO type contains children
        77 MYVar5 TYPE DATE.
 
+       01 BooleanVar TYPE BOOL.
+         88 WrongVarHere VALUE 99.
+
        PROCEDURE DIVISION.
        END PROGRAM LevelChecker.
