@@ -110,8 +110,7 @@ namespace TypeCobol.Server
         {
             var parser = new Parser();
             bool diagDetected = false;
-            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = null;
-            DiagnosticsErrorEvent += delegate(object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate(object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
             {
                 //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
                 diagDetected = true;
@@ -122,7 +121,14 @@ namespace TypeCobol.Server
             };
 
             parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load of the intrinsics
-            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, DiagnosticsErrorEvent); //Load of the dependency files
+
+
+            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+            {
+                //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
+            };
+            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, DependencyErrorEvent); //Load of the dependency files
            
             if (diagDetected)
                 throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
