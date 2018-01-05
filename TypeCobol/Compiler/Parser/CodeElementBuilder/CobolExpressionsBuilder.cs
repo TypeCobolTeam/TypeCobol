@@ -1316,10 +1316,14 @@ namespace TypeCobol.Compiler.Parser
             return new Variable(storageArea);
 		}
 
-        [CanBeNull]
+        [CanBeNull] 
         internal Variable CreateVariable([NotNull] CodeElementsParser.Variable4Context context)
         {
+            if (context == null)
+                return null;
+
             Variable variable = null;
+
             if (context.identifier() != null)
             {
                 StorageArea storageArea = CreateIdentifier(context.identifier());
