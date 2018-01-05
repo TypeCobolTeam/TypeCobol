@@ -170,9 +170,14 @@ namespace TypeCobol.Server {
                 ? (path != null ? new object[2] { message, path } : new object[1] { message })
                 : (path != null ? new object[1] { path } : new object[0]));
             diag.Message = message;
-            writer.AddErrors(path, diag);
-            Console.WriteLine(string.Format("Code : {0} - Message : {1}", messageCode , message));
-		}
+            AddError(writer, path, diag);
+        }
+
+        internal static void AddError(AbstractErrorWriter writer, string path, Diagnostic diagnostic)
+        {
+            writer.AddErrors(path, diagnostic);
+            Console.WriteLine(diagnostic);
+        }
 
         private static void runServer(string pipename) {
 			var parser = new Parser();

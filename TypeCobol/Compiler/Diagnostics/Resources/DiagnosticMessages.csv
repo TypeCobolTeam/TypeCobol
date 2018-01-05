@@ -33,7 +33,7 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 4;32;1;A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY);0;0;Page
 5;33;1;Error during parser initialization;0;0;Page
 5;34;1;Error during parsing Intrisic file: {0};0;0;Page
-5;35;1;Error during parsing dependency file: {0};0;0;Page
+5;35;2;Error while parsing dependency file: {0};0;0;Page
 5;36;1;Error during Cobol generation;0;0;Page
 7;37;2;Warning: {0};0;0;
 5;38;1;Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns;0;0;Page

@@ -85,7 +85,7 @@ namespace TypeCobol.Tools.APIHelpers
                 var dependenciesFound = Tools.FileSystem.GetFiles(path, extensions, true);
                 //Issue #668, warn if dependencies path are invalid
                 if (diagEvent != null && dependenciesFound.Count == 0) {
-                    diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic("No dependencies found", 1, 1, 1, null, MessageCode.Warning) });
+                    diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(path + ", no dependencies found", 1, 1, 1, null, MessageCode.DependenciesLoading) });
                 }
                 dependencies.AddRange(dependenciesFound); //Get File by name or search the directory for all files
             }
