@@ -105,14 +105,13 @@ namespace TypeCobol.Compiler.Diagnostics {
             }
 
             //Check if DataDefinition is level 88 and declared under BOOL variable
-            if (dataDefinition.CodeElement is DataDefinitionEntry &&
-                (dataDefinition.CodeElement as DataDefinitionEntry).LevelNumber.Value == 88
-                && dataDefinition.Parent is DataDefinition &&
-                (dataDefinition.Parent as DataDefinition).DataType == DataType.Boolean)
+            if (dataDefinition.CodeElement is DataDefinitionEntry && dataDefinition.Parent is DataDefinition)
             {
-                DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                    "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol",
-                    MessageCode.SyntaxErrorInParser);
+                var integerValue = (dataDefinition.CodeElement as DataDefinitionEntry).LevelNumber;
+                if (integerValue != null && ((dataDefinition.Parent as DataDefinition).DataType == DataType.Boolean && integerValue.Value == 88))
+                    DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                        "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol",
+                        MessageCode.SyntaxErrorInParser);
             }
 
             return true;
