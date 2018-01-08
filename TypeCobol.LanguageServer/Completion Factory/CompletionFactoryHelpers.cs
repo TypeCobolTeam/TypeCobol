@@ -84,7 +84,7 @@ namespace TypeCobol.LanguageServer
                                      //Ignore public if type is in the current program
                                      || typeIsIntrinsic); //Ignore public if type is in intrinsic
 
-                var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : (typeIsIntrinsic ? "*" : null) + type.Name;
+                var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
                 completionItem.insertText = typeIsPublic
                     ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
