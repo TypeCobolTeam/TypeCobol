@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using Analytics;
+using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
@@ -321,10 +322,11 @@ namespace TypeCobol.LanguageServer
             if (fileCompiler == null)
                 return null;
 
+            List<CompletionItem> items = new List<CompletionItem>();
+
             if (fileCompiler.CompilationResultsForProgram != null &&
                 fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot != null)
             {
-
                 var wrappedCodeElements = CodeElementFinder(fileCompiler, parameters.position);
                 if (wrappedCodeElements == null)
                     return new List<CompletionItem>();
@@ -338,7 +340,6 @@ namespace TypeCobol.LanguageServer
                 if (lastSignificantToken != null)
                 {
                     AnalyticsWrapper.Telemetry.TrackEvent("[Completion] " + lastSignificantToken.TokenType);
-                    List<CompletionItem> items = new List<CompletionItem>();
                     var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                     switch (lastSignificantToken.TokenType)
                     {
@@ -381,11 +382,12 @@ namespace TypeCobol.LanguageServer
                         case TokenType.MOVE:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
-                                    da =>
-                                        da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
-                                        ((da.CodeElement != null && (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88 )
-                                        || (da.CodeElement == null && da is IndexDefinition))));
-                                //Ignore 88 level variable
+                                da =>
+                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
+                                    ((da.CodeElement != null &&
+                                      (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88)
+                                     || (da.CodeElement == null && da is IndexDefinition))));
+                            //Ignore 88 level variable
                             break;
                         }
                         case TokenType.TO:
@@ -430,7 +432,8 @@ namespace TypeCobol.LanguageServer
                     {
                         //Add the range object to let the client know the position of the user filter token
                         var range = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
-                                userFilterToken.Line - 1, userFilterToken.StopIndex + 1); //-1 on lne to 0 based / +1 on stop index to include the last character
+                            userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
+                        //-1 on lne to 0 based / +1 on stop index to include the last character
                         items = items.Select(c =>
                         {
                             if (c.data != null && c.data.GetType().IsArray)
@@ -444,9 +447,21 @@ namespace TypeCobol.LanguageServer
 
                     return items;
                 }
+                else
+                {
+                    //Return a default text to inform the user that completion is not available after the given token
+                    items.Add(new CompletionItem("Completion is not available in this context, it may come soon.")
+                    {
+                        insertText = ""
+                    });
+                    //Send the demand to analytics to let us know what the user wants. 
+                    var wrappedCodeEl = wrappedCodeElements.FirstOrDefault();
+                    if (wrappedCodeElements.Any() && wrappedCodeEl != null)
+                        AnalyticsWrapper.Telemetry.TrackEvent("[Completion-Demand] Source Tokens : " + wrappedCodeEl.InputStream);
+                }
             }
 
-            return new List<CompletionItem>();
+            return items;
         }
 
         public override Definition OnDefinition(TextDocumentPosition parameters)
