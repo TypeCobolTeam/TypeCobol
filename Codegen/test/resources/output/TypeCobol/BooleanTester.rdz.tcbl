@@ -31,4 +31,12 @@
          continue
        END-IF.
        SET myBool TO TRUE.
+      *SET myBool TO FALSE.
+       SET myBool-false TO TRUE
+                          .
+
+        EVALUATE TRUE
+         WHEN myBool CONTINUE
+        END-EVALUATE.
+
        END PROGRAM BooleanTester.
