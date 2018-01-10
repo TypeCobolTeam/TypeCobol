@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
+using TypeCobol.LanguageServices.FileWatchers;
 using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.LanguageServices.Editor
@@ -34,6 +35,8 @@ namespace TypeCobol.LanguageServices.Editor
         private string WorkspaceName;
         private CompilationProject CompilationProject;
         private string[] Extensions = { ".cbl", ".cpy" };
+        private DependenciesFileWatcher _DepWatcher;
+        private Stack<Action> _actionQueue;
 
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
@@ -41,10 +44,12 @@ namespace TypeCobol.LanguageServices.Editor
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
         public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
         public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
+        public Stack<Action> ActionQueue { get { return _actionQueue; } }
 
 
-        public Workspace(string rootDirectoryFullName, string workspaceName)
+        public Workspace(string rootDirectoryFullName, string workspaceName, Stack<Action> actionQueue)
         {
+            _actionQueue = actionQueue;
             TypeCobolConfiguration = new TypeCobolConfiguration();
             OpenedFileCompiler = new Dictionary<Uri, FileCompiler>();
 
@@ -55,6 +60,8 @@ namespace TypeCobol.LanguageServices.Editor
                 WorkspaceName, RootDirectoryFullName, Extensions,
                 Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat,
                 new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
+
+            _DepWatcher = new DependenciesFileWatcher(this);
 
         }
 
@@ -99,7 +106,7 @@ namespace TypeCobol.LanguageServices.Editor
                 fileCompiler.CompilationResultsForProgram.ProgramClassChanged += ProgramClassChanged;
             }
 
-            //fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
+            fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
             //fileCompiler.StartContinuousBackgroundCompilation(200, 500, 1000, 3000); //TODO: create a better refresh compilation
 
             fileCompiler.CompileOnce(); //Let's parse file for the first time after openning. 
@@ -202,6 +209,17 @@ namespace TypeCobol.LanguageServices.Editor
                 RefreshOpenedFiles();
             else
                 RefreshCustomSymbols();
+
+            //Dispose previous watcher before setting new ones
+            _DepWatcher.Dispose();
+            foreach (var depFolder in TypeCobolConfiguration.Dependencies)
+            {
+                _DepWatcher.SetDirectoryWatcher(depFolder);
+            }
+            foreach (var intrinsicFolder in TypeCobolConfiguration.Copies)
+            {
+                _DepWatcher.SetDirectoryWatcher(intrinsicFolder);
+            }
         }
 
         public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
@@ -226,7 +244,7 @@ namespace TypeCobol.LanguageServices.Editor
         /// <summary>
         /// Refresh all opened files' parser.
         /// </summary>
-        private void RefreshOpenedFiles()
+        public void RefreshOpenedFiles()
         {
             RefreshCustomSymbols();
 
@@ -235,7 +253,11 @@ namespace TypeCobol.LanguageServices.Editor
                 var tempOpenedFileCompiler = new Dictionary<Uri, FileCompiler>(OpenedFileCompiler);
                 foreach (var fileParser in tempOpenedFileCompiler)
                 {
-                    OpenSourceFile(fileParser.Key, fileParser.Value.TextDocument.TextSegment(0, fileParser.Value.TextDocument.Length - 1));
+                    var sourceText = new StringBuilder();
+                    foreach (var line in fileParser.Value.TextDocument.Lines)
+                        sourceText.AppendLine(line.Text);
+
+                    OpenSourceFile(fileParser.Key, sourceText.ToString());
                 }
             }
         }

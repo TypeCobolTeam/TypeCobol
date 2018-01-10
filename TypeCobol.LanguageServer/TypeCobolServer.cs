@@ -40,7 +40,7 @@ namespace TypeCobol.LanguageServer
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
             // Initialize the workspace
-            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName);
+            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, ((CustomJSonRPCServer) rpcServer).ActionQueue);
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
 
             // Return language server capabilities

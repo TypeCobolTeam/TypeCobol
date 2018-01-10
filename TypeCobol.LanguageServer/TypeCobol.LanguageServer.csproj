@@ -108,6 +108,7 @@
     <Compile Include="StdioHttp\IMessageServer.cs" />
     <Compile Include="StdioHttp\ServerLogLevel.cs" />
     <Compile Include="StdioHttp\StdioHttpServer.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\CustomJSonRPCServer.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolCustomLanguageServer.cs" />

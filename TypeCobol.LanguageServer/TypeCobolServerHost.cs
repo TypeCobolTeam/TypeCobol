@@ -28,7 +28,7 @@ namespace TypeCobol.LanguageServer
             {
                 // Configure the protocols stack
                 var httpServer = new StdioHttpServer(Encoding.UTF8, logLevel, logWriter);
-                var jsonRPCServer = new JsonRPCServer(httpServer);
+                var jsonRPCServer = new CustomJSonRPCServer(httpServer);
                 var languageServer = new TypeCobolServer(jsonRPCServer);
 
                 // Start listening to incoming request (block, infinite loop)
