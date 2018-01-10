@@ -410,10 +410,17 @@ namespace TypeCobol.Compiler.Parser
             ProcedureStyleCallStatement statement = null;
             Context = context;
 
-            //Incomplete CallStatement, create an empty CodeElement and return
+            //Incomplete CallStatement, create an empty CodeElement and return + Error due to issue #774
             if (cbCallProc == null)
             {
-                CodeElement = new ProcedureStyleCallStatement();
+                CodeElement = new ProcedureStyleCallStatement
+                {
+                    Diagnostics = new List<Diagnostic>
+                    {
+                        new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Column,
+                            context.Stop.Column, context.Start.Line, "Empty CALL is not authorize")
+                    }
+                };
                 return;
             }
 
@@ -590,11 +597,15 @@ namespace TypeCobol.Compiler.Parser
                         new ProcedureStyleCallStatement(new ProcedureCall(ambiguousSymbolReference.MainSymbolReference,
                             inputs, inouts, outputs))
                         {
-                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction =
-                                ambiguousSymbolReference.MainSymbolReference,
+                            ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction = ambiguousSymbolReference.MainSymbolReference,
+                            Diagnostics = new List<Diagnostic>
+                            {
+                                new Diagnostic(MessageCode.ImplementationError, context.Start.Column,
+                                    context.Stop.Column, context.Start.Line,
+                                    "A call with arguments is not a TCFunctionName")
+                            },
                         };
-                    statement.Diagnostics.Add(new Diagnostic(MessageCode.ImplementationError, context.Start.Column,
-                        context.Stop.Column, context.Start.Line, "A call with arguments is not a TCFunctionName"));
+
                     callSite.CallTarget = ambiguousSymbolReference.MainSymbolReference;
                 }
             }

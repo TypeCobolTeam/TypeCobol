@@ -118,6 +118,11 @@
        TRAITEMENT.
 
       * __________________________________________________
+      * KO Empty Call 
+       CALL 
+       .
+
+      * __________________________________________________
       * OK : function-pointer procedure-pointer
        CALL GetPtrFn 
              INPUT funcPointer procPointer.
