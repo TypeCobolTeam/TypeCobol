@@ -24,10 +24,13 @@ namespace TypeCobol.LanguageServer
         public override void HandleMessage(string message, IMessageServer server)
         {
             //Check if queued actions needs to be done
-            while (ActionQueue.Any())
+            lock (ActionQueue)
             {
-                var action = ActionQueue.Pop();
-                action(); //Execute acion on the main Thread
+                while (ActionQueue.Any())
+                {
+                    var action = ActionQueue.Pop();
+                    action(); //Execute acion on the main Thread
+                }
             }
 
             base.HandleMessage(message, server);

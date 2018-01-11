@@ -42,9 +42,12 @@ namespace TypeCobol.LanguageServices.FileWatchers
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
             Action refreshAction = () => { _TypeCobolWorkSpace.RefreshOpenedFiles(); };
-            if (!_TypeCobolWorkSpace.ActionQueue.Contains(refreshAction))
+            lock (_TypeCobolWorkSpace.ActionQueue)
             {
-                _TypeCobolWorkSpace.ActionQueue.Push(refreshAction);
+                if (!_TypeCobolWorkSpace.ActionQueue.Contains(refreshAction))
+                {
+                    _TypeCobolWorkSpace.ActionQueue.Push(refreshAction);
+                }
             }
         }
 
