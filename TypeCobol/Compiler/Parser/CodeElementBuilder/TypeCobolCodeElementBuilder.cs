@@ -418,7 +418,7 @@ namespace TypeCobol.Compiler.Parser
                     Diagnostics = new List<Diagnostic>
                     {
                         new Diagnostic(MessageCode.SyntaxErrorInParser, context.Start.Column,
-                            context.Stop.Column, context.Start.Line, "Empty CALL is not authorize")
+                            context.Stop.Column, context.Start.Line, "Empty CALL is not authorized")
                     }
                 };
                 return;
