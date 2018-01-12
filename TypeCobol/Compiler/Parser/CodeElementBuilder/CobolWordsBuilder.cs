@@ -625,9 +625,10 @@ namespace TypeCobol.Compiler.Parser
             var typeNameRef = context.typeNameReference();
             if (typeNameRef == null)
                 return null;
-            var dataNameContext = typeNameRef.UserDefinedWord(); //Get variable/type name Context
+            var dataNameContext = typeNameRef.UserDefinedWord() ?? context.typeNameReference().DATE(); //Get variable/type name Context
+
             if (dataNameContext == null)
-                dataNameContext = context.typeNameReference().DATE();
+                return null;
 
             Token pgmToken, dataToken = null;
             AlphanumericValue pgmAlph, dataAlpha = null;
