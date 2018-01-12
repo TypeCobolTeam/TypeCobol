@@ -436,26 +436,40 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
+            if (arrangedCodeElement == null)
+                return completionItems;
             var node = GetMatchingNode(fileCompiler, codeElement);
             List<DataDefinition> potentialVariables = new List<DataDefinition>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+            Expression<Func<DataDefinition, bool>> variablePredicate =
+                da =>
+                    (da.CodeElement != null && ((DataDefinitionEntry) da.CodeElement).LevelNumber.Value < 88) ||
+                    (da.CodeElement == null && da is IndexDefinition); //Ignore variable of level 88.
 
+            bool unsafeContext = arrangedCodeElement.ArrangedConsumedTokens.Any(t => t != null && t.TokenType == TokenType.UNSAFE);
             var qualifiedNameTokens = arrangedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.UserDefinedWord).TakeWhile(t => t != lastSignificantToken).Where(t => t.TokenType != TokenType.QualifiedNameSeparator);
             if (!qualifiedNameTokens.Any())
                 return completionItems;
 
+            if (!unsafeContext) //Search for variable that match the DataType
+            {
+                DataType seekedDataType = null;
+                var foundedVar =
+                    node.SymbolTable.GetVariablesExplicit(
+                        new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
 
-            DataType seekedDataType = null;
-            var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
+                if (foundedVar.Count != 1) //If no variable or more than one founded stop process
+                    return completionItems;
 
-
-            if (foundedVar.Count != 1) //If no varaible or more than one founded stop process
-                return completionItems;
-
-            seekedDataType = foundedVar.First().DataType;
-
-            node.SymbolTable.GetVariablesByType(seekedDataType, ref potentialVariables, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
-            potentialVariables = potentialVariables.Where(da => (da.CodeElement != null && ((DataDefinitionEntry) da.CodeElement).LevelNumber.Value < 88) || (da.CodeElement == null && da is IndexDefinition)).ToList(); //Ignore variable of level 88. 
+                seekedDataType = foundedVar.First().DataType;
+                node.SymbolTable.GetVariablesByType(seekedDataType, ref potentialVariables,
+                    new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
+                potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate).ToList();
+            }
+            else //Get all 
+            {
+                potentialVariables = node.SymbolTable.GetVariables(variablePredicate, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+            }
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
             {
