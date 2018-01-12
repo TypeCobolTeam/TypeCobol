@@ -21,10 +21,20 @@ namespace TypeCobol.LanguageServices.FileWatchers
 
         public void SetDirectoryWatcher(string directoryPath)
         {
+            var fileNameExt = Path.GetFileName(directoryPath);
+            if (fileNameExt != null)
+                directoryPath = directoryPath.Replace(fileNameExt, "");//Remove filename with extension at the end
+            if (!Directory.Exists(directoryPath))
+                return; //If directory does not exist do no try to watch..
+
             //Initialize File Watcher
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            watcher.Path = Path.GetDirectoryName(directoryPath);
-            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            var watcher = new FileSystemWatcher
+            {
+                Path = directoryPath,
+                NotifyFilter =
+                    NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
+                    NotifyFilters.DirectoryName
+            };
             //watcher.Filter = "*.tcbl|*.cpy" //Does not work like this, may need to initialize multiple filewatcher for each file extension. 
 
             // Add event handlers.
