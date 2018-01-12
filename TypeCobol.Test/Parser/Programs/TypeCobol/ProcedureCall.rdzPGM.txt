@@ -4,7 +4,7 @@ Line 30[8,59] <27, Error, Syntax> - Syntax error : Parameter with name 'format' 
 Line 30[8,59] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times
 Line 110[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:declare]<DECLARE>
 Line 114[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:declare]<DECLARE>
-Line 122[8,8] <27, Error, Syntax> - Syntax error : Empty CALL is not authorize
+Line 122[8,8] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
 Line 132[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrFn' of usage FunctionPointer and received 'someformat' of usage 
 Line 132[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrPr' of usage ProcedurePointer and received 'someformat' of usage 
 Line 147[12,50] <27, Error, Syntax> - Syntax error : Function not found 'ValidateDatFormatt' input(DATE, Alphanumeric) output(Numeric)
