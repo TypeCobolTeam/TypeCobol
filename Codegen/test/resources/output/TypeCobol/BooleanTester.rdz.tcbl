@@ -14,7 +14,18 @@
            88  levelBool-false VALUE 'F'.
                                    
 
-
+       01 Var1 pic X.
+      *01 Var2 TYPE BOOL.
+       01  Var2-value PIC X VALUE LOW-VALUE.
+           88  Var2       VALUE 'T'.
+           88  Var2-false VALUE 'F'.
+                         
+      *01 Var3 TYPE BOOL.
+       01  Var3-value PIC X VALUE LOW-VALUE.
+           88  Var3       VALUE 'T'.
+           88  Var3-false VALUE 'F'.
+                         
+       01 Var4 pic 9.
 
       *01 myBool TYPE BOOL.
        01  myBool-value PIC X VALUE LOW-VALUE.
@@ -37,6 +48,31 @@
 
         EVALUATE TRUE
          WHEN myBool CONTINUE
-        END-EVALUATE.
+        END-EVALUATE
 
+      *   display var2 "rtzerz" var3 "zerzerze"
+      *      'zrzr' var2
+          display var2-value "rtzerz" var3-value "zerzerze"
+             'zrzr' var2-value
+      
+      *    string var2 var3 Var4
+      *         delimited by size
+      *         into Var1
+           string var2-value var3-value Var4
+                delimited by size
+                into Var1
+           end-string
+      
+      *    evaluate var2
+           evaluate var2-value
+              when var2
+                  continue
+              when var3
+                 continue
+              when Var1 = '99998'
+                 continue
+              when other
+                 continue
+           end-evaluate
+           .
        END PROGRAM BooleanTester.
