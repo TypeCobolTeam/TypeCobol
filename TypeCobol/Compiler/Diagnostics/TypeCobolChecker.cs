@@ -507,6 +507,8 @@ class FunctionDeclarationChecker: NodeListener {
                 {
                     if (condition.LevelNumber.Value != 88)
                         DiagnosticUtils.AddError(node, "Condition parameter \"" + condition.Name + "\" must be level 88.");
+                    if (condition.LevelNumber.Value == 88 && parameter.DataType == DataType.Boolean)
+                        DiagnosticUtils.AddError(node, "The Level 88 symbol '" + parameter.Name + "' cannot be declared under a BOOL typed symbol");
                 }
             }
 
