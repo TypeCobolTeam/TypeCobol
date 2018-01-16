@@ -25,11 +25,15 @@ Line 23[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis
            move var2 to var1
            move var1 to var3
            move var3 to var1
+Line 26[12,30] <30, Error, Semantics> - Semantic error: Cannot write Numeric to strictly typed variable var1Small:SmallInt.
            MOVE 1 to var1Small
+Line 27[12,31] <30, Error, Semantics> - Semantic error: Cannot write Numeric to strictly typed variable var1Small:SmallInt.
            MOVE -1 to var1Small
+Line 28[12,29] <30, Error, Semantics> - Semantic error: Cannot write Numeric to strictly typed variable realVar:Real.
            MOVE 10 TO realVar
            MOVE false TO MyBoolean
            MOVE true TO MyBoolean
+Line 31[12,30] <30, Error, Semantics> - Semantic error: Cannot write Numeric to strictly typed variable floatVar:Float.
            MOVE 10 TO floatVar
            .
        IDENTIFICATION DIVISION.
