@@ -28,7 +28,9 @@
         }
 @items
     88  %name       VALUE 'T'.
-    88  %name-false VALUE 'F'.
+    88  %name-false VALUE 'F'
+                    X'00' thru 'S'
+                    'U' thru X'FF'.
       </pattern>
     </patterns>
   </skeleton>

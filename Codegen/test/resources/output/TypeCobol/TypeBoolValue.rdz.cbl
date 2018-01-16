@@ -11,12 +11,16 @@
       *01 A type bool value true.
        01  A-value PIC X VALUE 'T'.
            88  A       VALUE 'T'.
-           88  A-false VALUE 'F'.
+           88  A-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                  
       *01 B type bool value false.
        01  B-value PIC X VALUE 'F'.
            88  B       VALUE 'T'.
-           88  B-false VALUE 'F'.
+           88  B-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                         
 
       *01 Person TYPEDEF STRICT.
@@ -25,7 +29,9 @@
        01 W-Person1.
           02  Registered-value PIC X VALUE 'F'.
               88  Registered       VALUE 'T'.
-              88  Registered-false VALUE 'F'.
+              88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                 
 
       *01 Person2 TYPEDEF STRICT.
@@ -36,14 +42,20 @@
        01 W-Person3.
           02  Registered2-value PIC X VALUE 'T'.
               88  Registered2       VALUE 'T'.
-              88  Registered2-false VALUE 'F'.
+              88  Registered2-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
            02 W-Person2.
             03  Registered-value PIC X VALUE 'F'.
                 88  Registered       VALUE 'T'.
-                88  Registered-false VALUE 'F'.
+                88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
           02  Registered3-value PIC X VALUE LOW-VALUE.
               88  Registered3       VALUE 'T'.
-              88  Registered3-false VALUE 'F'.
+              88  Registered3-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                  
 
       *01 myType TYPEDEF STRICT.
@@ -64,7 +76,9 @@
       *    05 bval TYPE bool value true.
            05  bval-value PIC X VALUE 'T'.
            88  bval       VALUE 'T'.
-           88  bval-false VALUE 'F'.
+           88  bval-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                         
       *    05 MyVar1 TYPE myType.
            05 MyVar1.
@@ -72,7 +86,9 @@
            06 secondGroup.
             07  bval-value PIC X VALUE 'F'.
                 88  bval       VALUE 'T'.
-                88  bval-false VALUE 'F'.
+                88  bval-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
              07 varGroup pic 9(10).
              07 typedGroupvar.
                08 Grp.
@@ -81,7 +97,9 @@
                08 varGroup pic 9(10).
               08  bval2-value PIC X VALUE 'T'.
                   88  bval2       VALUE 'T'.
-                  88  bval2-false VALUE 'F'.
+                  88  bval2-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                  
        01 Vars2.
       *    05 MyVar1 TYPE myType.
@@ -90,7 +108,9 @@
            06 secondGroup.
             07  bval-value PIC X VALUE 'F'.
                 88  bval       VALUE 'T'.
-                88  bval-false VALUE 'F'.
+                88  bval-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
              07 varGroup pic 9(10).
              07 typedGroupvar.
                08 Grp.
@@ -99,7 +119,9 @@
                08 varGroup pic 9(10).
               08  bval2-value PIC X VALUE 'T'.
                   88  bval2       VALUE 'T'.
-                  88  bval2-false VALUE 'F'.
+                  88  bval2-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                  
       *01 MyVar2 TYPE myType.
        01 MyVar2.
@@ -107,7 +129,9 @@
            02 secondGroup.
             03  bval-value PIC X VALUE 'F'.
                 88  bval       VALUE 'T'.
-                88  bval-false VALUE 'F'.
+                88  bval-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
              03 varGroup pic 9(10).
              03 typedGroupvar.
                04 Grp.
@@ -116,7 +140,9 @@
                04 varGroup pic 9(10).
               04  bval2-value PIC X VALUE 'T'.
                   88  bval2       VALUE 'T'.
-                  88  bval2-false VALUE 'F'.
+                  88  bval2-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                              
 
       *01 ErrorCode typedef strict private.
@@ -157,15 +183,21 @@
            02 loop pic S9(5) COMP-5.
           02  sta-value PIC X VALUE 'T'.
               88  sta       VALUE 'T'.
-              88  sta-false VALUE 'F'.
+              88  sta-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
            02 t pic S9(5) COMP-5.
            02 savedTrace pic S9(5) COMP-5.
           02  sta2-value PIC X VALUE 'F'.
               88  sta2       VALUE 'T'.
-              88  sta2-false VALUE 'F'.
+              88  sta2-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
           02  sta3-value PIC X VALUE LOW-VALUE.
               88  sta3       VALUE 'T'.
-              88  sta3-false VALUE 'F'.
+              88  sta3-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                       
        linkage section.
             

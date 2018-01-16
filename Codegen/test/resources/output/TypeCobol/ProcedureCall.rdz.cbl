@@ -34,7 +34,9 @@
       *01  flag         TYPE Bool.
        01  flag-value PIC X VALUE LOW-VALUE.
            88  flag       VALUE 'T'.
-           88  flag-false VALUE 'F'.
+           88  flag-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                   
        01  realformat   PIC X(08).
 

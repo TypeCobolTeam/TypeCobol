@@ -44,7 +44,9 @@
            02 loop pic S9(5) COMP-5.
           02  sta-value PIC X VALUE LOW-VALUE.
               88  sta       VALUE 'T'.
-              88  sta-false VALUE 'F'.
+              88  sta-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
            02 t pic S9(5) COMP-5.
            02 savedTrace pic S9(5) COMP-5.
                                       

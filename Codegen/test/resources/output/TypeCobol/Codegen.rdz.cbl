@@ -18,7 +18,9 @@
       *01  b TYPE Bool.
 000080 01  b-value PIC X VALUE LOW-VALUE.
            88  b       VALUE 'T'.
-           88  b-false VALUE 'F'.
+           88  b-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                                                         000080
 000090 01  mykey  PIC X(04). COPY Codegen-SECONDCOPY SUPPRESS.          000090
 002440 77 myconstant PIC X(10) value 'SHIBBOLEET'.                      002440
