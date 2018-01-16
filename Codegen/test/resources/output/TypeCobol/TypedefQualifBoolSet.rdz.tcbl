@@ -8,7 +8,9 @@
        01 W-Person1.
           02  Registered-value PIC X VALUE LOW-VALUE.
               88  Registered       VALUE 'T'.
-              88  Registered-false VALUE 'F'.
+              88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                 
 
       *01 Person2 TYPEDEF STRICT.
@@ -18,11 +20,15 @@
         01 W-Person3.
           02  Registered2-value PIC X VALUE LOW-VALUE.
               88  Registered2       VALUE 'T'.
-              88  Registered2-false VALUE 'F'.
+              88  Registered2-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
            02 W-Person2.
             03  Registered-value PIC X VALUE LOW-VALUE.
                 88  Registered       VALUE 'T'.
-                88  Registered-false VALUE 'F'.
+                88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                   
 
        procedure division.

@@ -10,7 +10,9 @@
       *01  b TYPE BOOL.
        01  b-value PIC X VALUE LOW-VALUE.
            88  b       VALUE 'T'.
-           88  b-false VALUE 'F'.
+           88  b-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                        
 
        PROCEDURE DIVISION.

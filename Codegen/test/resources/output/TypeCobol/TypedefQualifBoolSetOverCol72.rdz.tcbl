@@ -16,15 +16,21 @@
        01 W-Person4.
           02  Registered3-value PIC X VALUE LOW-VALUE.
               88  Registered3       VALUE 'T'.
-              88  Registered3-false VALUE 'F'.
+              88  Registered3-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
            02 W-Person3.
             03  Registered2-value PIC X VALUE LOW-VALUE.
                 88  Registered2       VALUE 'T'.
-                88  Registered2-false VALUE 'F'.
+                88  Registered2-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
              03 W-Person2.
               04  Registered-value PIC X VALUE LOW-VALUE.
                   88  Registered       VALUE 'T'.
-                  88  Registered-false VALUE 'F'.
+                  88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                  
 
        procedure division.

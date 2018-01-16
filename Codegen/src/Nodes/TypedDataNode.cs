@@ -670,7 +670,9 @@
         private readonly static string[] BoolTypeTemplate = {
         " {2}{1}  {0}-value PIC X VALUE {3}.",
         " {2}    88  {0}       VALUE 'T'.",
-        " {2}    88  {0}-false VALUE 'F'.",
+        " {2}    88  {0}-false VALUE 'F' ",
+        "                      X'00' thru 'S'",
+        "                      'U' thru X'FF'."
     };
         public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
