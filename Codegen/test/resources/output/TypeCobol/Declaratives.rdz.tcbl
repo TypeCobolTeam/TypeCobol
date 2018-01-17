@@ -1,0 +1,78 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DeclarativesTest.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  TC-Declarat-FctList-Loaded PIC X(02).
+           88 TC-Declarat-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-Declarat-PntTab.
+           05 TC-Declarat-PntNbr         PIC S9(04) COMP VALUE 1.
+      *Declarat::MyProc
+           05 TC-Declarat-da2f236e-Idt   PIC X(08) VALUE 'da2f236e'.
+           05 TC-Declarat-da2f236e PROCEDURE-POINTER.
+
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
+      
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
+      
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display DEBUG-NAME
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
+
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-Declarat-FctList-IsLoaded
+              SET TC-Declarat-da2f236e   TO ENTRY 'da2f236e'
+
+              SET TC-Declarat-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-Declarat-PntTab
+
+           .
+      
+      *DECLARE PROCEDURE MyProc public.
+
+       END PROGRAM DeclarativesTest.
+      *
+      *DECLARE PROCEDURE MyProc public.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. da2f236eMyProc.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+        DATA DIVISION.
+        WORKING-STORAGE SECTION.
+        LINKAGE SECTION.
+       PROCEDURE DIVISION
+           .
+        .
+       END PROGRAM da2f236eMyProc.
