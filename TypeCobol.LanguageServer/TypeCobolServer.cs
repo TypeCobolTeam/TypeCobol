@@ -78,7 +78,7 @@ namespace TypeCobol.LanguageServer
         public override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
 
-            var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
+            var fileCompiler = GetFileCompilerFromStringUri(parameters.uri, false); //Text Change do not have to trigger node phase, it's only a another event that will do it
             if (fileCompiler == null)
                 return;
 
@@ -769,12 +769,14 @@ namespace TypeCobol.LanguageServer
             return codeElements.Select(c => new CodeElementWrapper(c));
         }
 
-        private FileCompiler GetFileCompilerFromStringUri(string uri)
+        private FileCompiler GetFileCompilerFromStringUri(string uri, bool acceptNodeRefresh = true)
         {
             Uri objUri = new Uri(uri);
             if (objUri.IsFile)
             {
                 // Get compilation info for the current file
+                if (acceptNodeRefresh)
+                    typeCobolWorkspace.NeedRefreshProgramClass();
                 return typeCobolWorkspace.OpenedFileCompiler[objUri];
             }
 

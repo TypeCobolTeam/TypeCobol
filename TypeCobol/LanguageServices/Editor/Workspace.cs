@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Timers;
 using Analytics;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
@@ -37,9 +38,11 @@ namespace TypeCobol.LanguageServices.Editor
         private string[] Extensions = { ".cbl", ".cpy" };
         private DependenciesFileWatcher _DepWatcher;
         private Stack<Action> _actionQueue;
+        private System.Timers.Timer _SemanticUpdaterTimer;
 
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
+        private Stack<FileCompiler> _FileCompilerWaittingForNodePhase;
         public Dictionary<Uri, FileCompiler> OpenedFileCompiler{ get; private set; }
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
         public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
@@ -52,6 +55,7 @@ namespace TypeCobol.LanguageServices.Editor
             _actionQueue = actionQueue;
             TypeCobolConfiguration = new TypeCobolConfiguration();
             OpenedFileCompiler = new Dictionary<Uri, FileCompiler>();
+            _FileCompilerWaittingForNodePhase = new Stack<FileCompiler>();
 
             this.RootDirectoryFullName = rootDirectoryFullName;
             this.WorkspaceName = workspaceName;
@@ -120,18 +124,36 @@ namespace TypeCobol.LanguageServices.Editor
             FileCompiler fileCompilerToUpdate = null;
             if (OpenedFileCompiler.TryGetValue(fileUri, out fileCompilerToUpdate))
             {
+                if (_SemanticUpdaterTimer != null)
+                    _SemanticUpdaterTimer.Stop();
+
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+
                 if (!bAsync)
-                {//Don't wait asynchroneous snapshot refresh.
+                {//Don't wait asynchronous snapshot refresh.
                     fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
                         () =>
                             {
                                 fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
                                 fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
                                 fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
-                                fileCompilerToUpdate.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
                             }
                         );
+
+                    lock (_FileCompilerWaittingForNodePhase)
+                    {
+                        if (!_FileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
+                        {
+                            _FileCompilerWaittingForNodePhase.Push(fileCompilerToUpdate);
+                        }
+                    }
+
+
+                    _SemanticUpdaterTimer = new System.Timers.Timer(500);
+                    _SemanticUpdaterTimer.Elapsed += delegate(object s, ElapsedEventArgs ev) { NeedRefreshProgramClass(); };
+                    _SemanticUpdaterTimer.Start();
+                    
+                        
                 }
                 else
                 {
@@ -140,6 +162,17 @@ namespace TypeCobol.LanguageServices.Editor
             }
         }
 
+        public void NeedRefreshProgramClass()
+        {
+            lock (_FileCompilerWaittingForNodePhase)
+            {
+                if (_FileCompilerWaittingForNodePhase.Any())
+                {
+                    _FileCompilerWaittingForNodePhase.Pop()
+                        .CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+                }
+            }
+        }
         /// <summary>
         /// Stop continuous background compilation after a file has been closed
         /// </summary>

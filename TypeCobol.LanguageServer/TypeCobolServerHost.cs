@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.StdioHttp;
 using TypeCobol.LanguageServer.Utilities;
@@ -12,6 +15,7 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     class TypeCobolServerHost
     {
+        public static Queue<Tuple<string, IMessageServer>> MessagesQueue { get; set; }
         /// <summary>
         /// Main Entry point of the Server.
         /// </summary>
@@ -21,15 +25,21 @@ namespace TypeCobol.LanguageServer
         {
             ServerLogLevel logLevel;
             TextWriter logWriter;
+            //Queue storing messages coming from client, this queue is read by readingThread
+            MessagesQueue = new Queue<Tuple<string, IMessageServer>>();
 
             GetArguments(args, out logLevel, out logWriter);
             // Open log file
             try
             {
                 // Configure the protocols stack
-                var httpServer = new StdioHttpServer(Encoding.UTF8, logLevel, logWriter);
+                var httpServer = new StdioHttpServer(Encoding.UTF8, logLevel, logWriter, MessagesQueue);
                 var jsonRPCServer = new CustomJSonRPCServer(httpServer);
-                var languageServer = new TypeCobolServer(jsonRPCServer);
+                new TypeCobolServer(jsonRPCServer);
+
+                //Creating the thread that will read mesages and handle them 
+                var readingThread = new Thread(() => { MessageHandler(jsonRPCServer); }) {IsBackground = true};
+                readingThread.Start();
 
                 // Start listening to incoming request (block, infinite loop)
                 httpServer.StartReceivingMessagesFor(jsonRPCServer);
@@ -42,6 +52,27 @@ namespace TypeCobol.LanguageServer
                 }
             }
         }
+
+        static void MessageHandler(IMessageHandler messageHandler)
+        {
+            while (true)
+            {
+                Tuple<string, IMessageServer> message = null;
+                lock (MessagesQueue)
+                {
+                    if (MessagesQueue.Any())
+                    {
+                        message = MessagesQueue.Dequeue(); //Pop out message from queue
+                    }
+                }
+                if (message != null)
+                    messageHandler.HandleMessage(message.Item1, message.Item2); //Give this mesage to the real handler
+
+                Thread.Sleep(1); //To preserve processor use
+            }
+            
+        }
+
         /// <summary>
         /// Collect Arguments
         /// </summary>

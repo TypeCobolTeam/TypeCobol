@@ -422,6 +422,8 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
             var node = GetMatchingNode(fileCompiler, codeElement);
+            if (node == null)
+                return completionItems;
             List<DataDefinition> variables = null;
 
             variables = node.SymbolTable.GetVariables(predicate, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
