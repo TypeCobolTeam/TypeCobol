@@ -609,7 +609,7 @@ public class LibraryChecker {
 	        foreach (var child in procedureDivision.Children)
             {
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
-                if (!(child is Paragraph || child is FunctionDeclaration)) {
+                if (!(child is Paragraph || child is FunctionDeclaration || child is Declaratives)) {
                     DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child, "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
                 }
             }

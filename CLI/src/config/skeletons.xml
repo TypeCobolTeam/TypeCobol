@@ -173,7 +173,7 @@
       </pattern>
 
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
-      <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
+      <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
 *
 *    IF CallIsCopy
 *      PERFORM Copy-Process-Mode

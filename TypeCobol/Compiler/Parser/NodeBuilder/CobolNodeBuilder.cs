@@ -565,6 +565,20 @@ namespace TypeCobol.Compiler.Parser
             Exit();
         }
 
+        public override void EnterDeclaratives(ProgramClassParser.DeclarativesContext context)
+        {
+            var terminal = context.DeclarativesHeader();
+            var header = terminal != null ? (DeclarativesHeader)terminal.Symbol : null;
+  
+            var node = new Declaratives(header);
+            Enter(node, context);
+        }
+
+        public override void ExitDeclaratives(ProgramClassParser.DeclarativesContext context)
+        {
+            AttachEndIfExists(context.DeclarativesEnd());
+            Exit();
+        }
 
 
         private Tools.UIDStore uidfactory = new Tools.UIDStore();

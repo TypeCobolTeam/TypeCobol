@@ -59,6 +59,17 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
+    public class Declaratives : Node, CodeElementHolder<DeclarativesHeader>
+    {
+        public Declaratives(DeclarativesHeader header) : base(header) { }
+
+        public override string ID { get { return "declaratives-header"; } }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     // [TYPECOBOL]
 
     public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller {
