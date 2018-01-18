@@ -247,11 +247,20 @@ namespace TypeCobol.Compiler.CodeModel
                 if (scope == Scope.Namespace || scope == Scope.Intrinsic)
                     throw new NotSupportedException();
 
-                foreach (var variable in GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t))
+                var currentTable = GetTableFromScope(scope);
+
+                if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
-                    SeekVariableType(dataType, variable, ref foundedVariables);
+                    var references = currentTable.TypesReferences.Where(t => t.Key is TypeDefinition && ((TypeDefinition) t.Key).DataType == dataType).SelectMany(t => t.Value);
+                    foundedVariables.AddRange(references);
                 }
-          
+                else
+                {
+                    foreach (var variable in currentTable.DataEntries.Values.SelectMany(t => t))
+                    {
+                        SeekVariableType(dataType, variable, ref foundedVariables);
+                    }
+                }
             }
         }
 
@@ -263,16 +272,16 @@ namespace TypeCobol.Compiler.CodeModel
                     foundedVariables.Add(variable);
                 return;
             }
-              
-            if (variable.DataType != null && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
+
+            if (variable.DataType != null && variable.DataType != DataType.Boolean && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
             {
                 var types = GetTypes(t => t.DataType == variable.DataType, new List<Scope>
-                                                                    {
-                                                                        Scope.Declarations,
-                                                                        Scope.Global,
-                                                                        Scope.Intrinsic,
-                                                                        Scope.Namespace
-                                                                    });
+                {
+                    Scope.Declarations,
+                    Scope.Global,
+                    Scope.Intrinsic,
+                    Scope.Namespace
+                });
 
                 foreach (var type in types)
                 {
