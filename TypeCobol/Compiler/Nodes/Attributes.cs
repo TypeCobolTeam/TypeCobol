@@ -33,7 +33,8 @@ namespace TypeCobol.Compiler.Nodes {
 		attributes = new Dictionary<string,Attribute>();
 		attributes["name"]  = new NameAttribute();
 		attributes["level"] = new LevelAttribute();
-		attributes["type"]  = new TypeAttribute();
+        attributes["value"] = new ValueAttribute();
+        attributes["type"]  = new TypeAttribute();
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
 		attributes["unsafe"] = new UnsafeAttribute();
@@ -93,7 +94,30 @@ internal class TypeAttribute: Attribute {
 	}
 }
 
-internal class LevelAttribute: Attribute {
+    /// <summary>
+    /// Class to evaluate the value of a DataDescription node if its associated DataDescriptionEntry
+    /// Code Element has an Initial value.
+    /// </summary>
+    internal class ValueAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var data = o as DataDescription;
+            if (data == null) return null;
+            TypeCobol.Compiler.CodeElements.Value value = ((DataDescriptionEntry)data.CodeElement).InitialValue;
+            if (value != null)
+            {
+                if (value.LiteralType == Value.ValueLiteralType.Boolean)
+                {   //Special case for TypeCobol Bool type value.
+                    return value.BooleanValue.Value ? "'T'" : "'F'";
+                }
+                return value.ToString();
+            }
+            return "";
+        }
+    }
+
+    internal class LevelAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var data = o as DataDefinition;
 		if (data == null) return null;

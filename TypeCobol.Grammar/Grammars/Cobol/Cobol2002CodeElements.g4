@@ -22,7 +22,7 @@ dataDescriptionEntry:
 		| synchronizedClause
 		| usageClause
 		| valueClause
-		| (cobol2002TypeClause valueClauseWithBoolean?)
+		| cobol2002TypeClause
 		)* PeriodSeparator
 	)
 	| dataRenamesEntry

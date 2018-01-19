@@ -4,9 +4,9 @@ Line 1[1,1] <35, Warning, Semantics> - Error while parsing dependency file: inpu
 1 error in "input\Callee.rdz.tcbl":
 Line 1[1,1] <37, Warning, General> - Warning: No public types or procedures/functions found in Callee
 6 errors in "input\PGM3.rdz.tcbl":
+Line 22[12,42] <27, Error, Syntax> - Syntax error : Symbol Calendar.Gregorian is not referenced
 Line 9[8,41] <30, Error, Semantics> - Semantic error: TYPE 'Callee.Calendar' is not referenced
 Line 26[12,39] <27, Error, Syntax> - Syntax error : Function not found 'MyPublicProcedure' input(DATE)
 Line 30[12,39] <27, Error, Syntax> - Syntax error : Function not found 'Callee.MyPublicProcedure' input(DATE)
 Line 42[11,33] <27, Error, Syntax> - Syntax error : Function not found 'dump' input(Alphanumeric)
 Line 45[11,55] <27, Error, Syntax> - Syntax error : Function not found 'MyIntrinsicFunctions.dump' input(Alphanumeric)
-Line 22[12,42] <27, Error, Syntax> - Syntax error : Symbol Calendar.Gregorian is not referenced

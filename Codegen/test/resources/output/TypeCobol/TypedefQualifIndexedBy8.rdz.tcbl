@@ -24,6 +24,7 @@
                04 Periodicity pic 9(03).
                                  
        PROCEDURE DIVISION.
+      *    set Idx to 1.
            set d004576fIdx to 1.
       *DECLARE PROCEDURE DisplayEventList PRIVATE
       *    INPUT EventList type _EVENT_LIST_.

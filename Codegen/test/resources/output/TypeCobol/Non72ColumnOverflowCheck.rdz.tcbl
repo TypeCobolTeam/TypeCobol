@@ -17,7 +17,9 @@
              03 DD PIC 9(2).
           02  Registered-value PIC X VALUE LOW-VALUE.
               88  Registered       VALUE 'T'.
-              88  Registered-false VALUE 'F'.
+              88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                      
       *01 W-PERSON2      TYPE PERSON.
        01 W-PERSON2.
@@ -29,7 +31,9 @@
              03 DD PIC 9(2).
           02  Registered-value PIC X VALUE LOW-VALUE.
               88  Registered       VALUE 'T'.
-              88  Registered-false VALUE 'F'.
+              88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
                                      
 
        procedure division.

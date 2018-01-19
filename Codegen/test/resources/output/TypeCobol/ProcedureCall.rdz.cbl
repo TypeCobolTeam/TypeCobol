@@ -34,11 +34,20 @@
       *01  flag         TYPE Bool.
        01  flag-value PIC X VALUE LOW-VALUE.
            88  flag       VALUE 'T'.
-           88  flag-false VALUE 'F'.
+           88  flag-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                   
        01  realformat   PIC X(08).
 
+       01 funcPointer function-pointer.
+       01 procPointer procedure-pointer.
+
        PROCEDURE DIVISION.
+
+      *DECLARE PROCEDURE GetPtrFn
+      *    INPUT  ptrFn function-pointer
+      *           ptrPr procedure-pointer.
 
       *DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
 
@@ -63,6 +72,14 @@
       *  .
 
        TRAITEMENT.
+
+      *CALL GetPtrFn
+      *      INPUT funcPointer procPointer.
+       CALL 'd03c3701GetPtrFn' USING
+                                 funcPointer
+                                 procPointer
+           end-call
+                                          .
 
       *CALL ProcedureWithANameOver22Chars.
        CALL 'eb292c28ProcedureWithANameOver'
@@ -189,6 +206,23 @@
            .
 
        END PROGRAM ProcedureCall.
+      *
+      *DECLARE PROCEDURE GetPtrFn
+      *    INPUT  ptrFn function-pointer
+      *           ptrPr procedure-pointer.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d03c3701GetPtrFn.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 ptrFn function-pointer.
+       01 ptrPr procedure-pointer.
+       PROCEDURE DIVISION
+             USING BY REFERENCE ptrFn
+                   BY REFERENCE ptrPr
+           .
+           CONTINUE.
+       END PROGRAM d03c3701GetPtrFn.
       *
       *DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
       *_________________________________________________________________

@@ -145,14 +145,16 @@ namespace TypeCobol.LanguageServer
                         //Detect if the cursor is just after the token, in this case and if bAllowLastPos is false, set 
                         if ((lastSignificantToken != null &&
                               (!CompletionElligibleTokens.DoesTokenAllowLastPos(lastSignificantToken) && lastSignificantToken.StopIndex + 1 == position.character &&
-                               lastSignificantToken.Line == position.line + 1)) ||
-                             (consumedTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord &&
-                              !(position.character <= consumedTokens.LastOrDefault().StopIndex + 1 &&
-                                position.character >= consumedTokens.LastOrDefault().StartIndex)
-                              &&
-                              !(lastSignificantToken.TokenType == TokenType.INPUT ||
-                                lastSignificantToken.TokenType == TokenType.OUTPUT ||
-                                lastSignificantToken.TokenType == TokenType.IN_OUT)))
+                               lastSignificantToken.Line == position.line + 1)) 
+                             ||
+                                 (consumedTokens.LastOrDefault().TokenType == TokenType.UserDefinedWord &&
+                                  !(position.character <= consumedTokens.LastOrDefault().StopIndex + 1 &&
+                                    position.character >= consumedTokens.LastOrDefault().StartIndex)
+                                  &&
+                                  lastSignificantToken != null &&
+                                  !(lastSignificantToken.TokenType == TokenType.INPUT ||
+                                    lastSignificantToken.TokenType == TokenType.OUTPUT ||
+                                    lastSignificantToken.TokenType == TokenType.IN_OUT)))
                         {
                             significantTokensDectected.Pop();
                             lastSignificantToken = significantTokensDectected.Peek();

@@ -103,6 +103,17 @@ namespace TypeCobol.Compiler.Diagnostics {
             {
                 CheckPicture(dataDefinition);
             }
+
+            //Check if DataDefinition is level 88 and declared under BOOL variable
+            if (dataDefinition.CodeElement is DataDefinitionEntry && dataDefinition.Parent is DataDefinition)
+            {
+                var integerValue = (dataDefinition.CodeElement as DataDefinitionEntry).LevelNumber;
+                if (integerValue != null && ((dataDefinition.Parent as DataDefinition).DataType == DataType.Boolean && integerValue.Value == 88))
+                    DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                        "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol",
+                        MessageCode.SyntaxErrorInParser);
+            }
+
             return true;
         }
 
@@ -175,50 +186,62 @@ namespace TypeCobol.Compiler.Diagnostics {
                 found = foundQualified.Select(v => v.Value).ToList();
             }
 
-            if (found.Count == 1 && foundQualified.Count == 1 && found[0].IsIndex)
+            if (found.Count == 1 && foundQualified.Count == 1)
             {
-                var index = found[0];
-                string completeQualifiedName = foundQualified.First().Key;
-
-                index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
-
-                if (area.SymbolReference.IsQualifiedReference)
+                if (found[0].IsIndex)
                 {
-                    if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
-                        DiagnosticUtils.AddError(index.Parent.CodeElement, "Index name '" + index.Name + "' is over 22 characters.");
-                    if (
-                        index.Parent.CodeElement.IsInsideCopy()) //If index comes from a copy, do not support qualification
-                        DiagnosticUtils.AddError(node.CodeElement, "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
-                }
+                    var index = found[0];
+                    string completeQualifiedName = foundQualified.First().Key;
 
-                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef) //Index name is qualified or belongs to a typedef
-                {
-                    //Mark this node for generator
-                    FlagNodeAndCreateQualifiedStorageAreas(node, storageArea, completeQualifiedName);
+                    index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
 
-                    foreach (var reference in index.GetReferences().Where(n => !n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                    if (area.SymbolReference.IsQualifiedReference)
                     {
-                        FlagNodeAndCreateQualifiedStorageAreas(reference.Value, reference.Key, completeQualifiedName);
+                        if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
+                            DiagnosticUtils.AddError(index.Parent.CodeElement, "Index name '" + index.Name + "' is over 22 characters.");
+                        if (
+                            index.Parent.CodeElement.IsInsideCopy()) //If index comes from a copy, do not support qualification
+                            DiagnosticUtils.AddError(node.CodeElement, "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
+                    }
+
+                    if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef) //Index name is qualified or belongs to a typedef
+                    {
+                        //Mark this node for generator
+                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, completeQualifiedName);
+
+                        foreach (var reference in index.GetReferences().Where(n => !n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                        {
+                            FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, reference.Value, reference.Key, completeQualifiedName);
+                        }
+                    }
+                    else if (!area.SymbolReference.IsQualifiedReference) //If it's an index but not use with qualified reference 
+                    {
+                        //Check the previous references to see if one has been flagged as NodeContainsIndex then flag this node
+                        if (index.GetReferences().Any(n => n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                        {
+                            FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea, completeQualifiedName);
+                        }
+                    }
+
+                    //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
+                    if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef) //If index is used with qualified name but doesn't belongs to typedef
+                    {
+                        //Flag index node for code generator to let it know that this index will need hash.
+                        index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
+                    }
+
+                    if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                        DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
+                }
+                else if (found[0].DataType == DataType.Boolean && found[0].CodeElement is DataDefinitionEntry && (found[0].CodeElement as DataDefinitionEntry).LevelNumber.Value != 88)
+                {
+                    if (!(node is Nodes.If || node is Nodes.Set))//Ignore Conditional(If) and Set statement
+                    {
+                        //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
+                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, foundQualified.First().Key);
                     }
                 }
-                else if (!area.SymbolReference.IsQualifiedReference) //If it's an index but not use with qualified reference 
-                {
-                    //Check the previous references to see if one has been flagged as NodeContainsIndex then flag this node
-                    if (index.GetReferences().Any(n => n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
-                    {
-                        FlagNodeAndCreateQualifiedStorageAreas(node, storageArea, completeQualifiedName);
-                    }
-                }
-
-                //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
-                if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef) //If index is used with qualified name but doesn't belongs to typedef
-                {
-                    //Flag index node for code generator to let it know that this index will need hash.
-                    index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
-                }
-
-                if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
-                    DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
+               
             }
 
             if (found.Count < 1)
@@ -229,9 +252,9 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         }
 
-        private void FlagNodeAndCreateQualifiedStorageAreas(Node node, StorageArea storageArea, string completeQualifiedName)
+        private void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea, string completeQualifiedName)
         {
-            node.SetFlag(Node.Flag.NodeContainsIndex, true);
+            node.SetFlag(flag, true);
             if (node.QualifiedStorageAreas == null)
                 node.QualifiedStorageAreas = new Dictionary<StorageArea, string>();
 
@@ -611,47 +634,76 @@ namespace TypeCobol.Compiler.Diagnostics {
 
         /// <param name="wname">Receiving item; must be found and its type known</param>
         /// <param name="sent">Sending item; must be found and its type known</param>
-        private static void CheckVariable(Node node, QualifiedName wname, object sent) {
-		if (sent == null || wname == null) return;// I need both items
-		var wsymbol = GetSymbol(node.SymbolTable, wname);
-		if (wsymbol == null) return;// receiving symbol name unresolved
-		var receiving = GetTypeDefinition(node.SymbolTable, wsymbol);
-		if (receiving == null) return;// cannot find receiving type
+        private static void CheckVariable(Node node, QualifiedName wname, object sent)
+        {
+            DataDefinition sendingTypeDefinition = null, receivingTypeDefinition = null;
 
-		DataType sending = null;
-		var sname = sent as QualifiedName;
-		if (sname != null) {
-			var ssymbol = GetSymbol(node.SymbolTable, sname);
-			if (ssymbol == null) return;// sending symbol name unresolved
-			sending = GetTypeDefinition(node.SymbolTable, ssymbol);
-			if (sending == null) return;// cannot find sending type
-		} else {
-			bool? sbool = sent as bool?;
-			if (sbool != null) sending = DataType.Boolean;
-			double? sdouble = sent as double?;
-			if (sdouble != null) sending = DataType.Numeric;
-			string sstring = sent as string;
-			if (sstring != null) sending = DataType.Alphanumeric;
-		}
-		if (sending != receiving) {
-			var IsUnsafe = ((VariableWriter)node).IsUnsafe;
-			if (receiving.RestrictionLevel > RestrictionLevel.WEAK) {
-                    if (!IsUnsafe)
+            if (sent == null || wname == null) return; //Both items needed
+            var wsymbol = GetSymbol(node.SymbolTable, wname);
+            if (wsymbol == null) return; // receiving symbol name unresolved
+            receivingTypeDefinition = wsymbol.TypeDefinition;
+            if (receivingTypeDefinition == null) //No TypeDefinition found, try to get DataType
+            {
+                receivingTypeDefinition = GetDataDefinitionType(node.SymbolTable, wsymbol);
+            }
+            
+            var sname = sent as QualifiedName;
+            if (sname != null)
+            {
+                var ssymbol = GetSymbol(node.SymbolTable, sname);
+                if (ssymbol == null) return; // sending symbol name unresolved
+                sendingTypeDefinition = ssymbol.TypeDefinition;
+                if (sendingTypeDefinition == null) //No TypeDefinition found try to get DataType
+                {
+                    sendingTypeDefinition = GetDataDefinitionType(node.SymbolTable, ssymbol);
+                }
+            }
+            else
+            {   //This will resolve the following cases MOVE 1 TO myVar / MOVE true TO myVar / MOVE "test" TO myVar. 
+                if (sent is bool?) sendingTypeDefinition = GeneratedDefinition.BooleanGeneratedDefinition;
+                if (sent is double?) sendingTypeDefinition = GeneratedDefinition.NumericGeneratedDefinition;
+                if (sent is string) sendingTypeDefinition = GeneratedDefinition.AlphanumericGeneratedDefinition;
+            }
+
+            //TypeDefinition Comparison
+            if (receivingTypeDefinition != null && !receivingTypeDefinition.Equals(sendingTypeDefinition))
+            {
+                var isUnsafe = ((VariableWriter) node).IsUnsafe;
+                if (receivingTypeDefinition.DataType.RestrictionLevel > RestrictionLevel.WEAK)
+                {
+                    if (!isUnsafe)
                     {
-                        string message = string.Format("Cannot write {0} to {1} typed variable {2}:{3}."
-                                                      , sending, receiving.RestrictionLevel == RestrictionLevel.STRONG ? "strongly" : "strictly"
-                                                      , wname.Head, receiving);
+                        var sendingName = sendingTypeDefinition != null ? sendingTypeDefinition.DataType.Name : null;
+                        var receivingName = receivingTypeDefinition.DataType.Name;
+
+                        if (sendingTypeDefinition != null &&
+                            sendingTypeDefinition.DataType.Name == receivingTypeDefinition.DataType.Name)
+                            //In case type names are equals
+                        {
+                            sendingName = sendingTypeDefinition.VisualQualifiedName.ToString().Replace(".", "::");
+                            receivingName = receivingTypeDefinition.VisualQualifiedName.ToString().Replace(".", "::");
+                        }
+
+                        var message = string.Format("Cannot write {0} to {1} typed variable {2}:{3}.", sendingName,
+                            receivingTypeDefinition.DataType.RestrictionLevel == RestrictionLevel.STRONG
+                                ? "strongly"
+                                : "strictly", wname.Head, receivingName);
+
                         DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                     }
-			} else {
-				if (IsUnsafe) {
-					string message = "Useless UNSAFE with non strongly typed receiver.";
-					DiagnosticUtils.AddError(node, message, MessageCode.SyntaxWarningInParser);
-				}
-			}
-		}
-	}
-	private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference) {
+                }
+                else
+                {
+                    if (isUnsafe)
+                    {
+                        var message = "Useless UNSAFE with non strongly typed receiver.";
+                        DiagnosticUtils.AddError(node, message, MessageCode.SyntaxWarningInParser);
+                    }
+                }
+            }
+        }
+
+        private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference) {
 		var found = table.GetVariables(symbolReference);
 		if (found.Count != 1) return null;// symbol undeclared or ambiguous -> not my job
 		return found[0];
@@ -663,14 +715,20 @@ namespace TypeCobol.Compiler.Diagnostics {
 	}
 
     //TODO move this method to DataDefinition
-        private static DataType GetTypeDefinition(SymbolTable table, Node symbol)
+    /// <summary>
+    /// Allows to get DataType of a DataDefinition Node
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="symbol"></param>
+    /// <returns></returns>
+        private static DataDefinition GetDataDefinitionType(SymbolTable table, Node symbol)
         {
             var data = symbol as DataDefinition;
             if (data != null)
             {
                 var dataCondition = data as DataCondition;
                 if (dataCondition != null)
-                    return dataCondition.CodeElement().DataType;
+                    return new GeneratedDefinition(dataCondition.CodeElement().DataType.Name, dataCondition.CodeElement().DataType);
 
                 DataDescriptionEntry entry;
                 if (data.CodeElement is DataDescriptionEntry)
@@ -700,13 +758,13 @@ namespace TypeCobol.Compiler.Diagnostics {
                 if (entry == null)
                     return null;
 
-                if (entry.UserDefinedDataType == null) return entry.DataType; //not a custom type
+                if (entry.UserDefinedDataType == null) return new GeneratedDefinition(entry.DataType.Name, entry.DataType);
             }
             ITypedNode typed = symbol as ITypedNode;
             if (typed == null) return null; // symbol untyped
             var types = table.GetType(typed);
             if (types.Count != 1) return null; // symbol type not found or ambiguous
-            return types[0].DataType;
+            return types[0];
         }
 
         /// <summary>

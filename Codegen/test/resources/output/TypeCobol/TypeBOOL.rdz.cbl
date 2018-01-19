@@ -47,15 +47,22 @@
            SET Identifier-false TO TRUE.
                                    
       * OK
-           MOVE TRUE         TO Identifier
-           MOVE FALSE        TO Identifier
-           MOVE AnotherOne   TO Identifier
-           MOVE Identifier   TO x
+      *    MOVE TRUE         TO Identifier
+           MOVE TRUE         TO Identifier-value
+      *    MOVE FALSE        TO Identifier
+           MOVE FALSE        TO Identifier-value
+      *    MOVE AnotherOne   TO Identifier
+           MOVE AnotherOne-value   TO Identifier-value
+      *    MOVE Identifier   TO x
+           MOVE Identifier-value   TO x
       * OK
            MOVE x   TO c OF a IN AGroup
-           MOVE Identifier    TO d      IN AGroup
-           MOVE Identifier    TO b OF a IN AGroup
-           MOVE d IN AGroup   TO b OF a IN AGroup
+      *    MOVE Identifier    TO d      IN AGroup
+           MOVE Identifier-value    TO AGroup.d-value      IN AGroup
+      *    MOVE Identifier    TO b OF a IN AGroup
+           MOVE Identifier-value    TO AGroup.a.b-value OF a IN AGroup
+      *    MOVE d IN AGroup   TO b OF a IN AGroup
+           MOVE AGroup.d-value IN AGroup   TO AGroup.a.b-value OF a IN AGroup
       * OK: copying chunks of memories of different layouts is standard COBOL practice
            MOVE x   TO      AGroup
            MOVE x   TO a IN AGroup
@@ -67,3 +74,5 @@
            .
 
        END PROGRAM Booleans.
+      * 1 errors
+      * Line 36[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns

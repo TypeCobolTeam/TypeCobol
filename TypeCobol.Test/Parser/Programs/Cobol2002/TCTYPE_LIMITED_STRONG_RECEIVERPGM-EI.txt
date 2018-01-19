@@ -1,0 +1,39 @@
+﻿--- Diagnostics ---
+Line 33[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
+Line 35[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[12,18:TYPEDEF]<TYPEDEF>
+Line 39[16,22] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[16,22:TYPEDEF]<TYPEDEF>
+Line 41[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[10,16:TYPEDEF]<TYPEDEF>
+Line 68[1,34] <27, Error, Syntax> - Syntax error : Symbol CharsStrong is not referenced
+Line 71[1,33] <27, Error, Syntax> - Syntax error : Symbol CharsStrong is not referenced
+Line 77[1,27] <30, Error, Semantics> - Semantic error: Cannot write  to strongly typed variable myStrongInt:IntegerStrong.
+Line 81[1,63] <30, Error, Semantics> - Semantic error: Cannot write  to strongly typed variable myStrongChars:CharsStrong.
+Line 85[1,78] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable myStrongChars:CharsStrong.
+Line 85[1,78] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable myStrongChars2:CharsStrong.
+Line 89[1,48] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable myStrongChars:CharsStrong.
+
+--- Program ---
+PROGRAM: StrongReceivers common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  FIC-APPEL:Alphanumeric
+  WorkRec:Alphanumeric
+  Temp:Alphanumeric
+  myStrongInt:IntegerStrong
+  myInt:Integer
+  myStrongChars:CharsStrong
+  myStrongChars2:CharsStrong
+  myChars:Chars
+  myChars2:Chars
+  varToUnstring:Alphanumeric
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  IntegerStrong:IntegerStrong
+  Integer:Integer
+  CharsStrong:CharsStrong
+  Chars:Chars
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

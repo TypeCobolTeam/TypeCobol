@@ -11,15 +11,26 @@
   </skeleton>
 
   <!-- replace TYPE BOOL declarations -->
-  <skeleton name="BOOL.DECLARE" var="level,name">
+  <skeleton name="BOOL.DECLARE" var="level,name,value">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="BOOL"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
-%level  %name-value PIC X VALUE LOW-VALUE.
+        @{
+        var items = "";
+        if (%value.Length == 0) {
+        items = %level +"  "+%name+"-value PIC X VALUE LOW-VALUE.";
+        }
+        else {
+        items = %level + "  " + %name + "-value PIC X VALUE " +  %value  + ".";
+        }
+        }
+@items
     88  %name       VALUE 'T'.
-    88  %name-false VALUE 'F'.
+    88  %name-false VALUE 'F'
+                    X'00' thru 'S'
+                    'U' thru X'FF'.
       </pattern>
     </patterns>
   </skeleton>
@@ -162,7 +173,7 @@
       </pattern>
 
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
-      <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
+      <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
 *
 *    IF CallIsCopy
 *      PERFORM Copy-Process-Mode

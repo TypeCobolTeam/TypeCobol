@@ -24,14 +24,16 @@ class Factory {
             { "file", "working-storage" },
             { "working-storage", "local-storage" },
             { "local-storage", "linkage" },
-		};
+            { "declaratives-header", "sentence" },
+        };
 
     private Dictionary<string, List<string> > Previous = new Dictionary<string, List<string>>{
 			{ "procedure-division", new List<string>(){"data-division" }},
             { "working-storage", new List<string>(){"file"} },
             { "local-storage", new List<string>(){"working-storage", "file"}  },
             { "linkage", new List<string>(){"local-storage", "working-storage", "file"} },
-		};
+            { "sentence", new List<string>(){ "declaratives-header" } },
+        };
 
 	private void GeneralizeName(ref string name) {
 		if (name.StartsWith("sentence-")) name = "sentence";

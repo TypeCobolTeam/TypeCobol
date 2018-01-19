@@ -127,8 +127,9 @@ namespace TypeCobol.Tools.APIHelpers
 #endif
                 try
                 {
+                    parser.CustomSymbols = table; //Update SymbolTable
                     parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format);
-                    parser.Parse(path); //Parse the dependencie file
+                    parser.Parse(path); //Parse the dependency file
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
 

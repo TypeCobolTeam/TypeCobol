@@ -115,7 +115,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// <summary>
         /// Implementation of IMessageHandler
         /// </summary>
-        public void HandleMessage(string message, IMessageServer server)
+        public virtual void HandleMessage(string message, IMessageServer server)
         {
             JObject jsonObject = JObject.Parse(message);
 

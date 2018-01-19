@@ -265,13 +265,6 @@ namespace TypeCobol.Compiler.Parser
 
                             // Add code element to the list                    
                             codeElementsLine.AddCodeElement(codeElement);
-                            if (codeElement.Diagnostics != null)
-                            {
-                                foreach (Diagnostic d in codeElement.Diagnostics)
-                                {
-                                    codeElementsLine.AddParserDiagnostic(d);
-                                }
-                            }
                         }
                     }
                 }

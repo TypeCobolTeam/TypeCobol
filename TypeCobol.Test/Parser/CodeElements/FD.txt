@@ -1,0 +1,3 @@
+﻿--- Code Elements ---
+[[FileDescriptionEntry]] [1,2:FD]<FD> --> [1,1+:.]<PeriodSeparator>
+

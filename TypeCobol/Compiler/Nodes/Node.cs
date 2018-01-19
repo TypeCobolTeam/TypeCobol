@@ -155,6 +155,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// It will be used by code generator, to know if the index has to be hashed or not.
             /// </summary>
             IndexUsedWithQualifiedName = 0x01 << 19,
+            /// <summary>
+            /// Mark that this node contains a boolean variable that has to be considered by CodeGen. 
+            /// </summary>
+            NodeContainsBoolean = 0x01 << 20,
 
 
         };
@@ -219,11 +223,32 @@ namespace TypeCobol.Compiler.Nodes {
                     if (!string.IsNullOrEmpty(parent.Name)) {
                         qn = parent.Name + "." + qn;
                     }
-                    //if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
-                    //    break;
                     parent = parent.Parent;
                 }
                 
+                return new URI(qn);
+            }
+        }
+
+        public virtual QualifiedName VisualQualifiedName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Name)) return null;
+
+                var qn = Name;
+                var parent = this.Parent;
+                while (parent != null)
+                {
+                    if (!string.IsNullOrEmpty(parent.Name))
+                    {
+                        qn = parent.Name + "." + qn;
+                    }
+                    if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
+                        break;
+                    parent = parent.Parent;
+                }
+
                 return new URI(qn);
             }
         }
@@ -275,6 +300,22 @@ namespace TypeCobol.Compiler.Nodes {
 
         public SymbolTable SymbolTable { get; set; }
 
+
+        private TypeDefinition _typeDefinition;
+
+        /// <summary>
+        /// Get the TypeDefinition node associated to this Node
+        /// </summary>
+        public TypeDefinition TypeDefinition
+        {
+            get { return _typeDefinition; }
+            set
+            {
+                if (_typeDefinition == null)
+                    _typeDefinition = value;
+            }
+        }
+
         public object this[string attribute] {
             get { return Attributes.Get(this, attribute); }
         }
@@ -320,6 +361,9 @@ namespace TypeCobol.Compiler.Nodes {
             get { return _Diagnostics; }
         }
 
+        /// <summary>
+        /// Allows to store the used storage areas and their fully qualified Name. 
+        /// </summary>
         public Dictionary<StorageArea, string> QualifiedStorageAreas { get; set; }
 
         private List<Diagnostic> _Diagnostics;

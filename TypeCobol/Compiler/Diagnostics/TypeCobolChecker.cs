@@ -507,6 +507,8 @@ class FunctionDeclarationChecker: NodeListener {
                 {
                     if (condition.LevelNumber.Value != 88)
                         DiagnosticUtils.AddError(node, "Condition parameter \"" + condition.Name + "\" must be level 88.");
+                    if (condition.LevelNumber.Value == 88 && parameter.DataType == DataType.Boolean)
+                        DiagnosticUtils.AddError(node, "The Level 88 symbol '" + parameter.Name + "' cannot be declared under a BOOL typed symbol");
                 }
             }
 
@@ -607,7 +609,7 @@ public class LibraryChecker {
 	        foreach (var child in procedureDivision.Children)
             {
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
-                if (!(child is Paragraph || child is FunctionDeclaration)) {
+                if (!(child is Paragraph || child is FunctionDeclaration || child is Declaratives)) {
                     DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child, "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
                 }
             }

@@ -1,0 +1,20 @@
+﻿--- Diagnostics ---
+Line 1[1,11] <27, Error, Syntax> - Syntax error : Symbol c is not referenced
+Line 1[1,11] <27, Error, Syntax> - Syntax error : Symbol d is not referenced
+Line 4[1,11] <27, Error, Syntax> - Syntax error : Symbol a is not referenced
+Line 4[1,11] <27, Error, Syntax> - Syntax error : Symbol b is not referenced
+--- Code Elements ---
+[[ProgramIdentification]] [1,14:IDENTIFICATION]<IDENTIFICATION> --> [22,22+:.]<PeriodSeparator>
+- ProgramName = TypeCobol
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
+
+[[MoveStatement]] [1,4:move]<MOVE> --> [11,11:b]<UserDefinedWord>
+
+[[MoveStatement]] [1,4:move]<MOVE> --> [11,11:d]<UserDefinedWord>
+
+[[SentenceEnd]] [1,1+:.]<PeriodSeparator> --> [1,1+:.]<PeriodSeparator>
+

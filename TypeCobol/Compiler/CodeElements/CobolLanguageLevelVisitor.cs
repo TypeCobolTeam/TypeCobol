@@ -342,6 +342,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] OnOverflow onOverflow);
         bool Visit([NotNull] NoOverflow noOverflow);
         bool Visit([NotNull] ProcedureDivision procedureDivision);
+        bool Visit([NotNull] Declaratives declaratives);
         bool Visit([NotNull] FunctionDeclaration functionDeclaration);
         bool Visit([NotNull] FunctionEnd functionEnd);
         bool Visit([NotNull] Sentence sentence);
@@ -1326,6 +1327,10 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ProcedureDivision procedureDivision) {
+            return true;
+        }
+
+        public virtual bool Visit(Declaratives declaratives) {
             return true;
         }
 

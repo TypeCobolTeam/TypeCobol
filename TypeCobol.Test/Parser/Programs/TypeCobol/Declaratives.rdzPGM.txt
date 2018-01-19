@@ -1,0 +1,13 @@
+﻿--- Program ---
+PROGRAM: DeclarativesTest common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+-- PARAGRAPHS --
+  AFFICHAGE-PARAGRAPHE
+  X
+-- FUNCTIONS ---
+  MyProc
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

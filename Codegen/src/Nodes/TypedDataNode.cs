@@ -668,9 +668,11 @@
         }
 
         private readonly static string[] BoolTypeTemplate = {
-        " {2}{1}  {0}-value PIC X VALUE LOW-VALUE.",
+        " {2}{1}  {0}-value PIC X VALUE {3}.",
         " {2}    88  {0}       VALUE 'T'.",
-        " {2}    88  {0}-false VALUE 'F'.",
+        " {2}    88  {0}-false VALUE 'F' ",
+        "                      X'00' thru 'S'",
+        "                      'U' thru X'FF'."
     };
         public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
@@ -691,9 +693,10 @@
                             for (int i = 0; i < indent; i++)
                                 margin += "  ";
                             string slevel = level.ToString("00");
+                            string svalue = child["value"] as string;
                             foreach (string str in BoolTypeTemplate)
                             {
-                                string sline = string.Format(str, attr_name, slevel, margin);
+                                string sline = string.Format(str, attr_name, slevel, margin, svalue.Length == 0 ? "LOW-VALUE" : svalue);
                                 TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
                                 lines.Add(line);
                             }
@@ -705,7 +708,12 @@
                 if (child is IndexDefinition)
                     continue;//Ignore Index Definition
 
+                System.Diagnostics.Debug.Assert(child is DataDefinition);
                 var typed = child is DataDefinition ? (DataDefinition)child : null;
+                if (typed == null)
+                {//Unexpected typed value.                    
+                    continue;
+                }
                 var types = table.GetType(typed.DataType);
                 bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;

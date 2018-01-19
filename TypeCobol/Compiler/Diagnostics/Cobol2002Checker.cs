@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
 
-            if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1) {
+            if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1 && !typeDefinition.Usage.HasValue) {
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
@@ -288,8 +288,13 @@ class RenamesChecker {
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
             else
+            {
                 foundedType = found[0];
+                node.TypeDefinition = foundedType;
+            }
+                
         }
+
     }
     /*
     class StronglyTypedReceiverChecker: NodeListener {

@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	    }
         
 
-        private object SendingItem {
+        public object SendingItem {
 		    [CanBeNull]
 		    get {
 		        if (SendingVariable != null) {
