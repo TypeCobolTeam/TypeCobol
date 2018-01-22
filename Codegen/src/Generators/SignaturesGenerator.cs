@@ -38,7 +38,7 @@ namespace TypeCobol.Codegen.Generators
             Destination.Write("");
             //Add version to output file
             if (!string.IsNullOrEmpty(TypeCobolVersion))
-                Destination.WriteLine("      * TypeCobol Version: " + TypeCobolVersion);
+                Destination.WriteLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());

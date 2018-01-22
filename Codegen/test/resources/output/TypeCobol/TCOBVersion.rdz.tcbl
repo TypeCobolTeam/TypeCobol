@@ -1,4 +1,4 @@
-﻿      * TypeCobol Version: TestTypeCobolVersion
+﻿      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. TCOBVersion.
 

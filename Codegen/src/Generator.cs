@@ -114,7 +114,7 @@ namespace TypeCobol.Codegen
 
             //Add version to output file
             if (!string.IsNullOrEmpty(TypeCobolVersion))
-                Destination.WriteLine("      * TypeCobol Version: " + TypeCobolVersion);
+                Destination.WriteLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
             Actions = new GeneratorActions(this, skeletons, document);
             //To Store Erased Nodes by the Erase Action.
