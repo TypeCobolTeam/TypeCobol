@@ -170,6 +170,12 @@ namespace TypeCobol.LanguageServices.Editor
                 {
                     _FileCompilerWaittingForNodePhase.Pop()
                         .CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+
+                    if (_SemanticUpdaterTimer != null)
+                    {
+                        _SemanticUpdaterTimer.Stop(); //Avoid duplicate Node pahse if a parser was launched
+                        _SemanticUpdaterTimer = null;
+                    }
                 }
             }
         }
