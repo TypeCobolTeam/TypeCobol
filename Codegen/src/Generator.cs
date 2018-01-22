@@ -106,10 +106,16 @@ namespace TypeCobol.Codegen
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public Generator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons)
+        public Generator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion)
         {
             this.CompilationResults = document;
+            this.TypeCobolVersion = typeCobolVersion;
             Destination = destination;
+
+            //Add version to output file
+            if (!string.IsNullOrEmpty(TypeCobolVersion))
+                Destination.WriteLine("      *TypeCobol_Version:" + TypeCobolVersion);
+
             Actions = new GeneratorActions(this, skeletons, document);
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
@@ -304,5 +310,7 @@ namespace TypeCobol.Codegen
         /// <param name="node">The node to process</param>
         /// <returns>true if child nodes must visited for acceptation, false otherwise.</returns>
         protected abstract bool Process(Node node);
+
+        public string TypeCobolVersion { get; set; }
     }
 }

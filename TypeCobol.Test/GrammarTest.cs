@@ -129,7 +129,7 @@ namespace TypeCobol.Test {
                     //Retrieve skeletons
                     var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : null;
 
-			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons);
+			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons, null);
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(document.Results, columns);
                     writer.Close();

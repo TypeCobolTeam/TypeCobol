@@ -26,7 +26,7 @@ namespace Analytics
         private static bool _DisableTelemetry = true; //By default telemetry needs to be disable. It will only be enable by the first caller.
         private static TelemetryClient _TelemetryClient;
         private Configuration _AppConfig;
-
+        private string _TypeCobolVersion;
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private AnalyticsWrapper()
@@ -35,13 +35,13 @@ namespace Analytics
             {
                 _AppConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location); //Load custom app.config for this assembly
                 var appKey = _AppConfig.AppSettings.Settings["AppInsightKey"].Value;//Get API Key CLI project config file
-                var typeCobolVersion = _AppConfig.AppSettings.Settings["TypeCobolVersion"].Value; 
+                _TypeCobolVersion = _AppConfig.AppSettings.Settings["TypeCobolVersion"].Value; 
 
                 // ----- Initiliaze AppInsights Telemetry Client -------//
                 _TelemetryClient = new TelemetryClient(new TelemetryConfiguration(appKey));
                 _TelemetryClient.Context.User.Id = CreateSHA256(Environment.UserName);
                 _TelemetryClient.Context.Session.Id = Guid.NewGuid().ToString();
-                _TelemetryClient.Context.Component.Version = typeCobolVersion;
+                _TelemetryClient.Context.Component.Version = _TypeCobolVersion;
                 _TelemetryClient.Context.Device.OperatingSystem = "N/A";
                 _TelemetryClient.Context.Location.Ip = "N/A";
                 _TelemetryClient.Context.Cloud.RoleInstance = "N/A";
@@ -62,6 +62,9 @@ namespace Analytics
         /// Gets or sets a value indicating whether sending of telemetry is disabled. 
         /// </summary>
         public bool DisableTelemetry { get { return _DisableTelemetry; } set { _DisableTelemetry = value; } }
+
+
+        public string TypeCobolVersion { get { return _TypeCobolVersion; } }
 
         /// <summary>
         /// Track a new event into analytics collector
