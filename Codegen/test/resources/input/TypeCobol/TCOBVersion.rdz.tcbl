@@ -1,0 +1,9 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBVersion.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      
+       PROCEDURE DIVISION.
+       .
+       END PROGRAM TCOBVersion.

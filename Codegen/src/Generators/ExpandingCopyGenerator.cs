@@ -466,5 +466,7 @@ namespace TypeCobol.Codegen.Generators
             //var date_diff = date2 - date1;
             //System.Console.Out.WriteLine(date_diff);
         }
+
+        public string TypeCobolVersion { get; set; }
     }
 }

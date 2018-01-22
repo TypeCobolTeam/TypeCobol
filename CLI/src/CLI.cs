@@ -231,7 +231,7 @@ namespace TypeCobol.Server
                     {
                         var generator = GeneratorFactoryManager.Instance.Create(TypeCobol.Tools.Options_Config.OutputFormat.ExpandingCopy.ToString(),
                             parser.Results,
-                            new StreamWriter(config.ExpandingCopyFilePath), null);
+                            new StreamWriter(config.ExpandingCopyFilePath), null, null);
                         generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
                     }
                     catch(Exception e)
@@ -252,10 +252,10 @@ namespace TypeCobol.Server
 
                         //Get Generator from specified config.OutputFormat
                         var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(), parser.Results,
-                            new StreamWriter(config.OutputFiles[c]), skeletons);
+                            new StreamWriter(config.OutputFiles[c]), skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion);
 
                         if (generator == null) {
-                            throw new GenerationException("Unkown OutputFormat=" + config.OutputFormat + "_", path);
+                            throw new GenerationException("Unknown OutputFormat=" + config.OutputFormat + "_", path);
                         }
 
                         //Generate and check diagnostics

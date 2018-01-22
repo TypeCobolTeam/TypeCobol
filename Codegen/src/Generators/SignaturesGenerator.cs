@@ -26,14 +26,19 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public SignaturesGenerator(TextWriter destination) {
+        /// <param name="typeCobolVersion">Version of the TypeCobol Parser/Generator</param>
+        public SignaturesGenerator(TextWriter destination, string typeCobolVersion) {
             this.Destination = destination;
+            TypeCobolVersion = typeCobolVersion;
         }
    
 
 
         public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat) {
             Destination.Write("");
+            //Add version to output file
+            if (!string.IsNullOrEmpty(TypeCobolVersion))
+                Destination.WriteLine("      * TypeCobol Version: " + TypeCobolVersion);
 
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());
@@ -49,6 +54,7 @@ namespace TypeCobol.Codegen.Generators
         }
 
         public List<Diagnostic> Diagnostics { get; }
+        public string TypeCobolVersion { get; set; }
     }
 
 
