@@ -139,7 +139,8 @@ namespace TypeCobol.Compiler.Parser
             {
                 parameter.UserDefinedDataType =
                     CobolWordsBuilder.CreateQualifiedDataTypeReference(context.cobol2002TypeClause());
-                parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
+                if (parameter.UserDefinedDataType != null)
+                    parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
             } else if (context.POINTER() != null) {
                 parameter.Usage = CreateDataUsageProperty(DataUsage.Pointer, context.POINTER());
             }
