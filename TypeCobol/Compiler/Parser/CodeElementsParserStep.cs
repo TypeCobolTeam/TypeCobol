@@ -356,17 +356,20 @@ namespace TypeCobol.Compiler.Parser
                     CodeElementsLine previousLine = reversedEnumerator.Current;
 
                     // The start of the parse section is delimited by the previous CodeElement
-                    previousLineHasCodeElements = previousLine.HasCodeElements;
-                    if (previousLineHasCodeElements)
+                    if (previousLine != null)
                     {
-                        currentParseSection.StartLineIndex = previousLineIndex;
-                        currentParseSection.StartToken = previousLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
-                    }
+                        previousLineHasCodeElements = previousLine.HasCodeElements;
+                        if (previousLineHasCodeElements)
+                        {
+                            currentParseSection.StartLineIndex = previousLineIndex;
+                            currentParseSection.StartToken = previousLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                        }
 
-                    // All lines contained in the parse section could be modified, and should be reset
-                    previousLine = (CodeElementsLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.CodeElementsParser);
-                    previousLine.ResetCodeElements();
-                    codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
+                        // All lines contained in the parse section could be modified, and should be reset
+                        previousLine = (CodeElementsLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.CodeElementsParser);
+                        previousLine.ResetCodeElements();
+                        codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, previousLineIndex, previousLine));
+                    }
 
                     // Stop iterating backwards as soon as the start of an old CodeElement is found                   
                     if (previousLineHasCodeElements)
@@ -402,38 +405,41 @@ namespace TypeCobol.Compiler.Parser
                     CodeElementsLine nextLine = enumerator.Current;
 
                     // Check if the next CodeElement found starts at the beginning of the line   
-                    nextLineHasCodeElements = nextLine.HasCodeElements;
-                    bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
-                    if (nextLineHasCodeElements)
+                    if (nextLine != null)
                     {
-                        try
+                        nextLineHasCodeElements = nextLine.HasCodeElements;
+                        bool nextCodeElementStartsAtTheBeginningOfTheLine = false;
+                        if (nextLineHasCodeElements)
                         {
-                            Token startTokenForNextParseSection = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
-                            Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
-                            nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
+                            try
+                            {
+                                Token startTokenForNextParseSection = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                                Token firstSourceTokenOfThisLine = nextLine.TokensWithCompilerDirectives.First(token => token.Channel == Token.CHANNEL_SourceTokens);
+                                nextCodeElementStartsAtTheBeginningOfTheLine = startTokenForNextParseSection == firstSourceTokenOfThisLine;
+                            }
+                            catch (System.InvalidOperationException /*e*/)
+                            {//JCM: 28/08/2017: I noticed that this Exception can occur if: it doesn't exists a token which verifies the predicate: token.Channel == Token.CHANNEL_SourceToken
+                                nextCodeElementStartsAtTheBeginningOfTheLine = false;
+                            }
                         }
-                        catch (System.InvalidOperationException /*e*/)
-                        {//JCM: 28/08/2017: I noticed that this Exception can occur if: it doesn't exists a token which verifies the predicate: token.Channel == Token.CHANNEL_SourceToken
-                            nextCodeElementStartsAtTheBeginningOfTheLine = false;
+
+                        // All lines contained in the parse section could be modified
+                        if (!nextCodeElementStartsAtTheBeginningOfTheLine)
+                        {
+                            // TO DO : ERROR below, will not work if we have source tokens from previous CodeElement + one other CodeElement on the same line
+                            // => the other CodeElement will be deleted by prepareDocumentLineForUpdate and not parsed again
+                            nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
+                            codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
                         }
-                    }
 
-                    // All lines contained in the parse section could be modified
-                    if (!nextCodeElementStartsAtTheBeginningOfTheLine)
-                    {
-                        // TO DO : ERROR below, will not work if we have source tokens from previous CodeElement + one other CodeElement on the same line
-                        // => the other CodeElement will be deleted by prepareDocumentLineForUpdate and not parsed again
-                        nextLine = (CodeElementsLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.CodeElementsParser);
-                        codeElementsLinesChanges.Add(new DocumentChange<ICodeElementsLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));
-                    }
-
-                    // Stop iterating forwards as soon as the start of an old CodeElement is found                   
-                    if (nextLineHasCodeElements)
-                    {
-                        currentParseSection.StopLineIndex = nextLineIndex;
-                        currentParseSection.StopToken = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
-                        currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
-                        break;
+                        // Stop iterating forwards as soon as the start of an old CodeElement is found                   
+                        if (nextLineHasCodeElements)
+                        {
+                            currentParseSection.StopLineIndex = nextLineIndex;
+                            currentParseSection.StopToken = nextLine.CodeElements.First().ConsumedTokens.FirstOrDefault();
+                            currentParseSection.StopTokenIsFirstTokenOfTheLine = nextCodeElementStartsAtTheBeginningOfTheLine;
+                            break;
+                        }
                     }
                 }
                 // If no CodeElement was found on the next lines, current parse section current parse section ends at the end of the file

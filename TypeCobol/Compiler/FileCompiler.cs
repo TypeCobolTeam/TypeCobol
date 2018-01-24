@@ -161,7 +161,7 @@ namespace TypeCobol.Compiler
             chrono.Start();
             if (textDocument == null)
             {
-                TextDocument = new ReadOnlyTextDocument(sourceFile.Name, sourceFile.Encoding, columnsLayout, sourceFile.ReadChars());
+                TextDocument = new ReadOnlyTextDocument(sourceFile?.Name, sourceFile?.Encoding, columnsLayout, sourceFile?.ReadChars());
             }
             // 2.b Load it in an existing text document in memory
             else if (sourceFile != null)
@@ -307,7 +307,7 @@ namespace TypeCobol.Compiler
                     {
                         waitHandles[i] = new EventWaitHandle(false, EventResetMode.AutoReset);
                     }
-                    scannerTimer.Dispose(waitHandles[0]);
+                    scannerTimer?.Dispose(waitHandles[0]);
                     preprocessorTimer.Dispose(waitHandles[1]);
                 }
                 else
@@ -317,7 +317,7 @@ namespace TypeCobol.Compiler
                     {
                         waitHandles[i] = new EventWaitHandle(false, EventResetMode.AutoReset);
                     }
-                    scannerTimer.Dispose(waitHandles[0]);
+                    scannerTimer?.Dispose(waitHandles[0]);
                     preprocessorTimer.Dispose(waitHandles[1]);
                     codeElementsParserTimer.Dispose(waitHandles[2]);
                     programClassParserTimer.Dispose(waitHandles[3]);

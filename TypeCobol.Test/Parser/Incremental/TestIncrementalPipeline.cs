@@ -83,15 +83,15 @@ namespace TypeCobol.Test.Parser.Incremental {
             unit.Init(new[] { ".pgm", ".cpy" });
             unit.Parse();
 
-            var e = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
-            e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.", e);
+            var e = UpdateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
+            e = UpdateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.", e);
 
             // clear document
             unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
             unit.Parse();
 
             var names = unit.Comparator.paths.Resultnames as Multipass.IndexNames;
-            names.index = 2;
+            if (names != null) names.index = 2;
             Console.WriteLine("Compare with result file: " + unit.Comparator.paths.Result);
             unit.Compare();//with Simple.2.txt
         }
@@ -106,38 +106,41 @@ namespace TypeCobol.Test.Parser.Incremental {
             unit.Init(new[] { ".pgm", ".cpy" });
             unit.Parse();
             var names = unit.Comparator.paths.Resultnames as Multipass.IndexNames;
-            names.index = 0;
-            unit.Compare();//with Simple.0.txt
+            if (names != null)
+            {
+                names.index = 0;
+                unit.Compare();//with Simple.0.txt
 
-            // explicitely close program by adding END PROGRAM line
-            var e2 = updateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
-            var e = updateLine(TextChangeType.LineUpdated, 1, "  PROGRAM-ID. Simple.");
-            e.TextChanges.Add(e2.TextChanges[0]);
-            unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
-            unit.Parse();
-            names.index++;
-            Console.WriteLine("Compare with result file: " + unit.Comparator.paths.Result);
-            unit.Compare();//with Simple.1.txt
+                // explicitely close program by adding END PROGRAM line
+                var e2 = UpdateLine(TextChangeType.LineInserted, 2, "END PROGRAM Simple.");
+                var e = UpdateLine(TextChangeType.LineUpdated, 1, "  PROGRAM-ID. Simple.");
+                e.TextChanges.Add(e2.TextChanges[0]);
+                unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
+                unit.Parse();
+                names.index++;
+                Console.WriteLine("Compare with result file: " + unit.Comparator.paths.Result);
+                unit.Compare();//with Simple.1.txt
 
-            // change program name ; now first and last line have differing program id
-            e = updateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.");
-            unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
-            unit.Parse();
-            names.index++;
-            Console.WriteLine("Compare with result file: " + unit.Comparator.paths.Result);
-            unit.Compare();//with Simple.2.txt
+                // change program name ; now first and last line have differing program id
+                e = UpdateLine(TextChangeType.LineUpdated, 1, "PROGRAM-ID. Simpler.");
+                unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
+                unit.Parse();
+                names.index++;
+                Console.WriteLine("Compare with result file: " + unit.Comparator.paths.Result);
+                unit.Compare();//with Simple.2.txt
 
-            // clear document
-            e = updateLine(TextChangeType.DocumentCleared, /* the following parameters are not used when DocumentCleared*/ 0, null);
-            unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
-            unit.Parse();
-            names.index++;
+                // clear document
+                e = UpdateLine(TextChangeType.DocumentCleared, /* the following parameters are not used when DocumentCleared*/ 0, null);
+                unit.Compiler.CompilationResultsForProgram.UpdateTextLines(e);
+                unit.Parse();
+                names.index++;
+            }
             Console.WriteLine("Compare with result file: " + unit.Comparator.paths.Result);
             unit.Compare();//with Simple.3.txt
         }
 
 
-        private static TextChangedEvent updateLine(TextChangeType type, int line, string text, TextChangedEvent e = null)
+        private static TextChangedEvent UpdateLine(TextChangeType type, int line, string text, TextChangedEvent e = null)
         {
             if (e == null) e = new TextChangedEvent();
             ITextLine snapshot = new TextLineSnapshot(line, text, null);

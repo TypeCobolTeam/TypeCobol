@@ -22,27 +22,16 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             if (start != null || stop != null)
             {
-                if (start == stop)
+                if (Equals(start, stop))
                 {
                     return start.Text;
                 }
                 else
                 {
-                    return start.Text + " ... " + stop.Text;
+                    return start?.Text + " ... " + stop.Text;
                 }
             }
-            else if (start != null)
-            {
-                return start.Text + " ...";
-            }
-            else if (stop != null)
-            {
-                return "... " + stop.Text;
-            }
-            else
-            {
-                return String.Empty;
-            }
+            return String.Empty;
         }
 
         /// <summary>

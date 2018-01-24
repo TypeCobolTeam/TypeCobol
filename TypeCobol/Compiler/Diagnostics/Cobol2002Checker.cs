@@ -30,7 +30,7 @@ namespace TypeCobol.Compiler.Diagnostics {
         private void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
             if (typedef == null) return;
 
-            if (typedef.LevelNumber.Value != 1)
+            if (typedef.LevelNumber?.Value != 1)
             {
                 string message = "TYPEDEF clause can only be specified for level 01 entries";
                 DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());

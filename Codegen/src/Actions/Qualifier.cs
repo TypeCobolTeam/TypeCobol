@@ -133,10 +133,10 @@ namespace TypeCobol.Codegen.Actions
             {
                 if (UsedStorageArea != null && UsedStorageArea.Contains(storage_area))
                     return;
-                string name = storage_area.SymbolReference.Name;
+                string name = storage_area?.SymbolReference?.Name;
                 GenerateToken item = null;
                 item = new GenerateToken(
-                    new TokenCodeElement(storage_area.SymbolReference.NameLiteral.Token), name + "-value", sourcePositions);
+                    new TokenCodeElement(storage_area?.SymbolReference?.NameLiteral?.Token), name + "-value", sourcePositions);
                 item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                 this.CurrentNode.Add(item);
                 if (UsedStorageArea == null)
@@ -146,25 +146,25 @@ namespace TypeCobol.Codegen.Actions
                 UsedStorageArea.Add(storage_area);
             }
 
-            private void QualifiedStorageAreaSelecterForIndexes(StorageArea storage_area, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
+            private void QualifiedStorageAreaSelecterForIndexes(StorageArea storageArea, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
             {
-                if (!storage_area.SymbolReference.IsQualifiedReference)
+                if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsQualifiedReference)
                 {
-                    if (UsedStorageArea != null && UsedStorageArea.Contains(storage_area))
+                    if (UsedStorageArea != null && UsedStorageArea.Contains(storageArea))
                         return;
-                    string name = storage_area.SymbolReference.Name;
-                    string qualified_name = this.CurrentNode.QualifiedStorageAreas[storage_area];
+                    string name = storageArea.SymbolReference.Name;
+                    string qualified_name = this.CurrentNode.QualifiedStorageAreas[storageArea];
                     GenerateToken item = null;
                     string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, this.CurrentNode);
                     item = new GenerateToken(
-                        new TokenCodeElement(storage_area.SymbolReference.NameLiteral.Token), hashName, sourcePositions);
+                        new TokenCodeElement(storageArea.SymbolReference.NameLiteral.Token), hashName, sourcePositions);
                     item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                     this.CurrentNode.Add(item);
                     if (UsedStorageArea == null)
                     {
                         UsedStorageArea = new HashSet<StorageArea>();
                     }
-                    UsedStorageArea.Add(storage_area);
+                    UsedStorageArea.Add(storageArea);
                 }
             }
 
@@ -176,7 +176,7 @@ namespace TypeCobol.Codegen.Actions
             /// <returns>true if some nodes have been generated, false otherwise</returns>
             private bool GenQualifiedStorage(StorageArea storageArea, CodeElement codeElement)
             {
-                if (!storageArea.SymbolReference.IsTypeCobolQualifiedReference)
+                if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsTypeCobolQualifiedReference)
                     return false;
                 if (CurrentNode == null)
                     return false;
@@ -184,7 +184,7 @@ namespace TypeCobol.Codegen.Actions
                 int start = -1;
                 for (int i = 0; i < codeElement.ConsumedTokens.Count; i++)
                 {
-                    if (codeElement.ConsumedTokens[i] == tcqsr.Head.NameLiteral.Token)
+                    if (codeElement.ConsumedTokens[i] == tcqsr?.Head.NameLiteral.Token)
                     {
                         start = i;
                         break;
@@ -193,7 +193,7 @@ namespace TypeCobol.Codegen.Actions
                 int end = -1;
                 for (int i = 0; i < codeElement.ConsumedTokens.Count; i++)
                 {
-                    if (codeElement.ConsumedTokens[i] == tcqsr.Tail.NameLiteral.Token)
+                    if (codeElement.ConsumedTokens[i] == tcqsr?.Tail.NameLiteral.Token)
                     {
                         end = i;
                         break;
@@ -513,14 +513,14 @@ namespace TypeCobol.Codegen.Actions
                     return false;
                 foreach (TypeCobol.Compiler.CodeElements.StorageArea storage_area in sourceNode.QualifiedStorageAreas.Keys)
                 {
-                    if (storage_area.SymbolReference.IsTypeCobolQualifiedReference)
+                    if (storage_area.SymbolReference != null && storage_area.SymbolReference.IsTypeCobolQualifiedReference)
                     {
                         TypeCobolQualifiedSymbolReference tc_sr = storage_area.SymbolReference as TypeCobolQualifiedSymbolReference;
-                        IList<SymbolReference> tcsr_items = tc_sr.AsList();
+                        IList<SymbolReference> tcsr_items = tc_sr?.AsList();
                         int nCountInner = 0;
                         foreach (SymbolReference item in items)
                         {
-                            if (tcsr_items.IndexOf(item) >= 0)
+                            if (tcsr_items != null && tcsr_items.IndexOf(item) >= 0)
                                 nCountInner++;
                             else
                                 break;
@@ -659,7 +659,7 @@ namespace TypeCobol.Codegen.Actions
 
                                     if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsBoolean))
                                     {
-                                        if (this.CurrentNode.QualifiedStorageAreas.Keys.Any(flagged_storage_area => flagged_storage_area.SymbolReference.NameLiteral.Value == replace_value))
+                                        if (this.CurrentNode.QualifiedStorageAreas.Keys.Any(flaggedStorageArea => flaggedStorageArea?.SymbolReference?.NameLiteral.Value == replace_value))
                                         {
                                             replace_value = replace_value + "-value";
                                         }

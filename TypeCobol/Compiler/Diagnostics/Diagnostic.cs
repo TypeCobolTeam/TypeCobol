@@ -21,10 +21,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
             Line = lineNumber;
             Message = String.Format(Info.MessageTemplate, messageArgs ?? new object[0]);
-            CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
-            MessageArgs = messageArgs;
+            if (messageArgs != null)
+            {
+                CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
+                MessageArgs = messageArgs;
+            }
 
-            AnalyticsWrapper.Telemetry.TrackTrace("[Diagnostic] " + this.ToString());
+            AnalyticsWrapper.Telemetry.TrackTrace("[Diagnostic] " + this);
         }
 
         public DiagnosticMessage Info { get; set; }

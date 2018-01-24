@@ -308,12 +308,12 @@ namespace TypeCobol.LanguageServices.Editor
         private void ProgramClassChanged(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
-            var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
+            var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
-            var diags = compilationUnit.AllDiagnostics().Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 100 : TypeCobolConfiguration.MaximumDiagnostics);
+            var diags = compilationUnit?.AllDiagnostics().Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 100 : TypeCobolConfiguration.MaximumDiagnostics);
             DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags});
 
-            if (compilationUnit.MissingCopies.Count > 0)
+            if (compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
         }
 

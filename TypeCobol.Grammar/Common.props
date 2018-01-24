@@ -27,6 +27,10 @@
     <TargetFrameworkProfile />
     <RestorePackages>false</RestorePackages>
   </PropertyGroup>
+  
+   <PropertyGroup>
+        <LangVersion>6</LangVersion>
+    </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

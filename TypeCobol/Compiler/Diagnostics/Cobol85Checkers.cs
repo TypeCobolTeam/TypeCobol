@@ -243,7 +243,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                     if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
                         DiagnosticUtils.AddError(node.CodeElement, "Index can not be use with OF or IN qualifiers " + area);
                 }
-                else if (found[0].DataType == DataType.Boolean && found[0].CodeElement is DataDefinitionEntry && (found[0].CodeElement as DataDefinitionEntry).LevelNumber.Value != 88)
+                else if (found[0].DataType == DataType.Boolean && found[0].CodeElement is DataDefinitionEntry && ((DataDefinitionEntry) found[0]?.CodeElement)?.LevelNumber?.Value != 88)
                 {
                     if (!(node is Nodes.If || node is Nodes.Set))//Ignore Conditional(If) and Set statement
                     {
@@ -283,11 +283,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 		        return; //not our job
 		    }
 			var context = c as CodeElementsParser.DataDescriptionEntryContext;
-			var external  = GetContext(data, context.externalClause());
-			var global    = GetContext(data, context.globalClause());
+			var external  = GetContext(data, context?.externalClause());
+			var global    = GetContext(data, context?.globalClause());
 			if (data.DataName == null) {
 				if (!data.IsFiller)
-					DiagnosticUtils.AddError(data, "Data name or FILLER expected", context.dataNameDefinition());
+					DiagnosticUtils.AddError(data, "Data name or FILLER expected", context?.dataNameDefinition());
 				if (data.IsExternal)
 					DiagnosticUtils.AddError(data, "Data name must be specified for any entry containing the EXTERNAL clause", external);
 				if (data.IsGlobal)
@@ -300,7 +300,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 			        !((data.LevelNumber.Value >= 01 && data.LevelNumber.Value <= 49) 
                        || data.LevelNumber.Value == 66 || data.LevelNumber.Value == 77 || data.LevelNumber.Value == 88))
 			    {
-			        DiagnosticUtils.AddError(data, "Data must be declared between level 01 to 49, or equals to 66, 77, 88", context.dataNameDefinition());
+			        DiagnosticUtils.AddError(data, "Data must be declared between level 01 to 49, or equals to 66, 77, 88", context?.dataNameDefinition());
 			    }
 			}
 		}
@@ -331,10 +331,10 @@ namespace TypeCobol.Compiler.Diagnostics {
                 return; //not our job
             }
             var context = c as CodeElementsParser.DataConditionEntryContext;
-			if (data.LevelNumber.Value != 88)
-				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context.levelNumber);
+			if (data.LevelNumber?.Value != 88)
+				DiagnosticUtils.AddError(data, "Data conditions must be level 88", context?.levelNumber);
 			if (data.DataName == null)
-				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context.levelNumber);
+				DiagnosticUtils.AddError(data, "Data name must be specified for level-88 items", context?.levelNumber);
 		}
 	}
 
@@ -346,12 +346,12 @@ namespace TypeCobol.Compiler.Diagnostics {
                 return; //not our job
             }
             var context = c as CodeElementsParser.DataConditionEntryContext;
-			if (data.LevelNumber.Value != 66)
+			if (data.LevelNumber?.Value != 66)
 				//(source page 379 of ISO Cobol 2014)
-				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context.levelNumber);
+				DiagnosticUtils.AddError(data, "RENAMES must be level 66", context?.levelNumber);
 			if (data.DataName == null)
 				//(source page 379 of ISO Cobol 2014)
-				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context.levelNumber);
+				DiagnosticUtils.AddError(data, "Data name must be specified for level-66 items", context?.levelNumber);
 			if (data.RenamesFromDataName.Equals(data.RenamesToDataName))
 				//(source page 379 of ISO Cobol 2014)
 				DiagnosticUtils.AddError(data, "Renamed items can't be the same " + data.RenamesFromDataName + " and " + data.RenamesToDataName, context);
@@ -366,7 +366,7 @@ namespace TypeCobol.Compiler.Diagnostics {
             }
             var context = c as CodeElementsParser.AddStatementContext;
 			if (statement.Operand == null)
-				DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context.addGiving());
+				DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context?.addGiving());
 		}
 	}
 
@@ -376,7 +376,7 @@ namespace TypeCobol.Compiler.Diagnostics {
         if (statement == null) {
             return; //not our job
         }
-	    var context = (c as CodeElementsParser.CallStatementContext).cobolCallStatement();
+	    var context = (c as CodeElementsParser.CallStatementContext)?.cobolCallStatement();
 
         if (context != null) //if null it's certainly a CallStatementContext
         {
@@ -458,9 +458,11 @@ namespace TypeCobol.Compiler.Diagnostics {
 		}
 		for(int i=0; i < statement.ReplacingConditions.Length; i++) {
 			var position = statement.ReplacingConditions[i].StartCharacterPosition;
-			if (seen[position.Value]) {
-				string error = "INSPECT: Maximum one "+position.Token.SourceText+" phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase";
-				DiagnosticUtils.AddError(statement, error, context.convertingPhrase().countingOrReplacingCondition()[i]);
+			if (seen[position.Value])
+			{
+			    string error = "INSPECT: Maximum one "+position.Token.SourceText+" phrase for any one ALL, LEADING, CHARACTERS, FIRST or CONVERTING phrase";
+			    if (context != null)
+			        DiagnosticUtils.AddError(statement, error, context.convertingPhrase().countingOrReplacingCondition()[i]);
 			}
 			seen[position.Value] = true;
 		}
@@ -476,7 +478,7 @@ namespace TypeCobol.Compiler.Diagnostics {
         }
 		var context = c as CodeElementsParser.MergeStatementContext;
 		if (statement.InputFiles.Length == 1)
-			DiagnosticUtils.AddError(statement, "MERGE: USING needs 2 filenames or more", context.usingFilenames());
+			DiagnosticUtils.AddError(statement, "MERGE: USING needs 2 filenames or more", context?.usingFilenames());
 	}
 }
 
@@ -513,7 +515,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 		if (statement.TableToSearch == null) return; // syntax error
 		if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea && ((DataOrConditionStorageArea)statement.TableToSearch.StorageArea).Subscripts.Count > 0)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(c));
-		if (statement.TableToSearch.StorageArea.ReferenceModifier != null)
+		if (statement.TableToSearch.StorageArea?.ReferenceModifier != null)
 			DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier", GetIdentifierContext(c));
 	}
 	private static RuleContext GetIdentifierContext(ParserRuleContext context) {
@@ -531,14 +533,14 @@ namespace TypeCobol.Compiler.Diagnostics {
             return; //not our job
         }
 		var context = c as CodeElementsParser.SetStatementForAssignmentContext;
-		for (int i = 0; i < context.dataOrIndexStorageArea().Length; i++) {
+		for (int i = 0; i < context?.dataOrIndexStorageArea().Length; i++) {
 			if (i >= set.ReceivingStorageAreas.Length) {
 				var ctxt = context.dataOrIndexStorageArea()[i];
 				DiagnosticUtils.AddError(set, "Set: Receiving fields missing or type unknown before TO", ctxt);
 			}
 		}
 		if (set.SendingVariable == null)
-			DiagnosticUtils.AddError(set, "Set: Sending field missing or type unknown after TO", context.setSendingField());
+			DiagnosticUtils.AddError(set, "Set: Sending field missing or type unknown after TO", context?.setSendingField());
 	}
 }
 
@@ -550,7 +552,7 @@ namespace TypeCobol.Compiler.Diagnostics {
         }
 		if (set.SendingVariable == null) {
 			var context = c as CodeElementsParser.SetStatementForIndexesContext;
-			DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context.integerVariable1());
+			DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown", context?.integerVariable1());
 		}
 	}
 }
@@ -563,7 +565,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                 return; //not our job
             }
 			var context = c as CodeElementsParser.StartStatementContext;
-			if (context.relationalOperator() != null)
+			if (context?.relationalOperator() != null)
 				if (statement.RelationalOperator.Value != RelationalOperator.EqualTo && statement.RelationalOperator.Value != RelationalOperator.GreaterThan && statement.RelationalOperator.Value != RelationalOperator.GreaterThanOrEqualTo)
 					DiagnosticUtils.AddError(statement, "START: Illegal operator "+statement.RelationalOperator.Value, context.relationalOperator());
 		}

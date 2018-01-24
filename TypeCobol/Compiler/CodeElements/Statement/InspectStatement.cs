@@ -40,13 +40,13 @@
                 if (variablesWritten != null) return variablesWritten;
                 variablesWritten = new Dictionary<QualifiedName, object>();
                 if (InspectedItem == null) return variablesWritten;
-                string receiver = InspectedItem.StorageArea.ToString();
+                string receiver = InspectedItem.StorageArea?.ToString();
                 if (InspectedItem.SendingStorageAreas == null || InspectedItem.SendingStorageAreas.Length < 1) {
                     variablesWritten.Add(new URI(receiver), "?MAGIC_FOR_INSPECTED_ITEM_AS_ALPHANUM?");
                     return variablesWritten;
                 }
                 foreach (var variable in InspectedItem.SendingStorageAreas) {
-                    string sender = variable.SymbolReference.Name;
+                    string sender = variable.SymbolReference?.Name;
                     variablesWritten.Add(new URI(receiver), sender);
                 }
                 return variablesWritten;

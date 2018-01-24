@@ -161,7 +161,7 @@ namespace TypeCobol.Codegen
                             {
                                 lineNumbers.Add(lastLine);
                                 SourceDocument.SourceLine srcLine = TargetDocument[lastLine - 1];
-                                lineOffsets.Add(srcLine.From - srcFirstLine.From);
+                                if (srcFirstLine != null) lineOffsets.Add(srcLine.From - srcFirstLine.From);
                             }
                         }
                         SourceDocument.SourceLine curLine = TargetDocument[curLineIndex - 1];

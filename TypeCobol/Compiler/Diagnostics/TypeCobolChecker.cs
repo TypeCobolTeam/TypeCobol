@@ -27,13 +27,14 @@ class ReadOnlyPropertiesChecker {
 	    }
         var element = node.CodeElement as VariableWriter;
 		var table = node.SymbolTable;
-		foreach (var pair in element.VariablesWritten) {
-			if (pair.Key == null) continue; // no receiving item
-			var lr = table.GetVariables(pair.Key);
-			if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
-			var receiving = lr[0];
-			checkReadOnly(node, receiving);
-		}
+	    if (element?.VariablesWritten != null)
+	        foreach (var pair in element.VariablesWritten) {
+	            if (pair.Key == null) continue; // no receiving item
+	            var lr = table.GetVariables(pair.Key);
+	            if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
+	            var receiving = lr[0];
+	            checkReadOnly(node, receiving);
+	        }
 	}
 	private static void checkReadOnly(Node node, [NotNull] Node receiving) {
 		var rtype = receiving.Parent as ITypedNode;
@@ -497,7 +498,7 @@ class FunctionDeclarationChecker: NodeListener {
     private void CheckParameter([NotNull] ParameterDescriptionEntry parameter,  ParserRuleContext context, Node node)
         {
             // TCRFUN_LEVEL_88_PARAMETERS
-            if (parameter.LevelNumber.Value != 1)
+            if (parameter.LevelNumber?.Value != 1)
             {
                 DiagnosticUtils.AddError(node, "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", context);
             }
@@ -505,9 +506,9 @@ class FunctionDeclarationChecker: NodeListener {
             {
                 foreach (var condition in parameter.DataConditions)
                 {
-                    if (condition.LevelNumber.Value != 88)
+                    if (condition.LevelNumber?.Value != 88)
                         DiagnosticUtils.AddError(node, "Condition parameter \"" + condition.Name + "\" must be level 88.");
-                    if (condition.LevelNumber.Value == 88 && parameter.DataType == DataType.Boolean)
+                    if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
                         DiagnosticUtils.AddError(node, "The Level 88 symbol '" + parameter.Name + "' cannot be declared under a BOOL typed symbol");
                 }
             }
@@ -617,7 +618,7 @@ public class LibraryChecker {
 		    var pdiv = procedureDivision.CodeElement as ProcedureDivisionHeader;
 
             //TCRFUN_LIBRARY_PROCEDURE_NO_USING 
-            if (pdiv.UsingParameters != null && pdiv.UsingParameters.Count > 0)
+            if (pdiv?.UsingParameters != null && pdiv.UsingParameters.Count > 0)
 			    DiagnosticUtils.AddError(procedureDivision, "Illegal "+pdiv.UsingParameters.Count+" USING in library PROCEDURE DIVISION.");
 		}
 	}

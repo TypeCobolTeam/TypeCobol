@@ -79,12 +79,15 @@
         {
             if (ReceivingStorageAreas == null && SendingVariable == null) return base.ToString();
             var str = new StringBuilder("SET ");
-            foreach (var receivingField in ReceivingStorageAreas)
+            if (ReceivingStorageAreas != null)
             {
-                str.Append(' ');
-                str.Append(receivingField);
+                foreach (var receivingField in ReceivingStorageAreas)
+                {
+                    str.Append(' ');
+                    str.Append(receivingField);
+                }
+                if (ReceivingStorageAreas.Length < 1) str.Append('?');
             }
-            if (ReceivingStorageAreas.Length < 1) str.Append('?');
             str.Append(" TO ");
             if (SendingVariable != null) str.AppendLine(SendingVariable.ToString());
             else str.Append('?');
@@ -107,9 +110,9 @@
                 if (ReceivingStorageAreas != null)
                     foreach (var item in ReceivingStorageAreas)
                     {
-                        var name = new URI(item.StorageArea.SymbolReference.Name);
+                        var name = new URI(item?.StorageArea?.SymbolReference?.Name);
                         if (variables.ContainsKey(name))
-                            if (item.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
+                            if (item?.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
                             else throw new System.ArgumentException(name + " already written, but not subscripted?");
                         else variables.Add(name, SendingItem);
                     }

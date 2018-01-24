@@ -1182,7 +1182,7 @@ namespace TypeCobol.Compiler.CodeModel
             var programs = GetProgram(nameSpace);
   
             if (programs.Count > 1)
-                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().Name));
+                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault()?.Name));
 
             return programs.FirstOrDefault();
         }

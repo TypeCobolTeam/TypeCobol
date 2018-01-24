@@ -587,12 +587,15 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context)
         {
             var terminal = context.FunctionDeclarationHeader();
-            var header = terminal != null ? (FunctionDeclarationHeader)terminal.Symbol : null;
-            if (header != null) header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
-            var node = new FunctionDeclaration(header);
-            node.Label = uidfactory.FromOriginal(header.FunctionName.Name);
-            node.Library = CurrentProgram.Identification.ProgramName.Name; //DO NOT change this without checking all references of Library. 
-                                                                           // (SymbolTable - function, type finding could be impacted) 
+            var header = (FunctionDeclarationHeader) terminal?.Symbol;
+            header?.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
+            var node = new FunctionDeclaration(header)
+            {
+                Label = uidfactory.FromOriginal(header?.FunctionName.Name),
+                Library = CurrentProgram.Identification.ProgramName.Name
+            };
+            //DO NOT change this without checking all references of Library. 
+            // (SymbolTable - function, type finding could be impacted) 
 
             //Function must be added to Declarations scope
             var declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);

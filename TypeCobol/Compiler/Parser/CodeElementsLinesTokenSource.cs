@@ -78,7 +78,7 @@ namespace TypeCobol.Compiler.Parser
             if(currentCodeElementIndexInLine >= 0)
             {
                 currentCodeElementIndexInLine++;
-                if(currentCodeElementIndexInLine < codeElementsLinesEnumerator.Current.CodeElements.Count)
+                if(currentCodeElementIndexInLine < codeElementsLinesEnumerator?.Current?.CodeElements.Count)
                 {
                     CurrentToken = codeElementsLinesEnumerator.Current.CodeElements[currentCodeElementIndexInLine];
                     return CurrentToken;
@@ -91,9 +91,9 @@ namespace TypeCobol.Compiler.Parser
             
             if (currentCodeElementIndexInLine < 0)
             {
-                while(codeElementsLinesEnumerator.MoveNext())
+                while(codeElementsLinesEnumerator != null && codeElementsLinesEnumerator.MoveNext())
                 {
-                    if(codeElementsLinesEnumerator.Current.CodeElements != null &&
+                    if(codeElementsLinesEnumerator?.Current?.CodeElements != null &&
                         codeElementsLinesEnumerator.Current.CodeElements.Count > 0)
                     {
                         currentCodeElementIndexInLine = 0;

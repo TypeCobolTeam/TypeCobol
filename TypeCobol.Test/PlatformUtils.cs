@@ -7,7 +7,7 @@ public static class PlatformUtils {
 
 	static PlatformUtils() {
 		string pwd = Directory.GetCurrentDirectory();
-		SOLUTION_PATH = Directory.GetParent(pwd).Parent.FullName;
+		SOLUTION_PATH = Directory.GetParent(pwd)?.Parent?.FullName;
 	}
 
 	/// <summary>Absolute path of the solution project on the local disk</summary>

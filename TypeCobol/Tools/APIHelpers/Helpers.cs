@@ -50,8 +50,9 @@ namespace TypeCobol.Tools.APIHelpers
                     {
                         var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
 
-                        if (symbols.Types.Count == 0 && symbols.Functions.Count == 0) {
-                            diagEvent(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = new ParserDiagnostic("No types and no procedures/functions found", 1,1,1,null, MessageCode.Warning) });
+                        if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
+                        {
+                            diagEvent?.Invoke(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = new ParserDiagnostic("No types and no procedures/functions found", 1,1,1,null, MessageCode.Warning) });
                             continue;
                         }
 

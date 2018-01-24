@@ -528,8 +528,11 @@ namespace TypeCobol.Compiler.Parser
 				{
 					InspectReplacingStatement replacingStatement = statement as InspectReplacingStatement;
 
-					replacingStatement.ReplaceAllCharactersOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceAllCharacters(), ctx => CreateReplaceAllCharactersOperation(ctx));
-					replacingStatement.ReplaceCharacterStringsOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceCharacterStrings(), ctx => CreateReplaceCharacterStringsOperation(ctx));
+				    if (replacingStatement != null)
+				    {
+				        replacingStatement.ReplaceAllCharactersOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceAllCharacters(), ctx => CreateReplaceAllCharactersOperation(ctx));
+				        replacingStatement.ReplaceCharacterStringsOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceCharacterStrings(), ctx => CreateReplaceCharacterStringsOperation(ctx));
+				    }
 				}
 
 				return statement;

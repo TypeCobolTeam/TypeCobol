@@ -31,16 +31,19 @@
                     if (this.Node.IsPartOfATypeDef) return _cache;
 
                     var data = this.Node.CodeElement();
-                    int level = (int)data.LevelNumber.Value;
-                    var customtype = this.Node.SymbolTable.GetType(data.DataType);
-                    //collect root procedure
-                    List<string> rootProcedures;
-                    //Collect from level 01 Pure Cobol85 root variables                    
-                    List<Tuple<string, string>> rootVars;
-                    GeneratorHelper.ComputeTypedProperPaths(this, data, customtype[0], out rootProcedures, out rootVars);
-                    _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
-                    if (customtype.Count > 0)
-                        _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, rootProcedures, rootVars,  customtype[0], customtype[0], level + 1, 1));
+                    if (data.LevelNumber != null)
+                    {
+                        int level = (int) (data.LevelNumber.Value);
+                        var customtype = this.Node.SymbolTable.GetType(data.DataType);
+                        //collect root procedure
+                        List<string> rootProcedures;
+                        //Collect from level 01 Pure Cobol85 root variables                    
+                        List<Tuple<string, string>> rootVars;
+                        GeneratorHelper.ComputeTypedProperPaths(this, data, customtype[0], out rootProcedures, out rootVars);
+                        _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
+                        if (customtype.Count > 0)
+                            _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, rootProcedures, rootVars,  customtype[0], customtype[0], level + 1, 1));
+                    }
                 }
                 return _cache;
             }
@@ -71,16 +74,16 @@
             while (i < consumedTokens.Count)
             {
                 if ((i != consumedTokens.Count - 1) || (consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PeriodSeparator))
-                    if (baseToken.Line == consumedTokens[i].Line)
+                    if (baseToken?.Line == consumedTokens[i].Line)
                         sb.Append(string.Intern(" "));//Add a space but not before a Period Separator
-                if (baseToken.Line != consumedTokens[i].Line)
+                if (baseToken?.Line != consumedTokens[i].Line)
                 {
                     int nPad = consumedTokens[i].Column;
                     if (layout.HasValue)
                     {
                         if (layout.Value == ColumnsLayout.CobolReferenceFormat)
                         {
-                            nPad = System.Math.Max(0, consumedTokens[i].Column - 8);
+                            nPad = Math.Max(0, consumedTokens[i].Column - 8);
                         }
                     }
                     string pad = new string(' ', nPad);
@@ -331,7 +334,7 @@
             bHasIndexes = false;
             dependingOnAccessPath = null;
             indexesMap = null;
-            if (data.OccursDependingOn != null)
+            if (data?.OccursDependingOn != null)
             {
                 if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
                 {
@@ -364,7 +367,7 @@
                     }
                 }
             }
-            if (data.Indexes != null)
+            if (data?.Indexes != null)
             {
                 bHasIndexes = true;
                 //So Children of the owner definition contains all indexes
@@ -400,7 +403,7 @@
             }
             if (bHasDependingOn)
             {
-                if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
+                if (data != null && !data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
                     depenOnTokenFilter = (token) =>
                     {
                         if (bHasIndexes)
@@ -422,11 +425,11 @@
                             if (indexesMap.ContainsKey(token))
                                 return indexesMap[token];
                         }
-                        QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data.OccursDependingOn.MainSymbolReference;
-                        if (qualSymRef.IsTypeCobolQualifiedReference)
+                        QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data?.OccursDependingOn.MainSymbolReference;
+                        if (qualSymRef != null && qualSymRef.IsTypeCobolQualifiedReference)
                         {
                             DataDescription dataDescription = ownerDefinition as DataDescription;
-                            if (dataDescription.QualifiedTokenSubsitutionMap != null && dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
+                            if (dataDescription?.QualifiedTokenSubsitutionMap != null && dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))
                             {
                                 if (token == qualSymRef.Head.NameLiteral.Token)
                                     return dataDescription.QualifiedTokenSubsitutionMap[token] + " OF " + string.Join(" OF ", dependingOnAccessPath.ToArray());
@@ -438,7 +441,7 @@
                         }
                         else
                         {   //Pure Cobol85 Qualification add left qualification to the root
-                            if (token == qualSymRef.Tail.NameLiteral.Token)
+                            if (qualSymRef != null && token == qualSymRef.Tail.NameLiteral.Token)
                             {
                                 return token.Text + " OF " + string.Join(" OF ", dependingOnAccessPath.ToArray());
                             }
@@ -696,7 +699,7 @@
                             string svalue = child["value"] as string;
                             foreach (string str in BoolTypeTemplate)
                             {
-                                string sline = string.Format(str, attr_name, slevel, margin, svalue.Length == 0 ? "LOW-VALUE" : svalue);
+                                string sline = string.Format(str, attr_name, slevel, margin, svalue?.Length == 0 ? "LOW-VALUE" : svalue);
                                 TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
                                 lines.Add(line);
                             }

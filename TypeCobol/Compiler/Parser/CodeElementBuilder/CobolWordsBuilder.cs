@@ -849,8 +849,13 @@ namespace TypeCobol.Compiler.Parser
                 }
                 qname = CreateQualifiedSymbolReference(qname, current, isCOBOL);
             }
-            symbolInformationForTokens[qname.NameLiteral.Token] = qname;
-            return qname;
+            if (qname != null)
+            {
+                symbolInformationForTokens[qname.NameLiteral.Token] = qname;
+                return qname;
+            }
+
+            return null;
         }
         private SymbolReference CreateQualifiedSymbolReference(SymbolReference head, SymbolReference tail, bool isCOBOL = true)
         {

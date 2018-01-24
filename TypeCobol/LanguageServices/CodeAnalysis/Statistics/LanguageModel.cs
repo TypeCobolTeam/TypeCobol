@@ -27,10 +27,11 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                 if(_defaultModelForProgram == null)
                 {
                     Stream embeddedFileStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TypeCobol.LanguageServices.CodeAnalysis.Statistics.LanguageModel.Program.txt");
-                    using (StreamReader textStreamReader = new StreamReader(embeddedFileStream))
-                    {
-                        _defaultModelForProgram = new LanguageModel(textStreamReader);
-                    }
+                    if (embeddedFileStream != null)
+                        using (StreamReader textStreamReader = new StreamReader(embeddedFileStream))
+                        {
+                            _defaultModelForProgram = new LanguageModel(textStreamReader);
+                        }
                 }
                 return _defaultModelForProgram;
             }
@@ -48,10 +49,11 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                 if (_defaultModelForCopy == null)
                 {
                     Stream embeddedFileStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TypeCobol.LanguageServices.CodeAnalysis.Statistics.LanguageModel.Copy.txt");
-                    using (StreamReader textStreamReader = new StreamReader(embeddedFileStream))
-                    {
-                        _defaultModelForCopy = new LanguageModel(textStreamReader);
-                    }
+                    if (embeddedFileStream != null)
+                        using (StreamReader textStreamReader = new StreamReader(embeddedFileStream))
+                        {
+                            _defaultModelForCopy = new LanguageModel(textStreamReader);
+                        }
                 }
                 return _defaultModelForCopy;
             }

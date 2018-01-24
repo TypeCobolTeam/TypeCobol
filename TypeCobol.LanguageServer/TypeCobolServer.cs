@@ -154,7 +154,7 @@ namespace TypeCobol.LanguageServer
                     {
                         //Allows to detect if the next line was supressed
                     }
-                    if (contentChange.text.Length == 0)
+                    if (contentChange.text?.Length == 0)
                     {
                         lineUpdates = new List<string>();
                     }

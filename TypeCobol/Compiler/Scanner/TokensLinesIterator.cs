@@ -309,7 +309,7 @@ namespace TypeCobol.Compiler.Scanner
                     }
                 }
                 // Check if the previous token found matches the filter criteria                
-                if (!applyChannelFilter || currentToken == null | currentToken.Channel == channelFilter)
+                if (!applyChannelFilter || currentToken == null | currentToken?.Channel == channelFilter)
                 {
                     break;
                 }

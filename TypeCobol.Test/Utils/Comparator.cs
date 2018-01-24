@@ -26,8 +26,8 @@ namespace TypeCobol.Test.Utils
 
         public void Init(string[] extensions = null, bool autoRemarks = false, bool AntlrProfiler = false)
         {
-            DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator.paths.SamplePath));
-            DocumentFormat format = Comparator.GetSampleFormat();
+            DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator?.paths?.SamplePath));
+            DocumentFormat format = Comparator?.GetSampleFormat();
             TypeCobolOptions options = new TypeCobolOptions();
 #if EUROINFO_RULES
             options.AutoRemarksEnable = autoRemarks;
@@ -188,7 +188,7 @@ namespace TypeCobol.Test.Utils
 				            string filename = comparator.paths.Result;
 				            //string name = Path.GetFileName(filename);
 				            string extension = Path.GetExtension(filename);
-				            filename = filename.Substring(0, filename.Length - extension.Length);
+				            if (extension != null) filename = filename.Substring(0, filename.Length - extension.Length);
 				            string[] lines = {unit.ToJSON()};
 				            System.IO.File.WriteAllLines(filename + ".json", lines);
 				        }
@@ -217,7 +217,7 @@ namespace TypeCobol.Test.Utils
                     Type type = names.GetComparatorType();
                     var isEI = names.IsEI();
                     System.Reflection.ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Paths), typeof(bool), typeof(bool) });
-                    comparators.Add((FilesComparator)constructor.Invoke(new object[] { path, debug, isEI }));
+                    comparators.Add((FilesComparator)constructor?.Invoke(new object[] { path, debug, isEI }));
                 }
             }
 #if EUROINFO_RULES
@@ -791,7 +791,7 @@ namespace TypeCobol.Test.Utils
         {
             get
             {
-                string ResultFilePath = Path.GetDirectoryName(SamplePath).Substring(_sampleRoot.Length);
+                string ResultFilePath = Path.GetDirectoryName(SamplePath)?.Substring(_sampleRoot.Length);
                 string ResultFileName = Path.GetFileNameWithoutExtension(SamplePath);
                 return _resultRoot + Path.DirectorySeparatorChar + ResultFilePath  + Path.DirectorySeparatorChar + Resultnames.CreateName(ResultFileName) + Rextension;
             }

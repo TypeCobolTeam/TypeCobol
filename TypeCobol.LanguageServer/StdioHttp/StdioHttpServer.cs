@@ -33,7 +33,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
             Console.OutputEncoding = messageEncoding ?? Encoding.UTF8;
             Console.InputEncoding = messageEncoding ?? Encoding.UTF8;
             if (logWriter is StreamWriter)
-                (this.logWriter as StreamWriter).AutoFlush = true;
+                ((StreamWriter) this.logWriter).AutoFlush = true;
         }
 
         // Shutdown request

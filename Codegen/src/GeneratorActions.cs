@@ -354,12 +354,12 @@ namespace TypeCobol.Codegen
                     int index = -1;
                     if (nextsibling != null)
                     {
-                        var sibling = result.Get(nextsibling);
+                        var sibling = result?.Get(nextsibling);
                         if (sibling != null)
                             index = sibling.Parent.IndexOf(sibling);
                     }
                     if (index >= 0)
-                        result.Add(current, index);
+                        result?.Add(current, index);
                     else
                     {
                         index = 0;
@@ -368,7 +368,7 @@ namespace TypeCobol.Codegen
                         {
                             foreach (string p in previoussibling)
                             {
-                                var previous = result.Get(p);
+                                var previous = result?.Get(p);
                                 if (previous != null)
                                 {
                                     int pindex = previous.Parent.IndexOf(previous);
@@ -380,7 +380,7 @@ namespace TypeCobol.Codegen
                                 }
                             }
                         }
-                        result.Add(current, index);
+                        result?.Add(current, index);
                     }
                 }
                 result = current;

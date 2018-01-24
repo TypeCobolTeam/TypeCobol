@@ -551,11 +551,11 @@ namespace TypeCobol.Compiler.Parser
                     {
                         var nonAmbiguousHead =
                             new SymbolReference(
-                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference).Head
+                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference)?.Head
                                 .NameLiteral, SymbolType.TCFunctionName);
                         var nonAmbiguousTail =
                             new SymbolReference(
-                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference).Tail
+                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference)?.Tail
                                 .NameLiteral, SymbolType.ProgramName);
 
                         TypeCobolQualifiedSymbolReference newQualifiedSymbolReferece =

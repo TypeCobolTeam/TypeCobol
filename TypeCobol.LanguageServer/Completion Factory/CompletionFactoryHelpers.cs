@@ -76,8 +76,7 @@ namespace TypeCobol.LanguageServer
                 bool typeIsPublic = false;
                 bool typeIsIntrinsic = type.IsFlagSet(Node.Flag.NodeIsIntrinsic);
                 if (enablePublicFlag)
-                    typeIsPublic = (type.CodeElement as DataTypeDescriptionEntry).Visibility ==
-                                   Compiler.CodeElements.AccessModifier.Public
+                    typeIsPublic = ((DataTypeDescriptionEntry) type.CodeElement)?.Visibility == AccessModifier.Public
                                    &&
                                    !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
                                          .Types.Values.Any(t => t.Contains(type))
@@ -124,8 +123,7 @@ namespace TypeCobol.LanguageServer
                 }
                 bool procIsPublic = false;
                 if (enablePublicFlag)
-                    procIsPublic = (proc.CodeElement as FunctionDeclarationHeader).Visibility ==
-                                   Compiler.CodeElements.AccessModifier.Public
+                    procIsPublic = ((FunctionDeclarationHeader) proc.CodeElement).Visibility == AccessModifier.Public
                                    &&
                                    !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
                                          .Functions.Values.Any(t => t.Contains(proc))
@@ -137,7 +135,7 @@ namespace TypeCobol.LanguageServer
                 completionItem.insertText = procIsPublic
                     ? string.Format("{0}::{1}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
                     : proc.Name;
-                completionItem.kind = proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
+                completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
                 completionItem.data = new object[2];
                 ((object[])completionItem.data)[1] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);

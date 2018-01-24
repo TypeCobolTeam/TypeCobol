@@ -34,12 +34,12 @@ public class SubtractSimpleStatement: SubtractStatement {
 			}
 			foreach(var receiver in SendingAndReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea.ToString();
-				if (!map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+				string key = rarea?.ToString();
+				if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
 				var right = new NumericVariableOperand(new NumericVariable(rarea));
 				var operation = ArithmeticOperator.Minus.CreateOperation(left, right);
 				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-				map[key].Add(operation);
+			    if (key != null) map[key].Add(operation);
 			}
 			return map;
 		}
@@ -76,11 +76,11 @@ public class SubtractGivingStatement: SubtractStatement {
 			}
 			foreach(var receiver in ReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea.ToString();
-				if (!map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+				string key = rarea?.ToString();
+				if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
 				var operation = left;
 				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-				map[key].Add(operation);
+			    if (key != null) map[key].Add(operation);
 			}
 			return map;
 		}
