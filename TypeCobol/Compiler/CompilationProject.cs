@@ -20,6 +20,13 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Create a new Cobol compilation project in a local directory
         /// </summary>
+        public CompilationProject(string projectName, string rootDirectory, string[] fileExtensions, DocumentFormat documentFormat, TypeCobolOptions compilationOptions) : this(projectName, rootDirectory, fileExtensions, documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength, documentFormat.ColumnsLayout, compilationOptions)
+        {
+            
+        }
+        /// <summary>
+        /// Create a new Cobol compilation project in a local directory
+        /// </summary>
         public CompilationProject(string projectName, string rootDirectory, string[] fileExtensions, Encoding encoding, EndOfLineDelimiter endOfLineDelimiter, int fixedLineLength, ColumnsLayout columnsLayout, TypeCobolOptions compilationOptions)
         {
             Name = projectName;

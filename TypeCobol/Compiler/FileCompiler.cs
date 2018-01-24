@@ -81,6 +81,12 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
+        public FileCompiler([NotNull] CompilationProject compilationProject, string fileName, bool isCopyFile) :
+            this(null, fileName, null, compilationProject.SourceFileProvider, compilationProject, compilationProject.ColumnsLayout, null, compilationProject.CompilationOptions, null, isCopyFile, null, compilationProject, null)
+        { }
+        /// <summary>
+        /// Load a Cobol source file in memory
+        /// </summary>
         public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, CompilationProject compilationProject) :
             this(libraryName, fileName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile, null, compilationProject, null)
         { }
@@ -114,7 +120,7 @@ namespace TypeCobol.Compiler
         { }
 
         /// <summary>
-        /// Common internal implementation for all 4 constructors above
+        /// Common internal implementation for all constructors above
         /// </summary>
         private FileCompiler(string libraryName, string fileName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile,
             [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
