@@ -42,7 +42,7 @@
            05 FILX0019 PIC X(96).
            05 FILX0020 PIC X(96).
            05 FILX0021 PIC X(96).
-		   05 FILX0022 PIC X(96).
+           05 FILX0022 PIC X(96).
            05 FILX0023 PIC X(96).
            05 FILX0024 PIC X(96).
            05 FILX0025 PIC X(96).

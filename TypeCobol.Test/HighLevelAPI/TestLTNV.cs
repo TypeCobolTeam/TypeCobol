@@ -5,9 +5,6 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Directives;
-using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.APIHelpers;
 
 namespace TypeCobol.Test.HighLevelAPI {
@@ -17,11 +14,7 @@ namespace TypeCobol.Test.HighLevelAPI {
 
     public class TestLTNV {
 
-        private static readonly string root = PlatformUtils.GetPathForProjectFile("HighLevelAPI");
-
-  
-
-
+        private static readonly string Root = PlatformUtils.GetPathForProjectFile("HighLevelAPI");
 
         [TestMethod]
         [TestCategory("Parsing")]
@@ -29,7 +22,7 @@ namespace TypeCobol.Test.HighLevelAPI {
         public void TestGetLTNVCopy() {
             var errors = new List<Exception>();
 
-            var rootPath = root + Path.DirectorySeparatorChar + "LTNV";
+            var rootPath = Root + Path.DirectorySeparatorChar + "LTNV";
 
 
             ParseAndTestGetLTNVCopys(rootPath, "FO200001.rdz.cbl", false, errors, new List<string> {"FO200001"},
@@ -95,6 +88,10 @@ namespace TypeCobol.Test.HighLevelAPI {
         private static IDictionary<Program, IDictionary<string, string>> ParseAndGetLTNVCopys(string rootPath, string path, bool autoRemarks = false)
         {
             var parser = TypeCobol.Parser.Parse(rootPath + Path.DirectorySeparatorChar + path, DocumentFormat.RDZReferenceFormat, autoRemarks);
+            var diagnostics = parser.Results.AllDiagnostics();
+            //There should be no diagnostics
+            Assert.IsFalse(diagnostics.Any());
+
             return LTNVHelper.GetLTNVCopy(parser.Results.ProgramClassDocumentSnapshot.Root);
         }
     }
