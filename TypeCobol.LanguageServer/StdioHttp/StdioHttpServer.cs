@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
         private Encoding messageEncoding;
         private ServerLogLevel logLevel;
         private TextWriter logWriter;
+        private Queue<Tuple<string, IMessageServer>> messagesQueue;
         public const string CONTENT_LENGTH_HEADER = "Content-Length";
         public const string CONTENT_TYPE_HEADER = "Content-Type";
 
@@ -25,11 +27,12 @@ namespace TypeCobol.LanguageServer.StdioHttp
         /// <param name="messageEncoding">Encoding used for the body of the Http messages</param>
         /// <param name="logLevel">Verbosity of the logs written by the Http server</param>
         /// <param name="logWriter">Text Writer used to write all the logs of the Http server</param>
-        public StdioHttpServer(Encoding messageEncoding, ServerLogLevel logLevel, TextWriter logWriter)
+        public StdioHttpServer(Encoding messageEncoding, ServerLogLevel logLevel, TextWriter logWriter, Queue<Tuple<string, IMessageServer>> messagesQueue)
         {
             this.messageEncoding = messageEncoding;
             this.logLevel = logLevel;
             this.logWriter = logWriter;
+            this.messagesQueue = messagesQueue;
             Console.OutputEncoding = messageEncoding ?? Encoding.UTF8;
             Console.InputEncoding = messageEncoding ?? Encoding.UTF8;
             if (logWriter is StreamWriter)
@@ -146,7 +149,13 @@ namespace TypeCobol.LanguageServer.StdioHttp
                 }
 
                 // Handle incoming message and optionnaly send reply
-                messageHandler.HandleMessage(message, this);
+                //Add message to queue 
+                lock (messagesQueue)
+                {
+                    messagesQueue.Enqueue(new Tuple<string, IMessageServer>(message, this));
+                }
+
+
             }
             return true;
         }
