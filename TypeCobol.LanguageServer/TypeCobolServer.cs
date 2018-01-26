@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using Analytics;
 using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler;
@@ -42,7 +43,8 @@ namespace TypeCobol.LanguageServer
             // Initialize the workspace
             typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, ((CustomJSonRPCServer) rpcServer).ActionQueue);
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
-
+            typeCobolWorkspace.ExceptionTriggered += ExceptionTriggered;
+            typeCobolWorkspace.WarningTrigger += WarningTrigger;
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
             initializeResult.capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
@@ -51,8 +53,7 @@ namespace TypeCobol.LanguageServer
             completionOptions.resolveProvider = false;
             completionOptions.triggerCharacters = new string[] {"::"};
             initializeResult.capabilities.completionProvider = completionOptions;
-            SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions();
-            sigHelpOptions.triggerCharacters = new string[0];
+            SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions {triggerCharacters = new string[0]};
             initializeResult.capabilities.signatureHelpProvider = sigHelpOptions;
 
             return initializeResult;
@@ -726,6 +727,16 @@ namespace TypeCobol.LanguageServer
             SendLoadingIssue(new LoadingIssueParams() {Message = loadingIssueEvent.Message});
         }
 
+        private void ExceptionTriggered(object sender, ThreadExceptionEventArgs exception)
+        {
+            this.NotifyException(exception.Exception);
+        }
+
+        private void WarningTrigger(object sender, string message)
+        {
+            this.NotifyWarning(message);
+        }
+
 
         private IEnumerable<CodeElementWrapper> CodeElementFinder(FileCompiler fileCompiler, Position position)
         {
@@ -774,10 +785,11 @@ namespace TypeCobol.LanguageServer
             Uri objUri = new Uri(uri);
             if (objUri.IsFile)
             {
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
                 // Get compilation info for the current file
-                if (acceptNodeRefresh)
-                    typeCobolWorkspace.NeedRefreshProgramClass();
-                return typeCobolWorkspace.OpenedFileCompiler[objUri];
+                if (acceptNodeRefresh && typeCobolWorkspace.FileCompilerNeedNodeRefresh(fileCompiler))
+                    typeCobolWorkspace.RefreshSyntaxTree(fileCompiler); //Do a Node Refresh
+                return fileCompiler;
             }
 
             return null;

@@ -39,6 +39,7 @@ namespace TypeCobol.LanguageServices.Editor
         private DependenciesFileWatcher _DepWatcher;
         private Stack<Action> _actionQueue;
         private System.Timers.Timer _SemanticUpdaterTimer;
+        private Thread _NodesRefreshThread;
 
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
@@ -47,6 +48,8 @@ namespace TypeCobol.LanguageServices.Editor
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
         public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
         public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
+        public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
+        public EventHandler<string> WarningTrigger { get; set; }
         public Stack<Action> ActionQueue { get { return _actionQueue; } }
 
 
@@ -56,6 +59,8 @@ namespace TypeCobol.LanguageServices.Editor
             TypeCobolConfiguration = new TypeCobolConfiguration();
             OpenedFileCompiler = new Dictionary<Uri, FileCompiler>();
             _FileCompilerWaittingForNodePhase = new Stack<FileCompiler>();
+            _NodesRefreshThread = new Thread(RefreshNodeThreadWaiter) {IsBackground = true};
+            _NodesRefreshThread.Start();
 
             this.RootDirectoryFullName = rootDirectoryFullName;
             this.WorkspaceName = workspaceName;
@@ -66,7 +71,6 @@ namespace TypeCobol.LanguageServices.Editor
                 new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
 
             _DepWatcher = new DependenciesFileWatcher(this);
-
         }
 
         /// <summary>
@@ -124,8 +128,7 @@ namespace TypeCobol.LanguageServices.Editor
             FileCompiler fileCompilerToUpdate = null;
             if (OpenedFileCompiler.TryGetValue(fileUri, out fileCompilerToUpdate))
             {
-                if (_SemanticUpdaterTimer != null)
-                    _SemanticUpdaterTimer.Stop();
+                _SemanticUpdaterTimer?.Stop();
 
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
 
@@ -140,20 +143,9 @@ namespace TypeCobol.LanguageServices.Editor
                             }
                         );
 
-                    lock (_FileCompilerWaittingForNodePhase)
-                    {
-                        if (!_FileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
-                        {
-                            _FileCompilerWaittingForNodePhase.Push(fileCompilerToUpdate);
-                        }
-                    }
-
-
                     _SemanticUpdaterTimer = new System.Timers.Timer(500);
-                    _SemanticUpdaterTimer.Elapsed += delegate(object s, ElapsedEventArgs ev) { NeedRefreshProgramClass(); };
-                    _SemanticUpdaterTimer.Start();
-                    
-                        
+                    _SemanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                    _SemanticUpdaterTimer.Start(); 
                 }
                 else
                 {
@@ -162,36 +154,82 @@ namespace TypeCobol.LanguageServices.Editor
             }
         }
 
-        public void NeedRefreshProgramClass()
+        /// <summary>
+        /// Event method called when the timer reach the Elapsed time
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
+        /// <param name="fileCompiler"></param>
+        private void TimerEvent(object sender, ElapsedEventArgs eventArgs, FileCompiler fileCompiler)
+        {
+            EnqueueNodeRefreshDemand(fileCompiler); //Call the public method that allows to enqueue a node refresh demand
+        }
+
+        /// <summary>
+        /// Call this method to enqueue a Node refresh demand 
+        /// </summary>
+        /// <param name="fileCompiler"></param>
+        public void EnqueueNodeRefreshDemand(FileCompiler fileCompiler)
         {
             lock (_FileCompilerWaittingForNodePhase)
             {
-                if (_FileCompilerWaittingForNodePhase.Any())
+                if (!_FileCompilerWaittingForNodePhase.Contains(fileCompiler))
                 {
-                    if (_SemanticUpdaterTimer != null)
-                    {
-                        _SemanticUpdaterTimer.Stop(); //Avoid duplicate Node pahse if a parser was launched
-                        _SemanticUpdaterTimer = null;
-                    }
-
-                    _FileCompilerWaittingForNodePhase.Pop()
-                        .CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot();
+                    _FileCompilerWaittingForNodePhase.Push(fileCompiler);
                 }
             }
+        }
+
+        private void RefreshNodeThreadWaiter()
+        {
+            while (true) //_NodesRefreshThread inifinite loop
+            {
+                try
+                {
+                    lock (_FileCompilerWaittingForNodePhase)
+                    {
+                        if (_FileCompilerWaittingForNodePhase.Any())
+                        {
+                            _SemanticUpdaterTimer?.Stop(); //Stop the timer (if exists)
+                            RefreshSyntaxTree(_FileCompilerWaittingForNodePhase.Pop());
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionTriggered(null, new ThreadExceptionEventArgs(e)); //Raise event to send exception to TypeCobolServer
+                }
+                Thread.Sleep(1); //Processor perf required
+            }
+        }
+
+        public bool FileCompilerNeedNodeRefresh(FileCompiler fileCompiler)
+        {
+            lock (_FileCompilerWaittingForNodePhase)
+            {
+                return _FileCompilerWaittingForNodePhase.Contains(fileCompiler);
+            }
+        }
+
+        /// <summary>
+        /// Use this method to force a node phase. 
+        /// </summary>
+        /// <param name="fileCompiler">FileCompiler on which the node phase will be done</param>
+        public void RefreshSyntaxTree(FileCompiler fileCompiler)
+        {
+            fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
         }
         /// <summary>
         /// Stop continuous background compilation after a file has been closed
         /// </summary>
         public void CloseSourceFile(Uri fileUri)
         {
-            FileCompiler fileCompilerToClose = null;
             lock (OpenedFileCompiler)
             {
                 if (OpenedFileCompiler.ContainsKey(fileUri))
                 {
-                    fileCompilerToClose = OpenedFileCompiler[fileUri];
+                    var fileCompilerToClose = OpenedFileCompiler[fileUri];
                     OpenedFileCompiler.Remove(fileUri);
-                    //fileCompilerToClose.StopContinuousBackgroundCompilation();
                     fileCompilerToClose.CompilationResultsForProgram.ProgramClassChanged -= ProgramClassChanged;
                 }
             }            
@@ -304,12 +342,20 @@ namespace TypeCobol.LanguageServices.Editor
         private void RefreshCustomSymbols()
         {
             bool diagDetected = false;
+            Dictionary<string, List<string>> detectedDiagnostics = new Dictionary<string, List<string>>();
             EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = null;
             DiagnosticsErrorEvent += delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
             {
                 //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
-                if(diagEvent.Diagnostic.Info.Severity == Severity.Error)
+                if (diagEvent.Diagnostic.Info.Severity == Severity.Error)
+                {
                     diagDetected = true;
+                    if (detectedDiagnostics.ContainsKey(diagEvent.Path))
+                        detectedDiagnostics[diagEvent.Path].Add(diagEvent.Diagnostic.ToString());
+                    else
+                        detectedDiagnostics.Add(diagEvent.Path, new List<string>() { diagEvent.Diagnostic.ToString() });
+                }
+                    
             };
             CustomSymbols = null;
             try
@@ -317,8 +363,24 @@ namespace TypeCobol.LanguageServices.Editor
                 CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
                 CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols, TypeCobolConfiguration.InputFiles, DiagnosticsErrorEvent); //Refresh Dependencies
 
-                if(diagDetected)
-                    LoadingIssueEvent(null, new LoadingIssueEvent() {Message = "An error occured while trying to load Intrinsics or Dependencies files."}); //Send notification to client
+                if (diagDetected)
+                {
+                    var message = "An error occured while trying to load Intrinsics or Dependencies files.";
+                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = message }); //Send notification to client
+
+                    var sb = new StringBuilder();
+                    sb.AppendLine(message);
+                    foreach (var dicItem in detectedDiagnostics)
+                    {
+                        sb.AppendLine("");
+                        sb.AppendLine(dicItem.Key); //Add file path 
+                        foreach (var diagText in dicItem.Value)
+                        {
+                            sb.AppendLine(" - "+diagText); //Add associated diagnostics
+                        }
+                    }
+                    WarningTrigger(null, sb.ToString()); //Send warning notification to display info to the user. 
+                }
             }
             catch (TypeCobolException typeCobolException)
             {
