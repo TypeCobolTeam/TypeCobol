@@ -121,7 +121,7 @@ namespace TypeCobol.Tools.APIHelpers
                 string depFileName = Path.GetFileNameWithoutExtension(path);
 
                 if (depFileName != null &&
-                    inputFileNames.Any(inputFileName => depFileName.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase)))
+                    inputFileNames.Any(inputFileName =>  depFileName.ToLower().Contains(inputFileName.ToLower())))
                 {
                     continue;
                 }
