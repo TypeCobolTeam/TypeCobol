@@ -683,6 +683,12 @@ namespace TypeCobol.LanguageServer
             typeCobolWorkspace.UpdateMissingCopies(new Uri(parameter.textDocument.uri), parameter.Copies);
         }
 
+        public override void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
+        {
+            var fileCompiler = GetFileCompilerFromStringUri(parameter.textDocument.uri, false);
+            typeCobolWorkspace.RefreshSyntaxTree(fileCompiler);
+        }
+
         #endregion
 
         /// <summary>

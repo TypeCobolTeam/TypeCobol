@@ -40,6 +40,7 @@ namespace TypeCobol.LanguageServices.Editor
         private Stack<Action> _actionQueue;
         private System.Timers.Timer _SemanticUpdaterTimer;
         private Thread _NodesRefreshThread;
+        private bool _TimerDisabled;
 
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
@@ -142,10 +143,12 @@ namespace TypeCobol.LanguageServices.Editor
                                 fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
                             }
                         );
-
-                    _SemanticUpdaterTimer = new System.Timers.Timer(500);
-                    _SemanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
-                    _SemanticUpdaterTimer.Start(); 
+                    if (!_TimerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
+                    {
+                        _SemanticUpdaterTimer = new System.Timers.Timer(500);
+                        _SemanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                        _SemanticUpdaterTimer.Start();
+                    }
                 }
                 else
                 {
@@ -248,6 +251,8 @@ namespace TypeCobol.LanguageServices.Editor
         {
             TypeCobolConfiguration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
+
+            options.Add("td|timerdisabled=", "Disable the delay that handle the automatic launch of Node Phase analyze", td => _TimerDisabled = (td != null)); //Add custom option to disable node phase timer
             options.Parse(arguments);
 
             //Adding default copies folder
