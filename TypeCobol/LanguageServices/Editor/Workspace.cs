@@ -252,6 +252,7 @@ namespace TypeCobol.LanguageServices.Editor
             TypeCobolConfiguration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
 
+            _TimerDisabled = false;
             options.Add("td|timerdisabled=", "Disable the delay that handle the automatic launch of Node Phase analyze", td => _TimerDisabled = (td != null)); //Add custom option to disable node phase timer
             options.Parse(arguments);
 
