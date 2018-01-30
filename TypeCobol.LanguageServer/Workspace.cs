@@ -95,7 +95,7 @@ namespace TypeCobol.LanguageServer
                 CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
                 false, CompilationProject);
 #else
-            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, CustomSymbols, false, CompilationProject);
+            fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, false, CompilationProject);
 #endif
 
 
