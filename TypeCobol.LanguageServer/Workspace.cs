@@ -14,10 +14,9 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
-using TypeCobol.LanguageServices.FileWatchers;
 using TypeCobol.Tools.Options_Config;
 
-namespace TypeCobol.LanguageServices.Editor
+namespace TypeCobol.LanguageServer
 {
     /// <summary>
     /// Represents a workspace in an Integrated Development Environment :
@@ -31,43 +30,39 @@ namespace TypeCobol.LanguageServices.Editor
     public class Workspace
     {
 
-        private SymbolTable CustomSymbols;
-        private string RootDirectoryFullName;
-        private string WorkspaceName;
+        private SymbolTable _customSymbols;
+        private string _rootDirectoryFullName;
+        private string _workspaceName;
         private CompilationProject CompilationProject;
-        private string[] Extensions = { ".cbl", ".cpy" };
+        private string[] _extensions = { ".cbl", ".cpy" };
         private DependenciesFileWatcher _DepWatcher;
-        private Stack<Action> _actionQueue;
-        private System.Timers.Timer _SemanticUpdaterTimer;
-        private Thread _NodesRefreshThread;
-        private bool _TimerDisabled;
+        private System.Timers.Timer _semanticUpdaterTimer;
+        private bool _timerDisabled;
 
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
-        private Stack<FileCompiler> _FileCompilerWaittingForNodePhase;
+        private List<FileCompiler> _fileCompilerWaittingForNodePhase;
         public Dictionary<Uri, FileCompiler> OpenedFileCompiler{ get; private set; }
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
         public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
         public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
         public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
         public EventHandler<string> WarningTrigger { get; set; }
-        public Stack<Action> ActionQueue { get { return _actionQueue; } }
+        public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
 
 
-        public Workspace(string rootDirectoryFullName, string workspaceName, Stack<Action> actionQueue)
+        public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue)
         {
-            _actionQueue = actionQueue;
+            MessagesActionsQueue = messagesActionsQueue;
             TypeCobolConfiguration = new TypeCobolConfiguration();
             OpenedFileCompiler = new Dictionary<Uri, FileCompiler>();
-            _FileCompilerWaittingForNodePhase = new Stack<FileCompiler>();
-            _NodesRefreshThread = new Thread(RefreshNodeThreadWaiter) {IsBackground = true};
-            _NodesRefreshThread.Start();
+            _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
 
-            this.RootDirectoryFullName = rootDirectoryFullName;
-            this.WorkspaceName = workspaceName;
+            this._rootDirectoryFullName = rootDirectoryFullName;
+            this._workspaceName = workspaceName;
 
             this.CompilationProject = new CompilationProject(
-                WorkspaceName, RootDirectoryFullName, Extensions,
+                _workspaceName, _rootDirectoryFullName, _extensions,
                 Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat,
                 new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
 
@@ -87,17 +82,17 @@ namespace TypeCobol.LanguageServices.Editor
             SymbolTable arrangedCustomSymbol = null;
             var inputFileName = fileName.Substring(0, 8);
             var matchingPgm =
-                CustomSymbols.Programs.Keys.FirstOrDefault(
+                _customSymbols.Programs.Keys.FirstOrDefault(
                     k => k.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase));
             if (matchingPgm != null)
             {
-                arrangedCustomSymbol = new SymbolTable(CustomSymbols, SymbolTable.Scope.Namespace);
-                var prog = CustomSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
+                arrangedCustomSymbol = new SymbolTable(_customSymbols, SymbolTable.Scope.Namespace);
+                var prog = _customSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
                 arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() {prog.ToList()});
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider,
-                CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? CustomSymbols,
+                CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
                 false, CompilationProject);
 #else
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, CustomSymbols, false, CompilationProject);
@@ -129,7 +124,7 @@ namespace TypeCobol.LanguageServices.Editor
             FileCompiler fileCompilerToUpdate = null;
             if (OpenedFileCompiler.TryGetValue(fileUri, out fileCompilerToUpdate))
             {
-                _SemanticUpdaterTimer?.Stop();
+                _semanticUpdaterTimer?.Stop();
 
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
 
@@ -143,11 +138,18 @@ namespace TypeCobol.LanguageServices.Editor
                                 fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
                             }
                         );
-                    if (!_TimerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
+
+                    lock (_fileCompilerWaittingForNodePhase)
                     {
-                        _SemanticUpdaterTimer = new System.Timers.Timer(500);
-                        _SemanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
-                        _SemanticUpdaterTimer.Start();
+                        if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
+                            _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
+                    }
+
+                    if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
+                    {
+                        _semanticUpdaterTimer = new System.Timers.Timer(1000);
+                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                        _semanticUpdaterTimer.Start();
                     }
                 }
                 else
@@ -165,63 +167,39 @@ namespace TypeCobol.LanguageServices.Editor
         /// <param name="fileCompiler"></param>
         private void TimerEvent(object sender, ElapsedEventArgs eventArgs, FileCompiler fileCompiler)
         {
-            EnqueueNodeRefreshDemand(fileCompiler); //Call the public method that allows to enqueue a node refresh demand
+            try
+            {
+                _semanticUpdaterTimer.Stop();
+                Action nodeRefreshAction = () => { RefreshSyntaxTree(fileCompiler); };
+                lock (MessagesActionsQueue)
+                {
+                    MessagesActionsQueue.Enqueue(new MessageActionWrapper(nodeRefreshAction));
+                }
+            }
+            catch (Exception e)
+            {
+                //In case Timer Thread crash
+                ExceptionTriggered(null, new ThreadExceptionEventArgs(e));
+            }
+           
         }
 
         /// <summary>
-        /// Call this method to enqueue a Node refresh demand 
-        /// </summary>
-        /// <param name="fileCompiler"></param>
-        public void EnqueueNodeRefreshDemand(FileCompiler fileCompiler)
-        {
-            lock (_FileCompilerWaittingForNodePhase)
-            {
-                if (!_FileCompilerWaittingForNodePhase.Contains(fileCompiler))
-                {
-                    _FileCompilerWaittingForNodePhase.Push(fileCompiler);
-                }
-            }
-        }
-
-        private void RefreshNodeThreadWaiter()
-        {
-            while (true) //_NodesRefreshThread inifinite loop
-            {
-                try
-                {
-                    lock (_FileCompilerWaittingForNodePhase)
-                    {
-                        if (_FileCompilerWaittingForNodePhase.Any())
-                        {
-                            _SemanticUpdaterTimer?.Stop(); //Stop the timer (if exists)
-                            RefreshSyntaxTree(_FileCompilerWaittingForNodePhase.Pop());
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    ExceptionTriggered(null, new ThreadExceptionEventArgs(e)); //Raise event to send exception to TypeCobolServer
-                }
-                Thread.Sleep(1); //Processor perf required
-            }
-        }
-
-        public bool FileCompilerNeedNodeRefresh(FileCompiler fileCompiler)
-        {
-            lock (_FileCompilerWaittingForNodePhase)
-            {
-                return _FileCompilerWaittingForNodePhase.Contains(fileCompiler);
-            }
-        }
-
-        /// <summary>
-        /// Use this method to force a node phase. 
+        /// Use this method to force a node phase if there is a filecompiler waiting for node refresh. 
         /// </summary>
         /// <param name="fileCompiler">FileCompiler on which the node phase will be done</param>
         public void RefreshSyntaxTree(FileCompiler fileCompiler)
         {
-            fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
+            lock (_fileCompilerWaittingForNodePhase)
+            {
+                if (!_fileCompilerWaittingForNodePhase.Contains(fileCompiler)) return;
+
+                _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
+                fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
+            }
+            
         }
+
         /// <summary>
         /// Stop continuous background compilation after a file has been closed
         /// </summary>
@@ -252,8 +230,8 @@ namespace TypeCobol.LanguageServices.Editor
             TypeCobolConfiguration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
 
-            _TimerDisabled = false;
-            options.Add("td|timerdisabled=", "Disable the delay that handle the automatic launch of Node Phase analyze", td => _TimerDisabled = (td != null)); //Add custom option to disable node phase timer
+            _timerDisabled = false;
+            options.Add("td|timerdisabled=", "Disable the delay that handle the automatic launch of Node Phase analyze", td => _timerDisabled = (td != null)); //Add custom option to disable node phase timer
             options.Parse(arguments);
 
             //Adding default copies folder
@@ -275,7 +253,7 @@ namespace TypeCobol.LanguageServices.Editor
 #endif
             };
 
-            CompilationProject = new CompilationProject(WorkspaceName, RootDirectoryFullName, Extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
+            CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
 
             if (TypeCobolConfiguration.CopyFolders != null && TypeCobolConfiguration.CopyFolders.Count > 0)
             {
@@ -363,11 +341,11 @@ namespace TypeCobol.LanguageServices.Editor
                 }
                     
             };
-            CustomSymbols = null;
+            _customSymbols = null;
             try
             {
-                CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
-                CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, CustomSymbols, TypeCobolConfiguration.InputFiles, DiagnosticsErrorEvent); //Refresh Dependencies
+                _customSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(TypeCobolConfiguration.Copies, TypeCobolConfiguration.Format, DiagnosticsErrorEvent); //Refresh Intrinsics
+                _customSymbols = Tools.APIHelpers.Helpers.LoadDependencies(TypeCobolConfiguration.Dependencies, TypeCobolConfiguration.Format, _customSymbols, TypeCobolConfiguration.InputFiles, DiagnosticsErrorEvent); //Refresh Dependencies
 
                 if (diagDetected)
                 {

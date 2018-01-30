@@ -16,7 +16,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
         private Encoding messageEncoding;
         private ServerLogLevel logLevel;
         private TextWriter logWriter;
-        private Queue<Tuple<string, IMessageServer>> messagesQueue;
+        private Queue<MessageActionWrapper> messagesQueue;
         public const string CONTENT_LENGTH_HEADER = "Content-Length";
         public const string CONTENT_TYPE_HEADER = "Content-Type";
 
@@ -27,7 +27,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
         /// <param name="messageEncoding">Encoding used for the body of the Http messages</param>
         /// <param name="logLevel">Verbosity of the logs written by the Http server</param>
         /// <param name="logWriter">Text Writer used to write all the logs of the Http server</param>
-        public StdioHttpServer(Encoding messageEncoding, ServerLogLevel logLevel, TextWriter logWriter, Queue<Tuple<string, IMessageServer>> messagesQueue)
+        public StdioHttpServer(Encoding messageEncoding, ServerLogLevel logLevel, TextWriter logWriter, Queue<MessageActionWrapper> messagesQueue)
         {
             this.messageEncoding = messageEncoding;
             this.logLevel = logLevel;
@@ -152,7 +152,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
                 //Add message to queue 
                 lock (messagesQueue)
                 {
-                    messagesQueue.Enqueue(new Tuple<string, IMessageServer>(message, this));
+                    messagesQueue.Enqueue(new MessageActionWrapper(message, this));
                 }
 
 

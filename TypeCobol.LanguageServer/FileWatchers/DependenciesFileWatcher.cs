@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Security.Permissions;
-using TypeCobol.LanguageServices.Editor;
 
-namespace TypeCobol.LanguageServices.FileWatchers
+namespace TypeCobol.LanguageServer
 {
     public class DependenciesFileWatcher : IDisposable
     {
@@ -52,11 +48,11 @@ namespace TypeCobol.LanguageServices.FileWatchers
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
             Action refreshAction = () => { _TypeCobolWorkSpace.RefreshOpenedFiles(); };
-            lock (_TypeCobolWorkSpace.ActionQueue)
+            lock (_TypeCobolWorkSpace.MessagesActionsQueue)
             {
-                if (!_TypeCobolWorkSpace.ActionQueue.Contains(refreshAction))
+                if (_TypeCobolWorkSpace.MessagesActionsQueue.All(mw => mw.Action != refreshAction))
                 {
-                    _TypeCobolWorkSpace.ActionQueue.Push(refreshAction);
+                    _TypeCobolWorkSpace.MessagesActionsQueue.Enqueue(new MessageActionWrapper(refreshAction));
                 }
             }
         }

@@ -28,10 +28,14 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     class TypeCobolServer : TypeCobolCustomLanguageServer
     {
-        public TypeCobolServer(IRPCServer rpcServer) : base(rpcServer) { }
+        public TypeCobolServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue) : base(rpcServer)
+        {
+            _MessagesActionsQueue = messagesActionsQueue;
+        }
 
         // -- Initialization : create workspace and return language server capabilities --
         private Workspace typeCobolWorkspace;
+        private Queue<MessageActionWrapper> _MessagesActionsQueue;
 
         #region Override LSP Methods
 
@@ -41,7 +45,7 @@ namespace TypeCobol.LanguageServer
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
             // Initialize the workspace
-            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, ((CustomJSonRPCServer) rpcServer).ActionQueue);
+            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, _MessagesActionsQueue);
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
             typeCobolWorkspace.ExceptionTriggered += ExceptionTriggered;
             typeCobolWorkspace.WarningTrigger += WarningTrigger;
@@ -793,7 +797,7 @@ namespace TypeCobol.LanguageServer
             {
                 var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
                 // Get compilation info for the current file
-                if (acceptNodeRefresh && typeCobolWorkspace.FileCompilerNeedNodeRefresh(fileCompiler))
+                if (acceptNodeRefresh)
                     typeCobolWorkspace.RefreshSyntaxTree(fileCompiler); //Do a Node Refresh
                 return fileCompiler;
             }

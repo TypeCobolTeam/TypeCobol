@@ -15,7 +15,7 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     class TypeCobolServerHost
     {
-        public static Queue<Tuple<string, IMessageServer>> MessagesQueue { get; set; }
+        public static Queue<MessageActionWrapper> MessagesActionQueue { get; set; }
         /// <summary>
         /// Main Entry point of the Server.
         /// </summary>
@@ -26,20 +26,20 @@ namespace TypeCobol.LanguageServer
             ServerLogLevel logLevel;
             TextWriter logWriter;
             //Queue storing messages coming from client, this queue is read by readingThread
-            MessagesQueue = new Queue<Tuple<string, IMessageServer>>();
+            MessagesActionQueue = new Queue<MessageActionWrapper>();
 
             GetArguments(args, out logLevel, out logWriter);
             // Open log file
             try
             {
                 // Configure the protocols stack
-                var httpServer = new StdioHttpServer(Encoding.UTF8, logLevel, logWriter, MessagesQueue);
-                var jsonRPCServer = new CustomJSonRPCServer(httpServer);
-                new TypeCobolServer(jsonRPCServer);
+                var httpServer = new StdioHttpServer(Encoding.UTF8, logLevel, logWriter, MessagesActionQueue);
+                var jsonRPCServer = new JsonRPCServer(httpServer);
+                var typeCobolServer = new TypeCobolServer(jsonRPCServer, MessagesActionQueue);
 
                 //Creating the thread that will read mesages and handle them 
-                var readingThread = new Thread(() => { MessageHandler(jsonRPCServer); }) {IsBackground = true};
-                readingThread.Start();
+                var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) {IsBackground = true};
+                backgroundExecutionThread.Start();
 
                 // Start listening to incoming request (block, infinite loop)
                 httpServer.StartReceivingMessagesFor(jsonRPCServer);
@@ -53,24 +53,46 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        static void MessageHandler(IMessageHandler messageHandler)
+        /// <summary>
+        /// Method of backgroundExecutionThread. It will Loop until the end of main Thread.
+        /// This method is going to read the MessagesActionQueue and do associated action.
+        /// In case of JsonRPC message, it will be pass to a MessageHandler.
+        /// In case of an action, it will execute it. 
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="typeCobolServer"></param>
+        static void MessageHandler(IMessageHandler messageHandler, TypeCobolServer typeCobolServer)
         {
             while (true)
             {
-                Tuple<string, IMessageServer> message = null;
-                lock (MessagesQueue)
+                Thread.Sleep(1); //To preserve processor use
+
+                MessageActionWrapper messageActionWrapper = null;
+                lock (MessagesActionQueue)
                 {
-                    if (MessagesQueue.Any())
+                    if (MessagesActionQueue.Any())
                     {
-                        message = MessagesQueue.Dequeue(); //Pop out message from queue
+                        messageActionWrapper = MessagesActionQueue.Dequeue(); //Pop out message from queue
                     }
                 }
-                if (message != null)
-                    messageHandler.HandleMessage(message.Item1, message.Item2); //Give this mesage to the real handler
+                if (messageActionWrapper == null)
+                    continue;
 
-                Thread.Sleep(1); //To preserve processor use
+                if (messageActionWrapper.MessageKind == MessageKind.JSonMessage)
+                    messageHandler.HandleMessage(messageActionWrapper.Message, messageActionWrapper.MessageServer); //Give this mesage to the real handler
+                else if (messageActionWrapper.MessageKind == MessageKind.Action)
+                {
+                    try
+                    {
+                        messageActionWrapper.Action(); //Execute queued action
+                    }
+                    catch (Exception e)
+                    {
+                        typeCobolServer.NotifyException(e);
+                    }
+                }
+                    
             }
-            
         }
 
         /// <summary>
