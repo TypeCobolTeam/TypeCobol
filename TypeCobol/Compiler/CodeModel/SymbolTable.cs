@@ -31,7 +31,7 @@ namespace TypeCobol.Compiler.CodeModel
 
             while (scope != null) //Loop on enclosing scope until null scope. 
             {
-                foreach (var typeReference in scope.TypesReferences.Select(pt => new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
+                foreach (var typeReference in scope.TypesReferences) //new KeyValuePair allow to loose object ref
                 {
                     if (!result.ContainsKey(typeReference.Key)) //Avoid duplicate key
                         result.Add(typeReference.Key, typeReference.Value);
@@ -45,14 +45,13 @@ namespace TypeCobol.Compiler.CodeModel
                         if (program != null && program.SymbolTable != null &&
                             program.SymbolTable.TypesReferences != null)
                         {
-                            foreach (var progTypeRef in program.SymbolTable.TypesReferences.Select(pt =>
-                                        new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
+                            foreach (var progTypeRef in program.SymbolTable.TypesReferences) //new KeyValuePair allow to loose object ref
                             {
                                 if (!result.ContainsKey(progTypeRef.Key)) //Avoid duplicate key
                                     result.Add(progTypeRef.Key, progTypeRef.Value);
                                 else
                                 {
-                                    foreach (var reference in progTypeRef.Value) //Add the reference values not already discovered
+                                    foreach (var reference in progTypeRef.Value.ToList()) //Add the reference values not already discovered
                                     {
                                         if (!result[progTypeRef.Key].Contains(reference))
                                             result[progTypeRef.Key].Add(reference);
