@@ -1,0 +1,14 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+       01 MyPicVar PIC X(10).
+       01 IRLTest TYPE IRLLBIRL::Irl.
+       01 MyGroup.
+        05 IRLQty TYPE IRLLBIRL::Qty.
+
+       PROCEDURE DIVISION.
+       MOVE MyPicVar TO IRLTest::IrlQty::Dec::I.
+       MOVE MyGroup::IRLQty::Dec::I TO MyPicVar.
+       END PROGRAM PGM.

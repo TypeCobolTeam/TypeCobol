@@ -1,0 +1,25 @@
+﻿      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+       01 MyPicVar PIC X(10).
+      *01 IRLTest TYPE IRLLBIRL::Irl.
+       01 IRLTest.
+           02 IsinCode PIC X(12).
+           02 IrlQty TYPE Qty.
+                                     
+       01 MyGroup.
+      * 05 IRLQty TYPE IRLLBIRL::Qty.
+        05 IRLQty.
+           06 Dec.
+             07 I PIC X(02).
+                                     
+
+       PROCEDURE DIVISION.
+      *MOVE MyPicVar TO IRLTest::IrlQty::Dec::I.
+       MOVE MyPicVar TO I OF Dec OF IrlQty OF IRLTest.
+      *MOVE MyGroup::IRLQty::Dec::I TO MyPicVar.
+       MOVE I OF Dec OF IRLQty OF MyGroup TO MyPicVar.
+       END PROGRAM PGM.

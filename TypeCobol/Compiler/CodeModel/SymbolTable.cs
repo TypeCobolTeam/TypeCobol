@@ -31,22 +31,34 @@ namespace TypeCobol.Compiler.CodeModel
 
             while (scope != null) //Loop on enclosing scope until null scope. 
             {
-                foreach (var typeReference in scope.TypesReferences)
+                foreach (var typeReference in scope.TypesReferences.Select(pt => new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
                 {
                     if (!result.ContainsKey(typeReference.Key)) //Avoid duplicate key
                         result.Add(typeReference.Key, typeReference.Value);
                 }
 
-                if (scope.CurrentScope == Scope.Namespace && scope.Programs.Any()) //Some TypeReferences are stored only in program's symbolTable, need to seek into them. 
+                if (scope.CurrentScope == Scope.Namespace && scope.Programs.Any())
+                    //Some TypeReferences are stored only in program's symbolTable, need to seek into them. 
                 {
                     foreach (var program in scope.Programs.SelectMany(t => t.Value))
                     {
-                        if (program != null && program.SymbolTable != null && program.SymbolTable.TypesReferences != null)
+                        if (program != null && program.SymbolTable != null &&
+                            program.SymbolTable.TypesReferences != null)
                         {
-                            foreach (var progTypeRef in program.SymbolTable.TypesReferences)
+                            foreach (var progTypeRef in program.SymbolTable.TypesReferences.Select(pt =>
+                                        new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
                             {
                                 if (!result.ContainsKey(progTypeRef.Key)) //Avoid duplicate key
                                     result.Add(progTypeRef.Key, progTypeRef.Value);
+                                else
+                                {
+                                    foreach (var reference in progTypeRef.Value) //Add the reference values not already discovered
+                                    {
+                                        if (!result[progTypeRef.Key].Contains(reference))
+                                            result[progTypeRef.Key].Add(reference);
+                                    }
+                                }
+                                    
                             }
                         }
                     }
