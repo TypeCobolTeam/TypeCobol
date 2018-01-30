@@ -1,5 +1,4 @@
-﻿      *TypeCobol_Version:0.1(alpha)
-       IDENTIFICATION DIVISION.
+﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM.
 
        DATA DIVISION.

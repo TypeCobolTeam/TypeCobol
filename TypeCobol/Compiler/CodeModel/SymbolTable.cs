@@ -19,14 +19,14 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// References of a type. This property is scope sensitive. To get all TypeReferences from any scope, use GetAllEnclosingTypeReferences().
         /// </summary>
-        public Dictionary<Node, List<DataDefinition>> TypesReferences { get; set; }
+        public Dictionary<TypeDefinition, List<DataDefinition>> TypesReferences { get; set; }
 
         /// <summary>
         /// Allow to get all the Type's references from any Enclosing Scope or Program
         /// </summary>
-        public Dictionary<Node, List<DataDefinition>> GetAllEnclosingTypeReferences()
+        public Dictionary<TypeDefinition, List<DataDefinition>> GetAllEnclosingTypeReferences()
         {
-            var result = new Dictionary<Node, List<DataDefinition>>();
+            var result = new Dictionary<TypeDefinition, List<DataDefinition>>();
             SymbolTable scope = this;//By default set this symboltable as the starting point
 
             while (scope != null) //Loop on enclosing scope until null scope. 
@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             CurrentScope = current;
             EnclosingScope = enclosing;
-            TypesReferences = new Dictionary<Node, List<DataDefinition>>();
+            TypesReferences = new Dictionary<TypeDefinition, List<DataDefinition>>();
             if (EnclosingScope == null && CurrentScope != Scope.Intrinsic)
                 throw new InvalidOperationException("Only Table of INTRINSIC symbols don't have any enclosing scope.");
         }
