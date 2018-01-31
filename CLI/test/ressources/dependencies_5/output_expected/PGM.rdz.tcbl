@@ -8,7 +8,9 @@
       *01 IRLTest TYPE IRLLBIRL::Irl.
        01 IRLTest.
            02 IsinCode PIC X(12).
-           02 IrlQty TYPE Qty.
+           02 IrlQty.
+             03 Dec.
+               04 I PIC X(02).
                                      
        01 MyGroup.
       * 05 IRLQty TYPE IRLLBIRL::Qty.

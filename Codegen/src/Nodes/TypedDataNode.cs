@@ -42,7 +42,7 @@
                         GeneratorHelper.ComputeTypedProperPaths(this, data, customtype[0], out rootProcedures, out rootVars);
                         _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
                         if (customtype.Count > 0)
-                            _cache.AddRange(InsertChildren(Layout, this.Node.SymbolTable, rootProcedures, rootVars,  customtype[0], customtype[0], level + 1, 1));
+                            _cache.AddRange(InsertChildren(Layout, rootProcedures, rootVars,  customtype[0], customtype[0], level + 1, 1));
                     }
                 }
                 return _cache;
@@ -677,7 +677,7 @@
         "                      X'00' thru 'S'",
         "                      'U' thru X'FF'."
     };
-        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, SymbolTable table, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
+        public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
             foreach (var child in type.Children)
@@ -717,12 +717,17 @@
                 {//Unexpected typed value.                    
                     continue;
                 }
-                var types = table.GetType(typed.DataType);
+     
+                List <TypeDefinition> types = new List<TypeDefinition>();
+                if (types.Count == 0 && child.SymbolTable != null)
+                {
+                    types = child.SymbolTable.GetType(typed.DataType);
+                }
                 bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
                 if (dataDefinitionEntry != null)
                 {
-                    lines.AddRange(CreateDataDefinition(table, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
+                    lines.AddRange(CreateDataDefinition(child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
                 }
                 else
                 {//Humm ... It will be a bug.
@@ -733,10 +738,10 @@
                     List< Tuple<string,string> > newRootVariableName = new List<Tuple<string, string>>();
                     newRootVariableName.Add(new Tuple<string, string>(typed.Name, types[0].Name));
                     newRootVariableName.AddRange(rootVariableName);
-                    lines.AddRange(InsertChildren(layout, table, rootProcedures, newRootVariableName, typed, types[0], level + 1, indent + 1));
+                    lines.AddRange(InsertChildren(layout, rootProcedures, newRootVariableName, typed, types[0], level + 1, indent + 1));
                 }
                 else
-                    lines.AddRange(InsertChildren(layout, table, rootProcedures, rootVariableName, typed, typed, level + 1, indent + 1));
+                    lines.AddRange(InsertChildren(layout, rootProcedures, rootVariableName, typed, typed, level + 1, indent + 1));
 
             }
             return lines;
