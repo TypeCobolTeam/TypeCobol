@@ -36,6 +36,7 @@ namespace CLI.Test
             CLITestHelper.Test("dependencies_2", ReturnCode.Success);
             CLITestHelper.Test("dependencies_3", ReturnCode.ParsingDiagnostics);
             CLITestHelper.Test("dependencies_4", ReturnCode.ParsingDiagnostics);            //No dependencies found
+            CLITestHelper.Test("dependencies_5", ReturnCode.Success);
 #if EUROINFO_RULES
             CLITestHelper.Test("ei_dependencies_1", ReturnCode.ParsingDiagnostics);
 #endif
