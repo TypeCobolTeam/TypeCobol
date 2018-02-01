@@ -3,8 +3,9 @@ Line 15[8,40] <27, Error, Syntax> - Syntax error : Given value is not correct : 
 Line 27[37,39] <27, Error, Syntax> - Syntax error : mismatched input 'PIC' expecting {user defined word, DATE} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause,  OffendingSymbol=[37,39:PIC]<PIC>
 Line 35[8,59] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times
 Line 35[8,59] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times
-Line 115[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:declare]<DECLARE>
-Line 119[8,14] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:declare]<DECLARE>
+Line 111[8,55] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
+Line 115[8,55] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
+Line 119[8,70] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
 Line 127[8,8] <27, Error, Syntax> - Syntax error : Empty CALL is not authorized
 Line 137[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrFn' of usage FunctionPointer and received 'someformat' of usage 
 Line 137[8,40] <27, Error, Syntax> - Syntax error : Function 'GetPtrFn' expected parameter 'ptrPr' of usage ProcedurePointer and received 'someformat' of usage 

@@ -111,9 +111,8 @@ namespace TypeCobol.LanguageServer
             }
 
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
-            //fileCompiler.StartContinuousBackgroundCompilation(200, 500, 1000, 3000); //TODO: create a better refresh compilation
 
-            fileCompiler.CompileOnce(); //Let's parse file for the first time after openning. 
+            fileCompiler.CompileOnce(); //Let's parse file for the first time after opening. 
         }
 
         /// <summary>
@@ -195,6 +194,7 @@ namespace TypeCobol.LanguageServer
                 if (!_fileCompilerWaittingForNodePhase.Contains(fileCompiler)) return;
 
                 _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
+                fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
                 fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
             }
             
@@ -242,7 +242,7 @@ namespace TypeCobol.LanguageServer
                 AnalyticsWrapper.Telemetry.DisableTelemetry = false; //If telemetry arg is passed enable telemetry
 
             if (TypeCobolConfiguration.ExecToStep >= ExecutionStep.Generate)
-                TypeCobolConfiguration.ExecToStep = ExecutionStep.SemanticCheck; //Language Server does not support Cobol Generation for now
+                TypeCobolConfiguration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
 
             var typeCobolOptions = new TypeCobolOptions
             {

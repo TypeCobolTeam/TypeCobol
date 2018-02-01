@@ -201,7 +201,7 @@ namespace TypeCobol.Compiler
         public void CompileOnce()
         {
             if (CompilerOptions.ExecToStep == null)
-                CompilerOptions.ExecToStep = ExecutionStep.SemanticCheck;
+                CompilerOptions.ExecToStep = ExecutionStep.CrossCheck;
 
             if (CompilationResultsForCopy != null)
             {
@@ -232,7 +232,12 @@ namespace TypeCobol.Compiler
                 if (!(CompilerOptions.ExecToStep > ExecutionStep.SyntaxCheck)) return;
 
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Semantic Step");
-                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //SemanticCheck
+                CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //SemanticCheck
+
+                if (!(CompilerOptions.ExecToStep > ExecutionStep.SemanticCheck)) return;
+
+                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] CrossCheck Step");
+                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
             }
 
 

@@ -14,7 +14,7 @@ Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbo
 Line 88[8,10] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times
 Line 88[8,10] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times
 Line 103[8,28] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
-Line 123[8,14] <27, Error, Syntax> - Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter. RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:DECLARE]<DECLARE>
+Line 123[8,10] <27, Error, Syntax> - Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
 Line 123[8,10] <27, Error, Syntax> - Syntax error : Condition parameter "male" must be level 88.
 
 --- Program ---

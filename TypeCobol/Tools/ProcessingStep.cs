@@ -12,6 +12,7 @@ namespace TypeCobol
         Preprocessor,
         SyntaxCheck,
         SemanticCheck,
+        CrossCheck,
         Generate
     }
 }

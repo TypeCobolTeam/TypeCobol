@@ -84,18 +84,15 @@ namespace TypeCobol.Compiler.Parser
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
             }
 
-            //Create link between datas
-            programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new TypeCobolLinker());
-            //Complete some information on Node and run checker that need a full AST
-            programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
+            root = programClassBuilder.SyntaxTree.Root; //Set output root node
 
+            //Create link between data definition an Types, will be stored in SymbolTable
+            root.AcceptASTVisitor(new TypeCobolLinker());
 
             //Stop measuring tree building performance
             perfStatsForParserInvocation.OnStopTreeBuilding();
 
-
             // Register compiler results
-            root = programClassBuilder.SyntaxTree.Root; //Set output root node
             var syntaxTreeDiag = programClassBuilder.GetDiagnostics(programClassParseTree);
             if (syntaxTreeDiag != null)
                 diagnostics.AddRange(syntaxTreeDiag);
@@ -103,11 +100,15 @@ namespace TypeCobol.Compiler.Parser
 
             if (programClassBuilderError != null)
             {
-                if (diagnostics == null) diagnostics = new List<Diagnostic>();
                 diagnostics.Add(programClassBuilderError);
             }
         }
 
+        public static void CrossCheckPrograms(SourceFile root)
+        {
+            //Complete some information on Node and run checker that need a full AST
+            root.AcceptASTVisitor(new CrossCompleteChecker());
+        }
 
     }
 }
