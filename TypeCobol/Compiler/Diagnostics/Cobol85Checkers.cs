@@ -245,7 +245,7 @@ namespace TypeCobol.Compiler.Diagnostics {
                 }
                 else if (found[0].DataType == DataType.Boolean && found[0].CodeElement is DataDefinitionEntry && ((DataDefinitionEntry) found[0]?.CodeElement)?.LevelNumber?.Value != 88)
                 {
-                    if (!(node is Nodes.If || node is Nodes.Set))//Ignore Conditional(If) and Set statement
+                    if (!(node is Nodes.If || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch))//Ignore If/Set/Perform/WhenSearch Statement
                     {
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea, foundQualified.First().Key);
