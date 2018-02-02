@@ -197,7 +197,14 @@ namespace TypeCobol.Compiler.CodeElements {
                 }
                 if (StorageArea != null)
                 {
-                    return bUseToString ? StorageArea?.SymbolReference?.ToString() : StorageArea?.SymbolReference?.Name;
+                    var qualifiedName = StorageArea?.SymbolReference?.ToString();
+                    if (StorageArea is DataOrConditionStorageArea && ((DataOrConditionStorageArea)StorageArea).Subscripts.Count > 0)
+                    {
+                        var subscript = ((DataOrConditionStorageArea) StorageArea).ToString(true);
+                        qualifiedName = qualifiedName + " " + subscript;
+                    }
+
+                    return bUseToString ? qualifiedName : StorageArea?.SymbolReference?.Name;
                 }
 			    //these should be: return XXXValue.GetValueInContext(???);
 			    if (AlphanumericValue != null) return AlphanumericValue.Token.SourceText;

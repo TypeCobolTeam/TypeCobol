@@ -1,0 +1,66 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Subscript.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyPicVar PIC X(10).
+       01 MyGroup.
+          05 MyValue  PIC 2.
+       01  StringArray.
+           05 OCCURS 10 INDEXED BY StringIdx.
+              10  Pnt               POINTER.
+              10  Lgt               PIC 9(09) COMP.
+      *       10  PrcTyp            TYPE Date.
+              10 PrcTyp.
+           11 YYYY PIC 9(4).
+           11 MM PIC 9(2).
+           11 DD PIC 9(2).
+                                              
+      
+       PROCEDURE DIVISION.
+      
+      
+      *DECLARE PROCEDURE CompressString PRIVATE
+      *    INPUT    arg1      POINTER
+      *             arg2      POINTER
+      *             arg3      PIC 9(09) COMP
+      *             arg4      TYPE DATE
+      *             arg5      TYPE DATE
+      *    OUTPUT   FinalLength     PIC X(10).
+      
+      *CALL CompressString
+      *INPUT    StringArray::Pnt (StringIdx , 1) (MyGroup::MyValue : 2)
+      *         StringArray::Pnt (StringIdx 1) (MyGroup::MyValue : 2)
+      *         StringArray::Lgt (StringIdx) (3 : 2)
+      *         StringArray::PrcTyp (StringIdx) (3 : MyGroup::MyValue)
+      *         StringArray::PrcTyp (StringIdx) (3 : )
+      *OUTPUT
+      *         MyPicVar.
+       CALL 'cffdfc03CompressString' USING
+                                 Pnt IN StringArray (StringIdx, 1) (MyVa
+      -    lue IN MyGroup : 2)
+                                 Pnt IN StringArray (StringIdx, 1) (MyVa
+      -    lue IN MyGroup : 2)
+                                 Lgt IN StringArray (StringIdx) (3 : 2)
+                                 PrcTyp IN StringArray (StringIdx) (3 :
+      -    MyValue IN MyGroup)
+                                 PrcTyp IN StringArray (StringIdx) (3 :
+      -    )
+                    by reference MyPicVar
+           end-call
+                        .
+
+       END PROGRAM Subscript.
+      *
+      *DECLARE PROCEDURE CompressString PRIVATE
+      *    INPUT    arg1      POINTER
+      *             arg2      POINTER
+      *             arg3      PIC 9(09) COMP
+      *             arg4      TYPE DATE
+      *             arg5      TYPE DATE
+      *    OUTPUT   FinalLength     PIC X(10).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. cffdfc03CompressString.
+       END PROGRAM cffdfc03CompressString.
