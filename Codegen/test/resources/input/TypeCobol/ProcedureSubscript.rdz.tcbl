@@ -1,0 +1,36 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Subscript.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyPicVar PIC X(10).
+       01 MyGroup.
+          05 MyValue  PIC 2.
+       01  StringArray.
+           05 OCCURS 10 INDEXED BY StringIdx.
+              10  Pnt               POINTER.
+              10  Lgt               PIC 9(09) COMP.
+              10  PrcTyp            TYPE Date.
+      
+       PROCEDURE DIVISION.
+      
+      
+       DECLARE PROCEDURE CompressString PRIVATE
+           INPUT    arg1      POINTER
+                    arg2      POINTER
+                    arg3      PIC 9(09) COMP
+                    arg4      TYPE DATE
+                    arg5      TYPE DATE
+           OUTPUT   FinalLength     PIC X(10).
+        END-DECLARE.
+      
+       CALL CompressString
+       INPUT    StringArray::Pnt (StringIdx , 1) (MyGroup::MyValue : 2)
+                StringArray::Pnt (StringIdx 1) (MyGroup::MyValue : 2)
+                StringArray::Lgt (StringIdx) (3 : 2)
+                StringArray::PrcTyp (StringIdx) (3 : MyGroup::MyValue)
+                StringArray::PrcTyp (StringIdx) (3 : )
+       OUTPUT
+                MyPicVar.
+
+       END PROGRAM Subscript.

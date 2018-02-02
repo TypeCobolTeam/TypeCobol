@@ -140,16 +140,53 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
 	    public override string ToString() {
-			var str = new System.Text.StringBuilder();
-	        if (SymbolReference != null)
-	        {
-                str.Append(SymbolReference.Name);
-                if (Subscripts != null)
-                    foreach (var subscript in Subscripts)
-                        str.Append('(').Append(subscript).Append(')');
-            }
-			return str.ToString();
+			return ToString(false);
 		}
+
+        public new string ToString(bool onlySubscript)
+        {
+            var str = new System.Text.StringBuilder();
+            if (SymbolReference != null)
+            {
+                if(!onlySubscript)
+                    str.Append(SymbolReference.Name);
+                if (Subscripts != null && Subscripts.Count > 0)
+                {
+                    str.Append('(');
+                    foreach (var subscript in Subscripts)
+                    {
+                        str.Append(subscript);
+                        if (Subscripts.LastOrDefault() != subscript)
+                            str.Append(", ");
+                    }
+                    str.Append(')');
+                }
+                if (ReferenceModifier != null)
+                {
+                    str.Append(" (")
+                        .Append(GetExpressionToAppend(ReferenceModifier.LeftmostCharacterPosition))
+                        .Append(" : ")
+                        .Append(GetExpressionToAppend(ReferenceModifier.Length))
+                        .Append(')');
+                }
+            }
+            return str.ToString();
+        }
+
+	    private string GetExpressionToAppend(ArithmeticExpression expression)
+	    {
+	        if (expression == null)
+	            return string.Empty;
+	        var expressionToAppend = expression.ToString();
+	        if (expression.NodeType == ExpressionNodeType.NumericVariable &&
+	            (expression as NumericVariableOperand)?.NumericVariable.MainSymbolReference != null)
+	        {
+	            expressionToAppend = ((NumericVariableOperand) expression).NumericVariable
+	                .MainSymbolReference.ToString();
+	        }
+
+	        return expressionToAppend;
+	    }
 	}
 
     /// <summary>
