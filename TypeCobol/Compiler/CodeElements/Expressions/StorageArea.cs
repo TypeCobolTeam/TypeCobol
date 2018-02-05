@@ -121,6 +121,7 @@ namespace TypeCobol.Compiler.CodeElements
 			Subscripts = new List<SubscriptExpression>(subscripts);
 		}
 
+        [NotNull]
 		public List<SubscriptExpression> Subscripts { get; private set; }
 
         /// <summary>Ambiguities in the grammar in the first phase of parsing</summary>
