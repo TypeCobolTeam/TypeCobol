@@ -144,14 +144,14 @@ namespace TypeCobol.Compiler.CodeElements
 			return ToString(false);
 		}
 
-        public new string ToString(bool onlySubscript)
+        public string ToString(bool onlySubscript)
         {
             var str = new System.Text.StringBuilder();
             if (SymbolReference != null)
             {
                 if(!onlySubscript)
                     str.Append(SymbolReference.Name);
-                if (Subscripts != null && Subscripts.Count > 0)
+                if (Subscripts.Count > 0)
                 {
                     str.Append('(');
                     foreach (var subscript in Subscripts)
@@ -164,9 +164,9 @@ namespace TypeCobol.Compiler.CodeElements
                 }
                 if (ReferenceModifier != null)
                 {
-                    str.Append(" (")
+                    str.Append("(")
                         .Append(GetExpressionToAppend(ReferenceModifier.LeftmostCharacterPosition))
-                        .Append(" : ")
+                        .Append(":")
                         .Append(GetExpressionToAppend(ReferenceModifier.Length))
                         .Append(')');
                 }
