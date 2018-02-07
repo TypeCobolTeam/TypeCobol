@@ -42,6 +42,9 @@ namespace CLI.Test
 #endif
         }
 
+        /// <summary>
+        /// Test that even with a execToStep>Preprocessor, then the parsing will halt on preprocessor phase because copy are missing
+        /// </summary>
         [TestMethod]
         public void TestHaltOnMissingCopy_1()
         {
@@ -50,6 +53,15 @@ namespace CLI.Test
 #else
              CLITestHelper.Test("haltOnMissingCopy_1", ReturnCode.MissingCopy);
 #endif
+        }
+
+        /// <summary>
+        /// Avoid loading intrinsic and dependencies when execToStep <= Preprocessor
+        /// </summary>
+        [TestMethod]
+        public void AvoidLoadingIntrinsicAndDependencies()
+        {
+            CLITestHelper.Test("avoidLoadingIntrinsicAndDependencies", ReturnCode.Success);
         }
 
         [TestMethod]
