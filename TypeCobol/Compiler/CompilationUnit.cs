@@ -168,9 +168,8 @@ namespace TypeCobol.Compiler
                 {
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root = temporarySnapshot.Root;
-                    List<Diagnostic> diagnostics = temporarySnapshot.Diagnostics ?? new List<Diagnostic>();
+                    List<Diagnostic> diagnostics = new List<Diagnostic>();
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
-                    //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
                     ProgramClassParserStep.CrossCheckPrograms(root);
               
                     // Capture the result of the parse in a new snapshot
@@ -252,7 +251,7 @@ namespace TypeCobol.Compiler
         private IList<Diagnostic> OnlyCodeElementDiagnostics() {
             var codeElementDiagnostics = new List<Diagnostic>();
 
-            if (CodeElementsDocumentSnapshot != null && CodeElementsDocumentSnapshot.ParserDiagnostics != null)
+            if (CodeElementsDocumentSnapshot?.ParserDiagnostics != null)
             {
                 codeElementDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
             }
@@ -272,7 +271,9 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
-        /// Return All diagnostics (token, CodeElement, Node, ...) with the possibily to exclude Node diagnostics
+        /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibily to exclude Node diagnostics
+        /// 
+        /// Note that a snapshot only contains diagnostics related to its own phase.
         /// </summary>
         /// <param name="includeNodeDiagnostics"></param>
         /// <returns></returns>
@@ -282,10 +283,14 @@ namespace TypeCobol.Compiler
             allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
 
             if (includeNodeDiagnostics) {
+                if (TemporaryProgramClassDocumentSnapshot != null) {
+                    allDiagnostics.AddRange(TemporaryProgramClassDocumentSnapshot.Diagnostics);
+                }
+
+
                 if (ProgramClassDocumentSnapshot != null) {
                     //Get all nodes diagnostics using visitor. 
-                    if (ProgramClassDocumentSnapshot.Root != null)
-                        ProgramClassDocumentSnapshot.Root.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
+                    ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
 
                     if (ProgramClassDocumentSnapshot.Diagnostics != null)
                         allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);

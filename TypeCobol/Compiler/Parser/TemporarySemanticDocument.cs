@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
@@ -11,7 +12,7 @@ namespace TypeCobol.Compiler.Parser
 
     public class TemporarySemanticDocument : ICompilerStepDocumentSnapshot<ICodeElementsLine, ICodeElementsLine>
     {
-        public TemporarySemanticDocument(CodeElementsDocument previousSnapShot, DocumentVersion<ICodeElementsLine> codeElementsLinesVersion, ISearchableReadOnlyList<ICodeElementsLine> codeElementsLines, SourceFile root, List<Diagnostic> diagnostics, Dictionary<CodeElement, Node> nodeCodeElementLinkers)
+        public TemporarySemanticDocument(CodeElementsDocument previousSnapShot, DocumentVersion<ICodeElementsLine> codeElementsLinesVersion, ISearchableReadOnlyList<ICodeElementsLine> codeElementsLines, SourceFile root, [NotNull] List<Diagnostic> diagnostics, Dictionary<CodeElement, Node> nodeCodeElementLinkers)
         {
             PreviousStepSnapshot = previousSnapShot;
             Root = root;
@@ -28,6 +29,7 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>
         /// Errors found while parsing Program or Class
         /// </summary>
+        [NotNull]
         public List<Diagnostic> Diagnostics { get; private set; }
 
         //USeless in this case
