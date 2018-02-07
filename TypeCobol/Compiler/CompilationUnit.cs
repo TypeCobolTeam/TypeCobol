@@ -283,17 +283,24 @@ namespace TypeCobol.Compiler
             allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
 
             if (includeNodeDiagnostics) {
-                if (TemporaryProgramClassDocumentSnapshot != null) {
-                    allDiagnostics.AddRange(TemporaryProgramClassDocumentSnapshot.Diagnostics);
+                lock (lockObjectForTemporarySemanticDocument)
+                {
+                    if (TemporaryProgramClassDocumentSnapshot != null)
+                    {
+                        allDiagnostics.AddRange(TemporaryProgramClassDocumentSnapshot.Diagnostics);
+                    }
                 }
 
+                lock (lockObjectForProgramClassDocumentSnapshot)
+                {
+                    if (ProgramClassDocumentSnapshot != null)
+                    {
+                        //Get all nodes diagnostics using visitor. 
+                        ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
 
-                if (ProgramClassDocumentSnapshot != null) {
-                    //Get all nodes diagnostics using visitor. 
-                    ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
-
-                    if (ProgramClassDocumentSnapshot.Diagnostics != null)
-                        allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+                        if (ProgramClassDocumentSnapshot.Diagnostics != null)
+                            allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+                    }
                 }
             }
 
