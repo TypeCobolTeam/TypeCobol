@@ -27,6 +27,11 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         Snippet = 15,
         Color = 16,
         File = 17,
-        Reference = 18
+        Reference = 18,
+
+        //Custom Kinds
+        IntrinsicType = 19,
+
+
     }
 }

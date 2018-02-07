@@ -88,7 +88,7 @@ namespace TypeCobol.LanguageServer
                 completionItem.insertText = typeIsPublic
                     ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
                     : type.Name;
-                completionItem.kind = CompletionItemKind.Class;
+                completionItem.kind = typeIsIntrinsic ? CompletionItemKind.IntrinsicType : CompletionItemKind.Class;
                 completionItems.Add(completionItem);
             }
             return completionItems;
