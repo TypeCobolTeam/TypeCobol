@@ -1076,9 +1076,25 @@ namespace TypeCobol.Compiler.CodeModel
         public IDictionary<string, List<Program>> Programs =
             new Dictionary<string, List<Program>>(StringComparer.InvariantCultureIgnoreCase);
 
+        /// <summary>
+        /// Add a program to this symbolTable
+        /// </summary>
+        /// <param name="program"></param>
         public void AddProgram(Program program)
         {
             Add(Programs, program);
+        }
+
+        /// <summary>
+        /// Add Multiple programs to SymbolTable
+        /// </summary>
+        /// <param name="programs"></param>
+        public void AddPrograms(List<Program> programs)
+        {
+            foreach (var program in programs)
+            {
+                AddProgram(program);
+            }
         }
 
         public List<Program> GetProgram(StorageArea storageArea, ParameterList profile = null)
@@ -1121,6 +1137,12 @@ namespace TypeCobol.Compiler.CodeModel
             var programs = this.GetTableFromScope(Scope.Namespace)
                 .Programs.Values.SelectMany(t => t).Where(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase));
             return programs.ToList();
+        }
+
+        public List<Program> GetPrograms()
+        {
+            return this.GetTableFromScope(Scope.Namespace)
+                .Programs.Values.SelectMany(t => t).ToList();
         }
 
 

@@ -105,14 +105,7 @@ namespace TypeCobol.Compiler.Parser
         {
             List<Diagnostic> diagnostics = new List<Diagnostic>();
             AddDiagnosticsAttachedInContext(diagnostics, context);
-            if (diagnostics.Count > 0)
-            {
-                return diagnostics;
-            }
-            else
-            {
-                return null;
-            }
+            return diagnostics.Count > 0 ? diagnostics : null;
         }
 
         private void AddDiagnosticsAttachedInContext(List<Diagnostic> diagnostics, ParserRuleContext context)

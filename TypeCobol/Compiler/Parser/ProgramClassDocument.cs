@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     public class ProgramClassDocument
     {
-        public ProgramClassDocument(CodeElementsDocument previousStepSnapshot, int programClassVersion, SourceFile root, List<Diagnostic> diagnostics, Dictionary<CodeElement, Node> nodeCodeElementLinkers)
+        public ProgramClassDocument(TemporarySemanticDocument previousStepSnapshot, int programClassVersion, SourceFile root, List<Diagnostic> diagnostics, Dictionary<CodeElement, Node> nodeCodeElementLinkers)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;

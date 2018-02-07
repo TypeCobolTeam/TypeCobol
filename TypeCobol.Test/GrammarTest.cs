@@ -82,7 +82,7 @@ namespace TypeCobol.Test {
                 var document = new TypeCobol.Parser();
 			    var options = new TypeCobolOptions
 			    {
-			        ExecToStep = ExecutionStep.SemanticCheck,
+			        ExecToStep = ExecutionStep.CrossCheck,
 #if EUROINFO_RULES
                     AutoRemarksEnable = autoRemarks
 #endif

@@ -81,7 +81,7 @@ namespace TypeCobol.Server {
                 }
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
-                    config.ExecToStep = ExecutionStep.SemanticCheck; //If there is no given output file, we can't run generation, fallback to SemanticCheck
+                    config.ExecToStep = ExecutionStep.CrossCheck; //If there is no given output file, we can't run generation, fallback to CrossCheck
 
 		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
 		            return exit(ReturnCode.OutputFileError, "The number of output files must be equal to the number of input files.");

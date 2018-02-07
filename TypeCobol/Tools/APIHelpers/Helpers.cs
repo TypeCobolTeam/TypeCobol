@@ -31,7 +31,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, intrinsicDocumentFormat);
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
@@ -139,15 +139,21 @@ namespace TypeCobol.Tools.APIHelpers
                         diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
                     }
 
-                    if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || !parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Any())
+                    if (parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs == null || !parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs.Any())
                     {
                         throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
                     }
 
-                    foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
+                    foreach (var program in parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs)
                     {
                         var declarationTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
                         var globalTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+
+                        var previousPrograms = table.GetPrograms();
+                        foreach (var previousProgram in previousPrograms)
+                        {
+                            previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace).AddProgram(program);
+                        }
                         
 
                         //If there is no public types or functions, then call diagEvent
@@ -171,6 +177,11 @@ namespace TypeCobol.Tools.APIHelpers
                     throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e);
                 }
             }
+
+            //Reset symbolTable of all dependencies 
+
+
+
             return table;
         }
     }
