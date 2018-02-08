@@ -350,7 +350,7 @@ namespace TypeCobol.LanguageServer
                 if (diagDetected)
                 {
                     var message = "An error occured while trying to load Intrinsics or Dependencies files.";
-                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = message }); //Send notification to client
+                    LoadingIssueEvent(null, new LoadingIssueEvent() {Message = message}); //Send notification to client
 
                     var sb = new StringBuilder();
                     sb.AppendLine(message);
@@ -360,10 +360,14 @@ namespace TypeCobol.LanguageServer
                         sb.AppendLine(dicItem.Key); //Add file path 
                         foreach (var diagText in dicItem.Value)
                         {
-                            sb.AppendLine(" - "+diagText); //Add associated diagnostics
+                            sb.AppendLine(" - " + diagText); //Add associated diagnostics
                         }
                     }
                     WarningTrigger(null, sb.ToString()); //Send warning notification to display info to the user. 
+                }
+                else
+                {//Send an LoadingIssueEvent with an empty message to tell the client that there are no issues.
+                    LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "" });
                 }
             }
             catch (TypeCobolException typeCobolException)
