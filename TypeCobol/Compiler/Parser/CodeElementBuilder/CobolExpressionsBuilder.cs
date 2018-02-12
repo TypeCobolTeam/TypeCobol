@@ -567,7 +567,8 @@ namespace TypeCobol.Compiler.Parser
 
 		internal ConditionalExpression CreateConditionalExpression(CodeElementsParser.ConditionalExpressionContext context)
 		{
-
+		    if (context == null)
+		        return null;
 			if(context.classCondition() != null)
 			{
 				return CreateClassCondition(context.classCondition());
@@ -1045,7 +1046,10 @@ namespace TypeCobol.Compiler.Parser
             return variable;
         }
 
-		internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable3Context context) {
+		internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable3Context context)
+		{
+		    if (context == null)
+		        return null;
             NumericVariable variable = null;
             if (context.identifier() != null)
 				variable = new NumericVariable(CreateIdentifier(context.identifier()));
@@ -1063,6 +1067,9 @@ namespace TypeCobol.Compiler.Parser
 
 		internal NumericVariable CreateNumericVariableOrIndex(CodeElementsParser.NumericVariableOrIndexContext context)
 		{
+		    if (context == null)
+		        return null;
+
             NumericVariable variable = null;
 			if (context.identifierOrIndexName() != null)
 			{
@@ -1553,6 +1560,9 @@ namespace TypeCobol.Compiler.Parser
 
 		internal ReceivingStorageArea CreateDataOrIndexStorageArea(CodeElementsParser.DataOrIndexStorageAreaContext context)
 		{
+		    if (context == null)
+		        return null; 
+
 			var storageArea = new ReceivingStorageArea(StorageDataType.Numeric,
 				CreateIdentifierOrIndexName(context.identifierOrIndexName()));
 
