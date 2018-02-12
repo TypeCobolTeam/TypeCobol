@@ -22,6 +22,11 @@
 
        PROCEDURE DIVISION.
 
+      *KO Input parameter Type is wrong
+       DECLARE PROCEDURE MyProc PRIVATE
+           INPUT    myDate     TYPE PIC X.
+       END-DECLARE.
+
        DECLARE PROCEDURE GetPtrFn
            INPUT  ptrFn function-pointer
                   ptrPr procedure-pointer.

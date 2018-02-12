@@ -1,4 +1,5 @@
-﻿       IDENTIFICATION DIVISION.
+﻿      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM0001.
        DATA DIVISION .
        working-storage section.

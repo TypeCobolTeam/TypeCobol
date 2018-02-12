@@ -153,7 +153,7 @@ namespace TypeCobol.Codegen.Generators
             foreach (TypeCobol.Compiler.Scanner.ITokensLine line in this.CompilationResults.TokensLines)
             {
                 Compiler.Parser.CodeElementsLine codeElemnLine = line as Compiler.Parser.CodeElementsLine;
-                if (codeElemnLine.TokensWithCompilerDirectives != null)
+                if (codeElemnLine?.TokensWithCompilerDirectives != null)
                 {
                     foreach (var token in codeElemnLine.TokensWithCompilerDirectives)
                     {
@@ -210,7 +210,7 @@ namespace TypeCobol.Codegen.Generators
                             {
                                 lineNumbers.Add(lastLine);
                                 SourceDocument.SourceLine srcLine = TargetDocument[lastLine - 1];
-                                lineOffsets.Add(srcLine.From - srcFirstLine.From);
+                                if (srcFirstLine != null) lineOffsets.Add(srcLine.From - srcFirstLine.From);
                             }
                         }
                         SourceDocument.SourceLine curLine = TargetDocument[curLineIndex - 1];
@@ -466,5 +466,7 @@ namespace TypeCobol.Codegen.Generators
             //var date_diff = date2 - date1;
             //System.Console.Out.WriteLine(date_diff);
         }
+
+        public string TypeCobolVersion { get; set; }
     }
 }

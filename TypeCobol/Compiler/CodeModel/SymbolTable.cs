@@ -24,14 +24,14 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// Allow to get all the Type's references from any Enclosing Scope or Program
         /// </summary>
-        public Dictionary<TypeDefinition, List<DataDefinition>> GetAllEnclosingTypeReferences()
+        public Dictionary<Node, List<DataDefinition>> GetAllEnclosingTypeReferences()
         {
-            var result = new Dictionary<TypeDefinition, List<DataDefinition>>();
+            var result = new Dictionary<Node, List<DataDefinition>>();
             SymbolTable scope = this;//By default set this symboltable as the starting point
 
             while (scope != null) //Loop on enclosing scope until null scope. 
             {
-                foreach (var typeReference in scope.TypesReferences) //new KeyValuePair allow to loose object ref
+                foreach (var typeReference in scope.TypesReferences.Select(pt => new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
                 {
                     if (!result.ContainsKey(typeReference.Key)) //Avoid duplicate key
                         result.Add(typeReference.Key, typeReference.Value);
@@ -45,13 +45,14 @@ namespace TypeCobol.Compiler.CodeModel
                         if (program != null && program.SymbolTable != null &&
                             program.SymbolTable.TypesReferences != null)
                         {
-                            foreach (var progTypeRef in program.SymbolTable.TypesReferences) //new KeyValuePair allow to loose object ref
+                            foreach (var progTypeRef in program.SymbolTable.TypesReferences.Select(pt =>
+                                        new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
                             {
                                 if (!result.ContainsKey(progTypeRef.Key)) //Avoid duplicate key
                                     result.Add(progTypeRef.Key, progTypeRef.Value);
                                 else
                                 {
-                                    foreach (var reference in progTypeRef.Value.ToList()) //Add the reference values not already discovered
+                                    foreach (var reference in progTypeRef.Value) //Add the reference values not already discovered
                                     {
                                         if (!result[progTypeRef.Key].Contains(reference))
                                             result[progTypeRef.Key].Add(reference);
@@ -258,11 +259,20 @@ namespace TypeCobol.Compiler.CodeModel
                 if (scope == Scope.Namespace || scope == Scope.Intrinsic)
                     throw new NotSupportedException();
 
-                foreach (var variable in GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t))
+                var currentTable = GetTableFromScope(scope);
+
+                if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
-                    SeekVariableType(dataType, variable, ref foundedVariables);
+                    var references = currentTable.TypesReferences.Where(t => t.Key.DataType == dataType).SelectMany(t => t.Value);
+                    foundedVariables.AddRange(references);
                 }
-          
+                else
+                {
+                    foreach (var variable in currentTable.DataEntries.Values.SelectMany(t => t))
+                    {
+                        SeekVariableType(dataType, variable, ref foundedVariables);
+                    }
+                }
             }
         }
 
@@ -274,16 +284,16 @@ namespace TypeCobol.Compiler.CodeModel
                     foundedVariables.Add(variable);
                 return;
             }
-              
-            if (variable.DataType != null && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
+
+            if (variable.DataType != null && variable.DataType != DataType.Boolean && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
             {
                 var types = GetTypes(t => t.DataType == variable.DataType, new List<Scope>
-                                                                    {
-                                                                        Scope.Declarations,
-                                                                        Scope.Global,
-                                                                        Scope.Intrinsic,
-                                                                        Scope.Namespace
-                                                                    });
+                {
+                    Scope.Declarations,
+                    Scope.Global,
+                    Scope.Intrinsic,
+                    Scope.Namespace
+                });
 
                 foreach (var type in types)
                 {
@@ -1066,9 +1076,25 @@ namespace TypeCobol.Compiler.CodeModel
         public IDictionary<string, List<Program>> Programs =
             new Dictionary<string, List<Program>>(StringComparer.InvariantCultureIgnoreCase);
 
+        /// <summary>
+        /// Add a program to this symbolTable
+        /// </summary>
+        /// <param name="program"></param>
         public void AddProgram(Program program)
         {
             Add(Programs, program);
+        }
+
+        /// <summary>
+        /// Add Multiple programs to SymbolTable
+        /// </summary>
+        /// <param name="programs"></param>
+        public void AddPrograms(List<Program> programs)
+        {
+            foreach (var program in programs)
+            {
+                AddProgram(program);
+            }
         }
 
         public List<Program> GetProgram(StorageArea storageArea, ParameterList profile = null)
@@ -1111,6 +1137,12 @@ namespace TypeCobol.Compiler.CodeModel
             var programs = this.GetTableFromScope(Scope.Namespace)
                 .Programs.Values.SelectMany(t => t).Where(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase));
             return programs.ToList();
+        }
+
+        public List<Program> GetPrograms()
+        {
+            return this.GetTableFromScope(Scope.Namespace)
+                .Programs.Values.SelectMany(t => t).ToList();
         }
 
 
@@ -1193,7 +1225,7 @@ namespace TypeCobol.Compiler.CodeModel
             var programs = GetProgram(nameSpace);
   
             if (programs.Count > 1)
-                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault().Name));
+                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault()?.Name));
 
             return programs.FirstOrDefault();
         }

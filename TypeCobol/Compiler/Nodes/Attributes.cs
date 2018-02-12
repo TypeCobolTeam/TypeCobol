@@ -69,7 +69,7 @@ internal class NameAttribute: Attribute {
         if (node != null)
         {
             var named = ((Node)o).CodeElement as NamedCodeElement;
-            return named.Name;
+            return named?.Name;
         }
         else
             return null;
@@ -121,7 +121,7 @@ internal class TypeAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var data = o as DataDefinition;
 		if (data == null) return null;
-		return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement).LevelNumber.Value);
+		return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement)?.LevelNumber?.Value);
 	}
 }
 
@@ -131,10 +131,11 @@ internal class TypeCobolAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var map = o as IDictionary<StorageArea,object>;
 		var results = new Dictionary<StorageArea,object>();
-		foreach (var kv in map)
-			if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
-				results.Add(kv.Key,kv.Value);
-		return results;
+	    if (map != null)
+	        foreach (var kv in map)
+	            if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
+	                results.Add(kv.Key,kv.Value);
+	    return results;
 	}
 }
 

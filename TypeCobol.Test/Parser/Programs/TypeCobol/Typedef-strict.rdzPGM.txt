@@ -14,6 +14,7 @@ Line 76[24,32] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be s
 Line 76[8,63] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
 Line 78[8,44] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines3' is not referenced
 Line 87[11,63] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part of a TYPEDEF
+Line 87[11,63] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'varNoRedefines4A' is strictly-typed
 Line 96[11,68] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
 Line 100[40,47] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[40,47:EXTERNAL]<EXTERNAL>
 Line 106[39,46] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[39,46:EXTERNAL]<EXTERNAL>

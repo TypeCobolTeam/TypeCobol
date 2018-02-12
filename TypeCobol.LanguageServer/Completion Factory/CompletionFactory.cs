@@ -126,7 +126,7 @@ namespace TypeCobol.LanguageServer
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
 
             //Get procedure name or qualified name
-            string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(arrangedCodeElement.ArrangedConsumedTokens);
+            string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(arrangedCodeElement?.ArrangedConsumedTokens);
 
             //Try to get procedure by its name
             var calledProcedures =
@@ -141,7 +141,7 @@ namespace TypeCobol.LanguageServer
                     });
 
 
-            var alreadyGivenTokens = arrangedCodeElement.ArrangedConsumedTokens
+            var alreadyGivenTokens = arrangedCodeElement?.ArrangedConsumedTokens
                 .SkipWhile(t => t != lastSignificantToken).Skip(1)
                 .TakeWhile(t => t.TokenType != TokenType.OUTPUT && t.TokenType != TokenType.IN_OUT)
                 .Except(new List<Token>() { userFilterToken })
@@ -151,12 +151,13 @@ namespace TypeCobol.LanguageServer
             TokenType? previousTokenType = null;
 
             //Loop that allows to ignore qualified name parameters. 
-            foreach (var givenToken in alreadyGivenTokens)
-            {
-                if (givenToken.TokenType == TokenType.UserDefinedWord && (previousTokenType == null || previousTokenType.Value == TokenType.UserDefinedWord))
-                    alreadyGivenParametersCount++;
-                previousTokenType = givenToken.TokenType;
-            }
+            if (alreadyGivenTokens != null)
+                foreach (var givenToken in alreadyGivenTokens)
+                {
+                    if (givenToken.TokenType == TokenType.UserDefinedWord && (previousTokenType == null || previousTokenType.Value == TokenType.UserDefinedWord))
+                        alreadyGivenParametersCount++;
+                    previousTokenType = givenToken.TokenType;
+                }
 
 
             var potentialVariablesForCompletion = new List<DataDefinition>();
@@ -280,46 +281,82 @@ namespace TypeCobol.LanguageServer
 
             //Get the token before MatchingToken 
             var userTokenToSeek =
-                arrangedCodeElement.ArrangedConsumedTokens.ElementAt(
+                arrangedCodeElement?.ArrangedConsumedTokens.ElementAt(
                     arrangedCodeElement.ArrangedConsumedTokens.IndexOf(qualifiedNameSeparatorToken) - 1);
             var qualifiedNameTokens = new List<Token>();
-            qualifiedNameTokens.AddRange(
-                    arrangedCodeElement.ArrangedConsumedTokens.Where(
-                        t => t.TokenType == TokenType.UserDefinedWord || t.TokenType == TokenType.QualifiedNameSeparator));
-            //Remove all the userdefinedword token and also QualifiedNameToken
-            arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(qualifiedNameTokens).ToList();
-            //We only wants the token that in front of any QualifiedName 
-            //Get the first significant token (i.e CALL/TYPE/...)
-            Token firstSignificantToken, tempUserFilterToken;
-            CodeElementMatcher.MatchCompletionCodeElement(position, new List<CodeElementWrapper> { arrangedCodeElement }, out tempUserFilterToken,
-                out firstSignificantToken);
-
-            //For MOVE INPUT OUTPUT variables etc.. , get all the childrens of a variable that are accessible
-            //Try to find corresponding variables
-            string qualifiedName = string.Join(".",
-                        qualifiedNameTokens.Where(
-                                t =>
-                                    t.TokenType == TokenType.UserDefinedWord &&
-                                    !(t.Text == userFilterText && userFilterToken != null && t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
-                                    ((t.StartIndex >= firstSignificantToken.EndColumn &&
-                                      t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line) &&
-                                      ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
-                            .Select(t => t.Text));
-            var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
-
-            if (possibleVariables != null && possibleVariables.Count > 0)
+            if (arrangedCodeElement != null)
             {
-                //Get childrens of a type to get completion possibilities
-                foreach (var variable in possibleVariables)
+                qualifiedNameTokens.AddRange(
+                    arrangedCodeElement.ArrangedConsumedTokens?.Where(
+                        t => t?.TokenType == TokenType.UserDefinedWord || t?.TokenType == TokenType.QualifiedNameSeparator));
+                //Remove all the userdefinedword token and also QualifiedNameToken
+                arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(qualifiedNameTokens).ToList();
+                //We only wants the token that in front of any QualifiedName 
+                //Get the first significant token (i.e CALL/TYPE/...)
+                Token firstSignificantToken, tempUserFilterToken;
+                CodeElementMatcher.MatchCompletionCodeElement(position, new List<CodeElementWrapper> { arrangedCodeElement }, out tempUserFilterToken,
+                    out firstSignificantToken);
+
+                //For MOVE INPUT OUTPUT variables etc.. , get all the childrens of a variable that are accessible
+                //Try to find corresponding variables
+                string qualifiedName = string.Join(".",
+                    qualifiedNameTokens.Where(
+                            t =>
+                                t.TokenType == TokenType.UserDefinedWord &&
+                                !(t.Text == userFilterText && userFilterToken != null && t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
+                                ((t.StartIndex >= firstSignificantToken.EndColumn &&
+                                  t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line) &&
+                                ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
+                        .Select(t => t.Text));
+                var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
+
+                if (possibleVariables != null && possibleVariables.Count > 0)
                 {
-                    var childrens = new List<Node>();
-                    if (variable.Children != null && variable.Children.Count > 0) //It's a variable with levels inside
-                        childrens.AddRange(variable.Children);
-                    else //It's a typed variable, we have to search for childrens in the type
+                    //Get childrens of a type to get completion possibilities
+                    foreach (var variable in possibleVariables)
                     {
-                        var typeChildrens = GetTypeChildrens(node.SymbolTable, variable);
+                        var childrens = new List<Node>();
+                        if (variable.Children != null && variable.Children.Count > 0) //It's a variable with levels inside
+                            childrens.AddRange(variable.Children);
+                        else //It's a typed variable, we have to search for childrens in the type
+                        {
+                            var typeChildrens = GetTypeChildrens(node.SymbolTable, variable);
+                            if (typeChildrens != null)
+                                childrens.AddRange(typeChildrens.Where(t => t.Name != null));
+                        }
+
+                        completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
+                            childrens.Where(
+                                    c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
+                                .Select(child => child as DataDefinition), false));
+                    }
+                }
+                else
+                { //If no variables found, it's could be a children declared in a typedef..
+                    var childrens = new List<Node>();
+                    var potentialTypes =
+                        node.SymbolTable.GetTypes(
+                            t =>
+                                t.Children != null &&
+                                t.Children.Any(
+                                    tc => tc.Name != null && tc.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)),
+                            new List<SymbolTable.Scope>
+                            {
+                                SymbolTable.Scope.Declarations,
+                                SymbolTable.Scope.Global,
+                                SymbolTable.Scope.Intrinsic,
+                                SymbolTable.Scope.Namespace
+                            });
+
+                    foreach (var nodeType in potentialTypes.SelectMany(t => t.Children).Where(c => c != null && c.Name != null && c.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+
+                        var nodeDataDef = nodeType as DataDefinition;
+                        if (nodeDataDef == null) continue;
+
+                        var typeChildrens = GetTypeChildrens(node.SymbolTable, nodeDataDef);
                         if (typeChildrens != null)
-                            childrens.AddRange(typeChildrens.Where(t => t.Name != null));
+                            childrens.AddRange(typeChildrens);
                     }
 
                     completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
@@ -327,46 +364,12 @@ namespace TypeCobol.LanguageServer
                                 c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
                             .Select(child => child as DataDefinition), false));
                 }
-            }
-            else
-            { //If no variables found, it's could be a children declared in a typedef..
-                var childrens = new List<Node>();
-                var potentialTypes =
-                    node.SymbolTable.GetTypes(
-                        t =>
-                            t.Children != null &&
-                            t.Children.Any(
-                                tc => tc.Name != null && tc.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)),
-                        new List<SymbolTable.Scope>
-                        {
-                            SymbolTable.Scope.Declarations,
-                            SymbolTable.Scope.Global,
-                            SymbolTable.Scope.Intrinsic,
-                            SymbolTable.Scope.Namespace
-                        });
 
-                foreach (var nodeType in potentialTypes.SelectMany(t => t.Children).Where(c => c != null && c.Name != null && c.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)))
+                if (firstSignificantToken != null)
                 {
-
-                    var nodeDataDef = nodeType as DataDefinition;
-                    if (nodeDataDef == null) continue;
-
-                    var typeChildrens = GetTypeChildrens(node.SymbolTable, nodeDataDef);
-                    if (typeChildrens != null)
-                        childrens.AddRange(typeChildrens);
-                }
-
-                completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
-                        childrens.Where(
-                                c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
-                            .Select(child => child as DataDefinition), false));
-            }
-
-            if (firstSignificantToken != null)
-            {
-                switch (firstSignificantToken.TokenType)
-                {
-                    case TokenType.CALL:
+                    switch (firstSignificantToken.TokenType)
+                    {
+                        case TokenType.CALL:
                         {
                             //On CALL get possible procedures and functions in the seeked program
                             var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
@@ -382,14 +385,14 @@ namespace TypeCobol.LanguageServer
                                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                                             new List<SymbolTable.Scope>
                                             {
-                                            SymbolTable.Scope.Declarations
+                                                SymbolTable.Scope.Declarations
                                             });
                                 completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, false));
 
                             }
                             break;
                         }
-                    case TokenType.TYPE:
+                        case TokenType.TYPE:
                         {
                             //On TYPE get possible public types in the seeked program
                             var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
@@ -403,13 +406,14 @@ namespace TypeCobol.LanguageServer
                                                     StringComparison.InvariantCultureIgnoreCase),
                                             new List<SymbolTable.Scope>
                                             {
-                                            SymbolTable.Scope.Declarations,
-                                            SymbolTable.Scope.Global
+                                                SymbolTable.Scope.Declarations,
+                                                SymbolTable.Scope.Global
                                             });
                                 completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForType(types, node, false));
                             }
                             break;
                         }
+                    }
                 }
             }
 
@@ -422,6 +426,8 @@ namespace TypeCobol.LanguageServer
         {
             var completionItems = new List<CompletionItem>();
             var node = GetMatchingNode(fileCompiler, codeElement);
+            if (node == null)
+                return completionItems;
             List<DataDefinition> variables = null;
 
             variables = node.SymbolTable.GetVariables(predicate, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
@@ -518,12 +524,12 @@ namespace TypeCobol.LanguageServer
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(fileCompiler, codeElement);
 
-            var tokensUntilCursor = arrangedCodeElement.ArrangedConsumedTokens
+            var tokensUntilCursor = arrangedCodeElement?.ArrangedConsumedTokens
             .Except(new List<Token>() { userFilterToken })
             .Where(t => (t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1).Reverse();
             
             //Detect what's before the OF token
-            var tokenBeforeOf = tokensUntilCursor.Skip(1).FirstOrDefault(); //Skip(1) will skip the OF token
+            var tokenBeforeOf = tokensUntilCursor?.Skip(1).FirstOrDefault(); //Skip(1) will skip the OF token
 
             if (tokenBeforeOf == null || tokenBeforeOf.TokenType != TokenType.ADDRESS) //For now we only need to filter on adress. 
                 return null;
@@ -533,7 +539,7 @@ namespace TypeCobol.LanguageServer
                 case TokenType.ADDRESS:
                 {
                     var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
-                    GetCompletionForAddressOf(ref completionItems, node, contextToken, userFilterText);
+                    GetCompletionForAddressOf(completionItems, node, contextToken, userFilterText);
                     break;
                 }  
             }
@@ -543,22 +549,26 @@ namespace TypeCobol.LanguageServer
 
         /// <summary>
         /// Get completion Item for a types ADDRESS OF demand. 
-        /// This meythod will modify the completionItems ref parameter.
-        /// CompletionItems will be filtered on varaibles declared in LINKAGE SECTION and with LevelNumber equal to 01 or 77. 
+        /// This method will modify the completionItems ref parameter.
+        /// CompletionItems will be filtered on variables declared in LINKAGE SECTION and with LevelNumber equal to 01 or 77. 
         /// </summary>
-        /// <param name="completionItems"></param>
-        /// <param name="aarangedCodeElement"></param>
-        /// <param name="matchingNode"></param>
-        /// <param name="userFilterText"></param>
-        public static void GetCompletionForAddressOf(ref List<CompletionItem> completionItems, Node node, Token contextToken, string userFilterText)
+        /// <param name="completionItems">Ref to a list of completion items</param>
+        /// <param name="node">Node found on cursor position</param>
+        /// <param name="contextToken">ContextToken to select if it's a SET or something else</param>
+        /// <param name="userFilterText">Variable Name Filter</param>
+        public static void GetCompletionForAddressOf(List<CompletionItem> completionItems, Node node, Token contextToken, string userFilterText)
         {
             var potentialVariable = new List<DataDefinition>();
+            if (node == null)
+                return;
 
             if (contextToken != null && contextToken.TokenType == TokenType.SET)
             {
-                //Get all the varaibles in Linkage section with Level 01 or 77 and starting by userFilterText. 
-                potentialVariable.AddRange(node.SymbolTable.GetVariables(v => v.IsFlagSet(Node.Flag.LinkageSectionNode)
-                                                && ((v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 1 || (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 77)
+                //Get all the variables in Linkage section with Level 01 or 77 and starting by userFilterText. 
+                potentialVariable.AddRange(node.SymbolTable.GetVariables(v => v != null
+                                                && v.IsFlagSet(Node.Flag.LinkageSectionNode)
+                                                && v.CodeElement is DataDefinitionEntry
+                                                && (((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 1 || ((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 77)
                                                 && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                                                 new List<SymbolTable.Scope>() { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global }));
             }
@@ -566,10 +576,12 @@ namespace TypeCobol.LanguageServer
             {
                 //Get all the variables from any section with level 01 or 77 and starting by userFilterText.
                 potentialVariable.AddRange(node.SymbolTable.GetVariables(
-                        v => ((v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 1 ||
-                             (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 77) &&
-                             v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                        new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
+                    v => v != null
+                         && v.CodeElement is DataDefinitionEntry
+                         && (((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 1 ||
+                             ((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 77)
+                         && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                    new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global}));
             }
            
 

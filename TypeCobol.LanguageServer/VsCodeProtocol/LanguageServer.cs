@@ -46,10 +46,15 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         // RPC server used to send Remote Procedure Calls to the client
         public IRPCServer rpcServer { get; private set; }
 
-        private void NotifyException(Exception e)
+        public void NotifyException(Exception e)
         {
             AnalyticsWrapper.Telemetry.TrackException(e);
             this.RemoteWindow.ShowErrorMessage(e.Message + "\n" + e.StackTrace);
+        }
+
+        public void NotifyWarning(string message)
+        {
+            this.RemoteWindow.ShowWarningMessage(message);
         }
 
         // --- Generic notification and request handlers ---

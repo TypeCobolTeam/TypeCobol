@@ -189,7 +189,7 @@ namespace TypeCobol.Transform.Test
 
         public bool Equals(System.IO.FileInfo f1, System.IO.FileInfo f2)
         {
-            return (f1.Name == f2.Name);
+            return f2 != null && (f1 != null && (f1.Name == f2.Name));
         }
 
         // Return a hash that reflects the comparison criteria. According to the   

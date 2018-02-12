@@ -27,12 +27,12 @@ public class DivideSimpleStatement: DivideStatement {
 			ArithmeticExpression right = new NumericVariableOperand(Divisor);
 			foreach(var receiver in SendingAndReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea.ToString();
-				if (!map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+				string key = rarea?.ToString();
+				if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
 				var left = new NumericVariableOperand(new NumericVariable(rarea));
 				var operation = ArithmeticOperator.Divide.CreateOperation(left, right);
 				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-				map[key].Add(operation);
+			    if (key != null) map[key].Add(operation);
 			}
 			return map;
 		}
@@ -72,11 +72,11 @@ public class DivideGivingStatement: DivideStatement {
 			left = ArithmeticOperator.Divide.CreateOperation(left, right);
 			foreach(var receiver in ReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea.ToString();
-				if (!map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+				string key = rarea?.ToString();
+				if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
 				var operation = left;
 				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-				map[key].Add(operation);
+			    if (key != null) map[key].Add(operation);
 			}
 			return map;
 		}
@@ -116,19 +116,22 @@ public class DivideRemainderStatement: DivideStatement {
 
 			operation = ArithmeticOperator.Divide.CreateOperation(left, right);
 			var rarea = Quotient.ReceivingStorageArea.StorageArea;
-			string key = rarea.ToString();
-			map[key] = new List<ArithmeticExpression>();
-			if (Quotient.IsRounded)
-			     map[key].Add(ArithmeticOperator.Round.CreateOperation(operation));
-			else map[key].Add(operation);
+			string key = rarea?.ToString();
+		    if (key != null)
+		    {
+		        map[key] = new List<ArithmeticExpression>();
+		        if (Quotient.IsRounded)
+		            map[key].Add(ArithmeticOperator.Round.CreateOperation(operation));
+		        else map[key].Add(operation);
 
-			operation = ArithmeticOperator.Remainder.CreateOperation(left, right);
-			rarea = Remainder.StorageArea;
-			key = rarea.ToString();
-			map[key] = new List<ArithmeticExpression>();
-			map[key].Add(operation);
+		        operation = ArithmeticOperator.Remainder.CreateOperation(left, right);
+		        rarea = Remainder.StorageArea;
+		    }
+		    key = rarea?.ToString();
+		    if (key != null)
+		        map[key] = new List<ArithmeticExpression> {operation};
 
-			return map;
+		    return map;
 		}
 	}
 

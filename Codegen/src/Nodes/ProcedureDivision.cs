@@ -47,14 +47,14 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 				var done = new List<string>();
 				foreach(var parameter in UsingParameters) {
 					var data = parameter.StorageArea;
-					string name = data != null? data.SymbolReference.Name : null;
+					string name = data?.SymbolReference?.Name;
 					if (done.Contains(name)) continue;
 					else done.Add(name);
 					string strmode = "BY REFERENCE ";
 					if (parameter.SharingMode.Value == ParameterSharingMode.ByValue) strmode = "BY VALUE ";
 					string strusing = c==0? "      USING ":"            ";
 					string strname = "?ANONYMOUS?";
-					if (parameter.StorageArea != null) strname = CreateName(data.SymbolReference);
+					if (parameter.StorageArea != null) strname = CreateName(data?.SymbolReference);
 					_cache.Add(new TextLineSnapshot(-1, strusing+strmode+strname, null));
 					c++;
 				}

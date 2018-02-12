@@ -13,64 +13,6 @@
     <RestorePackages>true</RestorePackages>
     <DoNotCopyLocalIfInGac>true</DoNotCopyLocalIfInGac>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>TRACE;DEBUG;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF, NET45</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'EI_Release|AnyCPU' ">
-    <OutputPath>..\bin\EI_Release\</OutputPath>
-    <DefineConstants>TRACE;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF, NET45</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Debug_Net40|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\EI_Debug_Net40\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF, NET40</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Release_Net40|AnyCPU'">
-    <OutputPath>..\bin\EI_Release_Net40\</OutputPath>
-    <DefineConstants>TRACE;EUROINFO_RULES, EUROINFO_LEGACY_REPLACING_SYNTAX, EUROINFO_LEGACY_TYPEDEF, NET40</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.4.5.3\lib\net45\Antlr4.Runtime.dll</HintPath>
@@ -94,6 +36,7 @@
     <Compile Include="Completion Factory\CompletionElligibleTokens.cs" />
     <Compile Include="Completion Factory\CompletionFactory.cs" />
     <Compile Include="Completion Factory\CompletionFactoryHelpers.cs" />
+    <Compile Include="FileWatchers\DependenciesFileWatcher.cs" />
     <Compile Include="JsonRPC\ErrorCodes.cs" />
     <Compile Include="JsonRPC\IRPCHandler.cs" />
     <Compile Include="JsonRPC\IRPCServer.cs" />
@@ -108,15 +51,17 @@
     <Compile Include="StdioHttp\IMessageServer.cs" />
     <Compile Include="StdioHttp\ServerLogLevel.cs" />
     <Compile Include="StdioHttp\StdioHttpServer.cs" />
-    <Compile Include="TypeCobolCustomLanguageServer\CustomJSonRPCServer.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolCustomLanguageServer.cs" />
     <Compile Include="TypeCobolServer.cs" />
     <Compile Include="TypeCobolServerHost.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesParams.cs" />
     <Compile Include="Utilities\DebugTextWriter.cs" />
+    <Compile Include="Utilities\MessageActionWrapper.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionContext.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionParams.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionRequest.cs" />
@@ -206,6 +151,7 @@
     <Compile Include="VsCodeProtocol\Workspace Changes\WorkspaceEdit.cs" />
     <Compile Include="VsCodeProtocol\Workspace Symbol Provider\WorkspaceSymbolParams.cs" />
     <Compile Include="VsCodeProtocol\Workspace Symbol Provider\WorkspaceSymbolRequest.cs" />
+    <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

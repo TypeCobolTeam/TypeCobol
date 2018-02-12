@@ -1,0 +1,56 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Subscript.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyPicVar PIC X(10).
+       01 MyGroup.
+          05 MyValue  PIC 2.
+       01  StringArray.
+           05 OCCURS 10 INDEXED BY StringIdx.
+              10  Pnt               POINTER.
+              10  Lgt               PIC 9(09) COMP.
+              10  PrcTyp            TYPE Date.
+              10  Var1              pic X(50).
+
+       01 .
+         05 MyArray2D occurs 50.
+            10 MyArray2D_Date type Date occurs 50.
+            10 MyArray2D_PicX pic X(50) occurs 50.
+       PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE Foo
+           INPUT    arg1      TYPE DATE
+                    arg2      pic X(50).
+       END-DECLARE.
+       DECLARE PROCEDURE CompressString PRIVATE
+           INPUT    arg1      POINTER
+                    arg2      PIC 9(09) COMP
+                    arg3      TYPE DATE
+                    arg4      pic X(50)
+                    arg5      pic X(50)
+           OUTPUT   FinalLength     PIC X(10).
+        END-DECLARE.
+      
+            CALL CompressString
+            INPUT    StringArray::Pnt (StringIdx)
+                     StringArray::Lgt (StringIdx)
+                     StringArray::PrcTyp (StringIdx)
+                     StringArray::Var1(StringIdx)
+                     StringArray::Var1(StringIdx)(1:50)
+            OUTPUT
+                     MyPicVar(1:10) 
+     
+            CALL Foo INPUT MyArray2D_Date (1 , 2)
+                           MyArray2D_PicX(12,2)(1:)
+            CALL Foo INPUT MyArray2D_Date (1, 2)
+                           MyArray2D_PicX(12,2)(1:50)
+            CALL Foo INPUT MyArray2D_Date (1,2)
+                           MyArray2D_PicX(12,2)
+            CALL Foo INPUT MyArray2D_Date (1 2)
+                           MyArray2D_PicX(12,2)(MyValue:50)
+            CALL Foo INPUT MyArray2D_Date (1  2)
+                           MyArray2D_PicX(12,2)(MyValue:)
+           .
+
+       END PROGRAM Subscript.

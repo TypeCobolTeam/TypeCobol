@@ -43,7 +43,7 @@ namespace TypeCobol.Codegen.Actions
         public void Execute()
         {
 #if EUROINFO_RULES
-            if ((Source as Program).IsNested)
+            if (((Program) Source).IsNested)
                 return; //We dont have to care about nested program. It prevents from generating REMARKS directive multiple times
 
             //Get tokensLine

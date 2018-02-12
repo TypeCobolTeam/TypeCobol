@@ -21,5 +21,7 @@ namespace TypeCobol.Codegen
         void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat);
 
         List<Diagnostic> Diagnostics { get; }
+
+        string TypeCobolVersion { get; set; }
     }
 }

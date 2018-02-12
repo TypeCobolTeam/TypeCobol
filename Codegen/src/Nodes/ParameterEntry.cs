@@ -93,7 +93,7 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
                     List<string> rootProcedures;
                     List<System.Tuple<string, string>> rootVars;
                     GeneratorHelper.ComputeTypedProperPaths(this, this.CodeElement(), customtype, out rootProcedures, out rootVars);
-                    _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, rootProcedures, rootVars, customtype, customtype, 2, 1));
+                    _cache.AddRange(TypedDataNode.InsertChildren(Layout, rootProcedures, rootVars, customtype, customtype, 2, 1));
                 }
 			}
 			return _cache;

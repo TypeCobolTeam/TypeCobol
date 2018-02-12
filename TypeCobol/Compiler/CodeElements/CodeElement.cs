@@ -169,6 +169,7 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         private bool? _isInsideCopy = null; 
+        public CopyDirective FirstCopyDirective { get; private set; }
 
         /// <summary>
         /// Return true if this CodeElement is inside a COPY
@@ -182,8 +183,8 @@ namespace TypeCobol.Compiler.CodeElements
         private bool? _isAcrossSourceFile = null;
 
         private void CalculateIsAcrossSourceFile() {
-            if (_isAcrossSourceFile == null || _isInsideCopy == null)
-            {
+            if (_isAcrossSourceFile == null || _isInsideCopy == null) {
+                FirstCopyDirective = null;
                 CopyDirective firstSource = null; //null = in the main source file
 
                 if (ConsumedTokens != null && ConsumedTokens.Count > 1)
@@ -203,11 +204,14 @@ namespace TypeCobol.Compiler.CodeElements
                         {
                             _isAcrossSourceFile = true;
                             _isInsideCopy = true;
+                            FirstCopyDirective = copyDirective ?? firstSource;
                             return;
                         }
+                        
                     }
                     _isAcrossSourceFile = false;
                     _isInsideCopy = firstSource != null;
+                    FirstCopyDirective = firstSource;
                 } else {
                     _isInsideCopy = false;
                     _isAcrossSourceFile = false;

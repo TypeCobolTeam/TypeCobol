@@ -73,8 +73,7 @@ namespace TypeCobol.LanguageServer
                     //The closestToken to cursor as to be added to this codeElement as a userdefinedword
                     if (closestTokenToCursor.TokenType != TokenType.UserDefinedWord)
                     {
-                        codeElements.LastOrDefault()
-                            .ArrangedConsumedTokens.Add(new Token(TokenType.UserDefinedWord,
+                        codeElements.LastOrDefault()?.ArrangedConsumedTokens.Add(new Token(TokenType.UserDefinedWord,
                                                         closestTokenToCursor.StartIndex,
                                                         closestTokenToCursor.StopIndex, closestTokenToCursor.TokensLine));
 

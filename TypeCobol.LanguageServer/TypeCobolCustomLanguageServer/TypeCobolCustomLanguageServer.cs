@@ -8,6 +8,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         public TypeCobolCustomLanguageServer(IRPCServer rpcServer) : base(rpcServer)
         {
             rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);
+            rpcServer.RegisterNotificationMethod(NodeRefreshNotification.Type, ReceivedRefreshNodeDemand);
         }
 
         private void CallReceiveMissingCopies(NotificationType notificationType, object parameters)
@@ -22,6 +23,18 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
         }
 
+        private void ReceivedRefreshNodeDemand(NotificationType notificationType, object parameters)
+        {
+            try
+            {
+                OnDidReceiveNodeRefresh((NodeRefreshParams) parameters);
+            }
+            catch (Exception e)
+            {
+                this.NotifyException(e);
+            }
+        }
+
         /// <summary>
         /// The Missing copies notification is sent from the client to the server
         /// when the client failled to load copies, it send back a list of missing copies to the server.
@@ -29,6 +42,16 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         public virtual void OnDidReceiveMissingCopies(MissingCopiesParams parameter)
         {
             //Nothing to do for now, maybe add some telemetry here...
+        }
+
+        /// <summary>
+        /// The Node Refresh notification is sent from the client to the server 
+        /// It will force the server to do a Node Phase analyze. 
+        /// </summary>
+        /// <param name="parameter"></param>
+        public virtual void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
+        {
+            
         }
 
         /// <summary>

@@ -139,7 +139,8 @@ namespace TypeCobol.Compiler.Parser
             {
                 parameter.UserDefinedDataType =
                     CobolWordsBuilder.CreateQualifiedDataTypeReference(context.cobol2002TypeClause());
-                parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
+                if (parameter.UserDefinedDataType != null)
+                    parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
             } else if (context.POINTER() != null) {
                 parameter.Usage = CreateDataUsageProperty(DataUsage.Pointer, context.POINTER());
             }
@@ -550,11 +551,11 @@ namespace TypeCobol.Compiler.Parser
                     {
                         var nonAmbiguousHead =
                             new SymbolReference(
-                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference).Head
+                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference)?.Head
                                 .NameLiteral, SymbolType.TCFunctionName);
                         var nonAmbiguousTail =
                             new SymbolReference(
-                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference).Tail
+                                (ambiguousSymbolReference.MainSymbolReference as TypeCobolQualifiedSymbolReference)?.Tail
                                 .NameLiteral, SymbolType.ProgramName);
 
                         TypeCobolQualifiedSymbolReference newQualifiedSymbolReferece =

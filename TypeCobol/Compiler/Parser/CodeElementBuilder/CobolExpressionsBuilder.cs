@@ -208,17 +208,18 @@ namespace TypeCobol.Compiler.Parser
 
 		internal StorageArea CreateLinageCounterSpecialRegister(CodeElementsParser.LinageCounterSpecialRegisterContext context)
 		{
-			var specialRegister = new FilePropertySpecialRegister(
-				ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER()),
-				CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()));
-            if(specialRegister.DataDescriptionEntry != null) {
-                var dataDescription = specialRegister.DataDescriptionEntry;
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.DataDescriptionEntry.DataName.NameLiteral.Token] = specialRegister.DataDescriptionEntry.DataName;
-            }
-            if (specialRegister.SymbolReference != null) {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
-            }
-            return specialRegister;
+		    if (CobolWordsBuilder == null) return null;
+		    var specialRegister = new FilePropertySpecialRegister(
+		        ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER()),
+		        CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()));
+		    if(specialRegister.DataDescriptionEntry != null) {
+		        var dataDescription = specialRegister.DataDescriptionEntry;
+		        CobolWordsBuilder.symbolInformationForTokens[specialRegister.DataDescriptionEntry.DataName.NameLiteral.Token] = specialRegister.DataDescriptionEntry.DataName;
+		    }
+		    if (specialRegister.SymbolReference != null) {
+		        CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
+		    }
+		    return specialRegister;
 		}
 
 		internal StorageArea CreateAddressOfSpecialRegister(CodeElementsParser.AddressOfSpecialRegisterContext context)
@@ -1520,7 +1521,7 @@ namespace TypeCobol.Compiler.Parser
         internal ReceivingStorageArea CreateNumericStorageArea(CodeElementsParser.NumericStorageAreaContext context)
 		{
 			var storageArea = new ReceivingStorageArea(StorageDataType.Numeric,
-				CreateIdentifier(context.identifier()));
+				CreateIdentifier(context?.identifier()));
 
             // Collect storage area read/writes at the code element level
             this.storageAreaWrites.Add(storageArea);
@@ -1531,7 +1532,7 @@ namespace TypeCobol.Compiler.Parser
 		internal ReceivingStorageArea CreateAlphanumericStorageArea(CodeElementsParser.AlphanumericStorageAreaContext context)
 		{
 			var storageArea = new ReceivingStorageArea(StorageDataType.Alphanumeric,
-				CreateIdentifier(context.identifier()));
+				CreateIdentifier(context?.identifier()));
 
             // Collect storage area read/writes at the code element level
             this.storageAreaWrites.Add(storageArea);

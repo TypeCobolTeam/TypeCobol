@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using Analytics;
 using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler;
@@ -27,10 +28,14 @@ namespace TypeCobol.LanguageServer
     /// </summary>
     class TypeCobolServer : TypeCobolCustomLanguageServer
     {
-        public TypeCobolServer(IRPCServer rpcServer) : base(rpcServer) { }
+        public TypeCobolServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue) : base(rpcServer)
+        {
+            _MessagesActionsQueue = messagesActionsQueue;
+        }
 
         // -- Initialization : create workspace and return language server capabilities --
         private Workspace typeCobolWorkspace;
+        private Queue<MessageActionWrapper> _MessagesActionsQueue;
 
         #region Override LSP Methods
 
@@ -40,9 +45,10 @@ namespace TypeCobol.LanguageServer
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
             // Initialize the workspace
-            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, ((CustomJSonRPCServer) rpcServer).ActionQueue);
+            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, _MessagesActionsQueue);
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
-
+            typeCobolWorkspace.ExceptionTriggered += ExceptionTriggered;
+            typeCobolWorkspace.WarningTrigger += WarningTrigger;
             // Return language server capabilities
             var initializeResult = base.OnInitialize(parameters);
             initializeResult.capabilities.textDocumentSync = TextDocumentSyncKind.Incremental;
@@ -51,8 +57,7 @@ namespace TypeCobol.LanguageServer
             completionOptions.resolveProvider = false;
             completionOptions.triggerCharacters = new string[] {"::"};
             initializeResult.capabilities.completionProvider = completionOptions;
-            SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions();
-            sigHelpOptions.triggerCharacters = new string[0];
+            SignatureHelpOptions sigHelpOptions = new SignatureHelpOptions {triggerCharacters = new string[0]};
             initializeResult.capabilities.signatureHelpProvider = sigHelpOptions;
 
             return initializeResult;
@@ -78,7 +83,7 @@ namespace TypeCobol.LanguageServer
         public override void OnDidChangeTextDocument(DidChangeTextDocumentParams parameters)
         {
 
-            var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
+            var fileCompiler = GetFileCompilerFromStringUri(parameters.uri, false); //Text Change do not have to trigger node phase, it's only a another event that will do it
             if (fileCompiler == null)
                 return;
 
@@ -154,7 +159,7 @@ namespace TypeCobol.LanguageServer
                     {
                         //Allows to detect if the next line was supressed
                     }
-                    if (contentChange.text.Length == 0)
+                    if (contentChange.text?.Length == 0)
                     {
                         lineUpdates = new List<string>();
                     }
@@ -682,6 +687,12 @@ namespace TypeCobol.LanguageServer
             typeCobolWorkspace.UpdateMissingCopies(new Uri(parameter.textDocument.uri), parameter.Copies);
         }
 
+        public override void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
+        {
+            var fileCompiler = GetFileCompilerFromStringUri(parameter.textDocument.uri, false);
+            typeCobolWorkspace.RefreshSyntaxTree(fileCompiler);
+        }
+
         #endregion
 
         /// <summary>
@@ -724,6 +735,16 @@ namespace TypeCobol.LanguageServer
         private void LoadingIssueDetected(object sender, LoadingIssueEvent loadingIssueEvent)
         {
             SendLoadingIssue(new LoadingIssueParams() {Message = loadingIssueEvent.Message});
+        }
+
+        private void ExceptionTriggered(object sender, ThreadExceptionEventArgs exception)
+        {
+            this.NotifyException(exception.Exception);
+        }
+
+        private void WarningTrigger(object sender, string message)
+        {
+            this.NotifyWarning(message);
         }
 
 
@@ -769,13 +790,16 @@ namespace TypeCobol.LanguageServer
             return codeElements.Select(c => new CodeElementWrapper(c));
         }
 
-        private FileCompiler GetFileCompilerFromStringUri(string uri)
+        private FileCompiler GetFileCompilerFromStringUri(string uri, bool acceptNodeRefresh = true)
         {
             Uri objUri = new Uri(uri);
             if (objUri.IsFile)
             {
+                var fileCompiler = typeCobolWorkspace.OpenedFileCompiler[objUri];
                 // Get compilation info for the current file
-                return typeCobolWorkspace.OpenedFileCompiler[objUri];
+                if (acceptNodeRefresh)
+                    typeCobolWorkspace.RefreshSyntaxTree(fileCompiler); //Do a Node Refresh
+                return fileCompiler;
             }
 
             return null;

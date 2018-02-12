@@ -29,9 +29,9 @@ namespace TypeCobol.Codegen
         static GeneratorFactoryManager()
         {
             Singleton = new GeneratorFactoryManager();
-            Instance.RegisterFactory(OutputFormat.Cobol85.ToString(), (id, document, destination, skeletons) => new DefaultGenerator(document, destination, skeletons));
-            Instance.RegisterFactory(OutputFormat.PublicSignatures.ToString(), (id, document, destination, skeletons) => new SignaturesGenerator(destination));
-            Instance.RegisterFactory(OutputFormat.ExpandingCopy.ToString(), (id, document, destination, skeletons) => new ExpandingCopyGenerator(document, destination));
+            Instance.RegisterFactory(OutputFormat.Cobol85.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new DefaultGenerator(document, destination, skeletons, typeCobolVersion));
+            Instance.RegisterFactory(OutputFormat.PublicSignatures.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new SignaturesGenerator(destination, typeCobolVersion));
+            Instance.RegisterFactory(OutputFormat.ExpandingCopy.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new ExpandingCopyGenerator(document, destination));
         }
 
         /// <summary>
@@ -79,11 +79,11 @@ namespace TypeCobol.Codegen
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
         /// <returns>The IGenerator instance if one has been created, null otherwise.</returns>
-        public IGenerator Create(string ID, TypeCobol.Compiler.CompilationDocument document, System.IO.TextWriter destination, List<Skeletons.Skeleton> skeletons)
+        public IGenerator Create(string ID, TypeCobol.Compiler.CompilationDocument document, System.IO.TextWriter destination, List<Skeletons.Skeleton> skeletons, string typeCobolVersion)
         {
             if (!RegistryMap.ContainsKey(ID))
                 return null;
-            return RegistryMap[ID](ID, document, destination, skeletons);
+            return RegistryMap[ID](ID, document, destination, skeletons, typeCobolVersion);
         }
     }
 }

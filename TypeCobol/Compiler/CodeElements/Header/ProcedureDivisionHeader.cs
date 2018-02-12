@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.CodeElements
 					}
 					var named = inputParam.StorageArea;
 					if (named == null) str.Append('?');
-					else str.Append(named.SymbolReference.Name);
+					else str.Append(named.SymbolReference?.Name);
 				}
 				str.AppendLine();
 			}
@@ -54,7 +54,7 @@ namespace TypeCobol.Compiler.CodeElements
 				str.Append("- ReturningDataName = ");
 				var named = ReturningParameter.StorageArea;
 				if (named == null) str.Append('?');
-				else str.Append(named.SymbolReference.Name);
+				else str.Append(named.SymbolReference?.Name);
 				str.AppendLine();
 			}
 			return str.ToString();

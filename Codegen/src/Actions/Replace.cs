@@ -70,7 +70,7 @@ namespace TypeCobol.Codegen.Actions
                 int count = node.Children.Count;
                 TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = node.Children[0] as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
                 //Add the -false
-                token.ReplaceCode = token.ReplaceCode + "-false";
+                if (token != null) token.ReplaceCode = token.ReplaceCode + "-false";
                 //Create a Token to replase the "false" to TRUE ==> lookup for the last one;
                 var consumedTokens = node.CodeElement.ConsumedTokens;
                 count = consumedTokens.Count;

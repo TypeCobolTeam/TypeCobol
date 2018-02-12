@@ -110,28 +110,34 @@ namespace TypeCobol.Server
         {
             var parser = new Parser();
             bool diagDetected = false;
-            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate(object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+
+            if (config.ExecToStep > ExecutionStep.Preprocessor)
             {
-                //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
-                diagDetected = true;
-                var diagnostic = diagEvent.Diagnostic;
-                Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
-                    diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
-                    "Error while parsing " + diagEvent.Path + ": " + diagnostic, diagEvent.Path);
-            };
+                #region Event Diags Handler
+                EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+                {
+                    //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                    diagDetected = true;
+                    var diagnostic = diagEvent.Diagnostic;
+                    Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
+                        diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
+                        "Error while parsing " + diagEvent.Path + ": " + diagnostic, diagEvent.Path);
+                };
+                EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+                {
+                    //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                    Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
+                };
+                #endregion
 
-            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load of the intrinsics
+                parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
+                parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, DependencyErrorEvent); //Load dependencies
 
+                if (diagDetected)
+                    throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
+            }
 
-            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
-            {
-                //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
-                Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
-            };
-            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, DependencyErrorEvent); //Load of the dependency files
-           
-            if (diagDetected)
-                throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
+         
 
             ReturnCode returnCode = ReturnCode.Success;
             for (int c = 0; c < config.InputFiles.Count; c++)
@@ -139,7 +145,6 @@ namespace TypeCobol.Server
                 string path = config.InputFiles[c];
                 try
                 {
-
                     var typeCobolOptions = new TypeCobolOptions
                                             {
                                                 HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
@@ -231,7 +236,7 @@ namespace TypeCobol.Server
                     {
                         var generator = GeneratorFactoryManager.Instance.Create(TypeCobol.Tools.Options_Config.OutputFormat.ExpandingCopy.ToString(),
                             parser.Results,
-                            new StreamWriter(config.ExpandingCopyFilePath), null);
+                            new StreamWriter(config.ExpandingCopyFilePath), null, null);
                         generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
                     }
                     catch(Exception e)
@@ -252,10 +257,10 @@ namespace TypeCobol.Server
 
                         //Get Generator from specified config.OutputFormat
                         var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(), parser.Results,
-                            new StreamWriter(config.OutputFiles[c]), skeletons);
+                            new StreamWriter(config.OutputFiles[c]), skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion);
 
                         if (generator == null) {
-                            throw new GenerationException("Unkown OutputFormat=" + config.OutputFormat + "_", path);
+                            throw new GenerationException("Unknown OutputFormat=" + config.OutputFormat + "_", path);
                         }
 
                         //Generate and check diagnostics

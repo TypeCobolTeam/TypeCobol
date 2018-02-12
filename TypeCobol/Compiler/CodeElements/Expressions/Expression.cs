@@ -383,7 +383,7 @@ namespace TypeCobol.Compiler.CodeElements
 				if (maybeunary) { }
 				else str.Append(' ').Append('0');
 			else str.Append(' ').Append(RightOperand);
-			str.Append(' ').Append((char)Operator.Value);
+			str.Append(' ').Append((char)Operator?.Value);
 			return str.ToString();
 		}
 	}

@@ -81,6 +81,12 @@ namespace TypeCobol.Compiler
         /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
+        public FileCompiler([NotNull] CompilationProject compilationProject, string fileName, bool isCopyFile) :
+            this(null, fileName, null, compilationProject.SourceFileProvider, compilationProject, compilationProject.ColumnsLayout, null, compilationProject.CompilationOptions, null, isCopyFile, null, compilationProject, null)
+        { }
+        /// <summary>
+        /// Load a Cobol source file in memory
+        /// </summary>
         public FileCompiler(string libraryName, string fileName, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, TypeCobolOptions compilerOptions, CodeModel.SymbolTable customSymbols, bool isCopyFile, CompilationProject compilationProject) :
             this(libraryName, fileName, null, sourceFileProvider, documentProvider, columnsLayout, null, compilerOptions, customSymbols, isCopyFile, null, compilationProject, null)
         { }
@@ -114,7 +120,7 @@ namespace TypeCobol.Compiler
         { }
 
         /// <summary>
-        /// Common internal implementation for all 4 constructors above
+        /// Common internal implementation for all constructors above
         /// </summary>
         private FileCompiler(string libraryName, string fileName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile,
             [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
@@ -155,7 +161,7 @@ namespace TypeCobol.Compiler
             chrono.Start();
             if (textDocument == null)
             {
-                TextDocument = new ReadOnlyTextDocument(sourceFile.Name, sourceFile.Encoding, columnsLayout, sourceFile.ReadChars());
+                TextDocument = new ReadOnlyTextDocument(sourceFile?.Name, sourceFile?.Encoding, columnsLayout, sourceFile?.ReadChars());
             }
             // 2.b Load it in an existing text document in memory
             else if (sourceFile != null)
@@ -195,7 +201,7 @@ namespace TypeCobol.Compiler
         public void CompileOnce()
         {
             if (CompilerOptions.ExecToStep == null)
-                CompilerOptions.ExecToStep = ExecutionStep.SemanticCheck;
+                CompilerOptions.ExecToStep = ExecutionStep.CrossCheck;
 
             if (CompilationResultsForCopy != null)
             {
@@ -226,7 +232,12 @@ namespace TypeCobol.Compiler
                 if (!(CompilerOptions.ExecToStep > ExecutionStep.SyntaxCheck)) return;
 
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Semantic Step");
-                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //SemanticCheck
+                CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //SemanticCheck
+
+                if (!(CompilerOptions.ExecToStep > ExecutionStep.SemanticCheck)) return;
+
+                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] CrossCheck Step");
+                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
             }
 
 
@@ -301,7 +312,7 @@ namespace TypeCobol.Compiler
                     {
                         waitHandles[i] = new EventWaitHandle(false, EventResetMode.AutoReset);
                     }
-                    scannerTimer.Dispose(waitHandles[0]);
+                    scannerTimer?.Dispose(waitHandles[0]);
                     preprocessorTimer.Dispose(waitHandles[1]);
                 }
                 else
@@ -311,7 +322,7 @@ namespace TypeCobol.Compiler
                     {
                         waitHandles[i] = new EventWaitHandle(false, EventResetMode.AutoReset);
                     }
-                    scannerTimer.Dispose(waitHandles[0]);
+                    scannerTimer?.Dispose(waitHandles[0]);
                     preprocessorTimer.Dispose(waitHandles[1]);
                     codeElementsParserTimer.Dispose(waitHandles[2]);
                     programClassParserTimer.Dispose(waitHandles[3]);

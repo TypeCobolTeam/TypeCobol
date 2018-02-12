@@ -1,9 +1,10 @@
 ﻿--- Diagnostics ---
 Line 6[25,31] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[25,31:TYPEDEF]<TYPEDEF>
 Line 9[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[19,25:TYPEDEF]<TYPEDEF>
-Line 142[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[9,15:DECLARE]<DECLARE>
-Line 154[9,15] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[9,15:DECLARE]<DECLARE>
-Line 160[8,14] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions". RuleStack=cobolCompilationUnit>cobolProgram>procedureDivision>functionDeclaration,  OffendingSymbol=[8,14:DECLARE]<DECLARE>
+Line 136[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
+Line 142[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
+Line 154[9,36] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
+Line 160[8,35] <27, Error, Syntax> - Syntax error : A function "conflict" with the same profile already exists in namespace "DateFunctions".
 
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False

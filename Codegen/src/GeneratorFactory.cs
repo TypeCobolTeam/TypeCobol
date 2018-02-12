@@ -13,5 +13,5 @@ namespace TypeCobol.Codegen
     /// <param name="destination">The Output stream for the generated code</param>
     /// <param name="skeletons">All skeletons pattern for code generation </param>
     /// <returns>An instance of the IGenerator interface if one is created, null otherwise</returns>
-    public delegate IGenerator GeneratorFactory (String ID, TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons);
+    public delegate IGenerator GeneratorFactory (String ID, TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion);
 }

@@ -15,8 +15,8 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public TypeCobolGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons)
-            : base(document, destination, skeletons)
+        public TypeCobolGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion)
+            : base(document, destination, skeletons, typeCobolVersion)
         {
         }
 

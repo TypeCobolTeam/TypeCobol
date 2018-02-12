@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.File
 {
@@ -27,6 +28,18 @@ namespace TypeCobol.Compiler.File
         public SourceFileProvider()
         {
             CobolLibraries = new List<ICobolLibrary>();
+        }
+        
+        /// <summary>
+        /// Add all Cobol files contained in a local directory, filtered by a set of extensions, to the default text library
+        /// </summary>
+        /// <param name="rootPath">Local directory containing all the Cobol files of this library</param>
+        /// <param name="includeSubdirectories">Does this library also includes the files contained in all the subdirectories found below the root path ?</param>
+        /// <param name="fileExtensions">File extensions which should be optionnaly appended to the text name to find corresponding Cobol files (for example : { ".cbl",".cpy" })</param>
+        /// <param name="documentFormat">For of the document (RDZ, FreeFormat)</param>
+        public LocalDirectoryLibrary AddLocalDirectoryLibrary(string rootPath, bool includeSubdirectories, string[] fileExtensions, [NotNull] DocumentFormat documentFormat)
+        {
+            return AddLocalDirectoryLibrary(DEFAULT_LIBRARY_NAME, rootPath, includeSubdirectories, fileExtensions, documentFormat.Encoding, documentFormat.EndOfLineDelimiter, documentFormat.FixedLineLength);
         }
         
         /// <summary>

@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.Scanner
                     while (documentLinesEnumerator.MoveNext())
                     {
                         nextTokensLine = documentLinesEnumerator.Current;
-                        if (nextTokensLine.Type == CobolTextLineType.Continuation /*|| <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
+                        if (nextTokensLine?.Type == CobolTextLineType.Continuation /*|| <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
                         lineToScan.Type == CobolTextLineType.Comment || lineToScan.Type == CobolTextLineType.Blank*/) // see p54 : for continuation, blank lines are treated like comment lines
                         {
                             // Add this line at the end of the list of continuation lines
@@ -291,7 +291,7 @@ namespace TypeCobol.Compiler.Scanner
                         revLineToScanIndex--;
                         lineToScan = reversedEnumerator.Current;
 
-                        if(lineToScan.Type != CobolTextLineType.Continuation /*&&  <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
+                        if(lineToScan?.Type != CobolTextLineType.Continuation /*&&  <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
                            lineToScan.Type != CobolTextLineType.Comment && lineToScan.Type != CobolTextLineType.Blank*/) // see p54 : for continuation, blank lines are treated like comment lines
                         { 
                             firstLineIndex = revLineToScanIndex;
@@ -325,7 +325,7 @@ namespace TypeCobol.Compiler.Scanner
                         lineToScanIndex++;
                         lineToScan = enumerator.Current;
 
-                        if (lineToScan.Type == CobolTextLineType.Continuation /*|| <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
+                        if (lineToScan?.Type == CobolTextLineType.Continuation /*|| <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
                            lineToScan.Type == CobolTextLineType.Comment || lineToScan.Type == CobolTextLineType.Blank*/) // see p54 : for continuation, blank lines are treated like comment lines
                         {
                             // Add this line at the end of the list of continuation lines

@@ -1,0 +1,11 @@
+﻿       01 FOOT00.
+         02 FOOT00-COB.
+          05 FOOT00-DAT-DMD.
+             10 FOOT00-DAT-DMD9            pic  9(008).
+          02 FOOT00-COB-LGR PIC S9(9) BINARY.
+          02 FOOT00-DD.
+           05 FILX0000 PIC X(96).
+           05 FILX0001 PIC X(96).
+           05 FILX0002 PIC X(96).
+          02 FOOT00-LGMAX-LTNV PIC S9(9) BINARY VALUE 34.
+     

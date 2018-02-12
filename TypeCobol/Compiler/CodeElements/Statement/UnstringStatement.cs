@@ -61,13 +61,13 @@ public class UnstringStatement: StatementElement, VariableWriter {
 			return base.ToString();
 		var str = new StringBuilder("");
 		if (SendingField != null) str.AppendLine("UNSTRING " + SendingField);
-		if (Delimiters.Length > 0) {
+		if (Delimiters?.Length > 0) {
 			str.Append(" DELIMITED BY ");
 			foreach (var delimiter in Delimiters) str.Append(delimiter).Append(" OR ");
 			str.Length -= 4;
 			str.AppendLine();
 		}
-		if (ReceivingFields.Length > 0) {
+		if (ReceivingFields?.Length > 0) {
 			str.Append(" INTO ");
 			foreach (var receiver in ReceivingFields) str.Append(receiver);
 			str.AppendLine();

@@ -1,36 +1,42 @@
 ﻿using System.Linq;
+using System;
+using System.Collections.Generic;
+using Antlr4.Runtime;
+using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements.Expressions;
+using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Nodes;
+using Analytics;
 
-namespace TypeCobol.Compiler.Diagnostics {
-
-    using System;
-    using System.Collections.Generic;
-    using Antlr4.Runtime;
-    using TypeCobol.Compiler.AntlrUtils;
-    using TypeCobol.Compiler.CodeElements;
-    using TypeCobol.Compiler.CodeElements.Expressions;
-    using TypeCobol.Compiler.Parser;
-    using TypeCobol.Compiler.Parser.Generated;
-    using TypeCobol.Compiler.Nodes;
-    using Analytics;
-
-    class TypeDefinitionEntryChecker: CodeElementListener {
-
-        public void OnCodeElement(CodeElement e, ParserRuleContext c) {
+namespace TypeCobol.Compiler.Diagnostics
+{
+    class TypeDefinitionEntryChecker : CodeElementListener
+    {
+        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        {
             var context = c as CodeElementsParser.DataDescriptionEntryContext;
             CheckRedefines(e as DataRedefinesEntry, context);
             CheckTypedef(e as DataTypeDescriptionEntry, context);
         }
-        private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context) {
+
+        private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
+        {
             if (redefines == null) return;
-            if (context.cobol2002TypedefClause() != null) {
+            if (context.cobol2002TypedefClause() != null)
+            {
                 string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
                 DiagnosticUtils.AddError(redefines, message, context.redefinesClause());
             }
         }
-        private void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context) {
+
+        private void CheckTypedef(DataTypeDescriptionEntry typedef,
+            CodeElementsParser.DataDescriptionEntryContext context)
+        {
             if (typedef == null) return;
 
-            if (typedef.LevelNumber.Value != 1)
+            if (typedef.LevelNumber?.Value != 1)
             {
                 string message = "TYPEDEF clause can only be specified for level 01 entries";
                 DiagnosticUtils.AddError(typedef, message, context.cobol2002TypedefClause());
@@ -57,7 +63,7 @@ namespace TypeCobol.Compiler.Diagnostics {
 
             }
 
-            if (typedef.RestrictionLevel == RestrictionLevel.STRONG)//Manage as a STRONG TYPEDEF
+            if (typedef.RestrictionLevel == RestrictionLevel.STRONG) //Manage as a STRONG TYPEDEF
             {
                 if (typedef.InitialValue != null)
                 {
@@ -70,15 +76,17 @@ namespace TypeCobol.Compiler.Diagnostics {
                 {
                     string message = "Elementary TYPEDEF cannot be STRONG";
                     string rulestack = RuleStackBuilder.GetRuleStack(context.cobol2002TypedefClause());
-                    DiagnosticUtils.AddError(typedef, message, ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
+                    DiagnosticUtils.AddError(typedef, message,
+                        ParseTreeUtils.GetFirstToken(context.cobol2002TypedefClause().STRONG()), rulestack);
                 }
             }
         }
     }
 
-    class TypeDefinitionChecker {
-
-        public static void CheckTypeDefinition(TypeDefinition typeDefinition) {
+    class TypeDefinitionChecker
+    {
+        public static void CheckTypeDefinition(TypeDefinition typeDefinition)
+        {
             AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name);
 
             if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
@@ -87,38 +95,56 @@ namespace TypeCobol.Compiler.Diagnostics {
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
 
-            if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1 && !typeDefinition.Usage.HasValue) {
+            if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1 &&
+                !typeDefinition.Usage.HasValue)
+            {
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
-            if (typeDefinition.RestrictionLevel == RestrictionLevel.STRONG) {
-                foreach (var sub in typeDefinition.Children) {
+            if (typeDefinition.RestrictionLevel == RestrictionLevel.STRONG)
+            {
+                foreach (var sub in typeDefinition.Children)
+                {
                     CheckForValueClause(sub, typeDefinition.QualifiedName);
                 }
             }
         }
 
-        private static void CheckForValueClause(Node node, QualifiedName typedef) {
+        private static void CheckForValueClause(Node node, QualifiedName typedef)
+        {
             var codeElement = node.CodeElement as DataDescriptionEntry;
-            if (codeElement != null && codeElement.InitialValue != null) {
-                string message = "Illegal VALUE clause for subordinate \'"+node.Name+"\' of STRONG TYPEDEF \'"+typedef.Head+"\'";
+            if (codeElement != null && codeElement.InitialValue != null)
+            {
+                string message = "Illegal VALUE clause for subordinate \'" + node.Name + "\' of STRONG TYPEDEF \'" +
+                                 typedef.Head + "\'";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
-            foreach(var sub in node.Children) CheckForValueClause(sub, typedef);
+            foreach (var sub in node.Children) CheckForValueClause(sub, typedef);
         }
     }
 
-    class RedefinesChecker: NodeListener {
-
-        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
+    class RedefinesChecker : NodeListener
+    {
+        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program)
+        {
             var redefinesNode = node as DataRedefines;
-            if (redefinesNode == null) {
+            if (redefinesNode == null)
                 return; //not my job
+
+            if (redefinesNode.IsPartOfATypeDef)
+            {
+                DiagnosticUtils.AddError(node, "Illegal REDEFINES as part of a TYPEDEF",
+                    MessageCode.SemanticTCErrorInParser);
             }
-            if (redefinesNode.IsPartOfATypeDef) {
-                DiagnosticUtils.AddError(node, "Illegal REDEFINES as part of a TYPEDEF", MessageCode.SemanticTCErrorInParser);
-                return;
-            }
+
+        }
+
+        public static void OnNode(Node node)
+        {
+            var redefinesNode = node as DataRedefines;
+            if (redefinesNode == null)
+                return; //not my job
+
             var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
             var redefinedVariable = node.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
 
@@ -131,40 +157,50 @@ namespace TypeCobol.Compiler.Diagnostics {
 
             if (redefinedVariable.IsStronglyTyped || redefinedVariable.IsStrictlyTyped)
             {
-                string message = string.Format("Illegal REDEFINES: '{0}' is {1}", redefinesSymbolReference, redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
+                string message = string.Format("Illegal REDEFINES: '{0}' is {1}", redefinesSymbolReference,
+                    redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
         }
     }
 
-class RenamesChecker {
-	public static void OnNode(Node node) {
-		var renames = node as DataRenames;
-	    if (renames == null) {
-	        return; //not my job
-	    }
-	    Check(renames.CodeElement().RenamesFromDataName, renames);
-	    Check(renames.CodeElement().RenamesToDataName, renames);
-	}
-	private static void Check(SymbolReference renames, Node node) {
-		var found = node.SymbolTable.GetVariables(renames);
-		if (found.Count > 1) {
-			string message = "Illegal RENAMES: Ambiguous reference to symbol \'"+renames+"\'";
-			DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
-		}
-		if (found.Count < 1) {
-			string message = "Illegal RENAMES: Symbol \'"+renames+"\' is not referenced";
-			DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
-		}
-		foreach(var v in found) {
+    class RenamesChecker
+    {
+        public static void OnNode(Node node)
+        {
+            var renames = node as DataRenames;
+            if (renames == null)
+            {
+                return; //not my job
+            }
+            Check(renames.CodeElement().RenamesFromDataName, renames);
+            Check(renames.CodeElement().RenamesToDataName, renames);
+        }
+
+        private static void Check(SymbolReference renames, Node node)
+        {
+            var found = node.SymbolTable.GetVariables(renames);
+            if (found.Count > 1)
+            {
+                string message = "Illegal RENAMES: Ambiguous reference to symbol \'" + renames + "\'";
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+            }
+            if (found.Count < 1)
+            {
+                string message = "Illegal RENAMES: Symbol \'" + renames + "\' is not referenced";
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+            }
+            foreach (var v in found)
+            {
                 if (v.IsStronglyTyped || v.IsStrictlyTyped)
                 {
-                    string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames, v.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
+                    string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames,
+                        v.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
                     DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                 }
-		}
-	}
-}
+            }
+        }
+    }
 
     class TypedDeclarationChecker
     {
@@ -199,30 +235,37 @@ class RenamesChecker {
 
             if (data.LevelNumber.Value == 88 || data.LevelNumber.Value == 66)
             {
-                DiagnosticUtils.AddError(node, string.Format("A {0} level variable cannot be typed", data.LevelNumber.Value), MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node,
+                    string.Format("A {0} level variable cannot be typed", data.LevelNumber.Value),
+                    MessageCode.SemanticTCErrorInParser);
             }
 
             if (data.LevelNumber.Value == 77 && foundedType.Children.Count > 0)
             {
-                DiagnosticUtils.AddError(node, "A 77 level variable cannot be typed with a type containing children", MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, "A 77 level variable cannot be typed with a type containing children",
+                    MessageCode.SemanticTCErrorInParser);
             }
-            
+
             if (data.LevelNumber.Value <= 49)
             {
                 browsedTypes.Clear(); //Clear list of browsed types before testing a path
                 long simulatedTypeLevel = SimulatedTypeDefLevel(data.LevelNumber.Value, foundedType);
                 if (simulatedTypeLevel > 49)
                 {
-                    var message = string.Format("Variable '{0}' has to be limited to level {1} because of '{2}' maximum estimated children level",
-                                  data.Name, data.LevelNumber.Value - (simulatedTypeLevel - 49), foundedType.Name);
+                    var message =
+                        string.Format(
+                            "Variable '{0}' has to be limited to level {1} because of '{2}' maximum estimated children level",
+                            data.Name, data.LevelNumber.Value - (simulatedTypeLevel - 49), foundedType.Name);
                     DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                 }
             }
-             
+
             //Check if initial value equals true/false for boolean TYPEDEF
-            if (type == DataType.Boolean && data.InitialValue != null && data.InitialValue.LiteralType != Value.ValueLiteralType.Boolean)
+            if (type == DataType.Boolean && data.InitialValue != null &&
+                data.InitialValue.LiteralType != Value.ValueLiteralType.Boolean)
             {
-                DiagnosticUtils.AddError(node, "Boolean type requires TRUE/FALSE value clause", MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, "Boolean type requires TRUE/FALSE value clause",
+                    MessageCode.SemanticTCErrorInParser);
             }
         }
 
@@ -275,11 +318,12 @@ class RenamesChecker {
         public static void Check(Node node, DataType type, out TypeDefinition foundedType)
         {
             foundedType = null;
-            if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85) return; //nothing to do, Type exists from Cobol 2002
+            if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
+                return; //nothing to do, Type exists from Cobol 2002
             var found = node.SymbolTable.GetType(type);
             if (found.Count < 1)
             {
-                 string message = "TYPE \'" + type.Name + "\' is not referenced";
+                string message = "TYPE \'" + type.Name + "\' is not referenced";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
             else if (found.Count > 1)
@@ -292,42 +336,8 @@ class RenamesChecker {
                 foundedType = found[0];
                 node.TypeDefinition = foundedType;
             }
-                
+
         }
 
     }
-    /*
-    class StronglyTypedReceiverChecker: NodeListener {
-        public IList<Type> GetNodes() { return new List<Type> { typeof(VariableWriter) }; }
-
-        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program) {
-            if (node is Initialize || node is Move || node is Release || node is Return
-                || node is Read || node is Write || node is Rewrite
-                // SET is unspecified, but as a level 88 variable cannot be strongly typed we don't need to check this case
-                // + SET myBool TO TRUE (where myBool is of type BOOL) need to works
-                || node is Set)
-                return;
-
-            var variables = ((VariableWriter)node).VariablesWritten;
-            foreach (var v in variables) {
-                var names = node.SymbolTable.GetVariables(v.Key);
-                foreach (var name in names) {
-                    if (name.IsStronglyTyped) {
-                        string sending = v.Value.ToString();
-                        var enumerable = v.Value as System.Collections.IEnumerable;
-                        if (enumerable != null) {
-                            var str = new System.Text.StringBuilder();
-                            int c = 0;
-                            foreach(var item in enumerable) { str.Append(item).Append(','); c++; }
-                            if (c > 0) str.Length -= 1;
-                            sending = str.ToString();
-                        }
-                        string message = "Cannot write "+sending+" to strongly typed variable "+name.Name+":"+((Typed)name).DataType.Name;
-                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
-                    }
-                }
-            }
-        }
-    }
-    */
 }
