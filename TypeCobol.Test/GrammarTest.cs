@@ -102,7 +102,9 @@ namespace TypeCobol.Test {
                 AppendTextToFiles("- " + document.Results.PerfStatsForScanner.FirstCompilationTime + " ms : scanner\n", timedResultFile);
                 AppendTextToFiles("- " + document.Results.PerfStatsForPreprocessor.FirstCompilationTime + " ms : preprocessor\n", timedResultFile);
                 AppendTextToFiles("- " + document.Results.PerfStatsForCodeElementsParser.FirstCompilationTime + " ms : code elements parser\n", timedResultFile);
-                AppendTextToFiles("- " + document.Results.PerfStatsForProgramClassParser.FirstCompilationTime + " ms : program class parser\n", timedResultFile);
+                AppendTextToFiles("- " + document.Results.PerfStatsForTemporarySemantic.FirstCompilationTime + " ms : temporary semantic class parser\n", timedResultFile);
+                AppendTextToFiles("- " + document.Results.PerfStatsForProgramCrossCheck.FirstCompilationTime + " ms : cross check class parser\n", timedResultFile);
+                
 
                 tested++;
                 Console.WriteLine(filename);

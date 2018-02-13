@@ -98,14 +98,13 @@ namespace TypeCobol.LanguageServer
                 List<string> lineUpdates = null;
                 bool replacementTextStartsWithNewLine = false;
 
-                if (contentChange.text != null && contentChange.text.Length > 0)
+                if (!string.IsNullOrEmpty(contentChange.text))
                 {
                     replacementTextStartsWithNewLine = contentChange.text[0] == '\r' ||
                                                        contentChange.text[0] == '\n';
                     //Allow to know if a new line was added
-                    lineUpdates =
-                        contentChange.text.Replace("\r", "").Split('\n').Where(s => !string.IsNullOrEmpty(s)).ToList();
-                        //Split on \r \n to know the number of lines added
+                    //Split on \r \n to know the number of lines added
+                    lineUpdates = contentChange.text.Replace("\r", "").Split('\n').ToList();
                 }
 
                 // Document cleared
@@ -149,7 +148,7 @@ namespace TypeCobol.LanguageServer
                         //Detected that the add line appeared inside an existing line
                     {
                         lineUpdates.Add(lineUpdates.First());
-                        ///Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
+                        //Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
                     }
 
                     // Check if the last line was deleted
@@ -157,7 +156,7 @@ namespace TypeCobol.LanguageServer
                     if (contentChange.range.end.line > contentChange.range.start.line &&
                         contentChange.range.end.character == 0)
                     {
-                        //Allows to detect if the next line was supressed
+                        //Allows to detect if the next line was suppressed
                     }
                     if (contentChange.text?.Length == 0)
                     {
@@ -197,7 +196,7 @@ namespace TypeCobol.LanguageServer
                     {
                         var textChange = new TextChange(TextChangeType.LineRemoved, firstLineIndex, null);
                         textChangedEvent.TextChanges.Add(textChange);
-                        //Mark the index line to be removed. The index will remains the same for each line delete, beacause text change are apply one after another
+                        //Mark the index line to be removed. The index will remains the same for each line delete, because text change are apply one after another
                     }
 
                     // Insert the updated lines

@@ -26,7 +26,12 @@ namespace TypeCobol.Compiler.Concurrency
         /// <summary>
         /// Individual CodeElement objects are parsed in a coherent tree to form a Program or Class
         /// </summary>
-        ProgramClassParser
+        ProgramClassParser,
+        /// <summary>
+        /// Final compilation phase that will cross check parsed files
+        /// </summary>
+        ProgramCrossCheck
+
     }
 
     /// <summary>
