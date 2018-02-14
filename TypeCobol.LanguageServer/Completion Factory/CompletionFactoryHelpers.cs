@@ -159,12 +159,22 @@ namespace TypeCobol.LanguageServer
 
         public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
         {
-            var variableArrangedQualifiedName = useQualifiedName
-                ? string.Join("::",
-                    variable.VisualQualifiedName.ToString()
-                        .Split(variable.VisualQualifiedName.Separator)
-                        .Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0)) //Skip Program Name
-                : variable.Name;
+
+            var qualifiedName = variable.VisualQualifiedName.ToString()
+                .Split(variable.VisualQualifiedName.Separator)
+                .Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
+
+            var finalQualifiedName = qualifiedName.ToList();
+            var lastElementName = finalQualifiedName.Last();
+            foreach (var name in qualifiedName)
+            {
+                if (lastElementName == name)
+                    break;
+                if (lastElementName.Contains(name))
+                    finalQualifiedName.Remove(name);
+            }
+
+            var variableArrangedQualifiedName = useQualifiedName ? string.Join("::", finalQualifiedName) : variable.Name;
 
             var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
             return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind = CompletionItemKind.Variable };
