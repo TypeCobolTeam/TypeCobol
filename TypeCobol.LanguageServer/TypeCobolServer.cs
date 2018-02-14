@@ -31,11 +31,15 @@ namespace TypeCobol.LanguageServer
         public TypeCobolServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue) : base(rpcServer)
         {
             _MessagesActionsQueue = messagesActionsQueue;
+            _FunctionDeclarationSignatureDictionary = new Dictionary<string, FunctionDeclaration>();
         }
 
         // -- Initialization : create workspace and return language server capabilities --
         private Workspace typeCobolWorkspace;
         private Queue<MessageActionWrapper> _MessagesActionsQueue;
+        private FunctionDeclaration _SignatureCompletionContext;
+        private Dictionary<string, FunctionDeclaration> _FunctionDeclarationSignatureDictionary;
+
 
         #region Override LSP Methods
 
@@ -355,8 +359,9 @@ namespace TypeCobol.LanguageServer
                         }
                         case TokenType.CALL:
                         {
+                            _FunctionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
                             items.AddRange(CompletionFactory.GetCompletionForProcedure(fileCompiler, matchingCodeElement,
-                                userFilterToken));
+                                userFilterToken, _FunctionDeclarationSignatureDictionary));
                             items.AddRange(CompletionFactory.GetCompletionForLibrary(fileCompiler, matchingCodeElement,
                                 userFilterToken));
                             break;
@@ -372,7 +377,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.QualifiedNameSeparator:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForQualifiedName(parameters.position,
-                                fileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken));
+                                fileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken, _FunctionDeclarationSignatureDictionary));
                             break;
                         }
                         case TokenType.INPUT:
@@ -380,7 +385,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.IN_OUT:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForProcedureParameter(parameters.position,
-                                fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
+                                fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, _SignatureCompletionContext));
                             break;
                         }
                         case TokenType.MOVE:
@@ -570,14 +575,30 @@ namespace TypeCobol.LanguageServer
             return defaultDefinition;
         }
 
+
+        public override void OnDidReceiveSignatureHelpContext(string procedureHash)
+        {
+            if (string.IsNullOrEmpty(procedureHash)) //Means that the client leave the context
+            {
+                //Make the context signature completion null
+                _SignatureCompletionContext = null;
+                //Clean up the dictionary
+                _FunctionDeclarationSignatureDictionary.Clear();
+                return;
+            }
+
+            var retrievedFuncDeclarationPair =
+                _FunctionDeclarationSignatureDictionary.FirstOrDefault(item => item.Key == procedureHash);
+
+            if (retrievedFuncDeclarationPair.Key != null)
+                _SignatureCompletionContext = retrievedFuncDeclarationPair.Value;
+        }
+
         public override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
-            if (fileCompiler == null) //No FileCompiler found
-                return null;
 
-            if (fileCompiler.CompilationResultsForProgram == null ||
-                fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
+            if (fileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
             var wrappedCodeElement = CodeElementFinder(fileCompiler, parameters.position).FirstOrDefault();
@@ -613,7 +634,10 @@ namespace TypeCobol.LanguageServer
                 signatureHelp.signatures[0] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(calledProcedure);
                 signatureHelp.activeSignature = 0; //Set the active signature as the one just created
                 //Select the current parameter the user is expecting
-                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position); 
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position);
+
+                //There is only one possibility so the context can be set right now 
+                _SignatureCompletionContext = calledProcedure;
 
                 return signatureHelp;
             }
@@ -642,33 +666,36 @@ namespace TypeCobol.LanguageServer
             FunctionDeclaration bestmatchingProcedure = null;
             int previousMatchingWeight = 0, selectedSignatureIndex = 0;
             foreach (var procedure in calledProcedures)
-            {
-                int matchingWeight = 0;
-                //Test INPUT parameters
-                var inputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
-                if (inputResult) matchingWeight++;
+            { 
+                //The commented parts allow to restrict the potential compatible signature to return to the client
+                //int matchingWeight = 0;
+                ////Test INPUT parameters
+                //var inputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
+                //if (inputResult) matchingWeight++;
 
-                //Test OUTPUT parameters
-                var outputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
-                if (outputResult) matchingWeight++;
+                ////Test OUTPUT parameters
+                //var outputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
+                //if (outputResult) matchingWeight++;
                 
-                //Test INOUT parameters 
-                var inoutResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
-                if (inoutResult) matchingWeight++;
+                ////Test INOUT parameters 
+                //var inoutResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
+                //if (inoutResult) matchingWeight++;
 
-                signatureHelp.signatures[selectedSignatureIndex] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
-
-                if (matchingWeight > previousMatchingWeight && totalGivenParameters > 0)
-                {
-                    previousMatchingWeight = matchingWeight;
-                    signatureHelp.activeSignature = selectedSignatureIndex;
-                    bestmatchingProcedure = procedure;
-                }
+                //if (matchingWeight > 0 && matchingWeight > previousMatchingWeight && totalGivenParameters > 0)
+                //{
+                    var signatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+                    signatureHelp.signatures[selectedSignatureIndex] = signatureInformation;
+                    //previousMatchingWeight = matchingWeight;
+                    //signatureHelp.activeSignature = selectedSignatureIndex;
+                    //bestmatchingProcedure = procedure;
+                //}
                 selectedSignatureIndex++;
             }
 
-            if(bestmatchingProcedure != null)
-                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position);
+            //if (bestmatchingProcedure != null)
+            //{
+            //    signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position);
+            //}
 
             return signatureHelp;
         }

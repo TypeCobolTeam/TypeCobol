@@ -49,7 +49,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
         }
 
         /// <summary>
-        /// This method is used to determine on which argument position the user use. It's able to determine if the user is inside the INPUT/OUTPUT/IN-OUT argument section. 
+        /// This method is used to determine on which argument position the user is. It's able to determine if the user is inside the INPUT/OUTPUT/IN-OUT argument section. 
         /// </summary>
         /// <param name="procedure">The detected procedure</param>
         /// <param name="wrappedCodeElement">One codeElement containing arrangedTokens concerning a procedure CALL</param>
