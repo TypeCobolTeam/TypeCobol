@@ -80,8 +80,12 @@
        PROCEDURE DIVISION
            .
       *    call TCOZCHKP::StartCheckpoint
-           IF TC-TCOZCHKP-ed8db690-Idt not = 'ed8db690'
+           IF ADDRESS OF TC-TCOZCHKP-ed8db690-Item = NULL
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
+           ELSE
+               IF TC-TCOZCHKP-ed8db690-Idt not = 'ed8db690'
+                   PERFORM TC-LOAD-POINTERS-TCOZCHKP
+               END-IF
            END-IF
            CALL TC-TCOZCHKP-ed8db690
            end-call
