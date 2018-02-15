@@ -94,7 +94,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        public static IEnumerable<CompletionItem> CreateCompletionItemsForProcedures(List<FunctionDeclaration> procedures, Node node, Dictionary<string, FunctionDeclaration> functionDeclarationSignatureDictionary,  bool enablePublicFlag = true)
+        public static IEnumerable<CompletionItem> CreateCompletionItemsForProcedures(List<FunctionDeclaration> procedures, Node node, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary,  bool enablePublicFlag = true)
         {
             var completionItems = new List<CompletionItem>();
 
@@ -138,11 +138,11 @@ namespace TypeCobol.LanguageServer
                 completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
                 completionItem.data = new object[3];
-                ((object[])completionItem.data)[1] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
-                ((object[]) completionItem.data)[2] = proc.Hash; //Send procedure hash in order to help completion later. 
+                var signatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
+                ((object[]) completionItem.data)[1] = signatureInformation;
 
                 //Store the link between the hash and the procedure. This will help to determine the procedure parameter completion context later. 
-                functionDeclarationSignatureDictionary.Add(proc.Hash, proc);
+                functionDeclarationSignatureDictionary.Add(signatureInformation, proc);
                 completionItems.Add(completionItem);
             }
 

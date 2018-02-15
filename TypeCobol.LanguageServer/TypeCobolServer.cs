@@ -31,14 +31,14 @@ namespace TypeCobol.LanguageServer
         public TypeCobolServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue) : base(rpcServer)
         {
             _MessagesActionsQueue = messagesActionsQueue;
-            _FunctionDeclarationSignatureDictionary = new Dictionary<string, FunctionDeclaration>();
+            _FunctionDeclarationSignatureDictionary = new Dictionary<SignatureInformation, FunctionDeclaration>();
         }
 
         // -- Initialization : create workspace and return language server capabilities --
         private Workspace typeCobolWorkspace;
         private Queue<MessageActionWrapper> _MessagesActionsQueue;
         private FunctionDeclaration _SignatureCompletionContext;
-        private Dictionary<string, FunctionDeclaration> _FunctionDeclarationSignatureDictionary;
+        private Dictionary<SignatureInformation, FunctionDeclaration> _FunctionDeclarationSignatureDictionary;
 
 
         #region Override LSP Methods
@@ -576,9 +576,9 @@ namespace TypeCobol.LanguageServer
         }
 
 
-        public override void OnDidReceiveSignatureHelpContext(string procedureHash)
+        public override void OnDidReceiveSignatureHelpContext(SignatureHelpContextParams parameters)
         {
-            if (string.IsNullOrEmpty(procedureHash)) //Means that the client leave the context
+            if (parameters?.signatureInformation == null) //Means that the client leave the context
             {
                 //Make the context signature completion null
                 _SignatureCompletionContext = null;
@@ -588,7 +588,7 @@ namespace TypeCobol.LanguageServer
             }
 
             var retrievedFuncDeclarationPair =
-                _FunctionDeclarationSignatureDictionary.FirstOrDefault(item => item.Key == procedureHash);
+                _FunctionDeclarationSignatureDictionary.FirstOrDefault(item => item.Key.Equals(parameters.signatureInformation));
 
             if (retrievedFuncDeclarationPair.Key != null)
                 _SignatureCompletionContext = retrievedFuncDeclarationPair.Value;
@@ -662,7 +662,7 @@ namespace TypeCobol.LanguageServer
             var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
 
             signatureHelp.signatures = new SignatureInformation[calledProcedures.Count];
-
+            _FunctionDeclarationSignatureDictionary.Clear();
             FunctionDeclaration bestmatchingProcedure = null;
             int previousMatchingWeight = 0, selectedSignatureIndex = 0;
             foreach (var procedure in calledProcedures)
@@ -685,9 +685,10 @@ namespace TypeCobol.LanguageServer
                 //{
                     var signatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
                     signatureHelp.signatures[selectedSignatureIndex] = signatureInformation;
-                    //previousMatchingWeight = matchingWeight;
-                    //signatureHelp.activeSignature = selectedSignatureIndex;
-                    //bestmatchingProcedure = procedure;
+                    _FunctionDeclarationSignatureDictionary.Add(signatureInformation, procedure);
+                //previousMatchingWeight = matchingWeight;
+                //signatureHelp.activeSignature = selectedSignatureIndex;
+                //bestmatchingProcedure = procedure;
                 //}
                 selectedSignatureIndex++;
             }

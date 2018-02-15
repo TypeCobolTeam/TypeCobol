@@ -70,7 +70,7 @@ namespace TypeCobol.LanguageServer
         #endregion
 
         #region Procedure Completion 
-        public static IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Dictionary<string, FunctionDeclaration> functionDeclarationSignatureDictionary)
+        public static IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary)
         {
             var node = GetMatchingNode(fileCompiler, codeElement);
             var procedures = new List<FunctionDeclaration>();
@@ -282,7 +282,7 @@ namespace TypeCobol.LanguageServer
         #endregion
 
         #region QualifiedName Completion
-        public static IEnumerable<CompletionItem> GetCompletionForQualifiedName(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token qualifiedNameSeparatorToken, Token userFilterToken, Dictionary<string, FunctionDeclaration> functionDeclarationSignatureDictionary)
+        public static IEnumerable<CompletionItem> GetCompletionForQualifiedName(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token qualifiedNameSeparatorToken, Token userFilterToken, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary)
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;

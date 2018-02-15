@@ -43,7 +43,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             try
             {
-                OnDidReceiveSignatureHelpContext(parameters.ToString());
+                OnDidReceiveSignatureHelpContext((SignatureHelpContextParams)parameters);
             }
             catch (Exception e)
             {
@@ -70,7 +70,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             
         }
 
-        public virtual void OnDidReceiveSignatureHelpContext(string procedureHash)
+        public virtual void OnDidReceiveSignatureHelpContext(SignatureHelpContextParams procedureHash)
         {
             
         }
