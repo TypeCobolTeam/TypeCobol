@@ -53,10 +53,17 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         private static bool CompareLists(List<ParameterInformation> list1, List<ParameterInformation> list2)
         {
-            var firstNotSecond = list1.Except(list2).ToList();
-            var secondNotFirst = list2.Except(list1).ToList();
 
-            return !firstNotSecond.Any() && !secondNotFirst.Any();
+            if (list1.Count != list2.Count)
+                return false;
+
+            for (int i = 0; i < list1.Count; i++)
+            {
+                if (list1[i].label != list2[i].label || list1[i].documentation != list2[i].documentation)
+                    return false;
+            }
+
+            return true;
         }
     }
 }
