@@ -660,43 +660,60 @@ namespace TypeCobol.LanguageServer
                   .Skip(1) //Ignore the INPUT Token
                   .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
             var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
-
-            signatureHelp.signatures = new SignatureInformation[calledProcedures.Count];
+     
+            var signatureInformation = new List<SignatureInformation>();
             _FunctionDeclarationSignatureDictionary.Clear();
             FunctionDeclaration bestmatchingProcedure = null;
             int previousMatchingWeight = 0, selectedSignatureIndex = 0;
-            foreach (var procedure in calledProcedures)
-            { 
-                //The commented parts allow to restrict the potential compatible signature to return to the client
-                //int matchingWeight = 0;
-                ////Test INPUT parameters
-                //var inputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
-                //if (inputResult) matchingWeight++;
 
-                ////Test OUTPUT parameters
-                //var outputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
-                //if (outputResult) matchingWeight++;
-                
-                ////Test INOUT parameters 
-                //var inoutResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
-                //if (inoutResult) matchingWeight++;
+            if (totalGivenParameters == 0)
+            {
+                foreach (var procedure in calledProcedures) //No parameters given, return all possibilities
+                {
+                    var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+                    signatureInformation.Add(formattedSignatureInformation);
+                    _FunctionDeclarationSignatureDictionary.Add(formattedSignatureInformation, procedure);
+                }
+            }
+            else
+            {
+                foreach (var procedure in calledProcedures)
+                {
+                    //The commented parts allow to restrict the potential compatible signature to return to the client
+                    int matchingWeight = 0;
+                    //Test INPUT parameters
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
 
-                //if (matchingWeight > 0 && matchingWeight > previousMatchingWeight && totalGivenParameters > 0)
-                //{
-                    var signatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
-                    signatureHelp.signatures[selectedSignatureIndex] = signatureInformation;
-                    _FunctionDeclarationSignatureDictionary.Add(signatureInformation, procedure);
-                //previousMatchingWeight = matchingWeight;
-                //signatureHelp.activeSignature = selectedSignatureIndex;
-                //bestmatchingProcedure = procedure;
-                //}
-                selectedSignatureIndex++;
+                    //Test OUTPUT parameters
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
+
+                    //Test INOUT parameters 
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
+
+                    if (matchingWeight > 0 && matchingWeight >= previousMatchingWeight && totalGivenParameters > 0)
+                    {
+                        if (matchingWeight > previousMatchingWeight)
+                            signatureInformation.Clear();  //If the matchingWeight is superior than previous, it means that the previous signature is not precise enough.
+
+                        var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+                        signatureInformation.Add(formattedSignatureInformation);
+                        _FunctionDeclarationSignatureDictionary.Add(formattedSignatureInformation, procedure);
+
+                        previousMatchingWeight = matchingWeight;
+                        bestmatchingProcedure = procedure;
+                    }
+                    selectedSignatureIndex++;
+                }
             }
 
-            //if (bestmatchingProcedure != null)
-            //{
-            //    signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position);
-            //}
+            signatureHelp.signatures = signatureInformation.ToArray();
+
+            if (signatureInformation.Count == 1)
+            {
+                _SignatureCompletionContext = bestmatchingProcedure; //Set the completion context 
+                signatureHelp.activeSignature = 0; //Select the only signature for the client
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position); //Select the current parameter
+            }
 
             return signatureHelp;
         }
