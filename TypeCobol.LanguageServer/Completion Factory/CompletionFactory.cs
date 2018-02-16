@@ -322,28 +322,34 @@ namespace TypeCobol.LanguageServer
 
                 if (possibleVariables != null && possibleVariables.Count > 0)
                 {
-                    //Get childrens of a type to get completion possibilities
+                    //Get children of a type to get completion possibilities
                     foreach (var variable in possibleVariables)
                     {
-                        var childrens = new List<Node>();
+                        var children = new List<Node>();
                         if (variable.Children != null && variable.Children.Count > 0) //It's a variable with levels inside
-                            childrens.AddRange(variable.Children);
+                            children.AddRange(variable.Children);
                         else //It's a typed variable, we have to search for childrens in the type
                         {
-                            var typeChildrens = GetTypeChildrens(node.SymbolTable, variable);
-                            if (typeChildrens != null)
-                                childrens.AddRange(typeChildrens.Where(t => t.Name != null));
+                            var typeChildren = GetTypeChildrens(node.SymbolTable, variable);
+                            if (typeChildren != null)
+                                children.AddRange(typeChildren.Where(t => t.Name != null));
+                        }
+
+                        var computedChildrenList = new List<Node>();
+                        foreach (var child in children)
+                        {
+                            GetNextRelevantChildren(child, computedChildrenList);
                         }
 
                         completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
-                            childrens.Where(
+                            computedChildrenList.Where(
                                     c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
                                 .Select(child => child as DataDefinition), false));
                     }
                 }
                 else
                 { //If no variables found, it's could be a children declared in a typedef..
-                    var childrens = new List<Node>();
+                    var children = new List<Node>();
                     var potentialTypes =
                         node.SymbolTable.GetTypes(
                             t =>
@@ -366,11 +372,11 @@ namespace TypeCobol.LanguageServer
 
                         var typeChildrens = GetTypeChildrens(node.SymbolTable, nodeDataDef);
                         if (typeChildrens != null)
-                            childrens.AddRange(typeChildrens);
+                            children.AddRange(typeChildrens);
                     }
 
                     completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
-                        childrens.Where(
+                        children.Where(
                                 c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
                             .Select(child => child as DataDefinition), false));
                 }
@@ -704,6 +710,22 @@ namespace TypeCobol.LanguageServer
                 }
             }
         }
+
+        private static void GetNextRelevantChildren(Node dataDefinition, List<Node> children)
+        {
+            if (string.IsNullOrEmpty(dataDefinition.Name) && dataDefinition.Children.Any())
+            {
+                foreach (var child in dataDefinition.Children)
+                {
+                    GetNextRelevantChildren(child, children);
+                }
+            }
+            else
+            {
+                children.Add(dataDefinition);
+            }
+        }
+
         #endregion
     }
 }
