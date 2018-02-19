@@ -55,6 +55,8 @@
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolCustomLanguageServer.cs" />
     <Compile Include="TypeCobolServer.cs" />
     <Compile Include="TypeCobolServerHost.cs" />
