@@ -744,24 +744,27 @@ namespace TypeCobol.Compiler.Parser
 					   ParseTreeUtils.GetFirstToken(context.OR()));
 				}
 
-				if (logicalOperator == null)
+			    var abbreviateExpressionArray = context.abbreviatedExpression();
+                if (logicalOperator == null && abbreviateExpressionArray != null && abbreviateExpressionArray.Length > 0)
 				{
-					return CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, context.abbreviatedExpression()[0]);
+					return CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, abbreviateExpressionArray[0]);
 				}
-				else
+				else if(abbreviateExpressionArray != null && abbreviateExpressionArray.Length > 0)
 				{
-					if (context.abbreviatedExpression().Length == 1)
+					if (abbreviateExpressionArray.Length == 1)
 					{
-						ConditionalExpression rightOperand = CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, context.abbreviatedExpression()[0]);
+						ConditionalExpression rightOperand = CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, abbreviateExpressionArray[0]);
 						return new LogicalOperation(null, logicalOperator, rightOperand);
 					}
 					else
 					{
-						ConditionalExpression leftOperand = CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, context.abbreviatedExpression()[0]);
-						ConditionalExpression rightOperand = CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, context.abbreviatedExpression()[1]);
+						ConditionalExpression leftOperand = CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, abbreviateExpressionArray[0]);
+						ConditionalExpression rightOperand = CreateAbbreviatedExpression(subjectOperand, distributedRelationalOperator, abbreviateExpressionArray[1]);
 						return new LogicalOperation(leftOperand, logicalOperator, rightOperand);
 					}
 				}
+                else
+                    return null;
 			}
 		}
 
