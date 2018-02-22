@@ -246,6 +246,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 // Create a new copy of the line before the update if necessary
                 lineToScan = (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner);
+                lineToScan.SourceTokens.Clear(); //Erase previous SourceTokens to let the scanner creates the new tokens
                 if (lineToScanIndex == 0)
                 {
                     if (scanState != null) {

@@ -297,13 +297,11 @@ namespace TypeCobol.Compiler
                             var test = compilationDocumentLines.Where(l => l.ParserDiagnostics != null);
 
                             appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
-                            // Recompute the line indexes of all the changes prevously applied
-                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
+     
+                            //Remove detected line document changes previously made
+                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges.Where(t => t.LineIndex >= textChange.LineIndex && t.Type == DocumentChangeType.LineRemoved).ToArray())
                             {
-                                if (documentChangeToAdjust.LineIndex >= textChange.LineIndex)
-                                {
-                                    documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex + 1;
-                                }
+                                documentChanges.Remove(documentChangeToAdjust);
                             }
                             break;
                         case TextChangeType.LineUpdated:

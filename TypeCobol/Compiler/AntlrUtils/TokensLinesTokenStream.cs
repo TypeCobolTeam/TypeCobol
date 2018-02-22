@@ -126,7 +126,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                     ((IWritableToken)t).TokenIndex = tokens.Count;
                 }
                 // >>> replacement added
-                if(StopToken != null && t == StopToken)
+                if(StopToken != null && StopToken.Equals(t))
                 {
                     t = stopTokenReplacedByEOF;
                     indexOfStopTokenReplacedByEOF = tokens.Count;
