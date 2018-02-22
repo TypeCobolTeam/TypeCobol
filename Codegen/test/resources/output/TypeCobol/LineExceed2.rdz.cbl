@@ -19,8 +19,7 @@
       *    move unsafe 19900101 to            Car::Driver::BirthDate
            move        19900101 to            BirthDate OF Driver OF Car
       *    move Car::Driver::BirthDate::MM to maDateFormatInconnu(5:2)
-           move MM OF BirthDate OF Driver OF Car to maDateFormatInconnu(5:2)
+           move MM OF BirthDate OF Driver OF Car
+                       to maDateFormatInconnu(5:2)
            .
        END PROGRAM DVZF0OSM.
-      * 1 errors
-      * Line 14[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns
