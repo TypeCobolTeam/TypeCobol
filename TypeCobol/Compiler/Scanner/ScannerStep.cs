@@ -184,19 +184,19 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     break;
                 }
-                else if (textChangeIndex < (textLinesChanges.Count - 1))
-                {
-                    int nextTextChangeIndex = textChangeIndex;
-                    DocumentChange<ICobolTextLine> nextTextChange = null;
-                    do
-                    {
-                        nextTextChangeIndex++;
-                        nextTextChange = textLinesChanges[nextTextChangeIndex];
-                    }
-                    while (nextTextChangeIndex < (textLinesChanges.Count - 1) &&
-                           nextTextChange.LineIndex <= nextLineToScanIndex);
-                    textChangeIndex = nextTextChangeIndex - 1;
-                }
+                //else if (textChangeIndex < (textLinesChanges.Count - 1))
+                //{
+                //    int nextTextChangeIndex = textChangeIndex;
+                //    DocumentChange<ICobolTextLine> nextTextChange = null;
+                //    do
+                //    {
+                //        nextTextChangeIndex++;
+                //        nextTextChange = textLinesChanges[nextTextChangeIndex];
+                //    }
+                //    while (nextTextChangeIndex < (textLinesChanges.Count - 1) &&
+                //           nextTextChange.LineIndex <= nextLineToScanIndex);
+                //    textChangeIndex = nextTextChangeIndex - 1;
+                //}
             }
 
             return tokensLinesChanges;
