@@ -53,7 +53,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                     Consume();
                     currentToken = Lt(1);
                 }
-                if (currentToken != searchedToken)
+                if (currentToken != searchedToken && searchedToken.Type != TokenConstants.Eof)
                 {
                     throw new InvalidOperationException("Token not found in this stream");
                 }

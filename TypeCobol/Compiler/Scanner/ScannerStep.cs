@@ -279,6 +279,7 @@ namespace TypeCobol.Compiler.Scanner
                 // Build a list of the lines we will have to scan as a group :
                 IList<TokensLine> continuationLinesGroup = new List<TokensLine>();
                 int firstLineIndex = lineToScanIndex;
+                lineToScan.SourceTokens.Clear();
                 continuationLinesGroup.Insert(0, (TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
 
                 // Navigate backwards to the start of the multiline continuation 
@@ -292,7 +293,7 @@ namespace TypeCobol.Compiler.Scanner
                         revLineToScanIndex--;
                         lineToScan = reversedEnumerator.Current;
 
-                        if(lineToScan?.Type != CobolTextLineType.Continuation /*&&  <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
+                        if(lineToScan?.Type == CobolTextLineType.Continuation /*&&  <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
                            lineToScan.Type != CobolTextLineType.Comment && lineToScan.Type != CobolTextLineType.Blank*/) // see p54 : for continuation, blank lines are treated like comment lines
                         { 
                             firstLineIndex = revLineToScanIndex;
@@ -310,6 +311,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     lineToScanIndex++;
                     lineToScan = nextLineToScan;
+                    lineToScan.SourceTokens.Clear();
                     continuationLinesGroup.Add((TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
 
                     nextLineToScanIndex = -1;
@@ -329,6 +331,7 @@ namespace TypeCobol.Compiler.Scanner
                         if (lineToScan?.Type == CobolTextLineType.Continuation /*|| <-- LIMITATION : this compiler does not support comment or blank lines between two continuation line
                            lineToScan.Type == CobolTextLineType.Comment || lineToScan.Type == CobolTextLineType.Blank*/) // see p54 : for continuation, blank lines are treated like comment lines
                         {
+                            lineToScan.SourceTokens.Clear();
                             // Add this line at the end of the list of continuation lines
                             continuationLinesGroup.Add((TokensLine)prepareDocumentLineForUpdate(lineToScanIndex, lineToScan, CompilationStep.Scanner));
                         }
