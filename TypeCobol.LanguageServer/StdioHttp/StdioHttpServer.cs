@@ -35,7 +35,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
         public StreamWriter RedirectedOutpuStream
         {
             get; set;
-        }
+        }        
 
         /// <summary>
         /// Configure the Http server

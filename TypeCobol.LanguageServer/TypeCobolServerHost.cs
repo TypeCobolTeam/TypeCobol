@@ -51,6 +51,11 @@ namespace TypeCobol.LanguageServer
         public static string LsrScript { get; set; }
 
         /// <summary>
+        /// The Lsr Options.
+        /// </summary>
+        public static string LsrOptions { get; set; }
+   
+        /// <summary>
         /// The Log file
         /// </summary>
         public static string LogFile { get; set; }
@@ -138,6 +143,7 @@ namespace TypeCobol.LanguageServer
                 },
                 { "lsr=","{PATH} the lsr path", (string v) => LsrPath = v },
                 { "s|script=","{PATH} script path in lsr", (string v) => LsrScript = v },
+                { "ro|roptions=","LSR options", (string v) => LsrOptions = v + " " },
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -178,7 +184,7 @@ namespace TypeCobol.LanguageServer
             }
             if (LsrMode && LsrPath != null && LsrScript != null)
             {
-                if (!StartLsr(LsrPath, "-ioc -c -script=" + LsrScript))
+                if (!StartLsr(LsrPath, (LsrOptions ?? "") + "-ioc -c -script=" + LsrScript))
                 {
                     System.Console.Error.WriteLine("Fail to run LSR process");
                     return -1;

@@ -35,8 +35,7 @@
 
        procedure division.
       *    set W-Person4::W-Person3::W-Person2::Registered to false.
-           set Registered-false OF W-Person2 OF W-Person3 OF W-Person4 to TRUE.
+           set Registered-false OF W-Person2 OF W-Person3 OF W-Person4
+                to TRUE.
 
        END PROGRAM TypDefQualBoolSet.
-      * 1 errors
-      * Line 18[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns

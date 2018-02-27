@@ -62,7 +62,8 @@
       *    MOVE Identifier    TO b OF a IN AGroup
            MOVE Identifier-value    TO AGroup.a.b-value OF a IN AGroup
       *    MOVE d IN AGroup   TO b OF a IN AGroup
-           MOVE AGroup.d-value IN AGroup   TO AGroup.a.b-value OF a IN AGroup
+           MOVE AGroup.d-value IN AGroup   TO AGroup.a.b-value
+                                               OF a IN AGroup
       * OK: copying chunks of memories of different layouts is standard COBOL practice
            MOVE x   TO      AGroup
            MOVE x   TO a IN AGroup
@@ -74,5 +75,3 @@
            .
 
        END PROGRAM Booleans.
-      * 1 errors
-      * Line 36[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns
