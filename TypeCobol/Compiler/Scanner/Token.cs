@@ -19,6 +19,28 @@ namespace TypeCobol.Compiler.Scanner
 		/// <summary>Empty constructor for mock.</summary>
 		public Token() { }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Token))
+                return false;
+            var tokenCompare = (Token) obj;
+
+            return this.Type == tokenCompare.Type
+                   && this.Channel == tokenCompare.Channel
+                   && this.Column == tokenCompare.Column
+                   && this.EndColumn == tokenCompare.EndColumn
+                   && this.ExpectedClosingDelimiter == tokenCompare.ExpectedClosingDelimiter
+                   && this.Length == tokenCompare.Length
+                   && this.Line == tokenCompare.Line
+                   && this.StartIndex == tokenCompare.StartIndex
+                   && this.StopIndex == tokenCompare.StopIndex
+                   && this.TokenIndex == tokenCompare.TokenIndex
+                   && this.HasClosingDelimiter == tokenCompare.HasClosingDelimiter
+                   && this.LiteralValue == tokenCompare.LiteralValue
+                   && this.TokenType == tokenCompare.TokenType
+                   && this.Text == tokenCompare.Text;
+        }
+
         /// <summary>
         /// Constructor for tokens without delimiters
         /// </summary>

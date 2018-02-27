@@ -294,17 +294,7 @@ namespace TypeCobol.Compiler
                                     encounteredCodeElement = true;
                             }
 
-                            var test = compilationDocumentLines.Where(l => l.ParserDiagnostics != null);
-
                             appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
-                            // Recompute the line indexes of all the changes prevously applied
-                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
-                            {
-                                if (documentChangeToAdjust.LineIndex >= textChange.LineIndex)
-                                {
-                                    documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex + 1;
-                                }
-                            }
                             break;
                         case TextChangeType.LineUpdated:
                             newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
@@ -341,7 +331,6 @@ namespace TypeCobol.Compiler
                                 if (lineToUpdate.CodeElements != null)
                                     encounteredCodeElement = true; 
                             }
-
 
                             appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineRemoved, textChange.LineIndex, null);
                             // Recompute the line indexes of all the changes prevously applied
