@@ -71,8 +71,12 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
+           IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
            END-IF
            CALL TC-Callee-ebb060ea USING
                                  somedate
@@ -85,8 +89,12 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
+           IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
            END-IF
            CALL TC-Callee-ebb060ea USING
                                  somedate
@@ -136,8 +144,12 @@
                                          
       *OK 
       *   call Callee::check input somedate
-          IF TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
+          IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
            END-IF
            CALL TC-Callee-ca0ab46c USING
                                  somedate

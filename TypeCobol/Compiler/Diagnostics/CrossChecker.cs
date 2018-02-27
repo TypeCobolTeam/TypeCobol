@@ -189,12 +189,12 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (area.SymbolReference.IsQualifiedReference)
                     {
                         if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
-                            DiagnosticUtils.AddError(index.Parent.CodeElement,
+                            DiagnosticUtils.AddError(index.Parent,
                                 "Index name '" + index.Name + "' is over 22 characters.");
                         if (
                                 index.Parent.CodeElement.IsInsideCopy())
                             //If index comes from a copy, do not support qualification
-                            DiagnosticUtils.AddError(node.CodeElement,
+                            DiagnosticUtils.AddError(node,
                                 "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
                     }
 
@@ -233,7 +233,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
 
                     if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
-                        DiagnosticUtils.AddError(node.CodeElement,
+                        DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area);
                 }
                 else if (found[0].DataType == DataType.Boolean && found[0].CodeElement is DataDefinitionEntry &&
@@ -251,9 +251,9 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (found.Count < 1)
                 if (node.SymbolTable.GetFunction(area).Count < 1)
-                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + area + " is not referenced");
+                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced");
             if (found.Count > 1)
-                DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + area);
+                DiagnosticUtils.AddError(node, "Ambiguous reference to symbol " + area);
 
         }
 

@@ -75,8 +75,12 @@
       * OK public procedures declared in "dependencies" file
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate
-           IF TC-Callee-c6db8d4a-Idt not = 'c6db8d4a'
+           IF ADDRESS OF TC-Callee-c6db8d4a-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-c6db8d4a-Idt not = 'c6db8d4a'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
            END-IF
            CALL TC-Callee-c6db8d4a USING
                                  somedate
@@ -85,8 +89,12 @@
 
       *    CALL Callee::MySecondPublicProcedure
       *             INPUT      vect2
-           IF TC-Callee-d3faf219-Idt not = 'd3faf219'
+           IF ADDRESS OF TC-Callee-d3faf219-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-d3faf219-Idt not = 'd3faf219'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
            END-IF
            CALL TC-Callee-d3faf219 USING
                                  vect2
@@ -110,8 +118,12 @@
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call dump input message
-          IF TC-MyIntrinsicFunctions-f9abcd81-Idt not = 'f9abcd81'
+          IF ADDRESS OF TC-MyIntrinsicFunctions-f9abcd81-Item = NULL
                PERFORM TC-LOAD-POINTERS-MyIntrinsicFunctions
+           ELSE
+               IF TC-MyIntrinsicFunctions-f9abcd81-Idt not = 'f9abcd81'
+                   PERFORM TC-LOAD-POINTERS-MyIntrinsicFunctions
+               END-IF
            END-IF
            CALL TC-MyIntrinsicFunctions-f9abcd81 USING
                                  message
@@ -120,8 +132,12 @@
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call MyIntrinsicFunctions::dump input message
-          IF TC-MyIntrinsicFunctions-f9abcd81-Idt not = 'f9abcd81'
+          IF ADDRESS OF TC-MyIntrinsicFunctions-f9abcd81-Item = NULL
                PERFORM TC-LOAD-POINTERS-MyIntrinsicFunctions
+           ELSE
+               IF TC-MyIntrinsicFunctions-f9abcd81-Idt not = 'f9abcd81'
+                   PERFORM TC-LOAD-POINTERS-MyIntrinsicFunctions
+               END-IF
            END-IF
            CALL TC-MyIntrinsicFunctions-f9abcd81 USING
                                  message

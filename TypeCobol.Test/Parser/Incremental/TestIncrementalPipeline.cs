@@ -56,13 +56,15 @@ namespace TypeCobol.Test.Parser.Incremental {
             report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForScanner.FirstCompilationTime + " ms : scanner");
             report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForPreprocessor.FirstCompilationTime + " ms : preprocessor");
             report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForCodeElementsParser.FirstCompilationTime + " ms : code elements parser");
-            report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForProgramClassParser.FirstCompilationTime + " ms : program class parser");
+            report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForTemporarySemantic.FirstCompilationTime + " ms : temporary semantic class parser");
+            report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForProgramCrossCheck.FirstCompilationTime + " ms : cross check class parser");
             report.AppendLine("Incremental compilation performance");
             report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForText.LastRefreshTime + " ms : text update");
             report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForScanner.LastRefreshTime + " ms : scanner");
             report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForPreprocessor.LastRefreshTime + " ms : preprocessor");
             report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForCodeElementsParser.LastRefreshTime + " ms : code elements parser");
-            report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForProgramClassParser.LastRefreshTime + " ms : program class parser");
+            report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForTemporarySemantic.LastRefreshTime + " ms : temporary semantic class parser");
+            report.AppendLine("- " + compiler.CompilationResultsForProgram.PerfStatsForProgramCrossCheck.LastRefreshTime + " ms : cross check class parser");
 
             Console.WriteLine(report.ToString());
 		}

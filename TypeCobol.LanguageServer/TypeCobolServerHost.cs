@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Mono.Options;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using TypeCobol.LanguageServer.JsonRPC;
@@ -16,29 +18,196 @@ namespace TypeCobol.LanguageServer
     class TypeCobolServerHost
     {
         public static Queue<MessageActionWrapper> MessagesActionQueue { get; set; }
+        public static bool LsrMode { get; set; }
         /// <summary>
-        /// Main Entry point of the Server.
+        /// Program name from Assembly name
         /// </summary>
-        /// <param name="args">Arguments: arg[0] the LogLevel (0=Lifecycle,1=Message,2=Protocol) - args[1] a Log File</param>
-        /// <see cref="TypeCobol.LanguageServer.StdioHttp.ServerLogLevel"/>
-        static void Main(string[] args)
+        public static string ProgName
         {
-            ServerLogLevel logLevel;
-            TextWriter logWriter;
-            //Queue storing messages coming from client, this queue is read by readingThread
-            MessagesActionQueue = new Queue<MessageActionWrapper>();
+            get
+            {
+                return Assembly.GetExecutingAssembly().GetName().Name;
+            }
+        }
+        /// <summary>
+        /// Assembly version
+        /// </summary>
+        public static string Version
+        {
+            get
+            {
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
+        }
 
-            GetArguments(args, out logLevel, out logWriter);
-            // Open log file
+        /// <summary>
+        /// The Lsr path
+        /// </summary>
+        public static string LsrPath { get; set; }
+
+        /// <summary>
+        /// The Lsr Script.
+        /// </summary>
+        public static string LsrScript { get; set; }
+
+        /// <summary>
+        /// The Lsr Options.
+        /// </summary>
+        public static string LsrOptions { get; set; }
+   
+        /// <summary>
+        /// The Log file
+        /// </summary>
+        public static string LogFile { get; set; }
+
+        /// <summary>
+        /// The Log level
+        /// </summary>
+        public static ServerLogLevel LogLevel { get; set; }
+
+
+        public static System.Diagnostics.Process Process;
+
+        /// <summary>
+        /// Run the Lsr Process
+        /// </summary>
+        /// <param name="fullPath">full path of the process</param>
+        /// <param name="arguments">process arguments</param>
+        /// <returns>true if the process has been run, false otherwise.</returns>
+        protected static bool StartLsr(string fullPath, string arguments)
+        {
+            Process = new System.Diagnostics.Process();
+            Process.StartInfo.FileName = fullPath;
+            if (arguments != null)
+                Process.StartInfo.Arguments = arguments;
+            Process.StartInfo.UseShellExecute = false;
+            Process.StartInfo.RedirectStandardOutput = true;
+            Process.StartInfo.RedirectStandardInput = true;
+            //Start the process
             try
             {
+                if (!Process.Start())
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        static int Main(string[] args)
+        {
+            bool help = false;
+            bool version = false;
+
+            var p = new OptionSet()
+            {
+                "USAGE",
+                "  "+ProgName+" [OPTIONS]",
+                "",
+                "VERSION:",
+                "  "+Version,
+                "",
+                "DESCRIPTION:",
+                "  Run the Language Server Robot.",
+                { "l|loglevel=",  "Logging level (1=Lifecycle, 2=Message, 3=Protocol).", (string v) =>
+                    {
+                        if (v != null)
+                        {
+                            try
+                            {
+                                // args[0] : Trace level
+                                LogLevel = (ServerLogLevel)Int32.Parse(v);
+                                if (!System.Enum.IsDefined(typeof(ServerLogLevel), (Int32)LogLevel));
+                                {
+                                    LogLevel = ServerLogLevel.Protocol;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                System.Console.Error.WriteLine(e.Message);
+                            }
+                        }
+                    }
+                },
+                { "v|version","Show version", _ => version = true },
+                { "h|help","Show help", _ => help = true },
+                { "lf|logfile=","{PATH} the target log file", (string v) => LogFile = v },
+                { "r|robot",  "Robot Client mode.", _ => LsrMode = true
+                },
+                { "lsr=","{PATH} the lsr path", (string v) => LsrPath = v },
+                { "s|script=","{PATH} script path in lsr", (string v) => LsrScript = v },
+                { "ro|roptions=","LSR options", (string v) => LsrOptions = v + " " },
+            };
+
+            System.Collections.Generic.List<string> arguments;
+            try { arguments = p.Parse(args); }
+            catch (OptionException ex) { return exit(1, ex.Message); }
+
+            if (help)
+            {
+                p.WriteOptionDescriptions(System.Console.Out);
+                return 0;
+            }
+            if (version)
+            {
+                System.Console.WriteLine(Version);
+                return 0;
+            }
+
+            TextWriter logWriter = null;
+            if (LogFile != null)
+            {
+                try
+                {
+                    StreamWriter sw = new StreamWriter(LogFile);
+                    sw.AutoFlush = true;
+                    logWriter = sw;
+                }
+                catch (Exception e)
+                {
+                    if (!LsrMode)
+                    {
+                        System.Console.Error.WriteLine(e.Message);
+                    }
+                }
+            }
+            if (logWriter == null)
+            {
+                logWriter = new DebugTextWriter();
+            }
+            if (LsrMode && LsrPath != null && LsrScript != null)
+            {
+                if (!StartLsr(LsrPath, (LsrOptions ?? "") + "-ioc -c -script=" + LsrScript))
+                {
+                    System.Console.Error.WriteLine("Fail to run LSR process");
+                    return -1;
+                }
+            }
+            //Run this server
+            try
+            {
+                //Queue storing messages coming from client, this queue is read by readingThread
+                MessagesActionQueue = new Queue<MessageActionWrapper>();
+
                 // Configure the protocols stack
-                var httpServer = new StdioHttpServer(Encoding.UTF8, logLevel, logWriter, MessagesActionQueue);
+                var httpServer = new StdioHttpServer(Encoding.UTF8, LogLevel, logWriter, MessagesActionQueue);
+                if (Process != null)
+                {
+                    httpServer.RedirectedInputStream = Process.StandardOutput.BaseStream;
+                    httpServer.RedirectedOutpuStream = Process.StandardInput;
+                }
                 var jsonRPCServer = new JsonRPCServer(httpServer);
                 var typeCobolServer = new TypeCobolServer(jsonRPCServer, MessagesActionQueue);
 
                 //Creating the thread that will read mesages and handle them 
-                var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) {IsBackground = true};
+                var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };
                 backgroundExecutionThread.Start();
 
                 // Start listening to incoming request (block, infinite loop)
@@ -51,6 +220,24 @@ namespace TypeCobol.LanguageServer
                     logWriter.Close();
                 }
             }
+            return 0;
+        }
+
+        /// <summary>
+        /// Command Line Option Set
+        /// </summary>
+        public static OptionSet Options
+        {
+            get;
+            internal set;
+        }
+
+        static int exit(int code, string message)
+        {
+            string errmsg = ProgName + ": " + message + "\n";
+            errmsg += "Try " + ProgName + " --help for usage information.";
+            System.Console.WriteLine(errmsg);
+            return code;
         }
 
         /// <summary>
@@ -91,62 +278,7 @@ namespace TypeCobol.LanguageServer
                         typeCobolServer.NotifyException(e);
                     }
                 }
-                    
-            }
-        }
 
-        /// <summary>
-        /// Collect Arguments
-        /// </summary>
-        /// <param name="args">The arguments</param>
-        /// <param name="logLevel">Output: The LogLevel from the arguments</param>
-        /// <param name="logWriter">Output: The Log Writer from the arguments</param>
-        static void GetArguments(String[] args, out ServerLogLevel logLevel, out TextWriter logWriter)
-        {
-            logLevel = ServerLogLevel.Lifecycle;
-            logWriter = null;
-            try
-            {
-                if (args != null && args.Length != 0)
-                {//Standard output
-                    try
-                    {
-                        // args[0] : Trace level
-                        logLevel = (ServerLogLevel)Int32.Parse(args[0]);
-                        if (!System.Enum.IsDefined(typeof(ServerLogLevel), (Int32)logLevel)) ;
-                        {
-                            logLevel = ServerLogLevel.Protocol;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        System.Console.Error.WriteLine(e.Message);
-                    }
-
-                    if (args.Length > 1)
-                    {
-                        // Open log file
-                        // args[1] : Log file name
-                        string logFile = args[1];
-                        try
-                        {
-                            StreamWriter sw = new StreamWriter(logFile);
-                            sw.AutoFlush = true;
-                            logWriter = sw;
-                        }
-                        catch (Exception e)
-                        {
-                            System.Console.Error.WriteLine(e.Message);
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                if (logWriter == null)
-                {
-                    logWriter = new DebugTextWriter();
-                }
             }
         }
     }

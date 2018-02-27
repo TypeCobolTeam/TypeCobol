@@ -131,8 +131,12 @@
              USING BY REFERENCE param1
            .
       *    call PGM1::StartCheckpoint input param1
-           IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
+           IF ADDRESS OF TC-PGM1-f1c0385c-Item = NULL
                PERFORM TC-LOAD-POINTERS-PGM1
+           ELSE
+               IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
+                   PERFORM TC-LOAD-POINTERS-PGM1
+               END-IF
            END-IF
            CALL TC-PGM1-f1c0385c USING
                                  param1
@@ -190,8 +194,12 @@
        PROCEDURE DIVISION
            .
       *    call PGM1::StartCheckpoint input var1
-           IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
+           IF ADDRESS OF TC-PGM1-f1c0385c-Item = NULL
                PERFORM TC-LOAD-POINTERS-PGM1
+           ELSE
+               IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
+                   PERFORM TC-LOAD-POINTERS-PGM1
+               END-IF
            END-IF
            CALL TC-PGM1-f1c0385c USING
                                  var1
@@ -199,8 +207,12 @@
                                                 
 
       *    call PGM2::CheckContract input var1
-           IF TC-PGM2-f73481e6-Idt not = 'f73481e6'
+           IF ADDRESS OF TC-PGM2-f73481e6-Item = NULL
                PERFORM TC-LOAD-POINTERS-PGM2
+           ELSE
+               IF TC-PGM2-f73481e6-Idt not = 'f73481e6'
+                   PERFORM TC-LOAD-POINTERS-PGM2
+               END-IF
            END-IF
            CALL TC-PGM2-f73481e6 USING
                                  var1

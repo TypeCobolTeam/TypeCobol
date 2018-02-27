@@ -48,11 +48,10 @@
 
        PROCEDURE DIVISION.
       *    IF (MyPM::temp::IMSBatch = "TI" AND MyPM2::DB2Batch = "TD")
-           IF (IMSBatch OF temp OF MyPM = "TI" AND DB2Batch OF MyPM2 = "TD")
+           IF (IMSBatch OF temp OF MyPM = "TI" AND DB2Batch OF MyPM2
+                = "TD")
              DISPLAY "TI and TD"
           ELSE
              CONTINUE
           END-IF.
        END PROGRAM TypeDefLevel88.
-      * 1 errors
-      * Line 33[0,0] <38, Error, Semantics> - Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns

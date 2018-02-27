@@ -28,9 +28,11 @@ namespace TypeCobol.Compiler
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
-            PerfStatsForProgramClassParser = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
+            PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
+            PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
 
-            
+
+
         }
 
         /// <summary>
@@ -140,7 +142,7 @@ namespace TypeCobol.Compiler
                     builder.Append(CodeElementsParserStep.AntlrPerformanceProfiler.WriteInfoToString());
                 }
 
-                if (ProgramClassParserStep.AntlrPerformanceProfiler != null && PerfStatsForProgramClassParser.ActivateDetailedAntlrPofiling)
+                if (ProgramClassParserStep.AntlrPerformanceProfiler != null && PerfStatsForTemporarySemantic.ActivateDetailedAntlrPofiling)
                 {
                     builder.Append("\n\n---PROGRAM CLASS PARSER STEP---\n");
                     builder.Append(ProgramClassParserStep.AntlrPerformanceProfiler.WriteInfoToString());
@@ -166,6 +168,12 @@ namespace TypeCobol.Compiler
                 // Check if an update is necessary and compute changes to apply since last version
                 if ((TemporaryProgramClassDocumentSnapshot != null) && (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != temporarySnapshot.CurrentVersion))
                 {
+                    PerfStatsForProgramCrossCheck.OnStartRefreshParsingStep();
+
+                    var sb = new StringBuilder();
+                    temporarySnapshot.Lines.ForEach(l => sb.AppendLine(l.Text));
+                    var final = sb.ToString();
+
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root = temporarySnapshot.Root;
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
@@ -177,6 +185,8 @@ namespace TypeCobol.Compiler
                         temporarySnapshot, ProgramClassDocumentSnapshot?.CurrentVersion + 1 ?? 0,
                         root, diagnostics, nodeCodeElementLinkers);
                     snapshotWasUpdated = true;;
+
+                    PerfStatsForProgramCrossCheck.OnStopRefreshParsingStep();
                 }
             }
 
@@ -208,7 +218,7 @@ namespace TypeCobol.Compiler
                 if (CodeElementsDocumentSnapshot != null && (TemporaryProgramClassDocumentSnapshot == null || TemporaryProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != CodeElementsDocumentSnapshot.CurrentVersion))
                 {
                     // Start perf measurement
-                    var perfStatsForParserInvocation = PerfStatsForProgramClassParser.OnStartRefreshParsingStep();
+                    var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root;
@@ -222,7 +232,7 @@ namespace TypeCobol.Compiler
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers);
 
                     // Stop perf measurement
-                    PerfStatsForProgramClassParser.OnStopRefreshParsingStep();
+                    PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
                 }
             }
         }
@@ -327,9 +337,11 @@ namespace TypeCobol.Compiler
         public event EventHandler<ProgramClassEvent> ProgramClassNotChanged;
 
         /// <summary>
-        /// Performance stats for the RefreshProgramClassDocumentSnapshot method
+        /// Performance stats for the TemporaryProgramClassDocumentSnapshot method
         /// </summary>
-        public PerfStatsForParsingStep PerfStatsForProgramClassParser { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForTemporarySemantic { get; private set; }
+
+        public PerfStatsForParsingStep PerfStatsForProgramCrossCheck { get; private set; }
 
         #region Thread ownership and synchronization
 

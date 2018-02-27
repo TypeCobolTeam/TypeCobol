@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.Source
         {
             Source = text;         
             lines = new SourceLine[1];
-            lines[0] = new SourceLine(new Position(0, 0), new Position(0, 0));
+            lines[0] = CreateSourceLine(new Position(0, 0), new Position(0, 0));
             nlines = 0;
             lastIndex = -1;
             ///Add a listener to us.
@@ -127,6 +127,13 @@ namespace TypeCobol.Compiler.Source
         }
 
         /// <summary>
+        /// Document's length
+        /// </summary>
+        public int Length
+        {
+            get { return LineCount > 0 && Source != null ? Source.Size : 0; }
+        }
+        /// <summary>
         /// Gets the count of lines.
         /// </summary>
         public int LineCount  
@@ -186,7 +193,7 @@ namespace TypeCobol.Compiler.Source
                                 if (c == '\n') 
                                 {
                                     int lineFeedPos = from + i + 1;
-                                    added.Add(new SourceLine(Source.AddPosition(new Position(lastPos,0)), Source.AddPosition(new Position(lineFeedPos))));
+                                    added.Add(CreateSourceLine(Source.AddPosition(new Position(lastPos,0)), Source.AddPosition(new Position(lineFeedPos))));
                                     lastPos = lineFeedPos;
                                     hasLineFeed = true;
                                 }
@@ -202,7 +209,7 @@ namespace TypeCobol.Compiler.Source
                                 }
                                 if (lastPos < removeTo) 
                                 {
-                                    added.Add(new SourceLine(Source.AddPosition(new Position(lastPos, 0)), Source.AddPosition(new Position(removeTo, 0))));
+                                    added.Add(CreateSourceLine(Source.AddPosition(new Position(lastPos, 0)), Source.AddPosition(new Position(removeTo, 0))));
                                 }
                                 SourceLine[] added_lines = added.ToArray();
                                 Replace(index, nremoved, added_lines);
@@ -224,7 +231,7 @@ namespace TypeCobol.Compiler.Source
                             int startPos = this[firstLine].From;
                             int endPos = this[lastLine].To;
                             SourceLine[] added_lines = new SourceLine[1];
-                            added_lines[0] = new SourceLine(Source.AddPosition(new Position(startPos, 0)), Source.AddPosition(new Position(endPos, 0)));
+                            added_lines[0] = CreateSourceLine(Source.AddPosition(new Position(startPos, 0)), Source.AddPosition(new Position(endPos, 0)));
                             Replace(firstLine, nremoved, added_lines);
                         }
                     }
@@ -332,6 +339,16 @@ namespace TypeCobol.Compiler.Source
             //The index was not found but determine where it should be
             lastIndex = index = (pos < from) ? index = middle : index = middle + 1;
             return index;
+        }
+
+        /// <summary>
+        /// Create a source line
+        /// </summary>
+        /// <param name="from">The start position</param>
+        /// <param name="to">The end position</param>
+        protected virtual SourceLine CreateSourceLine(Position from, Position to)
+        {
+            return new SourceLine(new Position(0, 0), new Position(0, 0));
         }
 
         /// <summary>
