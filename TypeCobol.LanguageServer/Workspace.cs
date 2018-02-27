@@ -76,6 +76,7 @@ namespace TypeCobol.LanguageServer
         {
             string fileName = Path.GetFileName(fileUri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
+            TypeCobol.Compiler.Source.Text.TextDocument debuTextDocument = new TypeCobol.Compiler.Source.Text.TextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
             FileCompiler fileCompiler = null;
 
 #if EUROINFO_RULES //Issue #583
@@ -97,7 +98,7 @@ namespace TypeCobol.LanguageServer
 #else
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, false, CompilationProject);
 #endif
-
+            fileCompiler.DebugTextDocument = debuTextDocument;
 
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 

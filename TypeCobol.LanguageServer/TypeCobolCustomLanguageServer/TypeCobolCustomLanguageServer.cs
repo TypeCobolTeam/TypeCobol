@@ -92,5 +92,16 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             this.rpcServer.SendNotification(LoadingIssueNotification.Type, parameters);
         }
+
+        /// <summary>
+        /// Custom TypeCobol Log a message.
+        /// 
+        /// @param message The message to log.
+        /// </summary>
+        public void UriLog(string message, Uri objUri)
+        {            
+            RemoteConsole.Log((message + objUri.LocalPath));
+            rpcServer.SendNotification(UriLogMessageNotification.Type, new UriLogMessageParams() { type = MessageType.Log, message = message, textDocument = new TextDocumentIdentifier(objUri.ToString()) });
+        }
     }
 }

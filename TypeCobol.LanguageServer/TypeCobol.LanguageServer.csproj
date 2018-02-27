@@ -58,6 +58,8 @@
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolCustomLanguageServer.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageParams.cs" />
     <Compile Include="TypeCobolServer.cs" />
     <Compile Include="TypeCobolServerHost.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesNotification.cs" />
