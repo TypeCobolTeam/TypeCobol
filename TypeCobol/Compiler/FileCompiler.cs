@@ -20,6 +20,10 @@ namespace TypeCobol.Compiler
     /// </summary>
     public class FileCompiler
     {
+        public TypeCobol.Compiler.Source.Text.TextDocument DebugTextDocument
+        {
+            get; set;
+        }
         /// <summary>
         /// Source text file on disk
         /// </summary>
