@@ -155,8 +155,10 @@ namespace TypeCobol.LanguageServer
                                     lastSignificantToken.TokenType == TokenType.OUTPUT ||
                                     lastSignificantToken.TokenType == TokenType.IN_OUT)))
                         {
-                            significantTokensDectected.Pop();
-                            lastSignificantToken = significantTokensDectected.Peek();
+                            if (significantTokensDectected.Any())
+                                lastSignificantToken = significantTokensDectected.Pop();
+                            else
+                                break;
                         }
                         else
                         {

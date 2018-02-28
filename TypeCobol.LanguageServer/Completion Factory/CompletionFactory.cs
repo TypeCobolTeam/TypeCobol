@@ -70,7 +70,7 @@ namespace TypeCobol.LanguageServer
         #endregion
 
         #region Procedure Completion 
-        public static IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken)
+        public static IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary)
         {
             var node = GetMatchingNode(fileCompiler, codeElement);
             var procedures = new List<FunctionDeclaration>();
@@ -105,7 +105,7 @@ namespace TypeCobol.LanguageServer
 
 
 
-            completionItems = CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node).ToList();
+            completionItems = CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, functionDeclarationSignatureDictionary).ToList();
 
             foreach (var variable in variables)
             {
@@ -118,7 +118,7 @@ namespace TypeCobol.LanguageServer
 
             return completionItems;
         }
-        public static IEnumerable<CompletionItem> GetCompletionForProcedureParameter(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
+        public static IEnumerable<CompletionItem> GetCompletionForProcedureParameter(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken, FunctionDeclaration procedureSignatureContext)
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
@@ -127,19 +127,29 @@ namespace TypeCobol.LanguageServer
 
             //Get procedure name or qualified name
             string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(arrangedCodeElement?.ArrangedConsumedTokens);
+            List<FunctionDeclaration> calledProcedures = new List<FunctionDeclaration>();
 
-            //Try to get procedure by its name
-            var calledProcedures =
-                node.SymbolTable.GetFunctions(
-                    p =>
-                        p.Name.Equals(procedureName) ||
-                        p.VisualQualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
-                    {
-                        SymbolTable.Scope.Declarations,
-                        SymbolTable.Scope.Intrinsic,
-                        SymbolTable.Scope.Namespace
-                    });
-
+            if (procedureSignatureContext == null ||
+                !(procedureSignatureContext.QualifiedName.ToString().Equals(procedureName, StringComparison.InvariantCultureIgnoreCase) 
+                  || procedureSignatureContext.Name.Equals(procedureName, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                //Try to get procedure by its name
+                calledProcedures =
+                    node.SymbolTable.GetFunctions(
+                        p =>
+                            p.Name.Equals(procedureName) ||
+                            p.VisualQualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
+                        {
+                            SymbolTable.Scope.Declarations,
+                            SymbolTable.Scope.Intrinsic,
+                            SymbolTable.Scope.Namespace
+                        });
+            }
+            else
+            {
+                //If the procedure name is equivalent to the signature selected by signature help, we can assume the user is always on the same procedure. 
+                calledProcedures.Add(procedureSignatureContext);
+            }
 
             var alreadyGivenTokens = arrangedCodeElement?.ArrangedConsumedTokens
                 .SkipWhile(t => t != lastSignificantToken).Skip(1)
@@ -272,7 +282,7 @@ namespace TypeCobol.LanguageServer
         #endregion
 
         #region QualifiedName Completion
-        public static IEnumerable<CompletionItem> GetCompletionForQualifiedName(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token qualifiedNameSeparatorToken, Token userFilterToken)
+        public static IEnumerable<CompletionItem> GetCompletionForQualifiedName(Position position, FileCompiler fileCompiler, CodeElement codeElement, Token qualifiedNameSeparatorToken, Token userFilterToken, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary)
         {
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
@@ -312,28 +322,34 @@ namespace TypeCobol.LanguageServer
 
                 if (possibleVariables != null && possibleVariables.Count > 0)
                 {
-                    //Get childrens of a type to get completion possibilities
+                    //Get children of a type to get completion possibilities
                     foreach (var variable in possibleVariables)
                     {
-                        var childrens = new List<Node>();
+                        var children = new List<Node>();
                         if (variable.Children != null && variable.Children.Count > 0) //It's a variable with levels inside
-                            childrens.AddRange(variable.Children);
+                            children.AddRange(variable.Children);
                         else //It's a typed variable, we have to search for childrens in the type
                         {
-                            var typeChildrens = GetTypeChildrens(node.SymbolTable, variable);
-                            if (typeChildrens != null)
-                                childrens.AddRange(typeChildrens.Where(t => t.Name != null));
+                            var typeChildren = GetTypeChildrens(node.SymbolTable, variable);
+                            if (typeChildren != null)
+                                children.AddRange(typeChildren.Where(t => t.Name != null));
+                        }
+
+                        var computedChildrenList = new List<Node>();
+                        foreach (var child in children)
+                        {
+                            GetNextRelevantChildren(child, computedChildrenList);
                         }
 
                         completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
-                            childrens.Where(
+                            computedChildrenList.Where(
                                     c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
                                 .Select(child => child as DataDefinition), false));
                     }
                 }
                 else
                 { //If no variables found, it's could be a children declared in a typedef..
-                    var childrens = new List<Node>();
+                    var children = new List<Node>();
                     var potentialTypes =
                         node.SymbolTable.GetTypes(
                             t =>
@@ -356,11 +372,11 @@ namespace TypeCobol.LanguageServer
 
                         var typeChildrens = GetTypeChildrens(node.SymbolTable, nodeDataDef);
                         if (typeChildrens != null)
-                            childrens.AddRange(typeChildrens);
+                            children.AddRange(typeChildrens);
                     }
 
                     completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(
-                        childrens.Where(
+                        children.Where(
                                 c => c.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)) //Filter on user text
                             .Select(child => child as DataDefinition), false));
                 }
@@ -371,6 +387,7 @@ namespace TypeCobol.LanguageServer
                     {
                         case TokenType.CALL:
                         {
+                            functionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
                             //On CALL get possible procedures and functions in the seeked program
                             var programs = node.SymbolTable.GetPrograms(userTokenToSeek.Text);
                             if (programs != null && programs.Count > 0)
@@ -387,7 +404,7 @@ namespace TypeCobol.LanguageServer
                                             {
                                                 SymbolTable.Scope.Declarations
                                             });
-                                completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, false));
+                                completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, functionDeclarationSignatureDictionary, false));
 
                             }
                             break;
@@ -693,6 +710,22 @@ namespace TypeCobol.LanguageServer
                 }
             }
         }
+
+        private static void GetNextRelevantChildren(Node dataDefinition, List<Node> children)
+        {
+            if (string.IsNullOrEmpty(dataDefinition.Name) && dataDefinition.Children.Any())
+            {
+                foreach (var child in dataDefinition.Children)
+                {
+                    GetNextRelevantChildren(child, children);
+                }
+            }
+            else
+            {
+                children.Add(dataDefinition);
+            }
+        }
+
         #endregion
     }
 }

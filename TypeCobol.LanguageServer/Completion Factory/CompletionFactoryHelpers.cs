@@ -94,7 +94,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        public static IEnumerable<CompletionItem> CreateCompletionItemsForProcedures(List<FunctionDeclaration> procedures, Node node, bool enablePublicFlag = true)
+        public static IEnumerable<CompletionItem> CreateCompletionItemsForProcedures(List<FunctionDeclaration> procedures, Node node, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary,  bool enablePublicFlag = true)
         {
             var completionItems = new List<CompletionItem>();
 
@@ -137,8 +137,12 @@ namespace TypeCobol.LanguageServer
                     : proc.Name;
                 completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
-                completionItem.data = new object[2];
-                ((object[])completionItem.data)[1] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
+                completionItem.data = new object[3];
+                var signatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(proc);
+                ((object[]) completionItem.data)[1] = signatureInformation;
+
+                //Store the link between the hash and the procedure. This will help to determine the procedure parameter completion context later. 
+                functionDeclarationSignatureDictionary.Add(signatureInformation, proc);
                 completionItems.Add(completionItem);
             }
 
@@ -159,12 +163,22 @@ namespace TypeCobol.LanguageServer
 
         public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
         {
-            var variableArrangedQualifiedName = useQualifiedName
-                ? string.Join("::",
-                    variable.VisualQualifiedName.ToString()
-                        .Split(variable.VisualQualifiedName.Separator)
-                        .Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0)) //Skip Program Name
-                : variable.Name;
+
+            var qualifiedName = variable.VisualQualifiedName.ToString()
+                .Split(variable.VisualQualifiedName.Separator)
+                .Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
+
+            var finalQualifiedName = qualifiedName.ToList();
+            var lastElementName = finalQualifiedName.Last();
+            foreach (var name in qualifiedName)
+            {
+                if (lastElementName == name)
+                    break;
+                if (lastElementName.Contains(name))
+                    finalQualifiedName.Remove(name);
+            }
+
+            var variableArrangedQualifiedName = useQualifiedName ? string.Join("::", finalQualifiedName) : variable.Name;
 
             var variableDisplay = string.Format("{0} ({1}) ({2})", variable.Name, variable.DataType.Name, variableArrangedQualifiedName);
             return new CompletionItem(variableDisplay) { insertText = variableArrangedQualifiedName, kind = CompletionItemKind.Variable };

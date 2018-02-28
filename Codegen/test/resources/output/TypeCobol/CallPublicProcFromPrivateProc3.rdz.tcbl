@@ -83,8 +83,12 @@
        PROCEDURE DIVISION
            .
       *    call TCOZCHKP::StartCheckpoint input var1
-           IF TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
+           IF ADDRESS OF TC-TCOZCHKP-b179d81b-Item = NULL
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
+           ELSE
+               IF TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
+                   PERFORM TC-LOAD-POINTERS-TCOZCHKP
+               END-IF
            END-IF
            CALL TC-TCOZCHKP-b179d81b USING
                                  var1

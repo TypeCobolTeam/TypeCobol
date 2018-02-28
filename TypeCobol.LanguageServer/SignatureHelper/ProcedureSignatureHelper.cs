@@ -49,7 +49,7 @@ namespace TypeCobol.LanguageServer.SignatureHelper
         }
 
         /// <summary>
-        /// This method is used to determine on which argument position the user use. It's able to determine if the user is inside the INPUT/OUTPUT/IN-OUT argument section. 
+        /// This method is used to determine on which argument position the user is. It's able to determine if the user is inside the INPUT/OUTPUT/IN-OUT argument section. 
         /// </summary>
         /// <param name="procedure">The detected procedure</param>
         /// <param name="wrappedCodeElement">One codeElement containing arrangedTokens concerning a procedure CALL</param>
@@ -117,18 +117,23 @@ namespace TypeCobol.LanguageServer.SignatureHelper
         }
 
 
-        public static bool ParametersTester(IList<ParameterDescription> parameters, List<string> parameters2, Node node)
+        public static int ParametersTester(IList<ParameterDescription> parameters, List<string> parameters2, Node node)
         {
-            for (int i = 0; i < Math.Min(parameters.Count, parameters2.Count); i++)
+            var length = Math.Min(parameters.Count, parameters2.Count);
+            if (length == 0)
+                return 0;
+
+            int weight = 0;
+            for (int i = 0; i < length; i++)
             {
                 var foundedVar = node.SymbolTable.GetVariablesExplicit(new URI(parameters2[i])).FirstOrDefault();
-                if (foundedVar == null)
-                    return false;
-                if (!IsParameterCompatible(parameters[i], foundedVar))
-                    return false;
+                if (foundedVar == null || !IsParameterCompatible(parameters[i], foundedVar))
+                    continue; //Ignore this parameter and check for the next one
+
+                weight++; //Each time a parameter is valid increase weight
             }
 
-            return true;
+            return weight;
         }
 
         private static bool IsParameterCompatible(ParameterDescription parameter1, DataDefinition parameter2)

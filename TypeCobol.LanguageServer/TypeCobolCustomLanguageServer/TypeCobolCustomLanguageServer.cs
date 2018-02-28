@@ -1,5 +1,8 @@
 ﻿using System;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.LanguageServer.JsonRPC;
+using TypeCobol.LanguageServer.VsCodeProtocol;
+using String = System.String;
 
 namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 {
@@ -9,6 +12,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         {
             rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);
             rpcServer.RegisterNotificationMethod(NodeRefreshNotification.Type, ReceivedRefreshNodeDemand);
+            rpcServer.RegisterNotificationMethod(SignatureHelpContextNotification.Type, ReceivedSignatureHelpContext);
         }
 
         private void CallReceiveMissingCopies(NotificationType notificationType, object parameters)
@@ -35,6 +39,18 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             }
         }
 
+        private void ReceivedSignatureHelpContext(NotificationType notificationType, object parameters)
+        {
+            try
+            {
+                OnDidReceiveSignatureHelpContext((SignatureHelpContextParams)parameters);
+            }
+            catch (Exception e)
+            {
+                this.NotifyException(e);
+            }
+        }
+
         /// <summary>
         /// The Missing copies notification is sent from the client to the server
         /// when the client failled to load copies, it send back a list of missing copies to the server.
@@ -50,6 +66,11 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// </summary>
         /// <param name="parameter"></param>
         public virtual void OnDidReceiveNodeRefresh(NodeRefreshParams parameter)
+        {
+            
+        }
+
+        public virtual void OnDidReceiveSignatureHelpContext(SignatureHelpContextParams procedureHash)
         {
             
         }

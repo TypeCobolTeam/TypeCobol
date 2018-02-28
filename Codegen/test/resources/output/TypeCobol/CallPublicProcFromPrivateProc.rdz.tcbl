@@ -126,8 +126,12 @@
              USING BY REFERENCE mydate
            .
       *    Call PersonService::GetPersonById input mydate
-           IF TC-PersonService-cd991005-Idt not = 'cd991005'
+           IF ADDRESS OF TC-PersonService-cd991005-Item = NULL
                PERFORM TC-LOAD-POINTERS-PersonService
+           ELSE
+               IF TC-PersonService-cd991005-Idt not = 'cd991005'
+                   PERFORM TC-LOAD-POINTERS-PersonService
+               END-IF
            END-IF
            CALL TC-PersonService-cd991005 USING
                                  mydate

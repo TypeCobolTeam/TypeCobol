@@ -31,11 +31,15 @@ namespace TypeCobol.LanguageServer
         public TypeCobolServer(IRPCServer rpcServer, Queue<MessageActionWrapper> messagesActionsQueue) : base(rpcServer)
         {
             _MessagesActionsQueue = messagesActionsQueue;
+            _FunctionDeclarationSignatureDictionary = new Dictionary<SignatureInformation, FunctionDeclaration>();
         }
 
         // -- Initialization : create workspace and return language server capabilities --
         private Workspace typeCobolWorkspace;
         private Queue<MessageActionWrapper> _MessagesActionsQueue;
+        private FunctionDeclaration _SignatureCompletionContext;
+        private Dictionary<SignatureInformation, FunctionDeclaration> _FunctionDeclarationSignatureDictionary;
+
 
         #region Override LSP Methods
 
@@ -98,14 +102,15 @@ namespace TypeCobol.LanguageServer
                 List<string> lineUpdates = null;
                 bool replacementTextStartsWithNewLine = false;
 
-                if (contentChange.text != null && contentChange.text.Length > 0)
+                if (!string.IsNullOrEmpty(contentChange.text))
                 {
                     replacementTextStartsWithNewLine = contentChange.text[0] == '\r' ||
                                                        contentChange.text[0] == '\n';
                     //Allow to know if a new line was added
-                    lineUpdates =
-                        contentChange.text.Replace("\r", "").Split('\n').Where(s => !string.IsNullOrEmpty(s)).ToList();
-                        //Split on \r \n to know the number of lines added
+                    //Split on \r \n to know the number of lines added
+                    lineUpdates = contentChange.text.Replace("\r", "").Split('\n').ToList();
+                    if(string.IsNullOrEmpty(lineUpdates.FirstOrDefault()) && replacementTextStartsWithNewLine)
+                        lineUpdates.RemoveAt(0);
                 }
 
                 // Document cleared
@@ -149,7 +154,7 @@ namespace TypeCobol.LanguageServer
                         //Detected that the add line appeared inside an existing line
                     {
                         lineUpdates.Add(lineUpdates.First());
-                        ///Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
+                        //Add the default 7 spaces + add lineUpdates in order to update the current line and add the new one. 
                     }
 
                     // Check if the last line was deleted
@@ -157,7 +162,7 @@ namespace TypeCobol.LanguageServer
                     if (contentChange.range.end.line > contentChange.range.start.line &&
                         contentChange.range.end.character == 0)
                     {
-                        //Allows to detect if the next line was supressed
+                        //Allows to detect if the next line was suppressed
                     }
                     if (contentChange.text?.Length == 0)
                     {
@@ -197,7 +202,7 @@ namespace TypeCobol.LanguageServer
                     {
                         var textChange = new TextChange(TextChangeType.LineRemoved, firstLineIndex, null);
                         textChangedEvent.TextChanges.Add(textChange);
-                        //Mark the index line to be removed. The index will remains the same for each line delete, beacause text change are apply one after another
+                        //Mark the index line to be removed. The index will remains the same for each line delete, because text change are apply one after another
                     }
 
                     // Insert the updated lines
@@ -356,8 +361,9 @@ namespace TypeCobol.LanguageServer
                         }
                         case TokenType.CALL:
                         {
+                            _FunctionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
                             items.AddRange(CompletionFactory.GetCompletionForProcedure(fileCompiler, matchingCodeElement,
-                                userFilterToken));
+                                userFilterToken, _FunctionDeclarationSignatureDictionary));
                             items.AddRange(CompletionFactory.GetCompletionForLibrary(fileCompiler, matchingCodeElement,
                                 userFilterToken));
                             break;
@@ -373,7 +379,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.QualifiedNameSeparator:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForQualifiedName(parameters.position,
-                                fileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken));
+                                fileCompiler, matchingCodeElement, lastSignificantToken, userFilterToken, _FunctionDeclarationSignatureDictionary));
                             break;
                         }
                         case TokenType.INPUT:
@@ -381,7 +387,7 @@ namespace TypeCobol.LanguageServer
                         case TokenType.IN_OUT:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForProcedureParameter(parameters.position,
-                                fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken));
+                                fileCompiler, matchingCodeElement, userFilterToken, lastSignificantToken, _SignatureCompletionContext));
                             break;
                         }
                         case TokenType.MOVE:
@@ -571,14 +577,30 @@ namespace TypeCobol.LanguageServer
             return defaultDefinition;
         }
 
+
+        public override void OnDidReceiveSignatureHelpContext(SignatureHelpContextParams parameters)
+        {
+            if (parameters?.signatureInformation == null) //Means that the client leave the context
+            {
+                //Make the context signature completion null
+                _SignatureCompletionContext = null;
+                //Clean up the dictionary
+                _FunctionDeclarationSignatureDictionary.Clear();
+                return;
+            }
+
+            var retrievedFuncDeclarationPair =
+                _FunctionDeclarationSignatureDictionary.FirstOrDefault(item => item.Key.Equals(parameters.signatureInformation));
+
+            if (retrievedFuncDeclarationPair.Key != null)
+                _SignatureCompletionContext = retrievedFuncDeclarationPair.Value;
+        }
+
         public override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
-            if (fileCompiler == null) //No FileCompiler found
-                return null;
 
-            if (fileCompiler.CompilationResultsForProgram == null ||
-                fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
+            if (fileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
                 return null;
 
             var wrappedCodeElement = CodeElementFinder(fileCompiler, parameters.position).FirstOrDefault();
@@ -614,7 +636,10 @@ namespace TypeCobol.LanguageServer
                 signatureHelp.signatures[0] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(calledProcedure);
                 signatureHelp.activeSignature = 0; //Set the active signature as the one just created
                 //Select the current parameter the user is expecting
-                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position); 
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(calledProcedure, wrappedCodeElement, parameters.position);
+
+                //There is only one possibility so the context can be set right now 
+                _SignatureCompletionContext = calledProcedure;
 
                 return signatureHelp;
             }
@@ -637,39 +662,60 @@ namespace TypeCobol.LanguageServer
                   .Skip(1) //Ignore the INPUT Token
                   .TakeWhile(t => !(t.TokenType == TokenType.OUTPUT || t.TokenType == TokenType.INPUT))).ToList();
             var totalGivenParameters = givenInputParameters.Count + givenInoutParameters.Count + givenOutputParameters.Count;
-
-            signatureHelp.signatures = new SignatureInformation[calledProcedures.Count];
-
+     
+            var signatureInformation = new List<SignatureInformation>();
+            _FunctionDeclarationSignatureDictionary.Clear();
             FunctionDeclaration bestmatchingProcedure = null;
             int previousMatchingWeight = 0, selectedSignatureIndex = 0;
-            foreach (var procedure in calledProcedures)
+
+            if (totalGivenParameters == 0)
             {
-                int matchingWeight = 0;
-                //Test INPUT parameters
-                var inputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
-                if (inputResult) matchingWeight++;
-
-                //Test OUTPUT parameters
-                var outputResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
-                if (outputResult) matchingWeight++;
-                
-                //Test INOUT parameters 
-                var inoutResult = ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
-                if (inoutResult) matchingWeight++;
-
-                signatureHelp.signatures[selectedSignatureIndex] = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
-
-                if (matchingWeight > previousMatchingWeight && totalGivenParameters > 0)
+                foreach (var procedure in calledProcedures) //No parameters given, return all possibilities
                 {
-                    previousMatchingWeight = matchingWeight;
-                    signatureHelp.activeSignature = selectedSignatureIndex;
-                    bestmatchingProcedure = procedure;
+                    var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+                    signatureInformation.Add(formattedSignatureInformation);
+                    _FunctionDeclarationSignatureDictionary.Add(formattedSignatureInformation, procedure);
                 }
-                selectedSignatureIndex++;
+            }
+            else
+            {
+                foreach (var procedure in calledProcedures)
+                {
+                    //The commented parts allow to restrict the potential compatible signature to return to the client
+                    int matchingWeight = 0;
+                    //Test INPUT parameters
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.InputParameters, givenInputParameters, node);
+
+                    //Test OUTPUT parameters
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.OutputParameters, givenOutputParameters, node);
+
+                    //Test INOUT parameters 
+                    matchingWeight = matchingWeight + ProcedureSignatureHelper.ParametersTester(procedure.Profile.InoutParameters, givenInoutParameters, node);
+
+                    if (matchingWeight > 0 && matchingWeight >= previousMatchingWeight && totalGivenParameters > 0)
+                    {
+                        if (matchingWeight > previousMatchingWeight)
+                            signatureInformation.Clear();  //If the matchingWeight is superior than previous, it means that the previous signature is not precise enough.
+
+                        var formattedSignatureInformation = ProcedureSignatureHelper.SignatureHelperSignatureFormatter(procedure);
+                        signatureInformation.Add(formattedSignatureInformation);
+                        _FunctionDeclarationSignatureDictionary.Add(formattedSignatureInformation, procedure);
+
+                        previousMatchingWeight = matchingWeight;
+                        bestmatchingProcedure = procedure;
+                    }
+                    selectedSignatureIndex++;
+                }
             }
 
-            if(bestmatchingProcedure != null)
-                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position);
+            signatureHelp.signatures = signatureInformation.ToArray();
+
+            if (signatureInformation.Count == 1)
+            {
+                _SignatureCompletionContext = bestmatchingProcedure; //Set the completion context 
+                signatureHelp.activeSignature = 0; //Select the only signature for the client
+                signatureHelp.activeParameter = ProcedureSignatureHelper.SignatureHelperParameterSelecter(bestmatchingProcedure, wrappedCodeElement, parameters.position); //Select the current parameter
+            }
 
             return signatureHelp;
         }

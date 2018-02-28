@@ -62,7 +62,7 @@
             {
                 var RootNode = (SourceFile)node.Root;
                 if (RootNode != null && RootNode.GeneratedCobolHashes.Any(v => v.Key == result && v.Value != text))
-                    DiagnosticUtils.AddError(node.CodeElement, "Duplicated hash detected. Please contact TypeCobol support team.", MessageCode.ImplementationError);
+                    DiagnosticUtils.AddError(node, "Duplicated hash detected. Please contact TypeCobol support team.", MessageCode.ImplementationError);
                 else if (RootNode != null && !RootNode.GeneratedCobolHashes.Any(v => v.Key == result))
                     RootNode.GeneratedCobolHashes.Add(result, text);
             }
