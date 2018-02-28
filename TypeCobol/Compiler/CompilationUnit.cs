@@ -170,10 +170,6 @@ namespace TypeCobol.Compiler
                 {
                     PerfStatsForProgramCrossCheck.OnStartRefreshParsingStep();
 
-                    var sb = new StringBuilder();
-                    temporarySnapshot.Lines.ForEach(l => sb.AppendLine(l.Text));
-                    var final = sb.ToString();
-
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
                     SourceFile root = temporarySnapshot.Root;
                     List<Diagnostic> diagnostics = new List<Diagnostic>();
