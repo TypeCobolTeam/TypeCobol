@@ -504,7 +504,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The log message notification is send from the server to the client to ask
         /// the client to log a particular message.
         /// </summary>
-        public RemoteConsole RemoteConsole { get; private set; }
+        public RemoteConsole RemoteConsole { get; protected set; }
 
         /// <summary>
         /// The show message notification is sent from a server to a client to ask

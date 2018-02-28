@@ -58,6 +58,9 @@
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolCustomLanguageServer.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\TypeCobolRemoteConsole.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageParams.cs" />
     <Compile Include="TypeCobolServer.cs" />
     <Compile Include="TypeCobolServerHost.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesNotification.cs" />
@@ -172,6 +175,7 @@
       <Name>TypeCobol</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

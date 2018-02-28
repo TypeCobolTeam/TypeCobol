@@ -9,7 +9,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     public class RemoteConsole
     {
-        private IRPCServer rpcServer;
+        protected IRPCServer rpcServer;
 
         public RemoteConsole(IRPCServer rpcServer)
         {
