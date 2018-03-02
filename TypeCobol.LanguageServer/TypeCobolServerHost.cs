@@ -65,6 +65,31 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static ServerLogLevel LogLevel { get; set; }
 
+        /// <summary>
+        /// Lstr Testing Source document
+        /// </summary>
+        public static bool LsrSourceTesting { get; set; }
+        /// <summary>
+        /// Lstr Testing Scanning of the document.
+        /// </summary>
+        public static bool LsrScannerTesting { get; set; }
+        /// <summary>
+        /// Lstr Testing preprocessed Source document
+        /// </summary>
+        public static bool LsrPreprocessTesting { get; set; }
+        /// <summary>
+        /// Lstr Testing parsing
+        /// </summary>
+        public static bool LsrParserTesting { get; set; }
+        /// <summary>
+        /// Lstr Testing semantic phase
+        /// </summary>
+        public static bool LsrSemanticTesting { get; set; }
+
+        /// <summary>
+        /// Timer Disabled for TypeCobol.LanguageServer.
+        /// </summary>
+        public static bool TimerDisabledOption { get; set; }
 
         public static System.Diagnostics.Process Process;
 
@@ -139,11 +164,16 @@ namespace TypeCobol.LanguageServer
                 { "v|version","Show version", _ => version = true },
                 { "h|help","Show help", _ => help = true },
                 { "lf|logfile=","{PATH} the target log file", (string v) => LogFile = v },
-                { "r|robot",  "Robot Client mode.", _ => LsrMode = true
-                },
+                { "r|robot",  "Robot Client mode.", _ => LsrMode = true },
                 { "lsr=","{PATH} the lsr path", (string v) => LsrPath = v },
                 { "s|script=","{PATH} script path in lsr", (string v) => LsrScript = v },
+                { "td|timerdisabled","Disable the delay that handle the automatic launch of Node Phase analyze", _ => TimerDisabledOption = true },
                 { "ro|roptions=","LSR options", (string v) => LsrOptions = v + " " },
+                { "tsource",  "Source document testing mode.", _ => LsrSourceTesting = true},
+                { "tscanner",  "Scanner testing mode.", _ => LsrScannerTesting = true},
+                { "tpreprocess",  "Preprocessing testing mode.", _ => LsrPreprocessTesting = true},
+                { "tparser",  "parsing testing mode.", _ => LsrParserTesting = true},
+                { "tsemantic",  "Semantic analysis testing mode.", _ => LsrSemanticTesting = true},
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -205,6 +235,14 @@ namespace TypeCobol.LanguageServer
                 }
                 var jsonRPCServer = new JsonRPCServer(httpServer);
                 var typeCobolServer = new TypeCobolServer(jsonRPCServer, MessagesActionQueue);
+
+                typeCobolServer.LsrSourceTesting = LsrSourceTesting;
+                typeCobolServer.LsrScannerTesting = LsrScannerTesting;
+                typeCobolServer.LsrPreprocessTesting = LsrPreprocessTesting;
+                typeCobolServer.LsrParserTesting = LsrParserTesting;
+                typeCobolServer.LsrSemanticTesting = LsrSemanticTesting;
+                typeCobolServer.TimerDisabledOption = TimerDisabledOption;
+
 
                 //Creating the thread that will read mesages and handle them 
                 var backgroundExecutionThread = new Thread(() => { MessageHandler(jsonRPCServer, typeCobolServer); }) { IsBackground = true };
