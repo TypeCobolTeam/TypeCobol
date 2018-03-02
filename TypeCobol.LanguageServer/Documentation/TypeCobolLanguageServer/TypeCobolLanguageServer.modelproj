@@ -184,6 +184,13 @@
       <SubType>Content</SubType>
       <DependentUpon>GotoSymbolDef.sequencediagram</DependentUpon>
     </Content>
+    <Content Include="IncrementalWithLSP\LSPIncremental.sequencediagram">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="IncrementalWithLSP\LSPIncremental.sequencediagram.layout">
+      <SubType>Content</SubType>
+      <DependentUpon>IncrementalWithLSP\LSPIncremental.sequencediagram</DependentUpon>
+    </Content>
     <Content Include="Initialisation.usecasediagram">
       <SubType>Content</SubType>
     </Content>
@@ -278,6 +285,7 @@
     <Folder Include="Go to definition" />
     <Folder Include="MissingCopies" />
     <Folder Include="Completion Resolve" />
+    <Folder Include="IncrementalWithLSP" />
     <Folder Include="Source Code Update" />
   </ItemGroup>
 </Project>

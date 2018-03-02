@@ -10,6 +10,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
     {
         public TypeCobolCustomLanguageServer(IRPCServer rpcServer) : base(rpcServer)
         {
+            RemoteConsole = new LanguageServer.TypeCobolCustomLanguageServerProtocol.TypeCobolRemoteConsole(rpcServer);
             rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);
             rpcServer.RegisterNotificationMethod(NodeRefreshNotification.Type, ReceivedRefreshNodeDemand);
             rpcServer.RegisterNotificationMethod(SignatureHelpContextNotification.Type, ReceivedSignatureHelpContext);

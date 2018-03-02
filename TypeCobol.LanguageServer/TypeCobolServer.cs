@@ -40,6 +40,39 @@ namespace TypeCobol.LanguageServer
         private FunctionDeclaration _SignatureCompletionContext;
         private Dictionary<SignatureInformation, FunctionDeclaration> _FunctionDeclarationSignatureDictionary;
 
+        /// <summary>
+        /// Timer Disabled for TypeCobol.LanguageServer.
+        /// </summary>
+        public bool TimerDisabledOption
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Lstr Testing Source document
+        /// </summary>
+        public bool LsrSourceTesting { get; set; }
+        /// <summary>
+        /// Lstr Testing Source document
+        /// </summary>
+        public bool LsrScannerTesting { get; set; }
+        /// <summary>
+        /// Lstr Testing preprocessed Source document
+        /// </summary>
+        public bool LsrPreprocessTesting { get; set; }
+        /// <summary>
+        /// Lstr Testing parsing
+        /// </summary>
+        public bool LsrParserTesting { get; set; }
+        /// <summary>
+        /// Lstr Testing semantic phase
+        /// </summary>
+        public bool LsrSemanticTesting { get; set; }
+
+        public Workspace Workspace
+        {
+            get { return typeCobolWorkspace; }
+        }
 
         #region Override LSP Methods
 
@@ -50,6 +83,14 @@ namespace TypeCobol.LanguageServer
 
             // Initialize the workspace
             typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, _MessagesActionsQueue);
+            //Propagate LSR testing options.
+            if (LsrSourceTesting) typeCobolWorkspace.IsLsrSourceTesting = LsrSourceTesting;
+            if (LsrScannerTesting) typeCobolWorkspace.IsLsrScannerTesting = LsrScannerTesting;
+            if (LsrPreprocessTesting) typeCobolWorkspace.IsLsrPreprocessinTesting = LsrPreprocessTesting;
+            if (LsrParserTesting) typeCobolWorkspace.IsLsrParserTesting = LsrParserTesting;
+            if (LsrSemanticTesting) typeCobolWorkspace.IsLsrSemanticTesting = LsrSemanticTesting;
+
+            typeCobolWorkspace.TimerDisabledOption = TimerDisabledOption;
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
             typeCobolWorkspace.ExceptionTriggered += ExceptionTriggered;
             typeCobolWorkspace.WarningTrigger += WarningTrigger;
