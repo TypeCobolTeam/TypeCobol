@@ -169,13 +169,13 @@ namespace TypeCobol.LanguageServer
                 .Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
 
             var finalQualifiedName = qualifiedName.ToList();
-            var lastElementName = finalQualifiedName.Last();
-            foreach (var name in qualifiedName)
+
+            if (variable.CodeElement.IsInsideCopy())
             {
-                if (lastElementName == name)
-                    break;
-                if (lastElementName.Contains(name))
-                    finalQualifiedName.Remove(name);
+                finalQualifiedName.Clear();
+                finalQualifiedName.Add(qualifiedName.First());
+                if (qualifiedName.First() != qualifiedName.Last())
+                    finalQualifiedName.Add(qualifiedName.Last());
             }
 
             var variableArrangedQualifiedName = useQualifiedName ? string.Join("::", finalQualifiedName) : variable.Name;
