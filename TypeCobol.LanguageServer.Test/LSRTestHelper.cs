@@ -17,10 +17,12 @@ namespace TypeCobol.LanguageServer.Test
         /// -lsr contains the path to LanguageServerRobot executable
         /// -script contains the path to the script to test
         /// -config contains the path to the config file necessary for TypeCobolLSR initialization 
+        /// -init Give the initialize file path
+        /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\" -p -init={1} -config={2}\" -script={3}";
+        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\" -p -init={1} -config={2}\" -script={3} {4}"; 
 
-        public static void Test(string testFolderName, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null)
+        public static void Test(string testFolderName, bool activateTdOption = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null)
         {
             var workingDirectory = "LSRTests";
             var testWorkingDirectory = workingDirectory + Path.DirectorySeparatorChar + testFolderName;
@@ -66,7 +68,7 @@ namespace TypeCobol.LanguageServer.Test
             var scriptFileInfo = new FileInfo(scriptPath);
             //Setup the arguments
             //Waitting for LSR NuGet Package 
-            var arguments = string.Format(defaultTypeCobolLSArgs, @"C:\TypeCobol\LanguageServerRobot\LanguageServerRobot.exe", initGeneratedFileInfo.FullName, configGeneratedFileInfo.FullName, scriptFileInfo.FullName);
+            var arguments = string.Format(defaultTypeCobolLSArgs, @"C:\TypeCobol\LanguageServerRobot\LanguageServerRobot.exe", initGeneratedFileInfo.FullName, configGeneratedFileInfo.FullName, scriptFileInfo.FullName, activateTdOption ? "-td" : "");
             //new FileInfo("..\\..\\packages\\LSR\\LanguageServerRobot.exe").FullName
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
