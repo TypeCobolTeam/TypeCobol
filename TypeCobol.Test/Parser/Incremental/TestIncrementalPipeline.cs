@@ -152,6 +152,9 @@ namespace TypeCobol.Test.Parser.Incremental {
         }
     }
 
+    /// <summary>
+    /// These tests are going to check if the document's line update works fine. 
+    /// </summary>
     [TestClass]
     public class IncrementalTextLineChanges
     {

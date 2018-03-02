@@ -1,0 +1,19 @@
+﻿{
+  "jsonrpc": "2.0",
+  "method": "workspace/didChangeConfiguration",
+  "params": {
+    "settings": [
+      "-e",
+      "rdz",
+      "-c",
+      "{CopyFolder}",
+      "-y",
+      "{IntrinsicFile}",
+      "--dependencies",
+      "{DependenciesFolder}\\*.tcbl",
+      "--autoremarks",
+      "-md",
+      "30"
+    ]
+  }
+}
