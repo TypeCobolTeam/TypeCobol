@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using TypeCobol.LanguageServer.Utilities;
 
 namespace TypeCobol.LanguageServer.StdioHttp
 {
@@ -267,6 +269,8 @@ namespace TypeCobol.LanguageServer.StdioHttp
         // Synchronized access
         private readonly object _lock = new object();
 
+        private OrderTaskScheduler _scheduler = new OrderTaskScheduler("TC.Lsp.Server");
+
         /// <summary>
         /// Send a message to the Http client
         /// </summary>
@@ -296,8 +300,14 @@ namespace TypeCobol.LanguageServer.StdioHttp
                     }
                 }
             };
-            Task tsend = new Task(action, message);
-            tsend.Start();
+            var tsend = Task.Factory.StartNew(
+                () => action(message),
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                this._scheduler);
+
+            //Task tsend = new Task(action, message);
+            //tsend.Start();
         }
 
         /// <summary>

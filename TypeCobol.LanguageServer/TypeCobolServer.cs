@@ -39,6 +39,7 @@ namespace TypeCobol.LanguageServer
         private Queue<MessageActionWrapper> _MessagesActionsQueue;
         private FunctionDeclaration _SignatureCompletionContext;
         private Dictionary<SignatureInformation, FunctionDeclaration> _FunctionDeclarationSignatureDictionary;
+        private TypeCobolRemoteConsole _TCobRemoteControl { get { return (TypeCobolRemoteConsole)RemoteConsole; } }
 
         /// <summary>
         /// Timer Disabled for TypeCobol.LanguageServer.
@@ -82,7 +83,7 @@ namespace TypeCobol.LanguageServer
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
             // Initialize the workspace
-            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, _MessagesActionsQueue);
+            typeCobolWorkspace = new Workspace(rootDirectory.FullName, workspaceName, _MessagesActionsQueue, Logger);
             //Propagate LSR testing options.
             if (LsrSourceTesting) typeCobolWorkspace.IsLsrSourceTesting = LsrSourceTesting;
             if (LsrScannerTesting) typeCobolWorkspace.IsLsrScannerTesting = LsrScannerTesting;
@@ -108,6 +109,13 @@ namespace TypeCobol.LanguageServer
             return initializeResult;
         }
         // -- Files synchronization : maintain a list of opened files, apply all updates to their content -- //
+
+        private bool Logger(string message, Uri uri)
+        {
+            _TCobRemoteControl.UriLog(message, uri);
+            return true;
+        }
+
         public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
             Uri objUri = new Uri(parameters.textDocument.uri);
@@ -118,7 +126,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
 
                 typeCobolWorkspace.OpenSourceFile(objUri,
-                    parameters.text != null ? parameters.text : parameters.textDocument.text);
+                    parameters.text != null ? parameters.text : parameters.textDocument.text, Workspace.LsrTestOptions);
                 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + objUri.LocalPath);
@@ -161,7 +169,7 @@ namespace TypeCobol.LanguageServer
                     //To avoid crashes.
                     try
                     {
-                        typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text);
+                        typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text, this.Workspace.LsrTestOptions);
                         return;
                     }
                     catch (Exception e)

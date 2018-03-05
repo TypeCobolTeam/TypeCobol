@@ -15,6 +15,7 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.Options_Config;
+using TypeCobol.LanguageServer.Utilities;
 
 namespace TypeCobol.LanguageServer
 {
@@ -49,6 +50,7 @@ namespace TypeCobol.LanguageServer
         public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
         public EventHandler<string> WarningTrigger { get; set; }
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
+        private Func<string, Uri, bool> _Logger;
 
         #region Testing Options
 
@@ -134,12 +136,13 @@ namespace TypeCobol.LanguageServer
         #endregion
 
 
-        public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue)
+        public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
             MessagesActionsQueue = messagesActionsQueue;
             TypeCobolConfiguration = new TypeCobolConfiguration();
             OpenedFileCompiler = new Dictionary<Uri, FileCompiler>();
             _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
+            _Logger = logger;
 
             this._rootDirectoryFullName = rootDirectoryFullName;
             this._workspaceName = workspaceName;
@@ -155,7 +158,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Start continuous background compilation on a newly opened file
         /// </summary>
-        public void OpenSourceFile(Uri fileUri, string sourceText)
+        public void OpenSourceFile(Uri fileUri, string sourceText, LsrTestingOptions lsrOptions)
         {
             string fileName = Path.GetFileName(fileUri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
@@ -195,7 +198,14 @@ namespace TypeCobol.LanguageServer
 
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
 
-            fileCompiler.CompileOnce(); //Let's parse file for the first time after opening. 
+            if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
+            {
+                fileCompiler.CompileOnce(); //Let's parse file for the first time after opening. 
+            }
+            else
+            {
+                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
+            }
         }
 
         /// <summary>
@@ -209,51 +219,70 @@ namespace TypeCobol.LanguageServer
                 _semanticUpdaterTimer?.Stop();
 
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                if (IsLsrSourceTesting)
+                {
+                    //Log text lines string 
+                    foreach (var cobolTextLine in fileCompilerToUpdate.CompilationResultsForProgram.CobolTextLines)
+                    {
+                        _Logger(cobolTextLine.SourceText, fileUri);
+                    }
+                }
 
                 if (!bAsync)
                 {//Don't wait asynchronous snapshot refresh.
-                    fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
-                        () =>
-                            {
-                                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting)
-                                {
-                                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                                    fileCompilerToUpdate.CompilationResultsForProgram
-                                        .RefreshProcessedTokensDocumentSnapshot();
-                                    fileCompilerToUpdate.CompilationResultsForProgram
-                                        .RefreshCodeElementsDocumentSnapshot();
-                                }
-                                else
-                                {
-                                    if (IsLsrScannerTesting)
-                                    {
-                                        fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                                    }
-                                    if (IsLsrPreprocessinTesting)
-                                    { 
-                                        fileCompilerToUpdate.CompilationResultsForProgram
-                                            .RefreshProcessedTokensDocumentSnapshot();
-                                    }
-                                    if (IsLsrParserTesting)
-                                    {
-                                        fileCompilerToUpdate.CompilationResultsForProgram
-                                            .RefreshCodeElementsDocumentSnapshot();
-                                    }
-                                }
-                            }
-                        );
-
-                    lock (_fileCompilerWaittingForNodePhase)
+                    if (IsLsrScannerTesting || LsrTestOptions == LsrTestingOptions.NoLsrTesting)
                     {
-                        if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
-                            _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
+                        fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
+                       () =>
+                       {
+                           if (LsrTestOptions == LsrTestingOptions.NoLsrTesting)
+                           {
+                               fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+                               fileCompilerToUpdate.CompilationResultsForProgram
+                                    .RefreshProcessedTokensDocumentSnapshot();
+                               fileCompilerToUpdate.CompilationResultsForProgram
+                                    .RefreshCodeElementsDocumentSnapshot();
+                           }
+                           else
+                           {
+
+                               if (IsLsrScannerTesting)
+                               {
+                                   fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+
+                                   //Return log information about updated tokens
+                                   //fileCompilerToUpdate.CompilationResultsForProgram.TokensDocumentSnapshot.
+
+                               }
+                               if (IsLsrPreprocessinTesting)
+                               {
+                                   fileCompilerToUpdate.CompilationResultsForProgram
+                                        .RefreshProcessedTokensDocumentSnapshot();
+                               }
+                               if (IsLsrParserTesting)
+                               {
+                                   fileCompilerToUpdate.CompilationResultsForProgram
+                                        .RefreshCodeElementsDocumentSnapshot();
+                               }
+                           }
+                       }
+                       );
                     }
 
-                    if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
+                    if (LsrTestOptions == LsrTestingOptions.NoLsrTesting)
                     {
-                        _semanticUpdaterTimer = new System.Timers.Timer(1000);
-                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
-                        _semanticUpdaterTimer.Start();
+                        lock (_fileCompilerWaittingForNodePhase)
+                        {
+                            if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
+                                _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
+                        }
+
+                        if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
+                        {
+                            _semanticUpdaterTimer = new System.Timers.Timer(1000);
+                            _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                            _semanticUpdaterTimer.Start();
+                        }
                     }
                 }
                 else
@@ -420,7 +449,7 @@ namespace TypeCobol.LanguageServer
                     foreach (var line in fileParser.Value.TextDocument.Lines)
                         sourceText.AppendLine(line.Text);
 
-                    OpenSourceFile(fileParser.Key, sourceText.ToString());
+                    OpenSourceFile(fileParser.Key, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
                 }
             }
         }

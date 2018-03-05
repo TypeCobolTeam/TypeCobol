@@ -66,7 +66,9 @@
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesParams.cs" />
     <Compile Include="Utilities\DebugTextWriter.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\MessageActionWrapper.cs" />
+    <Compile Include="Utilities\OrderTaskScheduler.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionContext.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionParams.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionRequest.cs" />
