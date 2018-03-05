@@ -67,9 +67,8 @@ namespace TypeCobol.LanguageServer.Test
 
             var scriptFileInfo = new FileInfo(scriptPath);
             //Setup the arguments
-            //Waitting for LSR NuGet Package 
-            var arguments = string.Format(defaultTypeCobolLSArgs, @"C:\TypeCobol\LanguageServerRobot\LanguageServerRobot.exe", initGeneratedFileInfo.FullName, configGeneratedFileInfo.FullName, scriptFileInfo.FullName, activateTdOption ? "-td" : "");
-            //new FileInfo("..\\..\\packages\\LSR\\LanguageServerRobot.exe").FullName
+            //The path for LanguageServerRobot depends on the NuGetPackage. If the NuGet is not downloaded, it won't works
+            var arguments = string.Format(defaultTypeCobolLSArgs, @"TypeCobol.LanguageServerRobot.exe", initGeneratedFileInfo.FullName, configGeneratedFileInfo.FullName, scriptFileInfo.FullName, activateTdOption ? "-td" : "");
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
