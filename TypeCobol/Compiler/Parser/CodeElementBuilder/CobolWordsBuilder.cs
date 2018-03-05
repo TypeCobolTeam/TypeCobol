@@ -115,9 +115,9 @@ namespace TypeCobol.Compiler.Parser
             return new EnumeratedValue(valueToken, enumType);
         }
 
-        internal EnumeratedValue CreateEnumeratedValue(CodeElementsParser.EnumeratedValue2Context context, Type enumType)
+        internal EnumeratedValue CreateEnumeratedValue(ITerminalNode IntrinsicFunctionName, Type enumType)
         {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            Token valueToken = ParseTreeUtils.GetTokenFromTerminalNode(IntrinsicFunctionName);
             return new EnumeratedValue(valueToken, enumType);
         }
 
@@ -391,15 +391,14 @@ namespace TypeCobol.Compiler.Parser
             AddToSymbolInformations(nameLiteral, externalName);
             return externalName;
         }
-
-        internal ExternalName CreateExternalName(CodeElementsParser.ExternalName2Context context, SymbolType symbolType, Type enumType)
+        
+        internal ExternalName CreateExternalName(ITerminalNode IntrinsicFunctionName, SymbolType symbolType, Type enumType)
         {
-            AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue2(), enumType);
+            AlphanumericValue nameLiteral = CreateEnumeratedValue(IntrinsicFunctionName, enumType);
             var externalName = new ExternalName(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, externalName);
             return externalName;
         }
-
         internal ExternalName CreateExternalName(CodeElementsParser.ExternalName3Context context, SymbolType symbolType, Type enumType)
         {
             AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue3(), enumType);
@@ -1094,9 +1093,9 @@ namespace TypeCobol.Compiler.Parser
             YEAR_TO_YYYY
         }
 
-        internal ExternalName CreateIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context)
+        internal ExternalName CreateIntrinsicFunctionName(ITerminalNode IntrinsicFunctionName)
         {
-            return CreateExternalName(context.externalName2(), SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
+            return CreateExternalName(IntrinsicFunctionName, SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
         }
 
         /// <summary>

@@ -250,7 +250,7 @@ lengthOfSpecialRegister:
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
 functionIdentifier: 
-	FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+	FUNCTION IntrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the

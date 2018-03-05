@@ -283,7 +283,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context) {
-			var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName());
+			var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.IntrinsicFunctionName());
 			return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
 		}
 

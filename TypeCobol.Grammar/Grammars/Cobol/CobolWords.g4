@@ -772,8 +772,6 @@ alphanumericValue12: SectionParagraphName;
 
 enumeratedValue1: UserDefinedWord;
 
-enumeratedValue2: IntrinsicFunctionName;
-
 enumeratedValue3: ExecTranslatorName;
 
 // Repeated character values which can only be computed 
@@ -838,8 +836,6 @@ symbolDefinitionOrReference1: alphanumericValue1;
 symbolDefinitionOrReference4: alphanumericValue4;
 
 externalName1: enumeratedValue1;
-
-externalName2: enumeratedValue2;
 
 externalName3: enumeratedValue3;
 
@@ -1468,6 +1464,8 @@ assignmentName: externalName5;
 // [Type ambiguity] at this parsing stage
 assignmentNameOrFileNameReference : externalNameOrSymbolReference5;
 
+
+/*
 // ** Runtime functions **
 
 // NB : Because FunctionNames are not reserved words,
@@ -1500,8 +1498,8 @@ assignmentNameOrFileNameReference : externalNameOrSymbolReference5;
 //	WHEN_COMPILED |
 //	YEAR_TO_YYYY;
 
-intrinsicFunctionName: externalName2;
-
+intrinsicFunctionName: IntrinsicFunctionName;
+*/
 // IBM Enterprise Cobol 5.1 for zOS - Programming Guide.pdf
 // p423: To communicate with DB2, do these steps:
 // Code any SQL statements that you need, delimiting them with EXEC SQL and END-EXEC statements.
