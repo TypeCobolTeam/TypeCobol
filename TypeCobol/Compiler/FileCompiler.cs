@@ -200,14 +200,24 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void CompileOnce()
         {
-            if (CompilerOptions.ExecToStep == null)
-                CompilerOptions.ExecToStep = ExecutionStep.CrossCheck;
+            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy);
+        }
+
+        /// <summary>
+        /// Perform a cmpilation based on an execution step.
+        /// </summary>
+        /// <param name="exec2Step">The execution step</param>
+        /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
+        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy)
+        {
+            if (exec2Step == null)
+                exec2Step = ExecutionStep.CrossCheck;
 
             if (CompilationResultsForCopy != null)
             {
                 CompilationResultsForCopy.UpdateTokensLines(); //Scanner
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Scanner)) return;
+                if (!(exec2Step > ExecutionStep.Scanner)) return;
 
                 CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
                 CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
@@ -217,30 +227,28 @@ namespace TypeCobol.Compiler
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Scanner Step");
                 CompilationResultsForProgram.UpdateTokensLines(); //Scanner
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Scanner)) return;
+                if (!(exec2Step > ExecutionStep.Scanner)) return;
 
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Preprocessor Step");
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Preprocessor)) return;
-                if (CompilerOptions.HaltOnMissingCopy && CompilationResultsForProgram.MissingCopies.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
+                if (!(exec2Step > ExecutionStep.Preprocessor)) return;
+                if (haltOnMissingCopy && CompilationResultsForProgram.MissingCopies.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
 
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Syntaxic Step");
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.SyntaxCheck)) return;
+                if (!(exec2Step > ExecutionStep.SyntaxCheck)) return;
 
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Semantic Step");
                 CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //SemanticCheck
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.SemanticCheck)) return;
+                if (!(exec2Step > ExecutionStep.SemanticCheck)) return;
 
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] CrossCheck Step");
                 CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
             }
-
-
         }
 
         // Timers used for background execution of all compiler steps
