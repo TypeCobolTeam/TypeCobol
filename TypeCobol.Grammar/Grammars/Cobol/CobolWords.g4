@@ -673,7 +673,7 @@ allFigurativeConstant: ALL (figurativeConstant | notNullTerminatedAlphanumericOr
 // uniqueness. (For more information, see “Qualification ? on page 65.)
 // ... p17-p33 : more details on all special registers ...
 
-specialRegister: (DEBUG_CONTENTS |
+specialRegisterReference: (DEBUG_CONTENTS |
                   DEBUG_ITEM |
                   DEBUG_LINE |
                   DEBUG_NAME |
@@ -764,8 +764,6 @@ alphanumericValue7: PictureCharacterString;
 
 alphanumericValue8: ExecStatementText;
 
-alphanumericValue9: specialRegister;
-
 alphanumericValue10: standardCollatingSequence;
 
 alphanumericValue11: SymbolicCharacter;
@@ -823,8 +821,6 @@ symbolReference2: alphanumericValue2;
 symbolReference4: alphanumericValue4;
 
 symbolReference5: alphanumericValue5;
-
-symbolReference9: alphanumericValue9; // specialRegister
 
 symbolReference10: alphanumericValue10; // standardCollatingSequence
 
@@ -1127,8 +1123,6 @@ dataTypeNameReference: symbolReference12;
 dataNameDefinition: symbolDefinition4;
 
 dataNameReference: symbolReference4;
-
-intrinsicDataNameReference: /* specialRegister */ symbolReference9;
 
 // [Type ambiguity] at this parsing stage
 dataNameReferenceOrFileNameReference: ambiguousSymbolReference4;

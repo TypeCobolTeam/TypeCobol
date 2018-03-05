@@ -320,8 +320,8 @@ namespace TypeCobol.Compiler.Parser
 		[CanBeNull]
 		internal StorageArea CreateOtherStorageAreaReference([CanBeNull]CodeElementsParser.OtherStorageAreaReferenceContext context) {
 			if (context == null) return null;
-			if (context.intrinsicDataNameReference() != null) {
-                SymbolReference specialRegisterName = CobolWordsBuilder.CreateInstrinsicDataNameReference(context.intrinsicDataNameReference());
+			if (context.specialRegisterReference() != null) {
+                SymbolReference specialRegisterName = CobolWordsBuilder.CreateSpecialRegister(context.specialRegisterReference());
 				StorageArea specialRegister = new IntrinsicStorageArea(specialRegisterName);
 				return specialRegister;
 			}

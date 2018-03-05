@@ -282,7 +282,7 @@ storageAreaReference:
 	| otherStorageAreaReference;
 
 otherStorageAreaReference: 
-	  intrinsicDataNameReference /* specialRegister */
+	  specialRegisterReference
 	| autoAllocatedDataItemReference /* LINAGE-COUNTER, ADDRESS OF, LENGTH OF special registers */
 	| functionIdentifier;
 

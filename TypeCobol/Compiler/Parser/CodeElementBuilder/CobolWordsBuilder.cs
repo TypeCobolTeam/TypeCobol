@@ -320,14 +320,6 @@ namespace TypeCobol.Compiler.Parser
             return symbolReference;
         }
 
-        internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference9Context context, SymbolType symbolType)
-        {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue9());
-            var symbolReference = new SymbolReference(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolReference);
-            return symbolReference;
-        }
-
         internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference10Context context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue10());
@@ -667,10 +659,13 @@ namespace TypeCobol.Compiler.Parser
             if (context == null) return null;
             return CreateSymbolReference(context.symbolReference4(), SymbolType.DataName);
         }
-
-        internal SymbolReference CreateInstrinsicDataNameReference(CodeElementsParser.IntrinsicDataNameReferenceContext context)
+        
+        internal SymbolReference CreateSpecialRegister(CodeElementsParser.SpecialRegisterReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference9(), SymbolType.DataName);
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context);
+            var symbolReference = new SymbolReference(nameLiteral, SymbolType.DataName);
+            AddToSymbolInformations(nameLiteral, symbolReference);
+            return symbolReference;
         }
 
         internal AmbiguousSymbolReference CreateDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
