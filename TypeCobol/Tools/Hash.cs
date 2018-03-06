@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Tools
+﻿using System;
+
+namespace TypeCobol.Tools
 {
 
     using System.Collections.Generic;
@@ -17,6 +19,15 @@
 
     public class Hash
     {
+        /// <summary>
+        /// Calculate the Shortcut name of a COBOl Program name.
+        /// </summary>
+        /// <param name="name">The name to calculate the shortcut.</param>
+        /// <returns>The Shortcut name</returns>
+        public static string CalculateCobolProgramNameShortcut(string name)
+        {
+            return name.Substring(0, Math.Min(val1: name.Length, val2: 8));
+        }
 
         public static string CreateSHA256(string text)
         {
