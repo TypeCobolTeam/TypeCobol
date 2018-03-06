@@ -54,6 +54,20 @@ namespace TypeCobol.Compiler.Preprocessor
             }
         }
 
+        public IEnumerable<Token> ProcessedTokensSource
+        {
+            get
+            {
+                var tokenSource = ProcessedTokens;
+                Token token = null;
+                do
+                {
+                    token = (Token)tokenSource.NextToken();
+                    yield return token;
+                } while (token.Type != (int)TokenType.EndOfFile);
+            }
+        }
+
         /// <summary>
         /// Iterator over the tokens contained in the parameter "lines" after
         /// - COPY directives text imports

@@ -7,11 +7,9 @@ namespace TypeCobol.LanguageServer.Test
     public class LSRTest
     {
         [TestMethod]
-        [Ignore]
-
         public void Incremental_RemoveDataDivisionCtrlZ()
         {
-            LSRTestHelper.Test("Incremental_RemoveDataDivisionCtrlZ", true);
+            LSRTestHelper.Test("Incremental_RemoveDataDivisionCtrlZ", LsrTestingOptions.NoLsrTesting, true);
         }
     }
 }

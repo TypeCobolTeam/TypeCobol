@@ -21,7 +21,27 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="TypeCobol.LanguageServer.JsonRPC, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TypeCobol.LanguageServer.JsonRPC.1.0.1\lib\net45\TypeCobol.LanguageServer.JsonRPC.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeCobol.LanguageServer.Protocol, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TypeCobol.LanguageServer.Protocol.0.5.1\lib\net45\TypeCobol.LanguageServer.Protocol.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeCobol.LanguageServer.Robot.Common, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TypeCobol.LanguageServer.Robot.Common.0.5.1\lib\net45\TypeCobol.LanguageServer.Robot.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TypeCobol.LanguageServerRobot, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TypeCobol.LanguageServerRobot.0.5.1\lib\net45\TypeCobol.LanguageServerRobot.exe</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -45,8 +65,13 @@
       <Project>{cfbf4d30-56f3-4794-9067-b651dc1cab1e}</Project>
       <Name>CLI.Test</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj">
+      <Project>{b610d7fb-1c46-43bf-8df3-3a59a52673c0}</Project>
+      <Name>TypeCobol.LanguageServer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="LSRTests\Incremental_RemoveDataDivisionCtrlZ\input\RemoveDataDivisionCtrlZ.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -59,6 +84,7 @@
     <None Include="LSRTests\config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LSRTests\DefaultIntrinsic.txt">

@@ -8,24 +8,44 @@ namespace TypeCobol.LanguageServer.Utilities
 {
     public static class Extensions
     {
-        public static TypeCobol.ExecutionStep? ExecutionStep(this Workspace.LsrTestingOptions lsrOptions, TypeCobol.ExecutionStep defaultValue)
+        public static TypeCobol.ExecutionStep? ExecutionStep(this LsrTestingOptions lsrOptions, TypeCobol.ExecutionStep defaultValue)
         {
             switch (lsrOptions)
             {
-                case Workspace.LsrTestingOptions.NoLsrTesting:
+                case LsrTestingOptions.NoLsrTesting:
                     return defaultValue;
-                case Workspace.LsrTestingOptions.LsrSourceDocumentTesting:
+                case LsrTestingOptions.LsrSourceDocumentTesting:
                     return null;
-                case Workspace.LsrTestingOptions.LsrScanningPhaseTesting:
+                case LsrTestingOptions.LsrScanningPhaseTesting:
                     return TypeCobol.ExecutionStep.Scanner;
-                case Workspace.LsrTestingOptions.LsrPreprocessingPhaseTesting:
+                case LsrTestingOptions.LsrPreprocessingPhaseTesting:
                     return TypeCobol.ExecutionStep.Preprocessor;
-                case Workspace.LsrTestingOptions.LsrParsingPhaseTesting:
+                case LsrTestingOptions.LsrParsingPhaseTesting:
                     return TypeCobol.ExecutionStep.SyntaxCheck;
-                case Workspace.LsrTestingOptions.LsrSemanticPhaseTesting:
+                case LsrTestingOptions.LsrSemanticPhaseTesting:
                     return TypeCobol.ExecutionStep.CrossCheck;
             }
             return defaultValue;
+        }
+
+        public static string ToLanguageServerOption(this LsrTestingOptions lsrOptions)
+        {
+            switch (lsrOptions)
+            {
+                case LsrTestingOptions.LsrSourceDocumentTesting:
+                    return "-tsource";
+                case LsrTestingOptions.LsrScanningPhaseTesting:
+                    return "-tscanner";
+                case LsrTestingOptions.LsrPreprocessingPhaseTesting:
+                    return "-tpreprocess";
+                case LsrTestingOptions.LsrParsingPhaseTesting:
+                    return "-tparser";
+                case LsrTestingOptions.LsrSemanticPhaseTesting:
+                    return "-tsemantic";
+                case LsrTestingOptions.NoLsrTesting:
+                default:
+                    return "";
+            }
         }
     }
 }
