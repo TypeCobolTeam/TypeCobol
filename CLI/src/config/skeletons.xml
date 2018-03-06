@@ -308,6 +308,11 @@
         foreach (var pgm in %imports.Programs.Values) {
         items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n";
         }
+        if (%imports.HasPublicProcedures) {
+        items += "01 TC-Call          PIC X(01) VALUE 'T'.\n";
+        items += "    88 TC-FirstCall  VALUE 'T'.\n";
+        items += "    88 TC-NthCall    VALUE 'F'.\n";
+        }
         }
         @items
       </pattern>
@@ -383,37 +388,66 @@
         @clause
       </pattern>-->
 
+      
       <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
+      <pattern location="program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="false"  boolean_property="imports.HasPublicProcedures">
+        <conditions>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+        </conditions>
+        @{
+        var clause = "";
+        if (%imports.HasPublicProcedures) {
+        clause += "*\n";
+        clause += "    PERFORM TC-INITIALIZATIONS\n";
+        }
+        }
+        @clause
+      </pattern>
+
       <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="false">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
         </conditions>
         @{
         var clause = "";
+        if (%imports.HasPublicProcedures) {
+        clause += "*=================================================================\n";
+        clause += "TC-INITIALIZATIONS.\n";
+        clause += "*=================================================================\n";
+        clause += "     IF TC-FirstCall\n";
+        clause += "          SET TC-NthCall TO TRUE\n";
+        foreach (var pgm in %imports.Programs.Values) {
+        foreach (var proc in pgm.Procedures.Values) {
+        clause += "          SET ADDRESS OF TC-"+pgm.Name + "-" + proc.Hash+"-Item  TO NULL\n";
+        }
+        }
+        clause += "     END-IF\n";
+        clause += "     .\n";
+        }
         if (!%imports.IsEmpty) {
         foreach (var pgm in %imports.Programs.Values) {
-          clause += "*=================================================================\n";
-          clause += " TC-LOAD-POINTERS-" + pgm.Name + ".\n";
-          clause += "*=================================================================\n";
-          clause += "     CALL 'ZCALLPGM' USING TC-"+pgm.Name+"\n";
-          clause += "     ADDRESS OF TC-Library-PntTab\n";
-          clause += "     PERFORM VARYING TC-Library-Idx FROM 1 BY 1\n";
-          clause += "     UNTIL TC-Library-Idx > TC-Library-PntNbr\n";
-          clause += "         EVALUATE TC-Library-Item-Idt (TC-Library-Idx)\n";
-          foreach (var proc in pgm.Procedures.Values) {
-            clause += "         WHEN '"+proc.Hash+"'\n";
-            clause += "              SET ADDRESS OF\n";
-            clause += "              TC-"+pgm.Name+"-"+proc.Hash+"-Item\n";
-            clause += "              TO ADDRESS OF\n";
-            clause += "              TC-Library-Item(TC-Library-Idx)\n";
-          }
-          clause += "         END-EVALUATE\n";
-          clause += "     END-PERFORM\n";
-          clause += "     .\n";
+        clause += "*=================================================================\n";
+        clause += " TC-LOAD-POINTERS-" + pgm.Name + ".\n";
+        clause += "*=================================================================\n";
+        clause += "     CALL 'ZCALLPGM' USING TC-"+pgm.Name+"\n";
+        clause += "     ADDRESS OF TC-Library-PntTab\n";
+        clause += "     PERFORM VARYING TC-Library-Idx FROM 1 BY 1\n";
+        clause += "     UNTIL TC-Library-Idx > TC-Library-PntNbr\n";
+        clause += "         EVALUATE TC-Library-Item-Idt (TC-Library-Idx)\n";
+        foreach (var proc in pgm.Procedures.Values) {
+        clause += "         WHEN '"+proc.Hash+"'\n";
+        clause += "              SET ADDRESS OF\n";
+        clause += "              TC-"+pgm.Name+"-"+proc.Hash+"-Item\n";
+        clause += "              TO ADDRESS OF\n";
+        clause += "              TC-Library-Item(TC-Library-Idx)\n";
+        }
+        clause += "         END-EVALUATE\n";
+        clause += "     END-PERFORM\n";
+        clause += "     .\n";
         }
         }
         }
-@clause
+        @clause
       </pattern>
 
     </patterns>
