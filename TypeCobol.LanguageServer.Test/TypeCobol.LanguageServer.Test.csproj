@@ -65,6 +65,10 @@
       <Project>{cfbf4d30-56f3-4794-9067-b651dc1cab1e}</Project>
       <Name>CLI.Test</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TypeCobol.LanguageServer\TypeCobol.LanguageServer.csproj">
+      <Project>{b610d7fb-1c46-43bf-8df3-3a59a52673c0}</Project>
+      <Name>TypeCobol.LanguageServer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

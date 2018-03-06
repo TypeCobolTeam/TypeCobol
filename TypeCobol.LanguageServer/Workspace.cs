@@ -69,16 +69,7 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        [Flags]
-        public enum LsrTestingOptions
-        {
-            NoLsrTesting = 0,
-            LsrSourceDocumentTesting = 0x1 << 0,
-            LsrScanningPhaseTesting = LsrSourceDocumentTesting | 0x1 << 1,
-            LsrPreprocessingPhaseTesting = LsrScanningPhaseTesting | 0x01 << 2,
-            LsrParsingPhaseTesting = LsrPreprocessingPhaseTesting | 0x01 << 3,
-            LsrSemanticPhaseTesting = LsrParsingPhaseTesting | 0x1 << 4
-        }
+        
 
         /// <summary>
         /// Lsr Test Options.
@@ -200,10 +191,6 @@ namespace TypeCobol.LanguageServer
 
             if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
             {
-                fileCompiler.CompileOnce(); //Let's parse file for the first time after opening. 
-            }
-            else
-            {
                 fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
             }
         }
@@ -222,10 +209,10 @@ namespace TypeCobol.LanguageServer
                 if (IsLsrSourceTesting)
                 {
                     //Log text lines string 
+                    var sb = new StringBuilder();
                     foreach (var cobolTextLine in fileCompilerToUpdate.CompilationResultsForProgram.CobolTextLines)
-                    {
-                        _Logger(cobolTextLine.SourceText, fileUri);
-                    }
+                        sb.AppendLine(cobolTextLine.SourceText);
+                    _Logger(sb.ToString(), fileUri);
                 }
 
                 if (!bAsync)
@@ -233,40 +220,51 @@ namespace TypeCobol.LanguageServer
                     if (IsLsrScannerTesting || LsrTestOptions == LsrTestingOptions.NoLsrTesting)
                     {
                         fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
-                       () =>
-                       {
-                           if (LsrTestOptions == LsrTestingOptions.NoLsrTesting)
-                           {
-                               fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                               fileCompilerToUpdate.CompilationResultsForProgram
-                                    .RefreshProcessedTokensDocumentSnapshot();
-                               fileCompilerToUpdate.CompilationResultsForProgram
-                                    .RefreshCodeElementsDocumentSnapshot();
-                           }
-                           else
-                           {
-
-                               if (IsLsrScannerTesting)
-                               {
-                                   fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-
-                                   //Return log information about updated tokens
-                                   //fileCompilerToUpdate.CompilationResultsForProgram.TokensDocumentSnapshot.
-
-                               }
-                               if (IsLsrPreprocessinTesting)
-                               {
-                                   fileCompilerToUpdate.CompilationResultsForProgram
+                            () =>
+                            {
+                                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting)
+                                {
+                                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+                                    fileCompilerToUpdate.CompilationResultsForProgram
                                         .RefreshProcessedTokensDocumentSnapshot();
-                               }
-                               if (IsLsrParserTesting)
-                               {
-                                   fileCompilerToUpdate.CompilationResultsForProgram
+                                    fileCompilerToUpdate.CompilationResultsForProgram
                                         .RefreshCodeElementsDocumentSnapshot();
-                               }
-                           }
-                       }
-                       );
+                                }
+                                else
+                                {
+                                    if (IsLsrScannerTesting)
+                                    {
+                                        fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+
+                                        //Return log information about updated tokens
+                                        var sb = new StringBuilder();
+                                        foreach (var token in fileCompilerToUpdate.CompilationResultsForProgram.TokensDocumentSnapshot.SourceTokens)
+                                            sb.AppendLine(token.ToString());
+                                        _Logger(sb.ToString(), fileUri);
+                                    }
+                                    if (IsLsrPreprocessinTesting)
+                                    {
+                                        fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
+
+                                        //Return log information about updated processed tokens
+                                        var sb = new StringBuilder();
+                                        foreach (var token in fileCompilerToUpdate.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.ProcessedTokensSource)
+                                            sb.AppendLine(token.ToString());
+                                        _Logger(sb.ToString(), fileUri);
+                                    }
+                                    if (IsLsrParserTesting)
+                                    {
+                                        fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
+
+                                        //Return log information about code elements
+                                        var sb = new StringBuilder();
+                                        foreach (var codeElement in fileCompilerToUpdate.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements)
+                                            sb.AppendLine(codeElement.ToString());
+                                        _Logger(sb.ToString(), fileUri);
+                                    }
+                                }
+                            }
+                        );
                     }
 
                     if (LsrTestOptions == LsrTestingOptions.NoLsrTesting)
@@ -544,9 +542,22 @@ namespace TypeCobol.LanguageServer
   
     }
 
+
+    [Flags]
+    public enum LsrTestingOptions
+    {
+        NoLsrTesting = 0,
+        LsrSourceDocumentTesting = 0x1 << 0,
+        LsrScanningPhaseTesting = LsrSourceDocumentTesting | 0x1 << 1,
+        LsrPreprocessingPhaseTesting = LsrScanningPhaseTesting | 0x01 << 2,
+        LsrParsingPhaseTesting = LsrPreprocessingPhaseTesting | 0x01 << 3,
+        LsrSemanticPhaseTesting = LsrParsingPhaseTesting | 0x1 << 4
+    }
+
+
     public static class LsrTestingOptionsExtensions
     {
-        public static bool HasFlag(this Workspace.LsrTestingOptions value, Workspace.LsrTestingOptions flag)
+        public static bool HasFlag(this LsrTestingOptions value, LsrTestingOptions flag)
         {
             return (value & flag) != 0;
         }
