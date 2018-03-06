@@ -58,12 +58,12 @@
 
 
       *OK  call check of PGM1
-          call check input somedate
+           call check input somedate
       *OK 
-          call PGM1::check input somedate
+           call PGM1::check input somedate
       *OK 
-          call Callee::check input somedate
-        .
+           call Callee::check input somedate
+           .
 
 
       *Callee contains public procedure
@@ -125,7 +125,7 @@
        PROCEDURE DIVISION.
        
        declare procedure GetPersonById public
-          input  personId  pic 9(10)
+          input  person1Id  pic 9(10)
           output person    type Person
          .
          PROCEDURE DIVISION.

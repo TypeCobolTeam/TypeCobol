@@ -5,14 +5,15 @@ using TypeCobol.Codegen.Extensions.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen.Nodes {
-	using System.Collections.Generic;
-	using TypeCobol.Compiler.CodeElements;
-	using TypeCobol.Compiler.Text;
+    using System.Collections.Generic;
+    using Tools;
+    using TypeCobol.Compiler.CodeElements;
+    using TypeCobol.Compiler.Text;
 
     /// <summary>
-///  Class that represents the Node associated to a procedure call.
-/// </summary>
-internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
+    ///  Class that represents the Node associated to a procedure call.
+    /// </summary>
+    internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 	private Compiler.Nodes.ProcedureStyleCall Node;
 	private CallStatement call;
     //The Original Staement
@@ -85,18 +86,19 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
 
                 //We don't need end-if anymore, but I let it for now. Because this generated code still need to be tested on production
                 bool bNeedEndIf = false;
+			    string func_lib_name = Hash.CalculateCobolProgramNameShortcut(fun_decl.Library);
                 if (((FunctionDeclarationHeader)fun_decl.CodeElement).Visibility == AccessModifier.Public && fun_decl.GetProgramNode() != this.GetProgramNode())
                 {
                     if (this.Node.IsNotByExternalPointer || IsNotByExternalPointer)
                     {
                         int genIndent = 0;
                         IsNotByExternalPointer = true;
-                        string ptrCheckGuard = string.Format("{0}IF ADDRESS OF TC-{1}-{2}-Item = NULL", new string(' ', genIndent * 4), fun_decl.Library, hash);
+                        string ptrCheckGuard = string.Format("{0}IF ADDRESS OF TC-{1}-{2}-Item = NULL", new string(' ', genIndent * 4), func_lib_name, hash);
                         var ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
                         _cache.Add(ptrCheckGuardTextLine);
                         genIndent += 2;
 
-                        ptrCheckGuard = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), fun_decl.Library);
+                        ptrCheckGuard = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), func_lib_name);
                         ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
                         _cache.Add(ptrCheckGuardTextLine);
                         genIndent--;
@@ -106,12 +108,12 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
                         _cache.Add(ptrCheckGuardTextLine);
                         genIndent++;
 
-                        string guard = string.Format("{0}IF TC-{1}-{2}-Idt not = '{3}'", new string(' ', genIndent * 4), fun_decl.Library, hash, hash);
+                        string guard = string.Format("{0}IF TC-{1}-{2}-Idt not = '{3}'", new string(' ', genIndent * 4), func_lib_name, hash, hash);
                         var guardTextLine = new TextLineSnapshot(-1, guard, null);
                         _cache.Add(guardTextLine);
                         genIndent++;
 
-                        string loadPointer = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), fun_decl.Library);
+                        string loadPointer = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), func_lib_name);
                         _cache.Add(new TextLineSnapshot(-1, loadPointer, null));
                         genIndent--;
 
@@ -123,13 +125,13 @@ internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
                         ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
                         _cache.Add(ptrCheckGuardTextLine);
 
-                        callString = string.Format("{0}CALL TC-{1}-{2}{3}", new string(' ', genIndent * 4), fun_decl.Library, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                        callString = string.Format("{0}CALL TC-{1}-{2}{3}", new string(' ', genIndent * 4), func_lib_name, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
                         var callTextLine = new TextLineSnapshot(-1, callString, null);
                         _cache.Add(callTextLine);
                     }
                     else
                     {
-                        callString = string.Format("CALL TC-{0}-{1}{2}", fun_decl.Library, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                        callString = string.Format("CALL TC-{0}-{1}{2}", func_lib_name, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
                         var callTextLine = new TextLineSnapshot(-1, callString, null);
                         _cache.Add(callTextLine);
                     }
