@@ -72,6 +72,84 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="LSRTests\AddCharBeginLine\input\AddCharBeginLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddCharBeginLine\output_expected\AddCharBeginLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddCharEndLine\input\AddCharEndLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddCharEndLine\output_expected\AddCharEndLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddCharMiddleLine\input\AddCharMiddleLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddCharMiddleLine\output_expected\AddCharMiddleLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddLineJumpMiddleLine\input\AddLineJumpMiddleLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddLineJumpMiddleLine\output_expected\AddLineJumpMiddleLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddMultipleLinesWithEmptyLineInside\input\AddMultipleLinesWithEmptyLineInside.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddMultipleLinesWithEmptyLineInside\output_expected\AddMultipleLinesWithEmptyLineInside.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddMultipleLines\input\AddMultipleLines.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\AddMultipleLines\output_expected\AddMultipleLines.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteCharBeginLine\input\DeleteCharBeginLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteCharBeginLine\output_expected\DeleteCharBeginLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteCharEndLine\input\DeleteCharEndLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteCharEndLine\output_expected\DeleteCharEndLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteCharMiddleLine\input\DeleteCharMiddleLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteCharMiddleLine\output_expected\DeleteCharMiddleLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteMultipleLineButStopInMiddleLine\input\DeleteMultipleLineButStopInMiddleLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteMultipleLineButStopInMiddleLine\output_expected\DeleteMultipleLineButStopInMiddleLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteMultipleLinesButStopAtEndLine\input\DeleteMultipleLinesButStopAtEndLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteMultipleLinesButStopAtEndLine\output_expected\DeleteMultipleLinesButStopAtEndLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteMultipleLines\input\DeleteMultipleLines.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteMultipleLines\output_expected\DeleteMultipleLines.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteMultipleLineWithEmptyLineInside\input\DeleteMultipleLineWithEmptyLineInside.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\DeleteMultipleLineWithEmptyLineInside\output_expected\DeleteMultipleLineWithEmptyLineInside.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\Incremental_RemoveDataDivisionCtrlZ\input\RemoveDataDivisionCtrlZ.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -82,6 +160,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SupprEndLineEmptyLine\input\SupprEndLineEmptyLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SupprEndLineEmptyLine\output_expected\SupprEndLineEmptyLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SupprEndLineTextedLine\input\SupprEndLineTextedLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SupprEndLineTextedLine\output_expected\SupprEndLineTextedLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SupprMultipleLinesFromMiddlePreviousLine\input\SupprMultipleLinesFromMiddlePreviousLine.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SupprMultipleLinesFromMiddlePreviousLine\output_expected\SupprMultipleLinesFromMiddlePreviousLine.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
