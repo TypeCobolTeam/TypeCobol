@@ -162,6 +162,18 @@
     <None Include="LSRTests\config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\RemoveDataDivisionCtrlZWithDiag\input\RemoveDataDivisionCtrlZWithDiag.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\RemoveDataDivisionCtrlZWithDiag\output_expected\RemoveDataDivisionCtrlZWithDiag.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SimpleMoveToCompletion\input\SimpleMoveToCompletion.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\SimpleMoveToCompletion\output_expected\SimpleMoveToCompletion.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\SupprEndLineEmptyLine\input\SupprEndLineEmptyLine.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -178,6 +190,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\SupprMultipleLinesFromMiddlePreviousLine\output_expected\SupprMultipleLinesFromMiddlePreviousLine.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\TypeCompletion\input\TypeCompletion.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\TypeCompletion\output_expected\TypeCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

@@ -15,13 +15,14 @@ namespace TypeCobol.LanguageServer.Test
         /// <summary>
         /// Contains the default argument to launch TypeCobol Language Server executable. 
         /// -r activate the robot mode
+        /// -e make LSR stops at first error detected
         /// -lsr contains the path to LanguageServerRobot executable
         /// -script contains the path to the script to test
         /// -config contains the path to the config file necessary for TypeCobolLSR initialization 
         /// -init Give the initialize file path
         /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\" -p -init={1} -config={2}\" -script={3} {4} {5}"; 
+        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\" -e -init={1} -config={2}\" -script={3} {4} {5}"; 
 
         public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null)
         {
