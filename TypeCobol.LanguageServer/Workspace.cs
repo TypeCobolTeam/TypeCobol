@@ -267,7 +267,7 @@ namespace TypeCobol.LanguageServer
                         );
                     }
 
-                    if (LsrTestOptions == LsrTestingOptions.NoLsrTesting)
+                    if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || LsrTestOptions == LsrTestingOptions.LsrSemanticPhaseTesting)
                     {
                         lock (_fileCompilerWaittingForNodePhase)
                         {
