@@ -22,7 +22,7 @@ namespace TypeCobol.LanguageServer.Test
         /// -init Give the initialize file path
         /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\" -e -init={1} -config={2}\" -script={3} {4} {5}"; 
+        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"  -init={1} -config={2}\" -script={3} {4} {5}"; 
 
         public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null)
         {

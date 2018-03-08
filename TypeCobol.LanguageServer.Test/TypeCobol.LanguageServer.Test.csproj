@@ -198,6 +198,12 @@
     <None Include="LSRTests\TypeCompletion\output_expected\TypeCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\VariableQualifiedNameCompletion\input\VariableQualifiedSeparatorCompletion.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\VariableQualifiedNameCompletion\output_expected\VariableQualifiedSeparatorCompletion.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

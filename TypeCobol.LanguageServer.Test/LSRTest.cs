@@ -151,6 +151,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("SimpleMoveToCompletion", LsrTestingOptions.LsrSemanticPhaseTesting);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void VariableQualifiedNameCompletion()
+        {
+            LSRTestHelper.Test("VariableQualifiedNameCompletion", LsrTestingOptions.LsrSemanticPhaseTesting, true);
+        }
         #endregion
 
 
