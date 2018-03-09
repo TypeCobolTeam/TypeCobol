@@ -130,6 +130,7 @@ namespace TypeCobol.LanguageServer.Test
         #region Sementic_Tests
         [TestMethod]
         [TestCategory("Semantic")]
+        [Ignore]
         public void RemoveDataDivisionCtrlZWithDiag()
         {
             LSRTestHelper.Test("RemoveDataDivisionCtrlZWithDiag", LsrTestingOptions.LsrSemanticPhaseTesting);
@@ -139,14 +140,16 @@ namespace TypeCobol.LanguageServer.Test
         #region Completion_Tests
         [TestMethod]
         [TestCategory("Completion")]
-        public void TypeCompletion()
+        [Ignore]
+    public void TypeCompletion()
         {
             LSRTestHelper.Test("TypeCompletion", LsrTestingOptions.LsrSemanticPhaseTesting);
         }
 
         [TestMethod]
         [TestCategory("Completion")]
-        public void SimpleMoveToCompletion()
+        [Ignore]
+    public void SimpleMoveToCompletion()
         {
             LSRTestHelper.Test("SimpleMoveToCompletion", LsrTestingOptions.LsrSemanticPhaseTesting);
         }
