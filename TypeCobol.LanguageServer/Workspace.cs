@@ -230,17 +230,17 @@ namespace TypeCobol.LanguageServer
 
                 if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || LsrTestOptions == LsrTestingOptions.LsrSemanticPhaseTesting)
                 {
-                    lock (_fileCompilerWaittingForNodePhase)
+                    if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
+                    {
+                        lock (_fileCompilerWaittingForNodePhase)
                     {
                         if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
                             _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
                     }
 
-                    if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
-                    {
-                        _semanticUpdaterTimer = new System.Timers.Timer(1000);
-                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
-                        _semanticUpdaterTimer.Start();
+                    _semanticUpdaterTimer = new System.Timers.Timer(1000);
+                    _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                    _semanticUpdaterTimer.Start();
                     }
                 }
             }
@@ -321,18 +321,20 @@ namespace TypeCobol.LanguageServer
         /// Use this method to force a node phase if there is a filecompiler waiting for node refresh. 
         /// </summary>
         /// <param name="fileCompiler">FileCompiler on which the node phase will be done</param>
-        public void RefreshSyntaxTree(FileCompiler fileCompiler)
+        public void RefreshSyntaxTree(FileCompiler fileCompiler, bool forceRefresh = false)
         {
             lock (_fileCompilerWaittingForNodePhase)
             {
-                if (!_fileCompilerWaittingForNodePhase.Contains(fileCompiler)) return;                
+                var fileCompilerContained = _fileCompilerWaittingForNodePhase.Contains(fileCompiler);
+                if (!fileCompilerContained && !forceRefresh) return;   
+                else if(fileCompilerContained)             
+                    _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
 
-                _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
+
                 if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrSemanticTesting) return;
                 fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
                 fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
             }
-            
         }
 
         /// <summary>

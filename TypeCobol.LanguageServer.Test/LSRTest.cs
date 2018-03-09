@@ -153,6 +153,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void VariableQualifiedNameCompletion()
         {
             LSRTestHelper.Test("VariableQualifiedNameCompletion", LsrTestingOptions.LsrSemanticPhaseTesting, true);
@@ -160,6 +161,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void ProcedureCompletion()
         {
             LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, null, null, "CustomDependencies");
