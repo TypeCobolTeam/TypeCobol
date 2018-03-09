@@ -170,7 +170,7 @@ namespace TypeCobol.LanguageServer
 
             var finalQualifiedName = qualifiedName.ToList();
 
-            if (variable.CodeElement.IsInsideCopy())
+            if (variable.CodeElement != null && variable.CodeElement.IsInsideCopy())
             {
                 finalQualifiedName.Clear();
                 finalQualifiedName.Add(qualifiedName.First());
