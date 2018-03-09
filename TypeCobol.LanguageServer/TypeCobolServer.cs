@@ -1,25 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using Analytics;
-using Antlr4.Runtime.Misc;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
-using TypeCobol.LanguageServices.Editor;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.LanguageServer.SignatureHelper;
-using String = System.String;
 
 namespace TypeCobol.LanguageServer
 {
@@ -284,7 +278,7 @@ namespace TypeCobol.LanguageServer
             #endregion
 
             // Update the source file with the computed text changes
-            typeCobolWorkspace.UpdateSourceFile(objUri, textChangedEvent, false);
+            typeCobolWorkspace.UpdateSourceFile(objUri, textChangedEvent);
 
             // DEBUG information
             RemoteConsole.Log("Udpated source file : " + objUri.LocalPath);

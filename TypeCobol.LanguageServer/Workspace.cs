@@ -198,7 +198,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
-        public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent, bool bAsync)
+        public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
         {
             FileCompiler fileCompilerToUpdate = null;
             if (OpenedFileCompiler.TryGetValue(fileUri, out fileCompilerToUpdate))
@@ -214,79 +214,81 @@ namespace TypeCobol.LanguageServer
                         sb.AppendLine(cobolTextLine.SourceText);
                     _Logger(sb.ToString(), fileUri);
                 }
+                
+                var handler = new Action<object, ExecutionStepEventArgs>((sender, args) => { ExecutionStepEventHandler(sender, args, fileUri); });
+                //Subscribe to FileCompilerEvent 
+                fileCompilerToUpdate.ExecutionStepEventHandler += handler.Invoke;
+                var execStep = LsrTestOptions.ExecutionStep(fileCompilerToUpdate.CompilerOptions.ExecToStep);
+                if (execStep > ExecutionStep.SyntaxCheck)
+                    execStep = ExecutionStep.SyntaxCheck; //The maximum execstep authorize for incremental parsing is SyntaxCheck, 
+                                                          //further it's for semantic, which is handle by NodeRefresh method
 
-                if (!bAsync)
-                {//Don't wait asynchronous snapshot refresh.
-                    if (IsLsrScannerTesting || LsrTestOptions == LsrTestingOptions.NoLsrTesting)
-                    {
-                        fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
-                            () =>
-                            {
-                                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting)
-                                {
-                                    fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                                    fileCompilerToUpdate.CompilationResultsForProgram
-                                        .RefreshProcessedTokensDocumentSnapshot();
-                                    fileCompilerToUpdate.CompilationResultsForProgram
-                                        .RefreshCodeElementsDocumentSnapshot();
-                                }
-                                else
-                                {
-                                    if (IsLsrScannerTesting)
-                                    {
-                                        fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
 
-                                        //Return log information about updated tokens
-                                        var sb = new StringBuilder();
-                                        foreach (var token in fileCompilerToUpdate.CompilationResultsForProgram.TokensDocumentSnapshot.SourceTokens)
-                                            sb.AppendLine(token.ToString());
-                                        _Logger(sb.ToString(), fileUri);
-                                    }
-                                    if (IsLsrPreprocessinTesting)
-                                    {
-                                        fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
+                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy);
+                fileCompilerToUpdate.ExecutionStepEventHandler -= handler.Invoke;
+                
 
-                                        //Return log information about updated processed tokens
-                                        var sb = new StringBuilder();
-                                        foreach (var token in fileCompilerToUpdate.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.ProcessedTokensSource)
-                                            sb.AppendLine(token.ToString());
-                                        _Logger(sb.ToString(), fileUri);
-                                    }
-                                    if (IsLsrParserTesting)
-                                    {
-                                        fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
-
-                                        //Return log information about code elements
-                                        var sb = new StringBuilder();
-                                        foreach (var codeElement in fileCompilerToUpdate.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements)
-                                            sb.AppendLine(codeElement.ToString());
-                                        _Logger(sb.ToString(), fileUri);
-                                    }
-                                }
-                            }
-                        );
-                    }
-
-                    if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || LsrTestOptions == LsrTestingOptions.LsrSemanticPhaseTesting)
-                    {
-                        lock (_fileCompilerWaittingForNodePhase)
-                        {
-                            if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
-                                _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
-                        }
-
-                        if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
-                        {
-                            _semanticUpdaterTimer = new System.Timers.Timer(1000);
-                            _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
-                            _semanticUpdaterTimer.Start();
-                        }
-                    }
-                }
-                else
+                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || LsrTestOptions == LsrTestingOptions.LsrSemanticPhaseTesting)
                 {
-                    fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines();
+                    lock (_fileCompilerWaittingForNodePhase)
+                    {
+                        if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
+                            _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
+                    }
+
+                    if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
+                    {
+                        _semanticUpdaterTimer = new System.Timers.Timer(1000);
+                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                        _semanticUpdaterTimer.Start();
+                    }
                 }
+            }
+        }
+
+        private void ExecutionStepEventHandler(object oFileCompiler, ExecutionStepEventArgs executionStepEvent, Uri fileUri)
+        {
+            if (!(oFileCompiler is FileCompiler))
+                return;
+
+            var fileCompiler = (FileCompiler) oFileCompiler;
+            switch (executionStepEvent.ExecutionStep)
+            {
+                case ExecutionStep.Scanner:
+                    if (IsLsrScannerTesting)
+                    {
+                        //Return log information about updated tokens
+                        var sb = new StringBuilder();
+                        foreach (var token in fileCompiler.CompilationResultsForProgram.TokensDocumentSnapshot.SourceTokens)
+                            sb.AppendLine(token.ToString());
+                        _Logger(sb.ToString(), fileUri);
+                    }
+                    break;
+                case ExecutionStep.Preprocessor:
+                    if (IsLsrPreprocessinTesting)
+                    {
+                        //Return log information about updated processed tokens
+                        var sb = new StringBuilder();
+                        foreach (var token in fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.ProcessedTokensSource)
+                            sb.AppendLine(token.ToString());
+                        _Logger(sb.ToString(), fileUri);
+                    }
+                    break;
+                case ExecutionStep.SyntaxCheck:
+                    if (IsLsrParserTesting)
+                    {
+                        //Return log information about code elements
+                        var sb = new StringBuilder();
+                        foreach (var codeElement in fileCompiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements)
+                            sb.AppendLine(codeElement.ToString());
+                        _Logger(sb.ToString(), fileUri);
+                    }
+                    break;
+                case ExecutionStep.SemanticCheck:
+                case ExecutionStep.CrossCheck:
+                case ExecutionStep.Generate:
+                default:
+                    return;
             }
         }
 

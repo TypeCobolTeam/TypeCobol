@@ -8,14 +8,13 @@ namespace TypeCobol.LanguageServer.Utilities
 {
     public static class Extensions
     {
-        public static TypeCobol.ExecutionStep? ExecutionStep(this LsrTestingOptions lsrOptions, TypeCobol.ExecutionStep defaultValue)
+        public static TypeCobol.ExecutionStep? ExecutionStep(this LsrTestingOptions lsrOptions, TypeCobol.ExecutionStep? defaultValue)
         {
             switch (lsrOptions)
             {
                 case LsrTestingOptions.NoLsrTesting:
-                    return defaultValue;
                 case LsrTestingOptions.LsrSourceDocumentTesting:
-                    return null;
+                    return defaultValue;
                 case LsrTestingOptions.LsrScanningPhaseTesting:
                     return TypeCobol.ExecutionStep.Scanner;
                 case LsrTestingOptions.LsrPreprocessingPhaseTesting:
