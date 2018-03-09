@@ -727,7 +727,7 @@ superObjectIdentifier: SUPER;
 // EBCDIC
 // Specifies the EBCDIC character set.
 
-standardCollatingSequence: STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
+standardCollatingSequenceReference: STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
 
 
 // --- Compile-time constant values used in the Cobol grammar ---
@@ -763,8 +763,6 @@ alphanumericValue6: CommentEntry;
 alphanumericValue7: PictureCharacterString;
 
 alphanumericValue8: ExecStatementText;
-
-alphanumericValue10: standardCollatingSequence;
 
 alphanumericValue11: SymbolicCharacter;
 
@@ -819,8 +817,6 @@ symbolReference2: alphanumericValue2;
 symbolReference4: alphanumericValue4;
 
 symbolReference5: alphanumericValue5;
-
-symbolReference10: alphanumericValue10; // standardCollatingSequence
 
 symbolReference11: alphanumericValue11;
 
@@ -1068,7 +1064,7 @@ conditionForUPSISwitchNameDefinition: symbolDefinition4;
 
 symbolicCharacterDefinition: symbolDefinition11;
 
-symbolicCharacterReference: symbolReference10;
+symbolicCharacterReference: standardCollatingSequenceReference;
 
 // p 115 : ALPHABET alphabet-name-1 IS
 // alphabet-name-1 specifies a collating sequence when used in:
@@ -1083,9 +1079,9 @@ alphabetNameDefinition: symbolDefinition4;
 
 alphabetNameReference: symbolReference4;
 
-intrinsicAlphabetNameReference: /* standardCollatingSequence */ symbolReference10;
+intrinsicAlphabetNameReference: standardCollatingSequenceReference;
 
-alphabetName: alphabetNameReference | /* standardCollatingSequence */ intrinsicAlphabetNameReference;
+alphabetName: alphabetNameReference | /* standardCollatingSequenceReference */ intrinsicAlphabetNameReference;
 
 // p118 : CLASS class-name-1 IS
 // Provides a means for relating a name to the specified set of characters

@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Parser
         internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue2Context context)
         {
             if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
-                return new CharacterValue(CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter));
+                return new CharacterValue(CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter));
             return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
         }
 
@@ -71,7 +71,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
             {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
                 return new CharacterValue(symbolicCharacterReference);
             }
             else
@@ -86,9 +86,9 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             var c = context.figurativeConstant();
-            if (c != null && c.symbolicCharacterReference() != null)
+            if (c?.symbolicCharacterReference() != null)
             {
-                return new AlphanumericValue(CreateSymbolReference(c.symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter));
+                return new AlphanumericValue(CreateSymbolReference(c.symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter));
             }
             Token token = ParseTreeUtils.GetFirstToken(context);
             return new AlphanumericValue(token);
@@ -135,7 +135,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
                 {
-                    SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                    SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
                     return new RepeatedCharacterValue(null, symbolicCharacterReference);
                 }
                 else
@@ -163,7 +163,7 @@ namespace TypeCobol.Compiler.Parser
 
             if (figurativeConstantContext != null && figurativeConstantContext.symbolicCharacterReference() != null)
             {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(figurativeConstantContext.symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(figurativeConstantContext.symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
                 return new RepeatedCharacterValue(optionalALLToken, symbolicCharacterReference);
             }
             else
@@ -320,9 +320,9 @@ namespace TypeCobol.Compiler.Parser
             return symbolReference;
         }
 
-        internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference10Context context, SymbolType symbolType)
+        internal SymbolReference CreateSymbolReference(CodeElementsParser.StandardCollatingSequenceReferenceContext context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue10());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context);
             var symbolReference = new SymbolReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolReference);
             return symbolReference;
@@ -564,7 +564,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolReference CreateSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference10(), SymbolType.SymbolicCharacter);
+            return CreateSymbolReference(context.standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
         }
 
         internal SymbolDefinition CreateAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)
@@ -579,7 +579,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolReference CreateIntrinsicAlphabetNameReference(CodeElementsParser.IntrinsicAlphabetNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference10(), SymbolType.AlphabetName);
+            return CreateSymbolReference(context.standardCollatingSequenceReference(), SymbolType.AlphabetName);
         }
 
         internal SymbolReference CreateAlphabetName(CodeElementsParser.AlphabetNameContext context)
