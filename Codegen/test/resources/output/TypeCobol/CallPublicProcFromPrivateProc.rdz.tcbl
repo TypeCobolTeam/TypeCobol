@@ -125,6 +125,7 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+           PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
            IF ADDRESS OF TC-PersonSe-cd991005-Item = NULL
                PERFORM TC-LOAD-POINTERS-PersonSe
@@ -138,6 +139,15 @@
            end-call
                                                          
            .
+      *=================================================================
+       TC-INITIALIZATIONS.
+           .
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-PersonSe-cd991005-Item  TO NULL
+            END-IF
+            .
       *=================================================================
        TC-LOAD-POINTERS-PersonSe.
       *=================================================================

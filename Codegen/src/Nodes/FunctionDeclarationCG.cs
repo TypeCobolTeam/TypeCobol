@@ -130,36 +130,61 @@ namespace TypeCobol.Codegen.Nodes {
             }
 
 
-            Node whereToGenerate;
+            if (imports.HasPublicProcedures)
+            {
+                Node whereToGenerate;
 
-            //Generate a PERFORM, this must be the first instruction unless we have a Paragraph or a section
-            var firstChildOfPDiv = procedureDivision.Children.First();
-            if (firstChildOfPDiv is Section) {
-                var temp = firstChildOfPDiv.Children.First();
-                if (temp is Paragraph) {
-                    whereToGenerate = temp;
-                } else {
+                //Generate a PERFORM, this must be the first instruction unless we have a Paragraph or a section
+                var firstChildOfPDiv = procedureDivision.Children.First();
+                if (firstChildOfPDiv is Section)
+                {
+                    var temp = firstChildOfPDiv.Children.First();
+                    if (temp is Paragraph)
+                    {
+                        whereToGenerate = temp;
+                    }
+                    else
+                    {
+                        whereToGenerate = firstChildOfPDiv;
+                    }
+                }
+                else if (firstChildOfPDiv is Paragraph)
+                {
                     whereToGenerate = firstChildOfPDiv;
                 }
-            } else if (firstChildOfPDiv is Paragraph) {
-                whereToGenerate = firstChildOfPDiv;
-            } else {
-                whereToGenerate = procedureDivision;
+                else
+                {
+                    whereToGenerate = procedureDivision;
+                }
+
+                //After #655, TC-Initializations is not used
+                whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-INITIALIZATIONS", true), 0);
+
+
+                //Generate "TC-Initializations" paragraph
+                procedureDivision.Add(
+                    new GeneratedNode2("*=================================================================", true));
+                procedureDivision.Add(new ParagraphGen("TC-INITIALIZATIONS"));
+                procedureDivision.Add(new SentenceEnd());
+                procedureDivision.Add(
+                    new GeneratedNode2("*=================================================================", true));
+                procedureDivision.Add(new GeneratedNode2("     IF TC-FirstCall", true));
+                procedureDivision.Add(new GeneratedNode2("          SET TC-NthCall TO TRUE", true));
+                foreach (var pgm in imports.Programs.Values)
+                {
+                    foreach (var proc in pgm.Procedures.Values)
+                    {
+                        procedureDivision.Add(
+                            new GeneratedNode2(
+                                "          SET ADDRESS OF TC-" + pgm.Name + "-" + proc.Hash + "-Item  TO NULL", true));
+                    }
+                }
+                procedureDivision.Add(new GeneratedNode2("     END-IF", true));
+                procedureDivision.Add(new GeneratedNode2("     .", true));
             }
 
-            //After #655, TC-Initializations is not used
-            //whereToGenerate.Add(new GeneratedNode2("    PERFORM TC-Initializations", true), 0);
-
-
-            ////Generate "TC-Initializations" paragraph
-            //procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
-            //procedureDivision.Add(new ParagraphGen("TC-Initializations"));
-            //procedureDivision.Add(new SentenceEnd());
-            //procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
-
-
             //Generate "TC-LOAD-POINTERS-" paragraph
-            foreach (var pgm in imports.Programs.Values) {
+                foreach (var pgm in imports.Programs.Values) {
                 procedureDivision.Add(new GeneratedNode2("*=================================================================", true));
                 procedureDivision.Add(new ParagraphGen("TC-LOAD-POINTERS-" + pgm.Name));
                 procedureDivision.Add(new GeneratedNode2("*=================================================================",true));
