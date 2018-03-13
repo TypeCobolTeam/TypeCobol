@@ -549,7 +549,7 @@ namespace TypeCobol.LanguageServer
             var tokenBeforeOf = tokensUntilCursor?.Skip(1).FirstOrDefault(); //Skip(1) will skip the OF token
 
             if (tokenBeforeOf == null || tokenBeforeOf.TokenType != TokenType.ADDRESS) //For now we only need to filter on adress. 
-                return null;
+                return completionItems;
 
             switch (tokenBeforeOf.TokenType) //In the future, this will allow to switch between different token declared before OF. 
             {

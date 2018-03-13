@@ -130,44 +130,67 @@ namespace TypeCobol.LanguageServer.Test
         #region Sementic_Tests
         [TestMethod]
         [TestCategory("Semantic")]
-        [Ignore]
         public void RemoveDataDivisionCtrlZWithDiag()
         {
-            LSRTestHelper.Test("RemoveDataDivisionCtrlZWithDiag", LsrTestingOptions.LsrSemanticPhaseTesting);
+            LSRTestHelper.Test("RemoveDataDivisionCtrlZWithDiag", LsrTestingOptions.NoLsrTesting, true);
         }
         #endregion
 
         #region Completion_Tests
         [TestMethod]
         [TestCategory("Completion")]
-        [Ignore]
-    public void TypeCompletion()
+        public void TypeCompletion()
         {
-            LSRTestHelper.Test("TypeCompletion", LsrTestingOptions.LsrSemanticPhaseTesting);
+            LSRTestHelper.Test("TypeCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
 
         [TestMethod]
         [TestCategory("Completion")]
-        [Ignore]
-    public void SimpleMoveToCompletion()
+        public void SimpleMoveToCompletion()
         {
-            LSRTestHelper.Test("SimpleMoveToCompletion", LsrTestingOptions.LsrSemanticPhaseTesting);
+            LSRTestHelper.Test("SimpleMoveToCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
 
         [TestMethod]
         [TestCategory("Completion")]
-        [Ignore]
         public void VariableQualifiedNameCompletion()
         {
-            LSRTestHelper.Test("VariableQualifiedNameCompletion", LsrTestingOptions.LsrSemanticPhaseTesting, true);
+            LSRTestHelper.Test("VariableQualifiedNameCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
 
         [TestMethod]
         [TestCategory("Completion")]
-        [Ignore]
         public void ProcedureCompletion()
         {
             LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, null, null, "CustomDependencies");
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void PerformCompletion()
+        {
+            LSRTestHelper.Test("PerformCompletion", LsrTestingOptions.NoLsrTesting, true, null, null, "CustomDependencies");
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void SetToAddressOfCompletion()
+        {
+            LSRTestHelper.Test("SetToAddressOfCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void IfCompletion()
+        {
+            LSRTestHelper.Test("IfCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void DisplayCompletion()
+        {
+            LSRTestHelper.Test("DisplayCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
         #endregion
     }
