@@ -110,6 +110,9 @@
        PROGRAM-ID. f73481e6CheckContract.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        LINKAGE SECTION.
@@ -146,7 +149,6 @@
            .
       *=================================================================
        TC-INITIALIZATIONS.
-           .
       *=================================================================
             IF TC-FirstCall
                  SET TC-NthCall TO TRUE
@@ -178,6 +180,9 @@
        data division.
        working-storage section.
        01 var1 pic X.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        01 TC-PGM2 pic X(08) value 'PGM2'.
@@ -232,7 +237,6 @@
            .
       *=================================================================
        TC-INITIALIZATIONS.
-           .
       *=================================================================
             IF TC-FirstCall
                  SET TC-NthCall TO TRUE

@@ -61,6 +61,9 @@
        PROGRAM-ID. d58351d5testos.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
 
        LINKAGE SECTION.
@@ -94,7 +97,6 @@
            .
       *=================================================================
        TC-INITIALIZATIONS.
-           .
       *=================================================================
             IF TC-FirstCall
                  SET TC-NthCall TO TRUE

@@ -57,6 +57,13 @@ namespace TypeCobol.Codegen.Nodes {
                     
                     if (containsPublicCall) {
                         var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(), dataDivision);
+
+                        ProgramImports imports = ProgramImportsAttribute.GetProgramImports(originalNode);
+                        workingStorageSection.Add(new GeneratedNode2(
+                            "01 TC-Call          PIC X(01) VALUE 'T'.", true));
+                        workingStorageSection.Add(new GeneratedNode2("    88 TC-FirstCall  VALUE 'T'.", true));
+                        workingStorageSection.Add(new GeneratedNode2("    88 TC-NthCall    VALUE 'F'.", true));
+
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
                     }
                 } else {
@@ -165,7 +172,6 @@ namespace TypeCobol.Codegen.Nodes {
                 procedureDivision.Add(
                     new GeneratedNode2("*=================================================================", true));
                 procedureDivision.Add(new ParagraphGen("TC-INITIALIZATIONS"));
-                procedureDivision.Add(new SentenceEnd());
                 procedureDivision.Add(
                     new GeneratedNode2("*=================================================================", true));
                 procedureDivision.Add(new GeneratedNode2("     IF TC-FirstCall", true));
