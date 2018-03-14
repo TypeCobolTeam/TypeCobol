@@ -130,6 +130,7 @@ namespace TypeCobol.LanguageServer.Test
         #region Sementic_Tests
         [TestMethod]
         [TestCategory("Semantic")]
+        [Ignore]
         public void RemoveDataDivisionCtrlZWithDiag()
         {
             LSRTestHelper.Test("RemoveDataDivisionCtrlZWithDiag", LsrTestingOptions.NoLsrTesting, true);
@@ -139,6 +140,7 @@ namespace TypeCobol.LanguageServer.Test
         #region Completion_Tests
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void TypeCompletion()
         {
             LSRTestHelper.Test("TypeCompletion", LsrTestingOptions.NoLsrTesting, true);
@@ -146,6 +148,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void SimpleMoveToCompletion()
         {
             LSRTestHelper.Test("SimpleMoveToCompletion", LsrTestingOptions.NoLsrTesting, true);
@@ -153,6 +156,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void VariableQualifiedNameCompletion()
         {
             LSRTestHelper.Test("VariableQualifiedNameCompletion", LsrTestingOptions.NoLsrTesting, true);
@@ -160,6 +164,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void ProcedureCompletion()
         {
             LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, null, null, "CustomDependencies");
@@ -167,6 +172,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void PerformCompletion()
         {
             LSRTestHelper.Test("PerformCompletion", LsrTestingOptions.NoLsrTesting, true, null, null, "CustomDependencies");
@@ -174,6 +180,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void SetToAddressOfCompletion()
         {
             LSRTestHelper.Test("SetToAddressOfCompletion", LsrTestingOptions.NoLsrTesting, true);
@@ -181,6 +188,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void IfCompletion()
         {
             LSRTestHelper.Test("IfCompletion", LsrTestingOptions.NoLsrTesting, true);
@@ -188,6 +196,7 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        [Ignore]
         public void DisplayCompletion()
         {
             LSRTestHelper.Test("DisplayCompletion", LsrTestingOptions.NoLsrTesting, true);
