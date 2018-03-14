@@ -272,9 +272,9 @@ namespace TypeCobol.Compiler.Parser
             return symbolDefinition;
         }
 
-        internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition11Context context, SymbolType symbolType)
+        internal SymbolDefinition CreateSymbolDefinition(ITerminalNode terminalNode, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue11());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(terminalNode);
             var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinition);
             return symbolDefinition;
@@ -323,14 +323,6 @@ namespace TypeCobol.Compiler.Parser
         internal SymbolReference CreateSymbolReference(CodeElementsParser.StandardCollatingSequenceReferenceContext context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(context);
-            var symbolReference = new SymbolReference(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolReference);
-            return symbolReference;
-        }
-
-        internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference11Context context, SymbolType symbolType)
-        {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue11());
             var symbolReference = new SymbolReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolReference);
             return symbolReference;
@@ -559,7 +551,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition11(), SymbolType.SymbolicCharacter);
+            return CreateSymbolDefinition(context.SymbolicCharacter(), SymbolType.SymbolicCharacter);
         }
 
         internal SymbolReference CreateSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)

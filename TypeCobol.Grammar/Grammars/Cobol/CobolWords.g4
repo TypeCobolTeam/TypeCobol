@@ -764,8 +764,6 @@ alphanumericValue7: PictureCharacterString;
 
 alphanumericValue8: ExecStatementText;
 
-alphanumericValue11: SymbolicCharacter;
-
 alphanumericValue12: SectionParagraphName;
 
 enumeratedValue1: UserDefinedWord;
@@ -806,8 +804,6 @@ symbolDefinition4: alphanumericValue4;
 
 symbolDefinition5: alphanumericValue5;
 
-symbolDefinition11: alphanumericValue11;
-
 symbolDefinition12: alphanumericValue12;
 
 symbolReference1: alphanumericValue1;
@@ -817,8 +813,6 @@ symbolReference2: alphanumericValue2;
 symbolReference4: alphanumericValue4;
 
 symbolReference5: alphanumericValue5;
-
-symbolReference11: alphanumericValue11;
 
 // [TYPECOBOL] extension : rule modified to supportTYPE DATE (instead of TC-DATE or something)
 symbolReference12: alphanumericValue4 | DATE;
@@ -1062,7 +1056,7 @@ conditionForUPSISwitchNameDefinition: symbolDefinition4;
 // by integer-1.
 // Ordinal positions are numbered starting from 1.
 
-symbolicCharacterDefinition: symbolDefinition11;
+symbolicCharacterDefinition: SymbolicCharacter;
 
 symbolicCharacterReference: standardCollatingSequenceReference;
 
