@@ -120,8 +120,9 @@
         /// </summary>
         /// <param name="customtype">The TypeDef definition node</param>
         /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
+        /// <param name="bIgnoreGlobal">true if the GLOBAL keyword must be ignored</param>
         /// <returns>The string representing the TYPEDEF type</returns>
-        internal static string ExtractAnyCobolScalarTypeDef(ColumnsLayout? layout, TypeDefinition customtype, out bool bHasPeriod)
+        internal static string ExtractAnyCobolScalarTypeDef(ColumnsLayout? layout, TypeDefinition customtype, out bool bHasPeriod, bool bIgnoreGlobal)
         {
             bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
@@ -142,11 +143,19 @@
                     if ((i + 1) < customtype.CodeElement.ConsumedTokens.Count && (customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PUBLIC || customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.PRIVATE))
                         i++;
 
+                    //Ignore GLOBAL Keyword
+                    if (bIgnoreGlobal)
+                    {
+                        if ((i + 1) < customtype.CodeElement.ConsumedTokens.Count &&
+                            customtype.CodeElement.ConsumedTokens[i + 1].TokenType == Compiler.Scanner.TokenType.GLOBAL)
+                            i++;
+                    }
+
                     ++i;
                     //If we reached the last Tokens and if it's a PeriodSeparator then don't return a text
                     if (i < customtype.CodeElement.ConsumedTokens.Count && customtype.CodeElement.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.PeriodSeparator)
                     {
-                        bHasPeriod = true;
+                        bHasPeriod = false;
                         return "";
                     }
                     FlushConsumedTokens(layout, i - 1, customtype.CodeElement.ConsumedTokens, sb, out bHasPeriod);
@@ -195,19 +204,30 @@
         /// <returns>The string representing the PIC clause </returns>
         internal static string ExtractPicTokensValues(ColumnsLayout? layout, DataDescriptionEntry dataDescEntry, out bool bHasPeriod)
         {
+            return ExtractPicTokensValues(layout, dataDescEntry.ConsumedTokens, out bHasPeriod);
+        }
+
+        /// <summary>
+        /// Tries to detect a (PIC|PICTURE) construction for a Data Description Entry.
+        /// </summary>
+        /// <param name="dataDescEntry">The Data Description Entry Node</param>
+        /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
+        /// <returns>The string representing the PIC clause </returns>
+        internal static string ExtractPicTokensValues(ColumnsLayout? layout, IList<Compiler.Scanner.Token> consumedTokens, out bool bHasPeriod)
+        {
             bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
-            if (dataDescEntry.ConsumedTokens != null)
+            if (consumedTokens != null)
             {
                 int i = 0;
-                while (i < dataDescEntry.ConsumedTokens.Count && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PIC && dataDescEntry.ConsumedTokens[i].TokenType != Compiler.Scanner.TokenType.PICTURE)
+                while (i < consumedTokens.Count && consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PIC && consumedTokens[i].TokenType != Compiler.Scanner.TokenType.PICTURE)
                     i++;
-                if (i < dataDescEntry.ConsumedTokens.Count)
+                if (i < consumedTokens.Count)
                 {
                     sb.Append(string.Intern(" "));
-                    sb.Append(dataDescEntry.ConsumedTokens[i].Text);
+                    sb.Append(consumedTokens[i].Text);
                 }
-                FlushConsumedTokens(layout, i, dataDescEntry.ConsumedTokens, sb, out bHasPeriod);
+                FlushConsumedTokens(layout, i, consumedTokens, sb, out bHasPeriod);
             }
             return sb.ToString();
         }
@@ -519,7 +539,7 @@
                     PreGenDependingOnAndIndexed(table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
-                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod) : "";
+                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod, false) : "";
 
                     if (data_def.Name != null)
                         line.Append(' ').Append(data.Name);                    

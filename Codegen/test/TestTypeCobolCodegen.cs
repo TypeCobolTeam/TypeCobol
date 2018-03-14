@@ -589,6 +589,15 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureSubscript") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void ProgramParameterCompUsageTypesTest()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProgramParameterCompUsageTypes") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
 #if EUROINFO_RULES
         [TestMethod]
         [TestCategory("Codegen")]

@@ -475,7 +475,7 @@
        PROGRAM-ID. d2b57642GetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
-       01 person1Id PIC 9(10).
+       01 person1Id pic 9(10).
        01 person.
            02 PersonId pic 9(10).
            02 LastName pic X(30).

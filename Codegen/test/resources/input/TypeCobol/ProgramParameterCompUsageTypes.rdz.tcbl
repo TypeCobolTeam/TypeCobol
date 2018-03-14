@@ -1,0 +1,30 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ParamIntrinsic.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 FLength   PIC 9(09) COMP.
+
+       01 MySmallInt TYPEDEF STRICT PUBLIC pic S9(4) COMP-5.
+       01 MyInteger  TYPEDEF STRICT PUBLIC pic S9(9) COMP-5.
+       01 MyBigInt   TYPEDEF STRICT PUBLIC pic S9(17) COMP-5.
+       01 MyReal     TYPEDEF STRICT PUBLIC comp-1.
+       01 MyFloat    TYPEDEF STRICT PUBLIC comp-2.
+
+       PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE CompressString PRIVATE
+           INPUT     StringPointer POINTER
+                    StringLength  PIC 9(09) COMP
+                    I-Trim        PIC X(01)
+                    I-nOption     TYPE MyInteger
+                    P1            TYPE MySmallInt
+                    P2            TYPE MyReal
+           OUTPUT    FinalLength   PIC 9(09) COMP.
+        PROCEDURE DIVISION.
+           DISPLAY "TOTO".
+        END-DECLARE.
+
+           call CompressString INPUT 0 0 0 0 0 0 OUTPUT FLength.
+
+       END PROGRAM ParamIntrinsic.
