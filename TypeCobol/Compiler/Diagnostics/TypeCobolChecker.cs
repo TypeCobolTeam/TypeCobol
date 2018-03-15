@@ -182,12 +182,22 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var table = node.SymbolTable;
             var parameters = definition.Profile.Parameters;
+            var callerProfile = call.AsProfile(table);
             var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
             if (callArgsCount > parameters.Count)
             {
                 var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName, parameters.Count);
                 DiagnosticUtils.AddError(node, m);
             }
+
+            if (callerProfile.InputParameters.Count != definition.Profile.InputParameters.Count
+                || callerProfile.InoutParameters.Count != definition.Profile.InoutParameters.Count
+                || callerProfile.OutputParameters.Count != definition.Profile.OutputParameters.Count)
+            {
+                var m = string.Format("No suitable function signature found for '{0}' {1}", call.FunctionName, callerProfile.GetSignature());
+                DiagnosticUtils.AddError(node, m);
+            }
+
             for (int c = 0; c < parameters.Count; c++)
             {
                 var expected = parameters[c];
