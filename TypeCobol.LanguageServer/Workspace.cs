@@ -238,7 +238,7 @@ namespace TypeCobol.LanguageServer
                             _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
                     }
 
-                    _semanticUpdaterTimer = new System.Timers.Timer(1000);
+                    _semanticUpdaterTimer = new System.Timers.Timer(750);
                     _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
                     _semanticUpdaterTimer.Start();
                     }

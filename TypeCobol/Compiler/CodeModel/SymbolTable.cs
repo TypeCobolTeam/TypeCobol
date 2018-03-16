@@ -172,7 +172,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         
 
-        public List<DataDefinition> GetVariables(VariableBase variable)
+        public IEnumerable<DataDefinition> GetVariables(VariableBase variable)
         {
             if (variable.StorageArea != null)
             {
@@ -181,7 +181,7 @@ namespace TypeCobol.Compiler.CodeModel
             return GetVariables(new URI(variable.ToString()));
         }
 
-        public List<DataDefinition> GetVariables(StorageArea storageArea, TypeDefinition typeDefContext = null)
+        public IEnumerable<DataDefinition> GetVariables(StorageArea storageArea, TypeDefinition typeDefContext = null)
         {
             URI uri;
             if (storageArea.SymbolReference != null)
@@ -195,7 +195,7 @@ namespace TypeCobol.Compiler.CodeModel
             return GetVariables(uri, typeDefContext);
         }
 
-        public List<DataDefinition> GetVariables(SymbolReference symbolReference)
+        public IEnumerable<DataDefinition> GetVariables(SymbolReference symbolReference)
         {
             return GetVariables(symbolReference.URI);
         }
@@ -232,10 +232,10 @@ namespace TypeCobol.Compiler.CodeModel
             return null;
         }
 
-        public List<DataDefinition> GetVariables(QualifiedName name, TypeDefinition typeDefContext = null)
+        public IEnumerable<DataDefinition> GetVariables(QualifiedName name, TypeDefinition typeDefContext = null)
         {
             if (typeDefContext != null)
-                return GetVariablesExplicitWithQualifiedName(name, typeDefContext).Select(v => v.Value).ToList();
+                return GetVariablesExplicitWithQualifiedName(name, typeDefContext).Select(v => v.Value);
             else
                 return GetVariablesExplicit(name);
         }
@@ -248,10 +248,12 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public void GetVariablesByType(DataType dataType, ref List<DataDefinition> foundedVariables, List<Scope> scopes)
+        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, List<Scope> scopes)
         {
-            if(foundedVariables == null)
-                foundedVariables = new List<DataDefinition>();
+
+            var foundedVariables = new List<DataDefinition>();
+            if(existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
+
             scopes.Insert(0, this.CurrentScope); //Insert the current scope 
 
             foreach (var scope in scopes)
@@ -274,6 +276,8 @@ namespace TypeCobol.Compiler.CodeModel
                     }
                 }
             }
+
+            return foundedVariables;
         }
 
         private void SeekVariableType(DataType dataType, DataDefinition variable, ref List<DataDefinition> foundedVariables)
@@ -325,7 +329,7 @@ namespace TypeCobol.Compiler.CodeModel
 
       
 
-        public List<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
+        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
         {
             var foundedVariables = new List<DataDefinition>();
             scopes.Insert(0, this.CurrentScope); //Insert the current scope 
@@ -340,7 +344,7 @@ namespace TypeCobol.Compiler.CodeModel
                 foundedVariables.AddRange(results);
             }
 
-            return foundedVariables.Distinct().ToList(); //Distinct on object not on variable name
+            return foundedVariables.Distinct(); //Distinct on object not on variable name
         }
 
 
@@ -355,9 +359,9 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         /// <param name="name">QualifiedName of the variable looked for</param>
         /// <returns></returns>
-        public List<DataDefinition> GetVariablesExplicit(QualifiedName name)
+        public IEnumerable<DataDefinition> GetVariablesExplicit(QualifiedName name)
         {
-            return GetVariablesExplicitWithQualifiedName(name).Select(v => v.Value).ToList(); //Just Ignore CompleteQualifiedName stored as a key
+            return GetVariablesExplicitWithQualifiedName(name).Select(v => v.Value); //Just Ignore CompleteQualifiedName stored as a key
         }
 
         /// <summary>
@@ -782,9 +786,9 @@ namespace TypeCobol.Compiler.CodeModel
         /// Get all paragraphs in the current scope.
         /// </summary>
         /// <returns>The collection of paragraph names</returns>
-        public List<Paragraph> GetParagraphs(Expression<Func<Paragraph, bool>> predicate)
+        public IEnumerable<Paragraph> GetParagraphs(Expression<Func<Paragraph, bool>> predicate)
         {
-            return Paragraphs.Values.SelectMany(p => p).AsQueryable().Where(predicate).Distinct().ToList();
+            return Paragraphs.Values.SelectMany(p => p).AsQueryable().Where(predicate).Distinct();
         }
 
         #endregion
@@ -842,7 +846,7 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public List<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, List<Scope> scopes)
+        public IEnumerable<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, List<Scope> scopes)
         {
             var foundedTypes = new List<TypeDefinition>();
             
@@ -856,7 +860,7 @@ namespace TypeCobol.Compiler.CodeModel
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
                                     .Types.Values.SelectMany(t => t));
 
-                    dataToSeek.Concat(this.GetTableFromScope(scope)
+                    dataToSeek = dataToSeek.Concat(this.GetTableFromScope(scope)
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Global)
                                     .Types.Values.SelectMany(t => t)));
                 }
@@ -869,7 +873,7 @@ namespace TypeCobol.Compiler.CodeModel
                 foundedTypes.AddRange(results);
             }
 
-            return foundedTypes.Distinct().ToList();
+            return foundedTypes.Distinct();
         }
 
 
@@ -951,7 +955,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
 
-        public List<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, List<Scope> scopes)
+        public IEnumerable<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, List<Scope> scopes)
         {
             var foundedFunctions = new List<FunctionDeclaration>();
 
@@ -974,7 +978,7 @@ namespace TypeCobol.Compiler.CodeModel
                 foundedFunctions.AddRange(results);
             }
 
-            return foundedFunctions.Distinct().ToList();
+            return foundedFunctions.Distinct();
         }
 
         
@@ -1132,11 +1136,11 @@ namespace TypeCobol.Compiler.CodeModel
             return symbolTable.Programs;
         }
 
-        public List<Program> GetPrograms(string filter)
+        public IEnumerable<Program> GetPrograms(string filter)
         {
-            var programs = this.GetTableFromScope(Scope.Namespace)
-                .Programs.Values.SelectMany(t => t).Where(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase));
-            return programs.ToList();
+            return this.GetTableFromScope(Scope.Namespace)
+                .Programs.Values.SelectMany(t => t)
+                .Where(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public List<Program> GetPrograms()

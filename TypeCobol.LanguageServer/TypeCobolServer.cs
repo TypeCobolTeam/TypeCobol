@@ -671,7 +671,7 @@ namespace TypeCobol.LanguageServer
             if (calledProcedures == null)
                 return null;
 
-            if (calledProcedures.Count == 1)
+            if (calledProcedures.Count() == 1)
             {
                 var calledProcedure = calledProcedures.First();
                 //Create and return SignatureHelp object 

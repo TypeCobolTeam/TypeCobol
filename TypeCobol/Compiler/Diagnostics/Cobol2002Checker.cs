@@ -180,12 +180,12 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void Check(SymbolReference renames, Node node)
         {
             var found = node.SymbolTable.GetVariables(renames);
-            if (found.Count > 1)
+            if (found.Count() > 1)
             {
                 string message = "Illegal RENAMES: Ambiguous reference to symbol \'" + renames + "\'";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
-            if (found.Count < 1)
+            if (!found.Any())
             {
                 string message = "Illegal RENAMES: Symbol \'" + renames + "\' is not referenced";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);

@@ -1,6 +1,7 @@
 ﻿
 
 using System;
+using System.Linq;
 using TypeCobol.Codegen.Extensions.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 
@@ -247,11 +248,11 @@ namespace TypeCobol.Codegen.Nodes {
             if (variable.IsLiteral)
                 return share_mode + name;
             var found = table.GetVariables(variable);
-            if (found.Count < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
+            if (found.Count() < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
                 return share_mode + variable.ToCobol85();
             }
 //		if (found.Count > 1) return "?AMBIGUOUS?";
-            var data = found[0] as DataDescription;
+            var data = found.First() as DataDescription;
             if (data != null && data.DataType == DataType.Boolean) name += "-value";
         }
         return share_mode + name;
