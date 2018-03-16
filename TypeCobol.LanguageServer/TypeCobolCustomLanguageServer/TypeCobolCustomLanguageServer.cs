@@ -13,6 +13,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             RemoteConsole = new LanguageServer.TypeCobolCustomLanguageServerProtocol.TypeCobolRemoteConsole(rpcServer);
             rpcServer.RegisterNotificationMethod(MissingCopiesNotification.Type, CallReceiveMissingCopies);
             rpcServer.RegisterNotificationMethod(NodeRefreshNotification.Type, ReceivedRefreshNodeDemand);
+            rpcServer.RegisterRequestMethod(NodeRefreshRequest.Type, ReceivedRefreshNodeRequest);
             rpcServer.RegisterNotificationMethod(SignatureHelpContextNotification.Type, ReceivedSignatureHelpContext);
         }
 
@@ -38,6 +39,22 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             {
                 this.NotifyException(e);
             }
+        }
+
+        private ResponseResultOrError ReceivedRefreshNodeRequest(RequestType requestType, object parameters)
+        {
+            ResponseResultOrError resultOrError = null;
+            try
+            {
+                OnDidReceiveNodeRefresh((NodeRefreshParams)parameters);
+                resultOrError = new ResponseResultOrError() { result = true };
+            }
+            catch (Exception e)
+            {
+                NotifyException(e);
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message};
+            }
+            return resultOrError;
         }
 
         private void ReceivedSignatureHelpContext(NotificationType notificationType, object parameters)

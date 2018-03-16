@@ -22,6 +22,14 @@ namespace TypeCobol.LanguageServer.StdioHttp
         public const string CONTENT_LENGTH_HEADER = "Content-Length";
         public const string CONTENT_TYPE_HEADER = "Content-Type";
 
+        /// <summary>
+        /// Flag to track the Lsr Td mode so that Send Message are waited.
+        /// </summary>
+        public bool IsLsrTdMode
+        {
+            get; set;
+        }
+
 
         /// <summary>
         /// Redirected Input Stream if any
@@ -305,6 +313,10 @@ namespace TypeCobol.LanguageServer.StdioHttp
                 CancellationToken.None,
                 TaskCreationOptions.None,
                 this._scheduler);
+            if (IsLsrTdMode)
+            {
+                tsend.Wait();
+            }
 
             //Task tsend = new Task(action, message);
             //tsend.Start();

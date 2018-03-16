@@ -228,6 +228,7 @@ namespace TypeCobol.LanguageServer
 
                 // Configure the protocols stack
                 var httpServer = new StdioHttpServer(Encoding.UTF8, LogLevel, logWriter, MessagesActionQueue);
+                httpServer.IsLsrTdMode = TimerDisabledOption;
                 if (Process != null)
                 {
                     httpServer.RedirectedInputStream = Process.StandardOutput.BaseStream;
