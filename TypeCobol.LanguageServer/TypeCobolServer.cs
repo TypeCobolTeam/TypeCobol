@@ -450,6 +450,17 @@ namespace TypeCobol.LanguageServer
                                 userFilterToken, lastSignificantToken));
                             break;
                         }
+                        case TokenType.INTO:
+                        {
+                            items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
+                                v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
+                                     && ((v.CodeElement as DataDefinitionEntry) != null &&
+                                         v.DataType == DataType.Alphabetic
+                                         || v.DataType == DataType.Alphanumeric
+                                         || v.DataType == DataType.AlphanumericEdited)
+                            ));
+                            break;
+                        }
                         case TokenType.IF:
                         case TokenType.DISPLAY:
                         {
