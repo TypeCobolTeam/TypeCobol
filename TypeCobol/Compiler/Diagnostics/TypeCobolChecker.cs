@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 !functionCaller.FunctionCall.NeedDeclaration)
                 return;
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Call] " + functionCaller.FunctionCall.FunctionName);
+            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Call] " + functionCaller.FunctionCall.FunctionName, EventType.TypeCobolUsage);
 
             if (functionCaller.FunctionDeclaration == null)
             {

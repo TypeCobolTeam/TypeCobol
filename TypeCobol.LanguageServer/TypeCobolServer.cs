@@ -330,7 +330,7 @@ namespace TypeCobol.LanguageServer
 
         public override Hover OnHover(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[LSP] Hover");
+            AnalyticsWrapper.Telemetry.TrackEvent("[LSP] Hover", EventType.Completion);
 
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
             if (fileCompiler == null)
@@ -392,7 +392,7 @@ namespace TypeCobol.LanguageServer
                     out userFilterToken, out lastSignificantToken); //Magic happens here
                 if (lastSignificantToken != null)
                 {
-                    AnalyticsWrapper.Telemetry.TrackEvent("[Completion] " + lastSignificantToken.TokenType);
+                    AnalyticsWrapper.Telemetry.TrackEvent("[Completion] " + lastSignificantToken.TokenType, EventType.Completion);
                     var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                     switch (lastSignificantToken.TokenType)
                     {
@@ -522,7 +522,7 @@ namespace TypeCobol.LanguageServer
                     //Send the demand to analytics to let us know what the user wants. 
                     var wrappedCodeEl = wrappedCodeElements.FirstOrDefault();
                     if (wrappedCodeElements.Any() && wrappedCodeEl != null)
-                        AnalyticsWrapper.Telemetry.TrackEvent("[Completion-Demand] Source Tokens : " + wrappedCodeEl.InputStream);
+                        AnalyticsWrapper.Telemetry.TrackEvent("[Completion-Demand] Source Tokens : " + wrappedCodeEl.InputStream, EventType.Completion);
                 }
             }
 
@@ -531,7 +531,7 @@ namespace TypeCobol.LanguageServer
 
         public override Definition OnDefinition(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[Definition]"); //Send event to analytics
+            AnalyticsWrapper.Telemetry.TrackEvent("[Definition]", EventType.Completion); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile)

@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void CheckTypeDefinition(TypeDefinition typeDefinition)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name);
+            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name, EventType.TypeCobolUsage);
 
             if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
             {

@@ -175,8 +175,6 @@ namespace TypeCobol.Compiler.Preprocessor
                                      StringComparison.InvariantCultureIgnoreCase))))
                         //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
                     {
-                        AnalyticsWrapper.Telemetry.TrackEvent("[Copy-Missing] " + copy.TextName);
-
                         variations = new List<RemarksDirective.TextNameVariation>
                         {
                             new RemarksDirective.TextNameVariation(copy.TextName)
