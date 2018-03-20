@@ -1,8 +1,10 @@
-﻿      *Declaratives and no paragraph under procedure division
-      *Debug is NOT active
+﻿      *Declaratives and a paragraph under procedure division
+      *Debug is active
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
        DATA DIVISION.
        Working-STORAGE SECTION.
 
@@ -34,10 +36,6 @@
 
 
        PROCEDURE DIVISION.
-      *
-           PERFORM TC-INITIALIZATIONS
-
-                          
       DDECLARATIVES.
       DDECLARATION SECTION.
       D    USE FOR DEBUGGING ON ALL PROCEDURES.
@@ -47,7 +45,11 @@
       *   input mydate        TYPE Date
       *  .
 
+       TRAITEMENT.
+      *
+           PERFORM TC-INITIALIZATIONS
 
+                  
       *    call Callee::check input somedate
            IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
@@ -157,4 +159,7 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a0508f35check.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
        END PROGRAM a0508f35check.

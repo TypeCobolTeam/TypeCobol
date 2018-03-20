@@ -1,8 +1,10 @@
 ﻿      *Declaratives and no paragraph under procedure division
-      *Debug is NOT active
+      *Debug is active
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
        DATA DIVISION.
        Working-STORAGE SECTION.
 
@@ -34,14 +36,13 @@
 
 
        PROCEDURE DIVISION.
-      *
-           PERFORM TC-INITIALIZATIONS
-
-                          
       DDECLARATIVES.
       DDECLARATION SECTION.
       D    USE FOR DEBUGGING ON ALL PROCEDURES.
       DEND DECLARATIVES.
+      *
+           PERFORM TC-INITIALIZATIONS
+
 
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -157,4 +158,7 @@
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a0508f35check.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
        END PROGRAM a0508f35check.

@@ -1,8 +1,10 @@
-﻿      *Declaratives and a paragraph under procedure division
-      *Debug is NOT active
+﻿      *Declaratives and no paragraph under procedure division
+      *Debug is active
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
-
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
        DATA DIVISION.
        Working-STORAGE SECTION.
 
@@ -19,7 +21,7 @@
          .
        END-DECLARE.
 
-       TRAITEMENT.
+
            call Callee::check input somedate
            .
 
