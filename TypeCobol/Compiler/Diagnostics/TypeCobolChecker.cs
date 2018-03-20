@@ -764,11 +764,25 @@ namespace TypeCobol.Compiler.Diagnostics
 
 	    if (isLibrary)
         {
+	        bool firstParagraphChecked = false;
 	        foreach (var child in procedureDivision.Children)
             {
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
-                    if (!(child is Paragraph || child is FunctionDeclaration || child is Declaratives))
+                if (child is Paragraph)
+                {
+	                if (!firstParagraphChecked &&
+	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
+                            DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
+                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Move paragraph " + child.Name + " lower in the source.");
+                    }
+	                firstParagraphChecked = true;
+
+	                continue; //A paragraph is always accepted as a child of ProcedureDivision
+	            }
+                //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
+                if (!(child is FunctionDeclaration || child is Declaratives))
+                {
                         DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
                             "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
                 }
