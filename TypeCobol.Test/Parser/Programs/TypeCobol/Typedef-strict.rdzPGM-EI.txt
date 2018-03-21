@@ -24,6 +24,7 @@ Line 151[12,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symb
 Line 156[37,43] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[37,43:typedef]<TYPEDEF>
 Line 170[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART1 IN usestrictType1' is strictly-typed
 Line 170[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART2 IN usestrictType1' is strictly-typed
+Line 190[12,43] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable varCanBeStrict:canBeStrict.
 Line 192[12,40] <30, Error, Semantics> - Semantic error: Cannot write canBeStrict to strictly typed variable Point2:Vect2.
 Line 194[12,40] <30, Error, Semantics> - Semantic error: Cannot write Vect2 to strictly typed variable varCanBeStrict:canBeStrict.
 
