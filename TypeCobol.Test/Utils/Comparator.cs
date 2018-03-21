@@ -43,7 +43,7 @@ namespace TypeCobol.Test.Utils
             if(AntlrProfiler)
             {
                 Compiler.CompilationResultsForProgram.PerfStatsForCodeElementsParser.ActivateDetailedAntlrPofiling = true;
-                Compiler.CompilationResultsForProgram.PerfStatsForProgramClassParser.ActivateDetailedAntlrPofiling = true;
+                Compiler.CompilationResultsForProgram.PerfStatsForTemporarySemantic.ActivateDetailedAntlrPofiling = true;
             }
         }
 

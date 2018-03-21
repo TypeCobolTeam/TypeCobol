@@ -15,6 +15,7 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.Options_Config;
+using TypeCobol.LanguageServer.Utilities;
 
 namespace TypeCobol.LanguageServer
 {
@@ -49,14 +50,90 @@ namespace TypeCobol.LanguageServer
         public EventHandler<ThreadExceptionEventArgs> ExceptionTriggered { get; set; }
         public EventHandler<string> WarningTrigger { get; set; }
         public Queue<MessageActionWrapper> MessagesActionsQueue { get; private set; }
+        private Func<string, Uri, bool> _Logger;
+
+        #region Testing Options
+
+        /// <summary>
+        /// Timer Disabled for TypeCobol.LanguageServer.
+        /// </summary>
+        public bool TimerDisabledOption
+        {
+            get
+            {
+                return _timerDisabled;
+            }
+            set
+            {
+                _timerDisabled = value;
+            }
+        }
+
+        
+
+        /// <summary>
+        /// Lsr Test Options.
+        /// </summary>
+        public LsrTestingOptions LsrTestOptions
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// LSR always test the source code at least
+        /// </summary>
+        public bool IsLsrSourceTesting
+        {
+            get { return (LsrTestOptions & LsrTestingOptions.LsrSourceDocumentTesting) == LsrTestingOptions.LsrSourceDocumentTesting; }
+            set { LsrTestOptions = value  ? (LsrTestOptions | LsrTestingOptions.LsrSourceDocumentTesting) : LsrTestingOptions.NoLsrTesting; }
+        }
+
+        /// <summary>
+        /// LSR testing the Source document and scanning phase ?
+        /// </summary>
+        public bool IsLsrScannerTesting
+        {
+            get { return (LsrTestOptions & LsrTestingOptions.LsrScanningPhaseTesting) == LsrTestingOptions.LsrScanningPhaseTesting; }
+            set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrScanningPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
+        }
+
+        /// <summary>
+        /// LSR testing the Source document, scanning phase, and preprocessing phase ?
+        /// </summary>
+        public bool IsLsrPreprocessinTesting
+        {
+            get { return (LsrTestOptions & LsrTestingOptions.LsrPreprocessingPhaseTesting) == LsrTestingOptions.LsrPreprocessingPhaseTesting; }
+            set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrPreprocessingPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
+        }
+
+        /// <summary>
+        /// Testing the Source document, the scanning phase and code elements parsing phase.
+        /// </summary>
+        public bool IsLsrParserTesting
+        {
+            get { return (LsrTestOptions & LsrTestingOptions.LsrParsingPhaseTesting) == LsrTestingOptions.LsrParsingPhaseTesting; }
+            set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrParsingPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
+        }
+
+        /// <summary>
+        /// Testing the Source document the scanning phase, the code elements parsing phase and the semantic analysis phase.
+        /// </summary>
+        public bool IsLsrSemanticTesting
+        {
+            get { return (LsrTestOptions & LsrTestingOptions.LsrSemanticPhaseTesting) == LsrTestingOptions.LsrSemanticPhaseTesting; }
+            set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrSemanticPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
+        }
+
+        #endregion
 
 
-        public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue)
+        public Workspace(string rootDirectoryFullName, string workspaceName, Queue<MessageActionWrapper> messagesActionsQueue, Func<string, Uri, bool> logger)
         {
             MessagesActionsQueue = messagesActionsQueue;
             TypeCobolConfiguration = new TypeCobolConfiguration();
             OpenedFileCompiler = new Dictionary<Uri, FileCompiler>();
             _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
+            _Logger = logger;
 
             this._rootDirectoryFullName = rootDirectoryFullName;
             this._workspaceName = workspaceName;
@@ -72,7 +149,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Start continuous background compilation on a newly opened file
         /// </summary>
-        public void OpenSourceFile(Uri fileUri, string sourceText)
+        public void OpenSourceFile(Uri fileUri, string sourceText, LsrTestingOptions lsrOptions)
         {
             string fileName = Path.GetFileName(fileUri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
@@ -112,13 +189,16 @@ namespace TypeCobol.LanguageServer
 
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
 
-            fileCompiler.CompileOnce(); //Let's parse file for the first time after opening. 
+            if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
+            {
+                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
+            }
         }
 
         /// <summary>
         /// Update the text contents of the file
         /// </summary>
-        public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent, bool bAsync)
+        public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
         {
             FileCompiler fileCompilerToUpdate = null;
             if (OpenedFileCompiler.TryGetValue(fileUri, out fileCompilerToUpdate))
@@ -126,35 +206,89 @@ namespace TypeCobol.LanguageServer
                 _semanticUpdaterTimer?.Stop();
 
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
+                if (IsLsrSourceTesting)
+                {
+                    //Log text lines string 
+                    var sb = new StringBuilder();
+                    foreach (var cobolTextLine in fileCompilerToUpdate.CompilationResultsForProgram.CobolTextLines)
+                        sb.AppendLine(cobolTextLine.SourceText);
+                    _Logger(sb.ToString(), fileUri);
+                }
+                
+                var handler = new Action<object, ExecutionStepEventArgs>((sender, args) => { ExecutionStepEventHandler(sender, args, fileUri); });
+                //Subscribe to FileCompilerEvent 
+                fileCompilerToUpdate.ExecutionStepEventHandler += handler.Invoke;
+                var execStep = LsrTestOptions.ExecutionStep(fileCompilerToUpdate.CompilerOptions.ExecToStep);
+                if (execStep > ExecutionStep.SyntaxCheck)
+                    execStep = ExecutionStep.SyntaxCheck; //The maximum execstep authorize for incremental parsing is SyntaxCheck, 
+                                                          //further it's for semantic, which is handle by NodeRefresh method
 
-                if (!bAsync)
-                {//Don't wait asynchronous snapshot refresh.
-                    fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines(
-                        () =>
-                            {
-                                fileCompilerToUpdate.CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
-                                fileCompilerToUpdate.CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot();
-                                fileCompilerToUpdate.CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot();
-                            }
-                        );
 
-                    lock (_fileCompilerWaittingForNodePhase)
+                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy);
+                fileCompilerToUpdate.ExecutionStepEventHandler -= handler.Invoke;
+                
+
+                if (LsrTestOptions == LsrTestingOptions.NoLsrTesting || LsrTestOptions == LsrTestingOptions.LsrSemanticPhaseTesting)
+                {
+                    if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
+                    {
+                        lock (_fileCompilerWaittingForNodePhase)
                     {
                         if (!_fileCompilerWaittingForNodePhase.Contains(fileCompilerToUpdate))
                             _fileCompilerWaittingForNodePhase.Add(fileCompilerToUpdate); //Store that this fileCompiler will soon need a Node Phase
                     }
 
-                    if (!_timerDisabled) //If TimerDisabled is false, create a timer to automatically launch Node phase
-                    {
-                        _semanticUpdaterTimer = new System.Timers.Timer(1000);
-                        _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
-                        _semanticUpdaterTimer.Start();
+                    _semanticUpdaterTimer = new System.Timers.Timer(750);
+                    _semanticUpdaterTimer.Elapsed += (sender, e) => TimerEvent(sender, e, fileCompilerToUpdate);
+                    _semanticUpdaterTimer.Start();
                     }
                 }
-                else
-                {
-                    fileCompilerToUpdate.CompilationResultsForProgram.UpdateTokensLines();
-                }
+            }
+        }
+
+        private void ExecutionStepEventHandler(object oFileCompiler, ExecutionStepEventArgs executionStepEvent, Uri fileUri)
+        {
+            if (!(oFileCompiler is FileCompiler))
+                return;
+
+            var fileCompiler = (FileCompiler) oFileCompiler;
+            switch (executionStepEvent.ExecutionStep)
+            {
+                case ExecutionStep.Scanner:
+                    if (IsLsrScannerTesting)
+                    {
+                        //Return log information about updated tokens
+                        var sb = new StringBuilder();
+                        foreach (var token in fileCompiler.CompilationResultsForProgram.TokensDocumentSnapshot.SourceTokens)
+                            sb.AppendLine(token.ToString());
+                        _Logger(sb.ToString(), fileUri);
+                    }
+                    break;
+                case ExecutionStep.Preprocessor:
+                    if (IsLsrPreprocessinTesting)
+                    {
+                        //Return log information about updated processed tokens
+                        var sb = new StringBuilder();
+                        foreach (var token in fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.ProcessedTokensSource)
+                            sb.AppendLine(token.ToString());
+                        _Logger(sb.ToString(), fileUri);
+                    }
+                    break;
+                case ExecutionStep.SyntaxCheck:
+                    if (IsLsrParserTesting)
+                    {
+                        //Return log information about code elements
+                        var sb = new StringBuilder();
+                        foreach (var codeElement in fileCompiler.CompilationResultsForProgram.CodeElementsDocumentSnapshot.CodeElements)
+                            sb.AppendLine(codeElement.ToString());
+                        _Logger(sb.ToString(), fileUri);
+                    }
+                    break;
+                case ExecutionStep.SemanticCheck:
+                case ExecutionStep.CrossCheck:
+                case ExecutionStep.Generate:
+                default:
+                    return;
             }
         }
 
@@ -187,17 +321,20 @@ namespace TypeCobol.LanguageServer
         /// Use this method to force a node phase if there is a filecompiler waiting for node refresh. 
         /// </summary>
         /// <param name="fileCompiler">FileCompiler on which the node phase will be done</param>
-        public void RefreshSyntaxTree(FileCompiler fileCompiler)
+        public void RefreshSyntaxTree(FileCompiler fileCompiler, bool forceRefresh = false)
         {
             lock (_fileCompilerWaittingForNodePhase)
             {
-                if (!_fileCompilerWaittingForNodePhase.Contains(fileCompiler)) return;
+                var fileCompilerContained = _fileCompilerWaittingForNodePhase.Contains(fileCompiler);
+                if (!fileCompilerContained && !forceRefresh) return;   
+                else if(fileCompilerContained)             
+                    _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
 
-                _fileCompilerWaittingForNodePhase.Remove(fileCompiler);
+
+                if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrSemanticTesting) return;
                 fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
                 fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
             }
-            
         }
 
         /// <summary>
@@ -229,9 +366,6 @@ namespace TypeCobol.LanguageServer
         {
             TypeCobolConfiguration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
-
-            _timerDisabled = false;
-            options.Add("td|timerdisabled=", "Disable the delay that handle the automatic launch of Node Phase analyze", td => _timerDisabled = (td != null)); //Add custom option to disable node phase timer
             options.Parse(arguments);
 
             //Adding default copies folder
@@ -239,7 +373,7 @@ namespace TypeCobol.LanguageServer
             TypeCobolConfiguration.CopyFolders.Add(folder + @"\DefaultCopies\");
 
             if (TypeCobolConfiguration.Telemetry)
-                AnalyticsWrapper.Telemetry.DisableTelemetry = false; //If telemetry arg is passed enable telemetry
+                AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
 
             if (TypeCobolConfiguration.ExecToStep >= ExecutionStep.Generate)
                 TypeCobolConfiguration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
@@ -318,7 +452,7 @@ namespace TypeCobol.LanguageServer
                     foreach (var line in fileParser.Value.TextDocument.Lines)
                         sourceText.AppendLine(line.Text);
 
-                    OpenSourceFile(fileParser.Key, sourceText.ToString());
+                    OpenSourceFile(fileParser.Key, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
                 }
             }
         }
@@ -410,6 +544,27 @@ namespace TypeCobol.LanguageServer
        
 
   
+    }
+
+
+    [Flags]
+    public enum LsrTestingOptions
+    {
+        NoLsrTesting = 0,
+        LsrSourceDocumentTesting = 0x1 << 0,
+        LsrScanningPhaseTesting = LsrSourceDocumentTesting | 0x1 << 1,
+        LsrPreprocessingPhaseTesting = LsrScanningPhaseTesting | 0x01 << 2,
+        LsrParsingPhaseTesting = LsrPreprocessingPhaseTesting | 0x01 << 3,
+        LsrSemanticPhaseTesting = LsrParsingPhaseTesting | 0x1 << 4
+    }
+
+
+    public static class LsrTestingOptionsExtensions
+    {
+        public static bool HasFlag(this LsrTestingOptions value, LsrTestingOptions flag)
+        {
+            return (value & flag) != 0;
+        }
     }
 
     public class DiagnosticEvent : EventArgs

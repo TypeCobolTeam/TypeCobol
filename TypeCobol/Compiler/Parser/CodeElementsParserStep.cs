@@ -155,7 +155,22 @@ namespace TypeCobol.Compiler.Parser
                 // Seek just before the next code element starting token
                 tokenStream.SeekToToken(largestRefreshParseSection.StartToken);
                 tokenStream.StartLookingForStopToken(largestRefreshParseSection.StopToken);
+
+                //Remove all the code elements for the future line to parse.
+
+                for (int i = largestRefreshParseSection.StartLineIndex;
+                    i < (largestRefreshParseSection.StopLineIndex == documentLines.Count - 1 && largestRefreshParseSection.StopToken == null //If the last index is equals to number of line in document, make sure to also reset the last line, otherwise, reset lines normally. 
+                        ? largestRefreshParseSection.StopLineIndex + 1
+                        : largestRefreshParseSection.StopLineIndex);
+                    i++)
+                {
+                    if (documentLines[i].CodeElements != null)
+                        documentLines[i].ResetCodeElements();
+                }
             }
+
+           
+
 
             // Reset parsing error diagnostics
             cobolErrorStrategy.Reset(cobolParser);

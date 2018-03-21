@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using TypeCobol.LanguageServer.Utilities;
 
 namespace TypeCobol.LanguageServer.StdioHttp
 {
@@ -20,6 +22,30 @@ namespace TypeCobol.LanguageServer.StdioHttp
         public const string CONTENT_LENGTH_HEADER = "Content-Length";
         public const string CONTENT_TYPE_HEADER = "Content-Type";
 
+        /// <summary>
+        /// Flag to track the Lsr Td mode so that Send Message are waited.
+        /// </summary>
+        public bool IsLsrTdMode
+        {
+            get; set;
+        }
+
+
+        /// <summary>
+        /// Redirected Input Stream if any
+        /// </summary>
+        public Stream RedirectedInputStream
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Redirected Output Stream if any
+        /// </summary>
+        public StreamWriter RedirectedOutpuStream
+        {
+            get; set;
+        }        
 
         /// <summary>
         /// Configure the Http server
@@ -36,7 +62,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
             Console.OutputEncoding = messageEncoding ?? Encoding.UTF8;
             Console.InputEncoding = messageEncoding ?? Encoding.UTF8;
             if (logWriter is StreamWriter)
-                ((StreamWriter) this.logWriter).AutoFlush = true;
+                ((StreamWriter)this.logWriter).AutoFlush = true;
         }
 
         // Shutdown request
@@ -86,7 +112,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
                 switch (key)
                 {
                     case CONTENT_LENGTH_HEADER:
-                            Int32.TryParse(line.Substring(sepIndex + 1).Trim(), out headers.contentLength);
+                        Int32.TryParse(line.Substring(sepIndex + 1).Trim(), out headers.contentLength);
                         break;
                     case CONTENT_TYPE_HEADER:
                         {
@@ -137,7 +163,8 @@ namespace TypeCobol.LanguageServer.StdioHttp
                     headers.contentLength -= nbCharsRead;
                 }
                 Encoding encoding = headers.charset == Encoding.UTF8.BodyName ? Encoding.UTF8 : Encoding.GetEncoding(headers.charset);
-                if (encoding == null) {
+                if (encoding == null)
+                {
                     logWriter.WriteLine(String.Format("{0} >> Fail to get encoding : {1} --> using default encoding UTF-8", DateTime.Now, headers.charset));
                     encoding = Encoding.UTF8;
                 }
@@ -172,7 +199,7 @@ namespace TypeCobol.LanguageServer.StdioHttp
             bool newLine = false;
             Headers headers = new Headers();
             // Infinite message loop
-            using (Stream stdin = Console.OpenStandardInput())
+            using (Stream stdin = RedirectedInputStream ?? Console.OpenStandardInput())
             {
                 byte[] buffer = new byte[BUFFER_SIZE];
                 for (;;)
@@ -250,6 +277,8 @@ namespace TypeCobol.LanguageServer.StdioHttp
         // Synchronized access
         private readonly object _lock = new object();
 
+        private OrderTaskScheduler _scheduler = new OrderTaskScheduler("TC.Lsp.Server");
+
         /// <summary>
         /// Send a message to the Http client
         /// </summary>
@@ -259,18 +288,19 @@ namespace TypeCobol.LanguageServer.StdioHttp
             {
                 lock (_lock)
                 {
+                    TextWriter writer = RedirectedOutpuStream ?? Console.Out;
                     string the_message = (string)msg;
                     // Write only the Content-Length header
                     int contentLength = Console.Out.Encoding.GetByteCount(the_message);
-                    Console.Out.WriteLine("Content-Length: " + contentLength);
-                    Console.Out.WriteLine();
+                    writer.WriteLine("Content-Length: " + contentLength);
+                    writer.WriteLine();
                     if (logLevel >= ServerLogLevel.Message)
                     {
                         logWriter.WriteLine(String.Format("{0} << Message sent : Content-Length={1}", DateTime.Now, contentLength));
                     }
 
                     // Write the message body
-                    Console.Out.Write(the_message);
+                    writer.Write(the_message);
                     if (logLevel == ServerLogLevel.Protocol)
                     {
                         logWriter.WriteLine(the_message);
@@ -278,8 +308,18 @@ namespace TypeCobol.LanguageServer.StdioHttp
                     }
                 }
             };
-            Task tsend = new Task(action, message);
-            tsend.Start();
+            var tsend = Task.Factory.StartNew(
+                () => action(message),
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                this._scheduler);
+            if (IsLsrTdMode)
+            {
+                tsend.Wait();
+            }
+
+            //Task tsend = new Task(action, message);
+            //tsend.Start();
         }
 
         /// <summary>

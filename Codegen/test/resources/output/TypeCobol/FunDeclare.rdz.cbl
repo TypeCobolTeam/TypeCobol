@@ -100,7 +100,7 @@
        REPLACE ==:MyPrefix:== by ==MyPrefix2==.
        COPY MyDataCopy.
        LINKAGE SECTION.
-       01 x PIC X.
+       01 x pic X.
        PROCEDURE DIVISION
              USING BY REFERENCE x
            .

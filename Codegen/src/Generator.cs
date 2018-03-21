@@ -229,11 +229,11 @@ namespace TypeCobol.Codegen
             //Check if there is any error in diags
             if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
-                AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Diagnostics Detected");
+                AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Diagnostics Detected", EventType.Genration);
                 throw new GenerationException("Unable to generate because of error diagnostics", null, null, false, false);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Started");
+            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Started", EventType.Genration);
            
             // STEP 0: Initialize the global values.
             RootNode = compilationUnit.ProgramClassDocumentSnapshot.Root;
@@ -250,7 +250,7 @@ namespace TypeCobol.Codegen
             // STEP 2: convert tree to destination language code
             TreeToCode();
       
-            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Ended");
+            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Ended", EventType.Genration);
         }
 
         /// <summary>

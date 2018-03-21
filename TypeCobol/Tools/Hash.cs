@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Tools
+﻿using System;
+
+namespace TypeCobol.Tools
 {
 
     using System.Collections.Generic;
@@ -17,6 +19,15 @@
 
     public class Hash
     {
+        /// <summary>
+        /// Calculate the Shortcut name of a COBOl Program name.
+        /// </summary>
+        /// <param name="name">The name to calculate the shortcut.</param>
+        /// <returns>The Shortcut name</returns>
+        public static string CalculateCobolProgramNameShortcut(string name)
+        {
+            return name.Substring(0, Math.Min(val1: name.Length, val2: 8));
+        }
 
         public static string CreateSHA256(string text)
         {
@@ -62,7 +73,7 @@
             {
                 var RootNode = (SourceFile)node.Root;
                 if (RootNode != null && RootNode.GeneratedCobolHashes.Any(v => v.Key == result && v.Value != text))
-                    DiagnosticUtils.AddError(node.CodeElement, "Duplicated hash detected. Please contact TypeCobol support team.", MessageCode.ImplementationError);
+                    DiagnosticUtils.AddError(node, "Duplicated hash detected. Please contact TypeCobol support team.", MessageCode.ImplementationError);
                 else if (RootNode != null && !RootNode.GeneratedCobolHashes.Any(v => v.Key == result))
                     RootNode.GeneratedCobolHashes.Add(result, text);
             }

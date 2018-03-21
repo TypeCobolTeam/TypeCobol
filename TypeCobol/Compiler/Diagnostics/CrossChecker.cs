@@ -158,7 +158,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 return;
 
             var area = storageArea.GetStorageAreaThatNeedDeclaration;
-            List<DataDefinition> found;
+            IEnumerable<DataDefinition> found;
             var foundQualified = new List<KeyValuePair<string, DataDefinition>>();
 
             if (area.SymbolReference == null) return;
@@ -177,11 +177,11 @@ namespace TypeCobol.Compiler.Diagnostics
                 found = foundQualified.Select(v => v.Value).ToList();
             }
 
-            if (found.Count == 1 && foundQualified.Count == 1)
+            if (found.Count() == 1 && foundQualified.Count == 1)
             {
-                if (found[0].IsIndex)
+                if (found.First().IsIndex)
                 {
-                    var index = found[0];
+                    var index = found.First();
                     string completeQualifiedName = foundQualified.First().Key;
 
                     index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
@@ -189,12 +189,12 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (area.SymbolReference.IsQualifiedReference)
                     {
                         if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
-                            DiagnosticUtils.AddError(index.Parent.CodeElement,
+                            DiagnosticUtils.AddError(index.Parent,
                                 "Index name '" + index.Name + "' is over 22 characters.");
                         if (
                                 index.Parent.CodeElement.IsInsideCopy())
                             //If index comes from a copy, do not support qualification
-                            DiagnosticUtils.AddError(node.CodeElement,
+                            DiagnosticUtils.AddError(node,
                                 "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
                     }
 
@@ -233,11 +233,11 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
 
                     if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
-                        DiagnosticUtils.AddError(node.CodeElement,
+                        DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area);
                 }
-                else if (found[0].DataType == DataType.Boolean && found[0].CodeElement is DataDefinitionEntry &&
-                         ((DataDefinitionEntry) found[0]?.CodeElement)?.LevelNumber?.Value != 88)
+                else if (found.First().DataType == DataType.Boolean && found.First().CodeElement is DataDefinitionEntry &&
+                         ((DataDefinitionEntry) found.First()?.CodeElement)?.LevelNumber?.Value != 88)
                 {
                     if (!(node is Nodes.If || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch))//Ignore If/Set/Perform/WhenSearch Statement
                     {
@@ -249,11 +249,11 @@ namespace TypeCobol.Compiler.Diagnostics
 
             }
 
-            if (found.Count < 1)
+            if (!found.Any())
                 if (node.SymbolTable.GetFunction(area).Count < 1)
-                    DiagnosticUtils.AddError(node.CodeElement, "Symbol " + area + " is not referenced");
-            if (found.Count > 1)
-                DiagnosticUtils.AddError(node.CodeElement, "Ambiguous reference to symbol " + area);
+                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced");
+            if (found.Count() > 1)
+                DiagnosticUtils.AddError(node, "Ambiguous reference to symbol " + area);
 
         }
 
@@ -429,15 +429,15 @@ namespace TypeCobol.Compiler.Diagnostics
         private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference)
         {
             var found = table.GetVariables(symbolReference);
-            if (found.Count != 1) return null; // symbol undeclared or ambiguous -> not my job
-            return found[0];
+            if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
+            return found.First();
         }
 
         private static DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName)
         {
             var found = table.GetVariables(qualifiedName);
-            if (found.Count != 1) return null; // symbol undeclared or ambiguous -> not my job
-            return found[0];
+            if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
+            return found.First();
         }
 
         //TODO move this method to DataDefinition

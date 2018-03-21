@@ -1,0 +1,37 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+       PROCEDURE DIVISION.     
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DEND DECLARATIVES. 
+      *-----------------------------------------------------------------
+       declare procedure StartCheckpoint public.
+       end-declare.
+       INIT-LIBRARY.
+           exit.
+       FOO.
+           exit.
+       END PROGRAM PGM1.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPGM.
+       PROCEDURE DIVISION.      
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DEND DECLARATIVES.
+       declare procedure testos public.
+       procedure division.
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DEND DECLARATIVES.
+           call PGM1::StartCheckpoint
+           .
+       end-declare.
+       INIT-LIBRARY.
+           call testos.
+       FOO.
+           exit.
+       END PROGRAM MyPGM.

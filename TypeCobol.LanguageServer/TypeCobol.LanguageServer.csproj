@@ -18,8 +18,8 @@
       <HintPath>..\packages\Antlr4.Runtime.4.5.3\lib\net45\Antlr4.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -55,13 +55,21 @@
     <Compile Include="TypeCobolCustomLanguageServer\Loading Issue Notification\LoadingIssueParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Request\NodeRefreshRequest.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolCustomLanguageServer.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\TypeCobolRemoteConsole.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageParams.cs" />
     <Compile Include="TypeCobolServer.cs" />
     <Compile Include="TypeCobolServerHost.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesParams.cs" />
     <Compile Include="Utilities\DebugTextWriter.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\MessageActionWrapper.cs" />
+    <Compile Include="Utilities\OrderTaskScheduler.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionContext.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionParams.cs" />
     <Compile Include="VsCodeProtocol\Code Action Provider\CodeActionRequest.cs" />
@@ -169,6 +177,9 @@
       <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
       <Name>TypeCobol</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -1,5 +1,6 @@
 ﻿
 
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace TypeCobol.Codegen.Nodes {
@@ -74,9 +75,9 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 	private string CreateName(SymbolReference symbolReference) {
 	    var name = symbolReference.Name;
         var found = table.GetVariables(symbolReference);
-		if (found.Count < 1) return "?NOT_FOUND?";
-		if (found.Count > 1) return name;
-		var pentry = (DataDescriptionEntry)found[0].CodeElement;
+		if (found.Count() < 1) return "?NOT_FOUND?";
+		if (found.Count() > 1) return name;
+		var pentry = (DataDescriptionEntry)found.First().CodeElement;
 		if (pentry.DataType == DataType.Boolean) return name+"-value";
 		return name;
 	}

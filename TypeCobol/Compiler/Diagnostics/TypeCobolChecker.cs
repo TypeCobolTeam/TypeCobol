@@ -31,8 +31,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
 	            if (pair.Key == null) continue; // no receiving item
 	            var lr = table.GetVariables(pair.Key);
-	            if (lr.Count != 1) continue; // ambiguity or not referenced; not my job
-	            var receiving = lr[0];
+	            if (lr.Count() != 1) continue; // ambiguity or not referenced; not my job
+	            var receiving = lr.First();
 	            checkReadOnly(node, receiving);
 	        }
 	}
@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 !functionCaller.FunctionCall.NeedDeclaration)
                 return;
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Call] " + functionCaller.FunctionCall.FunctionName);
+            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Call] " + functionCaller.FunctionCall.FunctionName, EventType.TypeCobolUsage);
 
             if (functionCaller.FunctionDeclaration == null)
             {
@@ -118,7 +118,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     var potentialVariables =
                         node.SymbolTable.GetVariables(new URI(functionCaller.FunctionCall.FunctionName));
 
-                    if (functionDeclarations.Count == 1 && potentialVariables.Count == 0)
+                    if (functionDeclarations.Count == 1 && !potentialVariables.Any())
                     {
                         functionCaller.FunctionDeclaration = functionDeclarations.First();
                         return; //Everything seems to be ok, lets continue on the next one
@@ -128,17 +128,17 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null,
                             functionCaller.FunctionCall.Namespace);
 
-                    if (potentialVariables.Count > 1)
+                    if (potentialVariables.Count() > 1)
                     {
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times",
                             functionCaller.FunctionCall.FunctionName,
-                            potentialVariables.Count + functionDeclarations.Count);
+                            potentialVariables.Count() + functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
 
-                    if (functionDeclarations.Count > 1 && potentialVariables.Count == 0)
+                    if (functionDeclarations.Count > 1 && !potentialVariables.Any())
                     {
                         message = string.Format("No suitable function signature found for '{0}(no arguments)'",
                             functionCaller.FunctionCall.FunctionName);
@@ -146,7 +146,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return;
                     }
 
-                    if (functionDeclarations.Count >= 1 && potentialVariables.Count == 1)
+                    if (functionDeclarations.Count >= 1 && potentialVariables.Count() == 1)
                     {
                         message = string.Format("Warning: Risk of confusion in call of '{0}'",
                             functionCaller.FunctionCall.FunctionName);
@@ -154,7 +154,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return;
                     }
 
-                    if (functionDeclarations.Count == 0 && potentialVariables.Count == 0)
+                    if (functionDeclarations.Count == 0 && !potentialVariables.Any())
                     {
                         message = string.Format("No function or variable found for '{0}'(no arguments)",
                             functionCaller.FunctionCall.FunctionName);
@@ -162,7 +162,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return; //Do not continue the function/procedure does not exists
                     }
 
-                    if (potentialVariables.Count == 1)
+                    if (potentialVariables.Count() == 1)
                         return; //Stop here, it's a standard Cobol call
                 }
 
@@ -182,12 +182,22 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var table = node.SymbolTable;
             var parameters = definition.Profile.Parameters;
+            var callerProfile = call.AsProfile(table);
             var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
             if (callArgsCount > parameters.Count)
             {
                 var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName, parameters.Count);
                 DiagnosticUtils.AddError(node, m);
             }
+
+            if (callerProfile.InputParameters.Count != definition.Profile.InputParameters.Count
+                || callerProfile.InoutParameters.Count != definition.Profile.InoutParameters.Count
+                || callerProfile.OutputParameters.Count != definition.Profile.OutputParameters.Count)
+            {
+                var m = string.Format("No suitable function signature found for '{0}' {1}", call.FunctionName, callerProfile.GetSignature());
+                DiagnosticUtils.AddError(node, m);
+            }
+
             for (int c = 0; c < parameters.Count; c++)
             {
                 var expected = parameters[c];
@@ -239,8 +249,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
                     var callArgName = actual.MainSymbolReference?.Name;
                     var found = table.GetVariables(actual);
-                    if (found.Count != 1) continue; //Diagnostics have already been generated by Cobol85Checker
-                    var actualDataDefinition = found[0];
+                    if (found.Count() != 1) continue; //Diagnostics have already been generated by Cobol85Checker
+                    var actualDataDefinition = found.First();
 
                     //TODO use SubscriptExpression and ReferenceModifier of the StorageArea to correct the type
                     //Ex: MyVar1(1:10) has a length of 10 and is of type Alphanumeric
@@ -754,11 +764,25 @@ namespace TypeCobol.Compiler.Diagnostics
 
 	    if (isLibrary)
         {
+	        bool firstParagraphChecked = false;
 	        foreach (var child in procedureDivision.Children)
             {
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
-                    if (!(child is Paragraph || child is FunctionDeclaration || child is Declaratives))
+                if (child is Paragraph)
+                {
+	                if (!firstParagraphChecked &&
+	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
+                            DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
+                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Move paragraph " + child.Name + " lower in the source.");
+                    }
+	                firstParagraphChecked = true;
+
+	                continue; //A paragraph is always accepted as a child of ProcedureDivision
+	            }
+                //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
+                if (!(child is FunctionDeclaration || child is Declaratives))
+                {
                         DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
                             "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
                 }

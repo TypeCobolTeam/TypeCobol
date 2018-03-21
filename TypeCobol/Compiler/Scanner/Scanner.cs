@@ -721,7 +721,6 @@ namespace TypeCobol.Compiler.Scanner
                     if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
                     {
                         // consume two :: chars
-                        AnalyticsWrapper.Telemetry.TrackEvent("[Operator-Used] ::");
                         currentIndex += 2;
                         return new Token(TokenType.QualifiedNameSeparator, startIndex, startIndex + 1, tokensLine);
                     }

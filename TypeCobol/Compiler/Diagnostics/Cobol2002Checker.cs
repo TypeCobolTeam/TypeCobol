@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void CheckTypeDefinition(TypeDefinition typeDefinition)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name);
+            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name, EventType.TypeCobolUsage);
 
             if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
             {
@@ -180,12 +180,12 @@ namespace TypeCobol.Compiler.Diagnostics
         private static void Check(SymbolReference renames, Node node)
         {
             var found = node.SymbolTable.GetVariables(renames);
-            if (found.Count > 1)
+            if (found.Count() > 1)
             {
                 string message = "Illegal RENAMES: Ambiguous reference to symbol \'" + renames + "\'";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
-            if (found.Count < 1)
+            if (!found.Any())
             {
                 string message = "Illegal RENAMES: Symbol \'" + renames + "\' is not referenced";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
