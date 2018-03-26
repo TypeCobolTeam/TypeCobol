@@ -64,6 +64,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool LsrSemanticTesting { get; set; }
 
+        /// <summary>
+        /// Are Log message notifications enabled ? false if yes, true otherwise.
+        /// </summary>
+        public bool NoLogsMessageNotification { get; set; }
+
         public Workspace Workspace
         {
             get { return typeCobolWorkspace; }
@@ -73,6 +78,7 @@ namespace TypeCobol.LanguageServer
 
         public override InitializeResult OnInitialize(InitializeParams parameters)
         {
+            this.RemoteConsole.NoLogsMessageNotification = NoLogsMessageNotification;
             var rootDirectory = new DirectoryInfo(parameters.rootPath);
             string workspaceName = rootDirectory.Name + "#" + parameters.processId;
 
