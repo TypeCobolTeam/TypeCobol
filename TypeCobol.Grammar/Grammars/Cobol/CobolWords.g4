@@ -754,8 +754,6 @@ alphanumericValue2: alphanumericOrNationalLiteralToken;
 
 alphanumericValue3: alphanumericOrNationalLiteralToken | figurativeConstant;
 
-alphanumericValue4: UserDefinedWord;
-
 alphanumericValue5: UserDefinedWord | alphanumericLiteralToken;
 
 alphanumericValue6: CommentEntry;
@@ -811,15 +809,15 @@ symbolReference2: alphanumericValue2;
 symbolReference5: alphanumericValue5;
 
 // [TYPECOBOL] extension : rule modified to supportTYPE DATE (instead of TC-DATE or something)
-symbolReference12: alphanumericValue4 | DATE;
+symbolReference12: UserDefinedWord | DATE;
 
 ambiguousSymbolReference1: alphanumericValue1;
 
-ambiguousSymbolReference4: alphanumericValue4;
+ambiguousSymbolReference4: UserDefinedWord;
 
 symbolDefinitionOrReference1: alphanumericValue1;
 
-symbolDefinitionOrReference4: alphanumericValue4;
+symbolDefinitionOrReference4: UserDefinedWord;
 
 externalName1: enumeratedValue1;
 
@@ -827,7 +825,7 @@ externalName3: enumeratedValue3;
 
 externalName5: alphanumericValue5;
 
-externalNameOrSymbolReference4: alphanumericValue4;
+externalNameOrSymbolReference4: UserDefinedWord;
 
 externalNameOrSymbolReference5: alphanumericValue5;
 

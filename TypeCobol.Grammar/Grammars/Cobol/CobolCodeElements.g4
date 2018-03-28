@@ -618,7 +618,7 @@ configurationSectionHeader:
 
 sourceComputerParagraph: 
     SOURCE_COMPUTER PeriodSeparator
-    (computerName=alphanumericValue4 
+    (computerName=UserDefinedWord 
      (WITH? DEBUGGING MODE)? 
      PeriodSeparator)?;
 
@@ -665,7 +665,7 @@ sourceComputerParagraph:
 
 objectComputerParagraph:
     OBJECT_COMPUTER PeriodSeparator
-    (computerName=alphanumericValue4 
+    (computerName=UserDefinedWord 
      memorySizeClause?
      programCollatingSequenceClause?
      segmentLimitClause?

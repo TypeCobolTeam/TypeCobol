@@ -330,9 +330,9 @@ namespace TypeCobol.Compiler.Parser
         internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference12Context context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = null;
-            if (context.alphanumericValue4() != null)
+            if (context.UserDefinedWord() != null)
             {
-                nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+                nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
             }
             else if (context.DATE() != null)
             {
@@ -353,7 +353,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal AmbiguousSymbolReference CreateAmbiguousSymbolReference(CodeElementsParser.AmbiguousSymbolReference4Context context, SymbolType[] candidateTypes)
         {
-            var nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            var nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
             var ambiguousSymbolReference = new AmbiguousSymbolReference(nameLiteral, candidateTypes);
             AddToSymbolInformations(nameLiteral, ambiguousSymbolReference);
             return ambiguousSymbolReference;
@@ -369,7 +369,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference4Context context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
             var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
             return symbolDefinitionOrReference;
@@ -408,7 +408,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal ExternalNameOrSymbolReference CreateExternalNameOrSymbolReference(CodeElementsParser.ExternalNameOrSymbolReference4Context context, SymbolType[] candidateTypes)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
             var externalNameOrSymbolReference = new ExternalNameOrSymbolReference(nameLiteral, candidateTypes);
             AddToSymbolInformations(nameLiteral, externalNameOrSymbolReference);
             return externalNameOrSymbolReference;
