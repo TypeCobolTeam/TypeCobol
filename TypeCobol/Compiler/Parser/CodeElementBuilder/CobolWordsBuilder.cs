@@ -35,9 +35,13 @@ namespace TypeCobol.Compiler.Parser
             return new BooleanValue(ParseTreeUtils.GetFirstToken(context));
         }
 
-        internal static IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValueContext context)
+        internal static IntegerValue CreateIntegerValue([CanBeNull] ITerminalNode node) {
+            if (node == null) return null;
+            return new IntegerValue(ParseTreeUtils.GetTokenFromTerminalNode(node));
+        }
+        internal static IntegerValue CreateIntegerValue(IToken token)
         {
-            return new IntegerValue(ParseTreeUtils.GetFirstToken(context));
+            return new IntegerValue((Token) token);
         }
 
         internal static IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValue2Context context)

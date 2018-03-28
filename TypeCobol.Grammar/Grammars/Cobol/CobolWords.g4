@@ -734,8 +734,6 @@ standardCollatingSequenceReference: STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
 
 booleanValue: TRUE | FALSE;
 
-integerValue: IntegerLiteral;
-
 integerValue2: LevelNumber;
 
 numericValue: numericLiteralToken | numericFigurativeConstant;

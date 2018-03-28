@@ -158,7 +158,7 @@ subscript:
 	(integerVariableOrIndex2 withRelativeSubscripting?) | ALL | TALLY;
 
 withRelativeSubscripting: 
-	(PlusOperator | MinusOperator) integerValue;
+	(PlusOperator | MinusOperator) IntegerLiteral;
 
 // - 2. Special registers (allocate a storage area on reference) -
 
@@ -976,13 +976,13 @@ signCondition:
 
 booleanValueOrExpression: booleanValue | conditionalExpression;
 
-integerVariable1: identifier | integerValue;
+integerVariable1: identifier | IntegerLiteral;
 
-integerVariable2: dataNameReference | integerValue;
+integerVariable2: dataNameReference | IntegerLiteral;
 
-integerVariableOrIndex1: identifierOrIndexName | integerValue;
+integerVariableOrIndex1: identifierOrIndexName | IntegerLiteral;
 
-integerVariableOrIndex2: qualifiedDataNameOrIndexName | integerValue;
+integerVariableOrIndex2: qualifiedDataNameOrIndexName | IntegerLiteral;
 
 numericVariable1: identifier;
 		

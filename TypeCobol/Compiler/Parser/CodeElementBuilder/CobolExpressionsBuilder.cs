@@ -190,7 +190,7 @@ namespace TypeCobol.Compiler.Parser
 						}
 
 						IntegerVariable integerVariable2 = new IntegerVariable(
-							CobolWordsBuilder.CreateIntegerValue(context.withRelativeSubscripting().integerValue()));
+							CobolWordsBuilder.CreateIntegerValue(context.withRelativeSubscripting().IntegerLiteral()));
 						ArithmeticExpression numericOperand2 = new NumericVariableOperand(integerVariable2);
 
 						arithmeticExpression = new ArithmeticOperation(
@@ -931,13 +931,11 @@ namespace TypeCobol.Compiler.Parser
             IntegerVariable variable = null;
 			if(context.identifier() != null)
 			{
-				variable = new IntegerVariable(
-					CreateIdentifier(context.identifier()));
+				variable = new IntegerVariable(CreateIdentifier(context.identifier()));
 			}
 			else
 			{
-				variable = new IntegerVariable(
-					CobolWordsBuilder.CreateIntegerValue(context.integerValue()));
+				variable = new IntegerVariable(CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
 
             // Collect storage area read/writes at the code element level
@@ -961,7 +959,7 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				variable = new IntegerVariable(
-					CobolWordsBuilder.CreateIntegerValue(context.integerValue()));
+					CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
 
             // Collect storage area read/writes at the code element level
@@ -984,7 +982,7 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				variable = new IntegerVariable(
-					CobolWordsBuilder.CreateIntegerValue(context.integerValue()));
+					CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
 
             // Collect storage area read/writes at the code element level
@@ -1008,7 +1006,7 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				variable = new IntegerVariable(
-					CobolWordsBuilder.CreateIntegerValue(context.integerValue()));
+					CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
 
             // Collect storage area read/writes at the code element level

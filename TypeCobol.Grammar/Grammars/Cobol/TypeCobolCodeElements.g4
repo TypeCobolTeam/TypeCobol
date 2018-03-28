@@ -127,7 +127,7 @@ tcfuncParameterUsageClause:
 				    ;
 
 functionConditionParameter:
-	levelNumber=integerValue conditionNameDefinition valueClauseForCondition;
+	levelNumber=IntegerLiteral conditionNameDefinition valueClauseForCondition;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;
 
