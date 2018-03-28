@@ -808,8 +808,6 @@ symbolReference1: alphanumericValue1;
 
 symbolReference2: alphanumericValue2;
 
-symbolReference4: alphanumericValue4;
-
 symbolReference5: alphanumericValue5;
 
 // [TYPECOBOL] extension : rule modified to supportTYPE DATE (instead of TC-DATE or something)
@@ -912,7 +910,7 @@ programNameReference1: symbolReference1;
 
 programNameReference2: symbolReference5;
 
-programNameReference3: symbolReference4;
+programNameReference3: UserDefinedWord;
 
 // p330: ENTRY statement
 // literal-1 
@@ -932,7 +930,7 @@ programNameReferenceOrProgramEntryReference: ambiguousSymbolReference1;
 
 sectionNameDefinition: symbolDefinition12;
 
-sectionNameReference: symbolReference4;
+sectionNameReference: UserDefinedWord;
 
 // p253: Paragraph-name
 // A user-defined word that identifies a paragraph. A
@@ -942,7 +940,7 @@ sectionNameReference: symbolReference4;
 
 paragraphNameDefinition: symbolDefinition12;
 
-paragraphNameReference: symbolReference4;
+paragraphNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
 paragraphNameReferenceOrSectionNameReference: ambiguousSymbolReference4;
@@ -960,7 +958,7 @@ paragraphNameReferenceOrSectionNameReference: ambiguousSymbolReference4;
 
 classNameDefinition: UserDefinedWord;
 
-classNameReference: symbolReference4;
+classNameReference: UserDefinedWord;
 
 // p122: external-class-name-1
 // An alphanumeric literal containing a name that enables a COBOL program
@@ -991,7 +989,7 @@ methodNameReference: symbolReference2;
 
 functionNameDefinition: UserDefinedWord;
 
-functionNameReference: symbolReference4;
+functionNameReference: UserDefinedWord;
 
 // ** Environment vars **
 
@@ -1009,7 +1007,7 @@ functionNameReference: symbolReference4;
 
 mnemonicForEnvironmentNameDefinition: UserDefinedWord;
 
-mnemonicForEnvironmentNameReference: symbolReference4;
+mnemonicForEnvironmentNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
 mnemonicForEnvironmentNameReferenceOrEnvironmentName: externalNameOrSymbolReference4;
@@ -1022,7 +1020,7 @@ mnemonicForEnvironmentNameReferenceOrEnvironmentName: externalNameOrSymbolRefere
 
 mnemonicForUPSISwitchNameDefinition: UserDefinedWord;
 
-mnemonicForUPSISwitchNameReference: symbolReference4;
+mnemonicForUPSISwitchNameReference: UserDefinedWord;
 
 // p115 : upsiSwitchName
 // A 1-byte user-programmable status indicator (UPSI) switch.
@@ -1069,7 +1067,7 @@ symbolicCharacterReference: standardCollatingSequenceReference;
 
 alphabetNameDefinition: UserDefinedWord;
 
-alphabetNameReference: symbolReference4;
+alphabetNameReference: UserDefinedWord;
 
 intrinsicAlphabetNameReference: standardCollatingSequenceReference;
 
@@ -1084,7 +1082,7 @@ alphabetName: alphabetNameReference | /* standardCollatingSequenceReference */ i
 
 characterClassNameDefinition: UserDefinedWord;
 
-characterClassNameReference: symbolReference4;
+characterClassNameReference: UserDefinedWord;
 
 // ** Data **
 
@@ -1106,7 +1104,7 @@ dataTypeNameReference: symbolReference12;
 
 dataNameDefinition: UserDefinedWord;
 
-dataNameReference: symbolReference4;
+dataNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
 dataNameReferenceOrFileNameReference: ambiguousSymbolReference4;
@@ -1175,7 +1173,7 @@ conditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolRefe
 
 indexNameDefinition: UserDefinedWord;
 
-indexNameReference: symbolReference4;
+indexNameReference: UserDefinedWord;
 
 // ** Files **
 
@@ -1185,7 +1183,7 @@ indexNameReference: symbolReference4;
 
 fileNameDefinition: UserDefinedWord;
 
-fileNameReference: symbolReference4;
+fileNameReference: UserDefinedWord;
 
 // p120: XML-SCHEMA xml-schema-name-1 IS
 // xml-schema-name-1 can be referenced only in an XML PARSE statement.
@@ -1194,7 +1192,7 @@ fileNameReference: symbolReference4;
 
 xmlSchemaNameDefinition: UserDefinedWord;
 
-xmlSchemaNameReference: symbolReference4;
+xmlSchemaNameReference: UserDefinedWord;
 
 
 // --- Qualified names : give explicit context to resolve ambiguous name references ---
@@ -1354,7 +1352,7 @@ qualifiedDataNameOrQualifiedConditionNameOrFileName:
 qualifiedDataNameOrQualifiedConditionNameOrClassName:
 	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference | qualifiedDataNameOrQualifiedConditionName1;
 
-qualifiedIndexName: indexName=symbolReference4 | (symbolReference4 QualifiedNameSeparator)+ TcHeadDefiniiton=symbolReference4;
+qualifiedIndexName: indexName=UserDefinedWord | (UserDefinedWord QualifiedNameSeparator)+ TcHeadDefiniiton=UserDefinedWord;
 
 // - 4. External names -
 
