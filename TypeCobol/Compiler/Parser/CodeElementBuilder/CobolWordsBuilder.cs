@@ -279,14 +279,6 @@ namespace TypeCobol.Compiler.Parser
             return symbolDefinition;
         }
 
-        internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition12Context context, SymbolType symbolType)
-        {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue12());
-            var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolDefinition);
-            return symbolDefinition;
-        }
-
         internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference1Context context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
@@ -453,7 +445,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition12(), SymbolType.SectionName);
+            return CreateSymbolDefinition(context.SectionParagraphName(), SymbolType.SectionName);
         }
 
         internal SymbolReference CreateSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
@@ -463,7 +455,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition12(), SymbolType.ParagraphName);
+            return CreateSymbolDefinition(context.SectionParagraphName(), SymbolType.ParagraphName);
         }
 
         internal SymbolReference CreateParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)

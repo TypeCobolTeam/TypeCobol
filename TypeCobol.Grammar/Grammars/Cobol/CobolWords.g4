@@ -762,8 +762,6 @@ alphanumericValue7: PictureCharacterString;
 
 alphanumericValue8: ExecStatementText;
 
-alphanumericValue12: SectionParagraphName;
-
 enumeratedValue1: UserDefinedWord;
 
 enumeratedValue3: ExecTranslatorName;
@@ -799,8 +797,6 @@ symbolDefinition1: alphanumericValue1;
 symbolDefinition2: alphanumericValue2;
 
 symbolDefinition5: alphanumericValue5;
-
-symbolDefinition12: alphanumericValue12;
 
 symbolReference1: alphanumericValue1;
 
@@ -926,7 +922,7 @@ programNameReferenceOrProgramEntryReference: ambiguousSymbolReference1;
 // section-name, because it cannot be qualified, must be unique
 // within the program in which it is defined.
 
-sectionNameDefinition: symbolDefinition12;
+sectionNameDefinition: SectionParagraphName;
 
 sectionNameReference: UserDefinedWord;
 
@@ -936,7 +932,7 @@ sectionNameReference: UserDefinedWord;
 // If there are no declaratives (format 2), a paragraph-name is not
 // required in the PROCEDURE DIVISION.
 
-paragraphNameDefinition: symbolDefinition12;
+paragraphNameDefinition: SectionParagraphName;
 
 paragraphNameReference: UserDefinedWord;
 
