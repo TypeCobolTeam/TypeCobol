@@ -1,0 +1,28 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CobolLineSplitINVar.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 PERSON TYPEDEF STRICT.
+         05 FirstName              PIC X(30).
+         05 Grp1234567890123123456789.
+            10 LastName               PIC X(30).
+         05 Birthday               TYPE Date.
+         05 Registered             TYPE Bool.
+       01 W-PERSON1      TYPE PERSON.
+       01 W-PERSON2      TYPE PERSON.
+
+       procedure division.
+
+       declare procedure check private
+          output mydate        PIC X(30)
+         .
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+
+           call check
+                Output
+           W-PERSON1::Grp1234567890123123456789::LastName.
+
+       END PROGRAM CobolLineSplitINVar.

@@ -1,0 +1,74 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CobolLineSplitINVar.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *01 PERSON TYPEDEF STRICT.
+      *  05 FirstName              PIC X(30).
+      *  05 Grp12345678901231234567890.
+      *     10 LastName               PIC X(30).
+      *  05 Birthday               TYPE Date.
+      *  05 Registered             TYPE Bool.
+      *01 W-PERSON1      TYPE PERSON.
+       01 W-PERSON1.
+           02 FirstName PIC X(30).
+           02 Grp12345678901231234567890.
+             03 LastName PIC X(30).
+           02 Birthday.
+             03 YYYY PIC 9(4).
+             03 MM PIC 9(2).
+             03 DD PIC 9(2).
+          02  Registered-value PIC X VALUE LOW-VALUE.
+              88  Registered       VALUE 'T'.
+              88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+                                     
+      *01 W-PERSON2      TYPE PERSON.
+       01 W-PERSON2.
+           02 FirstName PIC X(30).
+           02 Grp12345678901231234567890.
+             03 LastName PIC X(30).
+           02 Birthday.
+             03 YYYY PIC 9(4).
+             03 MM PIC 9(2).
+             03 DD PIC 9(2).
+          02  Registered-value PIC X VALUE LOW-VALUE.
+              88  Registered       VALUE 'T'.
+              88  Registered-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+                                     
+
+       procedure division.
+
+      *declare procedure check private
+      *   output mydate        PIC X(30)
+      *  .
+
+
+      *    call check
+      *         Output
+      *    W-PERSON1::Grp12345678901231234567890::LastName.
+           CALL 'cb5016dbcheck' USING
+                    by reference LastName IN Grp12345678901231234567890
+           IN W-PERSON1
+           end-call
+                                                          .
+
+       END PROGRAM CobolLineSplitINVar.
+      *
+      *declare procedure check private
+      *   output mydate        PIC X(30)
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. cb5016dbcheck.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 mydate PIC X(30).
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate
+           .
+           CONTINUE.
+       END PROGRAM cb5016dbcheck.
