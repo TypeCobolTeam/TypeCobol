@@ -800,8 +800,6 @@ symbolDefinition1: alphanumericValue1;
 
 symbolDefinition2: alphanumericValue2;
 
-symbolDefinition4: alphanumericValue4;
-
 symbolDefinition5: alphanumericValue5;
 
 symbolDefinition12: alphanumericValue12;
@@ -960,7 +958,7 @@ paragraphNameReferenceOrSectionNameReference: ambiguousSymbolReference4;
 // that is part of a Java package or for using non-COBOL naming conventions for
 // class-names.
 
-classNameDefinition: symbolDefinition4;
+classNameDefinition: UserDefinedWord;
 
 classNameReference: symbolReference4;
 
@@ -991,7 +989,7 @@ methodNameReference: symbolReference2;
 
 // [TYPECOBOL] extension : user defined functions
 
-functionNameDefinition: symbolDefinition4;
+functionNameDefinition: UserDefinedWord;
 
 functionNameReference: symbolReference4;
 
@@ -1009,7 +1007,7 @@ functionNameReference: symbolReference4;
 // mnemonic-name-1 can be used in ACCEPT, DISPLAY, and WRITE statements. 
 // mnemonic-name-2 can be referenced only in the SET statement. 
 
-mnemonicForEnvironmentNameDefinition: symbolDefinition4;
+mnemonicForEnvironmentNameDefinition: UserDefinedWord;
 
 mnemonicForEnvironmentNameReference: symbolReference4;
 
@@ -1022,7 +1020,7 @@ mnemonicForEnvironmentNameReferenceOrEnvironmentName: externalNameOrSymbolRefere
 
 // mnemonic-name-2 can qualify condition-1 or condition-2 names.
 
-mnemonicForUPSISwitchNameDefinition: symbolDefinition4;
+mnemonicForUPSISwitchNameDefinition: UserDefinedWord;
 
 mnemonicForUPSISwitchNameReference: symbolReference4;
 
@@ -1030,7 +1028,7 @@ mnemonicForUPSISwitchNameReference: symbolReference4;
 // A 1-byte user-programmable status indicator (UPSI) switch.
 // - condition on UPSI switch status
 
-conditionForUPSISwitchNameDefinition: symbolDefinition4;
+conditionForUPSISwitchNameDefinition: UserDefinedWord;
 
 // ** Character sets **
 
@@ -1069,7 +1067,7 @@ symbolicCharacterReference: standardCollatingSequenceReference;
 // - The FD entry CODE-SET clause
 // - The SYMBOLIC CHARACTERS clause
 
-alphabetNameDefinition: symbolDefinition4;
+alphabetNameDefinition: UserDefinedWord;
 
 alphabetNameReference: symbolReference4;
 
@@ -1084,7 +1082,7 @@ alphabetName: alphabetNameReference | /* standardCollatingSequenceReference */ i
 // clause define the exclusive set of characters of which this class consists.
 // The class-name in the CLASS clause can be a DBCS user-defined word.
 
-characterClassNameDefinition: symbolDefinition4;
+characterClassNameDefinition: UserDefinedWord;
 
 characterClassNameReference: symbolReference4;
 
@@ -1092,7 +1090,7 @@ characterClassNameReference: symbolReference4;
 
 // [TYPECOBOL] extension : user defined data types
 
-dataTypeNameDefinition: symbolDefinition4; // Not used in the grammar - merged with dataNameDefinition
+dataTypeNameDefinition: UserDefinedWord; // Not used in the grammar - merged with dataNameDefinition
 
 dataTypeNameReference: symbolReference12;
 
@@ -1106,7 +1104,7 @@ dataTypeNameReference: symbolReference12;
 // and for record description entries associated with file description entries
 // that have the GLOBAL or EXTERNAL clauses.
 
-dataNameDefinition: symbolDefinition4;
+dataNameDefinition: UserDefinedWord;
 
 dataNameReference: symbolReference4;
 
@@ -1143,7 +1141,7 @@ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOr
 // Condition-names specified in the SPECIAL-NAMES paragraph of a
 // containing program can be referenced in any contained program
 
-conditionNameDefinition: symbolDefinition4;
+conditionNameDefinition: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
 conditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolReference4;
@@ -1175,7 +1173,7 @@ conditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolRefe
 // An index-name is not the same as the name of an index data item, and an
 // index-name cannot be used like a data-name.
 
-indexNameDefinition: symbolDefinition4;
+indexNameDefinition: UserDefinedWord;
 
 indexNameReference: symbolReference4;
 
@@ -1185,7 +1183,7 @@ indexNameReference: symbolReference4;
 // Must be identified by an FD or SD entry in the DATA DIVISION.
 // A file-name must conform to the rules for a COBOL user-defined name, must contain at least one alphabetic character, and must be unique within this program.
 
-fileNameDefinition: symbolDefinition4;
+fileNameDefinition: UserDefinedWord;
 
 fileNameReference: symbolReference4;
 
@@ -1194,7 +1192,7 @@ fileNameReference: symbolReference4;
 // The xml-schema-name in the XML SCHEMA clause can be a DBCS
 // user-defined word.
 
-xmlSchemaNameDefinition: symbolDefinition4;
+xmlSchemaNameDefinition: UserDefinedWord;
 
 xmlSchemaNameReference: symbolReference4;
 
