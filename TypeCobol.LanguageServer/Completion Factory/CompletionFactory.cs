@@ -211,6 +211,8 @@ namespace TypeCobol.LanguageServer
 
             }
 
+            if (potentialVariablesForCompletion == null) return completionItems;
+
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
                 SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems
 

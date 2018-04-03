@@ -396,10 +396,11 @@ namespace TypeCobol.LanguageServer
                 CodeElement matchingCodeElement = CodeElementMatcher.MatchCompletionCodeElement(parameters.position,
                     wrappedCodeElements,
                     out userFilterToken, out lastSignificantToken); //Magic happens here
+                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+
                 if (lastSignificantToken != null)
                 {
                     AnalyticsWrapper.Telemetry.TrackEvent("[Completion] " + lastSignificantToken.TokenType, EventType.Completion);
-                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
@@ -467,15 +468,6 @@ namespace TypeCobol.LanguageServer
                             ));
                             break;
                         }
-                        case TokenType.IF:
-                        case TokenType.DISPLAY:
-                        {
-
-                            items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
-                                da =>
-                                    da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
-                            break;
-                        }
                         case TokenType.SET:
                         {
                             items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler, matchingCodeElement,
@@ -498,39 +490,51 @@ namespace TypeCobol.LanguageServer
                         default:
                             break;
                     }
-
-                    if (userFilterToken != null)
-                    {
-                        //Add the range object to let the client know the position of the user filter token
-                        var range = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
-                            userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
-                        //-1 on lne to 0 based / +1 on stop index to include the last character
-                        items = items.Select(c =>
-                        {
-                            if (c.data != null && c.data.GetType().IsArray)
-                                ((object[]) c.data)[0] = range;
-                            else
-                                c.data = range;
-                            return c;
-                        }).ToList();
-                    }
-
-
-                    return items;
                 }
                 else
                 {
-                    //Return a default text to inform the user that completion is not available after the given token
-                    items.Add(new CompletionItem("Completion is not available in this context, it may come soon.")
+                    //If no known keyword has been found, let's try to get the context and return available variables. 
+                    if (matchingCodeElement == null && wrappedCodeElements.Any())
                     {
-                        insertText = ""
-                    });
-                    //Send the demand to analytics to let us know what the user wants. 
-                    var wrappedCodeEl = wrappedCodeElements.FirstOrDefault();
-                    if (wrappedCodeElements.Any() && wrappedCodeEl != null)
-                        AnalyticsWrapper.Telemetry.TrackEvent("[Completion-Demand] Source Tokens : " + wrappedCodeEl.InputStream, EventType.Completion);
+                        userFilterToken =
+                            wrappedCodeElements.First().ArrangedConsumedTokens.FirstOrDefault(
+                                t =>
+                                    parameters.position.character <= t.StopIndex + 1 && parameters.position.character > t.StartIndex
+                                    && t.Line == parameters.position.line + 1
+                                    && t.TokenType == TokenType.UserDefinedWord); //Get the userFilterToken to filter the results
+
+                        userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text; //Convert token to text
+
+                        items.AddRange(CompletionFactory.GetCompletionForVariable(fileCompiler,
+                           wrappedCodeElements.First(), da => da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)));
+                    }
+                    else
+                    {
+                        //Return a default text to inform the user that completion is not available after the given token
+                        items.Add(new CompletionItem("Completion is not available in this context")
+                        {
+                            insertText = ""
+                        });
+                    }
+                }
+
+                if (userFilterToken != null)
+                {
+                    //Add the range object to let the client know the position of the user filter token
+                    var range = new Range(userFilterToken.Line - 1, userFilterToken.StartIndex,
+                        userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
+                    //-1 on lne to 0 based / +1 on stop index to include the last character
+                    items = items.Select(c =>
+                    {
+                        if (c.data != null && c.data.GetType().IsArray)
+                            ((object[])c.data)[0] = range;
+                        else
+                            c.data = range;
+                        return c;
+                    }).ToList();
                 }
             }
+
 
             return items;
         }
@@ -872,7 +876,7 @@ namespace TypeCobol.LanguageServer
 
                     foreach (var tempCodeElement in tempCodeElements.Reverse())
                     {
-                        if (!tempCodeElement.ConsumedTokens.Any(t => CompletionElligibleTokens.IsCompletionElligibleToken(t) &&
+                        if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/
                         ((t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)))
                             ignoredCodeElements.Add(tempCodeElement);
                         else
