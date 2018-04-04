@@ -1,0 +1,25 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPgm.
+       DATA DIVISION .
+       working-storage section.
+
+       01 local.
+         05 overflw type bool.
+         05 grp.
+            10 overflw2 type bool.
+
+       PROCEDURE DIVISION.
+
+       declare procedure check private
+          output mydate  type bool
+         .
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+
+       CALL check Output local::overflw.
+       CALL check Output local::grp::overflw2.
+      *MOVE false TO local::overflw
+           .
+       END PROGRAM MyPgm.

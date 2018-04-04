@@ -87,7 +87,8 @@ namespace TypeCobol.Compiler.CodeElements
                 && this.ContinueVisitToChildren(astVisitor, NameLiteral);
         }
 
-        public override string ToString() {	return Name; }
+        public override string ToString() { return Name; }
+        public virtual string ToString(bool isBoolType) { return ToString() + (isBoolType ? "-value" : ""); }
     }
 
     /// <summary>
@@ -271,9 +272,23 @@ namespace TypeCobol.Compiler.CodeElements
 			get { return "\\." + Head.Name + "\\..*" + Tail.DefinitionPathPattern; }
 		}
 
-		public override string ToString() { return Head + " IN " + Tail; }
+	    public override string ToString()
+	    {
+	        return Head + " IN " + Tail;
+	    }
 
-		public override string Name { get { return Tail.Name+'.'+Head.Name; } }
+	    public override string ToString(bool isBoolType)
+	    {
+	        string head = "";
+	        if (Head.IsQualifiedReference)
+	            head = Head.ToString(isBoolType);
+	        else
+	        {
+	            head = Head.ToString() + (isBoolType ? "-value" : "");
+	        }
+            return head + " IN " + Tail;
+        }
+        public override string Name { get { return Tail.Name+'.'+Head.Name; } }
 
 
 
