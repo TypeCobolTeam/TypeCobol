@@ -231,6 +231,12 @@
     <None Include="LSRTests\TypeCompletion\output_expected\TypeCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\VariableQualifiedNameCompletion2\input\VaraibleQualifiedNameCompletion2.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\VariableQualifiedNameCompletion2\output_expected\VaraibleQualifiedNameCompletion2.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\VariableQualifiedNameCompletion\input\VariableQualifiedSeparatorCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
