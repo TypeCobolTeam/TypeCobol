@@ -298,10 +298,11 @@ namespace TypeCobol.LanguageServer
                     qualifiedNameTokens.Where(
                             t =>
                                 t.TokenType == TokenType.UserDefinedWord &&
-                                !(t.Text == userFilterText && userFilterToken != null && t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
-                                ((t.StartIndex >= firstSignificantToken.EndColumn &&
-                                  t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line) &&
-                                ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
+                                !(t.Text == userFilterText && userFilterToken != null &&
+                                  t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
+                                ((firstSignificantToken != null && ((t.StartIndex >= firstSignificantToken.EndColumn && t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line)) 
+                                || firstSignificantToken == null) 
+                                && ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
                         .Select(t => t.Text));
                 var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
 
