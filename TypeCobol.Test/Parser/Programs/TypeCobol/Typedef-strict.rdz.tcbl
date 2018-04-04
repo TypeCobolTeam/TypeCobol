@@ -186,7 +186,7 @@
       *OK same type
            move Point3 to Point2
       
-      *OK same primitive type 'Alphanumeric'
+      *KO for now but same primitive type 'Alphanumeric'
            move 'literal' to varCanBeStrict
       *KO not the same type
            move varCanBeStrict to Point2
