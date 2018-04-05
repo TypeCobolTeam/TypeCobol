@@ -211,6 +211,8 @@ namespace TypeCobol.LanguageServer
 
             }
 
+            if (potentialVariablesForCompletion == null) return completionItems;
+
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
                 SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems
 
@@ -281,7 +283,7 @@ namespace TypeCobol.LanguageServer
             {
                 qualifiedNameTokens.AddRange(
                     arrangedCodeElement.ArrangedConsumedTokens?.Where(
-                        t => t?.TokenType == TokenType.UserDefinedWord || t?.TokenType == TokenType.QualifiedNameSeparator));
+                        t => (t?.TokenType == TokenType.UserDefinedWord || t?.TokenType == TokenType.QualifiedNameSeparator) && (t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1));
                 //Remove all the userdefinedword token and also QualifiedNameToken
                 arrangedCodeElement.ArrangedConsumedTokens = arrangedCodeElement.ArrangedConsumedTokens.Except(qualifiedNameTokens).ToList();
                 //We only wants the token that in front of any QualifiedName 
@@ -290,16 +292,35 @@ namespace TypeCobol.LanguageServer
                 CodeElementMatcher.MatchCompletionCodeElement(position, new List<CodeElementWrapper> { arrangedCodeElement }, out tempUserFilterToken,
                     out firstSignificantToken);
 
-                //For MOVE INPUT OUTPUT variables etc.. , get all the childrens of a variable that are accessible
-                //Try to find corresponding variables
-                string qualifiedName = string.Join(".",
-                    qualifiedNameTokens.Where(
+
+                //Select the qualifiedName chain closest to cursor
+                Token previousToken = null;
+                qualifiedNameTokens.Reverse();
+                var filteredQualifiedNameTokens = new List<Token>(); //Will contains all the tokens forming the qualifiedName chain. 
+                foreach (var token in qualifiedNameTokens)
+                {
+                    if (previousToken == null 
+                        || ((previousToken.TokenType == TokenType.QualifiedNameSeparator && token.TokenType == TokenType.UserDefinedWord) 
+                            || (token.TokenType == TokenType.QualifiedNameSeparator && previousToken.TokenType == TokenType.UserDefinedWord)))
+                        filteredQualifiedNameTokens.Add(token);
+                    else
+                        break;
+
+                    previousToken = token;
+                }
+                filteredQualifiedNameTokens.Reverse();
+
+               //For MOVE INPUT OUTPUT variables etc.. , get all the children of a variable that are accessible
+               //Try to find corresponding variables
+               var qualifiedName = string.Join(".",
+                    filteredQualifiedNameTokens.Where(
                             t =>
                                 t.TokenType == TokenType.UserDefinedWord &&
-                                !(t.Text == userFilterText && userFilterToken != null && t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
-                                ((t.StartIndex >= firstSignificantToken.EndColumn &&
-                                  t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line) &&
-                                ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
+                                !(t.Text == userFilterText && userFilterToken != null &&
+                                  t.StartIndex == userFilterToken.StartIndex && t.EndColumn == userFilterToken.EndColumn) &&
+                                ((firstSignificantToken != null && ((t.StartIndex >= firstSignificantToken.EndColumn && t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line)) 
+                                || firstSignificantToken == null) 
+                                && ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
                         .Select(t => t.Text));
                 var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
 
@@ -311,7 +332,7 @@ namespace TypeCobol.LanguageServer
                         var children = new List<Node>();
                         if (variable.Children != null && variable.Children.Count > 0) //It's a variable with levels inside
                             children.AddRange(variable.Children);
-                        else //It's a typed variable, we have to search for childrens in the type
+                        else //It's a typed variable, we have to search for children in the type
                         {
                             var typeChildren = GetTypeChildrens(node.SymbolTable, variable);
                             if (typeChildren != null)

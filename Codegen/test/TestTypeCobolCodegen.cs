@@ -600,6 +600,27 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProgramParameterCompUsageTypes") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void CobolLineSplit_IN_VarTest()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var1") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CobolLineSplit_IN_Var2") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void GenQualifiedBoolVarTest()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenQualifiedBoolVar") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
+
 #if EUROINFO_RULES
         [TestMethod]
         [TestCategory("Codegen")]

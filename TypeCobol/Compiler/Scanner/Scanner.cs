@@ -474,7 +474,7 @@ namespace TypeCobol.Compiler.Scanner
 
         private TypeCobolOptions compilerOptions;
 
-        private Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
+        public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
         {
             this.tokensLine = tokensLine;
             this.line = line;
@@ -486,7 +486,7 @@ namespace TypeCobol.Compiler.Scanner
             this.BeSmartWithLevelNumber = beSmartWithLevelNumber;
         }
 
-        private Token GetNextToken()
+        public Token GetNextToken()
         {
             // Cannot read past end of line
             if(currentIndex > lastIndex)
