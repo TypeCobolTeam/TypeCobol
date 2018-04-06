@@ -77,7 +77,15 @@ namespace TypeCobol.Compiler
         /// </summary>
         public int SourceFileLoadTime { get; private set; }
 
+        public EventHandler<ExecutionStepEventArgs> ExecutionStepEventHandler { get; set; }
 
+
+        /// <summary>
+        /// Load a Cobol source file in memory
+        /// </summary>
+        public FileCompiler([NotNull] CompilationProject compilationProject, string fileName, bool isCopyFile) :
+            this(null, fileName, null, compilationProject.SourceFileProvider, compilationProject, compilationProject.ColumnsLayout, null, compilationProject.CompilationOptions, null, isCopyFile, null, compilationProject, null)
+        { }
         /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
@@ -114,7 +122,7 @@ namespace TypeCobol.Compiler
         { }
 
         /// <summary>
-        /// Common internal implementation for all 4 constructors above
+        /// Common internal implementation for all constructors above
         /// </summary>
         private FileCompiler(string libraryName, string fileName, CobolFile loadedCobolFile, SourceFileProvider sourceFileProvider, IProcessedTokensDocumentProvider documentProvider, ColumnsLayout columnsLayout, ITextDocument textDocument, TypeCobolOptions compilerOptions, SymbolTable customSymbols, bool isCopyFile,
             [CanBeNull] MultilineScanState scanState, CompilationProject compilationProject, List<RemarksDirective.TextNameVariation> copyTextNameVariations)
@@ -155,7 +163,7 @@ namespace TypeCobol.Compiler
             chrono.Start();
             if (textDocument == null)
             {
-                TextDocument = new ReadOnlyTextDocument(sourceFile.Name, sourceFile.Encoding, columnsLayout, sourceFile.ReadChars());
+                TextDocument = new ReadOnlyTextDocument(sourceFile?.Name, sourceFile?.Encoding, columnsLayout, sourceFile?.ReadChars());
             }
             // 2.b Load it in an existing text document in memory
             else if (sourceFile != null)
@@ -169,11 +177,6 @@ namespace TypeCobol.Compiler
             else if (sourceFile == null || loadedCobolFile != null)
             {
                 TextDocument = textDocument;
-            }
-
-            if (TextDocument != null && TextDocument.LineCount == 0)
-            {
-                throw new Exception(string.Format("Source file {0} is empty", fileName));
             }
 
             chrono.Stop();
@@ -199,180 +202,65 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void CompileOnce()
         {
-            if (CompilerOptions.ExecToStep == null)
-                CompilerOptions.ExecToStep = ExecutionStep.SemanticCheck;
+            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy);
+        }
+
+        /// <summary>
+        /// Perform a cmpilation based on an execution step.
+        /// </summary>
+        /// <param name="exec2Step">The execution step</param>
+        /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
+        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy)
+        {
+            if (exec2Step == null)
+                exec2Step = ExecutionStep.CrossCheck;
 
             if (CompilationResultsForCopy != null)
             {
                 CompilationResultsForCopy.UpdateTokensLines(); //Scanner
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Scanner)) return;
+                if (!(exec2Step > ExecutionStep.Scanner)) return;
 
                 CompilationResultsForCopy.RefreshTokensDocumentSnapshot();
                 CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
             }
             else
             {
-                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Scanner Step");
+                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Scanner Step", EventType.TypeCobolUsage);
                 CompilationResultsForProgram.UpdateTokensLines(); //Scanner
-
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Scanner)) return;
-
-                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Preprocessor Step");
                 CompilationResultsForProgram.RefreshTokensDocumentSnapshot();
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() {ExecutionStep = ExecutionStep.Scanner});
+
+                if (!(exec2Step > ExecutionStep.Scanner)) return;
+
+                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Preprocessor Step", EventType.TypeCobolUsage);
                 CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(); //Preprocessor
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.Preprocessor});
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.Preprocessor)) return;
-                if (CompilerOptions.HaltOnMissingCopy && CompilationResultsForProgram.MissingCopies.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
+                if (!(exec2Step > ExecutionStep.Preprocessor)) return;
+                if (haltOnMissingCopy && CompilationResultsForProgram.MissingCopies.Count > 0) return; //If the Option is set to true and there is at least one missing copy, we don't have to run the semantic phase
 
-                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Syntaxic Step");
+                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Syntaxic Step", EventType.TypeCobolUsage);
                 CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(); //SyntaxCheck
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SyntaxCheck});
 
-                if (!(CompilerOptions.ExecToStep > ExecutionStep.SyntaxCheck)) return;
+                if (!(exec2Step > ExecutionStep.SyntaxCheck)) return;
 
-                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Semantic Step");
-                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //SemanticCheck
-            }
+                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Semantic Step", EventType.TypeCobolUsage);
+                CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //SemanticCheck
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SemanticCheck });
 
+                if (!(exec2Step > ExecutionStep.SemanticCheck)) return;
 
-        }
-
-        // Timers used for background execution of all compiler steps
-        private readonly object timersSyncObject = new object();
-        private Timer scannerTimer;
-        private Timer preprocessorTimer;
-        private Timer codeElementsParserTimer;
-        private Timer programClassParserTimer;
-
-        /// <summary>
-        /// Start asynchronous continuous compilation in background threads
-        /// </summary>
-        public void StartContinuousBackgroundCompilation(int scannerPeriodMillisecond, int preprocessorPeriodMillisecond,
-            int codeElementsParserPeriodMillisecond, int programClassParserPeriodMillisecond)
-        {
-            // Protect against concurrent updates
-            lock (timersSyncObject)
-            {
-                // Already started, nothing to do
-                if (scannerTimer != null)
-                {
-                    return;
-                }
-
-                // Check that periods for sucessive steps are consistent
-                if (preprocessorPeriodMillisecond <= scannerPeriodMillisecond ||
-                   codeElementsParserPeriodMillisecond <= preprocessorPeriodMillisecond ||
-                   programClassParserPeriodMillisecond <= codeElementsParserPeriodMillisecond)
-                {
-                    throw new ArgumentException("Compiler step execution periods should be set with increasing values : any other setup would waste CPU resources");
-                }
-
-                // Initialize timers
-                if (CompilationResultsForCopy != null)
-                {
-                    scannerTimer = new Timer(state => CompilationResultsForCopy.RefreshTokensDocumentSnapshot(), null, 0, scannerPeriodMillisecond);
-                    preprocessorTimer = new Timer(state => CompilationResultsForCopy.RefreshProcessedTokensDocumentSnapshot(), null, preprocessorPeriodMillisecond, preprocessorPeriodMillisecond);
-                }
-                else
-                {
-                    scannerTimer = new Timer(state => CompilationResultsForProgram.RefreshTokensDocumentSnapshot(), null, 0, scannerPeriodMillisecond);
-                    preprocessorTimer = new Timer(state => CompilationResultsForProgram.RefreshProcessedTokensDocumentSnapshot(), null, preprocessorPeriodMillisecond, preprocessorPeriodMillisecond);
-                    codeElementsParserTimer = new Timer(state => CompilationResultsForProgram.RefreshCodeElementsDocumentSnapshot(), null, codeElementsParserPeriodMillisecond, codeElementsParserPeriodMillisecond);
-                    programClassParserTimer = new Timer(state => CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(), null, programClassParserPeriodMillisecond, programClassParserPeriodMillisecond);
-                }
+                AnalyticsWrapper.Telemetry.TrackEvent("[Phase] CrossCheck Step", EventType.TypeCobolUsage);
+                CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Cross Check step
+                ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.CrossCheck });
             }
         }
+    }
 
-        /// <summary>
-        /// Stop asynchronous continuous compilation in background threads : blocks until all callbacks are finished
-        /// </summary>
-        public void StopContinuousBackgroundCompilation()
-        {
-            // Protect against concurrent updates
-            lock (timersSyncObject)
-            {
-                // Already stopped, nothing to do
-                if (scannerTimer != null)
-                {
-                    return;
-                }
-
-                // Dispose timers and wait for all callbacks to finish
-                EventWaitHandle[] waitHandles = null;
-                if (CompilationResultsForCopy != null)
-                {
-                    waitHandles = new EventWaitHandle[2];
-                    for (int i = 0; i < 2; i++)
-                    {
-                        waitHandles[i] = new EventWaitHandle(false, EventResetMode.AutoReset);
-                    }
-                    scannerTimer.Dispose(waitHandles[0]);
-                    preprocessorTimer.Dispose(waitHandles[1]);
-                }
-                else
-                {
-                    waitHandles = new EventWaitHandle[4];
-                    for (int i = 0; i < 4; i++)
-                    {
-                        waitHandles[i] = new EventWaitHandle(false, EventResetMode.AutoReset);
-                    }
-                    scannerTimer.Dispose(waitHandles[0]);
-                    preprocessorTimer.Dispose(waitHandles[1]);
-                    codeElementsParserTimer.Dispose(waitHandles[2]);
-                    programClassParserTimer.Dispose(waitHandles[3]);
-                }
-                WaitHandle.WaitAll(waitHandles);
-            }
-        }
-
-        /// <summary>
-        /// Start listening to document change events
-        /// </summary>
-        public virtual void StartDocumentProcessing()
-        {
-            // Start compilation process
-            TextDocument.StartSendingChangeEvents();
-        }
-
-        /// <summary>
-        /// Monitor changes to the source Cobol file and automatically update TextDocument contents after each file update
-        /// </summary>
-        public virtual void StartContinuousFileProcessing()
-        {
-            // Reload text document each time an external change is applied to the cobol file
-            ObserverTextDocument observerTextDocument = new ObserverTextDocument(CobolFile, TextDocument);
-            CobolFile.CobolFileChanged += observerTextDocument.OnCobolFileChanged;
-
-            // Start compilation process
-            TextDocument.StartSendingChangeEvents();
-            CobolFile.StartMonitoringExternalChanges();
-        }
-
-        /// <summary>
-        /// Reload the entire file content in the text document each time the file is updated
-        /// </summary>
-        private class ObserverTextDocument
-        {
-            private CobolFile cobolFile;
-            private ITextDocument textDocument;
-
-            public ObserverTextDocument(CobolFile cobolFile, ITextDocument textDocument)
-            {
-                this.cobolFile = cobolFile;
-                this.textDocument = textDocument;
-            }
-
-            public void OnCobolFileChanged(object sender, CobolFileChangedEvent fileEvent)
-            {
-                if (fileEvent.Type == CobolFileChangeType.FileChanged)
-                {
-                    textDocument.LoadChars(cobolFile.ReadChars());
-                }
-                else
-                {
-                    throw new InvalidOperationException("File change type " + fileEvent.Type + " is not supported in this configuration");
-                }
-            }
-        }
+    public class ExecutionStepEventArgs : EventArgs
+    {
+        public ExecutionStep ExecutionStep { get; set; }
     }
 }

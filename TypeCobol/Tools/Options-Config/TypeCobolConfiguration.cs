@@ -13,6 +13,8 @@ namespace TypeCobol.Tools.Options_Config
         public Compiler.DocumentFormat Format = Compiler.DocumentFormat.RDZReferenceFormat;
         public bool AutoRemarks;
         public string HaltOnMissingCopyFilePath;
+        public string ExpandingCopyFilePath;
+        public string ExtractedCopiesFilePath;
         public List<string> CopyFolders = new List<string>();
         public List<string> InputFiles = new List<string>();
         public List<string> OutputFiles = new List<string>();
@@ -33,7 +35,8 @@ namespace TypeCobol.Tools.Options_Config
 
     public enum OutputFormat {
         Cobol85,
-        PublicSignatures
+        PublicSignatures,
+        ExpandingCopy,
     }
     public static class TypeCobolOptionSet
     {
@@ -54,9 +57,11 @@ namespace TypeCobol.Tools.Options_Config
                 { "y|intrinsic=", "{PATH} to intrinsic definitions to load.\nThis option can be specified more than once.", v => typeCobolConfig.Copies.Add(v) },
                 { "c|copies=",  "Folder where COBOL copies can be found.\nThis option can be specified more than once.", v => typeCobolConfig.CopyFolders.Add(v) },
                 { "dp|dependencies=", "Path to folder containing programs to load and to use for parsing a generating the input program.", v => typeCobolConfig.Dependencies.Add(v) },
-                { "t|telemetry", "If set to true telemrty will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => typeCobolConfig.Telemetry = true },
+                { "t|telemetry", "If set to true telemetry will send automatic email in case of bug and it will provide to TypeCobol Team data on your usage.", v => typeCobolConfig.Telemetry = true },
                 { "md|maximumdiagnostics=", "Wait for an int value that will represent the maximum number of diagnostics that TypeCobol have to return.", v =>  typeCobolConfig.MaximumDiagnostics = int.Parse(v.ToString())},
-                { "f|outputFormat=", "Output format (default is Cobol 85). (Cobol85/0, PublicSignature/1)", v => Enum.TryParse(v.ToString(), true, out typeCobolConfig.OutputFormat)}
+                { "f|outputFormat=", "Output format (default is Cobol 85). (Cobol85/0, PublicSignature/1)", v => Enum.TryParse(v.ToString(), true, out typeCobolConfig.OutputFormat)},
+                { "ec|expandingcopy=", "Generate a file with all COPY directives expanded in the source code. This option will be executed if the Preprocessor step is enabled.", v => typeCobolConfig.ExpandingCopyFilePath = v },
+                { "exc|extractusedcopy=", "Generate a file with all COPIES detected by the parser", v => typeCobolConfig.ExtractedCopiesFilePath = v },
             };
 
             return commonOptions;

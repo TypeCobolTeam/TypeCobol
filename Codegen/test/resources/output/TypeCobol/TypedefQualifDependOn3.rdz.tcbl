@@ -1,0 +1,80 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPDEFQU.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      *01 MyT TYPEDEF STRICT.
+      *  05 MyG.
+      *     10 GC pic 9(05) comp-5.
+      *     10 MyGT PIC X(1) occurs 99
+      *        depending on GC.
+
+      *01 MyType TYPEDEF STRICT.
+      *  05 Count2 pic 9(05) comp-5.
+      *  05 vG type MyT.
+      *  05 MyGroup.
+      *     10 GCount pic 9(05) comp-5.
+      *     10 MyGTbl PIC X(1) occurs 99
+      *        depending on GCount.
+      *  05 MyGroup2.
+      *     10 GCount2 pic 9(05) comp-5.
+      *  05 MyTable PIC X(1) occurs 99
+      *     depending on Count2.
+      *  05 MyTbl2 PIC X(1) occurs 99
+      *     depending on GCount2.
+
+      *01 var1 type MyType.
+       01 var1.
+           02 Count2 pic 9(05) comp-5.
+           02 vG.
+             03 MyG.
+               04 GC pic 9(05) comp-5.
+               04 MyGT PIC X(1) occurs 99
+               depending on GC OF MyG OF vG OF var1.
+           02 MyGroup.
+             03 GCount pic 9(05) comp-5.
+             03 MyGTbl PIC X(1) occurs 99
+               depending on GCount OF MyGroup OF var1.
+           02 MyGroup2.
+             03 GCount2 pic 9(05) comp-5.
+           02 MyTable PIC X(1) occurs 99
+            depending on Count2 OF var1.
+           02 MyTbl2 PIC X(1) occurs 99
+            depending on GCount2 OF MyGroup2 OF var1.
+                           
+      *01 var2 type MyType.
+       01 var2.
+           02 Count2 pic 9(05) comp-5.
+           02 vG.
+             03 MyG.
+               04 GC pic 9(05) comp-5.
+               04 MyGT PIC X(1) occurs 99
+               depending on GC OF MyG OF vG OF var2.
+           02 MyGroup.
+             03 GCount pic 9(05) comp-5.
+             03 MyGTbl PIC X(1) occurs 99
+               depending on GCount OF MyGroup OF var2.
+           02 MyGroup2.
+             03 GCount2 pic 9(05) comp-5.
+           02 MyTable PIC X(1) occurs 99
+            depending on Count2 OF var2.
+           02 MyTbl2 PIC X(1) occurs 99
+            depending on GCount2 OF MyGroup2 OF var2.
+                           
+
+      *01 MyArray TYPEDEF STRICT.
+      *   05 MyValue PIC S9(6).
+      
+      *01 MyVar TYPE MyArray.
+       01 MyVar.
+           02 MyValue PIC S9(6).
+                             
+      
+       01 MyLevel.
+      *   05 MyArray PIC X(1) occurs 30000
+      *      DEPENDING ON MyVar::MyValue.
+          05 MyArray PIC X(1) occurs 30000
+             DEPENDING ON MyValue OF MyVar.
+       procedure division.
+
+       END PROGRAM TYPDEFQU.

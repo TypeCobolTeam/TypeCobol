@@ -26,16 +26,6 @@ namespace CLI.Test
         }
 
         [TestMethod]
-        public void TestEmptyFile_1()
-        {
-            #if DEBUG
-                CLITestHelper.Test("emptyFile_1_debug", ReturnCode.FatalError);
-            #else
-                CLITestHelper.Test("emptyFile_1_release", ReturnCode.FatalError);
-            #endif
-        }
-
-        [TestMethod]
         public void TestGenerate_1() {
             CLITestHelper.Test("generate_1", ReturnCode.Success);
         }
@@ -45,15 +35,44 @@ namespace CLI.Test
             CLITestHelper.Test("dependencies_1", ReturnCode.Success);
             CLITestHelper.Test("dependencies_2", ReturnCode.Success);
             CLITestHelper.Test("dependencies_3", ReturnCode.ParsingDiagnostics);
-            CLITestHelper.Test("dependencies_4", ReturnCode.FatalError);            //No dependencies found
+            CLITestHelper.Test("dependencies_4", ReturnCode.ParsingDiagnostics);            //No dependencies found
+            CLITestHelper.Test("dependencies_5", ReturnCode.Success);
 #if EUROINFO_RULES
             CLITestHelper.Test("ei_dependencies_1", ReturnCode.ParsingDiagnostics);
 #endif
         }
 
+        /// <summary>
+        /// Test that even with a execToStep>Preprocessor, then the parsing will halt on preprocessor phase because copy are missing
+        /// </summary>
         [TestMethod]
-        public void TestHaltOnMissingCopy_1() {
-            CLITestHelper.Test("haltOnMissingCopy_1", ReturnCode.MissingCopy);
+        public void TestHaltOnMissingCopy_1()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("haltOnMissingCopy_1_EI", ReturnCode.MissingCopy);
+#else
+             CLITestHelper.Test("haltOnMissingCopy_1", ReturnCode.MissingCopy);
+#endif
+        }
+
+        /// <summary>
+        /// Avoid loading intrinsic and dependencies when execToStep <= Preprocessor
+        /// </summary>
+        [TestMethod]
+        public void AvoidLoadingIntrinsicAndDependencies()
+        {
+            CLITestHelper.Test("avoidLoadingIntrinsicAndDependencies", ReturnCode.Success);
+        }
+
+        [TestMethod]
+        public void TestExtractCopies()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("extractUsedCopies_EI", ReturnCode.MissingCopy);
+#else
+            CLITestHelper.Test("extractUsedCopies", ReturnCode.MissingCopy);
+#endif
+
         }
 
         [TestMethod]
@@ -73,7 +92,7 @@ namespace CLI.Test
 
     }
 
-    class CLITestHelper {
+    public class CLITestHelper {
 
         internal static ReturnCode Test(string testFolderName, ReturnCode expectedReturnCode)
         {
@@ -117,7 +136,7 @@ namespace CLI.Test
             Console.WriteLine("Return Code=" + process.ExitCode);
             //Compare outputDir with expectedOutputDir
             DirectoryInfo expectedOutputDir = new DirectoryInfo(workingDirectory + Path.DirectorySeparatorChar + "output_expected");
-            bool dirIdentical = CompareDirectory(expectedOutputDir, outputDir);
+            bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, outputDir);
             if (!dirIdentical) {
                 throw new Exception("directory not equals");
             }
@@ -129,9 +148,37 @@ namespace CLI.Test
             return returnCode;
         }
 
-        internal static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir)
+        
+    }
+
+    // This implementation defines a very simple comparison  
+    // between two FileInfo objects. It only compares the name  
+    // of the files being compared and their length in bytes.  
+    public class FileCompare : System.Collections.Generic.IEqualityComparer<System.IO.FileInfo>
+    {
+        public FileCompare() { }
+
+        public bool Equals(System.IO.FileInfo f1, System.IO.FileInfo f2) {
+            return (f1?.Name == f2?.Name);
+        }
+
+        // Return a hash that reflects the comparison criteria. According to the   
+        // rules for IEqualityComparer<T>, if Equals is true, then the hash codes must  
+        // also be equal. Because equality as defined here is a simple value equality, not  
+        // reference identity, it is possible that two or more objects will produce the same  
+        // hash code.  
+        public int GetHashCode(System.IO.FileInfo fi)
         {
-            if (!targetDir.Exists) {
+            return fi.Name.GetHashCode();
+        }
+    }
+
+    public static class UnitTestHelper
+    {
+        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir)
+        {
+            if (!targetDir.Exists)
+            {
                 Console.WriteLine("No Output folders comparison");
                 return true; //If the output_expected does not exist it means that the test doesn't have any expected output. 
             }
@@ -143,7 +190,7 @@ namespace CLI.Test
             actualFiles.Sort((f1, f2) => string.Compare(f1.Name, f2.Name, StringComparison.Ordinal));
 
 
-            
+
             FileCompare myFileCompare = new FileCompare();
 
             /*
@@ -164,23 +211,28 @@ namespace CLI.Test
             // execute until the foreach statement.  
             var commonTargetFiles = targetFiles.Intersect(actualFiles, myFileCompare).ToList();
             var commonActualFiles = actualFiles.Intersect(targetFiles, myFileCompare).ToList();
-            if (commonTargetFiles.Count != commonActualFiles.Count) {
+            if (commonTargetFiles.Count != commonActualFiles.Count)
+            {
                 throw new InvalidOperationException();
             }
 
             bool dirIdentical = true;
-            for (int i = 0; i < commonTargetFiles.Count; i++) {
+            for (int i = 0; i < commonTargetFiles.Count; i++)
+            {
                 var targetFileContent = File.ReadAllLines(commonTargetFiles[i].FullName);
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
-                if (!targetFileContent.SequenceEqual(actualFileContent)) {
+                if (!targetFileContent.SequenceEqual(actualFileContent))
+                {
                     Console.WriteLine("File not equals: " + commonTargetFiles[i]);
                     Console.WriteLine("___Actual file content___:\n");
-                    foreach (var actual in actualFileContent) {
+                    foreach (var actual in actualFileContent)
+                    {
                         Console.WriteLine(actual);
                     }
                     Console.WriteLine("\n________________\n");
                     Console.WriteLine("___Expected file content___:\n");
-                    foreach (var expected in targetFileContent) {
+                    foreach (var expected in targetFileContent)
+                    {
                         Console.WriteLine(expected);
                     }
                     Console.WriteLine("________________");
@@ -192,48 +244,29 @@ namespace CLI.Test
             // Find the set difference between the two folders.  
             // Files only in targetFiles
             var queryTargetFilesOnly = (from file in targetFiles select file).Except(actualFiles, myFileCompare);
-            if (queryTargetFilesOnly.Any()) {
+            if (queryTargetFilesOnly.Any())
+            {
                 Console.WriteLine("Only present in expected folder");
                 dirIdentical = false;
-                foreach (var v in queryTargetFilesOnly) {
+                foreach (var v in queryTargetFilesOnly)
+                {
                     Console.WriteLine(v.FullName);
                 }
             }
 
             var queryActualFilesOnly = (from file in actualFiles select file).Except(targetFiles, myFileCompare);
 
-            if (queryActualFilesOnly.Any()) {
+            if (queryActualFilesOnly.Any())
+            {
                 Console.WriteLine("Only present in actual folder");
                 dirIdentical = false;
-                foreach (var v in queryActualFilesOnly) {
+                foreach (var v in queryActualFilesOnly)
+                {
                     Console.WriteLine(v.FullName);
                 }
             }
 
-
             return dirIdentical;
-        }
-    }
-
-    // This implementation defines a very simple comparison  
-    // between two FileInfo objects. It only compares the name  
-    // of the files being compared and their length in bytes.  
-    class FileCompare : System.Collections.Generic.IEqualityComparer<System.IO.FileInfo>
-    {
-        public FileCompare() { }
-
-        public bool Equals(System.IO.FileInfo f1, System.IO.FileInfo f2) {
-            return (f1.Name == f2.Name);
-        }
-
-        // Return a hash that reflects the comparison criteria. According to the   
-        // rules for IEqualityComparer<T>, if Equals is true, then the hash codes must  
-        // also be equal. Because equality as defined here is a simple value equality, not  
-        // reference identity, it is possible that two or more objects will produce the same  
-        // hash code.  
-        public int GetHashCode(System.IO.FileInfo fi)
-        {
-            return fi.Name.GetHashCode();
         }
     }
 }

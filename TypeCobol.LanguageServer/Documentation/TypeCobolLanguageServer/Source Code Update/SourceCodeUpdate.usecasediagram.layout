@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="SourceCodeUpdate">
+  <useCaseModelRootMoniker Id="c3501da8-c5bf-48f4-b527-25c3a5b01e3c" />
+  <nestedChildShapes>
+    <actorShape Id="e0a370c5-f78c-4446-91d5-8fbc8ddfd59a" absoluteBounds="1.125, 1.5, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="c08c5de2-84c9-4558-bc1a-1b7034933c6d" LastKnownName="TypeCobol.LanguageClient4" />
+      <relativeChildShapes />
+    </actorShape>
+    <actorShape Id="ae918f54-84d3-48ca-b1d9-c9d9ceb06adf" absoluteBounds="4.5, 1.75, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="f8757a46-2dd5-43cd-9581-01322fed0f32" LastKnownName="TypeCobol.LanguageServer6" />
+      <relativeChildShapes />
+    </actorShape>
+    <useCaseShape Id="3333094a-74ca-4318-b081-3f4a7017b531" absoluteBounds="1, 2.5, 2.75, 0.875" customColor="238, 237, 131" heightOffset="0">
+      <useCaseMoniker Id="2ce6230b-b7fe-4c44-a268-504863133c08" LastKnownName="Envoie notification : textDocument/didChange: DidChangeTextDocumentParams" />
+      <relativeChildShapes />
+    </useCaseShape>
+    <useCaseAssociationConnector edgePoints="[(3.23790596631739 : 2.59687922382208); (4.5 : 2.09868421052632)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="c67cd7a7-2ab5-40be-9cd7-2243230e4677" />
+      <relativeChildShapes />
+      <nodes>
+        <useCaseShapeMoniker Id="3333094a-74ca-4318-b081-3f4a7017b531" />
+        <actorShapeMoniker Id="ae918f54-84d3-48ca-b1d9-c9d9ceb06adf" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseAssociationConnector edgePoints="[(1.58552631578947 : 2); (2.01913200236519 : 2.51490675280867)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="b343f30a-3f33-4b87-ac7f-41c4a3c10f23" />
+      <relativeChildShapes />
+      <nodes>
+        <actorShapeMoniker Id="e0a370c5-f78c-4446-91d5-8fbc8ddfd59a" />
+        <useCaseShapeMoniker Id="3333094a-74ca-4318-b081-3f4a7017b531" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <actorShape Id="39ee0cfd-62ca-4983-b6c3-3635c4a9b052" absoluteBounds="5.5, 3.5, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="60ec6036-c00c-4a9c-96b0-b529591163b5" LastKnownName="TypeCobol Parser2" />
+      <relativeChildShapes />
+    </actorShape>
+    <useCaseShape Id="61b8e119-21d2-4054-ba86-383e29b1c3bc" absoluteBounds="5.375, 2.5, 2.375, 0.75" customColor="238, 237, 131" heightOffset="0">
+      <useCaseMoniker Id="28fad448-c079-470d-9c14-65db8c198e1a" LastKnownName="Incremental update of the managed TypeCobol Code" />
+      <relativeChildShapes />
+    </useCaseShape>
+    <useCaseAssociationConnector edgePoints="[(6.2283553262417 : 3.23484811020125); (5.98214285714286 : 3.5)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="3ed538b6-5455-45a3-8b52-1c807ebd9885" />
+      <relativeChildShapes />
+      <nodes>
+        <useCaseShapeMoniker Id="61b8e119-21d2-4054-ba86-383e29b1c3bc" />
+        <actorShapeMoniker Id="39ee0cfd-62ca-4983-b6c3-3635c4a9b052" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseAssociationConnector edgePoints="[(5 : 2.12068965517241); (5.91244007791721 : 2.56117796864969)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="be971254-2ae5-4984-92c8-b871dddcbb8d" />
+      <relativeChildShapes />
+      <nodes>
+        <actorShapeMoniker Id="ae918f54-84d3-48ca-b1d9-c9d9ceb06adf" />
+        <useCaseShapeMoniker Id="61b8e119-21d2-4054-ba86-383e29b1c3bc" />
+      </nodes>
+    </useCaseAssociationConnector>
+  </nestedChildShapes>
+</useCaseDiagram>

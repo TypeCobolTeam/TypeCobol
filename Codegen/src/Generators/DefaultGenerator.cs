@@ -24,9 +24,21 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         const int ALREADY_LINE_OVERFLOW = 0x01 << 0;
         /// <summary>
-        /// The Set of Exceed Lines over column 72
+        /// The Map of Exceed Lines over column 72, associated to their (start position and length).
         /// </summary>
-        private HashSet<int> ExceedLines;
+        private Dictionary<int, Tuple<int /*line start position*/, int /*line length*/>> ExceedLines;
+        /// <summary>
+        /// The Map which give for a Buffer its exceed positions by line .
+        /// </summary>
+        Dictionary<SourceText, Dictionary<int, List<Position>>> BufferExceedMap;
+        /// <summary>
+        /// The Set to indicates which line number has alreday been checked for characters that were in column 73-80.
+        /// </summary>
+        private HashSet<int> Lines_73_80_Flags;
+        /// <summary>
+        /// Minimal splitting column.
+        /// </summary>
+        private const int MIN_SPLIT_COLUMN = 12;
 
         /// <summary>
         /// Constructor
@@ -34,9 +46,9 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons)
-            : base(document, destination, skeletons)
-        {
+        public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion)
+            : base(document, destination, skeletons, typeCobolVersion )
+        {            
         }
 
         /// <summary>
@@ -73,6 +85,8 @@ namespace TypeCobol.Codegen.Generators
             Stack<SourceText> stackLocalBuffer = new Stack<SourceText>();
             //Bit Array of Generated Nodes.
             BitArray generated_node = new BitArray(mapper.NodeCount);
+            //For detecting line having characters in columns [73-80]
+            Lines_73_80_Flags = new HashSet<int>();
             //The previous line generation buffer 
             StringSourceText previousBuffer = null;
             for (int i = 0; i < mapper.LineData.Length; i++)
@@ -250,8 +264,12 @@ namespace TypeCobol.Codegen.Generators
                                 AppendBufferContent(targetSourceText, previousBuffer);
                             previousBuffer = null;
                         }
-                        targetSourceText = stackOuterBuffer.Pop();
-                        curSourceText = (StringSourceText)stackLocalBuffer.Pop();
+                        System.Diagnostics.Debug.Assert(stackOuterBuffer.Count > 0 && stackLocalBuffer.Count > 0);
+                        if (stackOuterBuffer.Count > 0 && stackLocalBuffer.Count > 0)
+                        {
+                            targetSourceText = stackOuterBuffer.Pop();
+                            curSourceText = (StringSourceText)stackLocalBuffer.Pop();
+                        }
                         previousBuffer = curSourceText;
                     }
                     else
@@ -281,12 +299,116 @@ namespace TypeCobol.Codegen.Generators
         }
 
         /// <summary>
+        /// Determine if a position can be split without overflow.
+        /// </summary>
+        /// <param name="firstSplitablePos"></param>
+        /// <param name="lineLength"></param>
+        /// <param name="originalPos"></param>
+        /// <param name="resultColumn"></param>
+        /// <returns></returns>
+        public bool IsPlitablePosition(int firstSplitablePos, int lineLength, int originalPos, out int resultColumn )
+        {
+            resultColumn = MIN_SPLIT_COLUMN - 1;
+            if ((firstSplitablePos + lineLength - originalPos) < LEGAL_COBOL_LINE_LENGTH)
+            {
+                resultColumn = firstSplitablePos;
+                return true;
+            }
+            else if (((MIN_SPLIT_COLUMN - 1) + lineLength - originalPos) < LEGAL_COBOL_LINE_LENGTH)
+            {
+                resultColumn = MIN_SPLIT_COLUMN - 1;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Append a source buffer at the end of a target buffer
         /// </summary>
         /// <param name="dstBuffer"></param>
         /// <param name="srcBuffer"></param>
-        private static void AppendBufferContent(SourceText dstBuffer, SourceText srcBuffer)
+        private void AppendBufferContent(SourceText dstBuffer, SourceText srcBuffer)
         {
+            if (BufferExceedMap != null)
+            {
+                if (BufferExceedMap.ContainsKey(srcBuffer))
+                {//Create all start positions in the buffer.
+
+                    //originalPosition keep the original position of the position so that we can calculate
+                    //the exceed length, for the minimal spliting.
+                    Dictionary<Position, int> originalPositions = new Dictionary<Position, int>();
+                    foreach (var linePos in BufferExceedMap[srcBuffer])
+                    {
+                        foreach (var start in linePos.Value)
+                        {
+                            originalPositions[start] = start.Pos;
+                            srcBuffer.AddPosition(start);
+                        }
+                    }
+                    bool bLineStillTooLong = false;
+                    //Split each exceeded line based on the right most exceed position.
+                    foreach (var linePos in BufferExceedMap[srcBuffer])
+                    {
+                        List<Position> splittingPositionStack = new List<Position>();
+                        int lineNumber = linePos.Key;
+                        Tuple<int, int> lineStartLength = ExceedLines[lineNumber];
+                        int lineStartPos = lineStartLength.Item1;
+                        int lineLength = lineStartLength.Item2;
+                        int lastEndOrgPos = lineStartPos + lineLength;
+                        int firstSplitablePos = originalPositions[linePos.Value[0]];
+                        int targeSplittColumn = 0;
+                        for (int i = linePos.Value.Count - 1; i >= 0; i--)
+                        {
+                            Position start = linePos.Value[i];
+                            int originalPos = originalPositions[start];
+
+                            if (IsPlitablePosition(firstSplitablePos, lineLength, originalPos, out targeSplittColumn))
+                            {   //we can split here => so check if the rest at the left still exceed
+                                //Push this splitting position
+                                splittingPositionStack.Add(start);
+                                if ((originalPos - lineStartPos) < LEGAL_COBOL_LINE_LENGTH)
+                                {//The line is till too long?
+                                    break; //No ==> Stop splitting this line
+                                }
+                            }
+                            else
+                            {//This means that the line will stil too long.
+                                bLineStillTooLong = true;
+                            }
+                        }
+                        if (splittingPositionStack.Count > 0)
+                        {//This line can be splitted so split it.                            
+                            int rightPos = lineLength;
+                            for (int i = splittingPositionStack.Count - 1; i >= 0; i--)
+                            {
+                                Position start = splittingPositionStack[i];
+                                int originalPos = originalPositions[start];
+                                for (int j = 0; j <= i; j++)
+                                {
+                                    if (IsPlitablePosition(firstSplitablePos, rightPos, originalPos, out targeSplittColumn))
+                                    {
+                                        string pad = new StringBuilder().Append(Environment.NewLine).Append(new string(' ', targeSplittColumn - lineStartPos)).ToString();
+                                        //So break here
+                                        srcBuffer.Insert(pad, start.Pos, start.Pos);
+                                        i = j;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        Position jstart = splittingPositionStack[j];
+                                        rightPos = originalPositions[jstart];
+                                    }
+                                }
+                            }
+                            //Remove it from exceed, if the line has been correctly splitted
+                            if (!bLineStillTooLong)
+                            {
+                                ExceedLines.Remove(lineNumber);
+                            }
+                        }
+                    }
+                }
+            }
             int pos = dstBuffer.Size;
             dstBuffer.Insert(srcBuffer, pos, pos);
         }
@@ -300,37 +422,95 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="code">The code to insert</param>
         /// <param name="lineNumber">The current lien number</param>
         private void GenerateIntoBufferCheckLineExceed(Position from, Position to, SourceText buffer, string code, int lineNumber)
-        {
+        {   //Lines_73_80_Map
+            int start = Math.Min(from.Pos, buffer.Size);
+            int end = Math.Min(to.Pos, buffer.Size);
+            if (this.Layout != ColumnsLayout.CobolReferenceFormat)
+            {//Maybe Free Format
+                buffer.Insert(code, start, end);
+                return;
+            }
             int lineLen = -1;
             int lineStartOffset = -1;
             int lineEndOffset = -1;
-            int start = Math.Min(from.Pos, buffer.Size);
-            int end = Math.Min(to.Pos, buffer.Size);
             if (ExceedLines != null)
             {
                 ExceedLines.Remove(lineNumber);
             }
             lineLen = buffer.GetLineInfo(start, out lineStartOffset, out lineEndOffset);
-            buffer.Insert(code, start, end);
-
+            if (!Lines_73_80_Flags.Contains(lineNumber))
+            {//Replace by spaces any characters in columns[73-80]
+                Lines_73_80_Flags.Add(lineNumber);
+                if (lineLen > LEGAL_COBOL_LINE_LENGTH)
+                {
+                    int replace_len = lineLen - LEGAL_COBOL_LINE_LENGTH;
+                    buffer.Insert(new string(' ', replace_len), LEGAL_COBOL_LINE_LENGTH, lineLen);
+                }
+            }
+            buffer.Insert(code, start, end);        
             int delta = -(end - start) + code.Length;
             int newLineLen = lineLen + delta;
             bool newHas73Chars = false;
             if (newLineLen > LEGAL_COBOL_LINE_LENGTH)
             {
-                for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++)
-                    newHas73Chars = !Char.IsWhiteSpace(buffer[lineStartOffset + k]);
+                for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++) {
+                    char ch = buffer[lineStartOffset + k];
+                    newHas73Chars = !(ch == '\r' || ch == '\n' || Char.IsWhiteSpace(ch));
+                }
                 //Error
                 //Emit an error.
-                if ((newLineLen > MAX_COBOL_LINE_LENGTH) || newHas73Chars)
+                if (newHas73Chars)
                 {
                     if (ExceedLines == null)
                     {
-                        ExceedLines = new HashSet<int>();
+                        ExceedLines = new Dictionary<int, Tuple<int, int>>();
                     }
-                    ExceedLines.Add(lineNumber);
+                    ExceedLines.Add(lineNumber, new Tuple<int, int>(lineStartOffset, newLineLen));
+                }
+                else if (newLineLen > MAX_COBOL_LINE_LENGTH)
+                {//Here we know that the line the line exceed with only white characters. ==> Remove extra white characters
+                    buffer.Delete(LEGAL_COBOL_LINE_LENGTH, newLineLen);
                 }
             }
+
+            //Hanlde Buffer Exceed Map.
+            if (ExceedLines != null && ExceedLines.ContainsKey(lineNumber))
+            {
+                if (BufferExceedMap == null)
+                {
+                    BufferExceedMap = new Dictionary<SourceText, Dictionary<int, List<Position>>>();
+                }
+                if (!BufferExceedMap.ContainsKey(buffer))
+                {
+                    BufferExceedMap[buffer] = new Dictionary<int, List<Position>>();
+                }
+                if (!BufferExceedMap[buffer].ContainsKey(lineNumber))
+                {
+                    BufferExceedMap[buffer][lineNumber] = new List<Position>();
+                }
+                //Add the position at the code added
+                BufferExceedMap[buffer][lineNumber].Add(new Position(start));
+                //Add the position after the code added
+                BufferExceedMap[buffer][lineNumber].Add(new Position(start + code.Length));
+            }
+            else
+            {//Remove any line reference in the buffer exceed map.
+                if (BufferExceedMap != null)
+                {
+                    if (BufferExceedMap.ContainsKey(buffer))
+                    {
+                        if (BufferExceedMap[buffer].ContainsKey(lineNumber))
+                        {
+                            BufferExceedMap[buffer].Remove(lineNumber);
+                            if (BufferExceedMap[buffer].Count == 0)
+                            {
+                                BufferExceedMap.Remove(buffer);
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         /// <summary>
@@ -340,7 +520,7 @@ namespace TypeCobol.Codegen.Generators
         {
             if (ExceedLines != null)
             {
-                foreach (int lineNumber in ExceedLines)
+                foreach (int lineNumber in ExceedLines.Keys)
                 {
                     Diagnostic diag = new Diagnostic(MessageCode.GenerationErrorLineExceed, 0, 0, lineNumber);
                     AddDiagnostic(diag);
@@ -526,7 +706,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 if (Layout == ColumnsLayout.CobolReferenceFormat)
                 {
-                    var lines = CobolTextLine.Create(line.Text, Layout, line.InitialLineIndex);
+                    var lines = CobolTextLine.Create(line.Text, Layout, line.LineIndex);
                     foreach (var l in lines) results.Add(SetComment(l, isComment));
                 }
                 else
@@ -572,13 +752,13 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder text = new StringBuilder(cobol.Text);
                 if(text.Length > 6) 
                     text[6] = '*';
-                var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, cobol.InitialLineIndex);
+                var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, cobol.LineIndex);
                 foreach (var l in lines) return l;// there's only one in the collection
                 throw new System.NotImplementedException("I should have at least one item!");
             }
             else
             {
-                return new TextLineSnapshot(line.InitialLineIndex, "*" + line.Text, null);
+                return new TextLineSnapshot(line.LineIndex, "*" + line.Text, null);
             }
         }
 
@@ -594,7 +774,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 StringBuilder text = new StringBuilder(cobol.Text);
                 text[6] = ' ';
-                var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, cobol.InitialLineIndex);
+                var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, cobol.LineIndex);
                 foreach (var l in lines) 
                     return l;// there's only one in the collection
                 throw new System.NotImplementedException("I should have at least one item!");
@@ -604,7 +784,7 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder text = new StringBuilder(line.Text);
                 int index = line.Text.IndexOf('*');
                 text[index] = ' ';
-                return new TextLineSnapshot(line.InitialLineIndex, text.ToString(), null);
+                return new TextLineSnapshot(line.LineIndex, text.ToString(), null);
             }
         }
     }

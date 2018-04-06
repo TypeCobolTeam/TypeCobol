@@ -100,20 +100,23 @@
       *        input param1 pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f1c0385c.
-       END PROGRAM f1c0385c.
+       PROGRAM-ID. f1c0385cStartCheckpoint.
+       END PROGRAM f1c0385cStartCheckpoint.
       *
       *declare procedure CheckContract public
       *        input param1 pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f73481e6.
+       PROGRAM-ID. f73481e6CheckContract.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        LINKAGE SECTION.
-       01 param1 PIC X.
+       01 param1 pic X.
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -130,10 +133,14 @@
        PROCEDURE DIVISION
              USING BY REFERENCE param1
            .
-           PERFORM TC-Initializations
+           PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input param1
-           IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
+           IF ADDRESS OF TC-PGM1-f1c0385c-Item = NULL
                PERFORM TC-LOAD-POINTERS-PGM1
+           ELSE
+               IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
+                   PERFORM TC-LOAD-POINTERS-PGM1
+               END-IF
            END-IF
            CALL TC-PGM1-f1c0385c USING
                                  param1
@@ -141,9 +148,13 @@
                                                   
            .
       *=================================================================
-       TC-Initializations.
-           .
+       TC-INITIALIZATIONS.
       *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-PGM1-f1c0385c-Item  TO NULL
+            END-IF
+            .
       *=================================================================
        TC-LOAD-POINTERS-PGM1.
       *=================================================================
@@ -160,15 +171,18 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM f73481e6.
+       END PROGRAM f73481e6CheckContract.
       *
       *declare procedure testos private.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. bfc74757.
+       PROGRAM-ID. bfc74757testos.
        data division.
        working-storage section.
        01 var1 pic X.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        01 TC-PGM2 pic X(08) value 'PGM2'.
@@ -194,10 +208,14 @@
           05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
-           PERFORM TC-Initializations
+           PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input var1
-           IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
+           IF ADDRESS OF TC-PGM1-f1c0385c-Item = NULL
                PERFORM TC-LOAD-POINTERS-PGM1
+           ELSE
+               IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
+                   PERFORM TC-LOAD-POINTERS-PGM1
+               END-IF
            END-IF
            CALL TC-PGM1-f1c0385c USING
                                  var1
@@ -205,8 +223,12 @@
                                                 
 
       *    call PGM2::CheckContract input var1
-           IF TC-PGM2-f73481e6-Idt not = 'f73481e6'
+           IF ADDRESS OF TC-PGM2-f73481e6-Item = NULL
                PERFORM TC-LOAD-POINTERS-PGM2
+           ELSE
+               IF TC-PGM2-f73481e6-Idt not = 'f73481e6'
+                   PERFORM TC-LOAD-POINTERS-PGM2
+               END-IF
            END-IF
            CALL TC-PGM2-f73481e6 USING
                                  var1
@@ -214,9 +236,14 @@
                                               
            .
       *=================================================================
-       TC-Initializations.
-           .
+       TC-INITIALIZATIONS.
       *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-PGM1-f1c0385c-Item  TO NULL
+                 SET ADDRESS OF TC-PGM2-f73481e6-Item  TO NULL
+            END-IF
+            .
       *=================================================================
        TC-LOAD-POINTERS-PGM1.
       *=================================================================
@@ -249,4 +276,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM bfc74757.
+       END PROGRAM bfc74757testos.

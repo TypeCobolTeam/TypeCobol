@@ -1,0 +1,54 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPDEFQU.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 MyType TYPEDEF STRICT.
+         05 Count2 pic 9(05) comp-5.
+         05 MyGroup.
+            10 GCount pic 9(05) comp-5.
+            10 MyGTbl PIC X(1) occurs 99 
+               depending on GCount.
+
+       01 var1 type MyType.
+
+       01 Groupe2.
+         05 MyTable PIC X(1) occurs 99 
+            depending on var1::Count2.
+
+         05 var2 type MyType.
+         05 MyTable3 PIC X(1) occurs 99 
+            depending on Groupe2::Count2.
+         05 MyTable4 PIC X(1) occurs 99 
+            depending on Count2 OF Groupe2.
+         05 MyTable4 PIC X(1) occurs 99 
+            depending on Count2 IN Groupe2.
+
+         05 MyTable3 PIC X(1) occurs 99 
+            depending on Groupe2::var2::Count2.
+
+         05 MyTable4 PIC X(1) occurs 99 
+            depending on Count2 OF var2 OF Groupe2.
+         05 MyTable4 PIC X(1) occurs 99 
+            depending on Count2 IN var2 IN Groupe2.
+         05 MyTable4 PIC X(1) occurs 99 
+            depending on Count2 IN var2 OF Groupe2.
+         05 MyTable4 PIC X(1) occurs 99 
+            depending on Count2 OF var2 IN Groupe2.
+         
+         
+         
+       01 MyArray TYPEDEF STRICT.
+          05 MyValue PIC S9(6).
+      
+       01 MyVar TYPE MyArray.
+      
+       01 MyLevel.
+          05 MyArray PIC X(1) occurs 30000
+             DEPENDING ON MyVar::MyValue.      
+       01 MyLevel2.
+          05 MyArray2 PIC X(1) occurs 30000
+             DEPENDING ON MyValue OF MyVar.
+       procedure division.
+
+       END PROGRAM TYPDEFQU.

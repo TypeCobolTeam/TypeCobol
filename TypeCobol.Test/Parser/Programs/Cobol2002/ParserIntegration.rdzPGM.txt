@@ -1,0 +1,26 @@
+--- Diagnostics ---
+Line 19[44,48] <27, Error, Syntax> - Syntax error : PICTURE clause incompatible with TYPE clause OffendingSymbol=[44,48:X(21)]<PictureCharacterString>
+Line 19[18,59] <30, Error, Semantics> - Semantic error: TYPE 'rib' is not referenced
+Line 23[44,48] <27, Error, Syntax> - Syntax error : PICTURE clause incompatible with TYPE clause OffendingSymbol=[44,48:X(08)]<PictureCharacterString>
+
+--- Program ---
+PROGRAM: TESTPGM1 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  W-TAB-LCC-NONCLOSES:Alphanumeric
+  W-TAB-LCC-IND:Numeric
+  W-TAB-LCC-X:Array
+  W-TAB-LCC-CLE:Alphanumeric
+  W-TAB-LCC-CLE-RIB:rib
+  W-TAB-LCC-CLE-DEV:Alphanumeric
+  W-TAB-LCC-CLE-TYP:Alphanumeric
+  W-TAB-LCC-CLE-ORD:Alphanumeric
+  W-TAB-LCC-CLE-DAT:DATE
+-- PARAGRAPHS --
+  PRINCIPALE
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

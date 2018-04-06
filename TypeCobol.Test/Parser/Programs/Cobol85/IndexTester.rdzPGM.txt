@@ -1,0 +1,19 @@
+﻿--- Program ---
+PROGRAM: IndexTester common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  ZONE:Alphanumeric
+  TB-1:Alphanumeric
+  IND-1:Numeric
+  EL-1:Alphanumeric
+  ZONEBIS:Alphanumeric
+  TB-2:Alphanumeric
+  IND-2:Numeric
+  IND-3:Numeric
+  EL-2:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

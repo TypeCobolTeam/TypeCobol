@@ -1,0 +1,109 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ProcedureCallWithArray.
+       data DIVISION.
+       working-storage section.
+      
+       01 MyType typedef strict public.
+           05 Counter pic 9 comp-5.
+           05 Tab pic X occurs 5 depending on Counter.
+ 
+      
+       01 var1 type MyType.
+
+       01 date1 type Date.
+
+
+       01 _EVENT_ TYPEDEF STRICT.
+         05 IdNbr PIC X(05).
+         05 Periodicity PIC 9(03).
+
+      
+      
+       01 EventList.
+         05 Event TYPE _EVENT_ OCCURS 200.
+      
+       01 .
+         05 .
+            10 MyPicXArray pic X occurs 50.
+            10 MyDateArray type Date occurs 50.
+
+       01 .
+         05 MyArray2D occurs 50.
+            10 MyArray2D_PicX pic X occurs 50.
+            10 MyArray2D_Date type Date occurs 50.
+      
+      
+       procedure division.
+      * 1 dimension array
+      *    Ok
+           call fooWithEvent input Event(1)
+           call fooWithEvent input Event(199)
+      *   KO because Event is an array
+           call fooWithEvent input Event
+
+      *   Ok
+           call fooWithDate input MyDateArray(1)
+           call fooWithDate input MyDateArray(199)
+      *   KO because MyDateArray is an array
+           call fooWithDate input MyDateArray
+
+      *   Ok
+           call fooWithPicX input MyPicXArray(1)
+           call fooWithPicX input MyPicXArray(199)
+      *   KO because MyPicXArray is an array
+           call fooWithPicX input MyPicXArray
+
+      *   Ok
+           call fooWithPicX input var1::Tab(1)
+           call fooWithPicX input var1::Tab(1)
+      *   KO
+           call fooWithPicX input var1::Tab
+
+
+      * 2 dimension array
+      *   KO 2 dimension array not supported yet
+           call fooWithDate input MyArray2D_Date(1, 1)
+           call fooWithDate input MyArray2D_Date(199 1)
+      *   KO because MyArray2 is an array
+           call fooWithDate input MyArray2D_Date
+
+      *   KO 2 dimension array not supported yet
+           call fooWithPicX input MyArray2D_PicX(1, 1)
+           call fooWithPicX input MyArray2D_PicX(199 1)
+      *   KO because MyPicXArray is an array
+           call fooWithPicX input MyArray2D_PicX
+      
+
+      *   Ok
+           call foo input Event(199)
+                          MyDateArray(199)
+                          MyArray2D_PicX(1)(1:1)
+      
+           call foo input Event(9999)
+                          date1
+                          MyPicXArray(1)
+      
+           call foo input Event(9999)
+                          date1
+                          MyPicXArray(1)
+      
+
+           goback
+           .
+       declare fooWithEvent input  param1 type _EVENT_.
+       end-declare.
+       declare fooWithDate input  param1 type Date.
+       end-declare.
+       declare fooWithPicX input  param1 pic X.
+       end-declare.
+       declare foo4 input  param1 pic X.
+       end-declare.
+
+       declare foo
+                 input  param1      type _EVENT_
+                        param2      type Date
+                        param3      pic X.
+       end-declare.
+      
+      
+       END PROGRAM ProcedureCallWithArray.

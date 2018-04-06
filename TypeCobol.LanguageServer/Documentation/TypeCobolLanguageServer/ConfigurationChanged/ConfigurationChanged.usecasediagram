@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm11="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" dslVersion="1.0.0.0" Id="592a4652-42e8-47fd-b8a2-1ff21ea7c34b" name="ConfigurationChanged" linkedPackageId="8020e3ec-2da4-4d20-918f-db0e26d7cbd0" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+  <packagedElements>
+    <useCaseModelRootHasTypes>
+      <actor Id="26f5040d-c765-43a3-ae47-8f8a91a7f0d7" name="TypeCobol.LanguageClient2" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="bea307b4-35f5-41b3-9b07-b73e401d35aa" />
+        <targetEnds>
+          <association Id="ae565a2f-b3de-4add-a6b9-2d9596404252" isDerived="false" sourceEndRoleName="TypeCobol.LanguageClient" targetEndRoleName="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams  " isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="95cd41ae-cb73-42fc-8be1-26b15d16680a" LastKnownName="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams " />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="5c768bf8-2100-4eb9-a1ff-861b0c4d0e76" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="eb9ab55e-334c-435e-874f-d2f27e8c2326" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3a68ad0a-0629-4800-8f92-649c8defd5ea" name="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams  " isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="77d96ee8-e797-4c3f-ae39-90d130b008d2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="b225c3a4-72f1-424b-95c2-644351a878a9" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="4bfc345c-a20d-4b80-bf69-95ff78fa11a8" name="TypeCobol.LanguageServer2" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="ecc20172-309d-4d97-900d-fd801f23646b" />
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="95cd41ae-cb73-42fc-8be1-26b15d16680a" name="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams " isAbstract="false" isLeaf="false">
+        <elementDefinition Id="332ab8b2-f867-4eb4-95d3-712187c77836" />
+        <targetEnds>
+          <association Id="41de6168-af7a-4d0f-a84d-2b6af49c37d6" isDerived="false" sourceEndRoleName="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams  " targetEndRoleName="TypeCobol.LanguageServer" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="4bfc345c-a20d-4b80-bf69-95ff78fa11a8" LastKnownName="TypeCobol.LanguageServer2" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d72e1f05-8251-4efe-83e8-e2d5d88499eb" name="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams  " isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="cc0176ff-293d-4653-a472-56179628b96d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="4b381763-2b46-4e92-9bdc-b2f2a8f8ffc3" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="16eb1ce3-03ce-4a40-9ba8-ab3f8c4a8ecb" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="d65a1918-c28d-46ee-9609-85ed059799ea" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+  </packagedElements>
+  <package Id="8020e3ec-2da4-4d20-918f-db0e26d7cbd0" name="TypeCobolLanguageServer">
+    <elementDefinition Id="5d09ded1-4567-4003-bfe3-37cf35f27636" />
+  </package>
+</useCaseModelRoot>

@@ -18,15 +18,40 @@ using System.Security.Cryptography;
 namespace Analytics
 {
     /// <summary>
+    /// Use this to determine which type of event you want to send. 
+    /// If analyticswrapper state is CodeGeneration, every event will be send. 
+    /// Ifr Completion stat is active, only completion envent will be send. 
+    /// </summary>
+    public enum TelemetryVerboseLevel
+    {
+        Disable = 0,
+        Completion = 1,
+        CodeGeneration = 2,
+    }
+
+    /// <summary>
+    /// Type of Analytics event. This will allow AnalyticsWrapper 
+    /// if the event has to send or not regarding to TelemetryVerboseLevel. 
+    /// </summary>
+    public enum EventType
+    {
+        Completion = 0,
+        TypeCobolUsage = 1,
+        Diagnostics = 2,
+        Genration = 3,
+    }
+
+
+    /// <summary>
     /// Analytics Wrapper is Singleton designed class. Please use AnalyticsWrapper.Instance to work with it. 
     /// </summary>
     public sealed class AnalyticsWrapper
     {
         private static readonly Lazy<AnalyticsWrapper> _LazyAccess = new Lazy<AnalyticsWrapper>(() => new AnalyticsWrapper()); //Singleton pattern
-        private static bool _DisableTelemetry = true; //By default telemetry needs to be disable. It will only be enable by the first caller.
+       
         private static TelemetryClient _TelemetryClient;
         private Configuration _AppConfig;
-
+        private string _TypeCobolVersion;
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private AnalyticsWrapper()
@@ -35,13 +60,13 @@ namespace Analytics
             {
                 _AppConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location); //Load custom app.config for this assembly
                 var appKey = _AppConfig.AppSettings.Settings["AppInsightKey"].Value;//Get API Key CLI project config file
-                var typeCobolVersion = _AppConfig.AppSettings.Settings["TypeCobolVersion"].Value; 
+                _TypeCobolVersion = _AppConfig.AppSettings.Settings["TypeCobolVersion"].Value; 
 
                 // ----- Initiliaze AppInsights Telemetry Client -------//
                 _TelemetryClient = new TelemetryClient(new TelemetryConfiguration(appKey));
                 _TelemetryClient.Context.User.Id = CreateSHA256(Environment.UserName);
                 _TelemetryClient.Context.Session.Id = Guid.NewGuid().ToString();
-                _TelemetryClient.Context.Component.Version = typeCobolVersion;
+                _TelemetryClient.Context.Component.Version = _TypeCobolVersion;
                 _TelemetryClient.Context.Device.OperatingSystem = "N/A";
                 _TelemetryClient.Context.Location.Ip = "N/A";
                 _TelemetryClient.Context.Cloud.RoleInstance = "N/A";
@@ -61,7 +86,10 @@ namespace Analytics
         /// <summary>
         /// Gets or sets a value indicating whether sending of telemetry is disabled. 
         /// </summary>
-        public bool DisableTelemetry { get { return _DisableTelemetry; } set { _DisableTelemetry = value; } }
+        public TelemetryVerboseLevel TelemetryVerboseLevel { get; set; } = TelemetryVerboseLevel.Disable;
+
+
+        public string TypeCobolVersion { get { return _TypeCobolVersion; } }
 
         /// <summary>
         /// Track a new event into analytics collector
@@ -69,11 +97,14 @@ namespace Analytics
         /// <param name="eventName">Text name of the event</param>
         /// <param name="properties">Named string values you can use to search and classify events.</param>
         /// <param name="metrics">Measurements associated with this event.</param>
-        public void TrackEvent(string eventName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
+        public void TrackEvent(string eventName, EventType eventType, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
             try
             {
-                if (_DisableTelemetry) return;
+                if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
+
+                if((TelemetryVerboseLevel == TelemetryVerboseLevel.Completion && eventType == EventType.Completion) 
+                    || (TelemetryVerboseLevel > TelemetryVerboseLevel.Completion && eventType > EventType.Completion))
                 _TelemetryClient.TrackEvent(eventName, properties, metrics);
             }
             catch (Exception e) { logger.Fatal(e); }
@@ -87,7 +118,7 @@ namespace Analytics
         {
             try
             {
-                if (_DisableTelemetry) return;
+                if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
                 _TelemetryClient.TrackTrace(new TraceTelemetry(logMessage, SeverityLevel.Error));
             }
             catch (Exception e) { logger.Fatal(e); }
@@ -98,23 +129,23 @@ namespace Analytics
         /// </summary>
         /// <param name="exception">Exception raised to store</param>
         public void TrackException(Exception exception)
-        {
+        { 
             try
             {
-                if (_DisableTelemetry) return;
+                if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
                 _TelemetryClient.TrackException(exception);
             }
             catch (Exception e) { logger.Fatal(e); }
         }
 
         /// <summary>
-        /// Method to end the current Telemetry session. It will also force data sending to Application Inshights.
+        /// Method to end the current Telemetry session. It will also force data sending to Application Insights.
         /// </summary>
         public void EndSession()
         {
             try
             {
-                if (_DisableTelemetry) return;
+                if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
                 _TelemetryClient.Flush();
             }
             catch (Exception e) { logger.Fatal(e); }
@@ -125,7 +156,7 @@ namespace Analytics
         {
             try
             {
-                if (_DisableTelemetry) return;
+                if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
 
                 var currentUserMail = UserPrincipal.Current.EmailAddress;
                 var mail = new MailMessage();

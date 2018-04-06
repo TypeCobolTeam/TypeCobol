@@ -55,22 +55,6 @@ namespace TypeCobol.Compiler
         public List<CopyDirective> MissingCopies { get; set; }
 
         /// <summary>
-        /// Register a new symbolic character name found in the source file
-        /// </summary>
-        internal void AddCopyTextNamesVariations(IList<RemarksDirective.TextNameVariation> textNamesVariations)
-        {
-            if (CopyTextNamesVariations == null)
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>();
-            }
-            else
-            {
-                CopyTextNamesVariations = new List<RemarksDirective.TextNameVariation>(CopyTextNamesVariations);
-            }
-            CopyTextNamesVariations.AddRange(textNamesVariations);
-        }
-
-        /// <summary>
         /// Issue #315
         /// </summary>
         private MultilineScanState initialScanStateForCopy;
@@ -282,6 +266,7 @@ namespace TypeCobol.Compiler
                 {
                     DocumentChange<ICobolTextLine> appliedChange = null;
                     CodeElementsLine newLine = null;
+                    bool encounteredCodeElement;
                     switch (textChange.Type)
                     {
                         case TextChangeType.DocumentCleared:
@@ -293,15 +278,23 @@ namespace TypeCobol.Compiler
                         case TextChangeType.LineInserted:
                             newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
                             compilationDocumentLines.Insert(textChange.LineIndex, newLine);
-                            appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
-                            // Recompute the line indexes of all the changes prevously applied
-                            foreach (DocumentChange<ICobolTextLine> documentChangeToAdjust in documentChanges)
+
+                            encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
+
+                            foreach (var lineToUpdate in compilationDocumentLines.Skip(textChange.LineIndex+1)) //Loop on every line that appears after added line
                             {
-                                if (documentChangeToAdjust.LineIndex >= textChange.LineIndex)
-                                {
-                                    documentChangeToAdjust.LineIndex = documentChangeToAdjust.LineIndex + 1;
-                                }
+                                //Remove generated diagnostics for the line below the inserted line.
+                                if (!encounteredCodeElement)
+                                    lineToUpdate.ResetDiagnostics(); //Reset diag when on the same zone
+
+                                lineToUpdate.LineIndex++;
+                                lineToUpdate.UpdateDiagnositcsLine();
+                                 
+                                if (lineToUpdate.CodeElements != null)
+                                    encounteredCodeElement = true;
                             }
+
+                            appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineInserted, textChange.LineIndex, newLine);
                             break;
                         case TextChangeType.LineUpdated:
                             newLine = CreateNewDocumentLine(textChange.NewLine, TextSourceInfo.ColumnsLayout);
@@ -324,6 +317,21 @@ namespace TypeCobol.Compiler
                             break;
                         case TextChangeType.LineRemoved:
                             compilationDocumentLines.RemoveAt(textChange.LineIndex);
+                            encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
+
+                            foreach (var lineToUpdate in compilationDocumentLines.Skip(textChange.LineIndex)) //Loop on every line that appears after deleted line
+                            {
+                                //Remove generated diagnostics for the line below the deleted line.
+                                if (!encounteredCodeElement)
+                                    lineToUpdate.ResetDiagnostics();
+
+                                lineToUpdate.LineIndex--;
+                                lineToUpdate.UpdateDiagnositcsLine();
+
+                                if (lineToUpdate.CodeElements != null)
+                                    encounteredCodeElement = true; 
+                            }
+
                             appliedChange = new DocumentChange<ICobolTextLine>(DocumentChangeType.LineRemoved, textChange.LineIndex, null);
                             // Recompute the line indexes of all the changes prevously applied
                             IList<DocumentChange<ICobolTextLine>> documentChangesToRemove = null;

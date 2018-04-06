@@ -62,7 +62,10 @@ namespace TypeCobol.Transform
                             outputWriter.WriteLine("000000*" + typeCobolLine.Substring(7));
                         else
                             outputWriter.WriteLine("000000*");
-                        columns7.Append(typeCobolLine[CommentPos]);
+                        if (typeCobolLine.Length > CommentPos)
+                            columns7.Append(typeCobolLine[CommentPos]);
+                        else
+                            columns7.Append(' ');
                     }
                     else
                     {
@@ -150,7 +153,11 @@ namespace TypeCobol.Transform
                     if (isInPart4) // If inside of part 4 append
                     {
                         if (line.Length >= 7)
-                            tcLinesCol7.Append(line.Substring(7).PadRight(LineLength - 1));
+                        {   //We must remove any character after column 72
+                            int len = (line.Length > 72 ? 72 : line.Length) - 7;
+                            string transcript = line.Substring(7, len);
+                            tcLinesCol7.Append(transcript.PadRight(LineLength - 1));
+                        }
                     }
                 }
 

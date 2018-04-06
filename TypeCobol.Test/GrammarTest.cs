@@ -8,6 +8,7 @@ using System.IO;
 using TypeCobol.Codegen.Config;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Test.Utils;
 
 namespace TypeCobol.Test {
 
@@ -25,23 +26,39 @@ namespace TypeCobol.Test {
 
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex = "*.cbl", string skelPath = "") {
-	        CheckTests(rootFolder, resultFolder, resultFile, regex, new string[] {}, new string[] {}, skelPath);
+	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string expectedResultFile = null) {
+	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, skelPath, 10000, false, expectedResultFile);
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex,
-	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000) {
-            CheckTests(rootFolder, resultFolder, resultFile, regex, include, exclude, new string[] { }, skelPath);
+	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex,
+	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false, string expectedResultFile = null) {
+            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, skelPath, stopAfterAsManyErrors, autoRemarks, expectedResultFile);
         }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string resultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors = 10000) { 
+	    private static void AppendTextToFiles(string tetxToAppend, params string[] files)
+	    {
+	        foreach (var file in files)
+	        {
+	            if (!string.IsNullOrEmpty(file))
+	            {
+	                File.AppendAllText(file, tetxToAppend);
+	            }
+	        }
+	            
+	    }
+
+	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+	        string resultFile = "GeneratedResultFile.txt";
 
-            
-            File.WriteAllText(resultFile, "");
-			int tested = 0, nbFilesInError = 0, ignores = 0;
+            //Initialize both files
+            File.WriteAllText(timedResultFile, "");
+	        if (expectedResultFile != null)
+	            File.WriteAllText(resultFile, "");
+
+            int tested = 0, nbFilesInError = 0, ignores = 0;
 			TimeSpan parsingSumDuration = new TimeSpan(0);
 			TimeSpan codeGenSumDuration = new TimeSpan(0);
 			int parseErrors = 0;
@@ -50,20 +67,28 @@ namespace TypeCobol.Test {
 			foreach (var file in files) {
 
 				string filename = Path.GetFileName(file);
-                
-                File.AppendAllText(resultFile, (filename + ':'));
-				bool ignore = include.Length > 0 && !include.Contains(filename);
+			    AppendTextToFiles((filename + ':'), timedResultFile, resultFile);
+
+                bool ignore = include.Length > 0 && !include.Contains(filename);
 				if (!ignore) ignore = exclude.Contains(filename);
 				if (ignore) {
 					ignores++;
-					File.AppendAllText(resultFile, " ignored.\n");
+					File.AppendAllText(timedResultFile, " ignored.\n");
                     continue;
 				}
 				string path = Path.Combine(rootFolder, filename);
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
-                var document = new Parser();
-                document.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copiesFolder);
+                var document = new TypeCobol.Parser();
+			    var options = new TypeCobolOptions
+			    {
+			        ExecToStep = ExecutionStep.CrossCheck,
+#if EUROINFO_RULES
+                    AutoRemarksEnable = autoRemarks
+#endif
+                };
+
+                document.Init(path, options, format, copiesFolder);
                 document.Parse(path);
                 
 
@@ -72,13 +97,14 @@ namespace TypeCobol.Test {
 				TimeSpan elapsed = watch.Elapsed;
 				parsingSumDuration += elapsed;
 				string formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
-				File.AppendAllText(resultFile, " parsed in " + formatted +"\n");
-                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForText.FirstCompilationTime + " ms : text update\n");
-                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForScanner.FirstCompilationTime + " ms : scanner\n");
-                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForPreprocessor.FirstCompilationTime + " ms : preprocessor\n");
-                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForCodeElementsParser.FirstCompilationTime + " ms : code elements parser\n");
-                File.AppendAllText(resultFile, "- " + document.Results.PerfStatsForProgramClassParser.FirstCompilationTime + " ms : program class parser\n");
-
+			    AppendTextToFiles(" parsed in " + formatted + "\n", timedResultFile);
+                AppendTextToFiles("- " + document.Results.PerfStatsForText.FirstCompilationTime + " ms : text update\n", timedResultFile);
+                AppendTextToFiles("- " + document.Results.PerfStatsForScanner.FirstCompilationTime + " ms : scanner\n", timedResultFile);
+                AppendTextToFiles("- " + document.Results.PerfStatsForPreprocessor.FirstCompilationTime + " ms : preprocessor\n", timedResultFile);
+                AppendTextToFiles("- " + document.Results.PerfStatsForCodeElementsParser.FirstCompilationTime + " ms : code elements parser\n", timedResultFile);
+                AppendTextToFiles("- " + document.Results.PerfStatsForTemporarySemantic.FirstCompilationTime + " ms : temporary semantic class parser\n", timedResultFile);
+                AppendTextToFiles("- " + document.Results.PerfStatsForProgramCrossCheck.FirstCompilationTime + " ms : cross check class parser\n", timedResultFile);
+                
 
                 tested++;
                 Console.WriteLine(filename);
@@ -89,7 +115,7 @@ namespace TypeCobol.Test {
 			        okay = false;
 			        parseErrors += diagnostics.Count;
 			    }
-			    displayAndWriteErrorsToGrammarResult(resultFile, diagnostics);
+			    displayAndWriteErrorsToGrammarResult(diagnostics, timedResultFile, resultFile);
 
                 
 				if (!okay) {
@@ -105,7 +131,7 @@ namespace TypeCobol.Test {
                     //Retrieve skeletons
                     var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : null;
 
-			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons);
+			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons, null);
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(document.Results, columns);
                     writer.Close();
@@ -115,7 +141,7 @@ namespace TypeCobol.Test {
                     elapsed = watch.Elapsed;
                     codeGenSumDuration += elapsed;
                     formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
-                    File.AppendAllText(resultFile, " generated in " + formatted + "\n");
+                    AppendTextToFiles(" generated in " + formatted + "\n", timedResultFile);
 
                     
 
@@ -123,7 +149,7 @@ namespace TypeCobol.Test {
 			        if (generator.Diagnostics != null && generator.Diagnostics.Count > 0) {
 
 			            codegenErrors += generator.Diagnostics.Count;
-                        displayAndWriteErrorsToGrammarResult(resultFile, generator.Diagnostics);
+                        displayAndWriteErrorsToGrammarResult(generator.Diagnostics, timedResultFile, resultFile);
                         nbFilesInError++;
                         if (nbFilesInError >= stopAfterAsManyErrors) break;
 
@@ -177,21 +203,22 @@ namespace TypeCobol.Test {
                         if (errors.Length > 0)
                         {
                             codegenDiff += linesKO.Count + Math.Abs(actual.Count - expected.Count);
-                            File.AppendAllText(resultFile, errors.ToString());
+                            AppendTextToFiles(errors.ToString(), timedResultFile, resultFile);
                             if (okay) nbFilesInError++;
                         }
                     }
 
                     
 			    } else {
-                    File.AppendAllText(resultFile, "\n");
+                    AppendTextToFiles("\n", timedResultFile, resultFile);
                 }
 			}
             TimeSpan totalTestDuration = parsingSumDuration + codeGenSumDuration;
             string parsingTotalDurationFormatted = String.Format("{0:00}m{1:00}s{2:000}ms", parsingSumDuration.Minutes, parsingSumDuration.Seconds, parsingSumDuration.Milliseconds);
             
 			string message = "Files tested=" + tested + "/" + files.Length + ", files in error=" + nbFilesInError + ", ignored=" + ignores + "\n";
-			if (parseErrors > 0)   message += "Parsing errors: "+ parseErrors   + '\n';
+            AppendTextToFiles(message, resultFile);
+            if (parseErrors > 0)   message += "Parsing errors: "+ parseErrors   + '\n';
 			if (codegenErrors > 0) message += "Codegen errors: "+ codegenErrors + '\n';
 			if (codegenDiff > 0) message += "Codegen Diff: "+ codegenDiff + '\n';
             message += "Parsing time: " + parsingTotalDurationFormatted;
@@ -200,14 +227,24 @@ namespace TypeCobol.Test {
                 string totalDurationFormatted = String.Format("{0:00}m{1:00}s{2:000}ms", totalTestDuration.Minutes, totalTestDuration.Seconds, totalTestDuration.Milliseconds);
                 message += " + Codegen time: " + codeGenTotalDurationFormatted + "  => Total time: " + totalDurationFormatted;
             }
-            File.AppendAllText(resultFile, message);
-			if (nbFilesInError > 0) Assert.Fail('\n'+message);
+            AppendTextToFiles(message, timedResultFile);
+			if (nbFilesInError > 0 && expectedResultFile == null) Assert.Fail('\n'+message); //If no expectedFile to compare throw assert if error
+            else if (expectedResultFile != null) //If expectedFileResult exists compare the DefaultGeneratedFile with expectedFile
+			{
+                StreamReader expectedResultReader = new StreamReader(new FileStream(expectedResultFile, FileMode.Open));
+                StreamReader actualResultReader = new StreamReader(new FileStream(resultFile, FileMode.Open));
+                TestUtils.compareLines("GrammarTestCompareFiles", expectedResultReader.ReadToEnd(), actualResultReader.ReadToEnd()); //The test will fail if result files are different
+
+                expectedResultReader.Close();
+                actualResultReader.Close();
+            }
+
 		}
 
-		private static void displayAndWriteErrorsToGrammarResult(string resultFile, IEnumerable<Diagnostic> diagnostics) {
+        private static void displayAndWriteErrorsToGrammarResult(IEnumerable<Diagnostic> diagnostics, params string[] files) {
 			string result = ParserUtils.DiagnosticsToString(diagnostics, false);
 			Console.WriteLine(result);
-			File.AppendAllText(resultFile, (result + "\n"));
+			AppendTextToFiles((result + "\n"), files);
 		}
 
 		private static List<string> AsLines(string text) {

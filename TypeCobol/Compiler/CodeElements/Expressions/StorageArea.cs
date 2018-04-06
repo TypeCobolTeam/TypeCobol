@@ -121,6 +121,7 @@ namespace TypeCobol.Compiler.CodeElements
 			Subscripts = new List<SubscriptExpression>(subscripts);
 		}
 
+        [NotNull]
 		public List<SubscriptExpression> Subscripts { get; private set; }
 
         /// <summary>Ambiguities in the grammar in the first phase of parsing</summary>
@@ -140,16 +141,53 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
 	    public override string ToString() {
-			var str = new System.Text.StringBuilder();
-	        if (SymbolReference != null)
-	        {
-                str.Append(SymbolReference.Name);
-                if (Subscripts != null)
-                    foreach (var subscript in Subscripts)
-                        str.Append('(').Append(subscript).Append(')');
-            }
-			return str.ToString();
+			return ToString(false);
 		}
+
+        public string ToString(bool onlySubscript)
+        {
+            var str = new System.Text.StringBuilder();
+            if (SymbolReference != null)
+            {
+                if(!onlySubscript)
+                    str.Append(SymbolReference.Name);
+                if (Subscripts.Count > 0)
+                {
+                    str.Append('(');
+                    foreach (var subscript in Subscripts)
+                    {
+                        str.Append(subscript);
+                        if (Subscripts.LastOrDefault() != subscript)
+                            str.Append(", ");
+                    }
+                    str.Append(')');
+                }
+                if (ReferenceModifier != null)
+                {
+                    str.Append("(")
+                        .Append(GetExpressionToAppend(ReferenceModifier.LeftmostCharacterPosition))
+                        .Append(":")
+                        .Append(GetExpressionToAppend(ReferenceModifier.Length))
+                        .Append(')');
+                }
+            }
+            return str.ToString();
+        }
+
+	    private string GetExpressionToAppend(ArithmeticExpression expression)
+	    {
+	        if (expression == null)
+	            return string.Empty;
+	        var expressionToAppend = expression.ToString();
+	        if (expression.NodeType == ExpressionNodeType.NumericVariable &&
+	            (expression as NumericVariableOperand)?.NumericVariable.MainSymbolReference != null)
+	        {
+	            expressionToAppend = ((NumericVariableOperand) expression).NumericVariable
+	                .MainSymbolReference.ToString();
+	        }
+
+	        return expressionToAppend;
+	    }
 	}
 
     /// <summary>
@@ -446,13 +484,19 @@ namespace TypeCobol.Compiler.CodeElements
                     }
                     else
                     {
-                        var found = table.GetVariable(parameter);
-                        foreach (var item in found)
+                        if (table != null)
                         {
-                            var data = item as Nodes.DataDescription;
-                            if (type == null) type = data.DataType;
-                            else if (type != data.DataType) type = DataType.Unknown;
+                            var found = table.GetVariables(parameter);
+                            foreach (var item in found)
+                            {
+                                var data = item as Nodes.DataDescription;
+                                if (data == null)
+                                    type = DataType.Unknown;
+                                else if (type == null) type = data.DataType;
+                                else if (type != data.DataType) type = DataType.Unknown;
+                            }
                         }
+                       
                         if (type == null) type = DataType.Unknown;
                     }
                     return type;

@@ -77,11 +77,11 @@ namespace TypeCobol.Server {
 		        }
                 if(config.Telemetry)
                 {
-                    AnalyticsWrapper.Telemetry.DisableTelemetry = false; //If telemetry arg is passed enable telemetry
+                    AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.CodeGeneration; //If telemetry arg is passed enable telemetry
                 }
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
-                    config.ExecToStep = ExecutionStep.SemanticCheck; //If there is no given output file, we can't run generation, fallback to SemanticCheck
+                    config.ExecToStep = ExecutionStep.CrossCheck; //If there is no given output file, we can't run generation, fallback to CrossCheck
 
 		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
 		            return exit(ReturnCode.OutputFileError, "The number of output files must be equal to the number of input files.");
@@ -170,9 +170,14 @@ namespace TypeCobol.Server {
                 ? (path != null ? new object[2] { message, path } : new object[1] { message })
                 : (path != null ? new object[1] { path } : new object[0]));
             diag.Message = message;
-            writer.AddErrors(path, diag);
-            Console.WriteLine(string.Format("Code : {0} - Message : {1}", messageCode , message));
-		}
+            AddError(writer, path, diag);
+        }
+
+        internal static void AddError(AbstractErrorWriter writer, string path, Diagnostic diagnostic)
+        {
+            writer.AddErrors(path, diagnostic);
+            Console.WriteLine(diagnostic);
+        }
 
         private static void runServer(string pipename) {
 			var parser = new Parser();
@@ -217,11 +222,11 @@ namespace TypeCobol.Server {
 		}
 
 		static int exit(ReturnCode code, string message) {
-			string errmsg = PROGNAME+": "+message+"\n";
+			string errmsg = "Code: "+ (int)code + " " + PROGNAME+": "+message+"\n";
 			errmsg += "Try "+PROGNAME+" --help for usage information.";
 			Console.WriteLine(errmsg);
 
-            AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[ReturnCode] {0} : {1}", code.ToString(), message));
+            AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[ReturnCode] {0} : {1}", code.ToString(), message), EventType.Genration);
             AnalyticsWrapper.Telemetry.EndSession(); //End Telemetry session and force data sending
             return (int)code;
 		}

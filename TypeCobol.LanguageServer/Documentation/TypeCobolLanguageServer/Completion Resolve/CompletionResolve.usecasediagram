@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm11="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" dslVersion="1.0.0.0" Id="aa0cd065-5188-41c8-8cb2-46c15f502232" name="CompletionResolve" linkedPackageId="50708ccb-6bb8-4660-a260-eac1acdd1985" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+  <packagedElements>
+    <useCaseModelRootHasTypes>
+      <actor Id="8e423882-49c0-4497-a76b-39bd96beea5c" name="TypeCobol Editor" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="8c3374fd-45e0-4d9a-aca6-703e1d4e8a4c" />
+        <suppliersInternal>
+          <dependency Id="b6a73d63-2699-424c-8c49-6f2665010725">
+            <useCaseMoniker Id="29205897-1ddd-42dc-a201-d48bcc74c228" LastKnownName="Demand Completion for Procedure" />
+            <elementDefinition Id="6541c49f-1423-494c-9601-7fa83841dcbf" />
+          </dependency>
+          <dependency Id="f346beeb-0597-4e16-9fcf-a09080b812e0">
+            <useCaseMoniker Id="5f466d83-672a-4d1d-8149-133213e01c02" LastKnownName="Call SignatureHelper " />
+            <elementDefinition Id="63720053-6310-499c-993b-72d89ac72d24" />
+          </dependency>
+          <dependency Id="b76ea055-7c65-4106-8c15-a4d72962bc10">
+            <useCaseMoniker Id="69859e04-aacc-46ee-9149-cd3f9e636a6f" LastKnownName="Send Procedure Context" />
+            <elementDefinition Id="47386f6f-4029-45c0-a6ff-ff48dddd9af5" />
+          </dependency>
+          <dependency Id="0c588010-ec5f-4fe7-afb2-bb7517b6e183">
+            <useCaseMoniker Id="cbebab96-5cbe-4405-9d93-c8fcbbd29268" LastKnownName="Display procedure signature" />
+            <elementDefinition Id="4bdfa7ad-6fc2-4251-9dfa-164815b43d18" />
+          </dependency>
+        </suppliersInternal>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="625c76e4-9af5-4bf7-a3cf-89a458ed0524" name="TypeCobol LSP" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="c82897e4-8c25-4c80-b26c-3eff28dc96a2" />
+        <suppliersInternal>
+          <dependency Id="91f2cf39-56c9-4a14-9c1b-e5f52bef7446">
+            <useCaseMoniker Id="738d890a-b5c1-4284-bd13-7bdf55e3b8ea" LastKnownName="Store procedure signature context" />
+            <elementDefinition Id="aad77b62-6623-4d73-86e0-c1e1c82d9f3a" />
+          </dependency>
+          <dependency Id="33f62279-ab74-4fc3-b099-9f6ecaab5c82">
+            <useCaseMoniker Id="9656b32b-c4e8-432b-84b1-ca7517b8c3ba" LastKnownName="Find the best matching signature" />
+            <elementDefinition Id="cb0a0b68-3980-4cf6-b8e1-174f6a66884f" />
+          </dependency>
+        </suppliersInternal>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="2d2fc272-4329-4fb1-bcd0-d4e44ff43ab7" name="Ask for Proc completion" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="1df500d3-dbcd-48e6-adeb-d1edc2a7e784" />
+        <suppliersInternal>
+          <dependency Id="58698b88-b309-45e0-b42c-164c4105af3d">
+            <actorMoniker Id="8e423882-49c0-4497-a76b-39bd96beea5c" LastKnownName="TypeCobol Editor" />
+            <elementDefinition Id="4e7ba670-3370-43af-9ac6-446e4be68f56" />
+          </dependency>
+        </suppliersInternal>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="bc08842f-3473-4a4f-83a3-22687334106d" name="Select Procedure Signature" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="f0610ab8-c1ce-42ff-a597-5ba0184c9d32" />
+        <suppliersInternal>
+          <dependency Id="a94dc8fe-7145-49db-b808-696addc06eb6">
+            <actorMoniker Id="8e423882-49c0-4497-a76b-39bd96beea5c" LastKnownName="TypeCobol Editor" />
+            <elementDefinition Id="32e019e9-9834-4942-8bc9-f53e166f5235" />
+          </dependency>
+        </suppliersInternal>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="4caedb38-b5a8-4be7-bb85-0781293a0513" name="Type an unexpected variable" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="9b60cab4-a1d0-467c-abc5-8738c8391a12" />
+        <suppliersInternal>
+          <dependency Id="08b9f482-16a0-4a9e-b7a7-0660f8b4a33a">
+            <actorMoniker Id="8e423882-49c0-4497-a76b-39bd96beea5c" LastKnownName="TypeCobol Editor" />
+            <elementDefinition Id="0b930371-f4b9-4689-82e7-c0e4c20d8a7f" />
+          </dependency>
+        </suppliersInternal>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="5f466d83-672a-4d1d-8149-133213e01c02" name="Call SignatureHelper " isAbstract="false" isLeaf="false">
+        <elementDefinition Id="b1319716-018a-425e-a67b-b5d8980547f0" />
+        <suppliersInternal>
+          <dependency Id="4cd04c0f-9081-42c1-b2e3-45ca8e39400d">
+            <actorMoniker Id="625c76e4-9af5-4bf7-a3cf-89a458ed0524" LastKnownName="TypeCobol LSP" />
+            <elementDefinition Id="feb5fc72-132e-44f6-8be8-51e3513e4169" />
+          </dependency>
+        </suppliersInternal>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="32927426-0a41-4582-ac30-da166dac9761" name="User2" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="741ee557-5ffd-4dd5-8221-92ac29684698" />
+        <suppliersInternal>
+          <dependency Id="44e69707-6fad-436f-954c-638576732ac4">
+            <useCaseMoniker Id="bc08842f-3473-4a4f-83a3-22687334106d" LastKnownName="Select Procedure Signature" />
+            <elementDefinition Id="e0ca4f6a-69ff-448d-b309-b674188700e9" />
+          </dependency>
+          <dependency Id="e67aa13a-a179-469c-812d-6fe067d284f5">
+            <useCaseMoniker Id="2d2fc272-4329-4fb1-bcd0-d4e44ff43ab7" LastKnownName="Ask for Proc completion" />
+            <elementDefinition Id="cfc11a95-86bc-4aee-a523-c70568d3a62c" />
+          </dependency>
+          <dependency Id="4d6946e3-0c2c-42b9-b270-d97e72fb4217">
+            <useCaseMoniker Id="4caedb38-b5a8-4be7-bb85-0781293a0513" LastKnownName="Type an unexpected variable" />
+            <elementDefinition Id="250bda61-17fe-4695-8ea6-eea5c807e517" />
+          </dependency>
+        </suppliersInternal>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="29205897-1ddd-42dc-a201-d48bcc74c228" name="Demand Completion for Procedure" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="05889020-e0ce-49b4-9f0f-b9e9bcb7d2fb" />
+        <suppliersInternal>
+          <dependency Id="90955ae8-de88-4f74-a7b6-958cdff40644">
+            <actorMoniker Id="625c76e4-9af5-4bf7-a3cf-89a458ed0524" LastKnownName="TypeCobol LSP" />
+            <elementDefinition Id="1a198f48-bc79-490e-99d2-60ea49f756ca" />
+          </dependency>
+        </suppliersInternal>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="69859e04-aacc-46ee-9149-cd3f9e636a6f" name="Send Procedure Context" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="cc47ec9c-5c54-4d2b-bd8c-cda9a8fef29c" />
+        <suppliersInternal>
+          <dependency Id="27aff826-0c41-456c-bf44-bb57536c3969">
+            <actorMoniker Id="625c76e4-9af5-4bf7-a3cf-89a458ed0524" LastKnownName="TypeCobol LSP" />
+            <elementDefinition Id="7bc68e18-be5f-44b6-b96b-c945daaf8bba" />
+          </dependency>
+        </suppliersInternal>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="738d890a-b5c1-4284-bd13-7bdf55e3b8ea" name="Store procedure signature context" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="db72d29d-2034-42cd-aab8-cc5ca023ad5c" />
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="9656b32b-c4e8-432b-84b1-ca7517b8c3ba" name="Find the best matching signature" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="762c17e2-2666-46e0-8697-69f9fe5d1e30" />
+        <suppliersInternal>
+          <dependency Id="e3c31de7-d422-4942-a397-6d3f96b767e0">
+            <useCaseMoniker Id="738d890a-b5c1-4284-bd13-7bdf55e3b8ea" LastKnownName="Store procedure signature context" />
+            <elementDefinition Id="726f6f05-1156-4721-8f53-bd19e577377d" />
+          </dependency>
+        </suppliersInternal>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="cbebab96-5cbe-4405-9d93-c8fcbbd29268" name="Display procedure signature" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="c5d7c358-249e-4cad-b493-83dc15cd85bb" />
+        <suppliersInternal>
+          <dependency Id="6b311819-3ac8-41a1-a2b7-d45960565c2f">
+            <actorMoniker Id="32927426-0a41-4582-ac30-da166dac9761" LastKnownName="User2" />
+            <elementDefinition Id="3b4ff535-77da-4dcb-abd4-ee18ee949aeb" />
+          </dependency>
+        </suppliersInternal>
+      </useCase>
+    </useCaseModelRootHasTypes>
+  </packagedElements>
+  <package Id="50708ccb-6bb8-4660-a260-eac1acdd1985" name="TypeCobolLanguageServer">
+    <elementDefinition Id="5d09ded1-4567-4003-bfe3-37cf35f27636" />
+  </package>
+</useCaseModelRoot>

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Completionusecasediagram">
+  <useCaseModelRootMoniker Id="0d1bfb2f-fb7d-487a-9960-bb199a29d579" />
+  <nestedChildShapes>
+    <actorShape Id="0107cd0a-68ab-4072-beb7-971cf9ea80a5" absoluteBounds="2, 2.625, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="c6562e0d-4fe0-45a0-b321-4e4e916a534d" LastKnownName="TypeCobol.LanguageClient" />
+      <relativeChildShapes />
+    </actorShape>
+    <actorShape Id="8447f03c-414c-4c08-a9c1-86f6baf4783a" absoluteBounds="6.5, 2.875, 0.5, 0.5" isReference="false" heightOffset="0">
+      <actorMoniker Id="e8cc845d-4cd3-4fbc-b27f-345c89451964" LastKnownName="TypeCobol.LanguageServer" />
+      <relativeChildShapes />
+    </actorShape>
+    <useCaseShape Id="8a857f18-64e2-424e-98a6-eb513dbc8068" absoluteBounds="3, 1.875, 2.75, 0.875" customColor="238, 237, 131" heightOffset="0">
+      <useCaseMoniker Id="0892d181-163b-4d47-993a-ede385f843a8" LastKnownName="Ouverture d'u requête : textDocument/completion " />
+      <relativeChildShapes />
+    </useCaseShape>
+    <useCaseAssociationConnector edgePoints="[(5.31143013665399 : 2.632857678329); (6.5 : 3.03947368421053)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="4218b58d-666e-47e6-b484-f1a16fbf036b" />
+      <relativeChildShapes />
+      <nodes>
+        <useCaseShapeMoniker Id="8a857f18-64e2-424e-98a6-eb513dbc8068" />
+        <actorShapeMoniker Id="8447f03c-414c-4c08-a9c1-86f6baf4783a" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseAssociationConnector edgePoints="[(2.5 : 2.80882352941176); (3.31796801813983 : 2.59230258343357)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="6e738ae9-7553-4e0b-97f9-d2115d577f32" />
+      <relativeChildShapes />
+      <nodes>
+        <actorShapeMoniker Id="0107cd0a-68ab-4072-beb7-971cf9ea80a5" />
+        <useCaseShapeMoniker Id="8a857f18-64e2-424e-98a6-eb513dbc8068" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseShape Id="0daba8ce-422f-4853-ab99-89063f81f3fc" absoluteBounds="3, 3.5, 2.625, 0.75" customColor="238, 237, 131" heightOffset="0">
+      <useCaseMoniker Id="2cf980ca-2220-4685-9b41-0c3a19325728" LastKnownName="Réponse à la requête&#xD;&#xA;Renvoie d'une liste de CompletionItem " />
+      <relativeChildShapes />
+    </useCaseShape>
+    <useCaseAssociationConnector edgePoints="[(3.64615384615385 : 3.55192307692308); (2.5 : 2.99621212121212)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="dfbc0280-fdef-4293-8f4f-82008e3a96d6" />
+      <relativeChildShapes />
+      <nodes>
+        <useCaseShapeMoniker Id="0daba8ce-422f-4853-ab99-89063f81f3fc" />
+        <actorShapeMoniker Id="0107cd0a-68ab-4072-beb7-971cf9ea80a5" />
+      </nodes>
+    </useCaseAssociationConnector>
+    <useCaseAssociationConnector edgePoints="[(6.5 : 3.20192307692308); (5.20559206791955 : 3.60020244064014)]" fixedFrom="Algorithm" fixedTo="Algorithm" customColor="113, 111, 110" sourceMultiplicity="" targetMultiplicity="">
+      <associationMoniker Id="afd74e18-d11a-4c3e-99df-41563e139fda" />
+      <relativeChildShapes />
+      <nodes>
+        <actorShapeMoniker Id="8447f03c-414c-4c08-a9c1-86f6baf4783a" />
+        <useCaseShapeMoniker Id="0daba8ce-422f-4853-ab99-89063f81f3fc" />
+      </nodes>
+    </useCaseAssociationConnector>
+  </nestedChildShapes>
+</useCaseDiagram>

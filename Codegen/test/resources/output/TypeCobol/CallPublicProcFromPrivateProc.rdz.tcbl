@@ -20,7 +20,7 @@
        TRAITEMENT.
       *OK  call check of PGM1
       *   call check input mydate1
-          CALL 'a0508f35' USING
+          CALL 'a0508f35check' USING
                                  mydate1
            end-call
                                   
@@ -81,7 +81,7 @@
       *   input  personId  type date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd991005.
+       PROGRAM-ID. cd991005GetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
        01 personId.
@@ -92,16 +92,19 @@
              USING BY REFERENCE personId
            .
            CONTINUE.
-       END PROGRAM cd991005.
+       END PROGRAM cd991005GetPersonById.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35.
+       PROGRAM-ID. a0508f35check.
        data division.
        working-storage section.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-PersonSe pic X(08) value 'PersonSe'.
 
        linkage section.
@@ -125,20 +128,28 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
-           PERFORM TC-Initializations
+           PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
-           IF TC-PersonService-cd991005-Idt not = 'cd991005'
-               PERFORM TC-LOAD-POINTERS-PersonService
+           IF ADDRESS OF TC-PersonSe-cd991005-Item = NULL
+               PERFORM TC-LOAD-POINTERS-PersonSe
+           ELSE
+               IF TC-PersonSe-cd991005-Idt not = 'cd991005'
+                   PERFORM TC-LOAD-POINTERS-PersonSe
+               END-IF
            END-IF
-           CALL TC-PersonService-cd991005 USING
+           CALL TC-PersonSe-cd991005 USING
                                  mydate
            end-call
                                                          
            .
       *=================================================================
-       TC-Initializations.
-           .
+       TC-INITIALIZATIONS.
       *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-PersonSe-cd991005-Item  TO NULL
+            END-IF
+            .
       *=================================================================
        TC-LOAD-POINTERS-PersonSe.
       *=================================================================
@@ -155,4 +166,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM a0508f35.
+       END PROGRAM a0508f35check.

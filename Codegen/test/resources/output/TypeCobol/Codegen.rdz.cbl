@@ -18,7 +18,9 @@
       *01  b TYPE Bool.
 000080 01  b-value PIC X VALUE LOW-VALUE.
            88  b       VALUE 'T'.
-           88  b-false VALUE 'F'.
+           88  b-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                                                         000080
 000090 01  mykey  PIC X(04). COPY Codegen-SECONDCOPY SUPPRESS.          000090
 002440 77 myconstant PIC X(10) value 'SHIBBOLEET'.                      002440
@@ -53,7 +55,7 @@
       *                 RETURNING result PIC 9(32).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c0ca92c2.
+       PROGRAM-ID. c0ca92c2GetValue.
        DATA DIVISION.
        LINKAGE SECTION.
        01 ikey PIC X(04).
@@ -70,4 +72,4 @@
 000170                                                                  000170
 000180     display "test codegen"
 000180     CONTINUE.                                                    000180
-       END PROGRAM c0ca92c2.
+       END PROGRAM c0ca92c2GetValue.

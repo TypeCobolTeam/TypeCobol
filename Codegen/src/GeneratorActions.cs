@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
@@ -283,17 +284,82 @@ namespace TypeCobol.Codegen
         /// <param name="location">The location to get</param>
         /// <param name="index">Output Index of the location in the parent node</param>
         /// <returns>The location's node</returns>
-        public Node GetSingleLocation(Node node, string location, out int? index)
+        public Node GetSingleLocation(Node node, string location, out int? index, string[] subPaths)
         {
             index = null;
-            location = NormalizeLocation(node, location, out index);
-            if (location == null || location.ToLower().Equals("node")) return node;
+            location = NormalizeLocation(node, subPaths != null ? subPaths[0] : location, out index);
+            if (location == null || location.ToLower().Equals("node"))
+            {
+                return node;
+            }
             var root = CurrentProgram ?? (node.GetProgramNode() ?? node.Root);
-            var result = root.Get(location);
-            if (result != null) return result;
-            result = Create(root, location);
-            if (result != null) return result;
+            var result = root.Get(subPaths != null ? subPaths[0] : location);
+            if (result != null)
+            {                
+                if (subPaths != null)
+                {//Check if a subpath matches                                        
+                    for (int i = 1; i < subPaths.Length; i++)
+                    {
+                        int nbParent = subPaths[i].LastIndexOf('/') + 1;
+                        Node parent = result;
+                        int matchIndex = 0;
+                        for (int j = 0; j < nbParent; j++)
+                        {
+                            matchIndex = parent.Parent.IndexOf(parent);
+                            parent = parent.Parent;
+                        }
+                        int? index2 = null;
+                        var subResult = GetSingleSubLocation(parent, subPaths[i].Substring(nbParent), out index2, matchIndex + 1);
+                        if (subResult != null)
+                        {
+                            index = index2;
+                            if (subResult.CodeElement == null)
+                            {
+                                if (subResult.Parent == parent)
+                                {                                    
+                                    index = null;
+                                }
+                                else
+                                {
+                                    result = subResult;
+                                }
+                            }
+                            else
+                            {
+                                result = subResult;
+                            }
+                            break;
+                        }
+                    }
+                }
+                return result;
+            }
+            result = Create(root, subPaths != null ? subPaths[0] : location);
+            if (result != null)
+            {
+                return result;
+            }
             throw new System.ArgumentException("Undefined URI: " + location);
+        }
+
+        /// <summary>
+        /// Get a Sub Location node
+        /// </summary>
+        /// <param name="parent">The parent of the the sub location</param>
+        /// <param name="location">The sub location</param>
+        /// <param name="index">Output Index of the location in the parent node</param>
+        /// <param name="subIndex">Index of the starting sublocation in the parent</param>
+        /// <returns></returns>
+        public Node GetSingleSubLocation(Node parent, string location, out int? index, int subIndex)
+        {            
+            index = null;
+            location = NormalizeLocation(parent, location, out index);
+            if (location == null || location.ToLower().Equals("node"))
+            {
+                return parent;
+            }
+            var result = parent.Get(location, subIndex);
+            return result;
         }
 
         /// <summary>
@@ -309,18 +375,31 @@ namespace TypeCobol.Codegen
         public Node GetLocation(Node parent, string location, out int? index)
         {
             string[] locations = location.Split(new char[] { '|' });
+            string[] paths = null;
             if (locations.Length > 1)
             {
                 for (int i = 0; i < locations.Length; i++)
                 {
                     locations[i] = locations[i].Trim();
-                    if (IsLocationExists(parent, locations[i], out index))
+                    string mainLocation = locations[i];
+                    paths = null;              
+                    if (mainLocation.IndexOf(',') > 0)
                     {
-                        return GetSingleLocation(parent, locations[i], out index);
+                        paths = mainLocation.Split(new char[] { ',' });
+                        mainLocation = paths[0];
+                    }
+                    if (IsLocationExists(parent, mainLocation, out index))
+                    {
+                        return GetSingleLocation(parent, locations[i], out index, paths);
                     }
                 }
             }
-            return GetSingleLocation(parent, locations[locations.Length - 1], out index);
+            paths = null;
+            if (locations[locations.Length - 1].IndexOf(',') > 0)
+            {
+                paths = locations[locations.Length - 1].Split(new char[] { ',' });                
+            }
+            return GetSingleLocation(parent, locations[locations.Length - 1], out index, paths);
         }
 
         /// <summary>
@@ -354,12 +433,12 @@ namespace TypeCobol.Codegen
                     int index = -1;
                     if (nextsibling != null)
                     {
-                        var sibling = result.Get(nextsibling);
+                        var sibling = result?.Get(nextsibling);
                         if (sibling != null)
                             index = sibling.Parent.IndexOf(sibling);
                     }
                     if (index >= 0)
-                        result.Add(current, index);
+                        result?.Add(current, index);
                     else
                     {
                         index = 0;
@@ -368,7 +447,7 @@ namespace TypeCobol.Codegen
                         {
                             foreach (string p in previoussibling)
                             {
-                                var previous = result.Get(p);
+                                var previous = result?.Get(p);
                                 if (previous != null)
                                 {
                                     int pindex = previous.Parent.IndexOf(previous);
@@ -380,7 +459,7 @@ namespace TypeCobol.Codegen
                                 }
                             }
                         }
-                        result.Add(current, index);
+                        result?.Add(current, index);
                     }
                 }
                 result = current;

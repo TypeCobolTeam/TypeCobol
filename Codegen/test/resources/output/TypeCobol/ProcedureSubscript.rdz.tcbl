@@ -1,0 +1,119 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Subscript.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyPicVar PIC X(10).
+       01 MyGroup.
+          05 MyValue  PIC 2.
+       01  StringArray.
+           05 OCCURS 10 INDEXED BY StringIdx.
+              10  Pnt               POINTER.
+              10  Lgt               PIC 9(09) COMP.
+      *       10  PrcTyp            TYPE Date.
+              10 PrcTyp.
+           11 YYYY PIC 9(4).
+           11 MM PIC 9(2).
+           11 DD PIC 9(2).
+                                              
+              10  Var1              pic X(50).
+
+       01 .
+         05 MyArray2D occurs 50.
+      *     10 MyArray2D_Date type Date occurs 50.
+            10 MyArray2D_Date occurs 50.
+           11 YYYY PIC 9(4).
+           11 MM PIC 9(2).
+           11 DD PIC 9(2).
+                                                  
+            10 MyArray2D_PicX pic X(50) occurs 50.
+       PROCEDURE DIVISION.
+
+      *DECLARE PROCEDURE Foo
+      *    INPUT    arg1      TYPE DATE
+      *             arg2      pic X(50).
+      *DECLARE PROCEDURE CompressString PRIVATE
+      *    INPUT    arg1      POINTER
+      *             arg2      PIC 9(09) COMP
+      *             arg3      TYPE DATE
+      *             arg4      pic X(50)
+      *             arg5      pic X(50)
+      *    OUTPUT   FinalLength     PIC X(10).
+      
+      *     CALL CompressString
+      *     INPUT    StringArray::Pnt (StringIdx)
+      *              StringArray::Lgt (StringIdx)
+      *              StringArray::PrcTyp (StringIdx)
+      *              StringArray::Var1(StringIdx)
+      *              StringArray::Var1(StringIdx)(1:50)
+      *     OUTPUT
+      *              MyPicVar(1:10)
+            CALL 'ff1c836eCompressString' USING
+                                 Pnt IN StringArray (StringIdx)
+                                 Lgt IN StringArray (StringIdx)
+                                 PrcTyp IN StringArray (StringIdx)
+                                 Var1 IN StringArray (StringIdx)
+                                 Var1 IN StringArray (StringIdx)(1:50)
+                    by reference MyPicVar
+           end-call
+                                    
+     
+      *     CALL Foo INPUT MyArray2D_Date (1 , 2)
+      *                    MyArray2D_PicX(12,2)(1:)
+            CALL 'ff0c38e9Foo' USING
+                                 MyArray2D_Date (1, 2)
+                                 MyArray2D_PicX (12, 2)(1:)
+           end-call
+                                                   
+      *     CALL Foo INPUT MyArray2D_Date (1, 2)
+      *                    MyArray2D_PicX(12,2)(1:50)
+            CALL 'ff0c38e9Foo' USING
+                                 MyArray2D_Date (1, 2)
+                                 MyArray2D_PicX (12, 2)(1:50)
+           end-call
+                                                     
+      *     CALL Foo INPUT MyArray2D_Date (1,2)
+      *                    MyArray2D_PicX(12,2)
+            CALL 'ff0c38e9Foo' USING
+                                 MyArray2D_Date (1, 2)
+                                 MyArray2D_PicX (12, 2)
+           end-call
+                                               
+      *     CALL Foo INPUT MyArray2D_Date (1 2)
+      *                    MyArray2D_PicX(12,2)(MyValue:50)
+            CALL 'ff0c38e9Foo' USING
+                                 MyArray2D_Date (1, 2)
+                                 MyArray2D_PicX (12, 2)(MyValue:50)
+           end-call
+                                                           
+      *     CALL Foo INPUT MyArray2D_Date (1  2)
+      *                    MyArray2D_PicX(12,2)(MyValue:)
+            CALL 'ff0c38e9Foo' USING
+                                 MyArray2D_Date (1, 2)
+                                 MyArray2D_PicX (12, 2)(MyValue:)
+           end-call
+                                                         
+           .
+
+       END PROGRAM Subscript.
+      *
+      *DECLARE PROCEDURE Foo
+      *    INPUT    arg1      TYPE DATE
+      *             arg2      pic X(50).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ff0c38e9Foo.
+       END PROGRAM ff0c38e9Foo.
+      *
+      *DECLARE PROCEDURE CompressString PRIVATE
+      *    INPUT    arg1      POINTER
+      *             arg2      PIC 9(09) COMP
+      *             arg3      TYPE DATE
+      *             arg4      pic X(50)
+      *             arg5      pic X(50)
+      *    OUTPUT   FinalLength     PIC X(10).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ff1c836eCompressString.
+       END PROGRAM ff1c836eCompressString.

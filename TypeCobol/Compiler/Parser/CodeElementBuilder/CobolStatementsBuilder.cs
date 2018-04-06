@@ -262,7 +262,8 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateComputeStatement(CodeElementsParser.ComputeStatementContext context) {
 			var statement = new ComputeStatement();
 			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
-			statement.ArithmeticExpression = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression());
+            if(context.arithmeticExpression() != null)
+			    statement.ArithmeticExpression = CobolExpressionsBuilder.CreateArithmeticExpression(context.arithmeticExpression());
 			return statement;
 		}
 
@@ -527,8 +528,11 @@ namespace TypeCobol.Compiler.Parser
 				{
 					InspectReplacingStatement replacingStatement = statement as InspectReplacingStatement;
 
-					replacingStatement.ReplaceAllCharactersOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceAllCharacters(), ctx => CreateReplaceAllCharactersOperation(ctx));
-					replacingStatement.ReplaceCharacterStringsOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceCharacterStrings(), ctx => CreateReplaceCharacterStringsOperation(ctx));
+				    if (replacingStatement != null)
+				    {
+				        replacingStatement.ReplaceAllCharactersOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceAllCharacters(), ctx => CreateReplaceAllCharactersOperation(ctx));
+				        replacingStatement.ReplaceCharacterStringsOperations = BuildObjectArrayFromParserRules(context.replacingPhrase().replaceCharacterStrings(), ctx => CreateReplaceCharacterStringsOperation(ctx));
+				    }
 				}
 
 				return statement;
@@ -1025,7 +1029,10 @@ namespace TypeCobol.Compiler.Parser
 		///////////////////
 
 		internal CodeElement CreateSetStatementForAssignment(CodeElementsParser.SetStatementForAssignmentContext context) {
-			var statement = new SetStatementForAssignment();
+            if (context.dataOrIndexStorageArea() == null || context.setSendingField() == null)
+                return new SetStatementPartial();
+
+            var statement = new SetStatementForAssignment();
 			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.dataOrIndexStorageArea(), ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
 			statement.SendingVariable = CreateSendingVariable(context.setSendingField());
 			return statement;
@@ -1093,12 +1100,18 @@ namespace TypeCobol.Compiler.Parser
 			if (context.FALSE() != null) statement.SendingValue = CobolWordsBuilder.CreateBooleanValue(context.FALSE());
             return statement;
 		}
-		
-		  ////////////////////
-		 // SORT STATEMENT //
-		////////////////////
 
-		internal SortStatement CreateSortStatement(CodeElementsParser.SortStatementContext context)
+	    internal CodeElement CreatePartialSetStatement(CodeElementsParser.SetStatementContext context)
+	    {
+	        var statement = new SetStatementPartial();
+	        return statement;
+	    }
+
+          ////////////////////
+          // SORT STATEMENT //
+          ////////////////////
+
+        internal SortStatement CreateSortStatement(CodeElementsParser.SortStatementContext context)
 		{
 			var statement = new SortStatement();
 

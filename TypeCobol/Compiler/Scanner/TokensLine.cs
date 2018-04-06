@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.Scanner
         {
             lastSourceIndex = Source.EndIndex;
             SourceTokens = new List<Token>();
-            ScannerDiagnostics = new List<Diagnostic>();
+            _ScannerDiagnostics = new List<Diagnostic>();
         }
 
         internal void InitializeScanState(MultilineScanState initialScanState)
@@ -30,10 +30,10 @@ namespace TypeCobol.Compiler.Scanner
         /// Factory method used by the parser when it inserts a missing token
         /// in the tokens stream to recover from the error and continue
         /// </summary>
-        internal static TokensLine CreateVirtualLineForInsertedToken(int initialLineIndex, string text)
+        internal static TokensLine CreateVirtualLineForInsertedToken(int lineIndex, string text)
         {
             return new TokensLine(
-                new TextLineSnapshot(initialLineIndex, text, null),
+                new TextLineSnapshot(lineIndex, text, null),
                 ColumnsLayout.FreeTextFormat);
         }
         
@@ -100,7 +100,12 @@ namespace TypeCobol.Compiler.Scanner
         /// Error and warning messages produced while scanning the raw source text line
         /// (before text manipulation phase)
         /// </summary>
-        public IList<Diagnostic> ScannerDiagnostics { get; private set; }
+        public IList<Diagnostic> ScannerDiagnostics
+        {
+            get { return _ScannerDiagnostics; }
+        }
+
+        private IList<Diagnostic> _ScannerDiagnostics;
 
         /// <summary>
         /// Use this method to attach a diagnostic to this line 
@@ -108,8 +113,8 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, int columnStart, int columnEnd, params object[] messageArgs)
         {
-            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, this.InitialLineIndex, messageArgs);
-            ScannerDiagnostics.Add(diag);
+            Diagnostic diag = new Diagnostic(messageCode, columnStart, columnEnd, this.LineIndex, messageArgs);
+            _ScannerDiagnostics.Add(diag);
         }
 
         /// <summary>
@@ -118,12 +123,12 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, Token token, params object[] messageArgs)
         {
-            Diagnostic diag = new TokenDiagnostic(messageCode, token, this.InitialLineIndex, messageArgs);
+            Diagnostic diag = new TokenDiagnostic(messageCode, token, this.LineIndex, messageArgs);
             if(diag.Info.Severity == Severity.Error)
             {
                 token.HasError = true;
             }
-            ScannerDiagnostics.Add(diag);
+            _ScannerDiagnostics.Add(diag);
         }     
 
         /// <summary>
@@ -131,8 +136,10 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal IEnumerable<Diagnostic> GetDiagnosticsForToken(Token filterToken)
         {
-            return ScannerDiagnostics.Where(diag => diag is TokenDiagnostic ? ((TokenDiagnostic)diag).Token == filterToken : false );
+            return _ScannerDiagnostics.Where(diag => diag is TokenDiagnostic && ((TokenDiagnostic)diag).Token == filterToken );
         }
+
+
 
         /// <summary>
         /// In case a continuation of the last token of this line is discovered on the next line,
@@ -151,9 +158,9 @@ namespace TypeCobol.Compiler.Scanner
         {
             if (token != null)
             {
-                foreach (Diagnostic diag in GetDiagnosticsForToken(token).ToArray())
+                foreach (Diagnostic diag in GetDiagnosticsForToken(token).ToArray()) //ToArray in order to remove reference
                 {
-                    ScannerDiagnostics.Remove(diag);
+                    _ScannerDiagnostics.Remove(diag);
                 }
             }
         }
@@ -185,7 +192,7 @@ namespace TypeCobol.Compiler.Scanner
             this.ScanStateBeforeCOPYToken = previousLineVersion.ScanStateBeforeCOPYToken;
             this.ScanState = previousLineVersion.ScanState;
             this.SourceTokens = previousLineVersion.SourceTokens;
-            this.ScannerDiagnostics = previousLineVersion.ScannerDiagnostics;
+            this._ScannerDiagnostics = previousLineVersion.ScannerDiagnostics;
             this.HasTokenContinuationFromPreviousLine = previousLineVersion.HasTokenContinuationFromPreviousLine;
             this.HasTokenContinuedOnNextLine = previousLineVersion.HasTokenContinuedOnNextLine;
 

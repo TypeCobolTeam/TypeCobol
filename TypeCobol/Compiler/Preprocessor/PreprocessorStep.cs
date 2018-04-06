@@ -393,13 +393,13 @@ namespace TypeCobol.Compiler.Preprocessor
                     ProcessedTokensLine previousLine = reversedEnumerator.Current;
 
                     // A reset line was already treated by the previous call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (previousLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                    if (previousLine?.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                     {
                         break;
                     }
                     // Previous line is a continuation : reset this line and continue navigating backwards
                     // Previous line is not a continuation but is continued : reset this line and stop navigating backwards
-                    else if (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine)
+                    else if (previousLine != null && (previousLine.HasDirectiveTokenContinuationFromPreviousLine || previousLine.HasDirectiveTokenContinuedOnNextLine))
                     {
                         lineIndex = previousLineIndex;
                         previousLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(previousLineIndex, previousLine, CompilationStep.Preprocessor);
@@ -429,13 +429,13 @@ namespace TypeCobol.Compiler.Preprocessor
                     ProcessedTokensLine nextLine = enumerator.Current;
 
                     // A reset line will be treated by the next call to CheckIfAdjacentLinesNeedRefresh : stop searching
-                    if (nextLine.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
+                    if (nextLine?.PreprocessingState == ProcessedTokensLine.PreprocessorState.NeedsCompilerDirectiveParsing)
                     {
                         break;
                     }
                     // Next line is a continuation and is continued: reset this line and continue navigating forwards
                     // Next line is a continuation but is not continued : reset this line and stop navigating forwards
-                    else if (nextLine.HasDirectiveTokenContinuationFromPreviousLine)
+                    else if (nextLine != null && nextLine.HasDirectiveTokenContinuationFromPreviousLine)
                     {
                         nextLine = (ProcessedTokensLine)prepareDocumentLineForUpdate(nextLineIndex, nextLine, CompilationStep.Preprocessor);
                         processedTokensLinesChanges.Add(new DocumentChange<IProcessedTokensLine>(DocumentChangeType.LineUpdated, nextLineIndex, nextLine));

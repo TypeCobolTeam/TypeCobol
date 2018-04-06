@@ -5,7 +5,9 @@
       *01  IsOk type bool.
        01  IsOk-value PIC X VALUE LOW-VALUE.
            88  IsOk       VALUE 'T'.
-           88  IsOk-false VALUE 'F'.
+           88  IsOk-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                           
       
        procedure division.
@@ -23,13 +25,15 @@
       *DECLARE PROCEDURE IsDateValid.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ee0864c9.
+       PROGRAM-ID. ee0864c9IsDateValid.
        DATA DIVISION .
        working-storage section.
       *01  Result type bool.
        01  Result-value PIC X VALUE LOW-VALUE.
            88  Result       VALUE 'T'.
-           88  Result-false VALUE 'F'.
+           88  Result-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                             
        PROCEDURE DIVISION
            .
@@ -39,4 +43,4 @@
                SET Result-false TO TRUE
                                    
            .
-       END PROGRAM ee0864c9.
+       END PROGRAM ee0864c9IsDateValid.

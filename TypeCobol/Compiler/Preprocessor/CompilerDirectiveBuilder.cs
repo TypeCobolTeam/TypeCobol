@@ -175,8 +175,6 @@ namespace TypeCobol.Compiler.Preprocessor
                                      StringComparison.InvariantCultureIgnoreCase))))
                         //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
                     {
-                        AnalyticsWrapper.Telemetry.TrackEvent("[Copy-Missing] " + copy.TextName);
-
                         variations = new List<RemarksDirective.TextNameVariation>
                         {
                             new RemarksDirective.TextNameVariation(copy.TextName)
@@ -187,14 +185,11 @@ namespace TypeCobol.Compiler.Preprocessor
 
                     if (variations != null)
                     {
-                        var declaration =
-                            variations.Find(
-                                d =>
-                                    String.Equals(d.TextNameWithSuffix, copy.TextName,
+                        var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName,
                                         StringComparison.InvariantCultureIgnoreCase));
-                        if (declaration != null)
+                        if (declaration != null && copy.TextName.StartsWith("Y", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            // Declaration found => apply the legacy REPLACING semantics to the copy directive
+                            // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
                             copy.RemoveFirst01Level = true;
                             if (declaration.HasSuffix)
                             {

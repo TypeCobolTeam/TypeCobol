@@ -30,18 +30,18 @@
       *DECLARE FUNCTION DoesNothing PRIVATE.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c49a4761.
+       PROGRAM-ID. c49a4761DoesNothing.
        PROCEDURE DIVISION
            .
            DISPLAY 'I DO NOTHING'
            .
-       END PROGRAM c49a4761.
+       END PROGRAM c49a4761DoesNothing.
       *
       *DECLARE FUNCTION ReturnsZero PRIVATE
       *      RETURNING result PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e61a1c43.
+       PROGRAM-ID. e61a1c43ReturnsZero.
        DATA DIVISION.
        LINKAGE SECTION.
        01 result PIC 9(04).
@@ -50,13 +50,13 @@
            .
            MOVE 0 TO result.
            .
-       END PROGRAM e61a1c43.
+       END PROGRAM e61a1c43ReturnsZero.
       *
       *DECLARE FUNCTION DoesNothing PRIVATE
       *      INPUT x PIC 9(04).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd51a7fd.
+       PROGRAM-ID. cd51a7fdDoesNothing.
        DATA DIVISION.
        LINKAGE SECTION.
        01 x PIC 9(04).
@@ -65,7 +65,7 @@
            .
            DISPLAY 'I DO NOTHING WITH ' x
            .
-       END PROGRAM cd51a7fd.
+       END PROGRAM cd51a7fdDoesNothing.
       *
       *DECLARE FUNCTION StrangelyReturnsItsInput PRIVATE
       *      INPUT     x      PIC 9(04) comp-3
@@ -73,7 +73,7 @@
       *    .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c498f2f1.
+       PROGRAM-ID. c498f2f1StrangelyReturnsItsInp.
        DATA DIVISION.
        LINKAGE SECTION.
        01 x PIC 9(04) comp-3.
@@ -87,24 +87,24 @@
            ELSE
              MOVE x TO result
            END-IF.
-       END PROGRAM c498f2f1.
+       END PROGRAM c498f2f1StrangelyReturnsItsInp.
       *
       *declare function UseACopy private
       *         input  x pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e7b552c0.
+       PROGRAM-ID. e7b552c0UseACopy.
        data division.
        working-storage section.
        01 yoto pic X.
        REPLACE ==:MyPrefix:== by ==MyPrefix2==.
        COPY MyDataCopy.
        LINKAGE SECTION.
-       01 x PIC X.
+       01 x pic X.
        PROCEDURE DIVISION
              USING BY REFERENCE x
            .
            display "Hello"
            COPY MyProcedureCopy.
            .
-       END PROGRAM e7b552c0.
+       END PROGRAM e7b552c0UseACopy.

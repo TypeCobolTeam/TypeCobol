@@ -33,27 +33,46 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"       VALUE 'T'.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F'.", null));
 				} else {
-					var str = new System.Text.StringBuilder();
+                    bool bHasPeriod = false;
+                    bool bIgnoreUsage = false;
+                        var str = new System.Text.StringBuilder();
 					str.Append("01 ").Append(name);
 					AlphanumericValue picture = null;
-                        //Type exists from Cobol 2002
+                    //Type exists from Cobol 2002
+				    string typedef = null;
 					if (this.CodeElement().DataType.CobolLanguageLevel >= TypeCobol.Compiler.CobolLanguageLevel.Cobol2002) {
 						var found = this.SymbolTable.GetType(this.CodeElement().DataType);
 						if (found.Count > 0) {
 							customtype = found[0];
-							picture = customtype.CodeElement().Picture;
+						    typedef = TypedDataNode.ExtractAnyCobolScalarTypeDef(Layout, customtype, out bHasPeriod, true);
+						    if (typedef.Length != 0)
+						    {
+						        str.Append(typedef);
+						    }
 						}
 					} else picture = this.CodeElement().Picture;
 
                     if (picture != null)
                     {
-                        str.Append(" PIC ").Append(picture);
+                        //If we have a picture, try to extract the original pic string declaration.
+                        string picIt = TypedDataNode.ExtractPicTokensValues(Layout, this.CodeElement().ConsumedTokens, out bHasPeriod);
+                        if (picIt.Length != 0)
+                        {
+                            str.Append(picIt);
+                            bIgnoreUsage = true;
+                        }
+                        else
+                            str.Append(" PIC ").Append(picture);
                     }
-                    if (this.CodeElement().Usage != null) {
-                            str.Append(" ").Append(this.CodeElement().Usage.Token.SourceText);
-                    }
+				    if (!bIgnoreUsage)
+				    {
+				        if (this.CodeElement().Usage != null)
+				        {
+				            str.Append(" ").Append(this.CodeElement().Usage.Token.SourceText);
+				        }
+				    }
 
-                    if (picture == null && this.CodeElement().Usage == null && this.CodeElement().DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
+				    if (picture == null && this.CodeElement().Usage == null && this.CodeElement().DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
                     {//JCM humm... Type without picture lookup enclosing scope.
                         var found = this.SymbolTable.GetType(this.CodeElement().DataType);
                         if (found.Count > 0)
@@ -62,11 +81,17 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
                             picture = customtype.CodeElement().Picture;
                             if (picture != null)
                             {
-                                str.Append(" PIC ").Append(picture);
+                                //If we have a picture, try to extract the original pic string declaration.
+                                string picIt = TypedDataNode.ExtractPicTokensValues(Layout, customtype.CodeElement(), out bHasPeriod);
+                                if (picIt.Length != 0)
+                                    str.Append(picIt);
+                                else
+                                    str.Append(" PIC ").Append(picture);                                    
                             }
                         }
                     }
-					str.Append('.');
+                    if (!bHasPeriod)
+					    str.Append('.');
 					_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 
 					// TCRFUN_CODEGEN_PARAMETERS_IN_LINKAGE_SECTION
@@ -84,12 +109,17 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 							foreach(var range in entry.ConditionValuesRanges)
 								str.Append(" \'").Append(range.MinValue).Append("\' THRU \'").Append(range.MaxValue).Append('\'');
 						}
-						str.Append('.');
+                        str.Append('.');
 						_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 					}
 				}
-
-				if (customtype != null) _cache.AddRange(TypedDataNode.InsertChildren(Layout, this.SymbolTable, customtype, 2, 1));
+                if (customtype != null)
+                {
+                    List<string> rootProcedures;
+                    List<System.Tuple<string, string>> rootVars;
+                    GeneratorHelper.ComputeTypedProperPaths(this, this.CodeElement(), customtype, out rootProcedures, out rootVars);
+                    _cache.AddRange(TypedDataNode.InsertChildren(Layout, rootProcedures, rootVars, customtype, customtype, 2, 1));
+                }
 			}
 			return _cache;
 		}

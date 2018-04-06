@@ -14,7 +14,20 @@
        01  flag         TYPE Bool.
        01  realformat   PIC X(08).
 
+       01 funcPointer function-pointer.
+       01 procPointer procedure-pointer.
+
        PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE GetPtrFn
+           INPUT  ptrFn function-pointer
+                  ptrPr procedure-pointer.
+       PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
+       END-DECLARE.
 
        DECLARE PROCEDURE ValidateDateFormat PRIVATE.
        END-DECLARE.
@@ -44,6 +57,12 @@
        END-DECLARE.
 
        TRAITEMENT.
+
+       CALL GetPtrFn 
+             INPUT funcPointer procPointer.
+
+       CALL ProcedureWithANameOver22Chars.
+
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PARAMETER_ORDER)
            CALL ValidateDateFormat

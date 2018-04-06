@@ -1,0 +1,66 @@
+﻿--- Diagnostics ---
+Line 57[8,22] <27, Error, Syntax> - Syntax error : x is already a parameter.
+Line 58[8,22] <27, Error, Syntax> - Syntax error : y is already a parameter.
+Line 60[12,26] <27, Error, Syntax> - Syntax error : x is already a parameter.
+Line 61[12,26] <27, Error, Syntax> - Syntax error : z is already a parameter.
+Line 64[8,27] <27, Error, Syntax> - Syntax error : result is already a parameter.
+Line 66[12,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol x
+Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol y
+Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol z
+Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 88[8,10] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times
+Line 88[8,10] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times
+Line 103[8,28] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
+Line 123[8,10] <27, Error, Syntax> - Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
+Line 123[8,10] <27, Error, Syntax> - Syntax error : Condition parameter "male" must be level 88.
+
+--- Program ---
+PROGRAM: FunDeclare common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+-- PARAGRAPHS --
+  ILLEGAL-NON-FUNCTION-PARAGRAPH
+-- FUNCTIONS ---
+  DoesNothing
+  DoesNothing
+        in: x:Numeric
+  ReturnsZero
+    return: result:Numeric
+  StrangelyReturnsItsInput
+        in: x:Numeric
+    return: result:Numeric
+  SumThreeWithClutterInLinkage
+        in: x:Numeric
+        in: y:Numeric
+        in: z:Numeric
+        in: t:Numeric
+    return: result:Numeric
+  SwapParameters
+     inout: x:Numeric
+     inout: y:Numeric
+  SwapParametersWrong
+        in: x:Numeric
+        in: y:Numeric
+        in: a:Numeric
+       out: x:Numeric
+       out: y:Numeric
+       out: b:Numeric
+  IllegalClauses
+  FunConditions
+        in: gender:Alphanumeric
+  FunConditions
+        in: valid-gender:?
+        in: gender:Alphanumeric
+  MyNOT
+        in: x:BOOL
+    return: y:BOOL
+--- Intrinsic:Namespace:Global
+-- DATA --------
+  g:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

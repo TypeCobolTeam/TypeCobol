@@ -106,10 +106,16 @@ namespace TypeCobol.Codegen
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public Generator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons)
+        public Generator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion)
         {
             this.CompilationResults = document;
+            this.TypeCobolVersion = typeCobolVersion;
             Destination = destination;
+
+            //Add version to output file
+            if (!string.IsNullOrEmpty(TypeCobolVersion))
+                Destination.WriteLine("      *TypeCobol_Version:" + TypeCobolVersion);
+
             Actions = new GeneratorActions(this, skeletons, document);
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
@@ -155,7 +161,7 @@ namespace TypeCobol.Codegen
                             {
                                 lineNumbers.Add(lastLine);
                                 SourceDocument.SourceLine srcLine = TargetDocument[lastLine - 1];
-                                lineOffsets.Add(srcLine.From - srcFirstLine.From);
+                                if (srcFirstLine != null) lineOffsets.Add(srcLine.From - srcFirstLine.From);
                             }
                         }
                         SourceDocument.SourceLine curLine = TargetDocument[curLineIndex - 1];
@@ -223,11 +229,11 @@ namespace TypeCobol.Codegen
             //Check if there is any error in diags
             if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
-                AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Diagnostics Detected");
+                AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Diagnostics Detected", EventType.Genration);
                 throw new GenerationException("Unable to generate because of error diagnostics", null, null, false, false);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Started");
+            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Started", EventType.Genration);
            
             // STEP 0: Initialize the global values.
             RootNode = compilationUnit.ProgramClassDocumentSnapshot.Root;
@@ -244,7 +250,7 @@ namespace TypeCobol.Codegen
             // STEP 2: convert tree to destination language code
             TreeToCode();
       
-            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Ended");
+            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Ended", EventType.Genration);
         }
 
         /// <summary>
@@ -304,5 +310,7 @@ namespace TypeCobol.Codegen
         /// <param name="node">The node to process</param>
         /// <returns>true if child nodes must visited for acceptation, false otherwise.</returns>
         protected abstract bool Process(Node node);
+
+        public string TypeCobolVersion { get; set; }
     }
 }

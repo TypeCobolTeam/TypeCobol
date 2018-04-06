@@ -12,6 +12,7 @@ using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Tools;
 using Analytics;
 using Castle.Core.Internal;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -100,28 +101,21 @@ namespace TypeCobol.Compiler.Parser
             SyntaxTree.Exit();
         }
 
-        public IList<ParserDiagnostic> GetDiagnostics(ProgramClassParser.CobolCompilationUnitContext context)
+        public List<Diagnostic> GetDiagnostics(ProgramClassParser.CobolCompilationUnitContext context)
         {
-            IList<ParserDiagnostic> diagnostics = new List<ParserDiagnostic>();
+            List<Diagnostic> diagnostics = new List<Diagnostic>();
             AddDiagnosticsAttachedInContext(diagnostics, context);
-            if (diagnostics.Count > 0)
-            {
-                return diagnostics;
-            }
-            else
-            {
-                return null;
-            }
+            return diagnostics.Count > 0 ? diagnostics : null;
         }
 
-        private void AddDiagnosticsAttachedInContext(IList<ParserDiagnostic> diagnostics, ParserRuleContext context)
+        private void AddDiagnosticsAttachedInContext(List<Diagnostic> diagnostics, ParserRuleContext context)
         {
             var ruleNodeWithDiagnostics = (ParserRuleContextWithDiagnostics)context;
             if (ruleNodeWithDiagnostics.Diagnostics != null)
             {
                 foreach (var ruleDiagnostic in ruleNodeWithDiagnostics.Diagnostics)
                 {
-                    diagnostics.Add((ParserDiagnostic)ruleDiagnostic);
+                    diagnostics.Add(ruleDiagnostic);
                 }
             }
             if (context.children != null)
@@ -401,7 +395,7 @@ namespace TypeCobol.Compiler.Parser
                 table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
             table.AddType(node);
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Declared] " + node.Name);
+            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Declared] " + node.Name, EventType.TypeCobolUsage);
         }
         // [/COBOL 2002]
 
@@ -432,7 +426,11 @@ namespace TypeCobol.Compiler.Parser
                     if (node.CodeElement().IsGlobal)
                         table = table.GetTableFromScope(SymbolTable.Scope.Global);
 
-                    table.AddVariable(index.Name, node);
+                    var indexNode = new IndexDefinition(index);
+                    Enter(indexNode, null, table);
+                    if (!indexNode.IsPartOfATypeDef) //If index is inside a Typedef do not add to symboltable
+                        table.AddVariable(indexNode);
+                    Exit();
                 }
             }
 
@@ -441,7 +439,36 @@ namespace TypeCobol.Compiler.Parser
             {
                 data.DataType.RestrictionLevel = types[0].DataType.RestrictionLevel;
             }
-            //else do nothing, it's an error that will be treated by a Checker (Cobol2002Checker obviously).
+            //else do nothing, it's an error that will be handled by Cobol2002Checker
+
+            var parent = node.Parent;
+            while(parent !=null)
+            {
+                if (parent is WorkingStorageSection)
+                {
+                    //Set flag to know that this node belongs to working storage section
+                    node.SetFlag(Node.Flag.WorkingSectionNode, true); 
+                    break;
+                }
+                else if (parent is LinkageSection)
+                {
+                    //Set flag to know that this node belongs to linkage section
+                    node.SetFlag(Node.Flag.LinkageSectionNode, true);
+                    break;
+                }
+                else if (parent is LocalStorageSection)
+                {
+                    //Set flag to know that this node belongs to local storage section
+                    node.SetFlag(Node.Flag.LocalStorageSectionNode, true);
+                    break;
+                }
+                else if (parent is FileSection)
+                {
+                    node.SetFlag(Node.Flag.FileSectionNode, true);
+                    break;
+                }
+                parent = parent.Parent;
+            }
 
             AddToSymbolTable(node);
         }
@@ -531,6 +558,20 @@ namespace TypeCobol.Compiler.Parser
             Exit();
         }
 
+        public override void EnterDeclaratives(ProgramClassParser.DeclarativesContext context)
+        {
+            var terminal = context.DeclarativesHeader();
+            var header = terminal != null ? (DeclarativesHeader)terminal.Symbol : null;
+  
+            var node = new Declaratives(header);
+            Enter(node, context);
+        }
+
+        public override void ExitDeclaratives(ProgramClassParser.DeclarativesContext context)
+        {
+            AttachEndIfExists(context.DeclarativesEnd());
+            Exit();
+        }
 
 
         private Tools.UIDStore uidfactory = new Tools.UIDStore();
@@ -539,12 +580,15 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context)
         {
             var terminal = context.FunctionDeclarationHeader();
-            var header = terminal != null ? (FunctionDeclarationHeader)terminal.Symbol : null;
-            if (header != null) header.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
-            var node = new FunctionDeclaration(header);
-            node.Label = uidfactory.FromOriginal(header.FunctionName.Name);
-            node.Library = CurrentProgram.Identification.ProgramName.Name; //DO NOT change this without checking all references of Library. 
-                                                                           // (SymbolTable - function, type finding could be impacted) 
+            var header = (FunctionDeclarationHeader) terminal?.Symbol;
+            header?.SetLibrary(CurrentProgram.Identification.ProgramName.Name);
+            var node = new FunctionDeclaration(header)
+            {
+                Label = uidfactory.FromOriginal(header?.FunctionName.Name),
+                Library = CurrentProgram.Identification.ProgramName.Name
+            };
+            //DO NOT change this without checking all references of Library. 
+            // (SymbolTable - function, type finding could be impacted) 
 
             //Function must be added to Declarations scope
             var declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
@@ -558,21 +602,30 @@ namespace TypeCobol.Compiler.Parser
             {
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.InputParameters.Add(paramNode);
+
+                paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
             foreach (var parameter in declaration.Profile.OutputParameters) //Set Output Parameters
             {
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.OutputParameters.Add(paramNode);
+
+                paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
             foreach (var parameter in declaration.Profile.InoutParameters) //Set Inout Parameters
             {
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 funcProfile.InoutParameters.Add(paramNode);
+
+                paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
 
@@ -580,11 +633,14 @@ namespace TypeCobol.Compiler.Parser
             {
                 var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
+                paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
                 ((FunctionDeclaration)CurrentNode).Profile.ReturningParameter = paramNode;
+
+                paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName);
+            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName, EventType.TypeCobolUsage);
         }
         public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context)
         {

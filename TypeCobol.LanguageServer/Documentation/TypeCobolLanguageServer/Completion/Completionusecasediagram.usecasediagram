@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<useCaseModelRoot xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" xmlns:dm9="http://schemas.microsoft.com/VisualStudio/TeamArchitect/SequenceDesigner" xmlns:dm10="http://schemas.microsoft.com/dsltools/SimpleShapesModel" xmlns:dm11="http://schemas.microsoft.com/dsltools/LogicalClassDesigner" dslVersion="1.0.0.0" Id="0d1bfb2f-fb7d-487a-9960-bb199a29d579" name="Completionusecasediagram" linkedPackageId="e5136cb8-2639-46fa-ba8f-9d9f91bcc5fc" xmlns="http://schemas.microsoft.com/dsltools/UseCaseModel">
+  <packagedElements>
+    <useCaseModelRootHasTypes>
+      <actor Id="c6562e0d-4fe0-45a0-b321-4e4e916a534d" name="TypeCobol.LanguageClient" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="a272e2ce-0f59-4ed3-a7a7-4861e42bd3f3" />
+        <targetEnds>
+          <association Id="6e738ae9-7553-4e0b-97f9-d2115d577f32" isDerived="false" sourceEndRoleName="TypeCobol.LanguageClient" targetEndRoleName="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams  " isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="0892d181-163b-4d47-993a-ede385f843a8" LastKnownName="Ouverture d'u requête : textDocument/completion " />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="dbe21bdd-fb63-4851-8370-005f0b49e2a8" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="4694ccfd-74c6-4bd9-a43b-e4b3e90cd64a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="ee8e4341-10c1-44fe-a849-5ab50e10fee2" name="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams  " isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="a8fa403e-aefd-48a6-9335-3a576373bfdc" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="9bf72cc2-cce9-43ab-ac5e-4a5bfb8260de" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <actor Id="e8cc845d-4cd3-4fbc-b27f-345c89451964" name="TypeCobol.LanguageServer" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="acf6e5a9-6677-47e5-b736-fa342f105ee8" />
+        <targetEnds>
+          <association Id="afd74e18-d11a-4c3e-99df-41563e139fda" isDerived="false" sourceEndRoleName="TypeCobol.LanguageServer" targetEndRoleName="Réponse à la requête&#xD;&#xA;Renvoie d'une liste de CompletionItem " isLeaf="false" isAbstract="false">
+            <useCaseMoniker Id="2cf980ca-2220-4685-9b41-0c3a19325728" LastKnownName="Réponse à la requête&#xD;&#xA;Renvoie d'une liste de CompletionItem " />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="95bfc0ff-defe-4259-bef5-1d99a492fa9b" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="82294b6a-bae1-47a5-bf2c-1d7f3582c83a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="cb93e6ea-1904-433c-95bc-7ee9e0f7a127" name="Réponse à la requête&#xD;&#xA;Renvoie d'une liste de CompletionItem " isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="2ee3635b-ff12-49c7-a6ce-540565c18d43" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="f89c668a-d829-4c62-b749-6465d63ec3cc" />
+          </association>
+        </targetEnds>
+      </actor>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="0892d181-163b-4d47-993a-ede385f843a8" name="Ouverture d'u requête : textDocument/completion " isAbstract="false" isLeaf="false">
+        <elementDefinition Id="82604088-a461-4ff2-8001-444a7555d0eb" />
+        <targetEnds>
+          <association Id="4218b58d-666e-47e6-b484-f1a16fbf036b" isDerived="false" sourceEndRoleName="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams  " targetEndRoleName="TypeCobol.LanguageServer" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="e8cc845d-4cd3-4fbc-b27f-345c89451964" LastKnownName="TypeCobol.LanguageServer" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="625af9c2-7616-41d5-acdc-e657993f4e58" name="Envoie notification : workspace/didChangeConfiguration : DidChangeConfigurationParams  " isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="a1359664-5029-4394-8812-2fb88bed7283" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="bf89084d-e5c0-4e22-a025-34ecce030708" name="TypeCobol.LanguageServer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="6e80c26b-81a0-4a94-a6cb-749a09901a98" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="fb55685f-8e66-4804-8a56-7b952175139d" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+    <useCaseModelRootHasTypes>
+      <useCase Id="2cf980ca-2220-4685-9b41-0c3a19325728" name="Réponse à la requête&#xD;&#xA;Renvoie d'une liste de CompletionItem " isAbstract="false" isLeaf="false">
+        <elementDefinition Id="759a7d05-f1e0-48df-ae56-37f455b2c8c3" />
+        <targetEnds>
+          <association Id="dfbc0280-fdef-4293-8f4f-82008e3a96d6" isDerived="false" sourceEndRoleName="Réponse à la requête&#xD;&#xA;Renvoie d'une liste de CompletionItem " targetEndRoleName="TypeCobol.LanguageClient" isLeaf="false" isAbstract="false">
+            <actorMoniker Id="c6562e0d-4fe0-45a0-b321-4e4e916a534d" LastKnownName="TypeCobol.LanguageClient" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="76589dcb-396f-416e-8655-aeec9a9c9cfd" name="Réponse à la requête&#xD;&#xA;Renvoie d'une liste de CompletionItem " isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="152f2ab5-559d-4a1f-b087-1c1efec79e26" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="c8314c66-ae8c-4f8f-98c6-508efe1d0911" name="TypeCobol.LanguageClient" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="83229c35-407c-460e-af4e-bc5e47cfc28b" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="1355e20d-650d-41a6-8df8-3439759e9353" />
+          </association>
+        </targetEnds>
+      </useCase>
+    </useCaseModelRootHasTypes>
+  </packagedElements>
+  <package Id="e5136cb8-2639-46fa-ba8f-9d9f91bcc5fc" name="TypeCobolLanguageServer">
+    <elementDefinition Id="5d09ded1-4567-4003-bfe3-37cf35f27636" />
+  </package>
+</useCaseModelRoot>

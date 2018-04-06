@@ -3,6 +3,9 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace TypeCobol.LanguageServer.VsCodeProtocol
 {
     /// <summary>
@@ -35,5 +38,32 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
             this.documentation = documentation;
             this.parameters = parameters;
 	    }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is SignatureInformation))
+                return false;
+
+            var givenSignature = (SignatureInformation) obj;
+
+            return givenSignature.label == this.label
+                   && givenSignature.documentation == this.documentation
+                   && CompareLists(this.parameters.ToList(), givenSignature.parameters.ToList());
+        }
+
+        private static bool CompareLists(List<ParameterInformation> list1, List<ParameterInformation> list2)
+        {
+
+            if (list1.Count != list2.Count)
+                return false;
+
+            for (int i = 0; i < list1.Count; i++)
+            {
+                if (list1[i].label != list2[i].label || list1[i].documentation != list2[i].documentation)
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

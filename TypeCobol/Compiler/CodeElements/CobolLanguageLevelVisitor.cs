@@ -342,6 +342,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] OnOverflow onOverflow);
         bool Visit([NotNull] NoOverflow noOverflow);
         bool Visit([NotNull] ProcedureDivision procedureDivision);
+        bool Visit([NotNull] Declaratives declaratives);
         bool Visit([NotNull] FunctionDeclaration functionDeclaration);
         bool Visit([NotNull] FunctionEnd functionEnd);
         bool Visit([NotNull] Sentence sentence);
@@ -352,6 +353,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] CodeModel.Program program);
 
         bool Visit([NotNull] ParametersProfileNode profile);
+        bool Visit ([NotNull] IndexDefinition indexDefinition);
     }
 
 
@@ -1328,6 +1330,10 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
+        public virtual bool Visit(Declaratives declaratives) {
+            return true;
+        }
+
         public virtual bool Visit(FunctionDeclaration functionDeclaration) {
             return true;
         }
@@ -1368,6 +1374,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(ParametersProfileNode profile)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] IndexDefinition indexDefinition)
         {
             return true;
         }

@@ -1263,10 +1263,23 @@ namespace TypeCobol.Compiler.Parser
             {
                 entry.Usage = CreateUsageClause(context.usageClause()[0]);
             }
-            if (context.valueClause() != null && context.valueClause().Length > 0)
+            if (context.valueClause() != null && context.valueClause().Length > 0 && context.valueClause()[0].value2() != null)
             {
                 var valueClauseContext = context.valueClause()[0];
                 entry.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
+            }
+	        if (context.valueClauseWithBoolean() != null && context.valueClauseWithBoolean().Length > 0)
+	        {
+	            if (context.valueClauseWithBoolean()[0].booleanValue() != null)
+	            {
+                    var valueClauseBooleanContext = context.valueClauseWithBoolean()[0].booleanValue();
+                    entry.InitialValue = new Value(CobolWordsBuilder.CreateBooleanValue(valueClauseBooleanContext));
+                }
+                else if (context.valueClauseWithBoolean()[0].value2() != null)
+	            {
+                    var valueClauseContext = context.valueClauseWithBoolean()[0].value2();
+                    entry.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext);
+                }
             }
 
 
@@ -1980,6 +1993,11 @@ namespace TypeCobol.Compiler.Parser
 				Context = context.setStatementForConditions();
 				CodeElement = CobolStatementsBuilder.CreateSetStatementForConditions(context.setStatementForConditions());
 			}
+            else
+		    {
+		        Context = context;
+		        CodeElement = new SetStatementPartial();
+		    }
 		}
 
 

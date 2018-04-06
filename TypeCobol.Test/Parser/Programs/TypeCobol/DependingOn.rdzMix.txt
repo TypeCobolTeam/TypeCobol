@@ -1,0 +1,120 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DependOnPgm.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       special-names. decimal-point is comma.
+       DATA DIVISION.
+       working-storage section.
+
+       01 MyType TYPEDEF STRICT.
+            05 TypeCounter pic 999 comp-5.
+
+       01 MyTypedVar TYPE MyType.
+
+       01 MyGroup.
+          05 MyCounter pic 999 comp-5.
+      *Ok MyCounter is unique in the source
+          05 MyTab     occurs 99 depending on MyCounter.
+
+
+       01 MyAmbiguousGroup.
+      *OK you can declare 2 variables with the same name
+          05 MyAmbiguousCounter  pic 999 comp-5.
+      *OK you can declare 2 variables with the same name
+          05 MyAmbiguousCounter  pic 999 comp-5.
+      *KO reference to MyAmbiguousCounter is ... Ambiguous
+Line 27[11,64] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyAmbiguousCounter
+          05 MyAmbiguousTab     occurs 99 
+                                depending on MyAmbiguousCounter.
+
+       01 MyGroup3.
+          05 MyCounter3  pic 999 comp-5.
+      *KO depending on clause cannot be a numeric
+Line 33[48,50] <27, Error, Syntax> - Syntax error : no viable alternative at input '999'
+Line 33[48,50] <27, Error, Syntax> - Syntax error : no viable alternative at input '999'
+          05 MyTab3     occurs 99 depending on 999.
+
+
+       01 MyGroup5.
+          05 MyCounter5 pic 999 comp-5.
+      *Ok use operator OF
+          05 MyTab5     occurs 99 depending on MyCounter5 of MyGroup5. 
+      *Ok use operator IN
+          05 MyTab51     occurs 99 depending on MyCounter5 IN MyGroup5.
+      *OK use operator ::
+          05 MyTab52    occurs 99 depending on MyGroup::MyCounter.
+      *OK use operator :: with typedef
+          05 MyTab53    occurs 99 depending on MyTypedVar::TypeCounter.
+
+       01 CounterType TYPEDEF STRICT.
+            05 Counter pic 999 comp-5.
+
+       01 DuplicatedCounterType TYPEDEF STRICT.
+            05 DuplicatedCounter pic 999 comp-5.
+
+       01 DependType TYPEDEF STRICT.
+            05 VarCounter TYPE CounterType.
+            05 ambigousCounter TYPE DuplicatedCounterType.
+            05 ambigousCounter2 TYPE DuplicatedCounterType.
+            05 TypeCounter pic 999 comp-5.
+            05 MyGroup.
+                10 GroupCounter pic 999 comp-5.
+
+      *OK, typecounter is declared locally
+            05 secondTable pic x(1) occurs 5
+            depending on TypeCounter.
+
+      *OK, VarCounter is declared in this context
+            05 typedTable PIC X(1) occurs 5 
+            depending on VarCounter::Counter.
+
+      *OK, Counter belongs to CounterType declared with VarCounter
+            05 secondTypedTable PIC X(1) occurs 5 
+            depending on Counter.
+
+      *KO, trying to use a variable declared outside typedef
+Line 74[13,50] <27, Error, Syntax> - Syntax error : Symbol MyTypedVar2.TypeCounter is not referenced
+            05 table PIC X(1) occurs 5 
+            depending on MyTypedVar2::TypeCounter.
+
+      *KO, trying to use a variable declared outside typedef
+Line 78[13,50] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.Counter is not referenced
+            05 table PIC X(1) occurs 5 
+            depending on DenpendingGroup::Counter.
+
+      *KO, trying to use a variable declared outside typedef
+Line 82[13,62] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.VarCounter.Counter is not referenced
+            05 table PIC X(1) occurs 5 
+            depending on DenpendingGroup::VarCounter::Counter.
+
+      *KO, trying to use a variable declared outside typedef
+Line 86[13,54] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.TypeCounter is not referenced
+            05 table PIC X(1) occurs 5 
+            depending on DenpendingGroup::TypeCounter.
+
+      *KO, trying to use an ambigous local var
+Line 90[13,43] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter
+            05 table PIC X(1) occurs 5 
+            depending on DuplicatedCounter.
+
+      *OK, using local variable with qualifiedName
+            05 table PIC X(1) occurs 5 
+            depending on MyGroup::GroupCounter.
+
+      *OK, using local varialbe without qualifiedName
+            05 table PIC X(1) occurs 5 
+            depending on GroupCounter.
+
+       01 TypeCounter pic 666 comp-5.
+       01 VarCounter TYPE CounterType.
+       01 VarCounter TYPE CounterType.
+       01 DenpendingGroup.
+        05 VarCounter TYPE CounterType.
+        05 MyTypedVar2 TYPE DependType.
+
+
+       PROCEDURE DIVISION.
+           move 1 to MyCounter
+           .
+       END PROGRAM MYPGM.

@@ -1,0 +1,61 @@
+﻿--- Diagnostics ---
+Line 89[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
+Line 90[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced
+Line 92[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
+Line 93[5,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced
+Line 102[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
+Line 103[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
+Line 105[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-D2.T2-C.T2-B.T2-A is not referenced
+Line 106[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A is not referenced
+
+--- Program ---
+PROGRAM: COLON common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  T1-A:Alphanumeric
+  T1-B1:Alphanumeric
+  T1-B2:Alphanumeric
+  T2-A:Alphanumeric
+  T2-B:Alphanumeric
+  T2-C:Alphanumeric
+  T2-D1:Alphanumeric
+  T2-D2:Alphanumeric
+  T2-D2-V1:BOOL
+  T3-A1:Alphanumeric
+  T3-B1:Alphanumeric
+  T3-B1:Alphanumeric
+  T3-C1:Alphanumeric
+  T3-C1:Alphanumeric
+  T3-C2:Alphanumeric
+  T3-C2:Alphanumeric
+  T3-B2:Alphanumeric
+  T3-B2:Alphanumeric
+  T3-A2:Alphanumeric
+  T4-A1:Array
+  T4-B1:Array
+  T4-B1:Alphanumeric
+  T4-C1:Alphanumeric
+  T4-C1:Alphanumeric
+  T4-C2:Alphanumeric
+  T4-C2:Alphanumeric
+  T4-B2:Alphanumeric
+  T4-B2:Alphanumeric
+  T4-A2:Alphanumeric
+  MyVar:MyArray
+  MyLevel:Alphanumeric
+  MyArray:Array
+-- PARAGRAPHS --
+  TEST-1
+  TEST-2
+  TEST-3
+  TEST-4
+  TEST-5
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  MyArray:MyArray
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

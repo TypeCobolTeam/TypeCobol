@@ -21,10 +21,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
             Line = lineNumber;
             Message = String.Format(Info.MessageTemplate, messageArgs ?? new object[0]);
-            CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
-            MessageArgs = messageArgs;
+            if (messageArgs != null)
+            {
+                CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
+                MessageArgs = messageArgs;
+            }
 
-            AnalyticsWrapper.Telemetry.TrackTrace("[Diagnostic] " + this.ToString());
+            AnalyticsWrapper.Telemetry.TrackTrace("[Diagnostic] " + this);
         }
 
         public DiagnosticMessage Info { get; set; }
@@ -44,6 +47,22 @@ namespace TypeCobol.Compiler.Diagnostics
         public override string ToString()
         {
             return string.Format("Line {0}[{1},{2}] <{3}, {4}, {5}> - {6}", Line, ColumnStart, ColumnEnd, Info.Code, Info.Severity, Info.Category, Message);
+        }
+
+        public override bool Equals(object obj)
+        {
+            Diagnostic diag = obj as Diagnostic;
+            if (diag == null)
+                return false;
+
+            return diag.Line == this.Line &&
+                   diag.ColumnStart == this.ColumnStart &&
+                   diag.ColumnEnd == this.ColumnEnd &&
+                   diag.Message == this.Message &&
+                   (diag.Info != null && this.Info != null) &&
+                   diag.Info.Code == this.Info.Code &&
+                   diag.Info.Severity == this.Info.Severity;
+
         }
     }
 }

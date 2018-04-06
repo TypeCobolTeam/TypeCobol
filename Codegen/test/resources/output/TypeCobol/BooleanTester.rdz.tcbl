@@ -1,0 +1,97 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. BooleanTester.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 MyGroupLevl.
+         88 My88Level VALUE 99.
+
+       01 MyGroup.
+        05 MyArray pic X(50) occurs 50.
+        05 MySecondLevel.
+      *     10 levelBool TYPE BOOL.
+            10  levelBool-value PIC X VALUE LOW-VALUE.
+           88  levelBool       VALUE 'T'.
+           88  levelBool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                                   
+
+       01 Var1 pic X.
+      *01 Var2 TYPE BOOL.
+       01  Var2-value PIC X VALUE LOW-VALUE.
+           88  Var2       VALUE 'T'.
+           88  Var2-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                         
+      *01 Var3 TYPE BOOL.
+       01  Var3-value PIC X VALUE LOW-VALUE.
+           88  Var3       VALUE 'T'.
+           88  Var3-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                         
+       01 Var4 pic 9.
+
+      *01 myBool TYPE BOOL.
+       01  myBool-value PIC X VALUE LOW-VALUE.
+           88  myBool       VALUE 'T'.
+           88  myBool-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                           
+       PROCEDURE DIVISION.
+       MOVE My88Level TO My88Level.
+      *MOVE myBool TO myBool.
+       MOVE myBool-value TO myBool-value. 
+      *MOVE MyGroup::levelBool TO myBool.
+       MOVE levelBool-value OF MyGroup TO myBool-value. 
+       IF myBool = myBool
+         continue
+       END-IF.
+       SET myBool TO TRUE.
+      *SET myBool TO FALSE.
+       SET myBool-false TO TRUE
+                          .
+
+        EVALUATE TRUE
+         WHEN myBool CONTINUE
+        END-EVALUATE
+
+      *   display var2 "rtzerz" var3 "zerzerze"
+      *      'zrzr' var2
+          display var2-value "rtzerz" var3-value "zerzerze"
+             'zrzr' var2-value
+      
+      *    string var2 var3 Var4
+      *         delimited by size
+      *         into Var1
+           string var2-value var3-value Var4
+                delimited by size
+                into Var1
+           end-string
+      
+      *    evaluate var2
+           evaluate var2-value
+              when var2
+                  continue
+              when var3
+                 continue
+              when Var1 = '99998'
+                 continue
+              when other
+                 continue
+           end-evaluate
+
+           perform until MyBool
+            display "Hello"
+           end-perform
+
+           Search MyArray
+              when MyBool
+                 display "Hello"
+           end-search
+           .
+       END PROGRAM BooleanTester.

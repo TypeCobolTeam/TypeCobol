@@ -281,7 +281,7 @@ namespace TypeCobol.Compiler.Scanner
                 if (concatenatedLine.Length > 0)
                 {
                     // Scan the continuation text, and get its last token so far
-                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
+                    TokensLine temporaryTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
                     Scanner.ScanTokensLine(temporaryTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
                     Token lastTokenOfConcatenatedLineSoFar = temporaryTokensLine.SourceTokens[temporaryTokensLine.SourceTokens.Count - 1];
 
@@ -350,7 +350,7 @@ namespace TypeCobol.Compiler.Scanner
             }
 
             // Scan the complete continuation text as a whole
-            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.InitialLineIndex, concatenatedLine);
+            TokensLine virtualContinuationTokensLine = TokensLine.CreateVirtualLineForInsertedToken(firstLine.LineIndex, concatenatedLine);
             Scanner.ScanTokensLine(virtualContinuationTokensLine, initialScanState, compilerOptions, copyTextNameVariations);
 
             // Then attribute each token and diagnostic to its corresponding tokens line
@@ -474,7 +474,7 @@ namespace TypeCobol.Compiler.Scanner
 
         private TypeCobolOptions compilerOptions;
 
-        private Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
+        public Scanner(string line, int startIndex, int lastIndex, TokensLine tokensLine, TypeCobolOptions compilerOptions, bool beSmartWithLevelNumber = true)
         {
             this.tokensLine = tokensLine;
             this.line = line;
@@ -486,7 +486,7 @@ namespace TypeCobol.Compiler.Scanner
             this.BeSmartWithLevelNumber = beSmartWithLevelNumber;
         }
 
-        private Token GetNextToken()
+        public Token GetNextToken()
         {
             // Cannot read past end of line
             if(currentIndex > lastIndex)
@@ -721,7 +721,6 @@ namespace TypeCobol.Compiler.Scanner
                     if (currentIndex < lastIndex && line[currentIndex + 1] == ':')
                     {
                         // consume two :: chars
-                        AnalyticsWrapper.Telemetry.TrackEvent("[Operator-Used] ::");
                         currentIndex += 2;
                         return new Token(TokenType.QualifiedNameSeparator, startIndex, startIndex + 1, tokensLine);
                     }

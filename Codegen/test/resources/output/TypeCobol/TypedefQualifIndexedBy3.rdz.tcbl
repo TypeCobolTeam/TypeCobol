@@ -1,0 +1,102 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPDEFQU.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      *01 MyT TYPEDEF STRICT.
+      *  05 MyG.
+      *     10 GC pic 9(05) comp-5.
+      *     10 MyGT PIC X(1) occurs 99
+      *        INDEXED BY INX-G.
+
+      *01 MyType TYPEDEF STRICT.
+      *  05 Inner TYPE MyT.
+      *  05 Count2 pic 9(05) comp-5.
+      *  05 MyGroup.
+      *     10 GCount pic 9(05) comp-5.
+      *     10 MyGTbl PIC X(1) occurs 99
+      *        depending on GCount.
+      *     10 TAB-ITM PIC X(8)
+      *         OCCURS 10 INDEXED BY INX-T, INX-R.
+      *  05 TABLE-ITEM PIC X(8)
+      *         OCCURS 10 INDEXED BY INX-A, INX-B.
+     
+      *01 var1 type MyType.
+       01 var1.
+           02 Inner.
+             03 MyG.
+               04 GC pic 9(05) comp-5.
+               04 MyGT PIC X(1) occurs 99
+               INDEXED BY aa2d515dINX-G.
+           02 Count2 pic 9(05) comp-5.
+           02 MyGroup.
+             03 GCount pic 9(05) comp-5.
+             03 MyGTbl PIC X(1) occurs 99
+               depending on GCount OF MyGroup OF var1.
+             03 TAB-ITM PIC X(8)
+                OCCURS 10 INDEXED BY a4ef6dd7INX-T f243f155INX-R.
+           02 TABLE-ITEM PIC X(8)
+                OCCURS 10 INDEXED BY a00d0571INX-A dd137f22INX-B.
+                           
+      *01 var2 type MyType.
+       01 var2.
+           02 Inner.
+             03 MyG.
+               04 GC pic 9(05) comp-5.
+               04 MyGT PIC X(1) occurs 99
+               INDEXED BY bce604edINX-G.
+           02 Count2 pic 9(05) comp-5.
+           02 MyGroup.
+             03 GCount pic 9(05) comp-5.
+             03 MyGTbl PIC X(1) occurs 99
+               depending on GCount OF MyGroup OF var2.
+             03 TAB-ITM PIC X(8)
+                OCCURS 10 INDEXED BY ee6396edINX-T add97314INX-R.
+           02 TABLE-ITEM PIC X(8)
+                OCCURS 10 INDEXED BY bf0a1380INX-A ed3d0f32INX-B.
+                           
+
+       procedure division.
+      *-------------------------------------------------
+      * TESTING SET INSTRUCTION
+      *-------------------------------------------------
+      *    SET var1::INX-G TO 10.
+           SET aa2d515dINX-G TO 10.
+      *    SET var2::INX-G TO 05.
+           SET bce604edINX-G TO 05.
+      *    SET var1::INX-B TO var2::INX-T.
+           SET dd137f22INX-B TO ee6396edINX-T.
+      *-------------------------------------------------
+      * TODO
+      *-------------------------------------------------
+      *    SET var1::INX-B UP BY 1.
+      *-------------------------------------------------
+      * TESTING MOVE INSTRUCTION
+      *-------------------------------------------------
+      *    MOVE var2::MyGroup::TAB-ITM(var2::INX-T) TO
+      *     var1::MyGroup::TAB-ITM(var1::INX-R).
+           MOVE TAB-ITM OF MyGroup OF var2(ee6396edINX-T) TO 
+            TAB-ITM OF MyGroup OF var1(f243f155INX-R).
+      *-------------------------------------------------
+      * TESTING PERFORM INSTRUCTION
+      *-------------------------------------------------
+      *    PERFORM VARYING var1::INX-A FROM 1 BY 1 UNTIL
+      *    var1::INX-A > var2::INX-B
+           PERFORM VARYING a00d0571INX-A FROM 1 BY 1 UNTIL 
+           a00d0571INX-A > ed3d0f32INX-B
+      *        DISPLAY var1::TABLE-ITEM (var1::INX-A)
+               DISPLAY TABLE-ITEM OF var1 (a00d0571INX-A)
+           END-PERFORM.         
+      *-------------------------------------------------
+      * TESTING SEARCH VARYING INSTRUCTION
+      *-------------------------------------------------
+      *    SEARCH var2::TABLE-ITEM VARYING var2::INX-G
+           SEARCH TABLE-ITEM OF var2 VARYING bce604edINX-G 
+           AT END DISPLAY 'OK'
+      *      WHEN var2::TABLE-ITEM(var2::INX-G) = 'NOK'
+             WHEN TABLE-ITEM OF var2(bce604edINX-G) = 'NOK'
+      *      MOVE var1::MyGroup::TAB-ITM(var2::INX-T) TO
+      *        var2::MyGroup::TAB-ITM(var2::INX-R).
+             MOVE TAB-ITM OF MyGroup OF var1(ee6396edINX-T) TO
+               TAB-ITM OF MyGroup OF var2(add97314INX-R).
+       END PROGRAM TYPDEFQU.

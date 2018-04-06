@@ -1,0 +1,35 @@
+﻿--- Diagnostics ---
+Line 57[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'TYPE' expecting {symbol, special register, keyword} RuleStack=codeElement>moveStatement>moveSimple,  OffendingSymbol=[16,19:TYPE]<TYPE>
+
+--- Program ---
+PROGRAM: Simple common:False initial:True recursive:False
+ author: WIZTIGERS. written: NOVEMBER 2015 compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  str:Alphanumeric
+  str:Alphanumeric
+  mygroup:Alphanumeric
+  num:Numeric
+  subgroup:Alphanumeric
+  vrai:Numeric
+  faux:Numeric
+  subgroup2:Alphanumeric
+  x:Numeric
+  x:Alphabetic
+  y:Numeric
+  E1:Alphanumeric
+  E2:Alphanumeric
+  E3:Alphanumeric
+  A:BOOL
+  B:BOOL
+  sqlcode:NumericEdited
+  toto:Alphanumeric
+-- PARAGRAPHS --
+  PARAGRAPH1
+  PARAGRAPH2
+  EMPTY-PARAGRAPH
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

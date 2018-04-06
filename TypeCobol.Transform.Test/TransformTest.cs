@@ -49,22 +49,32 @@ namespace TypeCobol.Transform.Test
             while (!outputDir.Exists)
                 outputDir.Refresh();
 
+            StringReader sr = new StringReader(arguments);
+            string line_args = null;
+            List<int> returnCodes = new List<int>();
+            while ((line_args = sr.ReadLine()) != null)
+            {
+                line_args = line_args.Trim();
+                if (line_args.Length > 0)
+                {
+                    System.Diagnostics.Process process = new System.Diagnostics.Process();
+                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                    startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                    startInfo.FileName = "cmd.exe";
+                    startInfo.WorkingDirectory = workingDirectory;
+                    startInfo.Arguments = @"/c " + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar +
+                                          "TypeCobol.Transform.exe " + line_args;
 
-            System.Diagnostics.Process process = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
-            startInfo.WorkingDirectory = workingDirectory;
-            startInfo.Arguments = @"/c " + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar +
-                                  "TypeCobol.Transform.exe " + arguments;
-
-            process.StartInfo = startInfo;
-            process.Start();
-            while (!process.HasExited)
-                continue;
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    while (!process.HasExited)
+                        continue;
+                    returnCodes.Add(process.ExitCode);
+                }
+            }
 
             Console.WriteLine("workingDirectory=" + workingDirectory);
-            Console.WriteLine("Return Code=" + process.ExitCode);
+            Console.WriteLine("Return Codes =" + String.Join(", ", returnCodes.ToArray()));
             //Compare outputDir with expectedOutputDir
             DirectoryInfo expectedOutputDir = new DirectoryInfo(workingDirectory + Path.DirectorySeparatorChar + "output_expected");
             bool dirIdentical = CompareDirectory(expectedOutputDir, outputDir);
@@ -179,7 +189,7 @@ namespace TypeCobol.Transform.Test
 
         public bool Equals(System.IO.FileInfo f1, System.IO.FileInfo f2)
         {
-            return (f1.Name == f2.Name);
+            return f2 != null && (f1 != null && (f1.Name == f2.Name));
         }
 
         // Return a hash that reflects the comparison criteria. According to the   

@@ -1,0 +1,63 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. BooleanTester.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 MyGroupLevl.
+         88 My88Level VALUE 99.
+
+       01 MyGroup.
+        05 MyArray pic X(50) occurs 50.
+        05 MySecondLevel.
+            10 levelBool TYPE BOOL.
+
+       01 Var1 pic X.
+       01 Var2 TYPE BOOL.
+       01 Var3 TYPE BOOL.
+       01 Var4 pic 9.
+
+       01 myBool TYPE BOOL.
+       PROCEDURE DIVISION.
+       MOVE My88Level TO My88Level.
+       MOVE myBool TO myBool. 
+       MOVE MyGroup::levelBool TO myBool. 
+       IF myBool = myBool
+         continue
+       END-IF.
+       SET myBool TO TRUE.
+       SET myBool TO FALSE.
+
+        EVALUATE TRUE
+         WHEN myBool CONTINUE
+        END-EVALUATE
+
+          display var2 "rtzerz" var3 "zerzerze"
+             'zrzr' var2
+      
+           string var2 var3 Var4
+                delimited by size
+                into Var1
+           end-string
+      
+           evaluate var2
+              when var2
+                  continue
+              when var3
+                 continue
+              when Var1 = '99998'
+                 continue
+              when other
+                 continue
+           end-evaluate
+
+           perform until MyBool
+            display "Hello"
+           end-perform
+
+           Search MyArray
+              when MyBool
+                 display "Hello"
+           end-search
+           .
+       END PROGRAM BooleanTester.

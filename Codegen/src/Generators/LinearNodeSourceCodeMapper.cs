@@ -403,7 +403,7 @@ namespace TypeCobol.Codegen.Generators
             if (node.NodeIndex >= 0)
             {
                 //Associate the Function Node
-                data.FunctionBodyNode = CurrentFunctionDeclNode;
+                if (data != null) data.FunctionBodyNode = CurrentFunctionDeclNode;
                 //Add the node to the Function Decl nodes list
                 funData.FunctionDeclNodes.Add(node.NodeIndex);
             }
@@ -1094,7 +1094,7 @@ namespace TypeCobol.Codegen.Generators
                     return parent;
                 parent = parent.Parent;
             }
-            return parent;
+            return null;
         }
 
         /// <summary>

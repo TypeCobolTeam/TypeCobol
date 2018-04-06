@@ -54,16 +54,19 @@
       *        input param1 pic X.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b179d81b.
-       END PROGRAM b179d81b.
+       PROGRAM-ID. b179d81bStartCheckpoint.
+       END PROGRAM b179d81bStartCheckpoint.
       *
       *declare procedure testos private.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d58351d5.
+       PROGRAM-ID. d58351d5testos.
        data division.
        working-storage section.
        01 var1 pic X.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
 
        LINKAGE SECTION.
@@ -82,10 +85,14 @@
           05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
-           PERFORM TC-Initializations
+           PERFORM TC-INITIALIZATIONS
       *    call TCOZCHKP::StartCheckpoint input var1
-           IF TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
+           IF ADDRESS OF TC-TCOZCHKP-b179d81b-Item = NULL
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
+           ELSE
+               IF TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
+                   PERFORM TC-LOAD-POINTERS-TCOZCHKP
+               END-IF
            END-IF
            CALL TC-TCOZCHKP-b179d81b USING
                                  var1
@@ -93,9 +100,13 @@
                                                     
            .
       *=================================================================
-       TC-Initializations.
-           .
+       TC-INITIALIZATIONS.
       *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-TCOZCHKP-b179d81b-Item  TO NULL
+            END-IF
+            .
       *=================================================================
        TC-LOAD-POINTERS-TCOZCHKP.
       *=================================================================
@@ -112,4 +123,4 @@
                 END-EVALUATE
             END-PERFORM
             .
-       END PROGRAM d58351d5.
+       END PROGRAM d58351d5testos.

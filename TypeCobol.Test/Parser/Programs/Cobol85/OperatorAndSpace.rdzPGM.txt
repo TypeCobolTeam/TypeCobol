@@ -1,0 +1,18 @@
+﻿--- Program ---
+PROGRAM: DVZXMNT0 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  WS-LINE-BREAK:Alphanumeric
+  A:Alphanumeric
+  B:Alphanumeric
+  buffer:Alphanumeric
+  result:Numeric
+  float:Numeric
+  VarGroup:Numeric
+  VarGroup-Bis:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

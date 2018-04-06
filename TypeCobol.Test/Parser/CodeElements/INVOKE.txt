@@ -1,0 +1,68 @@
+﻿--- Diagnostics ---
+Line 20[10,11] <27, Error, Syntax> - Syntax error : mismatched input '42' expecting {separator, alphanumeric literal, symbol, special register, keyword} RuleStack=codeElement>invokeStatement>classNameOrObjectReferenceVariable>identifierOrClassName>storageAreaReferenceOrConditionReferenceOrClassName>dataItemReferenceOrConditionReferenceOrClassName,  OffendingSymbol=[10,11:42]<IntegerLiteral>{42}
+Line 22[26,30] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {separator, alphanumeric literal, numeric literal, symbol, statement starting keyword, special register, figurative constant, keyword} RuleStack=codeElement>invokeStatement>invokeInputParameter>sharedVariable3>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference,  OffendingSymbol=[26,30:USING]<USING>
+Line 24[24,32] <27, Error, Syntax> - Syntax error : mismatched input 'RETURNING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=codeElement>invokeStatement>invokeOutputParameter>sharedStorageArea1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference,  OffendingSymbol=[24,32:RETURNING]<RETURNING>
+Line 28[28,28] <27, Error, Syntax> - Syntax error : extraneous input '(' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=,  OffendingSymbol=[28,28:(]<LeftParenthesisSeparator>
+Line 28[27,27] <27, Error, Syntax> - Syntax error : extraneous input 'b' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=codeElement>invokeStatement>invokeOutputParameter>sharedStorageArea1>identifier,  OffendingSymbol=[27,27:b]<UserDefinedWord>
+Line 30[24,28] <27, Error, Syntax> - Syntax error : mismatched input 'USING' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=codeElement>invokeStatement>invokeOutputParameter>sharedStorageArea1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference,  OffendingSymbol=[24,28:USING]<USING>
+--- Code Elements ---
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [19,19:x]<UserDefinedWord>
+
+[[SentenceEnd]] [20,20+:.]<PeriodSeparator> --> [20,20+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [13,13:x]<UserDefinedWord>
+
+[[SentenceEnd]] [14,14+:.]<PeriodSeparator> --> [14,14+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [14,20:'value']<AlphanumericLiteral>(',Y,Y){value}
+
+[[SentenceEnd]] [21,21+:.]<PeriodSeparator> --> [21,21+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [18,20:NEW]<NEW>
+
+[[SentenceEnd]] [21,21+:.]<PeriodSeparator> --> [21,21+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [27,27:a]<UserDefinedWord>
+
+[[SentenceEnd]] [28,28+:.]<PeriodSeparator> --> [28,28+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [52,52:c]<UserDefinedWord>
+
+[[SentenceEnd]] [53,53+:.]<PeriodSeparator> --> [53,53+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [22,22:a]<UserDefinedWord>
+
+[[SentenceEnd]] [23,23+:.]<PeriodSeparator> --> [23,23+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [39,39:b]<UserDefinedWord>
+
+[[SentenceEnd]] [40,40+:.]<PeriodSeparator> --> [40,40+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [13,13:x]<UserDefinedWord>
+
+[[SentenceEnd]] [25,25+:.]<PeriodSeparator> --> [25,25+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [27,27:a]<UserDefinedWord>
+
+[[SentenceEnd]] [39,39+:.]<PeriodSeparator> --> [39,39+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [22,22:a]<UserDefinedWord>
+
+[[SentenceEnd]] [34,34+:.]<PeriodSeparator> --> [34,34+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [39,39:b]<UserDefinedWord>
+
+[[SentenceEnd]] [51,51+:.]<PeriodSeparator> --> [51,51+:.]<PeriodSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [10,11:42]<IntegerLiteral>{42}
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [38,38:b]<UserDefinedWord>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [34,34:b]<UserDefinedWord>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [27,27:)]<RightParenthesisSeparator>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [27,27:b]<UserDefinedWord>
+
+[[InvokeStatement]] [1,6:INVOKE]<INVOKE> --> [39,39:b]<UserDefinedWord>
+

@@ -155,7 +155,7 @@ dataItemReferenceOrConditionReferenceOrClassName:
 // program to alter the value of the index.
 
 subscript: 
-	(integerVariableOrIndex2 withRelativeSubscripting?) | ALL;
+	(integerVariableOrIndex2 withRelativeSubscripting?) | ALL | TALLY;
 
 withRelativeSubscripting: 
 	(PlusOperator | MinusOperator) integerValue;
@@ -1041,7 +1041,7 @@ numericStorageArea: identifier;
 
 alphanumericStorageArea: identifier;
 
-indexStorageArea: indexNameReference;
+indexStorageArea: qualifiedIndexName;
 
 dataOrIndexStorageArea: identifierOrIndexName;
 

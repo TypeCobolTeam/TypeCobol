@@ -9,6 +9,7 @@ using TypeCobol.Compiler.Text;
 using Analytics;
 using TypeCobol.CLI.CustomExceptions;
 using System.Linq;
+using System.Text;
 using TypeCobol.Codegen;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Tools.Options_Config;
@@ -98,7 +99,7 @@ namespace TypeCobol.Server
             File.AppendAllText("TypeCobol.CLI.log", debugLine);
             Console.WriteLine(debugLine);
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Duration] Execution Time",
+            AnalyticsWrapper.Telemetry.TrackEvent("[Duration] Execution Time", EventType.Genration, 
                                                     new Dictionary<string, string> { { "Duration", "Duration"} }, //Custom properties for metrics
                                                     new Dictionary<string, double> { { "ExecutionTime", stopWatch.Elapsed.Milliseconds} }); //Metrics fo duration
             
@@ -109,22 +110,34 @@ namespace TypeCobol.Server
         {
             var parser = new Parser();
             bool diagDetected = false;
-            EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = null;
-            DiagnosticsErrorEvent += delegate(object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
-            {
-                //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
-                diagDetected = true;
-                var diagnostic = diagEvent.Diagnostic;
-                Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
-                    diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
-                    "Error while parsing " + diagEvent.Path + ": " + diagnostic, diagEvent.Path);
-            };
 
-            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load of the intrinsics
-            parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, DiagnosticsErrorEvent); //Load of the dependency files
-           
-            if (diagDetected)
-                throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
+            if (config.ExecToStep > ExecutionStep.Preprocessor)
+            {
+                #region Event Diags Handler
+                EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DiagnosticsErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+                {
+                    //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                    diagDetected = true;
+                    var diagnostic = diagEvent.Diagnostic;
+                    Server.AddError(errorWriter, MessageCode.IntrinsicLoading,
+                        diagnostic.ColumnStart, diagnostic.ColumnEnd, diagnostic.Line,
+                        "Error while parsing " + diagEvent.Path + ": " + diagnostic, diagEvent.Path);
+                };
+                EventHandler<Tools.APIHelpers.DiagnosticsErrorEvent> DependencyErrorEvent = delegate (object sender, Tools.APIHelpers.DiagnosticsErrorEvent diagEvent)
+                {
+                    //Delegate Event to handle diagnostics generated while loading dependencies/intrinsics
+                    Server.AddError(errorWriter, diagEvent.Path, diagEvent.Diagnostic);
+                };
+                #endregion
+
+                parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
+                parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, DependencyErrorEvent); //Load dependencies
+
+                if (diagDetected)
+                    throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
+            }
+
+         
 
             ReturnCode returnCode = ReturnCode.Success;
             for (int c = 0; c < config.InputFiles.Count; c++)
@@ -132,7 +145,6 @@ namespace TypeCobol.Server
                 string path = config.InputFiles[c];
                 try
                 {
-
                     var typeCobolOptions = new TypeCobolOptions
                                             {
                                                 HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
@@ -151,7 +163,6 @@ namespace TypeCobol.Server
                 }
 
                 parser.Parse(path);
-
                 
                 bool copyAreMissing = false;
                 if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
@@ -168,6 +179,22 @@ namespace TypeCobol.Server
                         File.Delete(config.HaltOnMissingCopyFilePath);
                     }
                 }
+                if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
+                {
+                    if (parser.Results.CopyTextNamesVariations.Count > 0)
+                    {
+#if EUROINFO_RULES
+                        var copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextName).Distinct(); //Get copies without suffix
+#else
+                        var copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct(); //Get copies with suffix
+#endif
+                        //Create an output document of all the copy encountered by the parser
+                        File.WriteAllLines(config.ExtractedCopiesFilePath, copiesName);
+                    }
+
+                    else
+                        File.Delete(config.ExtractedCopiesFilePath);
+                }
 
                 var allDiags = parser.Results.AllDiagnostics();
                 errorWriter.AddErrors(path, allDiags.Take(config.MaximumDiagnostics == 0 ? allDiags.Count : config.MaximumDiagnostics)); //Write diags into error file
@@ -183,7 +210,7 @@ namespace TypeCobol.Server
                         }
                     }
 
-                    AnalyticsWrapper.Telemetry.TrackEvent("[Diagnostics] Detected");
+                    AnalyticsWrapper.Telemetry.TrackEvent("[Diagnostics] Detected", EventType.Diagnostics);
                     //Exception is thrown just below
                     }
 
@@ -203,6 +230,20 @@ namespace TypeCobol.Server
                     throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path); //Make ParsingException trace back to RunOnce()
                 }
 
+                if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExpandingCopyFilePath))
+                {
+                    try
+                    {
+                        var generator = GeneratorFactoryManager.Instance.Create(TypeCobol.Tools.Options_Config.OutputFormat.ExpandingCopy.ToString(),
+                            parser.Results,
+                            new StreamWriter(config.ExpandingCopyFilePath), null, null);
+                        generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
+                    }
+                    catch(Exception e)
+                    {
+                        throw new GenerationException(e.Message, path, e);
+                    }
+                }
                 if (config.ExecToStep >= ExecutionStep.Generate) {
 
                     try
@@ -216,10 +257,10 @@ namespace TypeCobol.Server
 
                         //Get Generator from specified config.OutputFormat
                         var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(), parser.Results,
-                            new StreamWriter(config.OutputFiles[c]), skeletons);
+                            new StreamWriter(config.OutputFiles[c]), skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion);
 
                         if (generator == null) {
-                            throw new GenerationException("Unkown OutputFormat=" + config.OutputFormat + "_", path);
+                            throw new GenerationException("Unknown OutputFormat=" + config.OutputFormat + "_", path);
                         }
 
                         //Generate and check diagnostics

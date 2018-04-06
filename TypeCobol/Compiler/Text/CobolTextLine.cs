@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Text
 {
@@ -44,6 +47,7 @@ namespace TypeCobol.Compiler.Text
         {
             // Reuse the external text line object
             this.textLine = textLine;
+            LineIndex = textLine.LineIndex;
             ColumnsLayout = columnsLayout;
 
             // Scan the line to find the indexes of the different areas
@@ -102,30 +106,39 @@ namespace TypeCobol.Compiler.Text
         private static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text)
         {
             var result = new List<ITextLine>();
-            var lines = Split(text, 65);
-            result.Add(new TextLineSnapshot(index, Convert(layout, lines[0], indicator, indent), null));
-            if (indicator == ' ') indicator = '-';
+            int max = 65;
+            int min = 65;
+            int nLine = (text.Length / max) + ((text.Length % max) != 0 ? 1 : 0);
+            if (nLine == 1)
+            {
+                result.Add(new TextLineSnapshot(index, Convert(layout, text, indicator, indent), null));
+                return result;
+            }
+            if (indicator == ' ')
+            {
+                max = 65;
+                min = 61;
+                indicator = '-';                
+            }
 
+            IList<Tuple<string, bool>> lines = lines = Split(text, max, min);
 
-            if (lines.Count > 1) {
-                int i = 1;
-                //Issue #651, continuation lines must start in Area B
-                //Only 61 chars remains available
-                if (indicator == '-') {
-                    //Remove 65 chars already added to result
-                    lines = Split(text.Substring(65), 61);
-                    i = 0;
-                }
-                for (; i < lines.Count; i++) {
-                    if (index > -1) index++;
-                    result.Add(new TextLineSnapshot(index, Convert(layout, lines[i], indicator, indent), null));
-                }
+            for (int i = 0; i < lines.Count; i++) {
+                if (index > -1) index++;
+                result.Add(new TextLineSnapshot(index, Convert(layout, lines[i].Item1,
+                    indicator != '-'
+                    ? indicator 
+                    : ((lines[i].Item2 && i != 0) ? indicator : (i == 0 ? NoIndicator : NoOneIndicator)) , indent), null));
             }
             return result;
         }
 
+        private const int NoIndicator = 0;
+        private const int NoOneIndicator = -1;
         private const string ContinuationLinePrefix = "      -    ";
-        private static string Convert(ColumnsLayout layout, string text, char indicator, string indent)
+        private const string NoContinuationLinePrefix = "       ";
+        private const string NoOneContinuationLinePrefix = "           ";
+        private static string Convert(ColumnsLayout layout, string text, int indicator, string indent)
         {
             string result = "";
             if (layout == ColumnsLayout.FreeTextFormat)
@@ -135,20 +148,59 @@ namespace TypeCobol.Compiler.Text
             else {
                 var end = text.Length < 65 ? new string(' ', 65 - text.Length) : "";
                 if (indicator != '-') {
-                    result = "      " + indicator + indent + text + end + "      ";//+"000000";
+                    if (indicator == NoIndicator)
+                        result = NoContinuationLinePrefix + indent + text + end + "      ";
+                    else if (indicator == NoOneIndicator)
+                        result = NoOneContinuationLinePrefix + indent + text + end + "      ";
+                    else
+                        result = "      " + (char)indicator + indent + text + end + "      ";
                 } else {
-                    result = ContinuationLinePrefix + indent + text + end + "      "; //+"000000"
+                    result = ContinuationLinePrefix + indent + text + end + "      ";
                 }
             }
             return result;
         }
-        private static IList<string> Split(string line, int max)
+
+        private static IList<Tuple<string, bool> > Split(string line, int max, int min)
         {
-            var lines = new List<string>();
-            if (line.Length < 1) lines.Add(line);
+            var lines = new List<Tuple<string, bool>>();
+            int nLine = (line.Length / max) + ((line.Length % max) != 0 ? 1 : 0);
+            if (nLine == 1)
+            {
+                lines.Add(new Tuple<string, bool>(line, false));
+                return lines;
+            }
+            if (line.Length < 1) lines.Add(new Tuple<string, bool>(line, false));
             else {
-                for (int i = 0; i < line.Length; i += max)
-                    lines.Add(line.Substring(i, Math.Min(max, line.Length - i)));
+                for (int i = 0; i < line.Length; i += (i == 0 ? max : min))
+                {
+                    lines.Add(new Tuple<string, bool>(line.Substring(i, Math.Min((i == 0 ? max : min), line.Length - i)), true));
+                }
+            }
+            TokensLine tempTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, line);
+            tempTokensLine.InitializeScanState(new MultilineScanState(false, false, false, IBMCodePages.GetDotNetEncodingFromIBMCCSID(1147)));
+
+            Scanner.Scanner scanner = new Scanner.Scanner(line, 0, line.Length - 1, tempTokensLine, null, false);
+            Token t = null;
+            int nCurLength = 0;
+            int nSpan = max;
+            int index = 0;
+            bool bNextNoIndicator = false;
+            while ((t = scanner.GetNextToken()) != null)
+            {
+                nCurLength += t.Length;
+                if (nCurLength >= nSpan)
+                {
+                    if (t.TokenFamily == TokenFamily.Whitespace || (nCurLength == nSpan))
+                        bNextNoIndicator = true;
+                    nSpan += min;
+                    index++;
+                }
+                else if (bNextNoIndicator)
+                {
+                    lines[index] = new Tuple<string, bool>(lines[index].Item1, false);
+                    bNextNoIndicator = false;
+                }                
             }
             return lines;
         }
@@ -461,12 +513,12 @@ namespace TypeCobol.Compiler.Text
         /// <summary>
         /// Index of this line when it first appeared in the document.
         /// WARNING : if lines are later inserted or removed in the document before it,
-        /// InitialLineIndex no longer reflects the current position of the line.
+        /// LineIndex no longer reflects the current position of the line.
         /// It can however provide a good starting point to start searching for a line
         /// in a snapshot of the document at a given point in time.
-        /// When a line is created outside of a document, InitialLineIndex = -1.
+        /// When a line is created outside of a document, LineIndex = -1.
         /// </summary>
-        public int InitialLineIndex { get { return textLine.InitialLineIndex; } }
+        public int LineIndex { get; set; }
 
         /// <summary>
         /// A text line instance can be reused simultaneously in different snapshots of the document

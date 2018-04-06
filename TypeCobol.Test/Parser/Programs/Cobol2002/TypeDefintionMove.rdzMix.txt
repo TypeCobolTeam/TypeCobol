@@ -1,0 +1,71 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OS3.
+       data DIVISION.
+       working-storage section.
+
+       01 MyBoolean TYPE BOOL VALUE TRUE.  
+       01 SmallInt  TYPEDEF STRICT PUBLIC pic S9(4) COMP-5.
+       01 Integer   TYPEDEF STRICT PUBLIC pic S9(9) COMP-5.
+       01 BigInt    TYPEDEF STRICT PUBLIC pic S9(17) COMP-5.
+       01 Real      TYPEDEF STRICT PUBLIC comp-1.
+       01 Float     TYPEDEF STRICT PUBLIC comp-2.
+       01 SmallChar TYPEDEF STRICT PUBLIC PIC X(10).
+       01 var1Small type SmallInt.
+       01 realVar TYPE Real.
+       01 floatVar TYPE Float. 
+     
+       01 toto typedef strict public global pic X.
+       01 var1 type toto.
+       01 var2 type DVZF0OS3bis::toto.
+       01 var3 type toto global.
+       procedure division.
+Line 22[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
+           move var1 to var2
+Line 23[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
+           move var2 to var1
+           move var1 to var3
+           move var3 to var1
+           MOVE 1 to var1Small
+           MOVE -1 to var1Small
+           MOVE 10 TO realVar
+           MOVE false TO MyBoolean
+           MOVE true TO MyBoolean
+           MOVE 10 TO floatVar
+           .
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       data DIVISION.
+       working-storage section.
+      
+       01 var1 type toto.
+       01 var2 type DVZF0OS3bis::toto.
+       procedure division.
+Line 41[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
+           move var1 to var2
+Line 42[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
+           move var2 to var1
+Line 43[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
+           move var3 to var2
+           move var3 to var1
+           move var1 to var3
+           .
+       END PROGRAM Nested.
+       END PROGRAM DVZF0OS3.
+      
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OS3bis.
+       data DIVISION.
+       working-storage section.
+       01 toto typedef strict public pic X.
+       01 var1 type DVZF0OS3::toto.
+       01 var2 type DVZF0OS3bis::toto.
+       01 var3 type toto.
+       procedure division.
+Line 59[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
+           move var1 to var2
+Line 60[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
+           move var2 to var1
+           move var2 to var3
+           move var3 to var2
+           .
+       END PROGRAM DVZF0OS3bis.

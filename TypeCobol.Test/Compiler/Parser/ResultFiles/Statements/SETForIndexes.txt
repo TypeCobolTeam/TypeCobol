@@ -1,6 +1,0 @@
-﻿--- Code Elements ---
-SET  toto-idx UP BY 1
-SET  toto-idx2 DOWN BY 1
-SET  table-idx UP BY augmentation
-SET  table-idx UP BY downBy
-SET  table-idx DOWN BY downBy

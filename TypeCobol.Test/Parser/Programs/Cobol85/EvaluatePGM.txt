@@ -1,0 +1,15 @@
+﻿--- Diagnostics ---
+Line 12[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE1 is not referenced
+Line 21[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE2 is not referenced
+Line 39[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE3 is not referenced
+
+--- Program ---
+PROGRAM: evaluate-semantic common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+-- PARAGRAPHS --
+  procedurename
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

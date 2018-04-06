@@ -1,0 +1,134 @@
+﻿IDENTIFICATION DIVISION.
+PROGRAM-ID. COLON.
+
+* What is allowed:
+* - Use the 'simple' form if there is no ambiguity: in this case 
+*   you use neither '::' nor IN|OF and the same forms are the same.
+* - In COBOL you can declare with IN|OF even if there is no ambiguity ;
+*   so can you declare the complete path with '::' even if it is not mandatory.
+*
+* What should be illegal:
+* - To improve readability, do not use the two different forms in the same statement.
+* - Disallow 'shortcuts': the complete path to the item must be written explicitely.
+* 
+* To test:
+*     - MOVE a::b TO c OF d
+*     - IF a::b = c OF d
+*     - if  group a -> group b > item c,  don't allow writing a::c
+*     - idem with OCCURS
+
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+
+01  T1-A.
+  05  T1-B1   PIC X.
+  05  T1-B2   PIC X.
+
+01  T2-A.
+  05  T2-B.
+    10  T2-C.
+      15  T2-D1      PIC X.
+      15  T2-D2      PIC X.
+         88 T2-D2-V1  value 'A'.
+
+01  T3-A1.
+  05  T3-B1.
+    10  T3-C1      PIC X.
+    10  T3-C2      PIC X.
+  05  T3-B2   PIC X.
+01  T3-A2.
+  05  T3-B1.
+    10  T3-C1      PIC X.
+    10  T3-C2      PIC X.
+  05  T3-B2   PIC X.
+
+01  T4-A1 OCCURS 10.
+  05  T4-B1 OCCURS 10.
+    10  T4-C1      PIC X.
+    10  T4-C2      PIC X.
+  05  T4-B2   PIC X.
+01  T4-A2.
+  05  T4-B1.
+    10  T4-C1      PIC X.
+    10  T4-C2      PIC X.
+  05  T4-B2   PIC X.
+
+01 MyArray TYPEDEF STRICT.
+    05 MyValue PIC 2(9).
+01 MyVar TYPE MyArray.
+
+01 MyLevel.
+    05 MyArray occurs 30000
+    DEPENDING ON MyVar::MyValue.
+
+PROCEDURE DIVISION.
+
+
+TEST-1.
+*** legal: nominal case
+    MOVE 'X' TO T1-B1
+    MOVE 'X' TO T1-A :: T1-B1
+    MOVE 'X' TO T1-B1 OF T1-A
+*** legal: there can be any number of blanks inside a name qualification
+*    MOVE 'X' TO T1-A::T1-B1 <----------------------- TODO: ' :: ' space are currently mandatory :/
+    MOVE 'X' TO T1-A :: T1-B1
+    MOVE 'X' TO T1-A      ::   T1-B1
+    MOVE 'X' TO T1-A ::
+                                T1-B1
+    MOVE 'X' TO T1-A
+                    ::
+                                T1-B1
+    MOVE 'X' TO T1-B1 OF T1-A
+    MOVE 'X' TO T1-B1      OF   T1-A
+    MOVE 'X' TO T1-B1 OF
+                                T1-A
+    MOVE 'X' TO T1-B1
+                    OF
+                                T1-A
+* illegal because undeclared
+    MOVE 'X' TO T1-A :: T1-B3
+    MOVE 'X' TO T1-B3 OF T1-A
+* illegal because reversed (thus undeclared)
+    MOVE 'X' TO T1-B2 :: T1-A
+    MOVE 'X' TO T1-A OF T1-B2
+    .
+
+TEST-2.
+*** same as TEST-1 but with 4 levels
+    MOVE 'X' TO T2-D1
+    MOVE 'X' TO T2-A :: T2-B :: T2-C :: T2-D1
+    MOVE 'X' TO T2-D1 OF T2-C OF T2-B OF T2-A
+* illegal because undeclared
+    MOVE 'X' TO T2-A :: T2-B :: T2-C :: T2-D3
+    MOVE 'X' TO T2-D3 OF T2-C OF T2-B OF T2-A
+* illegal because reversed (thus undeclared)
+    MOVE 'X' TO T2-D2 :: T2-C :: T2-B :: T2-A
+    MOVE 'X' TO T2-A OF T2-B OF T2-C OF T2-C2
+* allow only complete paths <----------------------- TODO: should these be illegal ?
+    MOVE 'X' TO T2-A :: T2-D1
+    MOVE 'X' TO T2-D1 OF T2-A
+    .
+
+TEST-3.
+    MOVE T3-A1 :: T3-B1 :: T3-C1 TO T3-A2 :: T3-B1 :: T3-C1
+    MOVE T3-C1 OF T3-B1 OF T3-A1 TO T3-C1 OF T3-B1 OF T3-A2
+    IF T3-A1 :: T3-B1 :: T3-C1 = T3-A2 :: T3-B1 :: T3-C1 THEN CONTINUE
+    IF T3-C1 OF T3-B1 OF T3-A1 = T3-C1 OF T3-B1 OF T3-A2 THEN CONTINUE
+* illegal because only one form in the same statement <----------------------- TODO: should these be illegal ?
+    MOVE T3-C1 OF T3-B1 OF T3-A1 TO T3-A2 :: T3-B1 :: T3-C1
+    MOVE T3-A1 :: T3-B1 :: T3-C1 TO T3-C1 OF T3-B1 OF T3-A2
+    IF T3-C1 OF T3-B1 OF T3-A1 = T3-A2 :: T3-B1 :: T3-C1 THEN CONTINUE
+    IF T3-A1 :: T3-B1 :: T3-C1 = T3-C1 OF T3-B1 OF T3-A2 THEN CONTINUE
+    .
+
+TEST-4.
+    MOVE SPACE TO T4-B1 OF T4-A1 ( 2 3 )
+* TODO operator '::' specification is insufficient regarding subscripts
+*    MOVE SPACE TO T4-A1 ( 2 ) :: T4-B1 ( 3 )
+    .
+
+*Condition name
+TEST-5.
+    set T2-D2-V1 of T2-C of T2-B of T2-A to true
+    set T2-A::T2-B::T2-C::T2-D2::T2-D2-V1 to true
+    .

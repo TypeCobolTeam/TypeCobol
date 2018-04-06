@@ -6,6 +6,7 @@ namespace TypeCobol.Compiler.Nodes {
 
     using System.Collections.Generic;
     using System.Linq;
+    using Tools;
     using TypeCobol.Compiler.CodeElements;
     using TypeCobol.Compiler.CodeElements.Expressions;
     using TypeCobol.Compiler.CodeModel;
@@ -33,7 +34,8 @@ namespace TypeCobol.Compiler.Nodes {
 		attributes = new Dictionary<string,Attribute>();
 		attributes["name"]  = new NameAttribute();
 		attributes["level"] = new LevelAttribute();
-		attributes["type"]  = new TypeAttribute();
+        attributes["value"] = new ValueAttribute();
+        attributes["type"]  = new TypeAttribute();
 		attributes["sender"] = new SenderAttribute();
 		attributes["receiver"] = new ReceiverAttribute();
 		attributes["unsafe"] = new UnsafeAttribute();
@@ -68,7 +70,7 @@ internal class NameAttribute: Attribute {
         if (node != null)
         {
             var named = ((Node)o).CodeElement as NamedCodeElement;
-            return named.Name;
+            return named?.Name;
         }
         else
             return null;
@@ -93,11 +95,34 @@ internal class TypeAttribute: Attribute {
 	}
 }
 
-internal class LevelAttribute: Attribute {
+    /// <summary>
+    /// Class to evaluate the value of a DataDescription node if its associated DataDescriptionEntry
+    /// Code Element has an Initial value.
+    /// </summary>
+    internal class ValueAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var data = o as DataDescription;
+            if (data == null) return null;
+            TypeCobol.Compiler.CodeElements.Value value = ((DataDescriptionEntry)data.CodeElement).InitialValue;
+            if (value != null)
+            {
+                if (value.LiteralType == Value.ValueLiteralType.Boolean)
+                {   //Special case for TypeCobol Bool type value.
+                    return value.BooleanValue.Value ? "'T'" : "'F'";
+                }
+                return value.ToString();
+            }
+            return "";
+        }
+    }
+
+    internal class LevelAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var data = o as DataDefinition;
 		if (data == null) return null;
-		return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement).LevelNumber.Value);
+		return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement)?.LevelNumber?.Value);
 	}
 }
 
@@ -107,10 +132,11 @@ internal class TypeCobolAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var map = o as IDictionary<StorageArea,object>;
 		var results = new Dictionary<StorageArea,object>();
-		foreach (var kv in map)
-			if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
-				results.Add(kv.Key,kv.Value);
-		return results;
+	    if (map != null)
+	        foreach (var kv in map)
+	            if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
+	                results.Add(kv.Key,kv.Value);
+	    return results;
 	}
 }
 
@@ -383,6 +409,12 @@ internal class LibraryCopyAttribute: Attribute {
         public Dictionary<string, ProcedureImport> Procedures
         { get; internal set; }
 
+
+        /// <summary>
+        /// Determine if in this Imported program we uses Public Procedures.
+        /// </summary>
+        public bool HasPublicProcedures => Procedures.Count > 0;
+
         public ProgramImport()
         {
             Procedures = new Dictionary<string, ProcedureImport>();
@@ -417,6 +449,11 @@ internal class LibraryCopyAttribute: Attribute {
             {
                 return !IsEmpty;
             }
+        }
+
+        public bool HasPublicProcedures
+        {
+            get { return IsNotEmpty && Programs.Values.Any(prg => prg.HasPublicProcedures); }
         }
         public ProgramImports()
         {
@@ -453,7 +490,7 @@ internal class LibraryCopyAttribute: Attribute {
                     {   //Avoid imports to itself.
                         continue;
                     }
-                    string item_pgm_name = item_pgm.Name.Substring(0, Math.Min(item_pgm.Name.Length, 8));
+                    string item_pgm_name = Hash.CalculateCobolProgramNameShortcut(item_pgm.Name);
                     string item_pgm_name_low = item_pgm_name.ToLower();
                     ProgramImport prg_imp = null;
                     if (!imports.Programs.ContainsKey(item_pgm_name_low))

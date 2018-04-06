@@ -1,4 +1,5 @@
-﻿       IDENTIFICATION DIVISION.
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
 
        DATA DIVISION.
@@ -27,25 +28,50 @@
            02 Coord3d.
              03 Z PIC 9.
                                    
-       01  TC-Callee-FctList-Loaded PIC X(02) EXTERNAL.
-           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
+      *01  MyVar        TYPE TechnicalContext.
+       01 MyVar.
+           02 Site.
+             03 SiteName PIC X(8).
+                                              
+       01 TC-Callee pic X(08) value 'Callee'.
+       01 TC-MyIntrin pic X(08) value 'MyIntrin'.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
+
+       LINKAGE SECTION.
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+          05 TC-Library-PntNbr          PIC S9(04) COMP.
+          05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
       *Callee::MyPublicProcedure
-        01 TC-Callee-c6db8d4a PROCEDURE-POINTER EXTERNAL.
+       01 TC-Callee-c6db8d4a-Item.
+          05 TC-Callee-c6db8d4a-Idt PIC X(08).
+          05 TC-Callee-c6db8d4a PROCEDURE-POINTER.
       *Callee::MySecondPublicProcedure
-        01 TC-Callee-d3faf219 PROCEDURE-POINTER EXTERNAL.
-       01  TC-MyIntrin-FctList-Loaded PIC X(02) EXTERNAL.
-           88 TC-MyIntrin-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-Callee-d3faf219-Item.
+          05 TC-Callee-d3faf219-Idt PIC X(08).
+          05 TC-Callee-d3faf219 PROCEDURE-POINTER.
       *MyIntrin::dump
-        01 TC-MyIntrin-f9abcd81 PROCEDURE-POINTER EXTERNAL.
+       01 TC-MyIntrin-f9abcd81-Item.
+          05 TC-MyIntrin-f9abcd81-Idt PIC X(08).
+          05 TC-MyIntrin-f9abcd81 PROCEDURE-POINTER.
 
 
        PROCEDURE DIVISION.
       *
-           PERFORM TC-Initializations
+           PERFORM TC-INITIALIZATIONS
 
                           
-      *    move vect2::Coord2d to Vect2b::Coord2d
-           move Coord2d OF vect2 to Coord2d OF Vect2b
+      *    move vect2::Coord2d to Vect2b::Coord2d.
+           move Coord2d OF vect2 to Coord2d OF Vect2b.
+      *    move MyVar::Site::SiteName to mymessage.
+           move SiteName OF Site OF MyVar to mymessage.
            .
       *declare procedure check private
       *   input mydate        TYPE Date.
@@ -56,6 +82,13 @@
       * OK public procedures declared in "dependencies" file
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate
+           IF ADDRESS OF TC-Callee-c6db8d4a-Item = NULL
+               PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-c6db8d4a-Idt not = 'c6db8d4a'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
+           END-IF
            CALL TC-Callee-c6db8d4a USING
                                  somedate
            end-call
@@ -63,6 +96,13 @@
 
       *    CALL Callee::MySecondPublicProcedure
       *             INPUT      vect2
+           IF ADDRESS OF TC-Callee-d3faf219-Item = NULL
+               PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-d3faf219-Idt not = 'd3faf219'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
+           END-IF
            CALL TC-Callee-d3faf219 USING
                                  vect2
            end-call
@@ -70,14 +110,14 @@
       * __________________________________________________
       *procedure declared in this program
       *    CALL PGM2::check INPUT      somedate
-           CALL 'c2c7ee3a' USING
+           CALL 'c2c7ee3acheck' USING
                                  somedate
            end-call
                                                
 
       *procedure declared in this program
       *   CALL check         INPUT      somedate
-          CALL 'c2c7ee3a' USING
+          CALL 'c2c7ee3acheck' USING
                                  somedate
            end-call
                                                 
@@ -85,27 +125,78 @@
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call dump input mymessage
-          CALL TC-MyIntrinsicFunctions-f9abcd81 USING
+          IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
+               PERFORM TC-LOAD-POINTERS-MyIntrin
+           ELSE
+               IF TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
+                   PERFORM TC-LOAD-POINTERS-MyIntrin
+               END-IF
+           END-IF
+           CALL TC-MyIntrin-f9abcd81 USING
                                  mymessage
            end-call
                                    
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call MyIntrinsicFunctions::dump input mymessage
-          CALL TC-MyIntrinsicFunctions-f9abcd81 USING
+          IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
+               PERFORM TC-LOAD-POINTERS-MyIntrin
+           ELSE
+               IF TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
+                   PERFORM TC-LOAD-POINTERS-MyIntrin
+               END-IF
+           END-IF
+           CALL TC-MyIntrin-f9abcd81 USING
                                  mymessage
            end-call
                                                          
         .
       *=================================================================
-        TC-Initializations.
+       TC-INITIALIZATIONS.
       *=================================================================
-            IF NOT TC-Callee-FctList-IsLoaded
-                CALL 'ZCALLPGM' USING 'Callee'
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-Callee-c6db8d4a-Item  TO NULL
+                 SET ADDRESS OF TC-Callee-d3faf219-Item  TO NULL
+                 SET ADDRESS OF TC-MyIntrin-f9abcd81-Item  TO NULL
             END-IF
-            IF NOT TC-MyIntrin-FctList-IsLoaded
-                CALL 'ZCALLPGM' USING 'MyIntrin'
-            END-IF
+            .
+      *=================================================================
+        TC-LOAD-POINTERS-Callee.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-Callee
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'c6db8d4a'
+                     SET ADDRESS OF
+                     TC-Callee-c6db8d4a-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                WHEN 'd3faf219'
+                     SET ADDRESS OF
+                     TC-Callee-d3faf219-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                END-EVALUATE
+            END-PERFORM
+            .
+      *=================================================================
+        TC-LOAD-POINTERS-MyIntrin.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-MyIntrin
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'f9abcd81'
+                     SET ADDRESS OF
+                     TC-MyIntrin-f9abcd81-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                END-EVALUATE
+            END-PERFORM
             .
 
        END PROGRAM PGM2.
@@ -115,7 +206,7 @@
       *   input mydate        TYPE Date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. c2c7ee3a.
+       PROGRAM-ID. c2c7ee3acheck.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -126,4 +217,4 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM c2c7ee3a.
+       END PROGRAM c2c7ee3acheck.

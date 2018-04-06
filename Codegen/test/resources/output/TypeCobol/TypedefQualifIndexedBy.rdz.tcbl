@@ -1,0 +1,45 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPDEFQU.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      *01 MyType TYPEDEF STRICT.
+      *  05 Count2 pic 9(05) comp-5.
+      *  05 MyGroup.
+      *     10 GCount pic 9(05) comp-5.
+      *     10 MyGTbl PIC X(1) occurs 99
+      *        depending on GCount.
+      *  05 TABLE-ITEM PIC X(8)
+      *         OCCURS 10 INDEXED BY INX-A.
+     
+      *01 var1 type MyType.
+       01 var1.
+           02 Count2 pic 9(05) comp-5.
+           02 MyGroup.
+             03 GCount pic 9(05) comp-5.
+             03 MyGTbl PIC X(1) occurs 99
+               depending on GCount OF MyGroup OF var1.
+           02 TABLE-ITEM PIC X(8)
+                OCCURS 10 INDEXED BY a00d0571INX-A.
+                           
+      *01 var2 type MyType.
+       01 var2.
+           02 Count2 pic 9(05) comp-5.
+           02 MyGroup.
+             03 GCount pic 9(05) comp-5.
+             03 MyGTbl PIC X(1) occurs 99
+               depending on GCount OF MyGroup OF var2.
+           02 TABLE-ITEM PIC X(8)
+                OCCURS 10 INDEXED BY bf0a1380INX-A.
+                           
+
+       procedure division.
+      *    SET var1::INX-A TO 10.
+           SET a00d0571INX-A TO 10.
+      *    SET var2::INX-A TO 05.
+           SET bf0a1380INX-A TO 05.
+      *    SET var1::INX-A UP BY 1.
+           SET a00d0571INX-A UP BY 1.
+      *    SET var1::INX-A DOWN BY 1.
+           SET a00d0571INX-A DOWN BY 1.
+       END PROGRAM TYPDEFQU.

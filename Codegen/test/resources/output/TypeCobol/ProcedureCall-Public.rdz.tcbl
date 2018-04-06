@@ -14,7 +14,9 @@
       *01  flag         TYPE Bool.
        01  flag-value PIC X VALUE LOW-VALUE.
            88  flag       VALUE 'T'.
-           88  flag-false VALUE 'F'.
+           88  flag-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                   
        01  realformat   PIC X(08).
 
@@ -27,6 +29,9 @@
                                                 
        01 TC-Callee pic X(08) value 'Callee'.
        01 TC-PersonSe pic X(08) value 'PersonSe'.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
 
        LINKAGE SECTION.
       *Common to all librairies used by the program.
@@ -67,7 +72,7 @@
 
        TRAITEMENT.
       *
-           PERFORM TC-Initializations
+           PERFORM TC-INITIALIZATIONS
 
                   
       * __________________________________________________
@@ -75,8 +80,12 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
+           IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
            END-IF
            CALL TC-Callee-ebb060ea USING
                                  somedate
@@ -89,8 +98,12 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
+           IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
            END-IF
            CALL TC-Callee-ebb060ea USING
                                  somedate
@@ -105,7 +118,7 @@
       *    CALL Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+           CALL 'fde394fbPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -115,10 +128,14 @@
       *
       *    call PersonService::GetPersonById input  person1Id
       *                                      output MyPerson
-           IF TC-PersonService-d2b57642-Idt not = 'd2b57642'
-               PERFORM TC-LOAD-POINTERS-PersonService
+           IF ADDRESS OF TC-PersonSe-d2b57642-Item = NULL
+               PERFORM TC-LOAD-POINTERS-PersonSe
+           ELSE
+               IF TC-PersonSe-d2b57642-Idt not = 'd2b57642'
+                   PERFORM TC-LOAD-POINTERS-PersonSe
+               END-IF
            END-IF
-           CALL TC-PersonService-d2b57642 USING
+           CALL TC-PersonSe-d2b57642 USING
                                  person1Id
                     by reference MyPerson
            end-call
@@ -128,7 +145,7 @@
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
-           CALL 'fde394fb' USING
+           CALL 'fde394fbPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
                     by reference flag-value
@@ -138,31 +155,40 @@
 
 
       *OK  call check of PGM1
-      *   call check input somedate
-          CALL 'a0508f35' USING
+      *    call check input somedate
+           CALL 'a0508f35check' USING
                                  somedate
            end-call
-                                   
+                                    
       *OK 
-      *   call PGM1::check input somedate
-          CALL 'a0508f35' USING
+      *    call PGM1::check input somedate
+           CALL 'a0508f35check' USING
                                  somedate
            end-call
-                                         
+                                          
       *OK 
-      *   call Callee::check input somedate
-          IF TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
+      *    call Callee::check input somedate
+           IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
                PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
            END-IF
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
-                                           
-        .
-
+                                            
+           .
       *=================================================================
-        TC-Initializations.
+       TC-INITIALIZATIONS.
       *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-Callee-ebb060ea-Item  TO NULL
+                 SET ADDRESS OF TC-Callee-ca0ab46c-Item  TO NULL
+                 SET ADDRESS OF TC-PersonSe-d2b57642-Item  TO NULL
+            END-IF
             .
       *=================================================================
         TC-LOAD-POINTERS-Callee.
@@ -221,7 +247,9 @@
       *01  flag         TYPE Bool.
        01  flag-value PIC X VALUE LOW-VALUE.
            88  flag       VALUE 'T'.
-           88  flag-false VALUE 'F'.
+           88  flag-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                   
        01  realformat   PIC X(08).
        01  TC-Callee-FctList-Loaded PIC X(02).
@@ -340,7 +368,7 @@
                           
        
       *declare procedure GetPersonById public
-      *   input  personId  pic 9(10)
+      *   input  person1Id  pic 9(10)
       *   output person    type Person
       *  .
        END PROGRAM PersonService.
@@ -354,7 +382,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ca0ab46c.
+       PROGRAM-ID. ca0ab46ccheck.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -365,14 +393,14 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM ca0ab46c.
+       END PROGRAM ca0ab46ccheck.
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d0a59141.
+       PROGRAM-ID. d0a59141check2.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -383,7 +411,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM d0a59141.
+       END PROGRAM d0a59141check2.
       *
       *declare procedure check2 public
       *   input mydate        TYPE Date
@@ -391,7 +419,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e5b741a8.
+       PROGRAM-ID. e5b741a8check2.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -407,7 +435,7 @@
                    BY REFERENCE myDate2
            .
            CONTINUE.
-       END PROGRAM e5b741a8.
+       END PROGRAM e5b741a8check2.
       *
       *DECLARE PROCEDURE MyPublicProcedure PUBLIC
       *    INPUT mydate        TYPE Date
@@ -417,7 +445,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ebb060ea.
+       PROGRAM-ID. ebb060eaMyPublicProcedure.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -436,35 +464,35 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM ebb060ea.
+       END PROGRAM ebb060eaMyPublicProcedure.
       *
       *declare procedure GetPersonById public
-      *   input  personId  pic 9(10)
+      *   input  person1Id  pic 9(10)
       *   output person    type Person
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d2b57642.
+       PROGRAM-ID. d2b57642GetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
-       01 personId PIC 9(10).
+       01 person1Id pic 9(10).
        01 person.
            02 PersonId pic 9(10).
            02 LastName pic X(30).
            02 FirstName pic X(30).
        PROCEDURE DIVISION
-             USING BY REFERENCE personId
+             USING BY REFERENCE person1Id
                    BY REFERENCE person
            .
            CONTINUE.
-       END PROGRAM d2b57642.
+       END PROGRAM d2b57642GetPersonById.
       *
       *declare procedure check private
       *   input mydate        TYPE Date
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35.
+       PROGRAM-ID. a0508f35check.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -475,7 +503,7 @@
              USING BY REFERENCE mydate
            .
            CONTINUE.
-       END PROGRAM a0508f35.
+       END PROGRAM a0508f35check.
       *
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
@@ -485,7 +513,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fde394fb.
+       PROGRAM-ID. fde394fbPgm1PrivateValidateDat.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -504,4 +532,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM fde394fb.
+       END PROGRAM fde394fbPgm1PrivateValidateDat.

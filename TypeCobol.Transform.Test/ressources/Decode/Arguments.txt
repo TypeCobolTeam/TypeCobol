@@ -1,1 +1,3 @@
 ﻿-c2tc input\EncodedTypeCobol.tcmc output\Result.tcbl
+-c2tc input\DVZZJCM06091671950858863561.tcmc output\DVZZJCM07743263199481788228.c2tc
+

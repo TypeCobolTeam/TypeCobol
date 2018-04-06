@@ -22,27 +22,16 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             if (start != null || stop != null)
             {
-                if (start == stop)
+                if (Equals(start, stop))
                 {
                     return start.Text;
                 }
                 else
                 {
-                    return start.Text + " ... " + stop.Text;
+                    return start?.Text + " ... " + stop.Text;
                 }
             }
-            else if (start != null)
-            {
-                return start.Text + " ...";
-            }
-            else if (stop != null)
-            {
-                return "... " + stop.Text;
-            }
-            else
-            {
-                return String.Empty;
-            }
+            return String.Empty;
         }
 
         /// <summary>
@@ -64,7 +53,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                     Consume();
                     currentToken = Lt(1);
                 }
-                if (currentToken != searchedToken)
+                if (currentToken != searchedToken && searchedToken.Type != TokenConstants.Eof)
                 {
                     throw new InvalidOperationException("Token not found in this stream");
                 }
@@ -137,7 +126,7 @@ namespace TypeCobol.Compiler.AntlrUtils
                     ((IWritableToken)t).TokenIndex = tokens.Count;
                 }
                 // >>> replacement added
-                if(StopToken != null && t == StopToken)
+                if(StopToken != null && StopToken.Equals(t))
                 {
                     t = stopTokenReplacedByEOF;
                     indexOfStopTokenReplacedByEOF = tokens.Count;

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Castle.Components.DictionaryAdapter;
-using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
@@ -30,9 +27,11 @@ namespace TypeCobol.Compiler
         {
             // Initialize performance stats 
             PerfStatsForCodeElementsParser = new PerfStatsForParsingStep(CompilationStep.CodeElementsParser);
-            PerfStatsForProgramClassParser = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
+            PerfStatsForTemporarySemantic = new PerfStatsForParsingStep(CompilationStep.ProgramClassParser);
+            PerfStatsForProgramCrossCheck = new PerfStatsForParsingStep(CompilationStep.ProgramCrossCheck);
 
-            
+
+
         }
 
         /// <summary>
@@ -87,26 +86,6 @@ namespace TypeCobol.Compiler
                 }
                 else
                 {
-                    ////Reset all diagnostics in modified lines
-                    foreach (var change in processedTokensLineChanges)
-                    {   
-                        var lines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines);
-                        if (lines != null && lines.Count > 0)
-                        {
-                            if (change.LineIndex + 1 <= lines.Count - 1)        //Temporary workaround until issue #611 is fixed
-                            {                                                   //Temporary workaround until issue #611 is fixed
-                                var lineIndex = change.LineIndex;
-                                while (lineIndex < lines.Count-1 && lines[lineIndex].ParserDiagnostics == null)
-                                    lineIndex++;
-
-                                lines[lineIndex].ResetDiagnostics();
-                            }                                                   //Temporary workaround until issue #611 is fixed
-                            else                                                //Temporary workaround until issue #611 is fixed
-                                lines[change.LineIndex].ResetDiagnostics();
-                        }
-                           
-                    }
-
                     ImmutableList<CodeElementsLine>.Builder codeElementsDocumentLines = ((ImmutableList<CodeElementsLine>)processedTokensDocument.Lines).ToBuilder();
                     IList<DocumentChange<ICodeElementsLine>> documentChanges = CodeElementsParserStep.ParseProcessedTokensLinesChanges(TextSourceInfo, codeElementsDocumentLines, processedTokensLineChanges, PrepareDocumentLineForUpdate, CompilerOptions, perfStatsForParserInvocation);
 
@@ -162,7 +141,7 @@ namespace TypeCobol.Compiler
                     builder.Append(CodeElementsParserStep.AntlrPerformanceProfiler.WriteInfoToString());
                 }
 
-                if (ProgramClassParserStep.AntlrPerformanceProfiler != null && PerfStatsForProgramClassParser.ActivateDetailedAntlrPofiling)
+                if (ProgramClassParserStep.AntlrPerformanceProfiler != null && PerfStatsForTemporarySemantic.ActivateDetailedAntlrPofiling)
                 {
                     builder.Append("\n\n---PROGRAM CLASS PARSER STEP---\n");
                     builder.Append(ProgramClassParserStep.AntlrPerformanceProfiler.WriteInfoToString());
@@ -174,7 +153,6 @@ namespace TypeCobol.Compiler
 
         /// <summary>
         /// Creates a new snapshot of the document viewed as complete Cobol Program or Class.
-        /// (if the code elements lines changed since the last time this method was called)
         /// Thread-safe : this method can be called from any thread.
         /// </summary>
         public void RefreshProgramClassDocumentSnapshot()
@@ -184,29 +162,26 @@ namespace TypeCobol.Compiler
             lock (lockObjectForProgramClassDocumentSnapshot)
             {
                 // Capture previous snapshot at one point in time
-                CodeElementsDocument codeElementsDocument = CodeElementsDocumentSnapshot;
+                TemporarySemanticDocument temporarySnapshot = TemporaryProgramClassDocumentSnapshot;
 
                 // Check if an update is necessary and compute changes to apply since last version
-                if ((CodeElementsDocumentSnapshot != null) && (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != codeElementsDocument.CurrentVersion))
+                if ((TemporaryProgramClassDocumentSnapshot != null) && (ProgramClassDocumentSnapshot == null || ProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != temporarySnapshot.CurrentVersion))
                 {
-                    // Start perf measurement
-                    var perfStatsForParserInvocation = PerfStatsForProgramClassParser.OnStartRefreshParsingStep();
+                    PerfStatsForProgramCrossCheck.OnStartRefreshParsingStep();
 
                     // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
-                    SourceFile root;
-                    IList<ParserDiagnostic> newDiagnostics;
-                    Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
-                    //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
-                
+                    SourceFile root = temporarySnapshot.Root;
+                    List<Diagnostic> diagnostics = new List<Diagnostic>();
+                    Dictionary<CodeElement, Node> nodeCodeElementLinkers = temporarySnapshot.NodeCodeElementLinkers ?? new Dictionary<CodeElement, Node>();
+                    ProgramClassParserStep.CrossCheckPrograms(root);
+              
                     // Capture the result of the parse in a new snapshot
                     ProgramClassDocumentSnapshot = new ProgramClassDocument(
-                        codeElementsDocument, ProgramClassDocumentSnapshot == null ? 0 : ProgramClassDocumentSnapshot.CurrentVersion + 1,
-                        root, newDiagnostics, nodeCodeElementLinkers);
-                    snapshotWasUpdated = true;
+                        temporarySnapshot, ProgramClassDocumentSnapshot?.CurrentVersion + 1 ?? 0,
+                        root, diagnostics, nodeCodeElementLinkers);
+                    snapshotWasUpdated = true;;
 
-                    // Stop perf measurement
-                    PerfStatsForProgramClassParser.OnStopRefreshParsingStep();
+                    PerfStatsForProgramCrossCheck.OnStopRefreshParsingStep();
                 }
             }
 
@@ -224,6 +199,41 @@ namespace TypeCobol.Compiler
         }
 
         /// <summary>
+        /// Creates a temporary snapshot which contains element before the cross check phase
+        /// Usefull to create a program symboltable without checking nodes.
+        /// For instance : it's used to load all the symbols from every dependencies before running the cross check phase to resolve symbols.
+        /// </summary>
+        public void ProduceTemporarySemanticDocument()
+        {
+            lock (lockObjectForTemporarySemanticDocument)
+            {
+                // Capture previous snapshot at one point in time
+                CodeElementsDocument codeElementsDocument = CodeElementsDocumentSnapshot;
+
+                if (CodeElementsDocumentSnapshot != null && (TemporaryProgramClassDocumentSnapshot == null || TemporaryProgramClassDocumentSnapshot.PreviousStepSnapshot.CurrentVersion != CodeElementsDocumentSnapshot.CurrentVersion))
+                {
+                    // Start perf measurement
+                    var perfStatsForParserInvocation = PerfStatsForTemporarySemantic.OnStartRefreshParsingStep();
+
+                    // Program and Class parsing is not incremental : the objects are rebuilt each time this method is called
+                    SourceFile root;
+                    List<Diagnostic> newDiagnostics;
+                    Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
+
+                    //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
+                    ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
+
+                    // Capture the produced results
+                    TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers);
+
+                    // Stop perf measurement
+                    PerfStatsForTemporarySemantic.OnStopRefreshParsingStep();
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Last snapshot of the compilation unit viewed as a complete Cobol program or class, after parsing the code elements.
         /// Only one of the two properties Program or Class can be not null.
         /// Tread-safe : accessible from any thread, returns an immutable object tree.
@@ -232,20 +242,23 @@ namespace TypeCobol.Compiler
 
 
         /// <summary>
-        /// Return all diagnostics from all snaphost
+        /// Temporary Snapshot stored between Semantic and CrossCheck phase. 
+        /// Only use this snapshot to go from semantic to cross check pahse. 
+        /// </summary>
+        public TemporarySemanticDocument TemporaryProgramClassDocumentSnapshot { get; private set; }
+
+
+        /// <summary>
+        /// Return diagnostics attached directly to a CodeElement or to CodeElementsDocumentSnapshot
         /// </summary>
         /// <returns></returns>
-        public override IList<Diagnostic> AllDiagnostics()
-        {
-            var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
 
-            if (CodeElementsDocumentSnapshot != null && CodeElementsDocumentSnapshot.ParserDiagnostics != null)
+        private IList<Diagnostic> OnlyCodeElementDiagnostics() {
+            var codeElementDiagnostics = new List<Diagnostic>();
+
+            if (CodeElementsDocumentSnapshot?.ParserDiagnostics != null)
             {
-                allDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
-            }
-            if (ProgramClassDocumentSnapshot != null && ProgramClassDocumentSnapshot.Diagnostics != null)
-            {
-                allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
+                codeElementDiagnostics.AddRange(CodeElementsDocumentSnapshot.ParserDiagnostics);
             }
 
             if (CodeElementsDocumentSnapshot != null)
@@ -254,12 +267,57 @@ namespace TypeCobol.Compiler
                 {
                     if (ce.Diagnostics != null)
                     {
-                        allDiagnostics.AddRange(ce.Diagnostics);
+                        codeElementDiagnostics.AddRange(ce.Diagnostics);
+                    }
+                }
+            }
+
+            return codeElementDiagnostics;
+        }
+
+        /// <summary>
+        /// Return All diagnostics from all snapshots (token, CodeElement, Node, ...) with the possibily to exclude Node diagnostics
+        /// 
+        /// Note that a snapshot only contains diagnostics related to its own phase.
+        /// </summary>
+        /// <param name="includeNodeDiagnostics"></param>
+        /// <returns></returns>
+        public IList<Diagnostic> AllDiagnostics(bool includeNodeDiagnostics) {
+            var allDiagnostics = new List<Diagnostic>(base.AllDiagnostics());
+
+            allDiagnostics.AddRange(OnlyCodeElementDiagnostics());
+
+            if (includeNodeDiagnostics) {
+                lock (lockObjectForTemporarySemanticDocument)
+                {
+                    if (TemporaryProgramClassDocumentSnapshot != null)
+                    {
+                        allDiagnostics.AddRange(TemporaryProgramClassDocumentSnapshot.Diagnostics);
+                    }
+                }
+
+                lock (lockObjectForProgramClassDocumentSnapshot)
+                {
+                    if (ProgramClassDocumentSnapshot != null)
+                    {
+                        //Get all nodes diagnostics using visitor. 
+                        ProgramClassDocumentSnapshot.Root?.AcceptASTVisitor(new DiagnosticsChecker(allDiagnostics));
+
+                        if (ProgramClassDocumentSnapshot.Diagnostics != null)
+                            allDiagnostics.AddRange(ProgramClassDocumentSnapshot.Diagnostics);
                     }
                 }
             }
 
             return allDiagnostics;
+        }
+
+        /// <summary>
+        /// Return all diagnostics from all snaphost
+        /// </summary>
+        /// <returns></returns>
+        public override IList<Diagnostic> AllDiagnostics() {
+            return AllDiagnostics(true);
         }
 
         /// <summary>
@@ -274,14 +332,17 @@ namespace TypeCobol.Compiler
         public event EventHandler<ProgramClassEvent> ProgramClassNotChanged;
 
         /// <summary>
-        /// Performance stats for the RefreshProgramClassDocumentSnapshot method
+        /// Performance stats for the TemporaryProgramClassDocumentSnapshot method
         /// </summary>
-        public PerfStatsForParsingStep PerfStatsForProgramClassParser { get; private set; }
+        public PerfStatsForParsingStep PerfStatsForTemporarySemantic { get; private set; }
+
+        public PerfStatsForParsingStep PerfStatsForProgramCrossCheck { get; private set; }
 
         #region Thread ownership and synchronization
 
         // Synchronize accesses during snapshots updates
         protected readonly object lockObjectForCodeElementsDocumentSnapshot = new object();
+        protected readonly object lockObjectForTemporarySemanticDocument = new object();
         protected readonly object lockObjectForProgramClassDocumentSnapshot = new object();
 
         #endregion

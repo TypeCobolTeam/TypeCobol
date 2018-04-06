@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Parser
         // When not null, optionnaly used to gather Antlr performance profiling information
         public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
 
-        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out IList<ParserDiagnostic> diagnostics, out Dictionary<CodeElement, Node> nodeCodeElementLinkers )
+        public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, out Dictionary<CodeElement, Node> nodeCodeElementLinkers )
         {
             // Create an Antlr compatible token source on top a the token iterator
             CodeElementsLinesTokenSource tokenSource = new CodeElementsLinesTokenSource(
@@ -68,6 +68,7 @@ namespace TypeCobol.Compiler.Parser
             // Visit the parse tree to build a first class object representing a Cobol program or class
             ParseTreeWalker walker = new ParseTreeWalker();
             CobolNodeBuilder programClassBuilder = new CobolNodeBuilder();
+            diagnostics = new List<Diagnostic>();
             programClassBuilder.SyntaxTree = new SyntaxTree(); //Initializie SyntaxTree for the current source file
 			programClassBuilder.CustomSymbols = customSymbols;
             programClassBuilder.Dispatcher = new NodeDispatcher();
@@ -83,27 +84,31 @@ namespace TypeCobol.Compiler.Parser
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
             }
 
-            //Create link between datas
-            programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new TypeCobolLinker());
+            root = programClassBuilder.SyntaxTree.Root; //Set output root node
 
+            //Create link between data definition an Types, will be stored in SymbolTable
+            root.AcceptASTVisitor(new TypeCobolLinker());
+
+            //Stop measuring tree building performance
             perfStatsForParserInvocation.OnStopTreeBuilding();
 
-            //Complete some information on Node and run checker that need a full AST
-            programClassBuilder.SyntaxTree.Root.AcceptASTVisitor(new Cobol85CompleteASTChecker());
-              
-           
             // Register compiler results
-            root = programClassBuilder.SyntaxTree.Root; //Set output root node
-            diagnostics = programClassBuilder.GetDiagnostics(programClassParseTree);
+            var syntaxTreeDiag = programClassBuilder.GetDiagnostics(programClassParseTree);
+            if (syntaxTreeDiag != null)
+                diagnostics.AddRange(syntaxTreeDiag);
             nodeCodeElementLinkers = programClassBuilder.NodeCodeElementLinkers;
 
             if (programClassBuilderError != null)
             {
-                if (diagnostics == null) diagnostics = new List<ParserDiagnostic>();
                 diagnostics.Add(programClassBuilderError);
             }
         }
 
+        public static void CrossCheckPrograms(SourceFile root)
+        {
+            //Complete some information on Node and run checker that need a full AST
+            root.AcceptASTVisitor(new CrossCompleteChecker());
+        }
 
     }
 }

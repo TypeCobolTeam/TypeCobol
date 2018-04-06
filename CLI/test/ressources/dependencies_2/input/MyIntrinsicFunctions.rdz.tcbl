@@ -16,6 +16,12 @@
           14 Accel2d  TYPE Vect2.
           10 Speed2d  TYPE Vect2.
 
+       01 TechnicalContext TYPEDEF STRICT PUBLIC. 
+            05 Site TYPE SITE.
+
+       01 SITE TYPEDEF STRICT PUBLIC.
+            05 SiteName PIC X(8).
+
        PROCEDURE DIVISION.
        
        declare procedure dump public

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
@@ -35,6 +36,7 @@ namespace TypeCobol.Codegen.Actions
             /// The Stack of Programs encountered
             /// </summary>
             public Stack<IProcCaller> ProcCallerStack;
+            
             /// <summary>
             /// Constructor
             /// </summary>
@@ -102,6 +104,176 @@ namespace TypeCobol.Codegen.Actions
             }
 
             /// <summary>
+            /// Set of already used storage area.
+            /// </summary>
+            HashSet<TypeCobol.Compiler.CodeElements.StorageArea> UsedStorageArea;
+            public override bool Visit(StorageArea storageArea)
+            {
+                if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsIndex) || this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsBoolean))
+                {
+                    Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(this.CurrentNode);
+                    foreach (TypeCobol.Compiler.CodeElements.StorageArea storage_area in this.CurrentNode.QualifiedStorageAreas.Keys)
+                    {
+                        if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsIndex))
+                        {
+                            QualifiedStorageAreaSelecterForIndexes(storage_area, sourcePositions);
+                        }
+                        if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsBoolean))
+                        {
+                            QualifiedStorageAreaSelecterForBoolean(storage_area, sourcePositions);
+                        }
+                       
+                    }
+                    this.CurrentNode.Comment = true;
+                }
+                return true;
+            }
+
+            private void QualifiedStorageAreaSelecterForBoolean(StorageArea storage_area, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
+            {
+                if (UsedStorageArea != null && UsedStorageArea.Contains(storage_area))
+                    return;
+                string name = storage_area?.SymbolReference?.Name;
+                GenerateToken item = null;
+                item = new GenerateToken(
+                    new TokenCodeElement(storage_area?.SymbolReference?.NameLiteral?.Token), name + "-value", sourcePositions);
+                item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                this.CurrentNode.Add(item);
+                if (UsedStorageArea == null)
+                {
+                    UsedStorageArea = new HashSet<StorageArea>();
+                }
+                UsedStorageArea.Add(storage_area);
+            }
+
+            private void QualifiedStorageAreaSelecterForIndexes(StorageArea storageArea, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
+            {
+                if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsQualifiedReference)
+                {
+                    if (UsedStorageArea != null && UsedStorageArea.Contains(storageArea))
+                        return;
+                    string name = storageArea.SymbolReference.Name;
+                    string qualified_name = this.CurrentNode.QualifiedStorageAreas[storageArea];
+                    GenerateToken item = null;
+                    string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, this.CurrentNode);
+                    item = new GenerateToken(
+                        new TokenCodeElement(storageArea.SymbolReference.NameLiteral.Token), hashName, sourcePositions);
+                    item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                    this.CurrentNode.Add(item);
+                    if (UsedStorageArea == null)
+                    {
+                        UsedStorageArea = new HashSet<StorageArea>();
+                    }
+                    UsedStorageArea.Add(storageArea);
+                }
+            }
+
+            /// <summary>
+            /// Generate TypeCobol Qualified Symbol Reference node for a given StorageArea.
+            /// </summary>
+            /// <param name="storageArea">The Storage Area to generate the node</param>
+            /// <param name="codeElement">The underlying code element</param>
+            /// <returns>true if some nodes have been generated, false otherwise</returns>
+            private bool GenQualifiedStorage(StorageArea storageArea, CodeElement codeElement)
+            {
+                if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsTypeCobolQualifiedReference)
+                    return false;
+                if (CurrentNode == null)
+                    return false;
+                TypeCobolQualifiedSymbolReference tcqsr = storageArea.SymbolReference as TypeCobolQualifiedSymbolReference;
+                int start = -1;
+                for (int i = 0; i < codeElement.ConsumedTokens.Count; i++)
+                {
+                    if (codeElement.ConsumedTokens[i] == tcqsr?.Head.NameLiteral.Token)
+                    {
+                        start = i;
+                        break;
+                    }
+                }
+                int end = -1;
+                for (int i = 0; i < codeElement.ConsumedTokens.Count; i++)
+                {
+                    if (codeElement.ConsumedTokens[i] == tcqsr?.Tail.NameLiteral.Token)
+                    {
+                        end = i;
+                        break;
+                    }
+                }
+                List<GenerateToken> items = new List<GenerateToken>();
+                List<string> names = new List<string>();
+                for (int i = end; i <= start; i++)
+                {
+                    if (codeElement.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.QualifiedNameSeparator)
+                    {
+                        GenerateToken qns = new GenerateToken(new TokenCodeElement(codeElement.ConsumedTokens[i]), string.Intern(" OF "),
+                            null);
+                        qns.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                        CurrentNode.Add(qns);
+                    }
+                    else
+                    {
+                        GenerateToken item = new GenerateToken(
+                            new TokenCodeElement(codeElement.ConsumedTokens[i]), codeElement.ConsumedTokens[i].Text,
+                            null);
+                        item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                        CurrentNode.Add(item);
+                        items.Add(item);
+                        names.Add(codeElement.ConsumedTokens[i].Text);
+                    }
+                }
+                names.Reverse();
+                for (int i = 0; i < names.Count; i++)
+                {
+                    items[i].ReplaceCode = names[i];
+                }
+                return items.Count > 0;
+            }
+
+
+            /// <summary>
+            /// The Goal of this override is to generate hash names for pure Cobol85 Indices used as Qualified Names.
+            /// </summary>
+            /// <param name="indexDefinition">The Index Definition instance</param>
+            /// <returns>true do to keep on visiting, false otherwise.</returns>
+            public override bool Visit(IndexDefinition indexDefinition)
+            {
+                if (indexDefinition.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
+                    return true;
+                if (!indexDefinition.IsPartOfATypeDef && indexDefinition.Parent != null && indexDefinition.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
+                {//Check if the parent is a data definition with a type which is not a TypeDef
+
+                    var dataDef = indexDefinition.Parent as DataDefinition;
+                    if (dataDef != null) {
+                        var dde = dataDef.CodeElement as DataDescriptionEntry;
+                        if (dde != null)
+                        {
+                            if (dde.Indexes != null)
+                            {
+                                foreach (var index in dde.Indexes)
+                                {
+                                    if (index.Name.Equals(indexDefinition.Name))
+                                    {
+                                        Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(indexDefinition.Parent);
+                                        string name = index.Name;
+                                        string qualified_name = indexDefinition.QualifiedName.ToString();
+                                        GenerateToken item = null;
+                                        string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, indexDefinition.Parent);
+                                        item = new GenerateToken(
+                                            new TokenCodeElement(index.NameLiteral.Token), hashName,
+                                            sourcePositions);
+                                        item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                                        indexDefinition.Parent.Add(item);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                indexDefinition.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                return true;
+            }
+            /// <summary>
             /// Checks if the current symbol reference is contained in the aready collected Items list.
             /// </summary>
             /// <param name="sr">The Symbol Reference to Check</param>
@@ -162,6 +334,42 @@ namespace TypeCobol.Codegen.Actions
                 }
             }
 
+            /// <summary>
+            /// If the Current Node uses Reads and Writes Storage Areas then if symbol references are
+            /// TypeCobol Symbol References, a substitution node is generated for them.
+            /// </summary>
+            private void GenQualificationForNodeWithReadsWritesStorage()
+            {
+                if (!HasMatch && CurrentNode != null && CurrentNode.CodeElement != null)
+                {//Check if this node has Reads/Writes Storages
+                    if (CurrentNode.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
+                        return;
+
+                    //Don't transform Procedure Call
+                    if (CurrentNode is TypeCobol.Compiler.Nodes.ProcedureStyleCall)
+                        return;
+
+                    CurrentNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                    bool bHasGeNodes = false;
+                    if (CurrentNode.CodeElement.StorageAreaReads != null)
+                        foreach (var storage in CurrentNode.CodeElement.StorageAreaReads)
+                        {
+                            if (GenQualifiedStorage(storage, CurrentNode.CodeElement))
+                                bHasGeNodes = true;
+                        }
+                    if (CurrentNode.CodeElement.StorageAreaWrites != null)
+                        foreach (var storage in CurrentNode.CodeElement.StorageAreaWrites)
+                        {
+                            if (GenQualifiedStorage(storage.StorageArea, CurrentNode.CodeElement))
+                                bHasGeNodes = true;
+                        }
+                    if (bHasGeNodes)
+                    {
+                        CurrentNode.Comment = true;
+                    }
+                }
+            }
+
             private void PerformMatch()
             {
                 if (HasMatch)
@@ -171,6 +379,10 @@ namespace TypeCobol.Codegen.Actions
                     Perform(this.CurrentNode);
                     Items = null;
                     AllItemsList.Clear();
+                }
+                else 
+                {//Check if this node has Reads/Writes Storages
+                    GenQualificationForNodeWithReadsWritesStorage();
                 }
             }
 
@@ -271,6 +483,59 @@ namespace TypeCobol.Codegen.Actions
 
 
             /// <summary>
+            /// Determine if a Data Definition is included a TypeDefintion
+            /// </summary>
+            /// <param name="dataDef">The Data Definition to check</param>
+            /// <returns>true if the DataDefintion is included in a TypeDefinition, false otherwise</returns>
+            internal bool IsTypeDefinition(TypeCobol.Compiler.Nodes.DataDefinition dataDef)
+            {
+                while (dataDef != null)
+                {
+                    if (dataDef is TypeCobol.Compiler.Nodes.TypeDefinition)
+                        return true;
+                    dataDef = dataDef.Parent as TypeCobol.Compiler.Nodes.DataDefinition;
+                }
+                return false;
+            }
+
+
+            /// <summary>
+            /// Check if the given items are in the source node qualified storage areas.
+            /// </summary>
+            /// <param name="items">The items to check</param>
+            /// <param name="sourceNode">The source node</param>
+            /// <param name="qualified_name">The qualified name that corresponds the the items.</param>
+            /// <returns>true if the items are in the source node storage areas, false otherwise</returns>
+            internal bool AreItemsInNodeQualifiedStorageAreas(IList<SymbolReference> items, Node sourceNode, out string qualified_name)
+            {
+                qualified_name = null;
+                if (sourceNode.QualifiedStorageAreas == null)
+                    return false;
+                foreach (TypeCobol.Compiler.CodeElements.StorageArea storage_area in sourceNode.QualifiedStorageAreas.Keys)
+                {
+                    if (storage_area.SymbolReference != null && storage_area.SymbolReference.IsTypeCobolQualifiedReference)
+                    {
+                        TypeCobolQualifiedSymbolReference tc_sr = storage_area.SymbolReference as TypeCobolQualifiedSymbolReference;
+                        IList<SymbolReference> tcsr_items = tc_sr?.AsList();
+                        int nCountInner = 0;
+                        foreach (SymbolReference item in items)
+                        {
+                            if (tcsr_items != null && tcsr_items.IndexOf(item) >= 0)
+                                nCountInner++;
+                            else
+                                break;
+                        }
+                        if (nCountInner == items.Count)
+                        {
+                            qualified_name = sourceNode.QualifiedStorageAreas[storage_area];
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            /// <summary>
             /// Perform the qualification action
             /// </summary>
             /// <param name="sourceNode">The source Node on which to perform teh action</param>
@@ -279,6 +544,14 @@ namespace TypeCobol.Codegen.Actions
             {
                 if (sourceNode.IsFlagSet(Node.Flag.HasBeenTypeCobolQualifierVisited))
                     return;
+                    TypeCobol.Compiler.Nodes.DataDescription dataDescription = null;
+                if (sourceNode is TypeCobol.Compiler.Nodes.DataDescription && IsTypeDefinition(sourceNode as TypeCobol.Compiler.Nodes.DataDescription))
+                {
+                    dataDescription = sourceNode as TypeCobol.Compiler.Nodes.DataDescription;
+                    if (dataDescription.QualifiedTokenSubsitutionMap == null)
+                        dataDescription.QualifiedTokenSubsitutionMap = new Dictionary<Compiler.Scanner.Token, string>();                    
+                }
+
                 //Now this Node Is Visited
                 sourceNode.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                 Tuple<int, int, int, List<int>, List<int>> sourcePositions = this.Generator.FromToPositions(sourceNode);
@@ -323,6 +596,34 @@ namespace TypeCobol.Codegen.Actions
                         bWasProcCall = true;//Remember that we have a Procedure Style Call Node.
                         continue;//Continue
                     }
+                    if (sourceNode.IsFlagSet(Node.Flag.NodeContainsIndex))
+                    {
+                        //So we must know if this qualified name is for an Index Name
+                        string qualified_name;
+                        bool bAreIn = AreItemsInNodeQualifiedStorageAreas(items, sourceNode, out qualified_name);
+                        if (bAreIn)
+                        {
+                            GenerateToken item = null;
+                            string hashName = GeneratorHelper.ComputeIndexHashName(qualified_name, sourceNode);
+                            //Now all items in the qualified name must be replaced with the hash name by the Generator.
+                            //So all items except the last one are replaced by a blank, the last item will be the HashName
+                            for (int r = i; r <= range.Item2 - 1; r++)
+                            {                                
+                                item = new GenerateToken(
+                                    new TokenCodeElement(nodeTokens[r]), "",
+                                    sourcePositions);
+                                item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                                sourceNode.Add(item);
+                             }
+                            item = new GenerateToken(
+                                new TokenCodeElement(nodeTokens[range.Item2]), hashName,
+                                sourcePositions);
+                            item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                            sourceNode.Add(item);
+                            continue;
+                        }
+                    }
+
                     for (int j = 0; j < Items.Count; j++)
                     {
                         SymbolReference sr = Items[Items.Count - j - 1];
@@ -345,17 +646,35 @@ namespace TypeCobol.Codegen.Actions
                                     }
                                 }
                                 //We got It ==> Create our Generate Nodes
-                                GenerateToken item = new GenerateToken(
-                                    new TokenCodeElement(sr.NameLiteral.Token), Items[j].ToString(),
-                                    sourcePositions);
-                                item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
-                                sourceNode.Add(item);
-                                if (tokenColonColon != null)
+                                if (dataDescription != null)
                                 {
-                                    item = new GenerateToken(new TokenCodeElement(tokenColonColon), string.Intern(" OF "),
-                                        sourcePositions);
+                                    dataDescription.QualifiedTokenSubsitutionMap[sr.NameLiteral.Token] = Items[j].ToString();
+                                    if (tokenColonColon != null)
+                                        dataDescription.QualifiedTokenSubsitutionMap[tokenColonColon] = "OF";
+                                }
+                                else
+                                {
+                                    GenerateToken item = null;
+                                    string replace_value = Items[j].ToString();
+
+                                    if (this.CurrentNode.IsFlagSet(Node.Flag.NodeContainsBoolean))
+                                    {
+                                        if (this.CurrentNode.QualifiedStorageAreas.Keys.Any(flaggedStorageArea => flaggedStorageArea?.SymbolReference?.NameLiteral.Value == replace_value))
+                                        {
+                                            replace_value = replace_value + "-value";
+                                        }
+                                    }
+                                   
+                                    item = new GenerateToken(new TokenCodeElement(sr.NameLiteral.Token), replace_value, sourcePositions);
                                     item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                                     sourceNode.Add(item);
+                                    if (tokenColonColon != null)
+                                    {
+                                        item = new GenerateToken(new TokenCodeElement(tokenColonColon), string.Intern(" OF "),
+                                            sourcePositions);
+                                        item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
+                                        sourceNode.Add(item);
+                                    }
                                 }
                                 break;//We got it
                             }
@@ -418,7 +737,7 @@ namespace TypeCobol.Codegen.Actions
             public string ReplaceCode
             {
                 get;
-                private set;
+                set;
             }
 
 

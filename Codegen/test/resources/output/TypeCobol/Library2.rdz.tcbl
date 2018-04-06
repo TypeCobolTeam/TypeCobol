@@ -51,7 +51,7 @@
       *    RETURNING Result TYPE dateString.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b8721d20.
+       PROGRAM-ID. b8721d20currentDateString.
        DATA DIVISION.
        LINKAGE SECTION.
        01 Result PIC 9(08).
@@ -60,4 +60,4 @@
            .
            display "toto"
            .
-       END PROGRAM b8721d20.
+       END PROGRAM b8721d20currentDateString.

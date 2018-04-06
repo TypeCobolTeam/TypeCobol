@@ -4,18 +4,17 @@
 # TypeCobol
 TypeCobol is two things:
  - An open source Cobol 85 incremental parser (+Typedef of  Cobol 2002)
-    - We are working on a implemention of LanguageServer Protocol to plug our paser with [RDZ](http://www.ibm.com/software/products/fr/ibm-developer-for-z-systems-enterprise-edition)
- - An extension of Cobol 85 language which can then be converted to Cobol 85
+ - An extension of Cobol 85 language (named TypeCobol) which can then be converted to Cobol 85
     - Like TypeScript with JavaScript
 
 ## Open source parser
 Our parser is based on IBM Enterprise Cobol 5.1 for zOS syntax.
-We'll certainly implement IBM Enterprise Cobol 6 next year.
+We'll certainly implement IBM Enterprise Cobol 6 in 2018/19.
 
 This parser can be used :
  - as C# API
  - with our [Command Line interface ](https://github.com/TypeCobolTeam/TypeCobol/wiki/Command-Line-Interface)
- - with our LanguageServer implementation (still a work in progress).
+ - with our LanguageServer Protocol implementation to plug our paser with [RDZ](http://www.ibm.com/software/products/fr/ibm-developer-for-z-systems-enterprise-edition) (still a work in progress).
  - You can also look at our https://github.com/TypeCobolTeam/TypeCobolBuild project which use our C# API from a Java RTC plugin
 
 
@@ -60,11 +59,13 @@ The solution was uploaded to Github using [Visual Studio 2015 Community RC](http
 
 The best way to test this project is to download and install both tools (for free) on your local machine, [login to Github from Visual Studio Team Explorer](http://channel9.msdn.com/Series/ConnectOn-Demand/217), then refresh this page and click on the *Open in Visual Studio* button which should appear on the right of the repository : this action will clone the solution in your local Git repository and open it in Visual Studio.
 
-The solution contains 4 projects :
+The solution contains these projects :
 - **TypeCobol** is the main project, it implements a complete Cobol compiler front-end
 - **TypeCobol.Grammar** uses Antlr4 to generate C# parsers for Cobol compiler directives and Cobol statements
 - **TypeCobol.Test** provides unit tests which can be launched from the *Test Explorer* in Visual Studio
-- **TypeCobolStudio** is a sample code editor used for visual demos
+- **Codegen** provides the mechanism to transform TypeCobol code to Cobol 85
+- **TypeCobol.LanguageServer** implements the LanguageServer protocol
+- **TypeCobol.Transform** is useful to store the TypeCobol source code and the generated Cobol85 code into one single file.
 
 ## Dependencies on third party librairies
 

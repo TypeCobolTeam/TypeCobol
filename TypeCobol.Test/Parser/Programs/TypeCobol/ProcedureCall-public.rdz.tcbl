@@ -1,0 +1,416 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CallToPublicProcedure.
+
+       DATA DIVISION.
+       LOCAL-STORAGE SECTION.
+
+       01  myDate         TYPE Date.
+       01  fakeDate       PIC X(08).
+       01  result         TYPE Bool.
+       01  realfakeDate   PIC X(08).
+
+       01  W-DATA-DateLibrary.
+           05  W-Dat                 TYPE date.
+           05  W-Date1               TYPE date.
+           05  W-NbOfDays            PIC S9(06).
+           05  W-typeOfDays          TYPE PublicProcedures::typeOfDays.
+           05  W-WrongTypeOfDays     TYPE typeOfDays.
+           05  W-WrongTypeOfDays2    TYPE absentPgm::typeOfDays.
+           05  W-RtnCode             TYPE returnCode.
+
+       01 ReturnCode TYPEDEF strict global.
+         05 PrmCod pic X(04).
+         05 ScdCod pic X(04).
+
+       01 case1 pic X.
+       01 case2 pic X.
+       01 case3 pic X.
+       01 case4 pic X.
+      *No case51, case52, case53
+       01 case61 pic X.
+       01 case62 pic X.
+       01 case63 pic X.
+      *No case7
+       01 case8 pic X.
+       01 case9 pic X.
+      *No case10
+       01 case11 pic X.
+       01 case12 pic X.
+      *No case13
+       01 case14 pic X.
+       01 case15 pic X.
+       01 mygroup.
+            05 case1 pic X.
+            05 case2 pic X.
+            05 case3 pic X.
+            05 case4 pic X.
+      *     no case51, case52, case53
+            05 case61 pic X.
+            05 case62 pic X.
+            05 case63 pic X.
+      *     no case7
+      *     no case8, we need only one defined
+            05 case9 pic X.
+      *     no case10
+      *     no case11, we need only one defined
+            05 case12 pic X.
+      *     no case13
+      *     no case14, we need only one defined
+            05 case15 pic X.
+
+       PROCEDURE DIVISION.
+
+
+
+       TRAITEMENT.
+      *OK: call with a program name
+           call 'case1'
+
+      * __________________________________________________
+      **Ko: not found
+           CALL case1 INPUT      myDate fakeDate
+                      OUTPUT     result
+
+           CALL case2 INPUT      myDate fakeDate
+                      OUTPUT     result
+
+           CALL case3 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+       
+           CALL case4 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+
+           CALL case51
+
+           CALL case52
+
+           CALL case53
+           
+      * KO: case61 is ambiguous (2 variables)
+           CALL case61
+      * KO: case62 is ambiguous (2 variables)
+           CALL case62
+      * KO: case63 is ambiguous (2 variables)
+           CALL case63
+       
+      **Ko: not found
+           CALL case7
+       
+      * Ok: case8 is a variable
+           CALL case8
+
+      * Ko: 2 variables named case9
+           CALL case9
+       
+      **Ko: not found
+           CALL case10 INPUT      fakeDate myDate fakeDate
+                      OUTPUT     fakeDate result
+
+      *Ok: case11 is a variable
+           CALL case11      
+
+      *Ko: case12 is defined 2 times
+           CALL case12
+
+      **Ko: not found
+           CALL case13
+
+      *Ok
+           CALL case14
+
+      *Ko: case15 is defined 2 times
+           CALL case15
+
+
+
+
+
+
+      *----------------------
+      * Now with Pgm prefix
+      *----------------------
+
+      *Ok Test if parameters comparaison is correct
+           CALL PublicProcedures::addDaysToDate INPUT  W-Dat
+                                               W-NbOfDays
+                                               W-TypeOfDays
+                                        OUTPUT W-Date1
+                                               W-RtnCode
+      *KO for parameters type matching 
+      *KO for W-WrongTypeOfDays reference not found
+           CALL PublicProcedures::addDaysToDate INPUT  W-Dat
+                                               W-NbOfDays
+                                               W-WrongTypeOfDays
+                                        OUTPUT W-Date1
+                                               W-RtnCode
+
+      *KO for parameters type matching 
+      *KO for W-WrongTypeOfDays2 reference not found
+           CALL PublicProcedures::addDaysToDate INPUT  W-Dat
+                                               W-NbOfDays
+                                               W-WrongTypeOfDays2
+                                        OUTPUT W-Date1
+                                               W-RtnCode
+
+      *OK: match with full signature
+           CALL PublicProcedures::case1 INPUT      myDate fakeDate
+                      OUTPUT     result
+           
+      *KO: case2 doesn't exists
+      *1 error max
+           CALL PublicProcedures::case2 INPUT      myDate fakeDate
+                      OUTPUT     result
+
+      *KO: case3 doesn't match signature: add 1st and 4th argument 
+      *as extra arguments
+      *1 error + 1 error per wrong argument
+           CALL PublicProcedures::case3 INPUT fakeDate myDate 
+                                              fakeDate
+                      OUTPUT     fakeDate result
+       
+      *KO: case4 doesn't match signature but 2 case4 declared
+      *1 error max
+           CALL PublicProcedures::case4 INPUT      fakeDate 
+                                                myDate fakeDate
+                      OUTPUT     fakeDate result
+
+      * Ok: case51 exists with no argument, 
+      *     case insensitive test
+           CALL PUBLICProcedures::CASE51
+      * Ok: case52 exists with no argument
+           CALL PublicProcedures::case52
+      * Ok: case53 exists with no argument
+           CALL PublicProcedures::case53
+           
+      * Ok exists with no argument
+           CALL PublicProcedures::case61
+      * Ok exists with no argument
+           CALL PublicProcedures::case62
+      * Ok exists with no argument
+           CALL PublicProcedures::case63
+       
+      * Ko: case7 doesn't exists
+           CALL PublicProcedures::case7
+       
+      * Ko: case8 doesn't exists
+           CALL PublicProcedures::case8
+
+      * Ko: case9 doesn't exists
+           CALL PublicProcedures::case9
+       
+      *KO: case10 doesn't match signature: procedure with no argument
+      *1 error + 1 error per wrong argument
+           CALL PublicProcedures::case10 INPUT      fakeDate myDate 
+                                                    fakeDate
+                      OUTPUT     fakeDate result
+
+      *KO: case11 doesn't match signature: procedure with no argument
+      *1 error + 1 error per wrong argument
+           CALL PublicProcedures::case11      
+
+      *KO: case12 doesn't match signature: procedure with no argument
+      *1 error + 1 error per wrong argument
+           CALL PublicProcedures::case12
+
+      *Ko: case13 is defined 2 times but with mandatory arguments
+           CALL PublicProcedures::case13
+
+      *KO: case10 doesn't match signature: procedure with no argument
+      *1 error + 1 error per wrong argument
+           CALL PublicProcedures::case14
+
+      *Ko: case15 is defined 2 times with different signature
+           CALL PublicProcedures::case15
+
+      *Ko: 
+           CALL PublicProcedures::case15::unknown
+
+
+       .
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PublicProcedures.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  typeOfDays       TYPEDEF STRICT PUBLIC pic X(01).
+       procedure division.
+
+       DECLARE PROCEDURE addDaysToDate PUBLIC
+               INPUT  Dat        TYPE date
+                      NbrOfDays  PIC S9(06)
+               OUTPUT Result     TYPE date
+                      RtnCode    TYPE ReturnCode.
+       END-DECLARE.
+       DECLARE PROCEDURE addDaysToDate PUBLIC
+               INPUT  Dat        TYPE date
+                      NbrOfDays  PIC S9(06)
+                      TypeOfDays TYPE typeOfDays 
+               OUTPUT Result     TYPE date
+                      RtnCode    TYPE ReturnCode.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case1 PUBLIC
+           INPUT mydate        TYPE Date
+                 fakeDate      PIC X(08)
+          OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case3 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case4 PUBLIC
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case4 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case51 PUBLIC.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case52 PUBLIC.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE case52 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case53 PUBLIC.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case53 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case53 PUBLIC
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case61 PUBLIC.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case62 PUBLIC.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE case62 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case63 PUBLIC.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case63 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case63 PUBLIC
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case10 PUBLIC.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case11 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case12 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case13 PUBLIC
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case13 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case14 PUBLIC
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case14 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       DECLARE PROCEDURE case15 PUBLIC
+           INPUT  mydate        TYPE Date
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+       DECLARE PROCEDURE case15 PUBLIC
+           INPUT  mydate        TYPE Date
+                  fakeDate      PIC X(08)
+           OUTPUT result        TYPE Bool.
+         PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+       END PROGRAM PublicProcedures.
+       END PROGRAM CallToPublicProcedure.

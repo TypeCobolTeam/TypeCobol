@@ -1,0 +1,15 @@
+﻿--- Diagnostics ---
+Line 13[12,12] <32, Error, Syntax> - A Cobol statement cannot be across 2 sources files (eg. Main program and a COPY)
+
+--- Program ---
+PROGRAM: SourceAcrossFiles2 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  a:Alphanumeric
+  b:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  STRING:STRING

@@ -84,9 +84,9 @@ namespace TypeCobol.Compiler.CodeElements {
 
 		        if (StorageAreaWrites != null) {
 		            foreach (var item in StorageAreaWrites) {
-		                var name = new URI(item.StorageArea.SymbolReference.Name);
+		                var name = new URI(item?.StorageArea?.SymbolReference?.Name);
 		                if (variables.ContainsKey(name))
-		                    if (item.StorageArea is DataOrConditionStorageArea)
+		                    if (item?.StorageArea is DataOrConditionStorageArea)
 		                        continue; // same variable with (presumably) different subscript
 		                    else throw new ArgumentException(name+" already written, but not subscripted?");
 		                else variables.Add(name, SendingItem);
@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	    }
         
 
-        private object SendingItem {
+        public object SendingItem {
 		    [CanBeNull]
 		    get {
 		        if (SendingVariable != null) {
@@ -171,7 +171,7 @@ namespace TypeCobol.Compiler.CodeElements {
                 if (FromGroupItem != null && FromGroupItem.SymbolReference != null)
                     variables.Add(new URI(FromGroupItem.SymbolReference.Name), null);
                 if (  ToGroupItem != null &&   ToGroupItem.SymbolReference != null)
-                    variables.Add(  new URI(ToGroupItem.SymbolReference.Name), FromGroupItem!=null? new URI(FromGroupItem.SymbolReference.Name):null);
+                    variables.Add(  new URI(ToGroupItem.SymbolReference.Name), FromGroupItem!=null? new URI(FromGroupItem?.SymbolReference?.Name):null);
                 return variables;
 		    }
 	    }

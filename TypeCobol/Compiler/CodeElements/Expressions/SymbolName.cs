@@ -38,7 +38,7 @@ namespace TypeCobol.Compiler.CodeElements
         public SyntaxValue<string> NameLiteral { get; private set; }
 
 		/// <summary>Symbol name</summary>
-		public virtual string Name { get { return NameLiteral.Value; } }
+		public virtual string Name { get { return NameLiteral != null ? NameLiteral.Value : null; } }
 
         /// <summary>
         /// Role of this symbol Token
@@ -87,7 +87,8 @@ namespace TypeCobol.Compiler.CodeElements
                 && this.ContinueVisitToChildren(astVisitor, NameLiteral);
         }
 
-        public override string ToString() {	return Name; }
+        public override string ToString() { return Name; }
+        public virtual string ToString(bool isBoolType) { return ToString() + (isBoolType ? "-value" : ""); }
     }
 
     /// <summary>
@@ -139,6 +140,8 @@ namespace TypeCobol.Compiler.CodeElements
         /// parent symbols in a symbols hierarchy
         /// </summary>
         public bool IsQualifiedReference { get; protected set; }
+
+        public bool IsTypeCobolQualifiedReference { get; set; }
 
         /// <summary>
         /// Used to resolve the symbol reference in a hierarchy of names
@@ -269,9 +272,23 @@ namespace TypeCobol.Compiler.CodeElements
 			get { return "\\." + Head.Name + "\\..*" + Tail.DefinitionPathPattern; }
 		}
 
-		public override string ToString() { return Head + " IN " + Tail; }
+	    public override string ToString()
+	    {
+	        return Head + " IN " + Tail;
+	    }
 
-		public override string Name { get { return Tail.Name+'.'+Head.Name; } }
+	    public override string ToString(bool isBoolType)
+	    {
+	        string head = "";
+	        if (Head.IsQualifiedReference)
+	            head = Head.ToString(isBoolType);
+	        else
+	        {
+	            head = Head.ToString() + (isBoolType ? "-value" : "");
+	        }
+            return head + " IN " + Tail;
+        }
+        public override string Name { get { return Tail.Name+'.'+Head.Name; } }
 
 
 
@@ -342,7 +359,10 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 	}
 	public class TypeCobolQualifiedSymbolReference: QualifiedSymbolReference {
-		public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head, tail) { }
+	    public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail) : base(head, tail)
+	    {
+	        IsTypeCobolQualifiedReference = true;
+	    }
 
 	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);

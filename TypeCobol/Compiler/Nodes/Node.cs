@@ -5,6 +5,7 @@ using System.Text;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
 
@@ -128,6 +129,38 @@ namespace TypeCobol.Compiler.Nodes {
             /// Flag the node as a node comming from intrinsic files
             /// </summary>
             NodeIsIntrinsic = 0x01 <<13,
+            /// <summary>
+            /// Flag the node that belongs to the working stoage section (Usefull for DataDefinition)
+            /// </summary>
+            WorkingSectionNode = 0x01 << 14,
+            /// <summary>
+            /// Flag the node that belongs to the linkage section (usefull for DataDefinition)
+            /// </summary>
+            LinkageSectionNode = 0x01 << 15,
+            /// <summary>
+            /// Flag node belongs to Local Storage Section (usefull for DataDefinition)
+            /// </summary>
+            LocalStorageSectionNode = 0x01 << 16,
+            /// <summary>
+            /// Flag node belongs to File Section (usefull for DataDefinition)
+            /// </summary>
+            FileSectionNode = 0x01 << 17,
+            /// <summary>
+            /// Mark that the node contains an index, 
+            /// this flag is usefull for generator to know if it has something special to do with index
+            /// </summary>
+            NodeContainsIndex = 0x01 << 18,
+            /// <summary>
+            /// Mark that the node contains an index that is used with a qualified Name
+            /// It will be used by code generator, to know if the index has to be hashed or not.
+            /// </summary>
+            IndexUsedWithQualifiedName = 0x01 << 19,
+            /// <summary>
+            /// Mark that this node contains a boolean variable that has to be considered by CodeGen. 
+            /// </summary>
+            NodeContainsBoolean = 0x01 << 20,
+
+
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node
@@ -190,11 +223,32 @@ namespace TypeCobol.Compiler.Nodes {
                     if (!string.IsNullOrEmpty(parent.Name)) {
                         qn = parent.Name + "." + qn;
                     }
+                    parent = parent.Parent;
+                }
+                
+                return new URI(qn);
+            }
+        }
+
+        public virtual QualifiedName VisualQualifiedName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Name)) return null;
+
+                var qn = Name;
+                var parent = this.Parent;
+                while (parent != null)
+                {
+                    if (!string.IsNullOrEmpty(parent.Name))
+                    {
+                        qn = parent.Name + "." + qn;
+                    }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
                         break;
                     parent = parent.Parent;
                 }
-                
+
                 return new URI(qn);
             }
         }
@@ -246,6 +300,22 @@ namespace TypeCobol.Compiler.Nodes {
 
         public SymbolTable SymbolTable { get; set; }
 
+
+        private TypeDefinition _typeDefinition;
+
+        /// <summary>
+        /// Get the TypeDefinition node associated to this Node
+        /// </summary>
+        public TypeDefinition TypeDefinition
+        {
+            get { return _typeDefinition; }
+            set
+            {
+                if (_typeDefinition == null)
+                    _typeDefinition = value;
+            }
+        }
+
         public object this[string attribute] {
             get { return Attributes.Get(this, attribute); }
         }
@@ -281,6 +351,47 @@ namespace TypeCobol.Compiler.Nodes {
         /// TODO this method should be in CodeGen project
         /// </summary>
         public bool NeedGeneration { get; set; }
+
+        /// <summary>
+        /// List of diagnostics detected for the current node. 
+        /// Please use AddDiagnostic and RemoveDiagnostic to interact with this property. 
+        /// </summary>
+        public List<Diagnostic> Diagnostics
+        {
+            get { return _Diagnostics; }
+        }
+
+        /// <summary>
+        /// Allows to store the used storage areas and their fully qualified Name. 
+        /// </summary>
+        public Dictionary<StorageArea, string> QualifiedStorageAreas { get; set; }
+
+        private List<Diagnostic> _Diagnostics;
+
+        /// <summary>
+        /// Method to add a new diagnostic to this node
+        /// </summary>
+        /// <param name="diagnostic"></param>
+        public void AddDiagnostic(Diagnostic diagnostic)
+        {
+            if(_Diagnostics == null)
+                _Diagnostics = new List<Diagnostic>();
+
+            if (!_Diagnostics.Contains(diagnostic)) //Check if diagnostic already exists (See Equals override in Diagnostic class)
+                _Diagnostics.Add(diagnostic);
+        }
+
+        /// <summary>
+        /// Method to remove a diagnostic from this node
+        /// </summary>
+        /// <param name="diagnostic"></param>
+        public void RemoveDiagnostic(Diagnostic diagnostic)
+        {
+            if (_Diagnostics == null || (_Diagnostics != null && _Diagnostics.Count == 0))
+                return;
+
+            _Diagnostics.Remove(diagnostic);
+        }
 
         public IList<N> GetChildren<N>() where N : Node {
             return children.OfType<N>().ToList();
@@ -331,6 +442,15 @@ namespace TypeCobol.Compiler.Nodes {
             if (index < 0) children.Add(child);
             else children.Insert(index, child);
             child.Parent = this;
+        }
+
+        /// <summary>
+        /// Allow to manually set the parent node
+        /// </summary>
+        /// <param name="parent">Parent node</param>
+        public virtual void SetParent(Node parent)
+        {
+            this.Parent = parent;
         }
 
         /// <summary>Removes a child from this node.</summary>
@@ -395,6 +515,36 @@ namespace TypeCobol.Compiler.Nodes {
             }
             foreach (var child in Children)
             {
+                var found = child.Get(uri);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        /// <summary>Get this node or one of its children that has a given URI.</summary>
+        /// <param name="uri">Node unique identifier to search for</param>
+        /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
+        public Node Get(string uri, int startIndex)
+        {
+            string gen_uri = URI;
+            if (gen_uri != null)
+            {
+                if (uri.IndexOf('(') >= 0 && uri.IndexOf(')') > 0)
+                {//Pattern matching URI                    
+                    System.Text.RegularExpressions.Regex re = new System.Text.RegularExpressions.Regex(uri);
+                    if (re.IsMatch(URI))
+                    {
+                        return this;
+                    }
+                }
+                if (gen_uri.EndsWith(uri))
+                {
+                    return this;
+                }
+            }
+            for (int i = startIndex; i < children.Count; i++)
+            {
+                var child = this.children[i];
                 var found = child.Get(uri);
                 if (found != null) return found;
             }

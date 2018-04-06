@@ -90,7 +90,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ressources\Decode\input\DVZZJCM06091671950858863561.tcmc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\Decode\input\EncodedTypeCobol.tcmc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Decode\output_expected\DVZZJCM07743263199481788228.c2tc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Decode\output_expected\Result.tcbl">
@@ -102,7 +108,16 @@
     <None Include="ressources\Encode\input\TypeCobolFile.tcbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="ressources\Encode\input\TypeCobolFileLine6.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Encode\input\TypeCobolFileLine6.tcbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\Encode\output_expected\EncodedTypeCobol.tcmc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Encode\output_expected\TypeCobolFileLine6.tcmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -6,6 +6,7 @@ namespace TypeCobol.Compiler.Nodes {
     using System;
     using System.Collections.Generic;
     using CodeElements.Expressions;
+    using Scanner;
     using TypeCobol.Compiler.CodeElements;
 
 
@@ -114,21 +115,38 @@ namespace TypeCobol.Compiler.Nodes {
     ///   DataRedefines
     ///   DataRenames
     ///   TypeDefinition
-    ///   IndexDefinition (TODO)
+    ///   IndexDefinition
+    ///   GeneratedDefinition
     /// </summary>
     public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode {
 
         private CommonDataDescriptionAndDataRedefines _ComonDataDesc { get { return this.CodeElement as CommonDataDescriptionAndDataRedefines; } }
-        protected DataDefinition(DataDefinitionEntry entry): base(entry) {  }
+
+        protected DataDefinition(DataDefinitionEntry entry) : base(entry) { }
         public override string ID { get { return "data-definition"; } }
         public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
 
+        private Dictionary<StorageArea, Node> _References;
+
+        public void AddReferences(StorageArea storageArea, Node node)
+        {
+            if(_References == null)
+                _References = new Dictionary<StorageArea, Node>();
+
+            if (!_References.ContainsKey(storageArea))
+                _References.Add(storageArea, node);
+        }
+
+        public Dictionary<StorageArea, Node> GetReferences()
+        {
+            return _References ?? (_References = new Dictionary<StorageArea, Node>());
+        }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }
 
-        public DataType DataType
+        public virtual DataType DataType
         {
             get
             {
@@ -137,6 +155,19 @@ namespace TypeCobol.Compiler.Nodes {
                     return ((DataDefinitionEntry)this.CodeElement).DataType;
                 }
                 return DataType.Unknown;
+            }
+        }
+
+        public virtual DataType PrimitiveDataType
+        {
+            get
+            {
+                if (this.Picture != null) //Get DataType based on Picture clause
+                    return DataType.Create(this.Picture.Value);
+                else if (this.Usage.HasValue) //Get DataType based on Usage clause
+                    return DataType.Create(this.Usage.Value);
+                else
+                    return null;
             }
         }
 
@@ -181,19 +212,26 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         [CanBeNull]
         public TypeDefinition GetParentTypeDefinition {
-            get {
-                Node currentNode = this;
-                while (currentNode != null) {
-                    var typedNode = currentNode as TypeDefinition;
-                    if (typedNode != null) return typedNode;
+            get { return GetParentTypeDefinitionWithPath(new List<string>()); }
+        }
 
-                    //Stop if we reach a Parent which is not a DataDefinion (Working storage section for example)
-                    if (!(currentNode is DataDefinition)) return null;
+        public TypeDefinition GetParentTypeDefinitionWithPath([NotNull] List<string> qualifiedPath)
+        {
+            Node currentNode = this;
+            while (currentNode != null)
+            {
+                var typedNode = currentNode as TypeDefinition;
+                if (typedNode != null) return typedNode;
+                else
+                    qualifiedPath.Add(currentNode.Name); //Store the path and ignore Type Name
 
-                    currentNode = currentNode.Parent;
-                }
-                return null;
+                //Stop if we reach a Parent which is not a DataDefinion (Working storage section for example)
+                if (!(currentNode is DataDefinition)) return null;
+
+                currentNode = currentNode.Parent;
+                
             }
+            return null;
         }
 
         public bool IsStronglyTyped
@@ -215,6 +253,8 @@ namespace TypeCobol.Compiler.Nodes {
                 return parent != null && parent.IsStrictlyTyped;
             }
         }
+
+        public bool IsIndex { get; internal set; }
 
         #region TypeProperties
         public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
@@ -243,6 +283,10 @@ namespace TypeCobol.Compiler.Nodes {
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
+        /// <summary>
+        /// A Dictonary that gives for a Token that appears in a qualified name its subtitution.
+        /// </summary>
+        public Dictionary<Token, string> QualifiedTokenSubsitutionMap;
     }
     public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> 
     {
@@ -276,6 +320,25 @@ namespace TypeCobol.Compiler.Nodes {
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
+
+        public override bool Equals(object obj)
+        {
+            if ((obj as TypeDefinition) != null)
+            {
+                var compareTypeDef = (TypeDefinition) obj;
+                return compareTypeDef.DataType == this.DataType &&
+                       compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
+                       compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
+            }
+            else if ((obj as GeneratedDefinition) != null)
+            {
+                if (this.PrimitiveDataType != null)
+                    return this.PrimitiveDataType == ((GeneratedDefinition) obj).DataType;
+                else
+                    return this.DataType == ((GeneratedDefinition) obj).DataType;
+            }
+            return false;
+        }
     }
     // [/COBOL 2002]
 
@@ -307,5 +370,75 @@ namespace TypeCobol.Compiler.Nodes {
 
     }
     // [/TYPECOBOL]
+
+    public class IndexDefinition : DataDefinition
+    {
+        public IndexDefinition(SymbolDefinition symbolDefinition) : base(null)
+        {
+            _SymbolDefinition = symbolDefinition;
+            IsIndex = true;
+        }
+
+        private SymbolDefinition _SymbolDefinition;
+
+        public override string Name
+        {
+            get { return _SymbolDefinition.Name; }
+        }
+
+        public override DataType DataType
+        {
+            get { return DataType.Numeric; }
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
+    /// <summary>
+    /// Allow to generate DataDefinition which can take any desired form/type. 
+    /// Give access to GeneratedDefinition of Numeric/Alphanumeric/Boolean/... DataType
+    /// </summary>
+    public class GeneratedDefinition : DataDefinition
+    {
+        private string _Name;
+        private DataType _DataType;
+
+        public static GeneratedDefinition NumericGeneratedDefinition =       new GeneratedDefinition("Numeric", DataType.Numeric);
+        public static GeneratedDefinition AlphanumericGeneratedDefinition =  new GeneratedDefinition("Alphanumeric", DataType.Alphanumeric);
+        public static GeneratedDefinition AlphabeticGeneratedDefinition =    new GeneratedDefinition("Alphabetic", DataType.Alphabetic);
+        public static GeneratedDefinition BooleanGeneratedDefinition =       new GeneratedDefinition("Boolean", DataType.Boolean);
+        public static GeneratedDefinition DBCSGeneratedDefinition =          new GeneratedDefinition("DBCS", DataType.DBCS);
+        public static GeneratedDefinition DateGeneratedDefinition =          new GeneratedDefinition("Date", DataType.Date);
+        public static GeneratedDefinition FloatingPointGeneratedDefinition = new GeneratedDefinition("FloatingPoint", DataType.FloatingPoint);
+        public static GeneratedDefinition OccursGeneratedDefinition =        new GeneratedDefinition("Occurs", DataType.Occurs);
+        public static GeneratedDefinition StringGeneratedDefinition =        new GeneratedDefinition("String", DataType.String);
+        public GeneratedDefinition(string name, DataType dataType) : base(null)
+        {
+            _Name = name;
+            _DataType = dataType;
+        }
+
+        public override string Name
+        {
+            get { return _Name; }
+        }
+
+        public override DataType DataType
+        {
+            get { return _DataType; }
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            //In this case we can only compare the DataType
+            if((obj as DataDefinition) != null)
+                return ((DataDefinition) obj).DataType == _DataType;
+            return false;
+        }
+    }
 
 } // end of namespace TypeCobol.Compiler.Nodes

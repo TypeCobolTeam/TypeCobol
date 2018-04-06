@@ -31,7 +31,7 @@ namespace TypeCobol.Tools.APIHelpers
             {
                 try
                 {
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, intrinsicDocumentFormat);
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck }, intrinsicDocumentFormat);
                     parser.Parse(path);
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
@@ -50,8 +50,9 @@ namespace TypeCobol.Tools.APIHelpers
                     {
                         var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
 
-                        if (symbols.Types.Count == 0 && symbols.Functions.Count == 0) {
-                            diagEvent(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = new ParserDiagnostic("No types and no procedures/functions found", 1,1,1,null, MessageCode.Warning) });
+                        if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
+                        {
+                            diagEvent?.Invoke(null, new DiagnosticsErrorEvent() {Path = path, Diagnostic = new ParserDiagnostic("No types and no procedures/functions found", 1,1,1,null, MessageCode.Warning) });
                             continue;
                         }
 
@@ -85,7 +86,7 @@ namespace TypeCobol.Tools.APIHelpers
                 var dependenciesFound = Tools.FileSystem.GetFiles(path, extensions, true);
                 //Issue #668, warn if dependencies path are invalid
                 if (diagEvent != null && dependenciesFound.Count == 0) {
-                    diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic("No dependencies found", 1, 1, 1, null, MessageCode.Warning) });
+                    diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(path + ", no dependencies found", 1, 1, 1, null, MessageCode.DependenciesLoading) });
                 }
                 dependencies.AddRange(dependenciesFound); //Get File by name or search the directory for all files
             }
@@ -120,15 +121,16 @@ namespace TypeCobol.Tools.APIHelpers
                 string depFileName = Path.GetFileNameWithoutExtension(path);
 
                 if (depFileName != null &&
-                    inputFileNames.Any(inputFileName => depFileName.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase)))
+                    inputFileNames.Any(inputFileName =>  depFileName.ToLower().Contains(inputFileName.ToLower())))
                 {
                     continue;
                 }
 #endif
                 try
                 {
+                    parser.CustomSymbols = table; //Update SymbolTable
                     parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format);
-                    parser.Parse(path); //Parse the dependencie file
+                    parser.Parse(path); //Parse the dependency file
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());
 
@@ -137,15 +139,21 @@ namespace TypeCobol.Tools.APIHelpers
                         diagnostics.ForEach(d => diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = d }));
                     }
 
-                    if (parser.Results.ProgramClassDocumentSnapshot.Root.Programs == null || !parser.Results.ProgramClassDocumentSnapshot.Root.Programs.Any())
+                    if (parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs == null || !parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs.Any())
                     {
                         throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
                     }
 
-                    foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
+                    foreach (var program in parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs)
                     {
                         var declarationTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
                         var globalTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+
+                        var previousPrograms = table.GetPrograms();
+                        foreach (var previousProgram in previousPrograms)
+                        {
+                            previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace).AddProgram(program);
+                        }
                         
 
                         //If there is no public types or functions, then call diagEvent
@@ -169,6 +177,11 @@ namespace TypeCobol.Tools.APIHelpers
                     throw new DepedenciesLoadingException(e.Message + "\n" + e.StackTrace, path, e);
                 }
             }
+
+            //Reset symbolTable of all dependencies 
+
+
+
             return table;
         }
     }

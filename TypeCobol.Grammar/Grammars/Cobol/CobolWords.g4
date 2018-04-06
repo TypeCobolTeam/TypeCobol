@@ -1421,6 +1421,7 @@ qualifiedDataNameOrQualifiedConditionNameOrFileName:
 qualifiedDataNameOrQualifiedConditionNameOrClassName:
 	dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference | qualifiedDataNameOrQualifiedConditionName1;
 
+qualifiedIndexName: indexName=symbolReference4 | (symbolReference4 QualifiedNameSeparator)+ TcHeadDefiniiton=symbolReference4;
 
 // - 4. External names -
 

@@ -1,0 +1,60 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPgm.
+       DATA DIVISION .
+       working-storage section.
+
+       01 local.
+      *  05 overflw type bool.
+         05  overflw-value PIC X VALUE LOW-VALUE.
+           88  overflw       VALUE 'T'.
+           88  overflw-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                              
+         05 grp.
+      *     10 overflw2 type bool.
+            10  overflw2-value PIC X VALUE LOW-VALUE.
+           88  overflw2       VALUE 'T'.
+           88  overflw2-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
+                                  
+
+       PROCEDURE DIVISION.
+
+      *declare procedure check private
+      *   output mydate  type bool
+      *  .
+
+
+      *CALL check Output local::overflw.
+       CALL 'ea379882check' USING
+                    by reference overflw-value IN local
+           end-call
+                                       .
+      *CALL check Output local::grp::overflw2.
+       CALL 'ea379882check' USING
+                    by reference overflw2-value IN grp IN local
+           end-call
+                                             .
+      *MOVE false TO local::overflw
+           .
+       END PROGRAM MyPgm.
+      *
+      *declare procedure check private
+      *   output mydate  type bool
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ea379882check.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 mydate-value PIC X     VALUE LOW-VALUE.
+           88 mydate       VALUE 'T'.
+           88 mydate-false VALUE 'F'.
+       PROCEDURE DIVISION
+             USING BY REFERENCE mydate-value
+           .
+           CONTINUE.
+       END PROGRAM ea379882check.

@@ -1,0 +1,1 @@
+﻿-1 -i input\MissingCopy.rdz.tcbl -o output\MissingCopy.rdz.tcbl -d output\error.txt -s ..\skeletons.xml --exectostep=SemanticCheck --haltonmissingcopy="output\MissingCopy.txt" -e rdz --autoremarks

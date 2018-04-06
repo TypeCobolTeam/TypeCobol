@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser.Generated;
 using Object = System.Object;
 using String = System.String;
 
@@ -53,6 +54,21 @@ namespace TypeCobol.Compiler.CodeElements
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
 			return doCreate(picture, basic);
 		}
+
+        /// <summary>
+        /// Allows to create a numeric DataType for TYPEDEF with a usage clause that makes the Data Numeric. 
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <returns></returns>
+	    public static DataType Create(DataUsage usage)
+	    {
+	        if (usage == DataUsage.Binary || usage == DataUsage.NativeBinary || usage == DataUsage.FloatingPoint ||
+	            usage == DataUsage.LongFloatingPoint || usage == DataUsage.PackedDecimal)
+	        {
+	            return DataType.Numeric;
+	        }
+	        return DataType.Unknown;
+	    }
 		public static DataType Create(string picture, char[] currencies) {
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
 			var all = new char[basic.Length + currencies.Length];
@@ -134,8 +150,10 @@ namespace TypeCobol.Compiler.CodeElements
         public static readonly DataType Boolean            = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
         //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
         public static readonly DataType Date               = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+        //String built in type
+        public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
-		public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
+        public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
 		{
             var builtInNode = type == DataType.Date ? CreateDate() : CreateBase(type);
             builtInNode.SetFlag(Node.Flag.NodeIsIntrinsic, true); //Mark BuiltIn Type as Instrinsic
@@ -160,12 +178,12 @@ namespace TypeCobol.Compiler.CodeElements
 			var data = new DataDescriptionEntry();
 			data.LevelNumber = new GeneratedIntegerValue(level);
 			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
-			data.Picture = new GeneratedAlphanumericValue(String.Format("{0}({1})", type, length));
+			data.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", type, length));
 			data.DataType = DataType.Create(data.Picture.Value);
 			return new Nodes.DataDescription(data);
 		}
 
-		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, };
+		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.String};
         // [/TYPECOBOL]
     }
     public enum RestrictionLevel

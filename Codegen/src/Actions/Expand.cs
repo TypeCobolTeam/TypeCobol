@@ -74,6 +74,12 @@ namespace TypeCobol.Codegen.Actions
             {                
                 nodegen = (Node)Activator.CreateInstance(typegen, this.Source);
                 this.Destination.Parent.Add(nodegen, index + 1);
+                if (nodegen is TypeCobol.Codegen.Nodes.FunctionDeclarationCG)
+                {   //This is a workaround, the TypeCobol.Codegen.Nodes.FunctionDeclarationCG must have
+                    //Its destination has parent.
+                    nodegen.SetParent(Destination);
+                }
+
             }
             // comment out original "line" (=~ non expanded node)
             this.Source.Comment = true;
@@ -84,8 +90,13 @@ namespace TypeCobol.Codegen.Actions
             ErasedNodes = erasedNodes;
             this.Source.RemoveAllChildren();
             if (nodegen != null)
-            {//Make all reused nodes persistent --> so that they will no be erased.
-                nodegen.SetFlag(Node.Flag.PersistentNode, true, true);
+            {//Remove from the Erased nodes all reused nodes.
+                List<Node> ng_child = new List<Node>();
+                nodegen.ListChildren(ng_child);
+                foreach(Node n in ng_child)
+                {
+                    ErasedNodes.Remove(n);
+                }                
             }
         }
 

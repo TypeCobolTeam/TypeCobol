@@ -115,7 +115,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
         /// <summary>
         /// Implementation of IMessageHandler
         /// </summary>
-        public void HandleMessage(string message, IMessageServer server)
+        public virtual void HandleMessage(string message, IMessageServer server)
         {
             JObject jsonObject = JObject.Parse(message);
 
@@ -167,7 +167,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
                 catch(Exception e)
                 {
                     WriteServerLog(String.Format("Notification handler for {0} failed : {1}", notificationType.GetType().Name, e.Message));
-                    ResponseResultOrError error = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message , data = parameters.ToString() };
+                    ResponseResultOrError error = new ResponseResultOrError() { code = ErrorCodes.InternalError, message = e.Message , data = parameters?.ToString() };
                     Reply(method, error);
                 }
             }

@@ -1,0 +1,58 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPDEFQU.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 MyT TYPEDEF STRICT.
+         05 MyG.
+            10 GC pic 9(05) comp-5.
+            10 MyGT PIC X(1) occurs 99 
+               INDEXED BY INX-G.
+
+       01 MyType TYPEDEF STRICT.
+         05 Inner TYPE MyT.
+         05 Count2 pic 9(05) comp-5.
+         05 MyGroup.
+            10 GCount pic 9(05) comp-5.
+            10 MyGTbl PIC X(1) occurs 99 
+               depending on GCount.
+            10 TAB-ITM PIC X(8)
+                OCCURS 10 INDEXED BY INX-T, INX-R.
+         05 TABLE-ITEM PIC X(8)
+                OCCURS 10 INDEXED BY INX-A, INX-B.
+     
+       01 var1 type MyType.
+       01 var2 type MyType.
+
+       procedure division.
+      *-------------------------------------------------
+      * TESTING SET INSTRUCTION
+      *-------------------------------------------------
+           SET var1::INX-G TO 10.
+           SET var2::INX-G TO 05.
+           SET var1::INX-B TO var2::INX-T.
+      *-------------------------------------------------
+      * TODO
+      *-------------------------------------------------
+      *    SET var1::INX-B UP BY 1.
+      *-------------------------------------------------
+      * TESTING MOVE INSTRUCTION
+      *-------------------------------------------------
+           MOVE var2::MyGroup::TAB-ITM(var2::INX-T) TO 
+            var1::MyGroup::TAB-ITM(var1::INX-R).
+      *-------------------------------------------------
+      * TESTING PERFORM INSTRUCTION
+      *-------------------------------------------------
+           PERFORM VARYING var1::INX-A FROM 1 BY 1 UNTIL 
+           var1::INX-A > var2::INX-B
+               DISPLAY var1::TABLE-ITEM (var1::INX-A)
+           END-PERFORM.         
+      *-------------------------------------------------
+      * TESTING SEARCH VARYING INSTRUCTION
+      *-------------------------------------------------
+           SEARCH var2::TABLE-ITEM VARYING var2::INX-G 
+           AT END DISPLAY 'OK'
+             WHEN var2::TABLE-ITEM(var2::INX-G) = 'NOK'
+             MOVE var1::MyGroup::TAB-ITM(var2::INX-T) TO
+               var2::MyGroup::TAB-ITM(var2::INX-R).
+       END PROGRAM TYPDEFQU.

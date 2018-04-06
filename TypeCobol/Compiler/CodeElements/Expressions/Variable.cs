@@ -186,18 +186,25 @@ namespace TypeCobol.Compiler.CodeElements {
 
         public override string ToString()
         {
-            return ToString(false);
+            return ToString(false, false);
         }
-        public new string ToString(bool bUseToString) {
+        public virtual string ToString(bool bUseToString, bool isBoolType) {
 		    if (NumericValue != null) return NumericValue.Value.ToString();
 		    try {
                 if (SymbolReference != null)
                 {
-                    return bUseToString ? SymbolReference.ToString() : SymbolReference.Name;
+                    return bUseToString ? SymbolReference.ToString(isBoolType) : (SymbolReference.Name + (isBoolType ? "-value" : ""));
                 }
                 if (StorageArea != null)
                 {
-                    return bUseToString ? StorageArea.SymbolReference.ToString() : StorageArea.SymbolReference.Name;
+                    var qualifiedName = StorageArea?.SymbolReference?.ToString(isBoolType);
+                    if (StorageArea is DataOrConditionStorageArea && ((DataOrConditionStorageArea)StorageArea).Subscripts.Count > 0)
+                    {
+                        var subscript = ((DataOrConditionStorageArea) StorageArea).ToString(true);
+                        qualifiedName = qualifiedName + " " + subscript;
+                    }
+
+                    return bUseToString ? qualifiedName : StorageArea?.SymbolReference?.Name + (isBoolType ? "-value" : "");
                 }
 			    //these should be: return XXXValue.GetValueInContext(???);
 			    if (AlphanumericValue != null) return AlphanumericValue.Token.SourceText;

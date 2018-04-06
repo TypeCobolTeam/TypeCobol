@@ -119,7 +119,7 @@
       *    RETURNING Result TYPE date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. db42865c.
+       PROGRAM-ID. db42865ccurrentDate.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -134,13 +134,13 @@
            .
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM db42865c.
+       END PROGRAM db42865ccurrentDate.
       *
       *DECLARE FUNCTION currentDateDB2 PUBLIC
       *    RETURNING Result Type dateDB2.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fa5ee5e9.
+       PROGRAM-ID. fa5ee5e9currentDateDB2.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -175,14 +175,14 @@
       *    move '-'                 to Result(8:1)
            
            .
-       END PROGRAM fa5ee5e9.
+       END PROGRAM fa5ee5e9currentDateDB2.
       *
       *DECLARE FUNCTION currentDateJulian PUBLIC
       * my comment
       *    RETURNING Result Type dateJulian.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cf63e86f.
+       PROGRAM-ID. cf63e86fcurrentDateJulian.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -207,7 +207,7 @@
       *    move unsafe W-Dat to Result
            move        W-Dat to Result
            .
-       END PROGRAM cf63e86f.
+       END PROGRAM cf63e86fcurrentDateJulian.
       *
       *DECLARE FUNCTION currentDateFreeFormat PUBLIC
       *                   INPUT dateType   PIC X(01)
@@ -219,7 +219,7 @@
       *                   RETURNING Result PIC X(40).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cfc290ce.
+       PROGRAM-ID. cfc290cecurrentDateFreeFormat.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -252,13 +252,13 @@
 
            continue
            .
-       END PROGRAM cfc290ce.
+       END PROGRAM cfc290cecurrentDateFreeFormat.
       *
       *DECLARE FUNCTION currentDateString PUBLIC
       *    RETURNING Result TYPE dateString.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b8721d20.
+       PROGRAM-ID. b8721d20currentDateString.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
@@ -270,4 +270,4 @@
            .
            ACCEPT Result FROM DATE YYYYMMDD
            .
-       END PROGRAM b8721d20.
+       END PROGRAM b8721d20currentDateString.

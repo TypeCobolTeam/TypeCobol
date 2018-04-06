@@ -50,7 +50,7 @@
       *    RETURNING Result PIC 9(08).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. b173dd7b.
+       PROGRAM-ID. b173dd7bcurrentDateString.
        DATA DIVISION.
        LINKAGE SECTION.
        01 Result PIC 9(08).
@@ -59,4 +59,4 @@
            .
            display "toto"
            .
-       END PROGRAM b173dd7b.
+       END PROGRAM b173dd7bcurrentDateString.

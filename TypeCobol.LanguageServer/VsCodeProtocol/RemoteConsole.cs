@@ -9,7 +9,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
     /// </summary>
     public class RemoteConsole
     {
-        private IRPCServer rpcServer;
+        protected IRPCServer rpcServer;
 
         public RemoteConsole(IRPCServer rpcServer)
         {
@@ -37,13 +37,21 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         }
 
         /// <summary>
+        /// Are Log message notifications enabled ? false if yes, true otherwise.
+        /// </summary>
+        public bool NoLogsMessageNotification { get; set; }
+
+        /// <summary>
         /// Log a message.
         /// 
         /// @param message The message to log.
         /// </summary>
         public void Log(string message)
         {
-            send(MessageType.Log, message);
+            if (!NoLogsMessageNotification)
+            {
+                send(MessageType.Log, message);
+            }
         }
 
         private void send(MessageType type, string message)
