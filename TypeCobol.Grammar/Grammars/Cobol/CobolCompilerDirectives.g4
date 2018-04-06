@@ -525,7 +525,7 @@ routineName: UserDefinedWord;
 
 execSqlIncludeStatement:
                           (EXEC | EXECUTE) ExecTranslatorName
-                          EXEC_SQL_INCLUDE 
+                          EXEC_SQL
                           copyCompilerStatementBody
                           END_EXEC PeriodSeparator;
 

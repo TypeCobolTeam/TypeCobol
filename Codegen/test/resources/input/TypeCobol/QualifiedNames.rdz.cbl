@@ -19,7 +19,7 @@
              04 Speed        TYPE Vector.
              04 Acceleration TYPE Vector.
        
-       01 Segment.
+       01 MySegment.
            05 p TYPE POINT.
            05 q TYPE POINT.
        
@@ -32,21 +32,21 @@
            MOVE   p :: Location :: y     TO   z OF   Location   IN p
            MOVE   1   TO x OF Location OF p
            MOVE 1 TO p :: Location ::    y z OF Location IN p
-           set Segment::p::Location::y::Toto to true
+           set MySegment::p::Location::y::Toto to true
            MOVE p :: Location :: y TO p :: location :: y
            move p::location::y to p::location::y
 
-           if Segment::p = Segment::q
+           if MySegment::p = MySegment::q
              continue
            end-if
 
            evaluate true
-              when Segment::p::Location::x = 1
+              when MySegment::p::Location::x = 1
                   continue
-              when Segment::p::Location::y = 1
+              when MySegment::p::Location::y = 1
                   continue
               when other
-                  compute Segment::p::Location::y = 9
+                  compute MySegment::p::Location::y = 9
            end-evaluate
            .
        

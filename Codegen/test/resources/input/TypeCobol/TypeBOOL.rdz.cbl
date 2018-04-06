@@ -15,7 +15,7 @@
              10  b TYPE BOOL.
            05  d TYPE BOOL.
 
-000000 01 group.
+000000 01 mygroup.
 000000    05 array occurs 5.
 000000       10 checkToDo type bool.
 

@@ -12,10 +12,10 @@
                 10 typedGroupvar TYPE secondType.
 
        01 secondType TYPEDEF STRICT.
-            05 Group.
+            05 MyGroup.
                 10 vargroup PIC X(10).
 
-       01 Group.
+       01 MyGroup.
 
       *OK level of this variable is ok
        45 MyVar2 TYPE myType.
