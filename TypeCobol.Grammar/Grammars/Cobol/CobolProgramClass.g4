@@ -163,6 +163,7 @@ tokens
 	FunctionDeclarationHeader,
 	FunctionDeclarationEnd,
 	ProcedureStyleCall,
+	GlobalStorageSectionHeader,
 //	[/TYPECOBOL]
 }
 

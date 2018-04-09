@@ -74,6 +74,16 @@ namespace TypeCobol.Compiler.Nodes {
         {
             return astVisitor.Visit(this);
         }
+   } 
+
+    public class GlobalStorageSection : DataSection, CodeElementHolder<GlobalStorageSectionHeader>, Parent<DataDefinition>
+    {
+        public GlobalStorageSection(GlobalStorageSectionHeader header) : base(header) { }
+        public override string ID { get { return "global-storage"; } }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return base.VisitNode(astVisitor) && astVisitor.Visit(this);
+        }
     }
 
 

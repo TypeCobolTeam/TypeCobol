@@ -14,6 +14,12 @@ namespace TypeCobol.Compiler.Parser
 
     internal partial class CodeElementBuilder : CodeElementsBaseListener
     {
+        public override void EnterGlobalStorageSectionHeader(CodeElementsParser.GlobalStorageSectionHeaderContext context)
+        {
+            Context = context;
+            CodeElement = new GlobalStorageSectionHeader();
+        }
+
         public override void EnterLibraryCopy(CodeElementsParser.LibraryCopyContext context)
         {
             var copy = new LibraryCopyCodeElement();

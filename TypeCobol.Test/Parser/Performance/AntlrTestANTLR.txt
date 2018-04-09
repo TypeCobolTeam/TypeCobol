@@ -235,15 +235,16 @@ Top rules invocations
 
 21	dataDefinitionEntry
 1	programAttributes
+1	dataDivision
 1	cobolCompilationUnit
 1	cobolProgram
-1	dataDivision
 1	localStorageSection
 0	dummyPhase2Rule
 0	procedureDivision
 0	functionDeclaration
 0	functionProcedureDivision
 0	procedureStyleCallConditional
+0	globalStorageSection
 0	environmentDivision
 0	cobolClass
 0	methodDefinition
@@ -262,7 +263,6 @@ Top rules invocations
 0	paragraph
 0	sentence
 0	statement
-0	addStatementConditional
 
 ---------------------
 Rules invocation info

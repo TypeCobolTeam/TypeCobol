@@ -27,3 +27,17 @@ functionProcedureDivision:
 procedureStyleCallConditional:
 	ProcedureStyleCall
 	CallStatementEnd?;
+
+//GLOBALSS_POSITION Global-storage section is declared after file section and before working-storage section
+dataDivision:
+	DataDivisionHeader 
+	fileSection? 
+	globalStorageSection?
+	workingStorageSection? 
+	localStorageSection? 
+	linkageSection?;
+
+
+globalStorageSection:
+	GlobalStorageSectionHeader 
+	(dataDefinitionEntry SentenceEnd?)*;

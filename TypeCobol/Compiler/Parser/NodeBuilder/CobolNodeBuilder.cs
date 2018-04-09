@@ -326,6 +326,21 @@ namespace TypeCobol.Compiler.Parser
             ExitLastLevel1Definition();
             Exit();
         }
+
+        public override void EnterGlobalStorageSection(ProgramClassParser.GlobalStorageSectionContext context)
+        {
+            var terminal = context.GlobalStorageSectionHeader();
+            var header = (GlobalStorageSectionHeader) terminal?.Symbol;
+            Enter(new GlobalStorageSection(header), context);
+        }
+
+        public override void ExitGlobalStorageSection(ProgramClassParser.GlobalStorageSectionContext context)
+        {
+            ExitLastLevel1Definition();
+            Exit(); // Exit GlobalStorageSection
+        }
+
+
         /// <summary>parent: DATA DIVISION</summary>
         /// <param name="context">WORKING-STORAGE SECTION</param>
         public override void EnterWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context)

@@ -562,6 +562,7 @@ tokens
     PRIVATE,
     IN_OUT,
 	STRICT,
+	GLOBAL_STORAGE,
 	QuestionMark
 }
 
