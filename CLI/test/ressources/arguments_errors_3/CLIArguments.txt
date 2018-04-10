@@ -1,0 +1,1 @@
+﻿-1 -i input\Test.rdz.tcbl  -o output\output.txt -s  input\badSkeleton1 -s  input\badSkeleton2

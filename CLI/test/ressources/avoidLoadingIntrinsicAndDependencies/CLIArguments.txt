@@ -1,1 +1,1 @@
-﻿-1 -i input\MissingCopy.rdz.tcbl -g -o output\MissingCopy.rdz.tcbl -d output\error.txt --dependencies input\Callee.rdz.tcbl -y input\MyIntrinsicFunctions.rdz.tcbl -s ..\skeletons.xml --exectostep=Preprocessor  --haltonmissingcopy="output\MissingCopy.txt" -e rdz --autoremarks
+﻿-1 -i input\MissingCopy.rdz.tcbl -o output\MissingCopy.rdz.tcbl -d output\error.txt --dependencies input\Callee.rdz.tcbl -y input\MyIntrinsicFunctions.rdz.tcbl -s ..\skeletons.xml --exectostep=Preprocessor  --haltonmissingcopy="output\MissingCopy.txt" -e rdz --autoremarks
