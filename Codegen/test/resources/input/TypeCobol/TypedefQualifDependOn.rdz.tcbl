@@ -12,29 +12,29 @@
 
        01 var1 type MyType.
 
-       01 Group.
+       01 Groupe2.
          05 MyTable PIC X(1) occurs 99 
             depending on var1::Count2.
 
          05 var2 type MyType.
          05 MyTable3 PIC X(1) occurs 99 
-            depending on Group::Count2.
+            depending on Groupe2::Count2.
          05 MyTable4 PIC X(1) occurs 99 
-            depending on Count2 OF GROUP.
+            depending on Count2 OF Groupe2.
          05 MyTable4 PIC X(1) occurs 99 
-            depending on Count2 IN GROUP.
+            depending on Count2 IN Groupe2.
 
          05 MyTable3 PIC X(1) occurs 99 
-            depending on Group::var2::Count2.
+            depending on Groupe2::var2::Count2.
 
          05 MyTable4 PIC X(1) occurs 99 
-            depending on Count2 OF var2 OF GROUP.
+            depending on Count2 OF var2 OF Groupe2.
          05 MyTable4 PIC X(1) occurs 99 
-            depending on Count2 IN var2 IN GROUP.
+            depending on Count2 IN var2 IN Groupe2.
          05 MyTable4 PIC X(1) occurs 99 
-            depending on Count2 IN var2 OF GROUP.
+            depending on Count2 IN var2 OF Groupe2.
          05 MyTable4 PIC X(1) occurs 99 
-            depending on Count2 OF var2 IN GROUP.
+            depending on Count2 OF var2 IN Groupe2.
          
          
          

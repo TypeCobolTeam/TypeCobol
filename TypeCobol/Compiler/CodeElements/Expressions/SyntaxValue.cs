@@ -250,7 +250,6 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
-                    case TokenType.EBCDIC:
                     case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
                         return false;
                     default:
@@ -336,7 +335,6 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
-                    case TokenType.EBCDIC:
                     case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
                         return CharacterEncodingType.Alphanumeric;
                     default:
@@ -386,7 +384,6 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
-                    case TokenType.EBCDIC:
                     case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
                         return Token.Text;
                     default:

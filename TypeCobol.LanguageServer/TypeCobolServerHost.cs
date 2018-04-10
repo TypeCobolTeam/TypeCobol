@@ -91,6 +91,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool TimerDisabledOption { get; set; }
 
+        /// <summary>
+        /// Are Log message notifications enabled ? false if yes, true otherwise.
+        /// </summary>
+        public static bool NoLogsMessageNotification { get; set; }
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -164,6 +169,7 @@ namespace TypeCobol.LanguageServer
                 { "v|version","Show version", _ => version = true },
                 { "h|help","Show help", _ => help = true },
                 { "lf|logfile=","{PATH} the target log file", (string v) => LogFile = v },
+                { "nologs","No log message notifications", _ => NoLogsMessageNotification = true },
                 { "r|robot",  "Robot Client mode.", _ => LsrMode = true },
                 { "lsr=","{PATH} the lsr path", (string v) => LsrPath = v },
                 { "s|script=","{PATH} script path in lsr", (string v) => LsrScript = v },
@@ -228,6 +234,7 @@ namespace TypeCobol.LanguageServer
 
                 // Configure the protocols stack
                 var httpServer = new StdioHttpServer(Encoding.UTF8, LogLevel, logWriter, MessagesActionQueue);
+                httpServer.IsLsrTdMode = TimerDisabledOption;
                 if (Process != null)
                 {
                     httpServer.RedirectedInputStream = Process.StandardOutput.BaseStream;
@@ -235,6 +242,8 @@ namespace TypeCobol.LanguageServer
                 }
                 var jsonRPCServer = new JsonRPCServer(httpServer);
                 var typeCobolServer = new TypeCobolServer(jsonRPCServer, MessagesActionQueue);
+
+                typeCobolServer.NoLogsMessageNotification = NoLogsMessageNotification;
 
                 typeCobolServer.LsrSourceTesting = LsrSourceTesting;
                 typeCobolServer.LsrScannerTesting = LsrScannerTesting;

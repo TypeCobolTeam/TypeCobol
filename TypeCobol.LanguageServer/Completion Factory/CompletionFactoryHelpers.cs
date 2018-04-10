@@ -67,7 +67,7 @@ namespace TypeCobol.LanguageServer
             return aggregatedTokens.ToArray().Reverse();
         }
 
-        public static IEnumerable<CompletionItem> CreateCompletionItemsForType(List<TypeDefinition> types, Node node, bool enablePublicFlag = true)
+        public static IEnumerable<CompletionItem> CreateCompletionItemsForType(IEnumerable<TypeDefinition> types, Node node, bool enablePublicFlag = true)
         {
             var completionItems = new List<CompletionItem>();
 
@@ -94,7 +94,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        public static IEnumerable<CompletionItem> CreateCompletionItemsForProcedures(List<FunctionDeclaration> procedures, Node node, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary,  bool enablePublicFlag = true)
+        public static IEnumerable<CompletionItem> CreateCompletionItemsForProcedures(IEnumerable<FunctionDeclaration> procedures, Node node, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary,  bool enablePublicFlag = true)
         {
             var completionItems = new List<CompletionItem>();
 
@@ -170,7 +170,7 @@ namespace TypeCobol.LanguageServer
 
             var finalQualifiedName = qualifiedName.ToList();
 
-            if (variable.CodeElement.IsInsideCopy())
+            if (variable.CodeElement != null && variable.CodeElement.IsInsideCopy())
             {
                 finalQualifiedName.Clear();
                 finalQualifiedName.Add(qualifiedName.First());

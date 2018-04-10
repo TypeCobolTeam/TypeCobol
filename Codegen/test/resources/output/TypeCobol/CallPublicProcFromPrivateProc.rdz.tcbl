@@ -102,6 +102,9 @@
        PROGRAM-ID. a0508f35check.
        data division.
        working-storage section.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-PersonSe pic X(08) value 'PersonSe'.
 
        linkage section.
@@ -125,19 +128,28 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+           PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
-           IF ADDRESS OF TC-PersonService-cd991005-Item = NULL
-               PERFORM TC-LOAD-POINTERS-PersonService
+           IF ADDRESS OF TC-PersonSe-cd991005-Item = NULL
+               PERFORM TC-LOAD-POINTERS-PersonSe
            ELSE
-               IF TC-PersonService-cd991005-Idt not = 'cd991005'
-                   PERFORM TC-LOAD-POINTERS-PersonService
+               IF TC-PersonSe-cd991005-Idt not = 'cd991005'
+                   PERFORM TC-LOAD-POINTERS-PersonSe
                END-IF
            END-IF
-           CALL TC-PersonService-cd991005 USING
+           CALL TC-PersonSe-cd991005 USING
                                  mydate
            end-call
                                                          
            .
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-PersonSe-cd991005-Item  TO NULL
+            END-IF
+            .
       *=================================================================
        TC-LOAD-POINTERS-PersonSe.
       *=================================================================

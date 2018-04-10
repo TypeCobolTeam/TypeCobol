@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CLI.Test;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.LanguageServer.Utilities;
 
 namespace TypeCobol.LanguageServer.Test
 {
@@ -14,15 +15,16 @@ namespace TypeCobol.LanguageServer.Test
         /// <summary>
         /// Contains the default argument to launch TypeCobol Language Server executable. 
         /// -r activate the robot mode
+        /// -e make LSR stops at first error detected
         /// -lsr contains the path to LanguageServerRobot executable
         /// -script contains the path to the script to test
         /// -config contains the path to the config file necessary for TypeCobolLSR initialization 
         /// -init Give the initialize file path
         /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\" -p -init={1} -config={2}\" -script={3} {4}"; 
+        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"  -init={1} -config={2}\" -script={3} {4} {5}"; 
 
-        public static void Test(string testFolderName, bool activateTdOption = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null)
+        public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null)
         {
             var workingDirectory = "LSRTests";
             var testWorkingDirectory = workingDirectory + Path.DirectorySeparatorChar + testFolderName;
@@ -67,9 +69,8 @@ namespace TypeCobol.LanguageServer.Test
 
             var scriptFileInfo = new FileInfo(scriptPath);
             //Setup the arguments
-            //Waitting for LSR NuGet Package 
-            var arguments = string.Format(defaultTypeCobolLSArgs, @"C:\TypeCobol\LanguageServerRobot\LanguageServerRobot.exe", initGeneratedFileInfo.FullName, configGeneratedFileInfo.FullName, scriptFileInfo.FullName, activateTdOption ? "-td" : "");
-            //new FileInfo("..\\..\\packages\\LSR\\LanguageServerRobot.exe").FullName
+            //The path for LanguageServerRobot depends on the NuGetPackage. If the NuGet is not downloaded, it won't works
+            var arguments = string.Format(defaultTypeCobolLSArgs, @"TypeCobol.LanguageServerRobot.exe", initGeneratedFileInfo.FullName, configGeneratedFileInfo.FullName, scriptFileInfo.FullName, activateTdOption ? "-td" : "", lsrTestingOption.ToLanguageServerOption());
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();

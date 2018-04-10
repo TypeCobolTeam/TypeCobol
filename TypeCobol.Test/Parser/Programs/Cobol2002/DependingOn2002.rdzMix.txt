@@ -58,35 +58,35 @@
 
       *KO, trying to use a variable declared outside typedef
 Line 60[13,50] <27, Error, Syntax> - Syntax error : Symbol MyTypedVar2.TypeCounter is not referenced
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on MyTypedVar2::TypeCounter.
 
       *KO, trying to use a variable declared outside typedef
 Line 64[13,50] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.Counter is not referenced
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on DenpendingGroup::Counter.
 
       *KO, trying to use a variable declared outside typedef
 Line 68[13,62] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.VarCounter.Counter is not referenced
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on DenpendingGroup::VarCounter::Counter.
 
       *KO, trying to use a variable declared outside typedef
 Line 72[13,54] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.TypeCounter is not referenced
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on DenpendingGroup::TypeCounter.
 
       *KO, trying to use an ambigous local var
 Line 76[13,43] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on DuplicatedCounter.
 
       *OK, using local variable with qualifiedName
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on MyGroup::GroupCounter.
 
       *OK, using local varialbe without qualifiedName
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on GroupCounter.
 
        01 TypeCounter pic 666 comp-5.

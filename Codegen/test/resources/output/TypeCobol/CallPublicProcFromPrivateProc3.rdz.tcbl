@@ -64,6 +64,9 @@
        data division.
        working-storage section.
        01 var1 pic X.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
        01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
 
        LINKAGE SECTION.
@@ -82,6 +85,7 @@
           05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
+           PERFORM TC-INITIALIZATIONS
       *    call TCOZCHKP::StartCheckpoint input var1
            IF ADDRESS OF TC-TCOZCHKP-b179d81b-Item = NULL
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
@@ -95,6 +99,14 @@
            end-call
                                                     
            .
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-TCOZCHKP-b179d81b-Item  TO NULL
+            END-IF
+            .
       *=================================================================
        TC-LOAD-POINTERS-TCOZCHKP.
       *=================================================================

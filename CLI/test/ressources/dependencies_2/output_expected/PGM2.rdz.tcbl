@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:0.1(alpha)
+      *TypeCobol_Version:0.1(alpha)
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM2.
 
@@ -11,7 +11,7 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                   
-       01  message      PIC X(80).
+       01  mymessage      PIC X(80).
       *01  vect2        TYPE Vect2.
        01 vect2.
            02 Coord2d.
@@ -35,6 +35,9 @@
                                               
        01 TC-Callee pic X(08) value 'Callee'.
        01 TC-MyIntrin pic X(08) value 'MyIntrin'.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
 
        LINKAGE SECTION.
       *Common to all librairies used by the program.
@@ -61,10 +64,14 @@
 
 
        PROCEDURE DIVISION.
+      *
+           PERFORM TC-INITIALIZATIONS
+
+                          
       *    move vect2::Coord2d to Vect2b::Coord2d.
            move Coord2d OF vect2 to Coord2d OF Vect2b.
-      *    move MyVar::Site::SiteName to message.
-           move SiteName OF Site OF MyVar to message.
+      *    move MyVar::Site::SiteName to mymessage.
+           move SiteName OF Site OF MyVar to mymessage.
            .
       *declare procedure check private
       *   input mydate        TYPE Date.
@@ -117,33 +124,43 @@
 
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
-      *   call dump input message
-          IF ADDRESS OF TC-MyIntrinsicFunctions-f9abcd81-Item = NULL
-               PERFORM TC-LOAD-POINTERS-MyIntrinsicFunctions
+      *   call dump input mymessage
+          IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
+               PERFORM TC-LOAD-POINTERS-MyIntrin
            ELSE
-               IF TC-MyIntrinsicFunctions-f9abcd81-Idt not = 'f9abcd81'
-                   PERFORM TC-LOAD-POINTERS-MyIntrinsicFunctions
+               IF TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
+                   PERFORM TC-LOAD-POINTERS-MyIntrin
                END-IF
            END-IF
-           CALL TC-MyIntrinsicFunctions-f9abcd81 USING
-                                 message
+           CALL TC-MyIntrin-f9abcd81 USING
+                                 mymessage
            end-call
-                                 
+                                   
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
-      *   call MyIntrinsicFunctions::dump input message
-          IF ADDRESS OF TC-MyIntrinsicFunctions-f9abcd81-Item = NULL
-               PERFORM TC-LOAD-POINTERS-MyIntrinsicFunctions
+      *   call MyIntrinsicFunctions::dump input mymessage
+          IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
+               PERFORM TC-LOAD-POINTERS-MyIntrin
            ELSE
-               IF TC-MyIntrinsicFunctions-f9abcd81-Idt not = 'f9abcd81'
-                   PERFORM TC-LOAD-POINTERS-MyIntrinsicFunctions
+               IF TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
+                   PERFORM TC-LOAD-POINTERS-MyIntrin
                END-IF
            END-IF
-           CALL TC-MyIntrinsicFunctions-f9abcd81 USING
-                                 message
+           CALL TC-MyIntrin-f9abcd81 USING
+                                 mymessage
            end-call
-                                                       
+                                                         
         .
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-Callee-c6db8d4a-Item  TO NULL
+                 SET ADDRESS OF TC-Callee-d3faf219-Item  TO NULL
+                 SET ADDRESS OF TC-MyIntrin-f9abcd81-Item  TO NULL
+            END-IF
+            .
       *=================================================================
         TC-LOAD-POINTERS-Callee.
       *=================================================================

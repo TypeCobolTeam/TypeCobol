@@ -1,0 +1,164 @@
+﻿      *Declaratives and no paragraph under procedure division
+      *Debug is active
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PGM1.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+      *01  somedate     TYPE Date.
+       01 somedate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                                  
+       01 TC-Callee pic X(08) value 'Callee'.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
+
+       LINKAGE SECTION.
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+          05 TC-Library-PntNbr          PIC S9(04) COMP.
+          05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
+      *Callee::check
+       01 TC-Callee-ca0ab46c-Item.
+          05 TC-Callee-ca0ab46c-Idt PIC X(08).
+          05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
+
+
+       PROCEDURE DIVISION.
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DEND DECLARATIVES.
+      *
+           PERFORM TC-INITIALIZATIONS
+
+
+      *declare procedure check private
+      *   input mydate        TYPE Date
+      *  .
+
+
+      *    call Callee::check input somedate
+           IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
+               PERFORM TC-LOAD-POINTERS-Callee
+           ELSE
+               IF TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
+                   PERFORM TC-LOAD-POINTERS-Callee
+               END-IF
+           END-IF
+           CALL TC-Callee-ca0ab46c USING
+                                 somedate
+           end-call
+                                            
+           .
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-Callee-ca0ab46c-Item  TO NULL
+            END-IF
+            .
+      *=================================================================
+        TC-LOAD-POINTERS-Callee.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-Callee
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'ca0ab46c'
+                     SET ADDRESS OF
+                     TC-Callee-ca0ab46c-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                END-EVALUATE
+            END-PERFORM
+            .
+
+
+
+      *Callee contains public procedure
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Callee.
+       DATA DIVISION.
+                                                           
+       WORKING-STORAGE SECTION.
+       01  TC-Callee-FctList-Loaded PIC X(02).
+           88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-Callee-PntTab.
+           05 TC-Callee-PntNbr         PIC S9(04) COMP VALUE 1.
+      *Callee::check
+           05 TC-Callee-ca0ab46c-Idt   PIC X(08) VALUE 'ca0ab46c'.
+           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
+
+       
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-Callee-FctList-IsLoaded
+              SET TC-Callee-ca0ab46c   TO ENTRY 'ca0ab46c'
+
+              SET TC-Callee-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-Callee-PntTab
+
+           .
+                          
+       
+      *declare procedure check public
+      *   input mydate        TYPE Date
+      *  .
+       INIT-LIBRARY.
+          exit
+          .
+       END PROGRAM Callee.
+
+
+       END PROGRAM PGM1.
+
+      *
+      *declare procedure check public
+      *   input mydate        TYPE Date
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ca0ab46ccheck.
+       END PROGRAM ca0ab46ccheck.
+      *
+      *declare procedure check private
+      *   input mydate        TYPE Date
+      *  .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a0508f35check.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
+       END PROGRAM a0508f35check.

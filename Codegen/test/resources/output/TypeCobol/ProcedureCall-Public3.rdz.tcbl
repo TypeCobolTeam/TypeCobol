@@ -20,6 +20,9 @@
                                   
        01  realformat   PIC X(08).
        01 TC-Callee pic X(08) value 'Callee'.
+       01 TC-Call          PIC X(01) VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'.
 
        LINKAGE SECTION.
       *Common to all librairies used by the program.
@@ -46,6 +49,10 @@
 
 
        PROCEDURE DIVISION.
+      *
+           PERFORM TC-INITIALIZATIONS
+
+                          
 
       *declare procedure check private
       *   input mydate        TYPE Date
@@ -165,6 +172,16 @@
            end-call
                                             
         .
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-Callee-ebb060ea-Item  TO NULL
+                 SET ADDRESS OF TC-Callee-ca0ab46c-Item  TO NULL
+                 SET ADDRESS OF TC-Callee-d0a59141-Item  TO NULL
+            END-IF
+            .
       *=================================================================
         TC-LOAD-POINTERS-Callee.
       *=================================================================

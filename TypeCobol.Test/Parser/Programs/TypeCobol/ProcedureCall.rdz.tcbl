@@ -133,6 +133,16 @@
              INPUT funcPointer procPointer.
 
       * __________________________________________________
+      * KO : Bad parameter entry
+       CALL GetPtrFn 
+             OUTPUT funcPointer procPointer.
+
+      * __________________________________________________
+      * KO : Bad parameter entry
+       CALL GetPtrFn 
+             IN-OUT funcPointer procPointer.
+
+      * __________________________________________________
       * KO : wrong params awaited func/proc-pointer
        CALL GetPtrFn 
              INPUT someformat someformat.

@@ -521,6 +521,36 @@ namespace TypeCobol.Compiler.Nodes {
             return null;
         }
 
+        /// <summary>Get this node or one of its children that has a given URI.</summary>
+        /// <param name="uri">Node unique identifier to search for</param>
+        /// <returns>Node n for which n.URI == uri, or null if no such Node was found</returns>
+        public Node Get(string uri, int startIndex)
+        {
+            string gen_uri = URI;
+            if (gen_uri != null)
+            {
+                if (uri.IndexOf('(') >= 0 && uri.IndexOf(')') > 0)
+                {//Pattern matching URI                    
+                    System.Text.RegularExpressions.Regex re = new System.Text.RegularExpressions.Regex(uri);
+                    if (re.IsMatch(URI))
+                    {
+                        return this;
+                    }
+                }
+                if (gen_uri.EndsWith(uri))
+                {
+                    return this;
+                }
+            }
+            for (int i = startIndex; i < children.Count; i++)
+            {
+                var child = this.children[i];
+                var found = child.Get(uri);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
         /// <summary>As <see cref="Get" /> method, but can specify the type of Node to retrieve.</summary>
         /// <typeparam name="N"></typeparam>
         /// <param name="uri"></param>

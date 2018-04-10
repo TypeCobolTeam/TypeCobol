@@ -266,7 +266,6 @@ namespace CLI.Test
                 }
             }
 
-
             return dirIdentical;
         }
     }

@@ -27,10 +27,9 @@ namespace TypeCobol.LanguageServer
             new Tuple<TokenType, bool>(TokenType.IN_OUT, false),
             new Tuple<TokenType, bool>(TokenType.MOVE, false),
             new Tuple<TokenType, bool>(TokenType.TO, false),
-            new Tuple<TokenType, bool>(TokenType.IF, false),
-            new Tuple<TokenType, bool>(TokenType.DISPLAY, false),
             new Tuple<TokenType, bool>(TokenType.SET, false),
             new Tuple<TokenType, bool>(TokenType.OF, false),
+            new Tuple<TokenType, bool>(TokenType.INTO, false),
         };
 
         /// <summary>

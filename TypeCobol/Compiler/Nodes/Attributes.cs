@@ -6,6 +6,7 @@ namespace TypeCobol.Compiler.Nodes {
 
     using System.Collections.Generic;
     using System.Linq;
+    using Tools;
     using TypeCobol.Compiler.CodeElements;
     using TypeCobol.Compiler.CodeElements.Expressions;
     using TypeCobol.Compiler.CodeModel;
@@ -408,6 +409,12 @@ internal class LibraryCopyAttribute: Attribute {
         public Dictionary<string, ProcedureImport> Procedures
         { get; internal set; }
 
+
+        /// <summary>
+        /// Determine if in this Imported program we uses Public Procedures.
+        /// </summary>
+        public bool HasPublicProcedures => Procedures.Count > 0;
+
         public ProgramImport()
         {
             Procedures = new Dictionary<string, ProcedureImport>();
@@ -442,6 +449,11 @@ internal class LibraryCopyAttribute: Attribute {
             {
                 return !IsEmpty;
             }
+        }
+
+        public bool HasPublicProcedures
+        {
+            get { return IsNotEmpty && Programs.Values.Any(prg => prg.HasPublicProcedures); }
         }
         public ProgramImports()
         {
@@ -478,7 +490,7 @@ internal class LibraryCopyAttribute: Attribute {
                     {   //Avoid imports to itself.
                         continue;
                     }
-                    string item_pgm_name = item_pgm.Name.Substring(0, Math.Min(item_pgm.Name.Length, 8));
+                    string item_pgm_name = Hash.CalculateCobolProgramNameShortcut(item_pgm.Name);
                     string item_pgm_name_low = item_pgm_name.ToLower();
                     ProgramImport prg_imp = null;
                     if (!imports.Programs.ContainsKey(item_pgm_name_low))
