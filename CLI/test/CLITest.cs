@@ -107,10 +107,14 @@ namespace CLI.Test
         {
             var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
             string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
-            string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim();
-            string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim();
-            if (standardOutput != expectedoutput)
-                throw new Exception(string.Format("console outputs not equals. {0}", standardOutput));
+            string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim().Replace("\r", "");
+            string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim().Replace("\r", "");
+            if (!string.Equals(standardOutput, expectedoutput, StringComparison.CurrentCultureIgnoreCase))
+                throw new Exception(string.Format("console outputs not equals.{0}" +
+                                                  "Console: {4}{0}{1}{0}" +
+                                                  "Expected: {5}{0}{2}{0}" +
+                                                  "{3}",
+                    Environment.NewLine, standardOutput, expectedoutput, Environment.NewLine, standardOutput.Length, expectedoutput.Length));
         }
 
         internal static string Test(string testFolderName, ReturnCode expectedReturnCode)
