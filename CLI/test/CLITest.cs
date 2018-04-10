@@ -110,7 +110,7 @@ namespace CLI.Test
             string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim();
             string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim();
             if (standardOutput != expectedoutput)
-                throw new Exception("console outputs not equals");
+                throw new Exception(string.Format("console outputs not equals. {0}", standardOutput));
         }
 
         internal static string Test(string testFolderName, ReturnCode expectedReturnCode)

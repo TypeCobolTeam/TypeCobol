@@ -46,7 +46,7 @@ namespace TypeCobol.Tools.Options_Config
         public static Dictionary<ReturnCode, string> ErrorMessages = new Dictionary<ReturnCode, string>()
         {
             // Warnings
-            { ReturnCode.Warning,                "test"},
+            { ReturnCode.Warning,                ""},
             // Errors   
             { ReturnCode.ParsingDiagnostics,     "Syntax or semantic error in one or more input file."},
             { ReturnCode.OutputFileError,        "The number of output files must be equal to the number of input files."},
