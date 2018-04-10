@@ -387,7 +387,7 @@ namespace TypeCobol.Codegen.Generators
                                 {
                                     if (IsPlitablePosition(firstSplitablePos, rightPos, originalPos, out targeSplittColumn))
                                     {
-                                        string pad = new StringBuilder().Append(Environment.NewLine).Append(new string(' ', targeSplittColumn - lineStartPos)).ToString();
+                                        string pad = new StringBuilder().Append(Environment.NewLine).Append(new string(' ', Math.Abs(targeSplittColumn - lineStartPos))).ToString();
                                         //So break here
                                         srcBuffer.Insert(pad, start.Pos, start.Pos);
                                         i = j;
