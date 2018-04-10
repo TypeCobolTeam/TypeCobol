@@ -366,7 +366,8 @@ namespace TypeCobol.LanguageServer
         {
             TypeCobolConfiguration = new TypeCobolConfiguration();
             var options = TypeCobolOptionSet.GetCommonTypeCobolOptions(TypeCobolConfiguration);
-            options.Parse(arguments);
+
+            var errors = TypeCobolOptionSet.InitializeCobolOptions(TypeCobolConfiguration, arguments, options);
 
             //Adding default copies folder
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);

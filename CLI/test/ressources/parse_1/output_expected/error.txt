@@ -1,2 +1,0 @@
-﻿ReturnCode=Success_
-No error in "input\ProcedureCall-Public.rdz.tcbl".
