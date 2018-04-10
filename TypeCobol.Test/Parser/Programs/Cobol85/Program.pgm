@@ -18,7 +18,7 @@ DATA DIVISION.
 **************
 WORKING-STORAGE SECTION.
 01  str    PIC X(08) VALUE 'THIS'.
-01  group.
+01  mygroup.
  05  num   PIC 9.
  05 subgroup.
   10  vrai  PIC 9 VALUE 1.

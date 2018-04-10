@@ -211,7 +211,21 @@ namespace TypeCobol.Codegen.Nodes {
 	private string ToString(TypeCobol.Compiler.CodeElements.CallSiteParameter parameter, Compiler.CodeModel.SymbolTable table, ArgMode mode,
         ref TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode, ref int previousSpan) {
         Variable variable = parameter.StorageAreaOrValue;
-        var name = parameter.IsOmitted ? "omitted" : variable.ToString(true);
+        bool bTypeBool = false;
+        if (variable != null)
+        {//We must detect a boolean variable
+            if (!variable.IsLiteral)
+            {
+                var found = table.GetVariables(variable);
+                if (found.Count() >= 1)
+                {
+                    var data = found.First() as DataDescription;
+                    bTypeBool = (data != null && data.DataType == DataType.Boolean);
+                }
+            }
+        }
+
+        var name = parameter.IsOmitted ? "omitted" : variable.ToString(true, bTypeBool);
 
         string share_mode = "";
         int defaultSpan = string.Intern("by reference ").Length;
@@ -251,9 +265,6 @@ namespace TypeCobol.Codegen.Nodes {
             if (found.Count() < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
                 return share_mode + variable.ToCobol85();
             }
-//		if (found.Count > 1) return "?AMBIGUOUS?";
-            var data = found.First() as DataDescription;
-            if (data != null && data.DataType == DataType.Boolean) name += "-value";
         }
         return share_mode + name;
 	}

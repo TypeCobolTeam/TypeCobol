@@ -5,7 +5,7 @@
        Working-STORAGE SECTION.
 
        01  somedate     TYPE Date.
-       01  message      PIC X(80).
+       01  msg      PIC X(80).
        01 Calendar TYPE Callee::Calendar.
 
        PROCEDURE DIVISION.
@@ -39,10 +39,10 @@
 
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
-          call dump input message
+          call dump input msg
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
-          call MyIntrinsicFunctions::dump input message
+          call MyIntrinsicFunctions::dump input msg
         .
        END PROGRAM PGM3.
 

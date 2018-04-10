@@ -97,7 +97,7 @@ tokens
     DELETE_CD,
     EJECT,
     ENTER,
-    EXEC_SQL_INCLUDE,
+    EXEC_SQL,
     INSERT,
     PROCESS,
     READY,
@@ -275,8 +275,6 @@ tokens
     ASCENDING,
     ASSIGN,
     AT,
-    ATTRIBUTE,
-    ATTRIBUTES,
     AUTHOR,
     BEFORE,
     BEGINNING,
@@ -332,10 +330,7 @@ tokens
     DOWN,
     DUPLICATES,
     DYNAMIC,
-    EBCDIC,
     EGCS,
-    ELEMENT,
-    ENCODING,
     END_OF_PAGE,
     ENDING,
     EOP,
@@ -388,16 +383,12 @@ tokens
     MODE,
     MODULES,
     MORE_LABELS,
-    NAME,
-    NAMESPACE,
-    NAMESPACE_PREFIX,
     NATIONAL,
     NATIONAL_EDITED,
     NATIVE,
     NEGATIVE,
     NEW,
     NO,
-    NONNUMERIC,
     NOT,
     NUMERIC,
     NUMERIC_EDITED,
@@ -418,7 +409,6 @@ tokens
     PACKED_DECIMAL,
     PADDING,
     PAGE,
-    PARSE,
     PASSWORD,
     PIC,
     PICTURE,
@@ -496,17 +486,73 @@ tokens
     UPON,
     USAGE,
     USING,
-    VALIDATING,
     VALUE,
     VALUES,
     VARYING,
     WITH,
     WORDS,
     WRITE_ONLY,
-    XML_DECLARATION,
     XML_SCHEMA,
-    YYYYDDD,
-    YYYYMMDD,
+	ALLOCATE,
+    CD,
+    CF,
+    CH,
+    CLOCK_UNITS,
+    COLUMN,
+    COMMUNICATION,
+    CONTROL,
+    CONTROLS,
+    DE,
+    DEFAULT,
+    DESTINATION,
+    DETAIL,
+    DISABLE,
+    EGI,
+    EMI,
+    ENABLE,
+    END_RECEIVE,
+    ESI,
+    FINAL,
+    FREE,
+    GROUP,
+    HEADING,
+    INDICATE,
+    INITIATE,
+    LAST,
+    LIMIT,
+    LIMITS,
+    LINE_COUNTER,
+    MESSAGE,
+    NUMBER,
+    PAGE_COUNTER,
+    PF,
+    PH,
+    PLUS,
+    PRINTING,
+    PURGE,
+    QUEUE,
+    RD,
+    RECEIVE,
+    REPORT,
+    REPORTING,
+    REPORTS,
+    RF,
+    RH,
+    SEGMENT,
+    SEND,
+    SOURCE,
+    SUB_QUEUE_1,
+    SUB_QUEUE_2,
+    SUB_QUEUE_3,
+    SUM,
+    TABLE,
+    TERMINAL,
+    TERMINATE,
+    TEXT,
+	// Keywords - Cobol V6
+    END_JSON,
+    JSON,
+    VOLATILE,
     // Keywords - Cobol 2002
     TYPEDEF,
     STRONG,
@@ -727,8 +773,7 @@ superObjectIdentifier: SUPER;
 // EBCDIC
 // Specifies the EBCDIC character set.
 
-standardCollatingSequence: STANDARD_1 | STANDARD_2 | NATIVE | EBCDIC;
-
+standardCollatingSequence: STANDARD_1 | STANDARD_2 | NATIVE;
 
 // --- Compile-time constant values used in the Cobol grammar ---
 
@@ -1619,7 +1664,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     DELETE_CD |
     EJECT |
     ENTER |
-    EXEC_SQL_INCLUDE |
+    EXEC_SQL |
     INSERT |
     PROCESS |
     READY |
@@ -1797,8 +1842,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     ASCENDING |
     ASSIGN |
     AT |
-    ATTRIBUTE |
-    ATTRIBUTES |
     AUTHOR |
     BEFORE |
     BEGINNING |
@@ -1854,10 +1897,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     DOWN |
     DUPLICATES |
     DYNAMIC |
-    EBCDIC |
     EGCS |
-    ELEMENT |
-    ENCODING |
     END_OF_PAGE |
     ENDING |
     EOP |
@@ -1910,16 +1950,12 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     MODE |
     MODULES |
     MORE_LABELS |
-    NAME |
-    NAMESPACE |
-    NAMESPACE_PREFIX |
     NATIONAL |
     NATIONAL_EDITED |
     NATIVE |
     NEGATIVE |
     NEW |
     NO |
-    NONNUMERIC |
     NOT |
     NUMERIC |
     NUMERIC_EDITED |
@@ -1940,7 +1976,6 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     PACKED_DECIMAL |
     PADDING |
     PAGE |
-    PARSE |
     PASSWORD |
     PIC |
     PICTURE |
@@ -2018,17 +2053,73 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     UPON |
     USAGE |
     USING |
-    VALIDATING |
     VALUE |
     VALUES |
     VARYING |
     WITH |
     WORDS |
     WRITE_ONLY |
-    XML_DECLARATION |
     XML_SCHEMA |
-    YYYYDDD |
-    YYYYMMDD |
+	ALLOCATE |
+    CD |
+    CF |
+    CH |
+    CLOCK_UNITS |
+    COLUMN |
+    COMMUNICATION |
+    CONTROL |
+    CONTROLS |
+    DE |
+    DEFAULT |
+    DESTINATION |
+    DETAIL |
+    DISABLE |
+    EGI |
+    EMI |
+    ENABLE |
+    END_RECEIVE |
+    ESI |
+    FINAL |
+    FREE |
+    GROUP |
+    HEADING |
+    INDICATE |
+    INITIATE |
+    LAST |
+    LIMIT |
+    LIMITS |
+    LINE_COUNTER |
+    MESSAGE |
+    NUMBER |
+    PAGE_COUNTER |
+    PF |
+    PH |
+    PLUS |
+    PRINTING |
+    PURGE |
+    QUEUE |
+    RD |
+    RECEIVE |
+    REPORT |
+    REPORTING |
+    REPORTS |
+    RF |
+    RH |
+    SEGMENT |
+    SEND |
+    SOURCE |
+    SUB_QUEUE_1 |
+    SUB_QUEUE_2 |
+    SUB_QUEUE_3 |
+    SUM |
+    TABLE |
+    TERMINAL |
+    TERMINATE |
+    TEXT |
+	// Keywords - Cobol V6
+    END_JSON |
+    JSON |
+    VOLATILE |
     // Keywords - Cobol 2002
     TYPEDEF |
     STRONG |
