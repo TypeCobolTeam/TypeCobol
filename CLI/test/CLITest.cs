@@ -109,7 +109,7 @@ namespace CLI.Test
             string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
             string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim();
             string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim();
-            if (standardOutput != expectedoutput)
+            if (!string.Equals(standardOutput, expectedoutput, StringComparison.CurrentCultureIgnoreCase))
                 throw new Exception(string.Format("console outputs not equals. {0}", standardOutput));
         }
 
