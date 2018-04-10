@@ -773,7 +773,7 @@ superObjectIdentifier: SUPER;
 // EBCDIC
 // Specifies the EBCDIC character set.
 
-standardCollatingSequence: STANDARD_1 | STANDARD_2 | NATIVE;
+standardCollatingSequenceReference: STANDARD_1 | STANDARD_2 | NATIVE;
 
 // --- Compile-time constant values used in the Cobol grammar ---
 
