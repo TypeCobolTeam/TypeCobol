@@ -173,10 +173,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-
-
-
-
         private static void Check(Node node, [NotNull] FunctionCall call,
             [NotNull] FunctionDeclaration definition)
         {
@@ -798,5 +794,56 @@ namespace TypeCobol.Compiler.Diagnostics
 	}
 }
 
+
+    class GlobalStorageSectionChecker
+    {
+        public static void OnNode([NotNull] Node node)
+        {
+            var globalStorageSection = node as GlobalStorageSection;
+            if (globalStorageSection == null) return;
+
+            //Check if GlobalStorageSection is declared in main program Rule - GLOBALSS_ONLY_IN_MAIN 
+            if(!globalStorageSection.GetProgramNode().IsMainProgram)
+                DiagnosticUtils.AddError(node, "GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.");
+
+            //Check every GlobalStorageSection DataDefinition (children)
+            foreach (var child in globalStorageSection.Children)
+            {
+                CheckGlobalStorageChildren(child);
+            }
+        }
+
+        private static void CheckGlobalStorageChildren(Node node)
+        {
+            var dataDefinition = node as DataDefinition;
+            if (dataDefinition == null) return;
+
+            //Check variable LevelNumber Rule - GLOBALSS_LIMIT48 
+            var data = dataDefinition.CodeElement as DataDefinitionEntry;
+            if (data?.LevelNumber != null && data.LevelNumber.Value == 77)
+                DiagnosticUtils.AddError(node, "Data must be declared between level 01 to 49, or equals to 66 or 88.");
+            if(!(dataDefinition.Parent is DataDefinition) && data?.LevelNumber != null && data.LevelNumber.Value == 88)
+                DiagnosticUtils.AddError(node, "Level 88 data must be declared inside a data from level 01 to 49.");
+
+            //Check variable no Global / External keyword 
+            // Rules : - GLOBALSS_NO_GLOBAL_KEYWORD - GLOBALSS_NO_EXTERNAL 
+            var dataDescription = dataDefinition.CodeElement as DataDescriptionEntry;
+            if (dataDescription != null)
+            {
+                if (dataDescription.IsGlobal) // GLOBALSS_NO_GLOBAL_KEYWORD 
+                    DiagnosticUtils.AddError(dataDescription, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.");
+                if(dataDescription.IsExternal) //GLOBALSS_NO_EXTERNAL
+                    DiagnosticUtils.AddError(dataDescription, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.");
+            }
+
+            if (node.Children.Count > 0)
+            {
+                foreach (var child in node.Children)
+                {
+                    CheckGlobalStorageChildren(child);
+                }
+            }
+        }
+    }
 
 }

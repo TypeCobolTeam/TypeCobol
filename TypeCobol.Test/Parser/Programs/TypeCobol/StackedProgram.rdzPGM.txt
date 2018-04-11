@@ -4,12 +4,12 @@ Line 36[8,29] <30, Error, Semantics> - Semantic error: TYPE 'NewType' is not ref
 --- Program ---
 PROGRAM: TYPEPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   typeOfDays:typeOfDays
   typeOfDaysPrivate:typeOfDaysPrivate
   typeOfDaysNoModifier:typeOfDaysNoModifier
---- Intrinsic:Namespace:Global
+--- Intrinsic:Namespace:GlobalStorage:Global
 -- TYPES -------
   NewType:NewType
 --- Intrinsic

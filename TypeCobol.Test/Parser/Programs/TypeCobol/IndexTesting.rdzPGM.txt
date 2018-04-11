@@ -9,7 +9,7 @@ Line 60[8,28] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY c
 --- Program ---
 PROGRAM: IndexTesting common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   MyGIdx:Alphanumeric
   Counter:Numeric
@@ -33,7 +33,7 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   Bad:BadType
   ThisIndexNameIsClearlyToLong:Numeric
   ToLingIndx:Alphanumeric
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   MyIdxType:MyIdxType
   Account:Account

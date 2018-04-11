@@ -5,12 +5,12 @@ Line 31[12,42] <27, Error, Syntax> - Syntax error : Symbol Account1.HolderNumber
 --- Program ---
 PROGRAM: VariableSeeking common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   Account1:Account
   Account2:Account
   HolderNumber:Numeric
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   Account:Account
   Account2:Account2

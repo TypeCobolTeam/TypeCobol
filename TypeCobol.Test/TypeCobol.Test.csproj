@@ -112,8 +112,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="**\*.cs" />
-	<Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
+    <Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
     <Content Include="NewTestsToFix\**" />
+    <Content Include="Parser\Programs\TypeCobol\GlobalStorageSection.rdzMix.txt" />
     <Content Include="ThirdParty\**" />
     <Content Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -129,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Parser\Programs\TypeCobol\GlobalStorageSection.rdz.tcbl" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

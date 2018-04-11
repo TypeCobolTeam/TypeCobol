@@ -18,7 +18,7 @@ Line 117[8,45] <30, Error, Semantics> - Semantic error: TYPE 'PGM1.AddressStrong
 --- Program ---
 PROGRAM: PGM1 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   Point:Alphanumeric
   Point:VECT2
@@ -42,7 +42,7 @@ PROGRAM: PGM1 common:False initial:False recursive:False
   address1:AddressWeak
   address2:AddressStrict
   address3:AddressStrong
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   Vect2:Vect2
   Person:Person

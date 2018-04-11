@@ -9,7 +9,7 @@ Line 20[19,19] <27, Error, Syntax> - Syntax error : extraneous input '9' expecti
 --- Program ---
 PROGRAM: MOVEQUA common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   var1:Alphanumeric
   var2:Alphanumeric

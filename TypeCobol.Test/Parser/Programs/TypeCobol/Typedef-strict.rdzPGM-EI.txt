@@ -30,7 +30,7 @@ Line 194[12,40] <30, Error, Semantics> - Semantic error: Cannot write Vect2 to s
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   PointA:Alphanumeric
   Position2d:Vect2
@@ -76,7 +76,7 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   MyVariable:Alphanumeric
   usestrictType1:strictType1
   TYPE-GRP-STRICT-REN:?
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   bool:bool
   DuplicatedType:DuplicatedType

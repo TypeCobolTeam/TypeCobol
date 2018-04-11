@@ -159,6 +159,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// Mark that this node contains a boolean variable that has to be considered by CodeGen. 
             /// </summary>
             NodeContainsBoolean = 0x01 << 20,
+            /// <summary>
+            /// Flag node belongs to Global Storage Section (usefull for DataDefinition)
+            /// </summary>
+            GlobalStorageSection = 0x01 << 21,
 
 
         };

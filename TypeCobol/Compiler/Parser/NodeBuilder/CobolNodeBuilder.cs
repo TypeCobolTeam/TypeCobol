@@ -42,6 +42,7 @@ namespace TypeCobol.Compiler.Parser
         private readonly SymbolTable TableOfIntrisic = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
         private SymbolTable TableOfGlobals;
         private SymbolTable TableOfNamespaces;
+        private SymbolTable TableOfGlobalStorage;
 
 
         public SymbolTable CustomSymbols
@@ -138,7 +139,8 @@ namespace TypeCobol.Compiler.Parser
             if(TableOfNamespaces == null)
                 TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace);
 
-            TableOfGlobals = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.Global);
+            TableOfGlobalStorage = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.GlobalStorage);
+            TableOfGlobals = new SymbolTable(TableOfGlobalStorage, SymbolTable.Scope.Global);
             Program = null;
            
             SyntaxTree.Root.SymbolTable = TableOfNamespaces; //Set SymbolTable of SourceFile Node, Limited to NameSpace and Intrinsic scopes
@@ -331,7 +333,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var terminal = context.GlobalStorageSectionHeader();
             var header = (GlobalStorageSectionHeader) terminal?.Symbol;
-            Enter(new GlobalStorageSection(header), context);
+            Enter(new GlobalStorageSection(header), context, SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage));
         }
 
         public override void ExitGlobalStorageSection(ProgramClassParser.GlobalStorageSectionContext context)
@@ -418,7 +420,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (node.IsPartOfATypeDef) return;
             var table = node.SymbolTable;
-            if (node.CodeElement().IsGlobal)
+            if (node.CodeElement().IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
                 table = table.GetTableFromScope(SymbolTable.Scope.Global);
 
             table.AddVariable(node);
@@ -480,6 +482,11 @@ namespace TypeCobol.Compiler.Parser
                 else if (parent is FileSection)
                 {
                     node.SetFlag(Node.Flag.FileSectionNode, true);
+                    break;
+                }
+                else if (parent is GlobalStorageSection)
+                {
+                    node.SetFlag(Node.Flag.GlobalStorageSection, true);
                     break;
                 }
                 parent = parent.Parent;

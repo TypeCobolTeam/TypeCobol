@@ -52,6 +52,20 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         public bool IsNested { get; protected set; }
 
+
+        /// <summary>
+        /// True if the program is the first program declared in the Root (SourceFile)
+        /// </summary>
+        public bool IsMainProgram
+        {
+            get { return this.Root.Children.FirstOrDefault() == this; }
+        }
+
+        public bool IsStacked
+        {
+            get { return !IsMainProgram && !IsNested; }
+        }
+
         // -- IDENTIFICATION DIVISION --
 
         /// <summary>

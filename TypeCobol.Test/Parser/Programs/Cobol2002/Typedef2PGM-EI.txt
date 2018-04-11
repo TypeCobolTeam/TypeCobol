@@ -6,10 +6,10 @@ Line 18[3,4] <27, Error, Syntax> - Syntax error : extraneous input '02' expectin
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   MyVar:MyType
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   MyType:MyType
 --- Intrinsic

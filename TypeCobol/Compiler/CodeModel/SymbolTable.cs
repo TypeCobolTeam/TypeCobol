@@ -1179,7 +1179,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// Cobol has compile time binding for variables, sometimes called static scope.
         /// Within that, Cobol supports several layers of scope: Global and Program scope.
         ///
-        /// TypeCobol has Intrisic scope used for standard library types and variables.
+        /// TypeCobol has Intrinsic scope used for standard library types and variables.
         /// TypeCobol has Function scope used for types and variables declared inside a function.
         /// </summary>
         public enum Scope
@@ -1193,6 +1193,16 @@ namespace TypeCobol.Compiler.CodeModel
             /// Namespace scope is a specific to TypeCobol. It registers all the different parsed programs. 
             /// </summary>
             Namespace,
+
+            /// <summary>
+            /// GlobalStorage scope is TypeCobol specific. It will store all the DataEntry data are decalred inside a GLOBAL-STORAGE SECTION
+            /// These variables will be accessible by all the nested programs. All the procedures will also have access to these variables. 
+            /// Issue #805
+            /// SymbolTable Enclosing Scopes allows to respect the rules : 
+            ///     - GLOBALSS_RANGE 
+            ///     - GLOBALSS_NOT_FOR_STACKED 
+            /// </summary>
+            GlobalStorage,
 
             /// <summary>
             /// Variables and TYPEDEF declared in DATA DIVISION as GLOBAL are visible
