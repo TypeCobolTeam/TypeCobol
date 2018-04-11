@@ -107,8 +107,8 @@ namespace CLI.Test
         {
             var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
             string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
-            string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim();
-            string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim();
+            string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim().Replace("\r", "");
+            string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim().Replace("\r", "");
             /*
             string standardOutput1 = standardOutput.Replace("\n\r", Environment.NewLine);
             string standardOutput2 = standardOutput.Replace("\n"  , Environment.NewLine);
