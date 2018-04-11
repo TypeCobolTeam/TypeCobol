@@ -109,17 +109,12 @@ namespace CLI.Test
             string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
             string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim().Replace("\r", "");
             string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim().Replace("\r", "");
-            /*
-            string standardOutput1 = standardOutput.Replace("\n\r", Environment.NewLine);
-            string standardOutput2 = standardOutput.Replace("\n"  , Environment.NewLine);
-            string standardOutput3 = standardOutput.Replace("\r"  , Environment.NewLine);
-            string expectedoutput1 = expectedoutput.Replace("\n\r", Environment.NewLine);
-            string expectedoutput2 = expectedoutput.Replace("\n"  , Environment.NewLine);
-            string expectedoutput3 = expectedoutput.Replace("\r"  , Environment.NewLine);
-            */
-
             if (!string.Equals(standardOutput, expectedoutput, StringComparison.CurrentCultureIgnoreCase))
-                throw new Exception(string.Format("console outputs not equals. {0}{1}{2}{3}{4}:{5}", standardOutput, Environment.NewLine, expectedoutput, Environment.NewLine, standardOutput.Length, expectedoutput.Length));
+                throw new Exception(string.Format("console outputs not equals.{0}" +
+                                                  "Console: {4}{0}{1}{0}" +
+                                                  "Expected: {5}{0}{2}{0}" +
+                                                  "{3}",
+                    Environment.NewLine, standardOutput, expectedoutput, Environment.NewLine, standardOutput.Length, expectedoutput.Length));
         }
 
         internal static string Test(string testFolderName, ReturnCode expectedReturnCode)
