@@ -6,8 +6,9 @@
        GLOBAL-STORAGE SECTION.
        88 etdzefezf         VALUE 'TRUE'.
        123 zefzefze         TYPE Bool.
-       01 W-Date            TYPE Date.
-       01 W-TechCtx         TYPE Bool.
+       01 G-Date            TYPE Date.
+       01 G-TechCtx         TYPE Bool.
+       01 DuplicatedVar     TYPE Bool.
 
        01 MyGroup.
       *Global clause is not authorized inside Global Storage
@@ -18,6 +19,7 @@
 
 
        WORKING-STORAGE SECTION.
+       01 DuplicatedVar     TYPE Bool.
        01 MyGroup PIC X(10).
            88 TestLevel VALUE "Test".
 
@@ -29,40 +31,40 @@
        WORKING-STORAGE Section.
        01 TestCtx TYPE Bool.
        PROCEDURE DIVISION.
-      *W-Date and W-TechCtx are accesible from GlobalStorage
-           MOVE W-Date TO myDate.
-           MOVE W-TechCtx TO TestCtx.
+      *G-Date and G-TechCtx are accesible from GlobalStorage
+           MOVE G-Date TO myDate.
+           MOVE G-TechCtx TO TestCtx.
         END-DECLARE.
 
-       MOVE  W-Date TO W-Date.
+       MOVE G-Date TO G-Date.
+       MOVE DuplicatedVar TO G-TechCtx.
 
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedProc.
 
-           IDENTIFICATION DIVISION.
-           PROGRAM-ID. NestedProc.
-
-           DATA DIVISION.
+       DATA DIVISION.
       *Global Storage Section cannot 
       * be define inside nested program
-           GLOBAL-STORAGE SECTION.
-           WORKING-STORAGE SECTION.
-           01 MyDate TYPE Date.
+       GLOBAL-STORAGE SECTION.
+       WORKING-STORAGE SECTION.
+       01 MyDate TYPE Date.
 
-           PROCEDURE DIVISION.
-      *W-Date is accessible in nested from Global Storage
-           MOVE W-Date TO MyDate.
-           DECLARE PROCEDURE MyProc PRIVATE
-                INPUT    myDate      TYPE DATE.
-           Data division.
-           WORKING-STORAGE Section.
-           01 TestCtx TYPE Bool.
-           PROCEDURE DIVISION.
-      *W-Date and W-TechCtx are accessible 
+       PROCEDURE DIVISION.
+      *G-Date is accessible in nested from Global Storage
+       MOVE G-Date TO MyDate.
+       DECLARE PROCEDURE MyProc PRIVATE
+            INPUT    myDate      TYPE DATE.
+       Data division.
+       WORKING-STORAGE Section.
+       01 TestCtx TYPE Bool.
+       PROCEDURE DIVISION.
+      *G-Date and G-TechCtx are accessible 
       * in nested procedure from Global Storage
-                MOVE W-Date TO myDate.
-                MOVE W-TechCtx TO TestCtx.
-           END-DECLARE.
+       MOVE G-Date TO myDate.
+       MOVE G-TechCtx TO TestCtx.
+       END-DECLARE.
 
-           END PROGRAM NestedProc.
+       END PROGRAM NestedProc.
 
        END PROGRAM GlobalStorageTest.
 
@@ -79,7 +81,7 @@
        01 MyDate TYPE Date.
 
        PROCEDURE DIVISION.
-      *W-Date is not accessible in StackedProgram
-       MOVE W-Date TO MyDate.
+      *G-Date is not accessible in StackedProgram
+       MOVE G-Date TO MyDate.
 
        END PROGRAM StackedProg.
