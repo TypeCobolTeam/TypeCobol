@@ -79,7 +79,6 @@ namespace CLI.Test
         [TestMethod]
         public void TestReturnCode() {
             CLITestHelper.Test("return_code_0", ReturnCode.Success);//0
-            //CLITestHelper.Test("return_code_1", ReturnCode.FatalError);
             CLITestHelper.Test("return_code_2", ReturnCode.OutputFileError); // 1001
             CLITestHelper.Test("return_code_3", ReturnCode.ParsingDiagnostics);// 1000
             CLITestHelper.Test("return_code_4", ReturnCode.Warning);//1
