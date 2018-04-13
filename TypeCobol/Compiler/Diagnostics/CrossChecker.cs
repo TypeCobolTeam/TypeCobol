@@ -253,8 +253,19 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced");
             if (found.Count() > 1)
-                DiagnosticUtils.AddError(node, "Ambiguous reference to symbol " + area);
-
+            {
+                bool isFirst = true;
+                string errorMessage = "Ambiguous reference to symbol " + area + " " + Environment.NewLine + "Symbols found: ";
+                foreach (var symbol in foundQualified)
+                {
+                    // Multiline Version
+                    //errorMessage += Environment.NewLine + "\t" + symbol.Key.Replace(".", "::");
+                    // Inline version
+                    errorMessage += (isFirst?"":" | ") + symbol.Key.Replace(".", "::");
+                    isFirst = false;
+                }
+                DiagnosticUtils.AddError(node, errorMessage);
+            }
         }
 
         private void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
