@@ -73,6 +73,17 @@ namespace TypeCobol.Server {
                 if (!errors.IsNullOrEmpty())
                     return exit(errors);
 
+                if (help)
+                {
+                    p.WriteOptionDescriptions(Console.Out);
+                    return 0;
+                }
+
+                if (version)
+                {
+                    Console.WriteLine(PROGVERSION);
+                    return 0;
+                }
 
                 if (config.Telemetry)
                 {
