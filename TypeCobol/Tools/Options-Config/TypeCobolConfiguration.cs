@@ -51,8 +51,8 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.ParsingDiagnostics,     "Syntax or semantic error in one or more input file."},
             { ReturnCode.OutputFileError,        "The number of output files must be equal to the number of input files."},
             { ReturnCode.MissingCopy,            "Use of option --haltonmissingcopy and at least one COPY is missing."},
-            { ReturnCode.GenerationError,        "Error during Code generatio."},
-            { ReturnCode.FatalError,             "Not managed error."},
+            { ReturnCode.GenerationError,        "Error during Code generation."},
+            { ReturnCode.FatalError,             "Unhandled error occurs."},
             { ReturnCode.UnexpectedParamError,   "Unexpected parameter given."},
             // Missing Parameters
             { ReturnCode.InputFileMissing,       "Input file(s) are required." },
@@ -63,7 +63,7 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.OutputFileErrorBis,     "Output files given are unreachable." },
             { ReturnCode.ErrorFileError,         "Error diagnostics file is unreachable." },
             { ReturnCode.SkeletonFileError,      "Skeleton file given is unreachable." },
-            { ReturnCode.HaltOnMissingCopyError, "Missing copy file given are unreachable." },
+            { ReturnCode.HaltOnMissingCopyError, "Missing copy file given is unreachable." },
             { ReturnCode.ExecToStepError,        "Unexpected parameter given for ExecToStep. Accepted parameters are \"Scanner\"/0, \"Preprocessor\"/1, \"SyntaxCheck\"/2, \"SemanticCheck\"/3, \"CrossCheck\"/4, \"Generate\"/5(default)." },
             { ReturnCode.EncodingError,          "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
             { ReturnCode.IntrinsicError,         "Intrinsic files given are unreachable." },
@@ -71,8 +71,8 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.DependenciesError,      "Dependencies files given are unreachable." },
             { ReturnCode.MaxDiagnosticsError,    "Maximum diagnostics have to be an integer." },
             { ReturnCode.OutputFormatError,      "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
-            { ReturnCode.ExpandingCopyError,     "Expanding copy file given are unreachable." },
-            { ReturnCode.ExtractusedCopyError,   "Extractused copy file given are unreachable." },
+            { ReturnCode.ExpandingCopyError,     "Expanding copy file given is unreachable." },
+            { ReturnCode.ExtractusedCopyError,   "Extractused copy file given is unreachable." },
             
         };
     }
@@ -178,36 +178,8 @@ namespace TypeCobol.Tools.Options_Config
 
 
             // ExecToStepError
-            switch (config.RawExecToStep.ToLower())
-            {
-                case "0":
-                case "scanner":
-                    config.ExecToStep = ExecutionStep.Scanner;
-                    break;
-                case "1":
-                case "preprocessor":
-                    config.ExecToStep = ExecutionStep.Preprocessor;
-                    break;
-                case "2":
-                case "syntaxcheck":
-                    config.ExecToStep = ExecutionStep.SyntaxCheck;
-                    break;
-                case "3":
-                case "semanticcheck":
-                    config.ExecToStep = ExecutionStep.SemanticCheck;
-                    break;
-                case "4":
-                case "crosscheck":
-                    config.ExecToStep = ExecutionStep.CrossCheck;
-                    break;
-                case "5":
-                case "generate":
-                    config.ExecToStep = ExecutionStep.Generate;
-                    break;
-                default:
-                    errorStack.Add(ReturnCode.ExecToStepError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExecToStepError]);
-                    break;
-            }
+            if (!Enum.TryParse(config.RawExecToStep, true, out config.ExecToStep))
+                errorStack.Add(ReturnCode.ExecToStepError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExecToStepError]);
 
             //// Check required options
             //InputFileMissing
@@ -232,64 +204,28 @@ namespace TypeCobol.Tools.Options_Config
 
             //// Options values verification
             //InputFileError
-            foreach (var path in config.InputFiles)
-            {
-                if (FileSystem.GetFiles(path, recursive: false).IsNullOrEmpty() && !errorStack.ContainsKey(ReturnCode.InputFileError))
-                {
-                    errorStack.Add(ReturnCode.InputFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.InputFileError]);
-                }
-            }
+            VerifFiles(config.InputFiles, ReturnCode.InputFileError, ref errorStack);
+            
             //SkeletonFileError
             if (config.ExecToStep == ExecutionStep.Generate && !config.skeletonPath.IsNullOrEmpty() &&  !errorStack.ContainsKey(ReturnCode.ExecToStepError))
             {
-                if (!File.Exists(config.skeletonPath))
+                if (FileSystem.GetFiles(config.skeletonPath, recursive: false).IsNullOrEmpty() && !errorStack.ContainsKey(ReturnCode.SkeletonFileError))
                 {
                     errorStack.Add(ReturnCode.SkeletonFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.SkeletonFileError]);
                 }
             }
             // EncodingError
-            switch (config.RawFormat.ToLower())
-            {
-                case "rdz":
-                    config.EncFormat = "rdz";
-                    config.Format = DocumentFormat.RDZReferenceFormat;
-                    break;
-                case "zos":
-                    config.EncFormat = "zos";
-                    config.Format = DocumentFormat.ZOsReferenceFormat;
-                    break;
-                case "utf8":
-                    config.EncFormat = "utf8";
-                    config.Format = DocumentFormat.FreeUTF8Format;
-                    break;
-                default:
-                    errorStack.Add(ReturnCode.EncodingError, TypeCobolConfiguration.ErrorMessages[ReturnCode.EncodingError]);
-                    break;
-            }
+            config.Format = CreateFormat(config.RawFormat, ref config);
+
             //IntrinsicError
-            foreach (var path in config.Copies)
-            {
-                if (FileSystem.GetFiles(path, recursive: false).IsNullOrEmpty() && !errorStack.ContainsKey(ReturnCode.IntrinsicError))
-                {
-                    errorStack.Add(ReturnCode.IntrinsicError, TypeCobolConfiguration.ErrorMessages[ReturnCode.IntrinsicError]);
-                }
-            }
+            VerifFiles(config.Copies, ReturnCode.IntrinsicError, ref errorStack);
+
             //CopiesError
-            foreach (var path in config.CopyFolders)
-            {
-                if (!Directory.Exists(path) && !errorStack.ContainsKey(ReturnCode.CopiesError))
-                {
-                    errorStack.Add(ReturnCode.CopiesError, TypeCobolConfiguration.ErrorMessages[ReturnCode.CopiesError]);
-                }
-            }
+            VerifFiles(config.CopyFolders, ReturnCode.CopiesError, ref errorStack, true);
+
             //DependenciesError
-            foreach (var path in config.Dependencies)
-            {
-                if (FileSystem.GetFiles(path, recursive: false).IsNullOrEmpty() && !errorStack.ContainsKey(ReturnCode.DependenciesError))
-                {
-                    errorStack.Add(ReturnCode.DependenciesError, TypeCobolConfiguration.ErrorMessages[ReturnCode.DependenciesError]);
-                }
-            }
+            VerifFiles(config.Dependencies, ReturnCode.DependenciesError, ref errorStack);
+
             // MaxDiagnosticsError
             if (!config.RawMaximumDiagnostics.IsNullOrEmpty())
             {
@@ -298,23 +234,22 @@ namespace TypeCobol.Tools.Options_Config
             }
 
             // OutputFormatError
-            switch (config.RawOutputFormat.ToLower())
-            {
-                case "0":
-                case "cobol85":
-                    config.OutputFormat = OutputFormat.Cobol85;
-                    break;
-                case "1":
-                case "publicsignature":
-                case "publicsignatures":
-                    config.OutputFormat = OutputFormat.PublicSignatures;
-                    break;
-                default:
-                    errorStack.Add(ReturnCode.OutputFormatError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputFormatError]);
-                    break;
-            }
+            if (!Enum.TryParse(config.RawOutputFormat, true, out config.OutputFormat))
+                errorStack.Add(ReturnCode.OutputFormatError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputFormatError]);
 
             return errorStack;
+        }
+
+
+        public static void VerifFiles(List<string> paths, ReturnCode errorCode, ref Dictionary<ReturnCode, string> errorStack, bool isFolder=false)
+        {
+            foreach (var path in paths)
+            {
+                if ((isFolder ? !Directory.Exists(path) : FileSystem.GetFiles(path, recursive: false).IsNullOrEmpty()) && !errorStack.ContainsKey(errorCode))
+                {
+                    errorStack.Add(errorCode, TypeCobolConfiguration.ErrorMessages[errorCode]);
+                }
+            }
         }
 
         /// <summary>

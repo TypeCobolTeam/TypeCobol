@@ -1,7 +1,6 @@
 ﻿Code: 1001 TypeCobol.CLI.exe: The number of output files must be equal to the number of input files.
 Code: 1012 TypeCobol.CLI.exe: Skeleton file is required in execution to generate step.
 Code: 1020 TypeCobol.CLI.exe: Input files given are unreachable.
-Code: 1026 TypeCobol.CLI.exe: Unexpected parameter given for encoding option. Accepted parameters are "rdz"(default), "zos", "utf8".
 Code: 1027 TypeCobol.CLI.exe: Intrinsic files given are unreachable.
 Code: 1028 TypeCobol.CLI.exe: Copies files given are unreachable.
 Code: 1029 TypeCobol.CLI.exe: Dependencies files given are unreachable.
