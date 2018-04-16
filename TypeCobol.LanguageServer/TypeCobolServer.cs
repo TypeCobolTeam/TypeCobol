@@ -662,6 +662,7 @@ namespace TypeCobol.LanguageServer
 
         public override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
+            AnalyticsWrapper.Telemetry.TrackEvent("[SignatureHelp]", EventType.Completion); //Send event to analytics
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
 
             if (fileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available
