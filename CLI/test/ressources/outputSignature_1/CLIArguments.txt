@@ -1,1 +1,1 @@
-﻿-1 -i input\Callee.rdz.tcbl -o output\ProcedureCall-Public-Signatures.rdz.tcbl -d output\error.txt input\Callee.rdz.tcbl -e rdz -f PublicSignatures
+﻿-1 -i input\Callee.rdz.tcbl -o output\ProcedureCall-Public-Signatures.rdz.tcbl -d output\error.txt -e rdz -f PublicSignatures -s ..\skeletons.xml

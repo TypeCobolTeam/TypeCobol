@@ -158,18 +158,18 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public virtual DataType PrimitiveDataType
-        {
-            get
-            {
-                if (this.Picture != null) //Get DataType based on Picture clause
-                    return DataType.Create(this.Picture.Value);
-                else if (this.Usage.HasValue) //Get DataType based on Usage clause
-                    return DataType.Create(this.Usage.Value);
-                else
-                    return null;
-            }
-        }
+        //public virtual DataType PrimitiveDataType
+        //{
+        //    get
+        //    {
+        //        if (this.Picture != null) //Get DataType based on Picture clause
+        //            return DataType.Create(this.Picture.Value);
+        //        else if (this.Usage.HasValue) //Get DataType based on Usage clause
+        //            return DataType.Create(this.Usage.Value);
+        //        else
+        //            return null;
+        //    }
+        //}
 
         /// <summary>
         /// TODO This method should be split like this:
@@ -327,15 +327,15 @@ namespace TypeCobol.Compiler.Nodes {
             {
                 var compareTypeDef = (TypeDefinition) obj;
                 return compareTypeDef.DataType == this.DataType &&
-                       compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
+                       //compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
                        compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
             }
             else if ((obj as GeneratedDefinition) != null)
             {
-                if (this.PrimitiveDataType != null)
-                    return this.PrimitiveDataType == ((GeneratedDefinition) obj).DataType;
-                else
-                    return this.DataType == ((GeneratedDefinition) obj).DataType;
+                //if (this.PrimitiveDataType != null)
+                //    return this.PrimitiveDataType == ((GeneratedDefinition)obj).DataType;
+                //else
+                    return this.DataType == ((GeneratedDefinition)obj).DataType;
             }
             return false;
         }

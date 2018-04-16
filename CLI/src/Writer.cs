@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Tools;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Server {
     interface ErrorWriter {
