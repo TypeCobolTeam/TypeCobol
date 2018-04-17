@@ -248,20 +248,19 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, List<Scope> scopes)
+        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, Scope maximalScope)
         {
 
             var foundedVariables = new List<DataDefinition>();
             if(existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
 
-            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
-
-            foreach (var scope in scopes)
+            Scope currentScope = this.CurrentScope;
+            while (currentScope >= maximalScope)
             {
-                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
+                if (currentScope == Scope.Namespace || currentScope == Scope.Intrinsic)
                     throw new NotSupportedException();
 
-                var currentTable = GetTableFromScope(scope);
+                var currentTable = GetTableFromScope(currentScope);
 
                 if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
@@ -275,8 +274,10 @@ namespace TypeCobol.Compiler.CodeModel
                         SeekVariableType(dataType, variable, ref foundedVariables);
                     }
                 }
-            }
 
+                currentScope--;
+            }
+            
             return foundedVariables;
         }
 
@@ -291,13 +292,7 @@ namespace TypeCobol.Compiler.CodeModel
 
             if (variable.DataType != null && variable.DataType != DataType.Boolean && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
             {
-                var types = GetTypes(t => t.DataType == variable.DataType, new List<Scope>
-                {
-                    Scope.Declarations,
-                    Scope.Global,
-                    Scope.Intrinsic,
-                    Scope.Namespace
-                });
+                var types = GetTypes(t => t.DataType == variable.DataType, Scope.Intrinsic);
 
                 foreach (var type in types)
                 {
@@ -329,19 +324,27 @@ namespace TypeCobol.Compiler.CodeModel
 
       
 
-        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="predicate">Predicate to search variable(s)</param>
+        /// <param name="maximalScope">The maximal symboltable scope to search in</param>
+        /// <returns></returns>
+        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, Scope maximalScope)
         {
             var foundedVariables = new List<DataDefinition>();
-            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
 
-            foreach (var scope in scopes)
+            Scope currentScope = this.CurrentScope;
+            while (currentScope >= maximalScope)
             {
-                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
-                    throw new NotSupportedException();
+                if (currentScope == Scope.Namespace || currentScope == Scope.Intrinsic)
+                    throw new NotSupportedException(); //There is no variable stored in those scopes
 
-                var dataToSeek = this.GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t);
+                var dataToSeek = this.GetTableFromScope(currentScope).DataEntries.Values.SelectMany(t => t);
                 var results = dataToSeek.AsQueryable().Where(predicate);
                 foundedVariables.AddRange(results);
+
+                currentScope--;
             }
 
             return foundedVariables.Distinct(); //Distinct on object not on variable name
@@ -846,31 +849,34 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public IEnumerable<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, List<Scope> scopes)
+        public IEnumerable<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, Scope maximalScope)
         {
             var foundedTypes = new List<TypeDefinition>();
-            
-            foreach (var scope in scopes)
+
+            Scope currentScope = this.CurrentScope;
+            while (currentScope >= maximalScope)
             {
-                var dataToSeek = this.GetTableFromScope(scope).Types.Values.SelectMany(t => t);
-                if (scope == Scope.Namespace)
+                var dataToSeek = this.GetTableFromScope(currentScope).Types.Values.SelectMany(t => t);
+                if (currentScope == Scope.Namespace)
                 {
                     //For namespace scope, we need to browse every program
-                    dataToSeek = this.GetTableFromScope(scope)
+                    dataToSeek = this.GetTableFromScope(currentScope)
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
                                     .Types.Values.SelectMany(t => t));
 
-                    dataToSeek = dataToSeek.Concat(this.GetTableFromScope(scope)
+                    dataToSeek = dataToSeek.Concat(this.GetTableFromScope(currentScope)
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Global)
                                     .Types.Values.SelectMany(t => t)));
                 }
 
                 var results = dataToSeek.AsQueryable().Where(predicate);
 
-                if (scope == Scope.Intrinsic || scope == Scope.Namespace)
+                if (currentScope == Scope.Intrinsic || currentScope == Scope.Namespace)
                     results = results.Where(tp => (tp.CodeElement as DataTypeDescriptionEntry) != null && (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public);
 
                 foundedTypes.AddRange(results);
+
+                currentScope--;
             }
 
             return foundedTypes.Distinct();
@@ -955,27 +961,30 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
 
-        public IEnumerable<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, List<Scope> scopes)
+        public IEnumerable<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, Scope maximalScope)
         {
             var foundedFunctions = new List<FunctionDeclaration>();
 
-            foreach (var scope in scopes)
+            Scope currentScope = this.CurrentScope;
+            while (currentScope >= maximalScope)
             {
-                var dataToSeek = this.GetTableFromScope(scope).Functions.Values.SelectMany(t => t);
-                if (scope == Scope.Namespace)
+                var dataToSeek = this.GetTableFromScope(currentScope).Functions.Values.SelectMany(t => t);
+                if (currentScope == Scope.Namespace)
                 {
                     //For namespace scope, we need to browse every program
-                    dataToSeek = this.GetTableFromScope(scope)
+                    dataToSeek = this.GetTableFromScope(currentScope)
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
                                     .Functions.Values.SelectMany(t => t));
                 }
 
                 var results = dataToSeek.AsQueryable().Where(predicate);
 
-                if (scope == Scope.Intrinsic || scope == Scope.Namespace)
+                if (currentScope == Scope.Intrinsic || currentScope == Scope.Namespace)
                     results = results.Where(tp => (tp.CodeElement as FunctionDeclarationHeader) != null && (tp.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public);
 
                 foundedFunctions.AddRange(results);
+
+                currentScope--;
             }
 
             return foundedFunctions.Distinct();

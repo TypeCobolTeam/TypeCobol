@@ -76,12 +76,13 @@ namespace TypeCobol.LanguageServer
                 bool typeIsPublic = false;
                 bool typeIsIntrinsic = type.IsFlagSet(Node.Flag.NodeIsIntrinsic);
                 if (enablePublicFlag)
+                {
+                    var declarationTable = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
                     typeIsPublic = ((DataTypeDescriptionEntry) type.CodeElement)?.Visibility == AccessModifier.Public
-                                   &&
-                                   !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
-                                         .Types.Values.Any(t => t.Contains(type))
-                                     //Ignore public if type is in the current program
-                                     || typeIsIntrinsic); //Ignore public if type is in intrinsic
+                                   && !(type.GetProgramNode() == node.GetProgramNode()  //Ignore public if type is in the current program
+                                    || typeIsIntrinsic); //Ignore public if type is in intrinsic
+                }
+                    
 
                 var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
