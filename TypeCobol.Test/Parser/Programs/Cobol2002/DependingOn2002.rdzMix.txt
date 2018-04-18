@@ -77,7 +77,8 @@ Line 72[13,54] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.TypeC
             depending on DenpendingGroup::TypeCounter.
 
       *KO, trying to use an ambigous local var
-Line 76[13,43] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter
+Line 76[13,43] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter 
+Symbols found: DependOnPgm::DependType::ambigousCounter::DuplicatedCounterType::DuplicatedCounter | DependOnPgm::DependType::ambigousCounter2::DuplicatedCounterType::DuplicatedCounter
             05 tableVar PIC X(1) occurs 5 
             depending on DuplicatedCounter.
 

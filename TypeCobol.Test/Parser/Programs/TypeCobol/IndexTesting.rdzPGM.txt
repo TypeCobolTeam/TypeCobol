@@ -3,7 +3,8 @@ Line 21[12,70] <27, Error, Syntax> - Syntax error : Index name 'MyIdx3azeazeazea
 Line 25[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
 Line 26[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
 Line 55[8,42] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx
-Line 58[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx
+Line 58[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx 
+Symbols found: IndexTesting::Bad::BadType::BadVar::BadIdx | IndexTesting::Bad::BadType::BadVar2::BadIdx
 Line 60[8,28] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol
 
 --- Program ---
