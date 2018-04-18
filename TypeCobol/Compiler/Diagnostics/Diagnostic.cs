@@ -26,6 +26,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 CatchedException = messageArgs.FirstOrDefault(x => x is Exception) as Exception;
                 MessageArgs = messageArgs;
             }
+
+            AnalyticsWrapper.Telemetry.TrackTrace("[Diagnostic] " + this);
         }
 
         public DiagnosticMessage Info { get; set; }

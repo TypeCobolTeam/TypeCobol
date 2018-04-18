@@ -254,9 +254,7 @@
        01 format PIC X(08).
        01 okay-value PIC X     VALUE LOW-VALUE.
            88 okay       VALUE 'T'.
-           88 okay-false VALUE 'F'
-                             X'00' thru 'S'
-                             'U' thru X'FF'.
+           88 okay-false VALUE 'F'.
        01 actual-format PIC X(08).
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
@@ -302,9 +300,7 @@
            02 DD PIC 9(2).
        01 okay-value PIC X     VALUE LOW-VALUE.
            88 okay       VALUE 'T'.
-           88 okay-false VALUE 'F'
-                             X'00' thru 'S'
-                             'U' thru X'FF'.
+           88 okay-false VALUE 'F'.
        01 actual-format PIC X(08).
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
