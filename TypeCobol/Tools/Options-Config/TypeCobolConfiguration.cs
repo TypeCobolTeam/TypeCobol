@@ -36,7 +36,7 @@ namespace TypeCobol.Tools.Options_Config
         public OutputFormat OutputFormat = OutputFormat.Cobol85;
 
 
-        // Raw values (it have to be verified)
+        // Raw values (it has to be verified)
         public string RawFormat = "rdz";
         public string RawExecToStep = "5";
         public string RawMaximumDiagnostics;
@@ -60,10 +60,10 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.SkeletonMissing,        "Skeleton file is required in execution to generate step." }, 
             // Wrong parameter
             { ReturnCode.InputFileError,         "Input files given are unreachable." },
-            { ReturnCode.OutputFileErrorBis,     "Output files given are unreachable." },
-            { ReturnCode.ErrorFileError,         "Error diagnostics file is unreachable." },
+            { ReturnCode.OutputPathError,        "Output paths given are unreachable." },
+            { ReturnCode.ErrorFileError,         "Error diagnostics path is unreachable." },
             { ReturnCode.SkeletonFileError,      "Skeleton file given is unreachable." },
-            { ReturnCode.HaltOnMissingCopyError, "Missing copy file given is unreachable." },
+            { ReturnCode.HaltOnMissingCopyError, "Missing copy path given is unreachable." },
             { ReturnCode.ExecToStepError,        "Unexpected parameter given for ExecToStep. Accepted parameters are \"Scanner\"/0, \"Preprocessor\"/1, \"SyntaxCheck\"/2, \"SemanticCheck\"/3, \"CrossCheck\"/4, \"Generate\"/5(default)." },
             { ReturnCode.EncodingError,          "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
             { ReturnCode.IntrinsicError,         "Intrinsic files given are unreachable." },
@@ -71,8 +71,8 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.DependenciesError,      "Dependencies files given are unreachable." },
             { ReturnCode.MaxDiagnosticsError,    "Maximum diagnostics have to be an integer." },
             { ReturnCode.OutputFormatError,      "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
-            { ReturnCode.ExpandingCopyError,     "Expanding copy file given is unreachable." },
-            { ReturnCode.ExtractusedCopyError,   "Extractused copy file given is unreachable." },
+            { ReturnCode.ExpandingCopyError,     "Expanding copy path given is unreachable." },
+            { ReturnCode.ExtractusedCopyError,   "Extractused copy path given is unreachable." },
             
         };
     }
@@ -111,10 +111,10 @@ namespace TypeCobol.Tools.Options_Config
 
         // Wrong parameter
         InputFileError = 1020,          // Wrong input file(s) given
-        OutputFileErrorBis = 1021,      // Wrong output file(s) given
-        ErrorFileError = 1022,          // Wrong error file given
+        OutputPathError = 1021,         // Output paths given are unreachable.
+        ErrorFileError = 1022,          // Wrong error path given
         SkeletonFileError = 1023,       // Wrong skeleton file given
-        HaltOnMissingCopyError = 1024,  // Wrong MissingCopy file
+        HaltOnMissingCopyError = 1024,  // Missing copy path given is unreachable.
         ExecToStepError = 1025,         // Unexpected user input for exectostep option
         EncodingError = 1026,           // Unexpected user input for encoding option
         IntrinsicError = 1027,          // Wrong intrinsic file(s) given
@@ -122,8 +122,8 @@ namespace TypeCobol.Tools.Options_Config
         DependenciesError = 1029,       // Wrong dependencies folder given
         MaxDiagnosticsError = 1030,     // Unexpected user input for maximundiagnostics option (not an int)
         OutputFormatError = 1031,       // Unexpected user input for outputFormat option
-        ExpandingCopyError = 1032,      // Wrong ExpandingCopy file given
-        ExtractusedCopyError = 1033,    // Wrong ExtractusedCopy file given
+        ExpandingCopyError = 1032,      // Expanding copy path given is unreachable.
+        ExtractusedCopyError = 1033,    // Extractused copy path given is unreachable.
 
         MultipleErrors = 9999
 
@@ -175,7 +175,7 @@ namespace TypeCobol.Tools.Options_Config
                 // Last parameter doesn't have any value
                 errorStack.Add(ReturnCode.FatalError, ex.Message);
             }
-
+            
 
             // ExecToStepError
             if (!Enum.TryParse(config.RawExecToStep, true, out config.ExecToStep))
@@ -205,7 +205,20 @@ namespace TypeCobol.Tools.Options_Config
             //// Options values verification
             //InputFileError
             VerifFiles(config.InputFiles, ReturnCode.InputFileError, ref errorStack);
-            
+
+            //outputFilePathsWrong
+            foreach (var path in config.OutputFiles)
+            {
+                if (!CanCreateFile(path) && !errorStack.ContainsKey(ReturnCode.OutputPathError))
+                {
+                    errorStack.Add(ReturnCode.OutputPathError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputPathError]);
+                }
+            }
+
+            //ErrorFilePathError
+            if (!CanCreateFile(config.ErrorFile) && !config.ErrorFile.IsNullOrEmpty())
+                errorStack.Add(ReturnCode.ErrorFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ErrorFileError]);
+
             //SkeletonFileError
             if (config.ExecToStep == ExecutionStep.Generate && !config.skeletonPath.IsNullOrEmpty() &&  !errorStack.ContainsKey(ReturnCode.ExecToStepError))
             {
@@ -214,6 +227,11 @@ namespace TypeCobol.Tools.Options_Config
                     errorStack.Add(ReturnCode.SkeletonFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.SkeletonFileError]);
                 }
             }
+
+            //HaltOnMissingCopyFilePathError
+            if (!CanCreateFile(config.HaltOnMissingCopyFilePath) && !config.HaltOnMissingCopyFilePath.IsNullOrEmpty())
+                errorStack.Add(ReturnCode.HaltOnMissingCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.HaltOnMissingCopyError]);
+
             // EncodingError
             config.Format = CreateFormat(config.RawFormat, ref config);
 
@@ -237,6 +255,14 @@ namespace TypeCobol.Tools.Options_Config
             if (!Enum.TryParse(config.RawOutputFormat, true, out config.OutputFormat))
                 errorStack.Add(ReturnCode.OutputFormatError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputFormatError]);
 
+            //ExpandingCopyFilePathError
+            if (!CanCreateFile(config.ExpandingCopyFilePath) && !config.ExpandingCopyFilePath.IsNullOrEmpty())
+                errorStack.Add(ReturnCode.ExpandingCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExpandingCopyError]);
+
+            //HaltOnMissingCopyFilePathError
+            if (!CanCreateFile(config.ExtractedCopiesFilePath) && !config.ExtractedCopiesFilePath.IsNullOrEmpty())
+                errorStack.Add(ReturnCode.ExtractusedCopyError, TypeCobolConfiguration.ErrorMessages[ReturnCode.ExtractusedCopyError]);
+
             return errorStack;
         }
 
@@ -250,6 +276,16 @@ namespace TypeCobol.Tools.Options_Config
                     errorStack.Add(errorCode, TypeCobolConfiguration.ErrorMessages[errorCode]);
                 }
             }
+        }
+
+        public static bool CanCreateFile(string path)
+        {
+            if (!File.Exists(path))
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(path)))
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>
