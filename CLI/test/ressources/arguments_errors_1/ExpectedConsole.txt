@@ -1,0 +1,13 @@
+﻿Code: 1001 TypeCobol.CLI.exe: The number of output files must be equal to the number of input files.
+Code: 1012 TypeCobol.CLI.exe: Skeleton file is required in execution to generate step.
+Code: 1020 TypeCobol.CLI.exe: Input files given are unreachable.
+Code: 1022 TypeCobol.CLI.exe: Error diagnostics path is unreachable.
+Code: 1024 TypeCobol.CLI.exe: Missing copy path given is unreachable.
+Code: 1027 TypeCobol.CLI.exe: Intrinsic files given are unreachable.
+Code: 1028 TypeCobol.CLI.exe: Copies files given are unreachable.
+Code: 1029 TypeCobol.CLI.exe: Dependencies files given are unreachable.
+Code: 1030 TypeCobol.CLI.exe: Maximum diagnostics have to be an integer.
+Code: 1031 TypeCobol.CLI.exe: Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1.
+Code: 1032 TypeCobol.CLI.exe: Expanding copy path given is unreachable.
+Code: 1033 TypeCobol.CLI.exe: Extractused copy path given is unreachable.
+Try TypeCobol.CLI.exe --help for usage information.
