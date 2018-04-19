@@ -74,7 +74,7 @@ namespace CLI.Test
         }
 
         /// <summary>
-        /// This test should return should return MissingCopy.
+        /// This test should return MissingCopy.
         /// It test if in case of missing copy and with the proper arguments extracted copies file and missing copie file ar present and well formed.
         /// </summary>
         [TestMethod]
