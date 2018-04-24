@@ -1,0 +1,28 @@
+﻿--- Diagnostics ---
+Line 35[3,35] <27, Error, Syntax> - Syntax error : Function 'MyTestProc' expected parameter 'myCurrencyVar' of type CURRENCY and received 'oldCurrency' of type Alphanumeric 
+
+--- Program ---
+PROGRAM: TEST-CURRENCY common:False initial:False recursive:False
+ author: BROCHATO. written: APRIL 2018 compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  MyestVar:testType
+  oldCurrency:Alphanumeric
+  myCurrency1:CURRENCY
+  myCurrency2:CURRENCY
+  groupe:Alphanumeric
+  myCurrency3:CURRENCY
+-- PARAGRAPHS --
+  TEST-DATE
+--- Intrinsic:Namespace:Global:Declarations
+-- TYPES -------
+  testType:testType
+-- FUNCTIONS ---
+  MyTestProc
+        in: myCurrencyVar:CURRENCY
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
