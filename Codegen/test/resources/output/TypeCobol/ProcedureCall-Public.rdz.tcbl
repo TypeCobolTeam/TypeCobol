@@ -66,6 +66,8 @@
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
       *          format        PIC X(08)
+      *          alength       PIC 9(8) comp-5
+      *          anotherlangth PIC S9(05) comp-5
       *   OUTPUT okay          TYPE Bool
       *          actual-format PIC X(08).
       *  .
@@ -116,11 +118,16 @@
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PRIVATE_ONLY_SAME_PGM)
       *    CALL Pgm1PrivateValidateDateFormat
-      *             INPUT      somedate someformat
+      *             INPUT      somedate
+      *                        someformat
+      *                        length of somedate
+      *                        length of somedate::YYYY
       *             OUTPUT     flag     realformat
-           CALL 'fde394fbPgm1PrivateValidateDat' USING
+           CALL 'f3a0a09cPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
+                                 length of somedate
+                                 length of somedate.YYYY
                     by reference flag-value
                                  realformat
            end-call
@@ -143,11 +150,16 @@
       * __________________________________________________
       * OK : proper parameter list (TCRFUN_CALL_PRIVATE_ONLY_SAME_PGM)
       *    CALL PGM1::Pgm1PrivateValidateDateFormat
-      *             INPUT      somedate someformat
+      *             INPUT      somedate
+      *                        someformat
+      *                        length of someformat
+      *                        length of MyPerson
       *             OUTPUT     flag     realformat
-           CALL 'fde394fbPgm1PrivateValidateDat' USING
+           CALL 'f3a0a09cPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
+                                 length of someformat
+                                 length of MyPerson
                     by reference flag-value
                                  realformat
            end-call
@@ -510,12 +522,14 @@
       *DECLARE PROCEDURE Pgm1PrivateValidateDateFormat PRIVATE
       *    INPUT mydate        TYPE Date
       *          format        PIC X(08)
+      *          alength       PIC 9(8) comp-5
+      *          anotherlangth PIC S9(05) comp-5
       *   OUTPUT okay          TYPE Bool
       *          actual-format PIC X(08).
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. fde394fbPgm1PrivateValidateDat.
+       PROGRAM-ID. f3a0a09cPgm1PrivateValidateDat.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -523,6 +537,8 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
        01 format PIC X(08).
+       01 alength PIC 9(8) comp-5.
+       01 anotherlangth PIC S9(05) comp-5.
        01 okay-value PIC X     VALUE LOW-VALUE.
            88 okay       VALUE 'T'.
            88 okay-false VALUE 'F'
@@ -532,8 +548,10 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
                    BY REFERENCE format
+                   BY REFERENCE alength
+                   BY REFERENCE anotherlangth
                    BY REFERENCE okay-value
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM fde394fbPgm1PrivateValidateDat.
+       END PROGRAM f3a0a09cPgm1PrivateValidateDat.

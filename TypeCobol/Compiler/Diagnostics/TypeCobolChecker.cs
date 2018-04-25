@@ -8,6 +8,7 @@ using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.CodeModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Analytics;
 using TypeCobol.Compiler.Scanner;
 
@@ -228,11 +229,23 @@ namespace TypeCobol.Compiler.Diagnostics
                         var tokenType = actualSpecialRegister.SpecialRegisterName.TokenType;
                         if (tokenType == TokenType.LENGTH)
                         {
-                            //parameter must be a Numeric of lengt
-                            //TODO
-                            //return an error for now
-                            DiagnosticUtils.AddError(node, "LENGTH OF not allowed yet with procedure");
-                            return;
+                            if (call is ProcedureCall)
+                            {
+                                ProcedureCall procedureCall = call as ProcedureCall;
+                                if (procedureCall.OutputParameters.Contains(call.Arguments[c]) )
+                                {
+                                    // rewrite message
+                                    DiagnosticUtils.AddError(node, "LENGTH can't be used as an output");
+                                    return;
+                                }
+                            }
+                               // accepted format is "PIC [S]9(5..9) comp-5"
+                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.Length < 5 || expected.Length > 9 || expected.Usage != DataUsage.NativeBinary)
+                            {
+                                // rewrite message
+                                DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5");
+                                return;
+                            }
                         }
                         else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer)
                         {
