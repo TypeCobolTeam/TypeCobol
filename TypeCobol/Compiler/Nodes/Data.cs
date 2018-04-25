@@ -158,18 +158,18 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        //public virtual DataType PrimitiveDataType
-        //{
-        //    get
-        //    {
-        //        if (this.Picture != null) //Get DataType based on Picture clause
-        //            return DataType.Create(this.Picture.Value);
-        //        else if (this.Usage.HasValue) //Get DataType based on Usage clause
-        //            return DataType.Create(this.Usage.Value);
-        //        else
-        //            return null;
-        //    }
-        //}
+        public virtual DataType PrimitiveDataType
+        {
+            get
+            {
+                if (this.Picture != null) //Get DataType based on Picture clause
+                    return DataType.Create(this.Picture.Value);
+                else if (this.Usage.HasValue) //Get DataType based on Usage clause
+                    return DataType.Create(this.Usage.Value);
+                else
+                    return null;
+            }
+        }
 
         /// <summary>
         /// TODO This method should be split like this:
@@ -330,12 +330,16 @@ namespace TypeCobol.Compiler.Nodes {
                        //compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
                        compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
             }
-            else if ((obj as GeneratedDefinition) != null)
+
+            var generatedDataType = (obj as GeneratedDefinition);
+            if (generatedDataType  != null && 
+                !(generatedDataType.DataType == DataType.Alphabetic ||
+                  generatedDataType .DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
             {
-                //if (this.PrimitiveDataType != null)
-                //    return this.PrimitiveDataType == ((GeneratedDefinition)obj).DataType;
-                //else
-                    return this.DataType == ((GeneratedDefinition)obj).DataType;
+                if (this.PrimitiveDataType != null)
+                    return this.PrimitiveDataType == generatedDataType.DataType;
+                else
+                    return this.DataType == generatedDataType.DataType;
             }
             return false;
         }

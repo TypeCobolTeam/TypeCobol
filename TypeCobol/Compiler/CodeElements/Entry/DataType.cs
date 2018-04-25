@@ -60,16 +60,16 @@ namespace TypeCobol.Compiler.CodeElements
         /// </summary>
         /// <param name="usage"></param>
         /// <returns></returns>
-	    //public static DataType Create(DataUsage usage)
-	    //{
-	    //    if (usage == DataUsage.Binary || usage == DataUsage.NativeBinary || usage == DataUsage.FloatingPoint ||
-	    //        usage == DataUsage.LongFloatingPoint || usage == DataUsage.PackedDecimal)
-	    //    {
-	    //        return DataType.Numeric;
-	    //    }
-	    //    return DataType.Unknown;
-	    //}
-		public static DataType Create(string picture, char[] currencies) {
+	    public static DataType Create(DataUsage usage)
+        {
+            if (usage == DataUsage.Binary || usage == DataUsage.NativeBinary || usage == DataUsage.FloatingPoint ||
+                usage == DataUsage.LongFloatingPoint || usage == DataUsage.PackedDecimal)
+            {
+                return DataType.Numeric;
+            }
+            return DataType.Unknown;
+        }
+        public static DataType Create(string picture, char[] currencies) {
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
 			var all = new char[basic.Length + currencies.Length];
 			basic.CopyTo(all, 0);
