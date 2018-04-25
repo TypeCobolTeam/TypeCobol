@@ -460,7 +460,7 @@ namespace TypeCobol.LanguageServer
         #region TO Completion
         public static IEnumerable<CompletionItem> GetCompletionForTo(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Token lastSignificantToken)
         {
-            DataType seekedDataType = null;
+            List<DataType> seekedDataTypes = new List<DataType>();
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             if (arrangedCodeElement == null)
@@ -477,40 +477,63 @@ namespace TypeCobol.LanguageServer
                     (da.CodeElement == null && da is IndexDefinition); //Ignore variable of level 88.
 
             //Look if the sending variable is like litteral Alpha / Numeric
-            if ((node.CodeElement as MoveSimpleStatement)?.SendingItem != null)
+
+            if (node.CodeElement is MoveSimpleStatement)
             {
-                var sendingItem = ((MoveSimpleStatement) node.CodeElement).SendingItem;
-                if (!(sendingItem is QualifiedName))
+                var sendingItem = ((MoveSimpleStatement)node.CodeElement).SendingItem;
+                var sendingVar = ((MoveSimpleStatement)node.CodeElement).SendingVariable;
+                if (sendingItem != null)
                 {
-                    if (sendingItem is bool?) seekedDataType = DataType.Boolean;
-                    if (sendingItem is double?) seekedDataType = DataType.Numeric;
-                    if (sendingItem is string) seekedDataType = DataType.Alphanumeric;
+                    if (!(sendingItem is QualifiedName))
+                    {
+                        if (sendingItem is bool?) seekedDataTypes.Add(DataType.Boolean);
+                        if (sendingItem is double?) seekedDataTypes.Add(DataType.Numeric);
+                        if (sendingItem is string) seekedDataTypes.Add(DataType.Alphanumeric);
+                    }
+
+                    if (sendingVar != null && sendingVar.IsLiteral == true && sendingItem is double? &&
+                        (sendingVar.NumericValue.Token.TokenType == TokenType.ZERO
+                         || sendingVar.NumericValue.Token.TokenType == TokenType.ZEROS
+                         || sendingVar.NumericValue.Token.TokenType == TokenType.ZEROES))
+                    {
+                        //See #845, ZERO support Alphabetic/Numeric/Alphanumeric datatype
+                        seekedDataTypes.Add(DataType.Alphanumeric);
+                        seekedDataTypes.Add(DataType.Alphabetic); 
+                    }
+                }
+
+                if (sendingVar?.RepeatedCharacterValue?.Token != null &&
+                    (sendingVar.RepeatedCharacterValue.Token.TokenType == TokenType.SPACE
+                     || sendingVar.RepeatedCharacterValue.Token.TokenType == TokenType.SPACES))
+                {
+                    seekedDataTypes.Add(DataType.Alphabetic);
                 }
             }
 
 
-
             bool unsafeContext = arrangedCodeElement.ArrangedConsumedTokens.Any(t => t != null && t.TokenType == TokenType.UNSAFE);
             var qualifiedNameTokens = arrangedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.UserDefinedWord).TakeWhile(t => t != lastSignificantToken).Where(t => t.TokenType != TokenType.QualifiedNameSeparator);
-            if (!qualifiedNameTokens.Any() && seekedDataType == null)
+            if (!qualifiedNameTokens.Any() && seekedDataTypes.Count == 0)
                 return completionItems;
 
             if (!unsafeContext) //Search for variable that match the DataType
             {
-                if (seekedDataType == null) //If a Datatype hasn't be found yet. 
+                if (seekedDataTypes.Count == 0) //If a Datatype hasn't be found yet. 
                 {
-                    var foundedVar =
+                    var foundedVars =
                         node.SymbolTable.GetVariablesExplicit(
                             new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
 
-                    if (foundedVar.Count() != 1) //If no variable or more than one founded stop process
-                        return completionItems;
-
-                    seekedDataType = foundedVar.First().DataType;
+                    if (foundedVars != null && foundedVars.Any())
+                        seekedDataTypes.Add(foundedVars.First().DataType);
                 }
 
-                potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables,
-                    new List<SymbolTable.Scope> {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
+                foreach (var seekedDataType in seekedDataTypes.Distinct())
+                {
+                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables,
+                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+                }
+                
                 potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
             }
             else //Get all 

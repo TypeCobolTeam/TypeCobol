@@ -75,7 +75,7 @@ Line 226[12,49] <27, Error, Syntax> - Syntax error : No function or variable fou
         case12
         case14
         case15
-        group
+        mygroup
           case1
           case2
           case3

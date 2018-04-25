@@ -31,8 +31,10 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 				if (this.CodeElement().DataType == DataType.Boolean) {
 					_cache.Add(new TextLineSnapshot(-1, "01 "+name+"-value PIC X     VALUE LOW-VALUE.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"       VALUE 'T'.", null));
-					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F'.", null));
-				} else {
+					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F' ", null));
+                    _cache.Add(new TextLineSnapshot(-1, "                      X'00' thru 'S'", null));
+                    _cache.Add(new TextLineSnapshot(-1, "                      'U' thru X'FF'.", null));
+                } else {
                     bool bHasPeriod = false;
                     bool bIgnoreUsage = false;
                         var str = new System.Text.StringBuilder();

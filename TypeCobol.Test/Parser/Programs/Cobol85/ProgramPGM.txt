@@ -8,7 +8,7 @@ PROGRAM: Simple common:False initial:True recursive:False
 -- DATA --------
   str:Alphanumeric
   str:Alphanumeric
-  group:Alphanumeric
+  mygroup:Alphanumeric
   num:Numeric
   subgroup:Alphanumeric
   vrai:Numeric

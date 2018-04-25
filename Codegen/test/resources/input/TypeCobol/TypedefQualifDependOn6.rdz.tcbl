@@ -13,12 +13,12 @@
                 10 ThirdGroup.
                    15 varGroup pic 9(10).
       
-                10 tutu occurs 1 depending on Group::vargroup.
+                10 tutu occurs 1 depending on MyGroup::vargroup.
                 10 titi occurs 1 depending on ThirdGroup::vargroup.
                 10 toto occurs 1 depending on myVar.
       
        01 secondType TYPEDEF STRICT.
-            05 Group.
+            05 MyGroup.
                 10 vargroup PIC 9(10).
       
        01 Vars.

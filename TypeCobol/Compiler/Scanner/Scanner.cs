@@ -1668,7 +1668,7 @@ namespace TypeCobol.Compiler.Scanner
                 {
                     // Consume 7 chars
                     currentIndex = startIndex + 7;
-                    return new Token(TokenType.EXEC_SQL_INCLUDE, startIndex, startIndex + 6, tokensLine);
+                    return new Token(TokenType.EXEC_SQL, startIndex, startIndex + 6, tokensLine);
                 }
             }
 

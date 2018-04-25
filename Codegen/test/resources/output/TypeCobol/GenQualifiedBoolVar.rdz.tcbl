@@ -52,7 +52,9 @@
        LINKAGE SECTION.
        01 mydate-value PIC X     VALUE LOW-VALUE.
            88 mydate       VALUE 'T'.
-           88 mydate-false VALUE 'F'.
+           88 mydate-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
        PROCEDURE DIVISION
              USING BY REFERENCE mydate-value
            .

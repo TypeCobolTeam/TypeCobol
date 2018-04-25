@@ -57,31 +57,31 @@
             depending on Counter.
 
       *KO, trying to use a variable declared outside typedef
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on MyTypedVar2::TypeCounter.
 
       *KO, trying to use a variable declared outside typedef
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on DenpendingGroup::Counter.
 
       *KO, trying to use a variable declared outside typedef
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on DenpendingGroup::VarCounter::Counter.
 
       *KO, trying to use a variable declared outside typedef
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on DenpendingGroup::TypeCounter.
 
       *KO, trying to use an ambigous local var
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on DuplicatedCounter.
 
       *OK, using local variable with qualifiedName
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on MyGroup::GroupCounter.
 
       *OK, using local varialbe without qualifiedName
-            05 table PIC X(1) occurs 5 
+            05 tableVar PIC X(1) occurs 5 
             depending on GroupCounter.
 
        01 TypeCounter pic 666 comp-5.

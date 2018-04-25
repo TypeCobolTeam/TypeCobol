@@ -63,20 +63,20 @@ namespace TypeCobol.Compiler.Parser
 
 			statement.ReceivingStorageArea = CobolExpressionsBuilder.CreateAlphanumericStorageArea(context.alphanumericStorageArea());
 			statement.ReceivingStorageArea.DataSourceType = DataSourceType.ReadFromSystemCall;
-			if (context.YYYYMMDD() != null)
+			if (context.yyyyMmDd() != null)
 			{
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYYYMMDD,
-					ParseTreeUtils.GetFirstToken(context.YYYYMMDD()));
+					ParseTreeUtils.GetFirstToken(context.yyyyMmDd().UserDefinedWord()));
 			}
 			else if (context.DATE() != null)
 			{
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DATE_YYMMDD,
 					ParseTreeUtils.GetFirstToken(context.DATE()));
 			}
-			else if (context.YYYYDDD() != null)
+			else if (context.yyyyDdd() != null)
 			{
 				statement.SystemDateFormat = new SyntaxProperty<SystemDateFormat>(SystemDateFormat.DAY_YYYYDDD,
-					ParseTreeUtils.GetFirstToken(context.YYYYDDD()));
+					ParseTreeUtils.GetFirstToken(context.yyyyDdd().UserDefinedWord()));
 			}
 			else if (context.DAY() != null)
 			{
@@ -1430,17 +1430,17 @@ namespace TypeCobol.Compiler.Parser
             {
                 statement.GeneratedXmlCharsCount = CobolExpressionsBuilder.CreateStorageArea(context.generatedXmlCharsCount);
             }
-            if (context.codepage() != null)
+            if (context.encoding() != null && context.encoding().codepage() != null)
             {
-                statement.CodePage = CobolExpressionsBuilder.CreateIntegerVariable(context.codepage().integerVariable1());
+                statement.CodePage = CobolExpressionsBuilder.CreateIntegerVariable(context.encoding().codepage().integerVariable1());
             }
-            if (context.XML_DECLARATION() != null)
+            if (context.xmlDeclaration() != null)
             {
-                statement.StartWithXMLDeclaration = CreateSyntaxProperty(true, context.XML_DECLARATION());
+                statement.StartWithXMLDeclaration = CreateSyntaxProperty(true, context.xmlDeclaration().UserDefinedWord());
             }
-            if (context.ATTRIBUTES() != null)
+            if (context.attributes() != null)
             {
-                statement.GenerateElementaryItemsAsAttributes = CreateSyntaxProperty(true, context.ATTRIBUTES());
+                statement.GenerateElementaryItemsAsAttributes = CreateSyntaxProperty(true, context.attributes().UserDefinedWord());
             }
             if (context.@namespace != null)
             {
@@ -1477,15 +1477,15 @@ namespace TypeCobol.Compiler.Parser
 		private XmlTypeMapping CreateXmlTypeMapping(CodeElementsParser.XmlTypeMappingContext context) {
 			var typeMapping = new XmlTypeMapping();
 			typeMapping.DataItemName = CobolExpressionsBuilder.CreateVariable(context.subordinateDataItem);
-            if (context.ATTRIBUTE() != null)
+            if (context.attribute() != null)
             {
                 typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ATTRIBUTE,
-                    context.ATTRIBUTE());
+                    context.attribute().UserDefinedWord());
             }
-            if (context.ELEMENT() != null)
+            if (context.element() != null)
             {
                 typeMapping.XmlSyntaxTypeToGenerate = CreateSyntaxProperty(XmlTypeMapping.XmlSyntaxType.ELEMENT,
-                    context.ELEMENT());
+                    context.element().UserDefinedWord());
             }
             if (context.CONTENT() != null)
             {
@@ -1503,29 +1503,29 @@ namespace TypeCobol.Compiler.Parser
             }
             else
             {
-                if (context.ATTRIBUTE() != null)
+                if (context.attribute() != null)
                 {
                     if (context.NUMERIC() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ATTRIBUTE,
                             context.NUMERIC());
-                    else if (context.NONNUMERIC() != null)
+                    else if (context.nonnumeric() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ATTRIBUTE,
-                            context.NONNUMERIC());
+                            context.nonnumeric().UserDefinedWord());
                     else
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ATTRIBUTE,
-                            context.ATTRIBUTE());
+                            context.attribute().UserDefinedWord());
                 }
-                else if (context.ELEMENT() != null)
+                else if (context.element() != null)
                 {
                     if (context.NUMERIC() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NUMERIC_ELEMENT,
                             context.NUMERIC());
-                    else if (context.NONNUMERIC() != null)
+                    else if (context.nonnumeric() != null)
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.NONNUMERIC_ELEMENT,
-                            context.NONNUMERIC());
+                            context.nonnumeric().UserDefinedWord());
                     else
                         suppressDirective.XmlSyntaxTypeToSuppress = CreateSyntaxProperty(XmlSuppressDirective.XmlSyntaxType.ELEMENT,
-                            context.ELEMENT());
+                            context.element().UserDefinedWord());
                 }
             }
 			suppressDirective.ItemValuesToSuppress = BuildObjectArrayFromParserRules(context.repeatedCharacterValue3(), ctx => CobolWordsBuilder.CreateRepeatedCharacterValue(ctx));

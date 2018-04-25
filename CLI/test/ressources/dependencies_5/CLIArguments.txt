@@ -1,1 +1,1 @@
-﻿-1 -i input\PGM.rdz.tcbl -g -o output\PGM.rdz.tcbl -d output\error.txt --dependencies input\IRLLBIRL.tcbl --dependencies input\TTTLBDEC.tcbl -s ..\skeletons.xml -e rdz
+﻿-1 -i input\PGM.rdz.tcbl -o output\PGM.rdz.tcbl -d output\error.txt --dependencies input\IRLLBIRL.tcbl --dependencies input\TTTLBDEC.tcbl -s ..\skeletons.xml -e rdz
