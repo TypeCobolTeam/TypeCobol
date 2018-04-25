@@ -8,6 +8,7 @@ using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using Castle.Core.Internal;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -43,7 +44,7 @@ namespace TypeCobol.Compiler.CodeModel
                     foreach (var program in scope.Programs.SelectMany(t => t.Value))
                     {
                         if (program != null && program.SymbolTable != null &&
-                            program.SymbolTable.TypesReferences != null)
+                            !program.SymbolTable.TypesReferences.IsNullOrEmpty())
                         {
                             foreach (var progTypeRef in program.SymbolTable.TypesReferences.Select(pt =>
                                         new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
@@ -170,7 +171,7 @@ namespace TypeCobol.Compiler.CodeModel
             found.Add(data);
         }
 
-        
+        //---------------------------------------------
 
         public IEnumerable<DataDefinition> GetVariables(VariableBase variable)
         {
@@ -181,7 +182,7 @@ namespace TypeCobol.Compiler.CodeModel
             return GetVariables(new URI(variable.ToString()));
         }
 
-        public IEnumerable<DataDefinition> GetVariables(StorageArea storageArea, TypeDefinition typeDefContext = null)
+        public IEnumerable<DataDefinition> GetVariables(StorageArea storageArea)
         {
             URI uri;
             if (storageArea.SymbolReference != null)
@@ -192,61 +193,46 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 uri = new URI(storageArea.ToString());
             }
-            return GetVariables(uri, typeDefContext);
+            return GetVariables(uri);
         }
 
         public IEnumerable<DataDefinition> GetVariables(SymbolReference symbolReference)
         {
             return GetVariables(symbolReference.URI);
         }
-
-        public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode, SymbolReference symbolReference)
+        public IEnumerable<DataDefinition> GetVariables(QualifiedName name)
         {
-            var childrens = redefinesNode.Parent.Children;
-            int index = redefinesNode.Parent.IndexOf(redefinesNode);
-
-            bool redefinedVariableFound = false;
-           
-            while (!redefinedVariableFound && index >= 0)
-            {
-                CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as DataDescriptionEntry ??
-                                                              (CommonDataDescriptionAndDataRedefines)
-                                                              (childrens[index].CodeElement as DataRedefinesEntry);
-
-                if (child != null && (child is DataDescriptionEntry || child is DataRedefinesEntry))
-                {
-                    if (child.DataName != null &&
-                        string.Equals(child.DataName.Name, symbolReference.Name,
-                            StringComparison.InvariantCultureIgnoreCase))
-                        return childrens[index] as DataDefinition;
-                    else if (child.DataName != null && child is DataDescriptionEntry &&
-                             !string.Equals(child.DataName.Name, symbolReference.Name,
-                                 StringComparison.InvariantCultureIgnoreCase))
-                        return null;
-                }
-                else
-                    return null;
-
-                index--;
-            }
-            return null;
-        }
-
-        public IEnumerable<DataDefinition> GetVariables(QualifiedName name, TypeDefinition typeDefContext = null)
-        {
-            if (typeDefContext != null)
-                return GetVariablesExplicitWithQualifiedName(name, typeDefContext).Select(v => v.Value);
-            else
-                return GetVariablesExplicit(name);
+            return GetVariablesExplicit(name);
         }
 
         private IList<DataDefinition> GetVariables(string name)
         {
-            //Try to et variable in the current program
+            //Try to get variable in the current program
             var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable);
            
             return found;
         }
+
+        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
+        {
+            var foundedVariables = new List<DataDefinition>();
+            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
+
+            foreach (var scope in scopes)
+            {
+                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
+                    throw new NotSupportedException();
+
+                var dataToSeek = this.GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t);
+                var results = dataToSeek.AsQueryable().Where(predicate);
+                foundedVariables.AddRange(results);
+            }
+
+            return foundedVariables.Distinct(); //Distinct on object not on variable name
+        }
+
+        //---------------------------------------------
+
 
         public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, List<Scope> scopes)
         {
@@ -327,26 +313,38 @@ namespace TypeCobol.Compiler.CodeModel
             }
         }
 
-      
-
-        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
+        public DataDefinition GetRedefinedVariable(DataRedefines redefinesNode, SymbolReference symbolReference)
         {
-            var foundedVariables = new List<DataDefinition>();
-            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
+            var childrens = redefinesNode.Parent.Children;
+            int index = redefinesNode.Parent.IndexOf(redefinesNode);
 
-            foreach (var scope in scopes)
+            bool redefinedVariableFound = false;
+
+            while (!redefinedVariableFound && index >= 0)
             {
-                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
-                    throw new NotSupportedException();
+                CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as DataDescriptionEntry ??
+                                                              (CommonDataDescriptionAndDataRedefines)
+                                                              (childrens[index].CodeElement as DataRedefinesEntry);
 
-                var dataToSeek = this.GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t);
-                var results = dataToSeek.AsQueryable().Where(predicate);
-                foundedVariables.AddRange(results);
+                if (child != null && (child is DataDescriptionEntry || child is DataRedefinesEntry))
+                {
+                    if (child.DataName != null &&
+                        string.Equals(child.DataName.Name, symbolReference.Name,
+                            StringComparison.InvariantCultureIgnoreCase))
+                        return childrens[index] as DataDefinition;
+                    else if (child.DataName != null && child is DataDescriptionEntry &&
+                             !string.Equals(child.DataName.Name, symbolReference.Name,
+                                 StringComparison.InvariantCultureIgnoreCase))
+                        return null;
+                }
+                else
+                    return null;
+
+                index--;
             }
-
-            return foundedVariables.Distinct(); //Distinct on object not on variable name
+            return null;
         }
-
+        
 
         private IDictionary<string, List<DataDefinition>> GetDataDefinitionTable(SymbolTable symbolTable)
         {
@@ -571,6 +569,7 @@ namespace TypeCobol.Compiler.CodeModel
             if (typeDefContext != null)
                 references = references.Where(r => r.DataType != typeDefContext.DataType && r.GetParentTypeDefinition == typeDefContext).ToList();
             var typePath = completeQualifiedNames.Last().ToArray();
+            var referenceCounter = 0;
             foreach (var reference in references)
             {
                 var primaryPath = new List<string>();
@@ -578,13 +577,15 @@ namespace TypeCobol.Compiler.CodeModel
                 if (parentTypeDef != null && parentTypeDef != typeDefContext) {
                     completeQualifiedNames.Last().AddRange(primaryPath);
                     AddAllReference(found, heaDataDefinition, parentTypeDef, completeQualifiedNames, typeDefContext);
+                    referenceCounter++;
                 } else { 
                     //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable OR check if the variable is declared inside the typeDefContext
                     if (GetVariables(reference.Name).Contains(reference) || (typeDefContext != null && typeDefContext.GetChildren<DataDefinition>(reference.Name, true).Contains(reference)))
                     {
                         found.Add(heaDataDefinition);
-                        if(found.Count == 1) //If first reference found, add it to the top item of list
+                        referenceCounter++;
+                        if (referenceCounter == 1) //If first reference found, add it to the top item of list
                             completeQualifiedNames.Last().AddRange(reference.QualifiedName.Reverse());
                         else
                         {

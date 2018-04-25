@@ -121,7 +121,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(IndexDefinition indexDefinition)
         {
             var found =
-                indexDefinition.SymbolTable.GetVariables(new URI(indexDefinition.Name))
+                indexDefinition.SymbolTable.GetVariablesExplicit(new URI(indexDefinition.Name))
                     .Where(i => i.GetParentTypeDefinition == null)
                     .ToList();
             if (indexDefinition.GetParentTypeDefinition != null) return true;
@@ -166,16 +166,13 @@ namespace TypeCobol.Compiler.Diagnostics
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return;
 
             var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition) node).IsPartOfATypeDef;
-            if (isPartOfTypeDef)
-                found = node.SymbolTable.GetVariables(area, ((DataDefinition) node).GetParentTypeDefinition);
-            else
-            {
-                foundQualified =
-                    node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
-                        ? area.SymbolReference.URI
-                        : new URI(area.ToString()));
-                found = foundQualified.Select(v => v.Value).ToList();
-            }
+            foundQualified =
+                node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
+                    ? area.SymbolReference.URI
+                    : new URI(area.ToString()),
+                    isPartOfTypeDef ? ((DataDefinition) node).GetParentTypeDefinition
+                    :null);
+            found = foundQualified.Select(v => v.Value);
 
             if (found.Count() == 1 && foundQualified.Count == 1)
             {
@@ -253,8 +250,19 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced");
             if (found.Count() > 1)
-                DiagnosticUtils.AddError(node, "Ambiguous reference to symbol " + area);
-
+            {
+                bool isFirst = true;
+                string errorMessage = "Ambiguous reference to symbol " + area + " " + Environment.NewLine + "Symbols found: ";
+                foreach (var symbol in foundQualified)
+                {
+                    // Multiline Version
+                    //errorMessage += Environment.NewLine + "\t" + symbol.Key.Replace(".", "::");
+                    // Inline version
+                    errorMessage += (isFirst?"":" | ") + symbol.Key.Replace(".", "::");
+                    isFirst = false;
+                }
+                DiagnosticUtils.AddError(node, errorMessage);
+            }
         }
 
         private void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
@@ -435,7 +443,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName)
         {
-            var found = table.GetVariables(qualifiedName);
+            var found = table.GetVariablesExplicit(qualifiedName);
             if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
             return found.First();
         }
