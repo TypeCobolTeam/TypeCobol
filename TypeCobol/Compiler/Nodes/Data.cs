@@ -327,15 +327,19 @@ namespace TypeCobol.Compiler.Nodes {
             {
                 var compareTypeDef = (TypeDefinition) obj;
                 return compareTypeDef.DataType == this.DataType &&
-                       compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
+                       //compareTypeDef.PrimitiveDataType == this.PrimitiveDataType &&
                        compareTypeDef.QualifiedName.ToString() == this.QualifiedName.ToString();
             }
-            else if ((obj as GeneratedDefinition) != null)
+
+            var generatedDataType = (obj as GeneratedDefinition);
+            if (generatedDataType  != null && 
+                !(generatedDataType.DataType == DataType.Alphabetic ||
+                  generatedDataType .DataType == DataType.Alphanumeric)) //Remove these two check on Alpha.. to allow move "fezf" TO alphatypedVar
             {
                 if (this.PrimitiveDataType != null)
-                    return this.PrimitiveDataType == ((GeneratedDefinition) obj).DataType;
+                    return this.PrimitiveDataType == generatedDataType.DataType;
                 else
-                    return this.DataType == ((GeneratedDefinition) obj).DataType;
+                    return this.DataType == generatedDataType.DataType;
             }
             return false;
         }
@@ -412,6 +416,7 @@ namespace TypeCobol.Compiler.Nodes {
         public static GeneratedDefinition BooleanGeneratedDefinition =       new GeneratedDefinition("Boolean", DataType.Boolean);
         public static GeneratedDefinition DBCSGeneratedDefinition =          new GeneratedDefinition("DBCS", DataType.DBCS);
         public static GeneratedDefinition DateGeneratedDefinition =          new GeneratedDefinition("Date", DataType.Date);
+        public static GeneratedDefinition CurrencyGeneratedDefinition =      new GeneratedDefinition("Currency", DataType.Currency);
         public static GeneratedDefinition FloatingPointGeneratedDefinition = new GeneratedDefinition("FloatingPoint", DataType.FloatingPoint);
         public static GeneratedDefinition OccursGeneratedDefinition =        new GeneratedDefinition("Occurs", DataType.Occurs);
         public static GeneratedDefinition StringGeneratedDefinition =        new GeneratedDefinition("String", DataType.String);

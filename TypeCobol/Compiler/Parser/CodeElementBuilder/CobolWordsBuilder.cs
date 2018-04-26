@@ -625,7 +625,16 @@ namespace TypeCobol.Compiler.Parser
             var typeNameRef = context.typeNameReference();
             if (typeNameRef == null)
                 return null;
-            var dataNameContext = typeNameRef.UserDefinedWord() ?? context.typeNameReference().DATE(); //Get variable/type name Context
+
+             ITerminalNode dataNameContext = null;
+            //Get variable/type name Context
+            if (typeNameRef.UserDefinedWord() != null)
+                dataNameContext = typeNameRef.UserDefinedWord();
+            else if (context.typeNameReference().DATE() != null)
+                dataNameContext = context.typeNameReference().DATE();
+            else if (context.typeNameReference().CURRENCY() != null)
+                dataNameContext = context.typeNameReference().CURRENCY();
+
 
             if (dataNameContext == null)
                 return null;
