@@ -104,7 +104,7 @@ namespace TypeCobol.Tools.APIHelpers
                 {
                     // substring in case of MYPGM.rdz.tcbl
                     var inputFileName = inputFileNameRaw.Substring(0,
-                        inputFileNameRaw.IndexOf(".", StringComparison.Ordinal) == -1 ?
+                        inputFileNameRaw.IndexOf(".", StringComparison.Ordinal) != -1 ?
                             inputFileNameRaw.IndexOf(".", StringComparison.Ordinal) :
                             inputFileNameRaw.Length
                     );
@@ -126,7 +126,7 @@ namespace TypeCobol.Tools.APIHelpers
                 {
                     // substring in case of MYPGM.rdz.tcbl
                     var depFileName = depFileNameRaw.Substring(0,
-                        depFileNameRaw.IndexOf(".", StringComparison.Ordinal) == -1 ?
+                        depFileNameRaw.IndexOf(".", StringComparison.Ordinal) != -1 ?
                             depFileNameRaw.IndexOf(".", StringComparison.Ordinal) :
                             depFileNameRaw.Length
                     );
