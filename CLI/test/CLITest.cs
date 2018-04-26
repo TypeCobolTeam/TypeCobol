@@ -5,37 +5,46 @@ using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Server;
+using TypeCobol.Tools.Options_Config;
 
 namespace CLI.Test
 {
     [TestClass]
     public class CLITest {
+
+        /// <summary>
+        /// Try to perform successfully a parsing witout generation
+        /// </summary>
         [TestMethod]
         public void TestParse_1() {
-            //From folder ressources\parse_1
-            //Run command TypeCobol.CLI with the content of CLIArguments.txt as arguments
-            //Check that the actual "output" folder (the one created by the CLI) match the content of the expected "output" folder
-            //the one on Git.
-            //The number of files and the content of the files must be identical
-            CLITestHelper.Test("parse_1", ReturnCode.Success);
+            CLITestHelper.Test("parse_1", ReturnCode.Success);   
         }
 
+        /// <summary>
+        /// Try to perform only a Scan of the input file
+        /// </summary>
         [TestMethod]
         public void TestExecToStep_1() {
             CLITestHelper.Test("execToStep_1", ReturnCode.Success);
         }
 
+        /// <summary>
+        /// Perform a simple generation test with only needed options
+        /// </summary>
         [TestMethod]
         public void TestGenerate_1() {
             CLITestHelper.Test("generate_1", ReturnCode.Success);
         }
 
+        /// <summary>
+        /// Test various case of usage of dependencies such as good usage, bad file, bad path.
+        /// </summary>
         [TestMethod]
         public void TestDependencies() {
             CLITestHelper.Test("dependencies_1", ReturnCode.Success);
             CLITestHelper.Test("dependencies_2", ReturnCode.Success);
             CLITestHelper.Test("dependencies_3", ReturnCode.ParsingDiagnostics);
-            CLITestHelper.Test("dependencies_4", ReturnCode.ParsingDiagnostics);            //No dependencies found
+            CLITestHelper.ReadConsole("dependencies_4", ReturnCode.DependenciesError);            //No dependencies found
             CLITestHelper.Test("dependencies_5", ReturnCode.Success);
 #if EUROINFO_RULES
             CLITestHelper.Test("ei_dependencies_1", ReturnCode.ParsingDiagnostics);
@@ -64,6 +73,10 @@ namespace CLI.Test
             CLITestHelper.Test("avoidLoadingIntrinsicAndDependencies", ReturnCode.Success);
         }
 
+        /// <summary>
+        /// This test should return MissingCopy.
+        /// It test if in case of missing copy and with the proper arguments extracted copies file and missing copie file ar present and well formed.
+        /// </summary>
         [TestMethod]
         public void TestExtractCopies()
         {
@@ -75,33 +88,105 @@ namespace CLI.Test
 
         }
 
+        /// <summary>
+        /// Test Various Return Code that can be returned by the CLI
+        /// (with CLI arguments well formed, for bad argument test see TestArgumentsErrors())
+        /// </summary>
         [TestMethod]
         public void TestReturnCode() {
-            CLITestHelper.Test("return_code_0", ReturnCode.Success);
-            CLITestHelper.Test("return_code_1", ReturnCode.FatalError);
-            CLITestHelper.Test("return_code_2", ReturnCode.OutputFileError);
-            CLITestHelper.Test("return_code_3", ReturnCode.ParsingDiagnostics);
-            CLITestHelper.Test("return_code_4", ReturnCode.Warning);
+            CLITestHelper.Test("return_code_0", ReturnCode.Success);//0
+            CLITestHelper.Test("return_code_2", ReturnCode.OutputFileError); // 1001
+            CLITestHelper.Test("return_code_3", ReturnCode.ParsingDiagnostics);// 1000
+            CLITestHelper.Test("return_code_4", ReturnCode.Warning);//1
         }
 
-
+        /// <summary>
+        /// Try parsing with PublicSignature as output format.
+        /// Should return success.
+        /// </summary>
         [TestMethod]
-        public void TestOutputFormat() {
+        public void TestOutputFormat()
+        {
             CLITestHelper.Test("outputSignature_1", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Test all CLI arguments errors as follow:
+        /// 
+        /// arguments_errors_1:
+        /// -i   Bad Paths + Folders, multiple
+        /// -o   Count, multiple
+        /// -d   Bad Path
+        /// -s   Missing
+        /// -hc  Bad Path
+        /// -e   Unexpected token, multiple
+        /// -y   Bad Paths + Folders, multiple
+        /// -c   Bad Paths + Folders, multiple
+        /// -dp  Bad Paths + Folders, multiple
+        /// -md  non-Integer
+        /// -f   Unexpected token
+        /// -ec  Bad Path
+        /// -exc Bad Path
+        /// 
+        /// arguments_errors_2:
+        /// -i   Missing
+        /// -o   Missing mais ets != 5
+        /// -s   Missing mais ets != 5
+        /// -ets Unexpected token, multiple
+        /// -e   multiple, wrong ("rdz" is taken")
+        /// -md  multiple
+        /// -f   multiple
+        /// 
+        /// arguments_errors_3:
+        /// -o   Bad Path
+        /// -s   Bad Path, Multiple given
+        /// 
+        /// </summary>
+        [TestMethod]
+        public void TestArgumentsErrors()
+        {
+            CLITestHelper.ReadConsole("arguments_errors_1", ReturnCode.MultipleErrors);
+            CLITestHelper.ReadConsole("arguments_errors_2", ReturnCode.MultipleErrors);
+            CLITestHelper.ReadConsole("arguments_errors_3", ReturnCode.MultipleErrors);
         }
 
     }
 
     public class CLITestHelper {
 
-        internal static ReturnCode Test(string testFolderName, ReturnCode expectedReturnCode)
+        /// <summary>
+        /// Use the folder ressources\[testFolderName]
+        /// Run command TypeCobol.CLI with the content of CLIArguments.txt as arguments
+        /// Check that the output of the CLI match the content of the expected console output stored is ExpectedConsole.txt.
+        /// </summary>
+        internal static void ReadConsole(string testFolderName, ReturnCode expectedReturnCode)
+        {
+            var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
+            string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
+            string standardOutput = Test(workingDirectory, arguments, expectedReturnCode).Trim().Replace("\r", "");
+            string expectedoutput = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "ExpectedConsole.txt").Trim().Replace("\r", "");
+            if (!string.Equals(standardOutput, expectedoutput, StringComparison.CurrentCultureIgnoreCase))
+                throw new Exception(string.Format("console outputs not equals.{0}" +
+                                                  "Console: {4}{0}{1}{0}" +
+                                                  "Expected: {5}{0}{2}{0}" +
+                                                  "{3}",
+                    Environment.NewLine, standardOutput, expectedoutput, Environment.NewLine, standardOutput.Length, expectedoutput.Length));
+        }
+
+        /// <summary>
+        /// Use the folder ressources\[testFolderName]
+        /// Run command TypeCobol.CLI with the content of CLIArguments.txt as arguments
+        /// Check that the actual "output" folder (the one created by the CLI) match the content of the expected "output" folder.
+        /// The number of files and the content of the files must be identical
+        /// </summary>
+        internal static string Test(string testFolderName, ReturnCode expectedReturnCode)
         {
             var workingDirectory = "ressources" + Path.DirectorySeparatorChar + testFolderName;
             string arguments = File.ReadAllText(workingDirectory + Path.DirectorySeparatorChar + "CLIArguments.txt");
             return Test(workingDirectory, arguments, expectedReturnCode);
         }
 
-        internal static ReturnCode Test(string workingDirectory, string arguments, ReturnCode expectedReturnCode)
+        internal static string Test(string workingDirectory, string arguments, ReturnCode expectedReturnCode)
         {
             //
             //Create output folder because CLI will not create it
@@ -128,6 +213,8 @@ namespace CLI.Test
                                   "TypeCobol.CLI.exe " + arguments;
 
             process.StartInfo = startInfo;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.UseShellExecute = false;
             process.Start();
             while (!process.HasExited)
                 continue;
@@ -137,6 +224,9 @@ namespace CLI.Test
             //Compare outputDir with expectedOutputDir
             DirectoryInfo expectedOutputDir = new DirectoryInfo(workingDirectory + Path.DirectorySeparatorChar + "output_expected");
             bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, outputDir);
+
+            string consoleOutput = (process.StandardOutput.ReadToEnd());
+
             if (!dirIdentical) {
                 throw new Exception("directory not equals");
             }
@@ -145,7 +235,7 @@ namespace CLI.Test
             if (expectedReturnCode != returnCode)
                 throw new Exception(string.Format("Wrong return code detected: {0} instead of {1}", returnCode, expectedReturnCode));
 
-            return returnCode;
+            return consoleOutput;
         }
 
         

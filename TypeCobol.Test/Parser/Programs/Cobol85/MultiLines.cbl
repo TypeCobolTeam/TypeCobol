@@ -6,7 +6,7 @@
  OBJECT-COMPUTER. IBM-370.
  DATA DIVISION.
  WORKING-STORAGE SECTION.
- 01  GROUP.
+ 01  MyGROUP.
      05 VAR1 PIC X(78) value 'f
 -       ' accès illimité* à vos comptes                  '.
      05 VAR2 PIC X(46) value '

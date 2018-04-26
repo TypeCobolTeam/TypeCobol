@@ -246,6 +246,8 @@ namespace TypeCobol.Compiler.Nodes {
                     }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
                         break;
+                    if (parent is Program)
+                        break;
                     parent = parent.Parent;
                 }
 

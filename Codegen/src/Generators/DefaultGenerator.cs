@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
@@ -194,11 +195,14 @@ namespace TypeCobol.Codegen.Generators
                         }
                         else foreach (var line in NodeLines(node, generated_node))
                         {
+                            bool bInsertSplit = false;
                             StringWriter sw = new StringWriter();
                             if (bFirst && !bIsFunctionDecl && curSourceText != null)
                             {//The first element don't ident it just insert it a the right position
+                             //issue #892 => Anyway Handle splitting 
                                 sw.WriteLine(line.Text);
                                 bFirst = false;
+                                bInsertSplit = true;
                             }
                             else foreach (var l in Indent(line, null))
                             {
@@ -216,19 +220,19 @@ namespace TypeCobol.Codegen.Generators
                                     //Create a the erase string to erase in the original source code
                                     //The Function header.
                                     //Erase in the original source code the Function header?
-                                    ReplaceByBlanks(curSourceText, f, t);                
-                                    //Output the pre-stored comment header
-                                    funData.FunctionDeclBuffer.Insert(funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                    ReplaceByBlanks(curSourceText, f, t);
+                                        //Output the pre-stored comment header
+                                        InsertLineMaybeSplit(funData.FunctionDeclBuffer, funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size, bInsertSplit);
                                 }
-                                //Insert the sequence
-                                funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                    //Insert the sequence
+                                    InsertLineMaybeSplit(funData.FunctionDeclBuffer, text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size, bInsertSplit);
                             }
                             else
                             {
                                 if (curSourceText == null)
-                                    targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                                        InsertLineMaybeSplit(targetSourceText, text, targetSourceText.Size, targetSourceText.Size, bInsertSplit);
                                 else
-                                    curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                                        InsertLineMaybeSplit(curSourceText, text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size), bInsertSplit);
                             }
                             from = to;
                             sw.Close();
@@ -296,6 +300,58 @@ namespace TypeCobol.Codegen.Generators
             //5)//Generate Line Exceed Diagnostics
             GenerateExceedLineDiagnostics();
             return targetSourceText;
+        }
+
+        /// <summary>
+        /// Insert in the buffer a text line that can be split.
+        /// </summary>
+        /// <param name="text">The text</param>
+        /// <param name="from">from position in the buffer</param>
+        /// <param name="to">to position in the buffer</param>
+        /// <param name="bInsertSplit">true if splitting must handle, false otherwise</param>
+        private void InsertLineMaybeSplit(SourceText buffer, string text, int from, int to, bool bInsertSplit)
+        {
+            if (bInsertSplit && this.Layout == ColumnsLayout.CobolReferenceFormat)
+            {
+                int crPos = text.LastIndexOf('\r');
+                int lfPos = text.LastIndexOf('\n');
+                int crlf = 0;
+                crlf += crPos >= 0 ? 1 : 0;
+                crlf += lfPos >= 0 ? 1 : 0;
+                int lineStartOffset;
+                int lineEndOffset;
+                int lineLen = buffer.GetLineInfo(from, out lineStartOffset, out lineEndOffset);
+                if (((from - lineStartOffset) + (text.Length - crlf)) >= LEGAL_COBOL_LINE_LENGTH)
+                {
+                    string lefttext = buffer.GetTextAt(lineStartOffset, from);
+                    ICollection<ITextLine> lines = CobolTextLine.CreateCobolLines(this.Layout, -1, ' ', "",
+                        lefttext + (crlf > 0 ? text.Substring(0, text.Length - crlf) : text), LEGAL_COBOL_LINE_LENGTH, 65, false);
+                    StringWriter sw = new StringWriter();
+                    string sep = "";
+                    foreach (var line in lines)
+                    {
+                        sw.Write(sep);
+                        sw.WriteLine(line.Text);
+                        sep = Environment.NewLine;
+                    }
+                    //We must insert "\r\n" if the target line is empty and the inserted test has one.
+                    if ((lineEndOffset == lineStartOffset) && crlf > 0)
+                    {
+                        sw.Write(Environment.NewLine);
+                    }
+                    sw.Flush();
+                    text = sw.ToString();
+                    buffer.Insert(text, lineStartOffset, to);
+                }
+                else
+                {
+                    buffer.Insert(text, from, to);
+                }
+            }
+            else
+            {
+                buffer.Insert(text, from, to);
+            }            
         }
 
         /// <summary>
@@ -387,7 +443,7 @@ namespace TypeCobol.Codegen.Generators
                                 {
                                     if (IsPlitablePosition(firstSplitablePos, rightPos, originalPos, out targeSplittColumn))
                                     {
-                                        string pad = new StringBuilder().Append(Environment.NewLine).Append(new string(' ', targeSplittColumn - lineStartPos)).ToString();
+                                        string pad = new StringBuilder().Append(Environment.NewLine).Append(new string(' ', Math.Abs(targeSplittColumn - lineStartPos))).ToString();
                                         //So break here
                                         srcBuffer.Insert(pad, start.Pos, start.Pos);
                                         i = j;

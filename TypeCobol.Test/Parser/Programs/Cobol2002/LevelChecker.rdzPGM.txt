@@ -9,7 +9,7 @@ PROGRAM: LevelChecker common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
-  Group:Alphanumeric
+  MyGroup:Alphanumeric
   MyVar2:myType
   MyVar1:myType
   MYVar3:myPic

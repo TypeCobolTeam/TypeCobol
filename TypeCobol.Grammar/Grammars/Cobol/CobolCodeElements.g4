@@ -759,7 +759,10 @@ environmentNameClause:
 // data, but not for DBCS or national data.
 
 alphabetClause: 
-    ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference | userDefinedCollatingSequence+);
+    ALPHABET alphabetNameDefinition IS? (intrinsicAlphabetNameReference 
+											| ({ string.Equals(CurrentToken.Text, "EBCDIC", System.StringComparison.InvariantCultureIgnoreCase) }? 
+													EBCDICFiller=UserDefinedWord )
+											|  userDefinedCollatingSequence+);
 
 userDefinedCollatingSequence:
     (charactersInCollatingSequence | charactersRange | charactersEqualSet);
@@ -3837,7 +3840,19 @@ acceptDataTransfer:
 	ACCEPT alphanumericStorageArea (FROM mnemonicForEnvironmentNameReferenceOrEnvironmentName)?;
 
 acceptSystemDateTime:
-	ACCEPT alphanumericStorageArea FROM ((DATE YYYYMMDD?) | (DAY YYYYDDD?) | DAY_OF_WEEK | TIME);
+	ACCEPT alphanumericStorageArea FROM ((DATE yyyyMmDd?) | (DAY yyyyDdd?) | DAY_OF_WEEK | TIME);
+
+
+yyyyMmDd: (
+				{ string.Equals(CurrentToken.Text, "YYYYMMDD", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				YYYYMMDDFiller=UserDefinedWord
+	  );
+
+yyyyDdd: (
+				{ string.Equals(CurrentToken.Text, "YYYYDDD", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				YYYYDDDFiller=UserDefinedWord
+		 );
+
 
 // p298: ADD statement
 // The ADD statement sums two or more numeric operands and stores the result.
@@ -7559,24 +7574,70 @@ xmlGenerateStatement:
 	XML GENERATE receivingField=storageArea1 
 	FROM dataItemToConvertToXml=variable1
 	(COUNT IN? generatedXmlCharsCount=storageArea1)?
-	(WITH? ENCODING codepage)?
-	(WITH? XML_DECLARATION)?
-	(WITH? ATTRIBUTES)?
-	(NAMESPACE IS? namespace=alphanumericVariable2 
-		(NAMESPACE_PREFIX IS? namespacePrefix=alphanumericVariable2)? )?
-	(NAME OF? xmlNameMapping+)?
+	(WITH? encoding )?
+	(WITH? xmlDeclaration)?
+	(WITH? attributes)?
+	(nameSpace IS? namespace=alphanumericVariable2 
+		(nameSpacePrefix IS? namespacePrefix=alphanumericVariable2)? )?
+	(name OF?  xmlNameMapping+)?
 	(TYPE OF? xmlTypeMapping+)?
 	(SUPPRESS xmlSuppressDirective+)?;
+
+encoding: (
+				{ string.Equals(CurrentToken.Text, "ENCODING", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				
+				encodingFiller=UserDefinedWord codepage
+		  )?;
+
+attributes: (
+				{ string.Equals(CurrentToken.Text, "ATTRIBUTES", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				attributesFiller=UserDefinedWord
+			);
+
+xmlDeclaration: (
+					{ string.Equals(CurrentToken.Text, "XML-DECLARATION", System.StringComparison.InvariantCultureIgnoreCase) }? 
+					xmlDeclarationFiller=UserDefinedWord
+			);
+
+nameSpacePrefix: (
+					{ string.Equals(CurrentToken.Text, "NAMESPACE-PREFIX", System.StringComparison.InvariantCultureIgnoreCase) }? 
+					nameSpacePrefixFiller=UserDefinedWord
+				 );
+
+nameSpace:  (
+					{ string.Equals(CurrentToken.Text, "NAMESPACE", System.StringComparison.InvariantCultureIgnoreCase) }? 
+					nameSpaceFiller=UserDefinedWord
+				 );
+
+name: (
+				{ string.Equals(CurrentToken.Text, "NAME", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				nameFiller=UserDefinedWord
+	  );
+
+attribute: (
+				{ string.Equals(CurrentToken.Text, "ATTRIBUTE", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				attributeFiller=UserDefinedWord
+	  );
+
+element: (
+				{ string.Equals(CurrentToken.Text, "ELEMENT", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				elementFiller=UserDefinedWord
+	  );
+
+nonnumeric: (
+				{ string.Equals(CurrentToken.Text, "NONNUMERIC", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				nonNumericFiller=UserDefinedWord
+	  );
 		
 xmlNameMapping:
-	subordinateDataItem=variable1 IS? xmlNameToGenerate=alphanumericValue2;
+	({ !string.Equals(CurrentToken.Text, "NAME", System.StringComparison.InvariantCultureIgnoreCase) }? subordinateDataItem=variable1) IS? xmlNameToGenerate=alphanumericValue2;
 
 xmlTypeMapping:
-	subordinateDataItem=variable1 IS? (ATTRIBUTE | ELEMENT | CONTENT);
+	subordinateDataItem=variable1 IS? (attribute | element | CONTENT);
 
 xmlSuppressDirective:	
 	( subordinateDataItem=variable1 |
-	(EVERY (ATTRIBUTE | ELEMENT | ((NUMERIC | NONNUMERIC) (ATTRIBUTE | ELEMENT)?)))?)
+	(EVERY (attribute | element | ((NUMERIC | nonnumeric) (attribute | element)?)))?)
 	// Only figurative constants are allowed: ZERO | ZEROES | ZEROS | SPACE | SPACES | LOW_VALUE | LOW_VALUES | HIGH_VALUE | HIGH_VALUES
 	WHEN repeatedCharacterValue3 (OR? repeatedCharacterValue3)*;
 	
@@ -7785,11 +7846,21 @@ codepage: integerVariable1;
 // ... more information p473->474 Control flow ...
 
 xmlParseStatement:
-                     XML PARSE xmlTextToParse=variable1
-                     (WITH? ENCODING codepage)? 
+                     XML parse xmlTextToParse=variable1
+                     (WITH? encoding codepage)? 
                      (RETURNING NATIONAL)?
                      (VALIDATING WITH? (optimizedXmlSchemaData=variable1 | (FILE optimizedXmlSchemaFile=xmlSchemaNameReference)))?
                      PROCESSING PROCEDURE IS? (procedureName | proceduresRange);
+
+parse: (
+				{ string.Equals(CurrentToken.Text, "PARSE", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				parseFiller=UserDefinedWord
+	  );
+
+validating: (
+				{ string.Equals(CurrentToken.Text, "VALIDATING", System.StringComparison.InvariantCultureIgnoreCase) }? 
+				validatingFiller=UserDefinedWord
+			);
 
 
 // --- Conditions code elements syntax ---

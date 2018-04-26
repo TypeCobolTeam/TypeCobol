@@ -37,7 +37,7 @@ namespace TypeCobol.Compiler.Scanner
             tokenStringFromTokenType[(int)TokenType.ASTERISK_CONTROL] = "*CONTROL";
             tokenStringFromTokenType[(int)TokenType.DELETE_CD] = "DELETE";
             tokenStringFromTokenType[(int)TokenType.SERVICE_CD] = "SERVICE";
-            tokenStringFromTokenType[(int)TokenType.EXEC_SQL_INCLUDE] = "INCLUDE";
+            tokenStringFromTokenType[(int)TokenType.EXEC_SQL] = "EXEC-SQL";
 
             // Map token string to token type
             tokenTypeFromTokenString = new Dictionary<string, TokenType>(types.Length - 1, StringComparer.OrdinalIgnoreCase);

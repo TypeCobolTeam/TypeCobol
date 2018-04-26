@@ -1,0 +1,3 @@
+﻿Code: 1025 TypeCobol.CLI.exe: Unexpected parameter given for ExecToStep. Accepted parameters are "Scanner"/0, "Preprocessor"/1, "SyntaxCheck"/2, "SemanticCheck"/3, "CrossCheck"/4, "Generate"/5(default).
+Code: 1010 TypeCobol.CLI.exe: Input file(s) are required.
+Try TypeCobol.CLI.exe --help for usage information.

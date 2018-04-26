@@ -17,7 +17,7 @@
 
 [[WorkingStorageSectionHeader]] [2,16:WORKING-STORAGE]<WORKING_STORAGE> --> [25,25+:.]<PeriodSeparator>
 
-[[DataDescriptionEntry]] [2,3:01]<LevelNumber>{1} --> [11,11+:.]<PeriodSeparator>
+[[DataDescriptionEntry]] [2,3:01]<LevelNumber>{1} --> [13,13+:.]<PeriodSeparator>
 
 [[DataDescriptionEntry]] [6,7:05]<LevelNumber>{5} --> [59,59+:.]<PeriodSeparator>
 

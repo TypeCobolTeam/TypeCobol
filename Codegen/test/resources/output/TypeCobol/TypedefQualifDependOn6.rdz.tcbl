@@ -13,12 +13,12 @@
       *         10 ThirdGroup.
       *            15 varGroup pic 9(10).
       
-      *         10 tutu occurs 1 depending on Group::vargroup.
+      *         10 tutu occurs 1 depending on MyGroup::vargroup.
       *         10 titi occurs 1 depending on ThirdGroup::vargroup.
       *         10 toto occurs 1 depending on myVar.
       
       *01 secondType TYPEDEF STRICT.
-      *     05 Group.
+      *     05 MyGroup.
       *         10 vargroup PIC 9(10).
       
        01 Vars.
@@ -29,12 +29,12 @@
            06 secondGroup.
              07 varGroup pic 9(10).
              07 typedGroupvar.
-               08 Group.
+               08 MyGroup.
                  09 vargroup PIC 9(10).
              07 ThirdGroup.
                08 varGroup pic 9(10).
-             07 tutu occurs 1 depending on vargroup OF Group OF typedGro
-      -    upvar OF secondGroup OF MyVar1 OF Vars3 OF Vars.
+             07 tutu occurs 1 depending on vargroup OF MyGroup OF typedG
+      -    roupvar OF secondGroup OF MyVar1 OF Vars3 OF Vars.
              07 titi occurs 1 depending on vargroup OF ThirdGroup OF sec
       -    ondGroup OF MyVar1 OF Vars3 OF Vars.
              07 toto occurs 1 depending on myVar OF MyVar1 OF Vars3 OF V
@@ -47,12 +47,12 @@
            06 secondGroup.
              07 varGroup pic 9(10).
              07 typedGroupvar.
-               08 Group.
+               08 MyGroup.
                  09 vargroup PIC 9(10).
              07 ThirdGroup.
                08 varGroup pic 9(10).
-             07 tutu occurs 1 depending on vargroup OF Group OF typedGro
-      -    upvar OF secondGroup OF MyVar1 OF Vars2.
+             07 tutu occurs 1 depending on vargroup OF MyGroup OF typedG
+      -    roupvar OF secondGroup OF MyVar1 OF Vars2.
              07 titi occurs 1 depending on vargroup OF ThirdGroup OF sec
       -    ondGroup OF MyVar1 OF Vars2.
              07 toto occurs 1 depending on myVar OF MyVar1 OF Vars2.
@@ -63,12 +63,12 @@
            02 secondGroup.
              03 varGroup pic 9(10).
              03 typedGroupvar.
-               04 Group.
+               04 MyGroup.
                  05 vargroup PIC 9(10).
              03 ThirdGroup.
                04 varGroup pic 9(10).
-             03 tutu occurs 1 depending on vargroup OF Group OF typedGro
-      -    upvar OF secondGroup OF MyVar2.
+             03 tutu occurs 1 depending on vargroup OF MyGroup OF typedG
+      -    roupvar OF secondGroup OF MyVar2.
              03 titi occurs 1 depending on vargroup OF ThirdGroup OF sec
       -    ondGroup OF MyVar2.
              03 toto occurs 1 depending on myVar OF MyVar2.

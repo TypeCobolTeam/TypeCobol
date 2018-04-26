@@ -11,7 +11,7 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                   
-       01  message      PIC X(80).
+       01  mymessage      PIC X(80).
       *01  vect2        TYPE Vect2.
        01 vect2.
            02 Coord2d.
@@ -70,8 +70,8 @@
                           
       *    move vect2::Coord2d to Vect2b::Coord2d.
            move Coord2d OF vect2 to Coord2d OF Vect2b.
-      *    move MyVar::Site::SiteName to message.
-           move SiteName OF Site OF MyVar to message.
+      *    move MyVar::Site::SiteName to mymessage.
+           move SiteName OF Site OF MyVar to mymessage.
            .
       *declare procedure check private
       *   input mydate        TYPE Date.
@@ -124,7 +124,7 @@
 
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
-      *   call dump input message
+      *   call dump input mymessage
           IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
                PERFORM TC-LOAD-POINTERS-MyIntrin
            ELSE
@@ -133,12 +133,12 @@
                END-IF
            END-IF
            CALL TC-MyIntrin-f9abcd81 USING
-                                 message
+                                 mymessage
            end-call
-                                 
+                                   
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
-      *   call MyIntrinsicFunctions::dump input message
+      *   call MyIntrinsicFunctions::dump input mymessage
           IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
                PERFORM TC-LOAD-POINTERS-MyIntrin
            ELSE
@@ -147,9 +147,9 @@
                END-IF
            END-IF
            CALL TC-MyIntrin-f9abcd81 USING
-                                 message
+                                 mymessage
            end-call
-                                                       
+                                                         
         .
       *=================================================================
        TC-INITIALIZATIONS.

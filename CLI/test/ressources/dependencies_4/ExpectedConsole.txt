@@ -1,0 +1,2 @@
+﻿Code: 1029 TypeCobol.CLI.exe: Dependencies files given are unreachable.
+Try TypeCobol.CLI.exe --help for usage information.
