@@ -25,7 +25,7 @@
            INPUT mydate        TYPE Date
                  format        PIC X(08)
                  alength       PIC 9(8) comp-5
-                 anotherlangth PIC S9(05) comp-5
+                 anotherlength PIC S9(05) comp-5
           OUTPUT okay          TYPE Bool
                  actual-format PIC X(08).
          .
@@ -50,7 +50,7 @@
                     INPUT      somedate
                                someformat
                                length of somedate
-                               length of somedate::YYYY
+                               length of YYYY of somedate
                     OUTPUT     flag     realformat
       *
            call PersonService::GetPersonById input  person1Id
