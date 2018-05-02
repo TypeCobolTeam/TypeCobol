@@ -73,36 +73,36 @@ namespace TypeCobol.LanguageServer
         #region Procedure Completion 
         public static IEnumerable<CompletionItem> GetCompletionForProcedure(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Dictionary<SignatureInformation, FunctionDeclaration> functionDeclarationSignatureDictionary)
         {
-            var node = GetMatchingNode(fileCompiler, codeElement);
             IEnumerable<FunctionDeclaration> procedures = null;
             IEnumerable<DataDefinition> variables = null;
             var completionItems = new List<CompletionItem>();
+            var node = GetMatchingNode(fileCompiler, codeElement);
+            if(node == null)
+                return completionItems;
 
-            if (node != null)
+            if (node.SymbolTable != null)
             {
-                if (node.SymbolTable != null)
-                {
-                    var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                    procedures =
-                        node.SymbolTable.GetFunctions(
-                            f =>
-                                f.VisualQualifiedName.ToString()
-                                    .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
-                                || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                            new List<SymbolTable.Scope>
-                            {
-                                SymbolTable.Scope.Declarations,
-                                SymbolTable.Scope.Intrinsic,
-                                SymbolTable.Scope.Namespace
-                            });
-                    variables = node.SymbolTable.GetVariables(da => da.Picture != null &&
-                                                                    da.DataType ==
-                                                                    Compiler.CodeElements.DataType.Alphanumeric &&
-                                                                    da.Name.StartsWith(userFilterText,
-                                                                        StringComparison.InvariantCultureIgnoreCase),
-                        new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
-                }
+                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+                procedures =
+                    node.SymbolTable.GetFunctions(
+                        f =>
+                            f.VisualQualifiedName.ToString()
+                                .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
+                            || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
+                        new List<SymbolTable.Scope>
+                        {
+                            SymbolTable.Scope.Declarations,
+                            SymbolTable.Scope.Intrinsic,
+                            SymbolTable.Scope.Namespace
+                        });
+                variables = node.SymbolTable.GetVariables(da => da.Picture != null &&
+                                                                da.DataType ==
+                                                                Compiler.CodeElements.DataType.Alphanumeric &&
+                                                                da.Name.StartsWith(userFilterText,
+                                                                    StringComparison.InvariantCultureIgnoreCase),
+                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
             }
+            
 
             completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, functionDeclarationSignatureDictionary));
 
@@ -122,6 +122,9 @@ namespace TypeCobol.LanguageServer
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(fileCompiler, codeElement);
+            if (node == null)
+                return completionItems;
+
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
 
             //Get procedure name or qualified name
@@ -242,25 +245,26 @@ namespace TypeCobol.LanguageServer
         {
             var node = GetMatchingNode(fileCompiler, codeElement);
             IEnumerable<TypeDefinition> types = null;
+            if (node?.SymbolTable == null)
+                return new List<CompletionItem>();
 
-            if (node?.SymbolTable != null)
-            {
-                var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
-                types =
-                    node.SymbolTable.GetTypes(
-                        t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
-                             ||
-                             (!t.IsFlagSet(Node.Flag.NodeIsIntrinsic) &&
-                              t.VisualQualifiedName.ToString()
-                                  .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)),
-                        new List<SymbolTable.Scope>
-                        {
-                            SymbolTable.Scope.Declarations,
-                            SymbolTable.Scope.Global,
-                            SymbolTable.Scope.Intrinsic,
-                            SymbolTable.Scope.Namespace
-                        });
-            }
+            var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
+
+            types =
+                node.SymbolTable.GetTypes(
+                    t => t.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
+                            ||
+                            (!t.IsFlagSet(Node.Flag.NodeIsIntrinsic) &&
+                            t.VisualQualifiedName.ToString()
+                                .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)),
+                    new List<SymbolTable.Scope>
+                    {
+                        SymbolTable.Scope.Declarations,
+                        SymbolTable.Scope.Global,
+                        SymbolTable.Scope.Intrinsic,
+                        SymbolTable.Scope.Namespace
+                    });
+            
 
             return CompletionFactoryHelpers.CreateCompletionItemsForType(types, node);
         }
@@ -272,6 +276,8 @@ namespace TypeCobol.LanguageServer
             var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(fileCompiler, codeElement);
+            if (node == null)
+                return completionItems;
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
 
             //Get the token before MatchingToken 
@@ -569,6 +575,8 @@ namespace TypeCobol.LanguageServer
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(fileCompiler, codeElement);
+            if(node == null)
+                return completionItems;
 
             var tokensUntilCursor = arrangedCodeElement?.ArrangedConsumedTokens
             .Except(new List<Token>() { userFilterToken })
