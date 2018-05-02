@@ -121,13 +121,13 @@
       *             INPUT      somedate
       *                        someformat
       *                        length of somedate
-      *                        length of YYYY of somedate
+      *                        length of somedate::YYYY
       *             OUTPUT     flag     realformat
            CALL 'f3a0a09cPgm1PrivateValidateDat' USING
                                  somedate
                                  someformat
                                  length of somedate
-                                 length of somedate.YYYY
+                                 length of YYYY IN somedate
                     by reference flag-value
                                  realformat
            end-call

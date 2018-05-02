@@ -50,7 +50,7 @@
                     INPUT      somedate
                                someformat
                                length of somedate
-                               length of YYYY of somedate
+                               length of somedate::YYYY
                     OUTPUT     flag     realformat
       *
            call PersonService::GetPersonById input  person1Id
