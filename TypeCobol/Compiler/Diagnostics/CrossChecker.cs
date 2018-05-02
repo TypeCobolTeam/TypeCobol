@@ -152,18 +152,18 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private void CheckVariable(Node node, StorageArea storageArea)
+        public static DataDefinition CheckVariable(Node node, StorageArea storageArea)
         {
             if (storageArea == null || !storageArea.NeedDeclaration)
-                return;
+                return null;
 
             var area = storageArea.GetStorageAreaThatNeedDeclaration;
             IEnumerable<DataDefinition> found;
             var foundQualified = new List<KeyValuePair<string, DataDefinition>>();
 
-            if (area.SymbolReference == null) return;
+            if (area.SymbolReference == null) return null;
             //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
-            if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return;
+            if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return null;
 
             var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition) node).IsPartOfATypeDef;
             foundQualified =
@@ -252,20 +252,26 @@ namespace TypeCobol.Compiler.Diagnostics
             if (found.Count() > 1)
             {
                 bool isFirst = true;
-                string errorMessage = "Ambiguous reference to symbol " + area + " " + Environment.NewLine + "Symbols found: ";
+                string errorMessage = "Ambiguous reference to symbol " + area + " " + Environment.NewLine +
+                                      "Symbols found: ";
                 foreach (var symbol in foundQualified)
                 {
                     // Multiline Version
                     //errorMessage += Environment.NewLine + "\t" + symbol.Key.Replace(".", "::");
                     // Inline version
-                    errorMessage += (isFirst?"":" | ") + symbol.Key.Replace(".", "::");
+                    errorMessage += (isFirst ? "" : " | ") + symbol.Key.Replace(".", "::");
                     isFirst = false;
                 }
                 DiagnosticUtils.AddError(node, errorMessage);
             }
+            if (found.Count() == 1)
+                return found.First();
+
+
+            return null;
         }
 
-        private void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
+        private static void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
             string completeQualifiedName)
         {
             node.SetFlag(flag, true);
@@ -364,29 +370,27 @@ namespace TypeCobol.Compiler.Diagnostics
 
         /// <param name="wname">Receiving item; must be found and its type known</param>
         /// <param name="sent">Sending item; must be found and its type known</param>
-        private static void CheckVariable(Node node, QualifiedName wname, object sent)
+        private static void CheckVariable(Node node, StorageArea wname, object sent)
         {
             DataDefinition sendingTypeDefinition = null, receivingTypeDefinition = null;
 
             if (sent == null || wname == null) return; //Both items needed
-            var wsymbol = GetSymbol(node.SymbolTable, wname);
-            if (wsymbol == null) return; // receiving symbol name unresolved
-            receivingTypeDefinition = wsymbol.TypeDefinition;
-            if (receivingTypeDefinition == null) //No TypeDefinition found, try to get DataType
-            {
-                receivingTypeDefinition = GetDataDefinitionType(node.SymbolTable, wsymbol);
-            }
+            var wsymbol = CrossCompleteChecker.CheckVariable(node, wname);
+            if (wsymbol != null)
+                receivingTypeDefinition = wsymbol.TypeDefinition ?? GetDataDefinitionType(node.SymbolTable, wsymbol);
 
-            var sname = sent as QualifiedName;
-            if (sname != null)
+            if (sent is QualifiedName)
             {
+                var sname = sent as QualifiedName;
                 var ssymbol = GetSymbol(node.SymbolTable, sname);
                 if (ssymbol == null) return; // sending symbol name unresolved
-                sendingTypeDefinition = ssymbol.TypeDefinition;
-                if (sendingTypeDefinition == null) //No TypeDefinition found try to get DataType
-                {
-                    sendingTypeDefinition = GetDataDefinitionType(node.SymbolTable, ssymbol);
-                }
+                sendingTypeDefinition = ssymbol.TypeDefinition ?? GetDataDefinitionType(node.SymbolTable, ssymbol);
+            }
+            else if (sent is StorageArea)
+            {
+                var rsymbol = CrossCompleteChecker.CheckVariable(node, (StorageArea) sent);
+                if (rsymbol != null)
+                    sendingTypeDefinition = rsymbol.TypeDefinition ?? GetDataDefinitionType(node.SymbolTable, rsymbol);
             }
             else
             {
@@ -418,7 +422,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         var message = string.Format("Cannot write {0} to {1} typed variable {2}:{3}.", sendingName,
                             receivingTypeDefinition.DataType.RestrictionLevel == RestrictionLevel.STRONG
                                 ? "strongly"
-                                : "strictly", wname.Head, receivingName);
+                                : "strictly", wname, receivingName);
 
                         DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
                     }

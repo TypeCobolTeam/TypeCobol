@@ -841,7 +841,9 @@ namespace TypeCobol.Compiler.Parser
             var c = context.cobolQualifiedDataName1();
             if (c != null) return CreateQualifiedDataName(c.dataNameReference(), c.dataNameReferenceOrFileNameReference());
             var tc = context.tcQualifiedDataName1();
-            return CreateQualifiedDataName(tc.dataNameReference(), tc.dataNameReferenceOrFileNameReference(), false);
+            var tail = tc.dataNameReferenceOrFileNameReference();
+            Array.Reverse(tail);
+            return CreateQualifiedDataName(tc.dataNameReference(), tail , false);
         }
         private SymbolReference CreateQualifiedDataName(CodeElementsParser.DataNameReferenceContext head, CodeElementsParser.DataNameReferenceOrFileNameReferenceContext[] tail, bool isCOBOL = true)
         {

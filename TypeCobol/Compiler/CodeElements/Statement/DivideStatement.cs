@@ -8,7 +8,7 @@
 /// </summary>
 public abstract class DivideStatement: AbstractArithmeticStatement {
     protected DivideStatement(StatementType statementType): base(CodeElementType.DivideStatement, statementType) { }
-	public abstract override Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+	public abstract override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations { get; }
 }
 
 /// <summary>
@@ -21,18 +21,17 @@ public class DivideSimpleStatement: DivideStatement {
 	public NumericVariable Divisor { get; set; }
 	public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
 
-	public override Dictionary<string,List<ArithmeticExpression>> Affectations {
+	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
 		get {
-			var map = new Dictionary<string,List<ArithmeticExpression>>();
+			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
 			ArithmeticExpression right = new NumericVariableOperand(Divisor);
 			foreach(var receiver in SendingAndReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea?.ToString();
-				if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
 				var left = new NumericVariableOperand(new NumericVariable(rarea));
 				var operation = ArithmeticOperator.Divide.CreateOperation(left, right);
 				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-			    if (key != null) map[key].Add(operation);
+			    if (rarea != null) map[rarea].Add(operation);
 			}
 			return map;
 		}
@@ -64,19 +63,18 @@ public class DivideGivingStatement: DivideStatement {
 	/// <summary>Quotients</summary>
 	public RoundedResult[] ReceivingStorageAreas { get; set; }
 
-	public override Dictionary<string,List<ArithmeticExpression>> Affectations {
+	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
 		get {
-			var map = new Dictionary<string,List<ArithmeticExpression>>();
+			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
 			ArithmeticExpression left  = new NumericVariableOperand(Dividend);
 			ArithmeticExpression right = new NumericVariableOperand(Divisor);
 			left = ArithmeticOperator.Divide.CreateOperation(left, right);
 			foreach(var receiver in ReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea?.ToString();
-				if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
 				var operation = left;
 				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-			    if (key != null) map[key].Add(operation);
+			    if (rarea != null) map[rarea].Add(operation);
 			}
 			return map;
 		}
@@ -107,29 +105,28 @@ public class DivideRemainderStatement: DivideStatement {
 	public RoundedResult Quotient { get; set; }
 	public ReceivingStorageArea Remainder { get; set; }
 
-	public override Dictionary<string,List<ArithmeticExpression>> Affectations {
+	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
 		get {
-			var map = new Dictionary<string,List<ArithmeticExpression>>();
+			var map = new Dictionary<StorageArea,List<ArithmeticExpression>>();
 			ArithmeticExpression left  = new NumericVariableOperand(Dividend);
 			ArithmeticExpression right = new NumericVariableOperand(Divisor);
 			ArithmeticExpression operation;
 
 			operation = ArithmeticOperator.Divide.CreateOperation(left, right);
 			var rarea = Quotient.ReceivingStorageArea.StorageArea;
-			string key = rarea?.ToString();
-		    if (key != null)
+		    if (rarea != null)
 		    {
-		        map[key] = new List<ArithmeticExpression>();
+		        map[rarea] = new List<ArithmeticExpression>();
 		        if (Quotient.IsRounded)
-		            map[key].Add(ArithmeticOperator.Round.CreateOperation(operation));
-		        else map[key].Add(operation);
+		            map[rarea].Add(ArithmeticOperator.Round.CreateOperation(operation));
+		        else map[rarea].Add(operation);
 
 		        operation = ArithmeticOperator.Remainder.CreateOperation(left, right);
 		        rarea = Remainder.StorageArea;
 		    }
-		    key = rarea?.ToString();
-		    if (key != null)
-		        map[key] = new List<ArithmeticExpression> {operation};
+               
+		    if (rarea != null)
+		        map[rarea] = new List<ArithmeticExpression> {operation};
 
 		    return map;
 		}

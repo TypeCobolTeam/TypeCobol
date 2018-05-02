@@ -5,7 +5,7 @@
 /// <summary>p298: The ADD statement sums two or more numeric operands and stores the result.</summary>
 public abstract class AddStatement: AbstractArithmeticStatement {
     protected AddStatement(StatementType statementType) : base(CodeElementType.AddStatement, statementType) { }
-	public abstract override Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+	public abstract override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations { get; }
 }
 
 /// <summary>
@@ -19,9 +19,9 @@ public class AddSimpleStatement: AddStatement {
 	public NumericVariable[] VariablesTogether { get; set; }
 	public RoundedResult[] SendingAndReceivingStorageAreas { get; set; }
 
-	public override Dictionary<string,List<ArithmeticExpression>> Affectations {
+	public override Dictionary<StorageArea, List<ArithmeticExpression>> Affectations {
 		get {
-			var map = new Dictionary<string,List<ArithmeticExpression>>();
+			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
 			ArithmeticExpression left = null;
                 if (VariablesTogether != null)
                 {
@@ -37,12 +37,11 @@ public class AddSimpleStatement: AddStatement {
                     foreach (var receiver in SendingAndReceivingStorageAreas)
                     {
                         var rarea = receiver.ReceivingStorageArea.StorageArea;
-                        string key = rarea?.ToString();
-                        if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+                        if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
                         var right = new NumericVariableOperand(new NumericVariable(rarea));
                         var operation = ArithmeticOperator.Plus.CreateOperation(left, right);
                         if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-                        if (key != null) map[key].Add(operation);
+                        if (rarea != null) map[rarea].Add(operation);
                     }
                 }
 			return map;
@@ -68,9 +67,9 @@ public class AddGivingStatement: AddStatement {
 	public NumericVariable Operand { get; set; }
 	public RoundedResult[] ReceivingStorageAreas { get; set; }
 
-	public override Dictionary<string,List<ArithmeticExpression>> Affectations {
+	public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
 		get {
-			var map = new Dictionary<string,List<ArithmeticExpression>>();
+			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
 			ArithmeticExpression left = null;
 			foreach (NumericVariable varTogether in VariablesTogether) {
 			    var right = new NumericVariableOperand(varTogether);
@@ -79,11 +78,10 @@ public class AddGivingStatement: AddStatement {
 			}
 			foreach(var receiver in ReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea?.ToString();
-				if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
 				var operation = left;
 				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-			    if (key != null) map[key].Add(operation);
+			    if (rarea != null) map[rarea].Add(operation);
 			}
 			return map;
 		}
@@ -108,18 +106,18 @@ public class AddCorrespondingStatement: AddStatement {
 	public SyntaxProperty<bool> Rounded { get; set; }
 	public bool IsRounded { get { return Rounded != null && Rounded.Value; } }
 
-	public override Dictionary<string,List<ArithmeticExpression>> Affectations {
+	public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
 		get {
-			var map = new Dictionary<string,List<ArithmeticExpression>>();
-			string key = SendingAndReceivingGroupItem.ToString();
-			map[key] = new List<ArithmeticExpression>();
+			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
+		   
+			map[SendingAndReceivingGroupItem] = new List<ArithmeticExpression>();
 			var operation = new ArithmeticOperation(
 					new NumericVariableOperand(new NumericVariable(GroupItem)),
 					new SyntaxProperty<ArithmeticOperator>(ArithmeticOperator.Plus, null),
 					new NumericVariableOperand(new NumericVariable(SendingAndReceivingGroupItem))
 				);
 			if (IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-			map[key].Add(operation);
+			map[SendingAndReceivingGroupItem].Add(operation);
 			return map;
 		}
 	}

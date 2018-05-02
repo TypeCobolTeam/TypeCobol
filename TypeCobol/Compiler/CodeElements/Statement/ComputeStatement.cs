@@ -19,16 +19,15 @@ public class ComputeStatement: AbstractArithmeticStatement {
 	public RoundedResult[] ReceivingStorageAreas { get; set; }
 	public ArithmeticExpression ArithmeticExpression { get; set; }
 
-	public override Dictionary<string,List<ArithmeticExpression>> Affectations {
+	public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
 		get {
-			var map = new Dictionary<string,List<ArithmeticExpression>>();
+			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
 			foreach(var receiver in ReceivingStorageAreas) {
 				var rarea = receiver.ReceivingStorageArea.StorageArea;
-				string key = rarea?.ToString();
-				if (key != null && !map.ContainsKey(key)) map[key] = new List<ArithmeticExpression>();
+				if (rarea != null && !map.ContainsKey(rarea)) map[rarea] = new List<ArithmeticExpression>();
 				var operation = ArithmeticExpression;
 				if (receiver.IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-			    if (key != null) map[key].Add(operation);
+			    if (rarea != null) map[rarea].Add(operation);
 			}
 			return map;
 		}
@@ -62,22 +61,23 @@ public class RoundedResult : IVisitable {
 }
 
 public interface ArithmeticStatement {
-	Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+	Dictionary<StorageArea,List<ArithmeticExpression>> Affectations { get; }
 }
 
 public abstract class AbstractArithmeticStatement: StatementElement, ArithmeticStatement, VariableWriter {
     protected AbstractArithmeticStatement(CodeElementType ce, StatementType statement): base(ce, statement) { }
 	
-	public abstract Dictionary<string,List<ArithmeticExpression>> Affectations { get; }
+	public abstract Dictionary<StorageArea, List<ArithmeticExpression>> Affectations { get; }
 
-	public IDictionary<QualifiedName,object> Variables { get { return VariablesWritten; } }
-	private IDictionary<QualifiedName,object> variablesWritten;
-	public  IDictionary<QualifiedName,object> VariablesWritten {
+	public IDictionary<StorageArea, object> Variables { get { return VariablesWritten; } }
+	private IDictionary<StorageArea, object> variablesWritten;
+	public  IDictionary<StorageArea,object> VariablesWritten {
 		get {
 			if (variablesWritten != null) return variablesWritten;
-			variablesWritten = new Dictionary<QualifiedName, object>();
+			variablesWritten = new Dictionary<StorageArea, object>();
+
 			foreach(var affectation in Affectations)
-				variablesWritten.Add(new URI(affectation.Key), affectation.Value);
+				variablesWritten.Add(affectation.Key, affectation.Value);
 			return variablesWritten;
 		}
 	}

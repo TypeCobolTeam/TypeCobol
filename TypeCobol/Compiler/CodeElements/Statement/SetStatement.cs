@@ -26,19 +26,17 @@
 
         public bool IsUnsafe { get { return false; } }
 
-        protected IDictionary<QualifiedName, object> variables;
-        public virtual IDictionary<QualifiedName, object> Variables
+        protected IDictionary<StorageArea, object> variables;
+        public virtual IDictionary<StorageArea, object> Variables
         {
-            get { return new Dictionary<QualifiedName, object>(); }
+            get { return new Dictionary<StorageArea, object>(); }
         }
-        public virtual IDictionary<QualifiedName, object> VariablesWritten
+        public virtual IDictionary<StorageArea, object> VariablesWritten
         {
             [NotNull]
             get
             {
-                var written = new Dictionary<QualifiedName, object>();
-                foreach (var v in Variables) if (v.Value != null) written.Add(v.Key, v.Value);
-                return written;
+                return Variables;
             }
         }
 
@@ -96,25 +94,23 @@
 
 
 
-        public override IDictionary<QualifiedName, object> Variables
+        public override IDictionary<StorageArea, object> Variables
         {
             [NotNull]
             get
             {
                 if (variables != null) return variables;
-                variables = new Dictionary<QualifiedName, object>();
-
-                var sending = SendingItem as QualifiedName;
-                if (sending != null) variables.Add(sending, null);
+                variables = new Dictionary<StorageArea, object>();
 
                 if (ReceivingStorageAreas != null)
                     foreach (var item in ReceivingStorageAreas)
                     {
-                        var name = new URI(item?.StorageArea?.SymbolReference?.Name);
-                        if (variables.ContainsKey(name))
-                            if (item?.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
-                            else throw new System.ArgumentException(name + " already written, but not subscripted?");
-                        else variables.Add(name, SendingItem);
+                        if (item?.StorageArea == null) continue;
+
+                        if (variables.ContainsKey(item.StorageArea))
+                            if (item.StorageArea is DataOrConditionStorageArea) continue; // same variable with (presumably) different subscript
+                            else throw new System.ArgumentException(item.StorageArea + " already written, but not subscripted?");
+                        else variables.Add(item.StorageArea, SendingItem);
                     }
 
                 return variables;
@@ -340,14 +336,19 @@
                 return SendingValue.Value;
             }
         }
-        public override IDictionary<QualifiedName, object> Variables
+        public override IDictionary<StorageArea, object> Variables
         {
             get
             {
                 if (variables != null) return variables;
-                variables = new Dictionary<QualifiedName, object>();
-                //			variables.Add(new URI(SendingValue.Value.ToString()), null);
-                foreach (var item in Conditions) variables.Add(new URI(item.MainSymbolReference.Name), SendingItem);
+                variables = new Dictionary<StorageArea, object>();
+
+                foreach (var item in Conditions)
+                {
+                    if (item?.StorageArea == null) continue;
+                    variables.Add(item.StorageArea, SendingItem);
+                }
+                   
                 return variables;
             }
         }

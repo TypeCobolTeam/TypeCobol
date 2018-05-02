@@ -77,33 +77,32 @@ public class StringStatement: StatementElement, VariableWriter {
 		return sb.ToString();
 	}
 
-	private IDictionary<QualifiedName,object> variables;
-	public  IDictionary<QualifiedName,object> Variables {
+	private IDictionary<StorageArea, object> variables;
+	public  IDictionary<StorageArea, object> Variables {
 		get {
 			if (variables != null) return variables;
-			variables = new Dictionary<QualifiedName, object>();
+			variables = new Dictionary<StorageArea, object>();
 			foreach(var kv in VariablesWritten) variables.Add(kv.Key, kv.Value);
 			if (StringContentsToConcatenate == null) return variables;
 			foreach(var content in StringContentsToConcatenate) {
 				foreach(var variable in content.SendingFields) {
 					if (variable.IsLiteral) continue;
-					string name = variable.ToString();
-
-                    var qualifiedName = new URI(name);
-                    if (!variables.ContainsKey(qualifiedName)) {
-                        variables.Add(qualifiedName, null);
+					var storageArea = variable.StorageArea;
+                  
+                    if (!variables.ContainsKey(storageArea)) {
+                        variables.Add(storageArea, null);
                     }
                 }
 			}
 			return variables;
 		}
 	}
-	private IDictionary<QualifiedName,object> variablesWritten;
-	public  IDictionary<QualifiedName,object> VariablesWritten {
+	private IDictionary<StorageArea, object> variablesWritten;
+	public  IDictionary<StorageArea,object> VariablesWritten {
 		get {
 			if (variablesWritten != null) return variablesWritten;
-			variablesWritten = new Dictionary<QualifiedName, object>();
-			if (ReceivingField != null) variablesWritten.Add(new URI(ReceivingField.ToString()), StringContentsToConcatenate);
+			variablesWritten = new Dictionary<StorageArea, object>();
+			if (ReceivingField?.StorageArea != null) variablesWritten.Add(ReceivingField.StorageArea, StringContentsToConcatenate);
 			return variablesWritten;
 		}
 	}

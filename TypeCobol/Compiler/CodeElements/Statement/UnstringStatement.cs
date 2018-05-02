@@ -77,29 +77,29 @@ public class UnstringStatement: StatementElement, VariableWriter {
 		return str.ToString();
 	}
 
-	private IDictionary<QualifiedName,object> variables;
-	public  IDictionary<QualifiedName,object> Variables {
+	private IDictionary<StorageArea,object> variables;
+	public  IDictionary<StorageArea, object> Variables {
 		get {
 			if (variables != null) return variables;
-			variables = new Dictionary<QualifiedName, object>();
+			variables = new Dictionary<StorageArea, object>();
 			foreach(var kv in VariablesWritten) variables.Add(kv.Key, kv.Value);
-			if (SendingField != null && !SendingField.IsLiteral) variables.Add(new URI(SendingField.ToString()), null);
+			if (SendingField?.StorageArea != null && !SendingField.IsLiteral) variables.Add(SendingField.StorageArea, null);
 			return variables;
 		}
 	}
-	private IDictionary<QualifiedName,object> variablesWritten;
-	public  IDictionary<QualifiedName,object> VariablesWritten {
+	private IDictionary<StorageArea, object> variablesWritten;
+	public  IDictionary<StorageArea, object> VariablesWritten {
 		get {
 			if (variablesWritten != null) return variablesWritten;
-			variablesWritten = new Dictionary<QualifiedName, object>();
+			variablesWritten = new Dictionary<StorageArea, object>();
 			if (ReceivingFields == null) return variablesWritten;
 			string sending = SendingField == null? null : SendingField.ToString();
-			foreach(var field in ReceivingFields) {
-				var name = field.ReceivingField.ToString();
-			    
-			    var qualifiedName = new URI(name);
-			    if (!variablesWritten.ContainsKey(qualifiedName)) {
-			        variablesWritten.Add(qualifiedName, sending);
+			foreach(var field in ReceivingFields)
+			{
+			    if (field.ReceivingField?.StorageArea == null) continue;
+		
+			    if (!variablesWritten.ContainsKey(field.ReceivingField.StorageArea)) {
+			        variablesWritten.Add(field.ReceivingField.StorageArea, sending);
 			    }
 			    
 			}

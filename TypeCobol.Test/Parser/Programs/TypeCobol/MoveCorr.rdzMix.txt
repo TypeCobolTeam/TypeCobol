@@ -1,0 +1,42 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MOVECORR.
+
+       DATA DIVISION.
+
+       WORKING-STORAGE SECTION.
+
+       01 var2 PIC X(10).
+
+       01 groupA-1.
+         02 groupA-2.
+           03 varA type Date.
+       01 groupB-1.
+         02 groupB-2.
+           03 varB type Bool.
+
+       PROCEDURE DIVISION.
+
+
+           MOVE CORR var2 TO var2.
+
+Line 22[12,45] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.groupB-2.varB:BOOL.
+           MOVE CORR groupA-1::groupA-2::varA
+                  To groupB-1::groupB-2::varB
+Line 24[12,45] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.groupB-2.varB:BOOL.
+           MOVE CORR groupA-1::varA
+                  To groupB-1::groupB-2::varB
+Line 26[12,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.varB:BOOL.
+           MOVE CORR groupA-1::groupA-2::varA
+                  To groupB-1::varB
+Line 28[12,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.varB:BOOL.
+           MOVE CORR groupA-1::varA
+                  To groupB-1::varB
+
+Line 31[12,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable2 is not referenced
+Line 31[12,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable is not referenced
+           MOVE CORR undefinedVariable
+                  To undefinedVariable2
+
+
+           .
+       END PROGRAM MOVECORR.
