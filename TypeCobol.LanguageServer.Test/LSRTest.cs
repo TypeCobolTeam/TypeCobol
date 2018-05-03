@@ -199,6 +199,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("DisplayCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void GlobalStorageCompletion()
+        {
+            LSRTestHelper.Test("GlobalStorageCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
         #endregion
     }
 }

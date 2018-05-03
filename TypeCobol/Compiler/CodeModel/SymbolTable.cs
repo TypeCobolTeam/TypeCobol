@@ -261,6 +261,7 @@ namespace TypeCobol.Compiler.CodeModel
                     throw new NotSupportedException();
 
                 var currentTable = GetTableFromScope(currentScope);
+                if (currentTable == null) { currentScope--; continue; }
 
                 if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
@@ -339,8 +340,9 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 if (currentScope == Scope.Namespace || currentScope == Scope.Intrinsic)
                     throw new NotSupportedException(); //There is no variable stored in those scopes
-
-                var dataToSeek = this.GetTableFromScope(currentScope).DataEntries.Values.SelectMany(t => t);
+                var scopedTable = this.GetTableFromScope(currentScope);
+                if (scopedTable == null) { currentScope--; continue;}
+                var dataToSeek = scopedTable.DataEntries.Values.SelectMany(t => t);
                 var results = dataToSeek.AsQueryable().Where(predicate);
                 foundedVariables.AddRange(results);
 
@@ -856,15 +858,17 @@ namespace TypeCobol.Compiler.CodeModel
             Scope currentScope = this.CurrentScope;
             while (currentScope >= maximalScope)
             {
-                var dataToSeek = this.GetTableFromScope(currentScope).Types.Values.SelectMany(t => t);
+                var scopedTable = this.GetTableFromScope(currentScope);
+                if (scopedTable == null) { currentScope--; continue; }
+                var dataToSeek = scopedTable.Types.Values.SelectMany(t => t);
                 if (currentScope == Scope.Namespace)
                 {
                     //For namespace scope, we need to browse every program
-                    dataToSeek = this.GetTableFromScope(currentScope)
+                    dataToSeek = scopedTable
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
                                     .Types.Values.SelectMany(t => t));
 
-                    dataToSeek = dataToSeek.Concat(this.GetTableFromScope(currentScope)
+                    dataToSeek = dataToSeek.Concat(scopedTable
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Global)
                                     .Types.Values.SelectMany(t => t)));
                 }
@@ -968,11 +972,12 @@ namespace TypeCobol.Compiler.CodeModel
             Scope currentScope = this.CurrentScope;
             while (currentScope >= maximalScope)
             {
-                var dataToSeek = this.GetTableFromScope(currentScope).Functions.Values.SelectMany(t => t);
+                var scopedTable = this.GetTableFromScope(currentScope);
+                var dataToSeek = scopedTable.Functions.Values.SelectMany(t => t);
                 if (currentScope == Scope.Namespace)
                 {
                     //For namespace scope, we need to browse every program
-                    dataToSeek = this.GetTableFromScope(currentScope)
+                    dataToSeek = scopedTable
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
                                     .Functions.Values.SelectMany(t => t));
                 }
