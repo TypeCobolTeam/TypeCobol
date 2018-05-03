@@ -206,6 +206,14 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CompletionWithNestedProgram", LsrTestingOptions.NoLsrTesting, true);
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void MoveZeroSpaceCompletion()
+        {
+            LSRTestHelper.Test("MoveZeroSpaceCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
+        
         #endregion
     }
 }

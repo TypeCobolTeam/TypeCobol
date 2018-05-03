@@ -207,6 +207,12 @@
     <None Include="LSRTests\SetToAddressOfCompletion\output_expected\SetToAddressOfCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\MoveZeroSpaceCompletion\input\MoveZeroSpaceCompletion.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\MoveZeroSpaceCompletion\output_expected\MoveZeroSpaceCompletion.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\SimpleMoveToCompletion\input\SimpleMoveToCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
