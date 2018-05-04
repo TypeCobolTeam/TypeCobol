@@ -138,16 +138,28 @@ namespace TypeCobol.Compiler.Diagnostics
             var codeElement = customCodeElement ?? node.CodeElement as CommonDataDescriptionAndDataRedefines;
             if (codeElement?.Picture == null) return;
 
-            foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
+
+            // if there is not the same number of '(' than of ')'
+            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
             {
-                try //Try catch is here because of the risk to parse a non numerical value
+                DiagnosticUtils.AddError(node, "missing '(' or ')'");
+            }
+            // if the first '(' is after first ')' OR last '(' is after last ')'
+            else if (codeElement.Picture.Value.IndexOf("(") > codeElement.Picture.Value.IndexOf(")") || codeElement.Picture.Value.LastIndexOf("(") > codeElement.Picture.Value.LastIndexOf(")"))
+                DiagnosticUtils.AddError(node, "missing '(' or ')'");
+            else
+            {
+                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
                 {
-                    int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                }
-                catch (Exception)
-                {
-                    var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                    DiagnosticUtils.AddError(node, m);
+                    try //Try catch is here because of the risk to parse a non numerical value
+                    {
+                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
+                    }
+                    catch (Exception)
+                    {
+                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
+                        DiagnosticUtils.AddError(node, m);
+                    }
                 }
             }
         }
