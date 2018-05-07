@@ -47,7 +47,10 @@ namespace TypeCobol.Compiler.Parser
         }
     }
 
-
+    /// <summary>
+    /// An delegate for Factories used to create Node Listener
+    /// </summary>
+    public delegate NodeListener<TCtx> NodeListenerFactory<TCtx>() where TCtx : class;
 
     /// <summary>
     /// Node Listener with a parsing context
@@ -55,8 +58,6 @@ namespace TypeCobol.Compiler.Parser
     /// <typeparam name="TCtx">Parsing context</typeparam>
 	public interface NodeListener<TCtx> where TCtx : class
     {
-
-
         /// <summary>
         /// Called when a CodeElement is created during ProgramClassParserStep,
         /// if the CodeElement type equals one of those returned by GetCodeElements.
@@ -68,6 +69,39 @@ namespace TypeCobol.Compiler.Parser
     }
 
     public class NodeDispatcher<TCtx> : NodeListener<TCtx> where TCtx : class {
+        /// <summary>
+        /// List of Static NodeListener Factory
+        /// </summary>
+        private static List<NodeListenerFactory<TCtx>> StaticNodeListenerFactory = null;
+        /// <summary>
+        /// Add Static NodeListenerFactory instance
+        /// </summary>
+        /// <param name="listener">The instance to be added</param>
+        public static void RegisterStaticNodeListenerFactory(NodeListenerFactory<TCtx> listener)
+        {
+            lock (typeof(NodeDispatcher<TCtx>))
+            {
+                if (StaticNodeListenerFactory == null && listener != null)
+                {
+                    StaticNodeListenerFactory = new List<NodeListenerFactory<TCtx>>();
+                }
+                StaticNodeListenerFactory.Add(listener);
+            }
+        }
+        /// <summary>
+        /// Remove Static NodeListenerFactory instance
+        /// </summary>
+        /// <param name="listener">The instance to be removed</param>
+        public static void RemoveStaticNodeListener(NodeListenerFactory<TCtx> listener)
+        {
+            lock (typeof(NodeDispatcher<TCtx>))
+            {
+                if (StaticNodeListenerFactory != null && listener != null)
+                {
+                    StaticNodeListenerFactory.Remove(listener);
+                }
+            }
+        }
 
         public IList<System.Type> GetNodes() { return null; }
 
@@ -97,7 +131,22 @@ namespace TypeCobol.Compiler.Parser
                 foreach (var names in namespaces)
                 {
                     var instances = Reflection.GetInstances<NodeListener<TCtx>>(assembly, names);
-                    foreach (var checker in instances) _listeners.Add(checker);
+                    foreach (var checker in instances)
+                    {
+                        _listeners.Add(checker);
+                    }
+                    //Allocate listeners from static factories.
+                    if (StaticNodeListenerFactory != null)
+                    {
+                        foreach (NodeListenerFactory<TCtx> factory in StaticNodeListenerFactory)
+                        {
+                            NodeListener<TCtx> listener = factory();
+                            if (listener != null)
+                            {
+                                _listeners.Add(listener);
+                            }
+                        }
+                    }
                 }
             }
         }

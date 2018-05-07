@@ -163,6 +163,28 @@ namespace TypeCobol.Server
                     throw new ParsingException(MessageCode.ParserInit, ex.Message, path, ex); //Make ParsingException trace back to RunOnce()
                 }
 
+                Compiler.Report.AbstractReport cmrReport = null;
+                if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath))
+                {
+                    //Register Copy Move Initialize Reporter
+                    if (config.UseAntlrProgramParsing)
+                    {
+                        Compiler.Parser.NodeDispatcher<Antlr4.Runtime.ParserRuleContext>.RegisterStaticNodeListenerFactory(
+                            () => {
+                                var report = new Compiler.Report.CopyMoveInitializeReport<Antlr4.Runtime.ParserRuleContext>();
+                                cmrReport = report; return report;
+                            });
+                    }
+                    else
+                    {
+                        Compiler.Parser.NodeDispatcher<Compiler.CodeElements.CodeElement>.RegisterStaticNodeListenerFactory(
+                            () => {
+                                var report = new Compiler.Report.CopyMoveInitializeReport<Compiler.CodeElements.CodeElement>();
+                                cmrReport = report; return report;
+                            });
+                    }
+                }
+
                 parser.Parse(path);
                 
                 bool copyAreMissing = false;
@@ -243,6 +265,17 @@ namespace TypeCobol.Server
                     catch(Exception e)
                     {
                         throw new GenerationException(e.Message, path, e);
+                    }
+                }
+                if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
+                {
+                    try
+                    {
+                        cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
+                    }
+                    catch (Exception e)
+                    {
+                        System.Console.Error.WriteLine(string.Format("Fail to emit report on MOVE and INTIALIZE statements that target COPYs! : {0}", e.Message));
                     }
                 }
                 if (config.ExecToStep >= ExecutionStep.Generate) {

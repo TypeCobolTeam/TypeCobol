@@ -19,6 +19,7 @@ namespace TypeCobol.Tools.Options_Config
         public string ExpandingCopyFilePath;
         public string ExtractedCopiesFilePath;
         public bool UseAntlrProgramParsing;
+        public string ReportCopyMoveInitializeFilePath;
         public List<string> CopyFolders = new List<string>();
         public List<string> InputFiles = new List<string>();
         public List<string> OutputFiles = new List<string>();
@@ -157,8 +158,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "f|outputFormat=", "Output format (default is Cobol 85). (Cobol85/0, PublicSignature/1)", v =>typeCobolConfig.RawOutputFormat = v},
                 { "ec|expandingcopy=", "Generate a file with all COPY directives expanded in the source code. This option will be executed if the Preprocessor step is enabled.", v => typeCobolConfig.ExpandingCopyFilePath = v },
                 { "exc|extractusedcopy=", "Generate a file with all COPIES detected by the parser", v => typeCobolConfig.ExtractedCopiesFilePath = v },
-                { "antlrp|antlrprogparse", "Use ANTLR to parse a program", v => typeCobolConfig.UseAntlrProgramParsing = true}
-
+                { "antlrp|antlrprogparse", "Use ANTLR to parse a program", v => typeCobolConfig.UseAntlrProgramParsing = true},
+                { "cmr|copymovereport=", "{PATH} to Report all Move and Initialize statements that target a COPY.", v => typeCobolConfig.ReportCopyMoveInitializeFilePath = v }
             };
             return commonOptions;
         }

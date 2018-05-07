@@ -1,0 +1,183 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Antlr4.Runtime;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Parser;
+
+namespace TypeCobol.Compiler.Report
+{
+    public class CopyMoveInitializeReport<TCtx> : AbstractReport, NodeListener<TCtx> where TCtx : class
+    {
+        /// <summary>
+        /// The list of all MoveStatement and InitializeStatement Nodes
+        /// </summary>
+        public List<Node> MoveInitializeNodes
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Internal Writer.
+        /// </summary>
+        private TextWriter Writer
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Empty constructor
+        /// </summary>
+        public CopyMoveInitializeReport()
+        {
+            MoveInitializeNodes = new List<Node>();
+        }
+        /// <summary>
+        /// Collect Move and Initialize Nodes.
+        /// </summary>
+        /// <param name="node">The Node</param>
+        /// <param name="context">The parsing context</param>
+        /// <param name="program">The underlying program.</param>
+        public void OnNode(Node node, TCtx context, Program program)
+        {
+            if (node.CodeElement != null)
+            {
+                switch (node.CodeElement.Type)
+                {
+                    case CodeElements.CodeElementType.MoveStatement:
+                    case CodeElements.CodeElementType.InitializeStatement:
+                        MoveInitializeNodes.Add(node);
+                        break;
+                }
+            }
+        }
+
+        public override void Report(TextWriter writer)
+        {
+            Writer = writer;
+            foreach (Node node in MoveInitializeNodes)
+            {
+                switch (node.CodeElement.Type)
+                {
+                    case CodeElements.CodeElementType.MoveStatement:
+                        {
+                            Move move = node as Move;
+                            ReportVariablesWritten(move);
+                        }
+                        break;
+                    case CodeElements.CodeElementType.InitializeStatement:
+                        {
+                            Initialize initialize = node as Initialize;
+                            ReportVariablesWritten(initialize);
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void ReportVariablesWritten(Initialize initialize)
+        {
+            ReceivingStorageArea[] receivings = (initialize.CodeElement as InitializeStatement).ReceivingStorageAreas;
+            if (receivings != null)
+            {
+                foreach (ReceivingStorageArea receiving in receivings)
+                {
+                    ReportVariable(initialize, receiving.StorageArea);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Report all variables written by a move statement.
+        /// </summary>
+        /// <param name="move">The move statement</param>
+        private void ReportVariablesWritten(Move move)
+        {
+            IDictionary<StorageArea, object> variables = move.VariablesWritten;
+            foreach (var variable in variables)
+            {
+                ReportVariable(move, variable.Key);
+            }
+        }
+
+        /// <summary>
+        /// Recurive check for a DataDefinition if it has field defined inside a COPYs
+        /// </summary>
+        /// <param name="data">The Data to check</param>
+        /// <returns></returns>
+        private void CollectInsideCopy(DataDefinition data, List<DataDefinition> data_copy)
+        {
+            if (data.IsInsideCopy())
+            {
+                data_copy.Add(data);
+            }
+            if (data.Children != null)
+            {
+                foreach (var Node in data.Children)
+                {
+                    CollectInsideCopy(Node as DataDefinition, data_copy);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Report a variable.
+        /// </summary>
+        /// <param name="node">Node that contains the variable</param>
+        private void ReportVariable(Node node, StorageArea variable)
+        {
+            StorageArea wname = variable;
+            if (wname == null || !wname.NeedDeclaration)
+                return;
+            var area = wname.GetStorageAreaThatNeedDeclaration;
+            if (area.SymbolReference == null)
+                return;
+
+            IEnumerable<DataDefinition> found;
+            var foundQualified = new List<KeyValuePair<string, DataDefinition>>();
+
+            foundQualified =
+                node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
+                    ? area.SymbolReference.URI
+                    : new CodeElements.Expressions.URI(area.ToString()),
+                    null);
+            found = foundQualified.Select(v => v.Value);
+            foreach (var v in found)
+            {
+                List<DataDefinition> data_copy = new List<DataDefinition>();
+                CollectInsideCopy(v, data_copy);
+                if (data_copy.Count > 0)
+                {
+                    string name = v.Name;
+                    string sourceText = node.CodeElement.SourceText.Replace('\r', ' ').Replace('\n', ' ');
+                    int line = node.CodeElement.Line;
+                    int column = node.CodeElement.Column;
+                    string fileName = node.CodeElement.TokenSource.SourceName;
+
+                    bool isMove = node is Move;
+                    string kind = isMove ? "MOVE" : "INITIALIZE";
+                    foreach (DataDefinition d in data_copy)
+                    {
+                        string copySourceText = d.CodeElement.SourceText.Replace('\r', ' ').Replace('\n', ' ');
+                        int copyLine = d.CodeElement.Line;
+                        int copyColumn = d.CodeElement.Column;
+                        Preprocessor.ImportedToken firstImportedToken = d.CodeElement.ConsumedTokens.First(t => t is Preprocessor.ImportedToken) as Preprocessor.ImportedToken;
+                        string copyName = firstImportedToken.CopyDirective.TextName;// .TokenSource.SourceName;
+                        Writer.WriteLine(string.Format("CopyName={0};{1};Variable={2};SourceText={3};Line={4};Column={5};FileName={6};CopySourceText={7};CopyLine={8};CopyColumn={9};",
+                            copyName, kind, name, sourceText, line, column, fileName, copySourceText, copyLine, copyColumn));
+                        //if (node is Move)
+                        //    break;//Don't recurse with move.
+                    }
+                }
+            }
+            return;
+        }
+    }
+}
