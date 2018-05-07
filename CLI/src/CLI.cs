@@ -149,6 +149,7 @@ namespace TypeCobol.Server
                                             {
                                                 HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
                                                 ExecToStep = config.ExecToStep,
+                                                UseAntlrProgramParsing = config.UseAntlrProgramParsing
                                             };
 
 #if EUROINFO_RULES

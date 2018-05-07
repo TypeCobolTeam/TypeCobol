@@ -7,7 +7,19 @@ namespace TypeCobol.Tools {
 public class Reflection {
 
 	public static bool IsTypeOf(Type type, Type iface) {
-		return iface.IsAssignableFrom(type);
+	    if (!type.IsGenericType && !iface.IsGenericType)
+	    {
+	        return iface.IsAssignableFrom(type);
+	    }
+	    else if (type.IsGenericType && iface.IsGenericType)
+	    {
+	        System.Type instType = type.MakeGenericType(iface.GetGenericArguments());
+	        return iface.IsAssignableFrom(instType);
+	    }
+	    else
+	    {
+	        return false;
+	    }
 	}
 
 	public static List<Type> GetTypesInNamespace(string nspace, Assembly assembly = null) {
@@ -37,10 +49,19 @@ public class Reflection {
 	public static List<T> GetInstances<T>(Assembly assembly, string nspace) {
 		var instances = new List<T>();
 		var types = GetTypesInNamespace<T>(nspace, assembly);
+	    System.Type iface = typeof(T);
 		foreach (var type in types) {
 			if (type.IsAbstract) continue;//cannot instanciate abstract types
-			instances.Add((T)System.Activator.CreateInstance(type));
-		}
+		    if (!type.IsGenericType && !iface.IsGenericType)
+		    {
+		        instances.Add((T) System.Activator.CreateInstance(type));
+		    }
+            else if (type.IsGenericType && iface.IsGenericType)
+		    {
+                System.Type instType = type.MakeGenericType(iface.GetGenericArguments());
+                instances.Add((T)System.Activator.CreateInstance(instType));
+            }
+        }
 		return instances;
 	}
 
