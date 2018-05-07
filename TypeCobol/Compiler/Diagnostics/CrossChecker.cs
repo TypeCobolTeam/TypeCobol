@@ -35,8 +35,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            RedefinesChecker.OnNode(node);
-            FunctionDeclarationChecker.OnNode(node);
+            RedefinesChecker<CodeElement>.OnNode(node);
+            FunctionDeclarationChecker<CodeElement>.OnNode(node);
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);

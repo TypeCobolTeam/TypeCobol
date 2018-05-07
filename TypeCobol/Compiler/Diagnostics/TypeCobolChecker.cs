@@ -545,27 +545,39 @@ namespace TypeCobol.Compiler.Diagnostics
 	}
 }
 
-    class FunctionDeclarationChecker : NodeListener
+    class FunctionDeclarationChecker<TCtx> : NodeListener<TCtx> where TCtx : class
     {
         public IList<Type> GetNodes()
         {
             return new List<Type> {typeof(FunctionDeclaration),};
 	}
 
-        public void OnNode([NotNull] Node node, ParserRuleContext context, CodeModel.Program program)
+        public void OnNode([NotNull] Node node, TCtx context, CodeModel.Program program)
         {
             var functionDeclaration = node as FunctionDeclaration;
             if (functionDeclaration == null) return; //not my job
             var header = node.CodeElement as FunctionDeclarationHeader;
-	    if (header == null) return; //not my job
+	        if (header == null) return; //not my job
 
-		var filesection = node.Get<FileSection>("file");
-		if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
-                DiagnosticUtils.AddError(filesection,
-                    "Illegal FILE SECTION in function \"" + header.Name + "\" declaration",
-                    context);
+		    var filesection = node.Get<FileSection>("file");
+            if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
+            {
+                string msg = "Illegal FILE SECTION in function \"" + header.Name + "\" declaration";
+                if (context is ParserRuleContext)
+                {
+                    DiagnosticUtils.AddError(filesection, msg, context as ParserRuleContext);
+                }
+                else if (context is CodeElement)
+                {
+                    DiagnosticUtils.AddError(filesection, msg, context as CodeElement);
+                }
+                else
+                {
+                    DiagnosticUtils.AddError(filesection,msg);
+                }
+            }
 
-		CheckNoGlobalOrExternal(node.Get<DataDivision>("data-division"));
+            CheckNoGlobalOrExternal(node.Get<DataDivision>("data-division"));
             CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
         }
 

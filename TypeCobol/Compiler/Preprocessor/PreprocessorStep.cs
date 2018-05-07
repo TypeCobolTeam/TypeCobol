@@ -132,11 +132,11 @@ namespace TypeCobol.Compiler.Preprocessor
                 compilerDirectiveErrorStrategy.Reset(directivesParser);
 
                 // 3. Try to parse a compiler directive starting with the current token
-                perfStatsForParserInvocation.OnStartAntlrParsing();
+                perfStatsForParserInvocation.OnStartParsing();
                 if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.BeginParsingSection();
                 CobolCompilerDirectivesParser.CompilerDirectingStatementContext directiveParseTree = directivesParser.compilerDirectingStatement();
                 if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.EndParsingSection(directiveParseTree.ChildCount);
-                perfStatsForParserInvocation.OnStopAntlrParsing(
+                perfStatsForParserInvocation.OnStopParsing(
                     AntlrPerformanceProfiler != null ? (int)AntlrPerformanceProfiler.CurrentFileInfo.DecisionTimeMs : 0,
                     AntlrPerformanceProfiler != null ? AntlrPerformanceProfiler.CurrentFileInfo.RuleInvocations.Sum() : 0);
 
