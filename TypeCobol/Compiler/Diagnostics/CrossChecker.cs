@@ -254,7 +254,10 @@ namespace TypeCobol.Compiler.Diagnostics
                         foreach (var receiver in receivers)
                         {
                             if (receiver.Usage != DataUsage.Pointer)
-                                DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers");
+                                DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
+                            
+                            if (((DataDefinitionEntry)receiver.CodeElement).LevelNumber.Value > 49)
+                                DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
                         }
                     }
                 }
