@@ -18,8 +18,32 @@
          02 groupB-2.
            03 varB type DateDB2.
 
-       PROCEDURE DIVISION.           
+       01 ED-Titre.
+            05 TimeDB2 PIC X(10).
+
+       01 TechnicalContext TYPEDEF STRICT PUBLIC.
+            05 SystemTime.
+
+       01  CDNBEXTR-SharedData  TYPEDEF STRICT PRIVATE.
+
+      *  --Technical context
+           05 TechnicalContext     TYPE TechnicalContext.
+      *  --System Date in DB2 format
+           05 SystemDateDB2        PIC X(10).
+
+           05  C-Application       PIC X(08) VALUE "FCDN".
+           05  C-Secteur           PIC X(08) VALUE "TITRES".
+           05  C-Plateforme        PIC X(08) VALUE "CENTRAL".
+           05  C-OPC               PIC X(08) VALUE "OPC".
+
+       01  SharedData  TYPE CDNBEXTR-SharedData.
+
+
+       PROCEDURE DIVISION.
            MOVE CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
            ADD CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
-      *    SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.		   
+      *    SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
+
+           MOVE CORR SharedData::TechnicalContext::SystemTime to 
+               ED-Titre::TimeDB2.                                                      
        END PROGRAM MOVECORR.
