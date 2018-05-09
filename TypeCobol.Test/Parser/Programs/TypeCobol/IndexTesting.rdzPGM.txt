@@ -6,7 +6,7 @@ Line 57[8,42] <27, Error, Syntax> - Syntax error : Index can not be use with OF 
 Line 60[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx 
 Symbols found: IndexTesting::Bad::BadType::BadVar::BadIdx | IndexTesting::Bad::BadType::BadVar2::BadIdx
 Line 62[8,28] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol
-Line 67[8,41] <27, Error, Syntax> - Syntax error : [Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers
+Line 67[8,41] <27, Error, Syntax> - Syntax error : [Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.
 
 --- Program ---
 PROGRAM: IndexTesting common:False initial:False recursive:False
