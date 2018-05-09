@@ -622,6 +622,23 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenQualifiedBoolVar") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void GenMoveCorrTest()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenMoveCorr") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void GenCorrStatementsTest()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenCorrStatements") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
 
 #if EUROINFO_RULES
         [TestMethod]

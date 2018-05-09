@@ -1,0 +1,44 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MOVECORR.
+
+       DATA DIVISION.
+
+       WORKING-STORAGE SECTION.
+
+      *01 DateDB2 TYPEDEF STRICT PUBLIC.
+      *  10  YYYY   PIC 9(04).
+      *  10  filler PIC X value '-'.
+      *  10  MM     PIC 9(02).
+      *  10  filler PIC X value '-'.
+      *  10  DD     PIC 9(02).
+
+      *01 myDate TYPE DateDB2.
+       01 myDate.
+           02 YYYY PIC 9(04).
+           02 PIC X value '-'.
+           02 MM PIC 9(02).
+           02 PIC X value '-'.
+           02 DD PIC 9(02).
+                              
+
+       01 groupB-1.
+         02 groupB-2.
+      *    03 varB type DateDB2.
+           03 varB.
+           04 YYYY PIC 9(04).
+           04 PIC X value '-'.
+           04 MM PIC 9(02).
+           04 PIC X value '-'.
+           04 DD PIC 9(02).
+                                
+
+       PROCEDURE DIVISION.           
+      *    MOVE CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
+           MOVE CORR YYYY OF myDate TO YYYY OF varB OF groupB-2 OF 
+           groupB-1.
+      *    ADD CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
+           ADD CORR YYYY OF myDate TO YYYY OF varB OF groupB-2 OF 
+           groupB-1.
+      *    SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.		   
+       END PROGRAM MOVECORR.
