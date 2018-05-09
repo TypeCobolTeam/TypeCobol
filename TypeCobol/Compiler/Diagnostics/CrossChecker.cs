@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
@@ -243,7 +244,20 @@ namespace TypeCobol.Compiler.Diagnostics
                             foundQualified.First().Key);
                     }
                 }
-
+                else if (found.First().Usage == DataUsage.Pointer && found.First().CodeElement is DataDefinitionEntry)
+                {
+                    if (node.CodeElement is SetStatementForIndexes)
+                    {
+                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsPointer, node, storageArea,
+                            foundQualified.First().Key);
+                        var receivers = node["receivers"] as List<DataDefinition>;
+                        foreach (var receiver in receivers)
+                        {
+                            if (receiver.Usage != DataUsage.Pointer)
+                                DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers");
+                        }
+                    }
+                }
             }
 
             if (!found.Any())

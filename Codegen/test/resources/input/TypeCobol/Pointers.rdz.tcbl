@@ -1,0 +1,22 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pointers.
+
+       DATA DIVISION.
+       LOCAL-STORAGE SECTION.
+
+       01 noPointer PIC S9(2) value 12.
+
+       01 pointer0 pointer.
+       01 pointer1 pointer.
+       01 pointer2 pointer.
+
+       PROCEDURE DIVISION.
+
+       SET address of noPointer to pointer0.
+
+       SET pointer0 UP BY 3.
+       SET pointer0 DOWN BY 1.
+       SET pointer0,pointer1 UP BY 1.
+       SET pointer0,pointer1,pointer2 DOWN BY 12.
+
+       END PROGRAM Pointers.

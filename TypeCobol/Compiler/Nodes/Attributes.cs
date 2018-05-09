@@ -38,12 +38,15 @@ namespace TypeCobol.Compiler.Nodes {
             attributes["value"] = new ValueAttribute();
             attributes["type"]  = new TypeAttribute();
 		    attributes["sender"] = new SenderAttribute();
-		    attributes["receiver"] = new ReceiverAttribute();
-		    attributes["unsafe"] = new UnsafeAttribute();
+	        attributes["receiver"] = new ReceiverAttribute();
+            attributes["unsafe"] = new UnsafeAttribute();
 		    attributes["function"] = new FunctionUserAttribute();
 		    attributes["definitions"] = new DefinitionsAttribute();
 	        attributes["usage"] = new UsageAttribute();
 	        attributes["hash"] = new HashAttribute();
+	        attributes["receivers"] = new ReceiversAttribute();
+	        attributes["receiverusage"] = new ReceiverUsageAttribute();
+	        attributes["incrementDirection"] = new incrementDirectionAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
@@ -96,6 +99,43 @@ namespace TypeCobol.Compiler.Nodes {
             }
             else
                 return null;
+        }
+    }
+
+    internal class ReceiverUsageAttribute : Attribute
+    {
+
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            var codeElement = node.CodeElement;
+            var setStatement = codeElement as SetStatementForIndexes;
+            List<List<DataDefinition>> variablesWrittenRaw = new List<List<DataDefinition>>();
+            List<DataDefinition> variablesWritten = new List<DataDefinition>();
+            if (setStatement != null && node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            {
+                foreach (var data in setStatement.StorageAreaWrites)
+                {
+                    variablesWrittenRaw.Add(
+                        node.SymbolTable.DataEntries.Where(x => x.Key == data.MainSymbolReference.Name).SelectMany(x => x.Value).ToList());
+                }
+
+                foreach (var varWritten in variablesWrittenRaw)
+                {
+                    if (varWritten.Count > 1)
+                    {
+                        throw new Exception("Ambiguous -ToTest-");
+                    }
+                    else
+                    {
+                        variablesWritten.Add(varWritten.First());
+                    }
+                }
+
+            }
+            if (variablesWritten == null) return null;
+            if (variablesWritten.Count == 0) return null;
+            else return variablesWritten.First().Usage;
         }
     }
     internal class HashAttribute : Attribute
@@ -181,26 +221,81 @@ namespace TypeCobol.Compiler.Nodes {
 	    }
     }
 
-    internal class SenderAttribute: Attribute {
-	    public object GetValue(object o, SymbolTable table) {
-		    var ce = ((Node)o).CodeElement;
+    internal class SenderAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            var ce = node.CodeElement;
 
-		    var set = ce as SetStatementForConditions;
-		    if (set != null) return new URI(set.SendingValue.Value.ToString());
-
-                //The only skeletons rule that use "sender" attribute if for "set bool to false" so ignore all other codeElement that are not a SetStatementForConditions
-                return null;
-	    }
+            // Used for bool arithmetics
+            var setCondition = ce as SetStatementForConditions;
+            if (setCondition != null)
+                return new URI(setCondition.SendingValue.Value.ToString());
+            else
+            {
+                // Used for pointers arithmetics
+                var setIndex = ce as SetStatementForIndexes;
+                if (setIndex != null)
+                    return new URI(setIndex.SendingVariable.Value.ToString());
+            }
+            return null;
+        }
     }
-    internal class ReceiverAttribute: Attribute {
-	    public object GetValue(object o, SymbolTable table) {
-	        var codeElement = ((Node)o).CodeElement;
-	        var variablesWritten = codeElement.StorageAreaWrites;
-	        if (variablesWritten == null) return null;
+    internal class incrementDirectionAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            var ce = node.CodeElement;
+            var setIndex = ce as SetStatementForIndexes;
+            if (setIndex != null)
+                return setIndex.IncrementDirection.ToString();
+            return null;
+        }
+    }
+    
+    internal class ReceiverAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var codeElement = ((Node)o).CodeElement;
+            var variablesWritten = codeElement.StorageAreaWrites;
+            if (variablesWritten == null) return null;
             if (variablesWritten.Count == 0) return null;
-            if (variablesWritten.Count == 1) return variablesWritten[0].ToString();
-		    throw new System.ArgumentOutOfRangeException("Too many receiving items ("+ variablesWritten.Count+")");
-	    }
+            if (variablesWritten.Count == 1) return new URI(variablesWritten[0].ToString());
+            throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");
+        }
+    }
+    internal class ReceiversAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            var codeElement = node.CodeElement;
+            var setStatement = codeElement as SetStatementForIndexes;
+            List<List<DataDefinition>> variablesWrittenRaw = new List<List<DataDefinition>>();
+            List<DataDefinition> variablesWritten = new List<DataDefinition>();
+            if (setStatement != null && node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            {
+                foreach (var data in setStatement.StorageAreaWrites)
+                {
+                    variablesWrittenRaw.Add(
+                        node.SymbolTable.DataEntries.Where(x => x.Key == data.MainSymbolReference.Name).SelectMany(x => x.Value).ToList());
+                }
+                
+                foreach (var varWritten in variablesWrittenRaw)
+                {
+                    //TODO: handle the case of ambiguous variable (varWritten.Count > 1)
+                    variablesWritten.Add(varWritten.First());
+                }
+
+            }
+            if (variablesWritten == null) return null;
+            if (variablesWritten.Count == 0) return null;
+            return variablesWritten;
+            
+        }
     }
 
     internal class UnsafeAttribute: Attribute {
