@@ -33,12 +33,47 @@
            04 DD PIC 9(02).
                                 
 
-       PROCEDURE DIVISION.           
+       01 ED-Titre.
+            05 TimeDB2 PIC X(10).
+
+      *01 TechnicalContext TYPEDEF STRICT PUBLIC.
+      *     05 SystemTime.
+
+      *01  CDNBEXTR-SharedData  TYPEDEF STRICT PRIVATE.
+
+      *  --Technical context
+      *    05 TechnicalContext     TYPE TechnicalContext.
+      *  --System Date in DB2 format
+      *    05 SystemDateDB2        PIC X(10).
+
+      *    05  C-Application       PIC X(08) VALUE "FCDN".
+      *    05  C-Secteur           PIC X(08) VALUE "TITRES".
+      *    05  C-Plateforme        PIC X(08) VALUE "CENTRAL".
+      *    05  C-OPC               PIC X(08) VALUE "OPC".
+
+      *01  SharedData  TYPE CDNBEXTR-SharedData.
+       01 SharedData.
+           02 TechnicalContext.
+             03 SystemTime.
+           02 SystemDateDB2 PIC X(10).
+           02 C-Application PIC X(08) VALUE "FCDN".
+           02 C-Secteur PIC X(08) VALUE "TITRES".
+           02 C-Plateforme PIC X(08) VALUE "CENTRAL".
+           02 C-OPC PIC X(08) VALUE "OPC".
+                                                
+
+
+       PROCEDURE DIVISION.
       *    MOVE CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
            MOVE CORR YYYY OF myDate TO YYYY OF varB OF groupB-2 OF 
            groupB-1.
       *    ADD CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
            ADD CORR YYYY OF myDate TO YYYY OF varB OF groupB-2 OF 
            groupB-1.
-      *    SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.		   
+      *    SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
+
+      *    MOVE CORR SharedData::TechnicalContext::SystemTime to
+      *        ED-Titre::TimeDB2.
+           MOVE CORR SystemTime OF TechnicalContext OF SharedData to 
+               TimeDB2 OF ED-Titre.                                        
        END PROGRAM MOVECORR.
