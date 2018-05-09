@@ -72,17 +72,13 @@ namespace TypeCobol.Codegen.Actions
                 }
                 else
                 {
-                    //Check if the first element is already in
                     SymbolReference first = items[0];
+                    SymbolReference last = items[items.Count - 1];
                     if (AllItemsListContains(first))
                         return true;
-                    if (ItemsContains(first))
+                    if (ItemsContains(first) || ItemsContains(last))
                     {
-                        foreach (SymbolReference sr in items)
-                        {
-                            if (!ItemsContains(sr))
-                                Items.Add(sr);
-                        }
+                        Items = items;
                     }
                     else
                     {
