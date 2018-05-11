@@ -1,0 +1,96 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MOVECORR.
+
+       DATA DIVISION.
+
+       WORKING-STORAGE SECTION.
+
+          01 CTGCPL-Enreg TYPEDEF STRICT.                               09220000
+             10 TYP                 PIC X(03).                          09230000
+             10 STE                 PIC X(02).                          09240000
+             10 IDTOBJ              PIC S9(9) COMP.                     09250000
+             10 NOMCLN              PIC X(10).                          09260000
+             10 VALCLN              PIC X(50).                          09270000
+
+      * structure d'enregistrement résultat de L1952                    09420000
+          01 CTGCPL-Enreg-resultat TYPEDEF STRICT.                      09430000
+             10 TVR              PIC X(1).                              09440000
+             10 TYP              PIC X(03).                             09450000
+             10 IDTOBJ           PIC S9(9) COMP.                        09460000
+             10 NOMCLN           PIC X(10).                             09470000
+             10 VALCLN           PIC X(50).
+
+
+          01 Table10-CTGCPL TYPEDEF STRICT.                             09500000
+            05 TBL10-CTGCPL-RTA-tbl TYPE CTGCPL-Enreg                   09510000
+                               OCCURS 10.
+
+      * table de 10 éléments à rechercher                               09490000
+         01 Table10-CTGCPL-Resultat TYPEDEF STRICT.                     09500000
+            05 TBL10-CTGCPL-RTA-tbl TYPE CTGCPL-Enreg-resultat          09510000
+                               OCCURS 10.
+
+       PROCEDURE DIVISION.
+       DECLARE PROCEDURE rechercheListeElements PRIVATE                 12240000
+               INPUT                                                    12250000
+                      liste-a-chercher TYPE Table10-CTGCPL              12260000
+                      nombre-elements PIC S9(2) COMP-5                  12270000
+                      site-ims       PIC X(2)                           12280000
+               OUTPUT                                                   12290000
+                      trouve TYPE Bool                                  12300000
+                      lis-trouvee TYPE Table10-CTGCPL-Resultat          12310000
+                                                                        12320000
+                      .                                                 12330000
+       DATA DIVISION.                                                   12340000
+       WORKING-STORAGE SECTION.                                         12350000
+          01  I                            PIC 9(4) COMP-5.             12360000
+          01  enr-lu                         TYPE CTGCPL-Enreg.         12370000
+      * 01  enr-a-chercher                 TYPE CTGCPL-Enreg.           12370001
+               01  L-I                            PIC 9(4) COMP-5.      12370002
+       REPLACE ==:MAX-TBL-RCH:== BY ==10==.                             12370003
+       REPLACE ==:MAX-TBL-MCTGCPL:== BY ==500==.                        12370004
+                                                                        12370005
+         01  enr-a-chercher                 TYPE CTGCPL-Enreg.          12370006
+         01  enr-trouve                     TYPE CTGCPL-Enreg.          12370007
+                                                                        12370008
+        01 MCTGCPL.                                                     12370009
+         05 MCTGCPL-TAB occurs :MAX-TBL-MCTGCPL:.                       12370010
+            10 champ TYPE CTGCPL-Enreg.                                 12370011
+                                                                        12380000
+       PROCEDURE DIVISION.
+
+      * recherche de l'element dans la table
+           PERFORM VARYING L-I FROM 1 BY 1                              12710000
+                UNTIL L-I > :MAX-TBL-MCTGCPL: OR                        12710000
+                  (MCTGCPL-TAB::TYP(L-I) = enr-a-chercher::TYP AND      12710000
+                   MCTGCPL-TAB::STE(L-I) = enr-a-chercher::STE AND      12710000
+                   MCTGCPL-TAB::IDTOBJ(L-I) =                           12710000
+                     enr-a-chercher::IDTOBJ                    AND      12710000
+                   MCTGCPL-TAB::NOMCLN(L-I) = enr-a-chercher::NOMCLN    12710000
+                   )                                                    12710000
+           END-PERFORM                                                  12710000
+           MOVE enr-a-chercher to enr-trouve                            12710000
+           IF L-I <= :MAX-TBL-MCTGCPL:                                  12710000
+              MOVE MCTGCPL-TAB::VALCLN(L-I) TO enr-trouve::VALCLN       12710000
+              DISPLAY 'rechercheElement - Element trouvé : VALCLN = '   12710000
+                      MCTGCPL-TAB::VALCLN(L-I)                          12710000
+              SET trouve TO TRUE                                        12710000
+           END-IF                                                       12710000
+
+
+        MOVE 'O' TO
+       lis-trouvee::TBL10-CTGCPL-RTA-tbl::TVR(I)                        12710000
+       MOVE enr-lu::TYP TO                                              12710000
+       lis-trouvee::TBL10-CTGCPL-RTA-tbl::TYP(I)                        12710000
+       MOVE enr-lu::IDTOBJ TO                                           12730000
+       lis-trouvee::TBL10-CTGCPL-RTA-tbl::IDTOBJ(I)                     12710000
+       MOVE enr-lu::NOMCLN TO                                           12750000
+       lis-trouvee::TBL10-CTGCPL-RTA-tbl::NOMCLN(I)                     12710000
+       MOVE enr-lu::VALCLN TO                                           12770000
+       lis-trouvee::TBL10-CTGCPL-RTA-tbl::VALCLN(I)                     12710000
+
+             GOBACK                                                     12930000
+           .                                                            12940000
+       END-DECLARE.
+
+       END PROGRAM MOVECORR.
