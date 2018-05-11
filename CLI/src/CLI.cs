@@ -237,6 +237,18 @@ namespace TypeCobol.Server
                     //Exception is thrown just below
                     }
 
+                if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
+                {//Emit any COPY MOVE/INITIALIZE Report.
+                    try
+                    {
+                        cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
+                    }
+                    catch (Exception e)
+                    {
+                        System.Console.Error.WriteLine(string.Format("Fail to emit report on MOVE and INTIALIZE statements that target COPYs! : {0}", e.Message));
+                    }
+                }
+
                 //Copy missing is more important than diagnostics
                 if (copyAreMissing) {
                     throw new MissingCopyException("Some copy are missing", path, null, logged: false, needMail: false);
@@ -265,17 +277,6 @@ namespace TypeCobol.Server
                     catch(Exception e)
                     {
                         throw new GenerationException(e.Message, path, e);
-                    }
-                }
-                if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
-                {
-                    try
-                    {
-                        cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Console.Error.WriteLine(string.Format("Fail to emit report on MOVE and INTIALIZE statements that target COPYs! : {0}", e.Message));
                     }
                 }
                 if (config.ExecToStep >= ExecutionStep.Generate) {

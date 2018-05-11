@@ -39,6 +39,7 @@ namespace TypeCobol.Compiler.Report
         {
             System.IO.StreamWriter writer = new StreamWriter(stream);
             Report(writer);
+            writer.Flush();
         }
     }
 }

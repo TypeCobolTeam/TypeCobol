@@ -111,18 +111,19 @@ namespace TypeCobol.Compiler.Report
         /// Recurive check for a DataDefinition if it has field defined inside a COPYs
         /// </summary>
         /// <param name="data">The Data to check</param>
+        /// <param name="dataCopy">Output list to store all Copy data</param>
         /// <returns></returns>
-        private void CollectInsideCopy(DataDefinition data, List<DataDefinition> data_copy)
+        private void CollectInsideCopy(DataDefinition data, List<DataDefinition> dataCopy)
         {
             if (data.IsInsideCopy())
             {
-                data_copy.Add(data);
+                dataCopy.Add(data);
             }
             if (data.Children != null)
             {
-                foreach (var Node in data.Children)
+                foreach (var node in data.Children)
                 {
-                    CollectInsideCopy(Node as DataDefinition, data_copy);
+                    CollectInsideCopy(node as DataDefinition, dataCopy);
                 }
             }
         }
@@ -139,21 +140,18 @@ namespace TypeCobol.Compiler.Report
             var area = wname.GetStorageAreaThatNeedDeclaration;
             if (area.SymbolReference == null)
                 return;
-
-            IEnumerable<DataDefinition> found;
-            var foundQualified = new List<KeyValuePair<string, DataDefinition>>();
-
-            foundQualified =
+            
+            List<KeyValuePair<string, DataDefinition>>  foundQualified =
                 node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
                     ? area.SymbolReference.URI
                     : new CodeElements.Expressions.URI(area.ToString()),
                     null);
-            found = foundQualified.Select(v => v.Value);
+            IEnumerable<DataDefinition> found = foundQualified.Select(v => v.Value);
             foreach (var v in found)
             {
-                List<DataDefinition> data_copy = new List<DataDefinition>();
-                CollectInsideCopy(v, data_copy);
-                if (data_copy.Count > 0)
+                List<DataDefinition> dataCopy = new List<DataDefinition>();
+                CollectInsideCopy(v, dataCopy);
+                if (dataCopy.Count > 0)
                 {
                     string name = v.Name;
                     string sourceText = node.CodeElement.SourceText.Replace('\r', ' ').Replace('\n', ' ');
@@ -163,17 +161,27 @@ namespace TypeCobol.Compiler.Report
 
                     bool isMove = node is Move;
                     string kind = isMove ? "MOVE" : "INITIALIZE";
-                    foreach (DataDefinition d in data_copy)
+                    foreach (DataDefinition d in dataCopy)
                     {
+#if DEBUG_REPORT_CMR_FULL_FIELDS                                                
                         string copySourceText = d.CodeElement.SourceText.Replace('\r', ' ').Replace('\n', ' ');
                         int copyLine = d.CodeElement.Line;
                         int copyColumn = d.CodeElement.Column;
+#endif
                         Preprocessor.ImportedToken firstImportedToken = d.CodeElement.ConsumedTokens.First(t => t is Preprocessor.ImportedToken) as Preprocessor.ImportedToken;
-                        string copyName = firstImportedToken.CopyDirective.TextName;// .TokenSource.SourceName;
-                        Writer.WriteLine(string.Format("CopyName={0};{1};Variable={2};SourceText={3};Line={4};Column={5};FileName={6};CopySourceText={7};CopyLine={8};CopyColumn={9};",
+                        if (firstImportedToken != null)
+                        {
+                            string copyName = firstImportedToken.CopyDirective.TextName;
+#if DEBUG_REPORT_CMR_FULL_FIELDS                                                
+                            Writer.WriteLine(string.Format("CopyName={0};{1};Variable={2};SourceText={3};Line={4};Column={5};FileName={6};CopySourceText={7};CopyLine={8};CopyColumn={9};",
                             copyName, kind, name, sourceText, line, column, fileName, copySourceText, copyLine, copyColumn));
-                        //if (node is Move)
-                        //    break;//Don't recurse with move.
+#else
+                            Writer.WriteLine(
+                                string.Format("CopyName={0};{1};Variable={2};Line={3};Column={4};SourceText={5}",
+                                    copyName, kind, name, line, column, sourceText));
+#endif
+                            break; //Don't recurse within move or initialize.
+                        }
                     }
                 }
             }
