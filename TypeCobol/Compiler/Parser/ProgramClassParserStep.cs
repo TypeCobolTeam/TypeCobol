@@ -32,6 +32,9 @@ namespace TypeCobol.Compiler.Parser
 
         public static void ParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, out Dictionary<CodeElement, Node> nodeCodeElementLinkers )
         {
+#if DEBUG_ANTRL_CUP_TIME
+    var t1 = DateTime.UtcNow;
+# endif
             // Create an Antlr compatible token source on top a the token iterator
             CodeElementsLinesTokenSource tokenSource = new CodeElementsLinesTokenSource(
                 textSourceInfo.Name,
@@ -88,7 +91,11 @@ namespace TypeCobol.Compiler.Parser
                 var code = Diagnostics.MessageCode.ImplementationError;
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
             }
-
+#if DEBUG_ANTRL_CUP_TIME
+            var t2 = DateTime.UtcNow;
+            var t = t2 - t1;
+            System.Diagnostics.Debug.WriteLine("Time[" + textSourceInfo.Name + "];" + t.Milliseconds);
+#endif
             root = programClassBuilder.SyntaxTree.Root; //Set output root node
 
             //Create link between data definition an Types, will be stored in SymbolTable
