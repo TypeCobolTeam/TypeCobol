@@ -1,4 +1,5 @@
-﻿using Antlr4.Runtime;
+﻿//#define DEBUG_ANTRL_CUP_TIME
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
@@ -128,7 +129,9 @@ namespace TypeCobol.Compiler.Parser
         public static void CupParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, out Dictionary<CodeElement, Node> nodeCodeElementLinkers)
         {
             PrepareCupParser();
-            //var t1 = DateTime.UtcNow;            
+#if DEBUG_ANTRL_CUP_TIME
+            var t1 = DateTime.UtcNow;            
+#endif
             CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines);
             TypeCobolProgramParser parser = new TypeCobolProgramParser(scanner);
             CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
@@ -155,13 +158,11 @@ namespace TypeCobol.Compiler.Parser
             }
             perfStatsForParserInvocation.OnStopParsing(0, 0);
 
-            //            var t2 = DateTime.UtcNow;
-            //            var t = t2 - t1;
-            //#if DEBUG
-            //            System.Diagnostics.Debug.WriteLine("Time[" + textSourceInfo.Name + "];" + t.Milliseconds);
-            //#else
-            //            System.Console.WriteLine("Time[" + textSourceInfo.Name + "];" + t.Milliseconds);
-            //#endif
+#if DEBUG_ANTRL_CUP_TIME
+            var t2 = DateTime.UtcNow;
+            var t = t2 - t1;
+            System.Diagnostics.Debug.WriteLine("Time[" + textSourceInfo.Name + "];" + t.Milliseconds);
+#endif
             root = builder.SyntaxTree.Root; //Set output root node
 
             perfStatsForParserInvocation.OnStartTreeBuilding();
