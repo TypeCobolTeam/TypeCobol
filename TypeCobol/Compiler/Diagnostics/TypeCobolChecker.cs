@@ -784,7 +784,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (!(child is FunctionDeclaration || child is Declaratives))
                 {
                         DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
-                            "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
+                            "Inside a library only function declaration or declaratives are allowed " + child.Name + " / " + child.ID);
                 }
             }
 
