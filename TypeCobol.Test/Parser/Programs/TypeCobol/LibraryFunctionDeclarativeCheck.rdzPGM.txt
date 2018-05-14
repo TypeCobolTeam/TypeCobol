@@ -1,0 +1,20 @@
+﻿--- Diagnostics ---
+Line 30[8,26] <27, Error, Syntax> - Syntax error : Inside a library only function declaration or declaratives are allowed  / sentence-1
+
+--- Program ---
+PROGRAM: PGM1 common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  somedate:DATE
+-- PARAGRAPHS --
+  TRAITEMENT
+-- FUNCTIONS ---
+  check
+        in: mydate:DATE
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
