@@ -680,7 +680,7 @@ namespace TypeCobol.Codegen.Nodes
                 if (child is DataDefinition)
                 {
                     DataDefinition data = child as DataDefinition;
-                    if (data.Name.ToLower().Equals(name))
+                    if (data.Name != null && data.Name.ToLower().Equals(name))
                     {
                         acc.Add(dataDef.Name);
                         acc.Add(data.Name);
