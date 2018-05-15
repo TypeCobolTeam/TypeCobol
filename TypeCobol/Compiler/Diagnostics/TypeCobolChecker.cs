@@ -794,7 +794,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (!(child is FunctionDeclaration || child is Declaratives))
                 {
-                        DiagnosticUtils.AddError(child.CodeElement == null ? (child.ID.Contains("sentence") ? child.Children.First() : procedureDivision) : child,
+                        DiagnosticUtils.AddError(child.CodeElement == null ? 
+                            (child is Sentence 
+                            ? (child.Children.FirstOrDefault(c => c.CodeElement != null) ?? procedureDivision)
+                            : procedureDivision) : child,
                             "Inside a library only function declaration or declaratives are allowed " + child.Name + " / " + child.ID);
                     }
             }
