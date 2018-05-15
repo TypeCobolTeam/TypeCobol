@@ -234,21 +234,21 @@ namespace TypeCobol.Compiler.Diagnostics
                                 ProcedureCall procedureCall = call as ProcedureCall;
                                 if (procedureCall.OutputParameters.Contains(call.Arguments[c]) )
                                 {
-                                    DiagnosticUtils.AddError(node, "LENGTH cannot be used as an output");
-                                    return;
+                                    DiagnosticUtils.AddError(node, "LENGTH cannot be used as an output", actualSpecialRegister.SpecialRegisterName);
+                                    continue;
                                 }
                             }
                                // accepted format is "PIC [S]9(5..9) comp-5"
                             if (expected.PrimitiveDataType.Name != "Numeric" || expected.Length < 5 || expected.Length > 9 || expected.Usage != DataUsage.NativeBinary)
                             {
-                                DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5");
-                                return;
+                                DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5", actualSpecialRegister.SpecialRegisterName);
+                                continue;
                             }
                         }
                         else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer)
                         {
                             //It's ok
-                            return;
+                            continue;
                         }
                         else if (tokenType == TokenType.LINAGE_COUNTER)
                         {

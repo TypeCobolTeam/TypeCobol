@@ -1,6 +1,11 @@
 ﻿--- Diagnostics ---
-Line 21[12,57] <27, Error, Syntax> - Syntax error : LENGTH can only be used as PIC S9(5..9) comp-5
-Line 29[12,49] <27, Error, Syntax> - Syntax error : LENGTH cannot be used as an output
+Line 21[43,48] <27, Error, Syntax> - Syntax error : LENGTH can only be used as PIC S9(5..9) comp-5 OffendingSymbol=[43,48:length]<LENGTH>
+Line 22[43,48] <27, Error, Syntax> - Syntax error : LENGTH can only be used as PIC S9(5..9) comp-5 OffendingSymbol=[43,48:length]<LENGTH>
+Line 23[43,48] <27, Error, Syntax> - Syntax error : LENGTH can only be used as PIC S9(5..9) comp-5 OffendingSymbol=[43,48:length]<LENGTH>
+Line 24[43,48] <27, Error, Syntax> - Syntax error : LENGTH can only be used as PIC S9(5..9) comp-5 OffendingSymbol=[43,48:length]<LENGTH>
+Line 25[43,48] <27, Error, Syntax> - Syntax error : LENGTH can only be used as PIC S9(5..9) comp-5 OffendingSymbol=[43,48:length]<LENGTH>
+Line 29[35,40] <27, Error, Syntax> - Syntax error : LENGTH cannot be used as an output OffendingSymbol=[35,40:length]<LENGTH>
+Line 30[35,40] <27, Error, Syntax> - Syntax error : LENGTH cannot be used as an output OffendingSymbol=[35,40:length]<LENGTH>
 
 --- Program ---
 PROGRAM: DVZF0OSM common:False initial:False recursive:False
