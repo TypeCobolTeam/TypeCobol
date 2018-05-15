@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.Nodes {
 		    attributes["definitions"] = new DefinitionsAttribute();
 	        attributes["usage"] = new UsageAttribute();
 	        attributes["hash"] = new HashAttribute();
-	        attributes["receivers"] = new ReceiversAttribute();
+	        attributes["receivers"] = new PointerReceiversAttribute();
 	        attributes["receiverusage"] = new ReceiverUsageAttribute();
 	        attributes["incrementDirection"] = new incrementDirectionAttribute();
             //not used?
@@ -267,7 +267,7 @@ namespace TypeCobol.Compiler.Nodes {
             throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");
         }
     }
-    internal class ReceiversAttribute : Attribute
+    internal class PointerReceiversAttribute : Attribute
     {
         public object GetValue(object o, SymbolTable table)
         {

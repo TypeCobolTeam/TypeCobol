@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
                 else if (found.First().Usage == DataUsage.Pointer && found.First().CodeElement is DataDefinitionEntry)
                 {
-                    if (node.CodeElement is SetStatementForIndexes)
+                    if (node.CodeElement is SetStatementForIndexes && !node.IsFlagSet(Node.Flag.NodeContainsPointer))
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsPointer, node, storageArea,
                             foundQualified.First().Key);
