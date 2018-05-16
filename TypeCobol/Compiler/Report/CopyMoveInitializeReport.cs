@@ -82,6 +82,10 @@ namespace TypeCobol.Compiler.Report
             }
         }
 
+        /// <summary>
+        /// Report Variables written by an Initialize statement
+        /// </summary>
+        /// <param name="initialize">The Initialize statement</param>
         private void ReportVariablesWritten(Initialize initialize)
         {
             ReceivingStorageArea[] receivings = (initialize.CodeElement as InitializeStatement).ReceivingStorageAreas;
