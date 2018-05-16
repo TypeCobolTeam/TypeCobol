@@ -1,8 +1,9 @@
 --- Diagnostics ---
-Line 31[6,36] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalVar is not referenced
-Line 37[6,38] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalGroup is not referenced
-Line 38[6,47] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalGroup.MNGG1 is not referenced
-Line 39[6,47] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalGroup.MNGG2 is not referenced
+Line 33[6,47] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalVar is not referenced
+Line 40[6,47] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalGroup is not referenced
+Line 41[6,47] <27, Error, Syntax> - Syntax error : Symbol MyNotGlobalGroup.MNGG1 is not referenced
+Line 42[6,47] <27, Error, Syntax> - Syntax error : Symbol MNGG2 is not referenced
+Line 43[6,47] <27, Error, Syntax> - Syntax error : Symbol MNGGDate is not referenced
 
 --- Program ---
 PROGRAM: EnclosingPgm common:False initial:False recursive:False
@@ -13,12 +14,14 @@ PROGRAM: EnclosingPgm common:False initial:False recursive:False
   MyNotGlobalGroup:Alphanumeric
   MNGG1:Alphanumeric
   MNGG2:Alphanumeric
+  MNGGDate:DATE
 --- Intrinsic:Namespace:Global
 -- DATA --------
   MyGlobalVar:Alphanumeric
   MyGlobalGroup:Alphanumeric
   MGG1:Alphanumeric
   MGG2:Alphanumeric
+  MGGDate:DATE
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL

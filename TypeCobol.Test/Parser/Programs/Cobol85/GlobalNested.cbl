@@ -7,12 +7,14 @@ LOCAL-STORAGE SECTION.
 01 MyNotGlobalVar PIC X(5).
 
 01 MyGlobalGroup GLOBAL.
-  05 MGG1 PIC X(5).
+  05 MGG1.
     10 MGG2 PIC X(5).
+  05 MGGDate Type Date.
 
 01 MyNotGlobalGroup.
-  05 MNGG1 PIC X(5).
+  05 MNGG1.
     10 MNGG2 PIC X(5).
+  05 MNGGDate Type Date.
 
 PROCEDURE DIVISION.
 
@@ -22,21 +24,23 @@ PROCEDURE DIVISION.
   DATA DIVISION.
     LOCAL-STORAGE SECTION.
 
-      01 innerVar PIC X(5).
+      01 innerVar PIC X(8).
 
    PROCEDURE DIVISION.
    
-     move MyGlobalVar to innerVar.
+     move MyGlobalVar               to innerVar.
 
-     move MyNotGlobalVar to innerVar.
+     move MyNotGlobalVar            to innerVar.
 
-     move MyGlobalGroup to innerVar.
-     move MGG1 OF MyGlobalGroup to innerVar.
-     move MGG2 OF MyGlobalGroup to innerVar.
+     move MyGlobalGroup             to innerVar.
+     move MGG1 OF MyGlobalGroup     to innerVar.
+     move MGG2                      to innerVar.
+     move MGGDate                   to innerVar.
 
-     move MyNotGlobalGroup to innerVar.
+     move MyNotGlobalGroup          to innerVar.
      move MNGG1 OF MyNotGlobalGroup to innerVar.
-     move MNGG2 OF MyNotGlobalGroup to innerVar.
+     move MNGG2                     to innerVar.
+     move MNGGDate                  to innerVar.
 
   END PROGRAM NestedPgm.
 
