@@ -413,7 +413,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             //TypeDefinition Comparison
-            if (receivingTypeDefinition != null && !receivingTypeDefinition.Equals(sendingTypeDefinition))
+            if (receivingTypeDefinition != null && !(receivingTypeDefinition.Equals(sendingTypeDefinition) || (wname is StorageAreaPropertySpecialRegister && sent is StorageAreaPropertySpecialRegister)))
             {
                 var isUnsafe = ((VariableWriter) node).IsUnsafe;
                 if (receivingTypeDefinition.DataType.RestrictionLevel > RestrictionLevel.WEAK)

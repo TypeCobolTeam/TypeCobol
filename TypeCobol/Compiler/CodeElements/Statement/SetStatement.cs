@@ -122,8 +122,7 @@
             [CanBeNull]
             get
             {
-                if (SendingVariable == null) return null;
-                return SendingVariable.Value;
+                return SendingVariable?.IntegerVariableOrIndex?.StorageArea;
             }
         }
 
