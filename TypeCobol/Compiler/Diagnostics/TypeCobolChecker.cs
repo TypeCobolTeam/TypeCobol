@@ -16,39 +16,39 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     class ReadOnlyPropertiesChecker
     {
-        private static string[] READONLY_DATATYPES = {"DATE",};
+        private static string[] READONLY_DATATYPES = { "DATE", };
 
         public static void OnNode([NotNull] Node node)
         {
-	    VariableWriter variableWriter = node as VariableWriter;
+            VariableWriter variableWriter = node as VariableWriter;
             if (variableWriter == null)
             {
-	        return; //not our job
-	    }
-        var element = node.CodeElement as VariableWriter;
-		var table = node.SymbolTable;
-	    if (element?.VariablesWritten != null)
+                return; //not our job
+            }
+            var element = node.CodeElement as VariableWriter;
+            var table = node.SymbolTable;
+            if (element?.VariablesWritten != null)
                 foreach (var pair in element.VariablesWritten)
                 {
-	            if (pair.Key == null) continue; // no receiving item
-	            var lr = table.GetVariables(pair.Key);
-	            if (lr.Count() != 1) continue; // ambiguity or not referenced; not my job
-	            var receiving = lr.First();
-	            checkReadOnly(node, receiving);
-	        }
-	}
+                    if (pair.Key == null) continue; // no receiving item
+                    var lr = table.GetVariables(pair.Key);
+                    if (lr.Count() != 1) continue; // ambiguity or not referenced; not my job
+                    var receiving = lr.First();
+                    checkReadOnly(node, receiving);
+                }
+        }
 
         private static void checkReadOnly(Node node, [NotNull] Node receiving)
         {
-		var rtype = receiving.Parent as ITypedNode;
-		if (rtype == null) return;
+            var rtype = receiving.Parent as ITypedNode;
+            if (rtype == null) return;
             foreach (var type in READONLY_DATATYPES)
             {
-			if (type.Equals(rtype.DataType.Name.ToUpper()))
+                if (type.Equals(rtype.DataType.Name.ToUpper()))
                     DiagnosticUtils.AddError(node, type + " properties are read-only");
-		}
-	}
-}
+            }
+        }
+    }
 
     class FunctionCallChecker
     {
@@ -794,9 +794,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (!(child is FunctionDeclaration || child is Declaratives))
                 {
-                        DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
-                            "Illegal non-function or paragraph item in library " + child.Name + " / " + child.ID);
-                }
+                        DiagnosticUtils.AddError(child.CodeElement == null ? 
+                            (child is Sentence 
+                            ? (child.Children.FirstOrDefault(c => c.CodeElement != null) ?? procedureDivision)
+                            : procedureDivision) : child,
+                            "Inside a library only function declaration or declaratives are allowed " + child.Name + " / " + child.ID);
+                    }
             }
 
 		    var pdiv = procedureDivision.CodeElement as ProcedureDivisionHeader;
