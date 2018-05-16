@@ -112,7 +112,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="**\*.cs" />
-	<Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
+    <Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
     <Content Include="NewTestsToFix\**" />
     <Content Include="ThirdParty\**" />
     <Content Include="Properties\AssemblyInfo.cs" />
