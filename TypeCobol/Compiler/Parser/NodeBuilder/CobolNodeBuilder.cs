@@ -405,6 +405,16 @@ namespace TypeCobol.Compiler.Parser
             var table = node.SymbolTable;
             if (node.CodeElement().IsGlobal)
                 table = table.GetTableFromScope(SymbolTable.Scope.Global);
+            else
+            {
+                var parent = node.Parent as DataDescription;
+                while (parent != null)
+                {
+                    if (parent.CodeElement().IsGlobal)
+                        table = table.GetTableFromScope(SymbolTable.Scope.Global);
+                    parent = parent.Parent as DataDescription;
+                }
+            }
 
             table.AddVariable(node);
         }
