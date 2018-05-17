@@ -8,6 +8,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -254,6 +255,20 @@ namespace TypeCobol.Compiler.Diagnostics
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
                             foundQualified.First().Key);
                     }
+                }
+
+                var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
+                if (specialRegister != null 
+                    && specialRegister.SpecialRegisterName.TokenType == TokenType.ADDRESS 
+                    && specialRegister.IsWrittenTo 
+                    && !(node is ProcedureStyleCall))
+                {
+                    var variabletoCheck = found.First();
+                    //This variable has to be in Linkage Section
+                    if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
+                        DiagnosticUtils.AddError(node,
+                            "Cannot write into " + storageArea + ", " + variabletoCheck +
+                            " is declared out of LINKAGE SECTION.");
                 }
 
             }
