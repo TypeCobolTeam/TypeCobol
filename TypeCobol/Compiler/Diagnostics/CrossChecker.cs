@@ -251,6 +251,14 @@ namespace TypeCobol.Compiler.Diagnostics
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsPointer, node, storageArea,
                             foundQualified.First().Key);
                         var receivers = node["receivers"] as List<DataDefinition>;
+                        int intSender;
+                        if (!Int32.TryParse(node["sender"].ToString(), out intSender))
+                        {
+                            if (!node.SymbolTable.DataEntries.Any(
+                                x => x.Key == node["sender"].ToString() &&
+                                     x.Value.First().DataType.Name == "Numeric"))
+                                DiagnosticUtils.AddError(node, "Increment only support integer values");
+                        }
                         foreach (var receiver in receivers)
                         {
                             if (receiver.Usage != DataUsage.Pointer)

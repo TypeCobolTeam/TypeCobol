@@ -30,12 +30,12 @@
       *SET pointer0 UP BY 3.
        ADD 3 to pointer0efd9c003
                            .
-      *SET pointer0 DOWN BY 1.
-       ADD -1 to pointer0efd9c003
-                             .
-      *SET pointer0,pointer1 UP BY 1.
-       ADD 1 to pointer0efd9c003, pointer1fe930f3e
-                                    .
+      *SET pointer0 DOWN BY noPointer.
+       ADD -noPointer to pointer0efd9c003
+                                     .
+      *SET pointer0,pointer1 UP BY noPointer.
+       ADD noPointer to pointer0efd9c003, pointer1fe930f3e
+                                            .
       *SET pointer0,pointer1,pointer2 DOWN BY 12.
        ADD -12 to pointer0efd9c003, pointer1fe930f3e, pointer2db906685
                                                 .

@@ -237,7 +237,7 @@ namespace TypeCobol.Compiler.Nodes {
                 // Used for pointers arithmetics
                 var setIndex = ce as SetStatementForIndexes;
                 if (setIndex != null)
-                    return new URI(setIndex.SendingVariable.Value.ToString());
+                    return new URI(setIndex.SendingVariable.ToString());
             }
             return null;
         }
