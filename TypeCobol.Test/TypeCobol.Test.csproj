@@ -113,6 +113,15 @@
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
+    <None Include="Report\Input\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Report\Output\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Report\Copy\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="NewTestsToFix\**" />
     <Content Include="ThirdParty\**" />
     <Content Include="Properties\AssemblyInfo.cs" />

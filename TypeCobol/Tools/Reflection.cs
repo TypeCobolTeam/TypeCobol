@@ -7,7 +7,7 @@ namespace TypeCobol.Tools {
 public class Reflection {
 
 	public static bool IsTypeOf(Type type, Type iface) {
-	    if (!type.IsGenericType && !iface.IsGenericType)
+	    if (!iface.IsGenericType)
 	    {
 	        return iface.IsAssignableFrom(type);
 	    }

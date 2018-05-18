@@ -1,0 +1,2 @@
+﻿CopyName=YINIPRG;INITIALIZE;Variable=YINIPRG;Line=20;Column=12;SourceText=    Initialize YINIPRG
+CopyName=YINIPRG;MOVE;Variable=PRG-KOMPIL;Line=21;Column=12;SourceText=    Move When-Compiled          to PRG-KOMPIL
