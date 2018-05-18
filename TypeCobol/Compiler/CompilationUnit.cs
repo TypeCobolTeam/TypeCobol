@@ -309,7 +309,7 @@ namespace TypeCobol.Compiler
                 }
             }
 
-            return allDiagnostics;
+              return allDiagnostics;
         }
 
         /// <summary>

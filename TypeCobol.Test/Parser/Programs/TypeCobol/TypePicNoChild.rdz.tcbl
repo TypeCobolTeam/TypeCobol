@@ -1,0 +1,9 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TYPECHILD.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  var1 pic X.       
+           88 toto value 'A'.
+          07 nochild pic X.
+       procedure division.
+       END PROGRAM TYPECHILD.

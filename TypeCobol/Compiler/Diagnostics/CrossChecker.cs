@@ -36,6 +36,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             RedefinesChecker.OnNode(node);
+            StructureChecker.OnNode(node);
             FunctionDeclarationChecker.OnNode(node);
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
@@ -292,6 +293,33 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (!node.QualifiedStorageAreas.ContainsKey(storageArea))
                 node.QualifiedStorageAreas.Add(storageArea, completeQualifiedName);
+        }
+    }
+
+    internal class StructureChecker
+    {
+        /// <summary>
+        /// Checks if a structure declaration is valid
+        /// </summary>
+        /// <param name="node"></param>
+        internal static void OnNode(Node node)
+        {
+            //Elements are not checked as they are not a DataDefinitionEntry
+            if (node.CodeElement == null ||
+                !(node.CodeElement is DataDefinitionEntry))
+            {
+                return; 
+            }
+            //Error if node's CodeElement is :
+            //- a rename entry or 
+            //- a data entry that contains a Picture
+            //AND the parent of the element is of type Picture
+            if ((node.CodeElement is DataDescriptionEntry && (node.CodeElement as DataDescriptionEntry).Picture != null) &&
+                (node.Parent != null && node.Parent.CodeElement is DataDescriptionEntry && (node.Parent.CodeElement as DataDescriptionEntry).Picture != null))
+            {
+                DiagnosticUtils.AddError(node, (node.CodeElement is DataRenamesEntry) ? "Rename clause " : "Variable " + node.Name + " within data declaration is child of PICTURE element");
+            }
+
         }
     }
 
