@@ -1,5 +1,5 @@
-       ID DIVISION.
-       PROGRAM-ID.     RPTCPY01
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.     RPTCPY01.
       *REMARKS. COPY=( YINIPRG
       *              ).
       *=========================
@@ -16,11 +16,11 @@
            88 SELECT-CJM-OK           VALUE 'CJM'.
        PROCEDURE DIVISION.
       *=========================
-       debut_prgs.
+
            Initialize YINIPRG
-           Move When-Compiled          to PRG-KOMPIL
-           Move NOMPRG                 to PRG-PGMNAME
-           Move 0 to I
-           INITIALIZE SELECT-CONSO
-           .
-       END PROGRAM
+           Move When-Compiled          to PRG-KOMPIL.
+           Move NOMPRG                 to PRG-PGMNAME.
+           Move 0 to I.
+           INITIALIZE SELECT-CONSO.
+
+       END PROGRAM RPTCPY01.

@@ -50,7 +50,7 @@ namespace TypeCobol.Test.Report
             string output = Path.Combine(ROOT_OUTPUT, reportFileName);
             DocumentFormat format = DocumentFormat.RDZReferenceFormat;
             var parser = new TypeCobol.Parser();
-            var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck };
+            var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
 #if EUROINFO_RULES
             bool autoRemarks = false;
             typeCobolOption.AutoRemarksEnable = autoRemarks;
@@ -58,6 +58,8 @@ namespace TypeCobol.Test.Report
             String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
             parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
             parser.Parse(input);
+
+            var allDiags = parser.Results.AllDiagnostics();
 
             if (report != null)
             {

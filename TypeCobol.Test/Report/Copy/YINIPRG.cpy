@@ -12,3 +12,5 @@
 000120                 05  FILLER      PIC X.                           00001200
 000130             04  PRG-DATE        PIC X(05).                       00001300
 000140             04  PRG-CENTRE      PIC X(02).                       00001400
+000150     02  PRG-PGMNAME PIC X(20).                                   00001500
+
