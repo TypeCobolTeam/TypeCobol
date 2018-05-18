@@ -21,6 +21,7 @@ Line 100[11,68] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symb
 Line 104[40,47] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[40,47:EXTERNAL]<EXTERNAL>
 Line 110[39,46] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[39,46:EXTERNAL]<EXTERNAL>
 Line 145[11,68] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRICT' is strictly-typed
+Line 150[11,54] <27, Error, Syntax> - Syntax error : Item useTypeGrp2Stricly is a TYPE that does not allow Group Item definition.
 Line 155[12,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRICT-PART3' is not referenced
 Line 160[37,43] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[37,43:typedef]<TYPEDEF>
 Line 174[8,54] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strictType1-PART1 IN usestrictType1' is strictly-typed

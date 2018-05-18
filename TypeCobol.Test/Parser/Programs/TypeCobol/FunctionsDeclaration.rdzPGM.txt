@@ -1,6 +1,7 @@
 ﻿--- Diagnostics ---
 Line 57[8,22] <27, Error, Syntax> - Syntax error : x is already a parameter.
 Line 58[8,22] <27, Error, Syntax> - Syntax error : y is already a parameter.
+Line 59[8,22] <27, Error, Syntax> - Syntax error : Group item a contained the "PICTURE" clause.
 Line 60[12,26] <27, Error, Syntax> - Syntax error : x is already a parameter.
 Line 61[12,26] <27, Error, Syntax> - Syntax error : z is already a parameter.
 Line 64[8,27] <27, Error, Syntax> - Syntax error : result is already a parameter.
