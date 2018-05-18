@@ -17,10 +17,8 @@
 
        PROCEDURE DIVISION.
 
-       SET MyBool TO MyDate.
-       SET W-PicVar TO MyDate.
-       SET PicVar TO MyDate.
 
+      * OF for now but should be KO
        SET LENGTH OF W-mydate2 to ADDRESS OF W-mydate.
 
       * Create error because it's in working-storage

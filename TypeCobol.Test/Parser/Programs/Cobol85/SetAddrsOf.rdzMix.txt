@@ -17,23 +17,20 @@
 
        PROCEDURE DIVISION.
 
-Line 20[8,27] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable MyBool:BOOL.
-       SET MyBool TO MyDate.
-       SET W-PicVar TO MyDate.
-       SET PicVar TO MyDate.
 
+      * OF for now but should be KO
        SET LENGTH OF W-mydate2 to ADDRESS OF W-mydate.
 
       * Create error because it's in working-storage
-Line 27[8,54] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-mydate2), W-myDate2
+Line 25[8,54] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-mydate2), W-myDate2
  is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-mydate2 to ADDRESS OF W-mydate.
       * Create error because it's in working-storage
-Line 29[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-myDate), W-myDate
+Line 27[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-myDate), W-myDate
  is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-myDate TO ADDRESS OF W-PicVar
       * Create error because it's in working-storage
-Line 31[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-PicVar), W-PicVar
+Line 29[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-PicVar), W-PicVar
  is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-PicVar TO ADDRESS OF W-mydate.
 
