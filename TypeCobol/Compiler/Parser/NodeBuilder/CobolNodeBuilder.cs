@@ -891,6 +891,13 @@ namespace TypeCobol.Compiler.Parser
                     condition.SelectionObjects = new EvaluateSelectionObject[1];
                     condition.SelectionObjects[0] = new EvaluateSelectionObject();
                     condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
+
+                    var conditionNameConditionOrSwitchStatusCondition = whensearch.Condition as ConditionNameConditionOrSwitchStatusCondition;
+                    if (conditionNameConditionOrSwitchStatusCondition != null)
+                        condition.StorageAreaReads = new List<StorageArea>
+                        {
+                            conditionNameConditionOrSwitchStatusCondition.ConditionReference
+                        };
                 }
                 else
                 {
