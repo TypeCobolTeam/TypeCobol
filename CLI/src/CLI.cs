@@ -237,15 +237,22 @@ namespace TypeCobol.Server
                     //Exception is thrown just below
                     }
 
-                if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
-                {//Emit any COPY MOVE/INITIALIZE Report.
-                    try
-                    {
-                        cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Console.Error.WriteLine(string.Format("Fail to emit report on MOVE and INTIALIZE statements that target COPYs! : {0}", e.Message));
+                if (allDiags.Count == 0)
+                {
+                    if (config.ExecToStep >= ExecutionStep.CrossCheck &&
+                        !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
+                    {//Emit any COPY MOVE/INITIALIZE Report.
+                        try
+                        {
+                            cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
+                        }
+                        catch (Exception e)
+                        {
+                            string msg = string.Format(
+                                    "Fail to emit report on MOVE and INTIALIZE statements that target COPYs! : {0}",
+                                    e.Message);
+                            throw new GenerationException(msg, config.ReportCopyMoveInitializeFilePath, e);                            
+                        }
                     }
                 }
 

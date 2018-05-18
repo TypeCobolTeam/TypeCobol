@@ -60,16 +60,18 @@ namespace TypeCobol.Test.Report
             parser.Parse(input);
 
             var allDiags = parser.Results.AllDiagnostics();
-
-            if (report != null)
+            if (allDiags.Count == 0)
             {
-                using (System.IO.StringWriter sw = new StringWriter())
+                if (report != null)
                 {
-                    report.Report(sw);
-                    // compare with expected result
-                    string result = sw.ToString();
-                    string expected = File.ReadAllText(output, format.Encoding);
-                    TypeCobol.Test.TestUtils.compareLines(input, result, expected);
+                    using (System.IO.StringWriter sw = new StringWriter())
+                    {
+                        report.Report(sw);
+                        // compare with expected result
+                        string result = sw.ToString();
+                        string expected = File.ReadAllText(output, format.Encoding);
+                        TypeCobol.Test.TestUtils.compareLines(input, result, expected);
+                    }
                 }
             }
         }
