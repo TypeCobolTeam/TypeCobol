@@ -92,7 +92,7 @@ namespace TypeCobol.Compiler.Parser
         /// Remove Static NodeListenerFactory instance
         /// </summary>
         /// <param name="listener">The instance to be removed</param>
-        public static void RemoveStaticNodeListener(NodeListenerFactory<TCtx> listener)
+        public static void RemoveStaticNodeListenerFactory(NodeListenerFactory<TCtx> listener)
         {
             lock (typeof(NodeDispatcher<TCtx>))
             {
@@ -135,8 +135,11 @@ namespace TypeCobol.Compiler.Parser
                     {
                         _listeners.Add(checker);
                     }
-                    //Allocate listeners from static factories.
-                    if (StaticNodeListenerFactory != null)
+                }
+                //Allocate listeners from static factories.
+                if (StaticNodeListenerFactory != null)
+                {
+                    lock (typeof(NodeDispatcher<TCtx>))
                     {
                         foreach (NodeListenerFactory<TCtx> factory in StaticNodeListenerFactory)
                         {

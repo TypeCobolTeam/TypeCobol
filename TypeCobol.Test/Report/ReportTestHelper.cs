@@ -37,7 +37,7 @@ namespace TypeCobol.Test.Report
             {
                 object obj = System.Activator.CreateInstance(reportType);
                 Assert.IsTrue(obj is NodeListener<TCtx>);
-                TypeCobol.Compiler.Parser.NodeListener<TCtx> nodeListener = (TypeCobol.Compiler.Parser.NodeListener<TCtx>)System.Activator.CreateInstance(reportType);
+                TypeCobol.Compiler.Parser.NodeListener<TCtx> nodeListener = (TypeCobol.Compiler.Parser.NodeListener<TCtx>)obj;
                 Assert.IsNotNull(nodeListener);
                 report = (IReport)nodeListener;
                 return nodeListener;
@@ -46,33 +46,40 @@ namespace TypeCobol.Test.Report
             //Register the Node Listener Factory
             TypeCobol.Compiler.Parser.NodeDispatcher<TCtx>.RegisterStaticNodeListenerFactory(factory);
 
-            string input = Path.Combine(ROOT_INPUT, fileName);
-            string output = Path.Combine(ROOT_OUTPUT, reportFileName);
-            DocumentFormat format = DocumentFormat.RDZReferenceFormat;
-            var parser = new TypeCobol.Parser();
-            var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
-#if EUROINFO_RULES
-            bool autoRemarks = false;
-            typeCobolOption.AutoRemarksEnable = autoRemarks;
-#endif
-            String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
-            parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
-            parser.Parse(input);
-
-            var allDiags = parser.Results.AllDiagnostics();
-            if (allDiags.Count == 0)
+            try
             {
-                if (report != null)
+                string input = Path.Combine(ROOT_INPUT, fileName);
+                string output = Path.Combine(ROOT_OUTPUT, reportFileName);
+                DocumentFormat format = DocumentFormat.RDZReferenceFormat;
+                var parser = new TypeCobol.Parser();
+                var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
+#if EUROINFO_RULES
+                bool autoRemarks = false;
+                typeCobolOption.AutoRemarksEnable = autoRemarks;
+#endif
+                String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
+                parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
+                parser.Parse(input);
+
+                var allDiags = parser.Results.AllDiagnostics();
+                if (allDiags.Count == 0)
                 {
-                    using (System.IO.StringWriter sw = new StringWriter())
+                    if (report != null)
                     {
-                        report.Report(sw);
-                        // compare with expected result
-                        string result = sw.ToString();
-                        string expected = File.ReadAllText(output, format.Encoding);
-                        TypeCobol.Test.TestUtils.compareLines(input, result, expected);
+                        using (System.IO.StringWriter sw = new StringWriter())
+                        {
+                            report.Report(sw);
+                            // compare with expected result
+                            string result = sw.ToString();
+                            string expected = File.ReadAllText(output, format.Encoding);
+                            TypeCobol.Test.TestUtils.compareLines(input, result, expected);
+                        }
                     }
                 }
+            }
+            finally
+            {
+                TypeCobol.Compiler.Parser.NodeDispatcher<TCtx>.RemoveStaticNodeListenerFactory(factory);
             }
         }
     }
