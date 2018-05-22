@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-Line 7[11,27] <27, Error, Syntax> - Syntax error : Variable nochild within data declaration is child of PICTURE element
+Line 7[12,28] <27, Error, Syntax> - Syntax error : Group item var1 contained the"PICTURE"clause.  The clause was discarded. 
 
 --- Program ---
 PROGRAM: TYPECHILD common:False initial:False recursive:False

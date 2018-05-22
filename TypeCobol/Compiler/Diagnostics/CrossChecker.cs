@@ -304,20 +304,21 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <param name="node"></param>
         internal static void OnNode(Node node)
         {
-            //Elements are not checked as they are not a DataDefinitionEntry
+            //Elements are not checked as they are not a DataDescriptionEntry
             if (node.CodeElement == null ||
-                !(node.CodeElement is DataDefinitionEntry))
+                (node.CodeElement!=null && node.CodeElement as DataDefinitionEntry == null))
             {
                 return; 
             }
-            //Error if node's CodeElement is :
-            //- a rename entry or 
-            //- a data entry that contains a Picture
+            //Error if node's CodeElement is not a data condition:
             //AND the parent of the element is of type Picture
-            if ((node.CodeElement is DataDescriptionEntry && (node.CodeElement as DataDescriptionEntry).Picture != null) &&
-                (node.Parent != null && node.Parent.CodeElement is DataDescriptionEntry && (node.Parent.CodeElement as DataDescriptionEntry).Picture != null))
+            if (node.CodeElement as DataConditionEntry==null  &&
+                node.Parent != null && (node.Parent.CodeElement as DataDescriptionEntry!=null && (
+                        (node.Parent.CodeElement as DataDescriptionEntry).Picture!= null ||
+                        (node.Parent.CodeElement as DataDescriptionEntry).Usage!=null)))
             {
-                DiagnosticUtils.AddError(node, (node.CodeElement is DataRenamesEntry) ? "Rename clause " : "Variable " + node.Name + " within data declaration is child of PICTURE element");
+                DiagnosticUtils.AddError(node, (node.Parent.CodeElement as DataDescriptionEntry).Picture != null ? "Group item "+ node.Parent.Name + " contained the\"PICTURE\"clause.  The clause was discarded. "
+                    : (node.Parent.CodeElement as DataDescriptionEntry).Usage!= null ? "The \"PICTURE\" clause was found for item " + node.Parent.Name + " with \"USAGE\" clause.  The clause was discarded. " : "" );
             }
 
         }

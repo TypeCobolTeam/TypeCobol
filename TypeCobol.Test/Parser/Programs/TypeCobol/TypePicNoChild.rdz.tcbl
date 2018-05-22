@@ -4,6 +4,6 @@
        WORKING-STORAGE SECTION.
        01  var1 pic X.       
            88 toto value 'A'.
-          07 nochild pic X.
+           07 nochild pic X.
        procedure division.
        END PROGRAM TYPECHILD.
