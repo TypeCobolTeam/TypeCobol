@@ -8,6 +8,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -256,6 +257,20 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
 
+                var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
+                if (specialRegister != null 
+                    && specialRegister.SpecialRegisterName.TokenType == TokenType.ADDRESS 
+                    && specialRegister.IsWrittenTo 
+                    && !(node is ProcedureStyleCall))
+                {
+                    var variabletoCheck = found.First();
+                    //This variable has to be in Linkage Section
+                    if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
+                        DiagnosticUtils.AddError(node,
+                            "Cannot write into " + storageArea + ", " + variabletoCheck +
+                            " is declared out of LINKAGE SECTION.");
+                }
+
             }
 
             if (!found.Any())
@@ -413,7 +428,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             //TypeDefinition Comparison
-            if (receivingTypeDefinition != null && !receivingTypeDefinition.Equals(sendingTypeDefinition))
+            if (receivingTypeDefinition != null && !(receivingTypeDefinition.Equals(sendingTypeDefinition) || (wname is StorageAreaPropertySpecialRegister && sent is StorageAreaPropertySpecialRegister)))
             {
                 var isUnsafe = ((VariableWriter) node).IsUnsafe;
                 if (receivingTypeDefinition.DataType.RestrictionLevel > RestrictionLevel.WEAK)

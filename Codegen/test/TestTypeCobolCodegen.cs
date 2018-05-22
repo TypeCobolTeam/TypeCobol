@@ -677,6 +677,15 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenGlobalKeyword") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
         }
 
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void SetUnsafeTest()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "SetUnsafe") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
 #if EUROINFO_RULES
         [TestMethod]
         [TestCategory("Codegen")]
