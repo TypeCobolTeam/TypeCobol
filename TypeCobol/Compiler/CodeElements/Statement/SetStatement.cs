@@ -24,7 +24,8 @@
     {
         protected SetStatement(StatementType statementType) : base(CodeElementType.SetStatement, statementType) { }
 
-        public bool IsUnsafe { get { return false; } }
+        public SyntaxProperty<bool> Unsafe { get; set; }
+        public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
 
         protected IDictionary<StorageArea, object> variables;
         public virtual IDictionary<StorageArea, object> Variables

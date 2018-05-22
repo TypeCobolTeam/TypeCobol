@@ -7,6 +7,7 @@
        01 W-myDate TYPE DATE.
        01 W-myDate2 TYPE DATE.
        01 W-PicVar PIC X(10).
+       01 W-PointerVar POINTER.
 
        linkage SECTION.
        01 myDate TYPE DATE.
@@ -43,6 +44,12 @@
        SET ADDRESS OF myDate TO ADDRESS OF PicVar
       * No error
        SET ADDRESS OF PicVar TO ADDRESS OF mydate.
+      *KO
+       SET ADDRESS OF myDate TO W-PointerVar.
+      *OK, use of unsafe in SET
+       SET UNSAFE ADDRESS OF myDate TO W-PointerVar.
+      *OK
+       SET W-PointerVar TO ADDRESS OF myDate.
 
            .
 

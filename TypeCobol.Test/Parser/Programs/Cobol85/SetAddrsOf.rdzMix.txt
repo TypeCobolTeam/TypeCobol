@@ -7,6 +7,7 @@
        01 W-myDate TYPE DATE.
        01 W-myDate2 TYPE DATE.
        01 W-PicVar PIC X(10).
+       01 W-PointerVar POINTER.
 
        linkage SECTION.
        01 myDate TYPE DATE.
@@ -22,15 +23,15 @@
        SET LENGTH OF W-mydate2 to ADDRESS OF W-mydate.
 
       * Create error because it's in working-storage
-Line 25[8,54] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-mydate2), W-myDate2
+Line 26[8,54] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-mydate2), W-myDate2
  is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-mydate2 to ADDRESS OF W-mydate.
       * Create error because it's in working-storage
-Line 27[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-myDate), W-myDate
+Line 28[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-myDate), W-myDate
  is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-myDate TO ADDRESS OF W-PicVar
       * Create error because it's in working-storage
-Line 29[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-PicVar), W-PicVar
+Line 30[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-PicVar), W-PicVar
  is declared out of LINKAGE SECTION.
        SET ADDRESS OF W-PicVar TO ADDRESS OF W-mydate.
 
@@ -49,6 +50,13 @@ Line 29[8,53] <27, Error, Syntax> - Syntax error : Cannot write into ADDRESS(W-P
        SET ADDRESS OF myDate TO ADDRESS OF PicVar
       * No error
        SET ADDRESS OF PicVar TO ADDRESS OF mydate.
+      *KO
+Line 48[8,44] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable ADDRESS(myDate):DATE.
+       SET ADDRESS OF myDate TO W-PointerVar.
+      *OK, use of unsafe in SET
+       SET UNSAFE ADDRESS OF myDate TO W-PointerVar.
+      *OK
+       SET W-PointerVar TO ADDRESS OF myDate.
 
            .
 
