@@ -1,0 +1,30 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DUPLICAT.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+       01  somedate     TYPE Date.
+
+       PROCEDURE DIVISION.
+
+        MOVE 01234567 to somedate.
+
+       END PROGRAM DUPLICAT.
+
+
+
+
+	   IDENTIFICATION DIVISION.
+       PROGRAM-ID. DUPLICATE.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+       01  someOtherDate     TYPE Date.
+
+       PROCEDURE DIVISION.
+
+        MOVE 98765432 to someOtherDate.
+
+       END PROGRAM DUPLICATE.

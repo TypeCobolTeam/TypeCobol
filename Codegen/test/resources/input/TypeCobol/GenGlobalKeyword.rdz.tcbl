@@ -1,0 +1,20 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPgm.
+       DATA DIVISION .
+       working-storage section.
+
+       01 DateDB2 TYPEDEF STRICT PUBLIC.
+         10  YYYY   PIC 9(04).
+         10  filler PIC X value '-'.
+         10  MM     PIC 9(02).
+         10  filler PIC X value '-'.
+         10  DD     PIC 9(02).
+
+       01 myDate global TYPE DateDB2.
+       01 myDate2 TYPE DateDB2 global.
+       01 myDate3 PIC X(10) global.
+       01 myDate4 global PIC X(10).
+
+       PROCEDURE DIVISION.
+		.
+       END PROGRAM MyPgm.

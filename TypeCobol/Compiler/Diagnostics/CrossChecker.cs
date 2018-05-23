@@ -8,6 +8,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -138,16 +139,28 @@ namespace TypeCobol.Compiler.Diagnostics
             var codeElement = customCodeElement ?? node.CodeElement as CommonDataDescriptionAndDataRedefines;
             if (codeElement?.Picture == null) return;
 
-            foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
+
+            // if there is not the same number of '(' than of ')'
+            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
             {
-                try //Try catch is here because of the risk to parse a non numerical value
+                DiagnosticUtils.AddError(node, "missing '(' or ')'");
+            }
+            // if the first '(' is after first ')' OR last '(' is after last ')'
+            else if (codeElement.Picture.Value.IndexOf("(") > codeElement.Picture.Value.IndexOf(")") || codeElement.Picture.Value.LastIndexOf("(") > codeElement.Picture.Value.LastIndexOf(")"))
+                DiagnosticUtils.AddError(node, "missing '(' or ')'");
+            else
+            {
+                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
                 {
-                    int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                }
-                catch (Exception)
-                {
-                    var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                    DiagnosticUtils.AddError(node, m);
+                    try //Try catch is here because of the risk to parse a non numerical value
+                    {
+                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
+                    }
+                    catch (Exception)
+                    {
+                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
+                        DiagnosticUtils.AddError(node, m);
+                    }
                 }
             }
         }
@@ -236,12 +249,26 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (found.First().DataType == DataType.Boolean && found.First().CodeElement is DataDefinitionEntry &&
                          ((DataDefinitionEntry) found.First()?.CodeElement)?.LevelNumber?.Value != 88)
                 {
-                    if (!(node is Nodes.If || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch))//Ignore If/Set/Perform/WhenSearch Statement
+                    if (!(node is Nodes.If || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch || node is Nodes.When))//Ignore If/Set/Perform/WhenSearch Statement
                     {
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
                             foundQualified.First().Key);
                     }
+                }
+
+                var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
+                if (specialRegister != null 
+                    && specialRegister.SpecialRegisterName.TokenType == TokenType.ADDRESS 
+                    && specialRegister.IsWrittenTo 
+                    && !(node is ProcedureStyleCall))
+                {
+                    var variabletoCheck = found.First();
+                    //This variable has to be in Linkage Section
+                    if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
+                        DiagnosticUtils.AddError(node,
+                            "Cannot write into " + storageArea + ", " + variabletoCheck +
+                            " is declared out of LINKAGE SECTION.");
                 }
 
             }
@@ -401,7 +428,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             //TypeDefinition Comparison
-            if (receivingTypeDefinition != null && !receivingTypeDefinition.Equals(sendingTypeDefinition))
+            if (receivingTypeDefinition != null && !(receivingTypeDefinition.Equals(sendingTypeDefinition) || (wname is StorageAreaPropertySpecialRegister && sent is StorageAreaPropertySpecialRegister)))
             {
                 var isUnsafe = ((VariableWriter) node).IsUnsafe;
                 if (receivingTypeDefinition.DataType.RestrictionLevel > RestrictionLevel.WEAK)

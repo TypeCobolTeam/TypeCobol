@@ -174,6 +174,18 @@
     <None Include="LSRTests\config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\CompletionWithNestedProgram\input\CompletionWithNestedProgram.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionWithNestedProgram\output_expected\CompletionWithNestedProgram.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OfCompletion\input\OfCompletion.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\OfCompletion\output_expected\OfCompletion.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\PerformCompletion\input\PerformCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -199,6 +211,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\SetToAddressOfCompletion\output_expected\SetToAddressOfCompletion.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\MoveZeroSpaceCompletion\input\MoveZeroSpaceCompletion.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\MoveZeroSpaceCompletion\output_expected\MoveZeroSpaceCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\SimpleMoveToCompletion\input\SimpleMoveToCompletion.tlsp">
