@@ -518,9 +518,14 @@ namespace TypeCobol.LanguageServer
 
 
             bool unsafeContext = arrangedCodeElement.ArrangedConsumedTokens.Any(t => t != null && t.TokenType == TokenType.UNSAFE);
-            var qualifiedNameTokens = arrangedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.UserDefinedWord).TakeWhile(t => t != lastSignificantToken).Where(t => t.TokenType != TokenType.QualifiedNameSeparator && t != userFilterToken);
+            var filteredTokens = arrangedCodeElement.ArrangedConsumedTokens.SkipWhile(t => t.TokenType != TokenType.UserDefinedWord);
+            bool needTailReverse = filteredTokens.Any(t => t.TokenType == TokenType.OF);
+            var qualifiedNameTokens = filteredTokens.TakeWhile(t => t != lastSignificantToken).Where(t => !(t.TokenType == TokenType.QualifiedNameSeparator || t.TokenType == TokenType.OF) && t != userFilterToken);
             if (!qualifiedNameTokens.Any() && seekedDataTypes.Count == 0)
                 return completionItems;
+
+            if (needTailReverse)
+                qualifiedNameTokens = qualifiedNameTokens.Reverse();
 
             if (!unsafeContext) //Search for variable that match the DataType
             {
@@ -571,7 +576,7 @@ namespace TypeCobol.LanguageServer
         /// <returns></returns>
         public static IEnumerable<CompletionItem> GetCompletionForOf(FileCompiler fileCompiler, CodeElement codeElement, Token userFilterToken, Position position)
         {
-            IEnumerable<CompletionItem> completionItems = null;
+            IEnumerable<CompletionItem> completionItems = new List<CompletionItem>();
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(fileCompiler, codeElement);
@@ -585,7 +590,7 @@ namespace TypeCobol.LanguageServer
             //Detect what's before the OF token
             var tokenBeforeOf = tokensUntilCursor?.Skip(1).FirstOrDefault(); //Skip(1) will skip the OF token
 
-            if (tokenBeforeOf == null || tokenBeforeOf.TokenType != TokenType.ADDRESS) //For now we only need to filter on adress. 
+            if (tokenBeforeOf == null || !(tokenBeforeOf.TokenType == TokenType.ADDRESS || tokenBeforeOf.TokenType == TokenType.UserDefinedWord)) 
                 return completionItems;
 
             switch (tokenBeforeOf.TokenType) //In the future, this will allow to switch between different token declared before OF. 
@@ -595,7 +600,12 @@ namespace TypeCobol.LanguageServer
                     var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
                     completionItems = GetCompletionForAddressOf(node, contextToken, userFilterText);
                     break;
-                }  
+                }
+                case TokenType.UserDefinedWord:
+                {
+                    completionItems = GetCompletionForOfParent(node, tokenBeforeOf, userFilterText);
+                    break;
+                }
             }
 
             return completionItems;
@@ -640,6 +650,31 @@ namespace TypeCobol.LanguageServer
 
             return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable);
         }
+
+
+        public static IEnumerable<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameToken,
+            string userFilterText)
+        {
+            var completionItems = new List<CompletionItem>();
+            if (node == null)
+                return completionItems;
+
+            var currentVariable = node.SymbolTable.GetVariables(
+                    v => v != null && v.Name.Equals(variableNameToken.Text, StringComparison.InvariantCultureIgnoreCase),
+                    new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global})
+                .FirstOrDefault();
+
+            if (currentVariable == null)
+                return completionItems;
+
+            var currentParent = currentVariable.Parent as DataDefinition;
+            if (currentParent != null)
+            {
+                completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForVariable(currentParent));
+            }
+            return completionItems;
+        }
+
         #endregion
 
 
