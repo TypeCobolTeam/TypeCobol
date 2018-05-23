@@ -299,28 +299,90 @@ namespace TypeCobol.Compiler.Diagnostics
     internal class StructureChecker
     {
         /// <summary>
+        /// List of nodes that have inconsistent structure
+        /// </summary>
+        private static List<Node> parentInError;
+
+        /// <summary>
         /// Checks if a structure declaration is valid
         /// </summary>
         /// <param name="node"></param>
         internal static void OnNode(Node node)
         {
             //Elements are not checked as they are not a DataDescriptionEntry
-            if (node.CodeElement == null ||
-                (node.CodeElement!=null && node.CodeElement as DataDefinitionEntry == null))
+            if (node?.CodeElement as DataDefinitionEntry == null)
             {
-                return; 
-            }
-            //Error if node's CodeElement is not a data condition:
-            //AND the parent of the element is of type Picture
-            if (node.CodeElement as DataConditionEntry==null  &&
-                node.Parent != null && (node.Parent.CodeElement as DataDescriptionEntry!=null && (
-                        (node.Parent.CodeElement as DataDescriptionEntry).Picture!= null ||
-                        (node.Parent.CodeElement as DataDescriptionEntry).Usage!=null)))
-            {
-                DiagnosticUtils.AddError(node, (node.Parent.CodeElement as DataDescriptionEntry).Picture != null ? "Group item "+ node.Parent.Name + " contained the\"PICTURE\"clause.  The clause was discarded. "
-                    : (node.Parent.CodeElement as DataDescriptionEntry).Usage!= null ? "The \"PICTURE\" clause was found for item " + node.Parent.Name + " with \"USAGE\" clause.  The clause was discarded. " : "" );
+                return;
             }
 
+            //get parent of node - DataDescription entries and Data Redefines entries cannot have childrens
+            dynamic nodeParentDataDescription = node.Parent?.CodeElement as DataDescriptionEntry;
+            if (nodeParentDataDescription == null)
+            {
+                nodeParentDataDescription = node.Parent?.CodeElement as DataRedefinesEntry;
+            }
+
+            //return if node is level 01
+            if (nodeParentDataDescription == null)
+            {
+                return;
+            }
+
+            //check parent of all nodes that are not DataCondition entries
+            var parent = GetUpperMostParent(node, nodeParentDataDescription);
+
+            if (parentInError == null)
+            {
+                parentInError = new List<Node>();
+            }
+
+            if (parentInError.Contains(parent))
+            {
+                return;
+            }
+
+            if (node.CodeElement.Type != CodeElementType.DataConditionEntry &&
+                nodeParentDataDescription != null &&
+                (nodeParentDataDescription.Picture != null || nodeParentDataDescription.Usage != null
+                                                           || nodeParentDataDescription.DataType == DataType.Date))
+            {
+
+                DiagnosticUtils.AddError(node.Parent, nodeParentDataDescription.Picture != null
+                    ? "Group item " + node.Parent.Name +
+                      " contained the \"PICTURE\" clause.  The clause was discarded. "
+                    : nodeParentDataDescription.Usage != null
+                        ? "The \"PICTURE\" clause was found for item " + node.Parent.Name +
+                          " with \"USAGE\" clause.  The clause was discarded. "
+                        : "Group item " + node.Parent.Name +
+                          " contained the \"DATE\" clause.  The clause was discarded. ");
+                parentInError.Add(parent);
+            }
+        }
+
+        /// <summary>
+        /// Retuns the node with level 01
+        /// </summary>
+        /// <param name="node">Node from which the tree is "climbed"</param>
+        /// <param name="nodeParentDataDescription">Parent of node</param>
+        /// <returns></returns>
+        private static Node GetUpperMostParent(Node node, dynamic nodeParent)
+        {
+            Node upperMostParent = null;
+            //check if the parent is still a variable (avoid to get higher than level 01 in the tree)
+            while (nodeParent != null && (nodeParent.Picture!=null || nodeParent.Usage != null || nodeParent.DataType == DataType.Date))
+            {
+                //get current uppermost parent and "hop" to next parent
+                upperMostParent = node.Parent;
+                node = node.Parent;
+                //"climb" the tree to the next parent
+                nodeParent = node?.Parent?.CodeElement as DataDescriptionEntry;
+                if (nodeParent == null)
+                {
+                    nodeParent = node?.Parent?.CodeElement as DataRedefinesEntry;
+                }
+            }
+
+            return upperMostParent;
         }
     }
 

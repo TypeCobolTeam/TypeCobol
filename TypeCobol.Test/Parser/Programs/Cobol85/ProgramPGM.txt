@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-Line 32[1,7] <27, Error, Syntax> - Syntax error : Group item x contained the"PICTURE"clause.  The clause was discarded. 
+Line 30[1,14] <27, Error, Syntax> - Syntax error : Group item x contained the "PICTURE" clause.  The clause was discarded. 
 Line 57[16,19] <27, Error, Syntax> - Syntax error : mismatched input 'TYPE' expecting {symbol, special register, keyword} RuleStack=codeElement>moveStatement>moveSimple,  OffendingSymbol=[16,19:TYPE]<TYPE>
 
 --- Program ---
