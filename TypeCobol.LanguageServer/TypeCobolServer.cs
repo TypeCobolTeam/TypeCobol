@@ -618,11 +618,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
                                     v => v.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    new List<SymbolTable.Scope>()
-                                    {
-                                        SymbolTable.Scope.Declarations,
-                                        SymbolTable.Scope.Global
-                                    }));
+                                    SymbolTable.Scope.Global));
                                 break;
                             }
                         }

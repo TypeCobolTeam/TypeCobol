@@ -213,19 +213,27 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="predicate">Predicate to search variable(s)</param>
+        /// <param name="maximalScope">The maximal symboltable scope to search in</param>
+        /// <returns></returns>
+        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, Scope maximalScope)
         {
             var foundedVariables = new List<DataDefinition>();
-            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
 
-            foreach (var scope in scopes)
+            SymbolTable currentTable = this;
+            while (currentTable != null && currentTable.CurrentScope >= maximalScope)
             {
-                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
-                    throw new NotSupportedException();
-
-                var dataToSeek = this.GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t);
+                if (currentTable.CurrentScope == Scope.Namespace || currentTable.CurrentScope == Scope.Intrinsic)
+                    throw new NotSupportedException(); //There is no variable stored in those scopes
+             
+                var dataToSeek = currentTable.DataEntries.Values.SelectMany(t => t);
                 var results = dataToSeek.AsQueryable().Where(predicate);
                 foundedVariables.AddRange(results);
+
+                currentTable = currentTable.EnclosingScope;
             }
 
             return foundedVariables.Distinct(); //Distinct on object not on variable name
@@ -234,20 +242,18 @@ namespace TypeCobol.Compiler.CodeModel
         //---------------------------------------------
 
 
-        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, List<Scope> scopes)
+        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, Scope maximalScope)
         {
 
             var foundedVariables = new List<DataDefinition>();
-            if(existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
+            if (existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
 
-            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
-
-            foreach (var scope in scopes)
+            SymbolTable currentTable = this;
+            while (currentTable != null && currentTable.CurrentScope >= maximalScope)
             {
-                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
+                if (currentTable.CurrentScope == Scope.Namespace || currentTable.CurrentScope == Scope.Intrinsic)
                     throw new NotSupportedException();
 
-                var currentTable = GetTableFromScope(scope);
 
                 if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
@@ -261,6 +267,9 @@ namespace TypeCobol.Compiler.CodeModel
                         SeekVariableType(dataType, variable, ref foundedVariables);
                     }
                 }
+
+                currentTable = currentTable.EnclosingScope;
+
             }
 
             return foundedVariables;
