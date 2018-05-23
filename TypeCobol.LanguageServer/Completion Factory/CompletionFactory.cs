@@ -44,8 +44,7 @@ namespace TypeCobol.LanguageServer
                                                                            Compiler.CodeElements.DataType.Numeric &&
                                                                            da.Name.StartsWith(userFilterText,
                                                                                StringComparison
-                                                                                   .InvariantCultureIgnoreCase),
-                        new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+                                                                                   .InvariantCultureIgnoreCase), SymbolTable.Scope.Global);
                 }
             }
 
@@ -99,8 +98,7 @@ namespace TypeCobol.LanguageServer
                                                                 da.DataType ==
                                                                 Compiler.CodeElements.DataType.Alphanumeric &&
                                                                 da.Name.StartsWith(userFilterText,
-                                                                    StringComparison.InvariantCultureIgnoreCase),
-                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+                                                                    StringComparison.InvariantCultureIgnoreCase), SymbolTable.Scope.Global);
             }
             
 
@@ -210,7 +208,7 @@ namespace TypeCobol.LanguageServer
                 var parameterToFill = procParams.ToArray()[alreadyGivenParametersCount];
                 //Get local/global variable that could correspond to the parameter
 
-                potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+                potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, SymbolTable.Scope.Global);
 
             }
 
@@ -456,7 +454,7 @@ namespace TypeCobol.LanguageServer
             if (node == null)
                 return completionItems;
 
-            var variables = node.SymbolTable.GetVariables(predicate, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+            var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.Global);
             completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(variables));
 
             return completionItems;
@@ -541,15 +539,14 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
                 {
-                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables,
-                    new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.Global);
                 }
                 
                 potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
             }
             else //Get all 
             {
-                potentialVariables = node.SymbolTable.GetVariables(variablePredicate, new List<SymbolTable.Scope> { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+                potentialVariables = node.SymbolTable.GetVariables(variablePredicate, SymbolTable.Scope.Global);
             }
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
@@ -633,8 +630,7 @@ namespace TypeCobol.LanguageServer
                                                 && v.IsFlagSet(Node.Flag.LinkageSectionNode)
                                                 && v.CodeElement is DataDefinitionEntry
                                                 && (((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 1 || ((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 77)
-                                                && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                                new List<SymbolTable.Scope>() { SymbolTable.Scope.Declarations, SymbolTable.Scope.Global });
+                                                && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase), SymbolTable.Scope.Global);
             }
             else 
             {
@@ -644,8 +640,7 @@ namespace TypeCobol.LanguageServer
                          && v.CodeElement is DataDefinitionEntry
                          && (((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 1 ||
                              ((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 77)
-                         && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                    new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global});
+                         && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase), SymbolTable.Scope.Global);
             }
 
             return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable);
@@ -660,8 +655,7 @@ namespace TypeCobol.LanguageServer
                 return completionItems;
 
             var currentVariable = node.SymbolTable.GetVariables(
-                    v => v != null && v.Name.Equals(variableNameToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                    new List<SymbolTable.Scope>() {SymbolTable.Scope.Declarations, SymbolTable.Scope.Global})
+                    v => v != null && v.Name.Equals(variableNameToken.Text, StringComparison.InvariantCultureIgnoreCase), SymbolTable.Scope.Global)
                 .FirstOrDefault();
 
             if (currentVariable == null)
