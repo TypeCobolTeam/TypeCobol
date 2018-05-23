@@ -119,6 +119,12 @@ namespace TypeCobol.Codegen.Generators
             return false;
         }
 
+        public override bool Visit(LinkageSection linkageSection)
+        {
+            RemoveNonPublicDataDeclaration(linkageSection);
+            return false;
+        }
+
         private void RemoveNonPublicDataDeclaration(Node parent) {
             //keep all public type
             var children = parent.GetChildren<Node>();
