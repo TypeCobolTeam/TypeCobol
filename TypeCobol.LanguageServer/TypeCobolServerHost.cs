@@ -125,7 +125,7 @@ namespace TypeCobol.LanguageServer
                     return true;
                 }
             }
-            catch (Exception e)
+            catch 
             {
                 return false;
             }
@@ -154,7 +154,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 // args[0] : Trace level
                                 LogLevel = (ServerLogLevel)Int32.Parse(v);
-                                if (!System.Enum.IsDefined(typeof(ServerLogLevel), (Int32)LogLevel));
+                                if (!System.Enum.IsDefined(typeof(ServerLogLevel), (Int32)LogLevel))
                                 {
                                     LogLevel = ServerLogLevel.Protocol;
                                 }

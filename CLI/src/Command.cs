@@ -122,7 +122,7 @@ namespace TypeCobol.Server
                 config.Format = TypeCobolOptionSet.CreateFormat(config.EncFormat, ref config);
                 returnCode = CLI.runOnce(config); //Try to run TypeCobol ad get status in returnCode
             }
-            catch (Exception e)
+            catch
             {
                 returnCode = ReturnCode.FatalError; 
             }
