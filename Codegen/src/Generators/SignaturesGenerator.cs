@@ -119,9 +119,19 @@ namespace TypeCobol.Codegen.Generators
             return false;
         }
 
+        /// <summary>
+        /// Check the Linkage section for private variables
+        /// </summary>
+        /// <param name="linkageSection"></param>
+        /// <returns></returns>
         public override bool Visit(LinkageSection linkageSection)
         {
             RemoveNonPublicDataDeclaration(linkageSection);
+            //remove linkage section if it doesn't contain any children
+            if (linkageSection.Children.Count == 0)
+            {
+                linkageSection.Remove();
+            }
             return false;
         }
 
