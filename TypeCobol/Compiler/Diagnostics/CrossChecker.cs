@@ -8,12 +8,17 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
     public class CrossCompleteChecker : AbstractAstVisitor
     {
         private Node CurrentNode { get; set; }
+        /// <summary>
+        /// List of nodes that have inconsistent structure
+        /// </summary>
+        private static List<Node> parentInError;
 
         public override bool BeginNode(Node node)
         {
@@ -36,7 +41,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             RedefinesChecker.OnNode(node);
-            StructureChecker.OnNode(node);
             FunctionDeclarationChecker.OnNode(node);
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
@@ -116,7 +120,74 @@ namespace TypeCobol.Compiler.Diagnostics
                     "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77");
             }
 
+
+            //get parent of node - DataDescription entries and Data Redefines entries cannot have childrens
+            dynamic nodeParentDataDescription = dataDefinition.Parent?.CodeElement as DataDescriptionEntry;
+            if (nodeParentDataDescription == null)
+            {
+                nodeParentDataDescription = dataDefinition.Parent?.CodeElement as DataRedefinesEntry;
+            }
+
+            //return if node is level 01
+            if (nodeParentDataDescription == null)
+            {
+                return true;
+            }
+
+            //check parent of all nodes that are not DataCondition entries
+            var parent = GetUpperMostParent(dataDefinition, nodeParentDataDescription);
+
+            if (parentInError == null)
+            {
+                parentInError = new List<Node>();
+            }
+
+            if (parentInError.Contains(parent))
+            {
+                return true;
+            }
+
+            if (dataDefinition.CodeElement.Type == CodeElementType.DataConditionEntry ||
+                nodeParentDataDescription.Picture == null && (nodeParentDataDescription.Usage == null || 
+                                                              nodeParentDataDescription.Usage.Value == DataUsage.Display ||
+                                                              nodeParentDataDescription.Usage.Value == DataUsage.Index ||
+                                                              nodeParentDataDescription.Usage.Token.TokenType == TokenType.COMPUTATIONAL ) &&
+                nodeParentDataDescription.DataType != DataType.Date)
+            {
+                return true;
+            }
+            DiagnosticUtils.AddError(dataDefinition.Parent, 
+                nodeParentDataDescription.Picture != null
+                ? "Group item " + dataDefinition.Parent.Name +
+                  " contained the \"PICTURE\" clause.  The clause was discarded. "
+                : nodeParentDataDescription.Usage != null
+                    ? "The \"PICTURE\" clause was found for item " + dataDefinition.Parent.Name +
+                      " with \"USAGE\" clause.  The clause was discarded. "
+                    : "Group item " + dataDefinition.Parent.Name +
+                      " contained the \"DATE\" clause.  The clause was discarded. ");
+            parentInError.Add(parent);
             return true;
+        }
+
+        private static Node GetUpperMostParent(Node dataDefinition, dynamic nodeParent)
+        {
+            Node upperMostParent = null;
+            //check if the parent is still a variable (avoid to get higher than level 01 in the tree)
+            while (nodeParent != null && (nodeParent.Picture != null || nodeParent.Usage != null || nodeParent.DataType == DataType.Date))
+            {
+                //get current uppermost parent and "hop" to next parent
+                upperMostParent = dataDefinition.Parent;
+                var intermediateParent = dataDefinition.Parent;
+                //"climb" the tree to the next parent
+                nodeParent = intermediateParent?.Parent?.CodeElement as DataDescriptionEntry;
+                if (nodeParent == null)
+                {
+                    nodeParent = dataDefinition?.Parent?.CodeElement as DataRedefinesEntry;
+                }
+
+                dataDefinition = dataDefinition.Parent;
+            }
+            return upperMostParent;
         }
 
         public override bool Visit(IndexDefinition indexDefinition)
@@ -295,97 +366,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, completeQualifiedName);
         }
     }
-
-    internal class StructureChecker
-    {
-        /// <summary>
-        /// List of nodes that have inconsistent structure
-        /// </summary>
-        private static List<Node> parentInError;
-
-        /// <summary>
-        /// Checks if a structure declaration is valid
-        /// </summary>
-        /// <param name="node"></param>
-        internal static void OnNode(Node node)
-        {
-            //Elements are not checked as they are not a DataDescriptionEntry
-            if (node?.CodeElement as DataDefinitionEntry == null)
-            {
-                return;
-            }
-
-            //get parent of node - DataDescription entries and Data Redefines entries cannot have childrens
-            dynamic nodeParentDataDescription = node.Parent?.CodeElement as DataDescriptionEntry;
-            if (nodeParentDataDescription == null)
-            {
-                nodeParentDataDescription = node.Parent?.CodeElement as DataRedefinesEntry;
-            }
-
-            //return if node is level 01
-            if (nodeParentDataDescription == null)
-            {
-                return;
-            }
-
-            //check parent of all nodes that are not DataCondition entries
-            var parent = GetUpperMostParent(node, nodeParentDataDescription);
-
-            if (parentInError == null)
-            {
-                parentInError = new List<Node>();
-            }
-
-            if (parentInError.Contains(parent))
-            {
-                return;
-            }
-
-            if (node.CodeElement.Type != CodeElementType.DataConditionEntry &&
-                nodeParentDataDescription != null &&
-                (nodeParentDataDescription.Picture != null || nodeParentDataDescription.Usage != null
-                                                           || nodeParentDataDescription.DataType == DataType.Date))
-            {
-
-                DiagnosticUtils.AddError(node.Parent, nodeParentDataDescription.Picture != null
-                    ? "Group item " + node.Parent.Name +
-                      " contained the \"PICTURE\" clause.  The clause was discarded. "
-                    : nodeParentDataDescription.Usage != null
-                        ? "The \"PICTURE\" clause was found for item " + node.Parent.Name +
-                          " with \"USAGE\" clause.  The clause was discarded. "
-                        : "Group item " + node.Parent.Name +
-                          " contained the \"DATE\" clause.  The clause was discarded. ");
-                parentInError.Add(parent);
-            }
-        }
-
-        /// <summary>
-        /// Retuns the node with level 01
-        /// </summary>
-        /// <param name="node">Node from which the tree is "climbed"</param>
-        /// <param name="nodeParentDataDescription">Parent of node</param>
-        /// <returns></returns>
-        private static Node GetUpperMostParent(Node node, dynamic nodeParent)
-        {
-            Node upperMostParent = null;
-            //check if the parent is still a variable (avoid to get higher than level 01 in the tree)
-            while (nodeParent != null && (nodeParent.Picture!=null || nodeParent.Usage != null || nodeParent.DataType == DataType.Date))
-            {
-                //get current uppermost parent and "hop" to next parent
-                upperMostParent = node.Parent;
-                node = node.Parent;
-                //"climb" the tree to the next parent
-                nodeParent = node?.Parent?.CodeElement as DataDescriptionEntry;
-                if (nodeParent == null)
-                {
-                    nodeParent = node?.Parent?.CodeElement as DataRedefinesEntry;
-                }
-            }
-
-            return upperMostParent;
-        }
-    }
-
+    
     class SectionOrParagraphUsageChecker
     {
         public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
