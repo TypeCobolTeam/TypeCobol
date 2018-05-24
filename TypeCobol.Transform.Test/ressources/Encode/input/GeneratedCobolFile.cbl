@@ -1,7 +1,4 @@
-      *TyceCobol_Version:v1.1.2
-       CBL ARTH(EXTEND)
-       CBL TestValue
-	   IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. ProcedureCall.
       
        DATA DIVISION.
