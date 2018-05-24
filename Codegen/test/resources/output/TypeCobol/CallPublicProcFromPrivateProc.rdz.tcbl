@@ -105,7 +105,7 @@
        01 TC-Call          PIC X(01) VALUE 'T'.
            88 TC-FirstCall  VALUE 'T'.
            88 TC-NthCall    VALUE 'F'.
-       01 TC-PersonSe pic X(08) value 'PersonSe'.
+       01 TC-PersonSe pic X(08) value 'PERSONSE'.
 
        linkage section.
        01 mydate.

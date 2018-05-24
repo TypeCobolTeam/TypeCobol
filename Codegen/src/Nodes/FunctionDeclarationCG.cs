@@ -110,7 +110,7 @@ namespace TypeCobol.Codegen.Nodes {
 
             foreach (var pgm in imports.Programs.Values) {
                 workingStorageSection.Add(
-                    new GeneratedNode2("01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n", true));
+                    new GeneratedNode2("01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n", true));
             }
 
             
