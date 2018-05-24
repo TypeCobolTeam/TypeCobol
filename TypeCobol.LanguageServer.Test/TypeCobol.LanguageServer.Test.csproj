@@ -207,6 +207,12 @@
     <None Include="LSRTests\ProcedureCompletion\output_expected\ProcedureCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\QualifiedNameCompletionWithFiller\input\QualifiedNameCompletionWithFiller.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\QualifiedNameCompletionWithFiller\output_expected\QualifiedNameCompletionWithFiller.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\RemoveDataDivisionCtrlZWithDiag\input\RemoveDataDivisionCtrlZWithDiag.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

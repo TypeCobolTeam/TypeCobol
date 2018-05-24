@@ -228,6 +228,13 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("GlobalWithNestedProgramCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
 
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void QualifiedNameCompletionWithFiller()
+        {
+            LSRTestHelper.Test("QualifiedNameCompletionWithFiller", LsrTestingOptions.NoLsrTesting, true);
+        }
+
         #endregion
     }
 }
