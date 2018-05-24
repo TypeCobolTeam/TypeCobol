@@ -421,20 +421,25 @@ namespace TypeCobol.Compiler.CodeModel
 
         //After that, the algorithm will rapidly return to the first foreach done on candidates inside GetVariablesExplicitWithQualifiedName
         //And launch the same mechanic, but this time with no success, because we are going to immediately find a terminal variable. 
-        public List<KeyValuePair<string, DataDefinition>> GetVariablesExplicitWithQualifiedName(QualifiedName name, TypeDefinition typeDefContext = null)
+        public List<KeyValuePair<string, DataDefinition>> GetVariablesExplicitWithQualifiedName(QualifiedName name,
+            TypeDefinition typeDefContext = null)
         {
+
             var found = new List<DataDefinition>();
             var completeQualifiedNames = new List<List<string>>();
-            var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
-            candidates.AddRange(GetVariables(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
+            var candidates = GetCustomTypesSubordinatesNamed(name.Head);
+                //Get variable name declared into typedef declaration
+            candidates.AddRange(GetVariables(name.Head));
+                //Get all variables that corresponds to the given head of QualifiedName
             int foundCount = 0;
 
             foreach (var candidate in candidates.Distinct())
             {
                 completeQualifiedNames.Add(new List<string>());
-                MatchVariable(found, candidate, name, name.Count-1, candidate, completeQualifiedNames, typeDefContext);
+                MatchVariable(found, candidate, name, name.Count - 1, candidate, completeQualifiedNames, typeDefContext);
 
-                if (foundCount == found.Count && completeQualifiedNames.Count > 0) //No changes detected so delete the last completeQualifiedName tested.
+                if (foundCount == found.Count && completeQualifiedNames.Count > 0)
+                    //No changes detected so delete the last completeQualifiedName tested.
                     completeQualifiedNames.Remove(completeQualifiedNames.Last());
 
                 foundCount = found.Count;
@@ -445,12 +450,18 @@ namespace TypeCobol.Compiler.CodeModel
             foreach (var foundedVar in found)
             {
                 completeQualifiedNames[i].Reverse();
-                foundedVariables.Add(new KeyValuePair<string, DataDefinition>(string.Join(".", completeQualifiedNames[i]), foundedVar));
+                foundedVariables.Add(
+                    new KeyValuePair<string, DataDefinition>(string.Join(".", completeQualifiedNames[i]), foundedVar));
                 i++;
+
+                if (completeQualifiedNames.Count == i)
+                    break;
             }
 
 
             return foundedVariables;
+
+
         }
 
         /// <summary>
