@@ -29,25 +29,25 @@
         /// </summary>
         public ReceivingStorageArea InspectedItem { get; set; }
 
-        public IDictionary<QualifiedName, object> Variables {
+        public IDictionary<StorageArea, object> Variables {
             get { return VariablesWritten; }
         }
 
-        protected IDictionary<QualifiedName, object> variablesWritten;
+        protected IDictionary<StorageArea, object> variablesWritten;
 
-        public IDictionary<QualifiedName, object> VariablesWritten {
+        public IDictionary<StorageArea, object> VariablesWritten {
             get {
                 if (variablesWritten != null) return variablesWritten;
-                variablesWritten = new Dictionary<QualifiedName, object>();
+                variablesWritten = new Dictionary<StorageArea, object>();
                 if (InspectedItem == null) return variablesWritten;
-                string receiver = InspectedItem.StorageArea?.ToString();
+                var receiver = InspectedItem.StorageArea;
                 if (InspectedItem.SendingStorageAreas == null || InspectedItem.SendingStorageAreas.Length < 1) {
-                    variablesWritten.Add(new URI(receiver), "?MAGIC_FOR_INSPECTED_ITEM_AS_ALPHANUM?");
+                    variablesWritten.Add(receiver, "?MAGIC_FOR_INSPECTED_ITEM_AS_ALPHANUM?");
                     return variablesWritten;
                 }
                 foreach (var variable in InspectedItem.SendingStorageAreas) {
                     string sender = variable.SymbolReference?.Name;
-                    variablesWritten.Add(new URI(receiver), sender);
+                    variablesWritten.Add(receiver, sender);
                 }
                 return variablesWritten;
             }

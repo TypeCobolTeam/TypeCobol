@@ -1,0 +1,23 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MOVECORR.
+      
+       DATA DIVISION.
+      
+       WORKING-STORAGE SECTION.
+      
+       01 DateDB2 TYPEDEF STRICT PUBLIC.
+         10  YYYY   PIC 9(04).
+         10  filler PIC X value '-'.
+         10  MM     PIC 9(02).
+         10  filler PIC X value '-'.
+         10  DD     PIC 9(02).
+      
+       01 myDate TYPE DateDB2.
+      
+       01 groupB-1.
+         02 groupB-2.
+           03 varB type DateDB2.
+      
+       PROCEDURE DIVISION.           
+          SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
+       END PROGRAM MOVECORR.

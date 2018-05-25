@@ -1,6 +1,9 @@
 ﻿--- Diagnostics ---
-Line 24[12,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol HolderNumber
+Line 24[12,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol HolderNumber 
+Symbols found: VariableSeeking::Account2::HolderNumber | VariableSeeking::Account2::HolderNumber
 Line 31[12,42] <27, Error, Syntax> - Syntax error : Symbol Account1.HolderNumber is not referenced
+Line 64[8,23] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol bla 
+Symbols found: VariableSeeking::MyVar1::MySimpleType::bla | VariableSeeking::MyVar2::MySimpleType::bla | VariableSeeking::MySuperVar1::MySuperType::MySubType::bla | VariableSeeking::MySuperVar2::MySuperType::MySubType::bla
 
 --- Program ---
 PROGRAM: VariableSeeking common:False initial:False recursive:False
@@ -10,6 +13,10 @@ PROGRAM: VariableSeeking common:False initial:False recursive:False
   Account1:Account
   Account2:Account
   HolderNumber:Numeric
+  MyVar1:MySimpleType
+  MyVar2:MySimpleType
+  MySuperVar1:MySuperType
+  MySuperVar2:MySuperType
 --- Intrinsic:Namespace:Global:Declarations
 -- TYPES -------
   Account:Account
@@ -18,8 +25,11 @@ PROGRAM: VariableSeeking common:False initial:False recursive:False
   Counter1:Counter1
   Counter2:Counter2
   MyType:MyType
+  MySimpleType:MySimpleType
+  MySuperType:MySuperType
 --- Intrinsic
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  CURRENCY:CURRENCY
   STRING:STRING

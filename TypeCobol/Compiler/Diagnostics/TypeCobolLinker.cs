@@ -65,6 +65,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 return; //Do not continue to prevent further work/crash with circular references
             }
 
+            if ((dataEntry.CodeElement as DataDescriptionEntry).IsGlobal)
+                symbolTable = symbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+
+            
             if (symbolTable.TypesReferences.ContainsKey(type)) //If datatype already exists, add ref to the list
             {
                 if (!symbolTable.TypesReferences[type].Contains(dataEntry))

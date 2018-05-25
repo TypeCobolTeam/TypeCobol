@@ -55,6 +55,12 @@ moveSimple: MOVE UNSAFE? (booleanValue | variable7) TO storageArea1+;
 moveCorresponding: MOVE UNSAFE? (CORRESPONDING | CORR) fromGroupItem=dataItemReference TO toGroupItem=dataItemReference;
 
 
+// rule modified to support : 
+// - SET UNSAFE <data> TO <data>
+setStatementForAssignment:
+	SET UNSAFE? setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
+
+
 // rule modified to support:
 // - SET <boolean> TO FALSE
 setStatementForConditions:
@@ -153,7 +159,7 @@ callInputParameter:  (BY? (REFERENCE | CONTENT | VALUE))? (sharedVariableOrFileN
 callInoutParameter:  (sharedStorageArea1 | OMITTED);  // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
 callOutputParameter: (sharedStorageArea1 | OMITTED); // TCRFUN_CALL_INOUT_AND_OUTPUT_BY_REFERENCE
 
-typeNameReference: (UserDefinedWord | DATE);
+typeNameReference: (UserDefinedWord | DATE | CURRENCY);
 
 // When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
 cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? (PRIVATE | PUBLIC)?;

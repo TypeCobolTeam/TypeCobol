@@ -39,7 +39,7 @@
            set td-var30Ind of Var3a to 1
            set td-var30Ind IN Var3a to 1
 
-      *KO, Typedef3 is used 2 times
+      *KO, Typedef3 is used 3 times
            set td-var30Ind to 1
 
 

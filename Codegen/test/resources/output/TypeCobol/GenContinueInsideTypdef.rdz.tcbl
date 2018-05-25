@@ -1,0 +1,49 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. GECCONTTD.
+       DATA DIVISION.
+       LOCAL-STORAGE SECTION.
+      * 01 MyType typedef strict.
+      *    02 Tit PIC X(60)  value 'blbablsdfklsdfksj dfjklsz e
+      *             'zfrzerzer'.
+      *    02 Titr PIC X(60)  value 'blbablsdfklsdfksj dfjklsz e
+      *             'zfrzerzer'.
+      *    02 Titq PIC X(60)  value "blbablsdfklsdfksj dfjklsz e
+      *             "zfrzerzer".
+      *    02 Titre PIC X(60)  value 'blbablsdfklsdfksj dfjklsz e
+      *             'zfrzerzer'.
+      *    02 Titre2 PIC X(60)  value "blbablsdfklsdfksj dfjklsz e
+      *             "zfrzerzer".
+      *    02 Titre3 PIC X(60)  value "blbablsdfklsdfksj dfjklsz e
+      *             "zfrzerzer
+      *             "zfin".
+      *    02 Titre4 PIC X(60)  value 'blbablsdfklsdfksj dfjklsz e
+      *             'zfrzerzer
+      *             'zfin'.
+      * 01 var1 TYPE MyType.
+        01 var1.
+           02 Tit PIC X(60) value 'blbablsdfklsdfksj dfjklsz ezfrzerzer'
+                               .
+           02 Titr PIC X(60) value 'blbablsdfklsdfksj dfjklsz ezfrzerzer
+      -    ''
+                               .
+           02 Titq PIC X(60) value "blbablsdfklsdfksj dfjklsz ezfrzerzer
+      -    ""
+                               .
+           02 Titre PIC X(60) value 'blbablsdfklsdfksj dfjklsz ezfrzerze
+      -    'r'
+                               .
+           02 Titre2 PIC X(60) value "blbablsdfklsdfksj dfjklsz ezfrzerz
+      -    "er"
+                               .
+           02 Titre3 PIC X(60) value "blbablsdfklsdfksj dfjklsz ezfrzerz
+      -    "erzfin"
+                          .
+           02 Titre4 PIC X(60) value 'blbablsdfklsdfksj dfjklsz ezfrzerz
+      -    'erzfin'
+                          .
+                            
+
+       PROCEDURE DIVISION.
+
+       END PROGRAM GECCONTTD.

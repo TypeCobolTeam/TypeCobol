@@ -47,7 +47,7 @@ namespace TypeCobol.Codegen.Extensions.Compiler.CodeElements.Expressions
                     str.Append(sa.SpecialRegisterName.TokenType).Append(' ');
                 }
             }
-            if (sa.OtherStorageAreaReference != null) str.Append(sa.OtherStorageAreaReference);
+            if (sa.OtherStorageAreaReference != null) str.Append(sa.OtherStorageAreaReference.SymbolReference);
 
             if (str.Length > 0) return str.ToString();
             return sa.ToString();

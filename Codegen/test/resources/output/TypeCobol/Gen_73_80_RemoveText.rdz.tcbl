@@ -1,0 +1,203 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MOVECORR.
+
+       DATA DIVISION.
+
+       WORKING-STORAGE SECTION.
+
+      *   01 CTGCPL-Enreg TYPEDEF STRICT.
+                                                                        09220000
+      *      10 TYP                 PIC X(03).
+                                                                        09230000
+      *      10 STE                 PIC X(02).
+                                                                        09240000
+      *      10 IDTOBJ              PIC S9(9) COMP.
+                                                                        09250000
+      *      10 NOMCLN              PIC X(10).
+                                                                        09260000
+      *      10 VALCLN              PIC X(50).
+                                                                        09270000
+
+      * structure d'enregistrement résultat de L1952                    09420000
+      *   01 CTGCPL-Enreg-resultat TYPEDEF STRICT.
+                                                                        09430000
+      *      10 TVR              PIC X(1).
+                                                                        09440000
+      *      10 TYP              PIC X(03).
+                                                                        09450000
+      *      10 IDTOBJ           PIC S9(9) COMP.
+                                                                        09460000
+      *      10 NOMCLN           PIC X(10).
+                                                                        09470000
+      *      10 VALCLN           PIC X(50).
+
+
+      *   01 Table10-CTGCPL TYPEDEF STRICT.
+                                                                        09500000
+      *     05 TBL10-CTGCPL-RTA-tbl TYPE CTGCPL-Enreg
+      *                        OCCURS 10.
+
+      * table de 10 éléments à rechercher                               09490000
+      *  01 Table10-CTGCPL-Resultat TYPEDEF STRICT.
+                                                                        09500000
+      *     05 TBL10-CTGCPL-RTA-tbl TYPE CTGCPL-Enreg-resultat
+      *                        OCCURS 10.
+
+       PROCEDURE DIVISION.
+      *DECLARE PROCEDURE rechercheListeElements PRIVATE
+      *        INPUT
+      *               liste-a-chercher TYPE Table10-CTGCPL
+      *               nombre-elements PIC S9(2) COMP-5
+      *               site-ims       PIC X(2)
+      *        OUTPUT
+      *               trouve TYPE Bool
+      *               lis-trouvee TYPE Table10-CTGCPL-Resultat
+      *
+      *               .
+
+       END PROGRAM MOVECORR.
+      *
+      *DECLARE PROCEDURE rechercheListeElements PRIVATE
+      *        INPUT
+      *               liste-a-chercher TYPE Table10-CTGCPL
+      *               nombre-elements PIC S9(2) COMP-5
+      *               site-ims       PIC X(2)
+      *        OUTPUT
+      *               trouve TYPE Bool
+      *               lis-trouvee TYPE Table10-CTGCPL-Resultat
+      *
+      *               .
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d5479a8frechercheListeElements.
+       DATA DIVISION.                                                   12340000
+       WORKING-STORAGE SECTION.                                         12350000
+          01  I                            PIC 9(4) COMP-5.             12360000
+      *   01  enr-lu                         TYPE CTGCPL-Enreg.
+          01 enr-lu. 
+           02 TYP PIC X(03).
+           02 STE PIC X(02).
+           02 IDTOBJ PIC S9(9) COMP.
+           02 NOMCLN PIC X(10).
+           02 VALCLN PIC X(50).
+                                                                        12370000
+      * 01  enr-a-chercher                 TYPE CTGCPL-Enreg.           12370001
+               01  L-I                            PIC 9(4) COMP-5.      12370002
+       REPLACE ==:MAX-TBL-RCH:== BY ==10==.                             12370003
+       REPLACE ==:MAX-TBL-MCTGCPL:== BY ==500==.                        12370004
+                                                                        12370005
+      *  01  enr-a-chercher                 TYPE CTGCPL-Enreg.
+         01 enr-a-chercher. 
+           02 TYP PIC X(03).
+           02 STE PIC X(02).
+           02 IDTOBJ PIC S9(9) COMP.
+           02 NOMCLN PIC X(10).
+           02 VALCLN PIC X(50).
+                                                                        12370006
+      *  01  enr-trouve                     TYPE CTGCPL-Enreg.
+         01 enr-trouve. 
+           02 TYP PIC X(03).
+           02 STE PIC X(02).
+           02 IDTOBJ PIC S9(9) COMP.
+           02 NOMCLN PIC X(10).
+           02 VALCLN PIC X(50).
+                                                                        12370007
+                                                                        12370008
+        01 MCTGCPL.                                                     12370009
+         05 MCTGCPL-TAB occurs :MAX-TBL-MCTGCPL:.                       12370010
+      *     10 champ TYPE CTGCPL-Enreg.
+            10 champ. 
+           11 TYP PIC X(03).
+           11 STE PIC X(02).
+           11 IDTOBJ PIC S9(9) COMP.
+           11 NOMCLN PIC X(10).
+           11 VALCLN PIC X(50).
+                                                                        12370011
+       LINKAGE SECTION.
+       01 liste-a-chercher.
+           02 TBL10-CTGCPL-RTA-tbl
+                               OCCURS 10.
+             03 TYP PIC X(03).
+             03 STE PIC X(02).
+             03 IDTOBJ PIC S9(9) COMP.
+             03 NOMCLN PIC X(10).
+             03 VALCLN PIC X(50).
+       01 nombre-elements PIC S9(2) COMP-5.
+       01 site-ims PIC X(2).
+       01 trouve-value PIC X     VALUE LOW-VALUE.
+           88 trouve       VALUE 'T'.
+           88 trouve-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+       01 lis-trouvee.
+           02 TBL10-CTGCPL-RTA-tbl
+                               OCCURS 10.
+             03 TVR PIC X(1).
+             03 TYP PIC X(03).
+             03 IDTOBJ PIC S9(9) COMP.
+             03 NOMCLN PIC X(10).
+             03 VALCLN PIC X(50).
+       PROCEDURE DIVISION
+             USING BY REFERENCE liste-a-chercher
+                   BY REFERENCE nombre-elements
+                   BY REFERENCE site-ims
+                   BY REFERENCE trouve-value
+                   BY REFERENCE lis-trouvee
+           .
+                                                                        12380000
+
+      * recherche de l'element dans la table
+      *    PERFORM VARYING L-I FROM 1 BY 1
+      *         UNTIL L-I > :MAX-TBL-MCTGCPL: OR
+      *           (MCTGCPL-TAB::TYP(L-I) = enr-a-chercher::TYP AND
+      *            MCTGCPL-TAB::STE(L-I) = enr-a-chercher::STE AND
+      *            MCTGCPL-TAB::IDTOBJ(L-I) =
+      *              enr-a-chercher::IDTOBJ                    AND
+      *            MCTGCPL-TAB::NOMCLN(L-I) = enr-a-chercher::NOMCLN
+      *            )
+           PERFORM VARYING L-I FROM 1 BY 1                              12710000
+                UNTIL L-I > :MAX-TBL-MCTGCPL: OR                        12710000
+                  (TYP OF MCTGCPL-TAB(L-I) = TYP OF enr-a-chercher AND    
+                   STE OF MCTGCPL-TAB(L-I) = STE OF enr-a-chercher AND    
+                   IDTOBJ OF MCTGCPL-TAB(L-I) =                         
+                     IDTOBJ OF enr-a-chercher                    AND    
+                   NOMCLN OF MCTGCPL-TAB(L-I) = NOMCLN OF enr-a-chercher  
+                   )                                                    12710000
+           END-PERFORM                                                  12710000
+           MOVE enr-a-chercher to enr-trouve                            12710000
+           IF L-I <= :MAX-TBL-MCTGCPL:                                  12710000
+      *       MOVE MCTGCPL-TAB::VALCLN(L-I) TO enr-trouve::VALCLN
+              MOVE VALCLN OF MCTGCPL-TAB(L-I) TO VALCLN OF enr-trouve     
+      *       DISPLAY 'rechercheElement - Element trouvé : VALCLN = '
+      *               MCTGCPL-TAB::VALCLN(L-I)
+              DISPLAY 'rechercheElement - Element trouvé : VALCLN = '   12710000
+                      VALCLN OF MCTGCPL-TAB(L-I)                        
+              SET trouve TO TRUE                                        12710000
+           END-IF                                                       12710000
+
+
+      * MOVE 'O' TO
+      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::TVR(I)
+        MOVE 'O' TO
+       TVR OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                    
+      *MOVE enr-lu::TYP TO
+      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::TYP(I)
+       MOVE TYP OF enr-lu TO                                            
+       TYP OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                    
+      *MOVE enr-lu::IDTOBJ TO
+      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::IDTOBJ(I)
+       MOVE IDTOBJ OF enr-lu TO                                         
+       IDTOBJ OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                 
+      *MOVE enr-lu::NOMCLN TO
+      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::NOMCLN(I)
+       MOVE NOMCLN OF enr-lu TO                                         
+       NOMCLN OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                 
+      *MOVE enr-lu::VALCLN TO
+      *lis-trouvee::TBL10-CTGCPL-RTA-tbl::VALCLN(I)
+       MOVE VALCLN OF enr-lu TO                                         
+       VALCLN OF TBL10-CTGCPL-RTA-tbl OF lis-trouvee(I)                 
+
+             GOBACK                                                     12930000
+           .                                                            12940000
+       END PROGRAM d5479a8frechercheListeElements.

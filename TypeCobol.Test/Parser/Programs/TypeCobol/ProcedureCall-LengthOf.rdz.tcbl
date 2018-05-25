@@ -1,0 +1,55 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+      *               WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyVar Type DATE.
+       PROCEDURE DIVISION.
+
+      *OK
+           call AllowedLengthOf input  length of MyVar
+                                       length of MyVar::YYYY
+                                in-out length of MyVar
+                                       length of MyVar::YYYY
+           end-call
+      *All KO, because format of procedure parameters are not correct
+           call KONotCorrectFormat input  length of MyVar
+                                          length of MyVar
+                                          length of MyVar
+                                          length of MyVar
+                                          length of MyVar
+           end-call
+
+      *All KO, because procedure parameters are in output
+           call KOInOutput output length of MyVar
+                                  length of MyVar
+           end-call
+           GOBACK
+           .
+       declare procedure AllowedLengthOf private
+             input  var11 pic  9(5)  comp-5
+                    var12 pic S9(07) comp-5
+             in-out var13 pic S9(9)  comp-5
+                    var14 pic  9(05) comp-5.
+       end-declare.
+
+       declare procedure KONotCorrectFormat private
+             input  var21 pic S9(5)
+                    var22 pic S9(06) comp
+                    var23 pic S9(07) comp-2
+                    var24 pic S9(08) comp-3
+                    var25 pic  9(10) comp-5.
+       end-declare.
+
+       declare procedure KOInOutput private
+             output var31 pic S9(6)  comp-5
+                    var32 pic S9(08) comp-5.
+       end-declare.
+
+
+       END PROGRAM DVZF0OSM.
