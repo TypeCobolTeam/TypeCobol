@@ -106,7 +106,7 @@
            CALL myProc  INPUT  somedate 
                                by content 'YYYYMMDD'
                                by reference myDate2
-                                  address of myDate2
+                               by content   address of myDate2
                         IN-OUT myDate3
                                myDate4
                         OUTPUT flag     
