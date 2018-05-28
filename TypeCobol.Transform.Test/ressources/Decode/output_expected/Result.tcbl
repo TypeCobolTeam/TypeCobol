@@ -1,3 +1,5 @@
+       CBL ARTH(EXTEND)
+       CBL TestValue
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ProcedureCall.
 

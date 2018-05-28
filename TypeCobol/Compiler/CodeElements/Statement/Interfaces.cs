@@ -10,7 +10,7 @@ namespace TypeCobol.Compiler.CodeElements {
 /// <summary>For statements using items for receiving data.</summary>
 public interface VariableWriter {
 	/// <summary>Keys: WHERE it is written. Values: WHAT is written.</summary>
-	IDictionary<QualifiedName,object> VariablesWritten { get; }
+	IDictionary<StorageArea,object> VariablesWritten { get; }
 	/// <summary>Are unsafe writes allowed?</summary>
 	bool IsUnsafe { get; }
 }

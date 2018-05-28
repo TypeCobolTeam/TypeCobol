@@ -213,19 +213,27 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, List<Scope> scopes)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="predicate">Predicate to search variable(s)</param>
+        /// <param name="maximalScope">The maximal symboltable scope to search in</param>
+        /// <returns></returns>
+        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, Scope maximalScope)
         {
             var foundedVariables = new List<DataDefinition>();
-            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
 
-            foreach (var scope in scopes)
+            SymbolTable currentTable = this;
+            while (currentTable != null && currentTable.CurrentScope >= maximalScope)
             {
-                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
-                    throw new NotSupportedException();
-
-                var dataToSeek = this.GetTableFromScope(scope).DataEntries.Values.SelectMany(t => t);
+                if (currentTable.CurrentScope == Scope.Namespace || currentTable.CurrentScope == Scope.Intrinsic)
+                    throw new NotSupportedException(); //There is no variable stored in those scopes
+             
+                var dataToSeek = currentTable.DataEntries.Values.SelectMany(t => t);
                 var results = dataToSeek.AsQueryable().Where(predicate);
                 foundedVariables.AddRange(results);
+
+                currentTable = currentTable.EnclosingScope;
             }
 
             return foundedVariables.Distinct(); //Distinct on object not on variable name
@@ -234,20 +242,18 @@ namespace TypeCobol.Compiler.CodeModel
         //---------------------------------------------
 
 
-        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, List<Scope> scopes)
+        public List<DataDefinition> GetVariablesByType(DataType dataType, IEnumerable<DataDefinition> existingVariables, Scope maximalScope)
         {
 
             var foundedVariables = new List<DataDefinition>();
-            if(existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
+            if (existingVariables != null && existingVariables.Any()) foundedVariables.AddRange(existingVariables);
 
-            scopes.Insert(0, this.CurrentScope); //Insert the current scope 
-
-            foreach (var scope in scopes)
+            SymbolTable currentTable = this;
+            while (currentTable != null && currentTable.CurrentScope >= maximalScope)
             {
-                if (scope == Scope.Namespace || scope == Scope.Intrinsic)
+                if (currentTable.CurrentScope == Scope.Namespace || currentTable.CurrentScope == Scope.Intrinsic)
                     throw new NotSupportedException();
 
-                var currentTable = GetTableFromScope(scope);
 
                 if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
@@ -261,6 +267,9 @@ namespace TypeCobol.Compiler.CodeModel
                         SeekVariableType(dataType, variable, ref foundedVariables);
                     }
                 }
+
+                currentTable = currentTable.EnclosingScope;
+
             }
 
             return foundedVariables;
@@ -412,20 +421,25 @@ namespace TypeCobol.Compiler.CodeModel
 
         //After that, the algorithm will rapidly return to the first foreach done on candidates inside GetVariablesExplicitWithQualifiedName
         //And launch the same mechanic, but this time with no success, because we are going to immediately find a terminal variable. 
-        public List<KeyValuePair<string, DataDefinition>> GetVariablesExplicitWithQualifiedName(QualifiedName name, TypeDefinition typeDefContext = null)
+        public List<KeyValuePair<string, DataDefinition>> GetVariablesExplicitWithQualifiedName(QualifiedName name,
+            TypeDefinition typeDefContext = null)
         {
+
             var found = new List<DataDefinition>();
             var completeQualifiedNames = new List<List<string>>();
-            var candidates = GetCustomTypesSubordinatesNamed(name.Head); //Get variable name declared into typedef declaration
-            candidates.AddRange(GetVariables(name.Head)); //Get all variables that corresponds to the given head of QualifiedName
+            var candidates = GetCustomTypesSubordinatesNamed(name.Head);
+                //Get variable name declared into typedef declaration
+            candidates.AddRange(GetVariables(name.Head));
+                //Get all variables that corresponds to the given head of QualifiedName
             int foundCount = 0;
 
             foreach (var candidate in candidates.Distinct())
             {
                 completeQualifiedNames.Add(new List<string>());
-                MatchVariable(found, candidate, name, name.Count-1, candidate, completeQualifiedNames, typeDefContext);
+                MatchVariable(found, candidate, name, name.Count - 1, candidate, completeQualifiedNames, typeDefContext);
 
-                if (foundCount == found.Count && completeQualifiedNames.Count > 0) //No changes detected so delete the last completeQualifiedName tested.
+                if (foundCount == found.Count && completeQualifiedNames.Count > 0)
+                    //No changes detected so delete the last completeQualifiedName tested.
                     completeQualifiedNames.Remove(completeQualifiedNames.Last());
 
                 foundCount = found.Count;
@@ -436,12 +450,18 @@ namespace TypeCobol.Compiler.CodeModel
             foreach (var foundedVar in found)
             {
                 completeQualifiedNames[i].Reverse();
-                foundedVariables.Add(new KeyValuePair<string, DataDefinition>(string.Join(".", completeQualifiedNames[i]), foundedVar));
+                foundedVariables.Add(
+                    new KeyValuePair<string, DataDefinition>(string.Join(".", completeQualifiedNames[i]), foundedVar));
                 i++;
+
+                if (completeQualifiedNames.Count == i)
+                    break;
             }
 
 
             return foundedVariables;
+
+
         }
 
         /// <summary>

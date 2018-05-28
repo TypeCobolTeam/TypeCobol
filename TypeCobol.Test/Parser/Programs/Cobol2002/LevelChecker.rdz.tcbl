@@ -31,6 +31,13 @@
        01 BooleanVar TYPE BOOL.
          88 WrongVarHere VALUE 99.
 
+       01 len PIC 9(2).
+       01 MyLevel1Test.
+           05 buf.
+           07 occurs 1
+              depending on len.
+              10 char    pic X.
+
        PROCEDURE DIVISION.
 
       *KO Level 88 under type bool in parameter

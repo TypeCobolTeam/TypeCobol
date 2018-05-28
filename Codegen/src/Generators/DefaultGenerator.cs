@@ -500,7 +500,7 @@ namespace TypeCobol.Codegen.Generators
                 if (lineLen > LEGAL_COBOL_LINE_LENGTH)
                 {
                     int replace_len = lineLen - LEGAL_COBOL_LINE_LENGTH;
-                    buffer.Insert(new string(' ', replace_len), LEGAL_COBOL_LINE_LENGTH, lineLen);
+                    buffer.Insert(new string(' ', replace_len), lineStartOffset + LEGAL_COBOL_LINE_LENGTH, lineStartOffset + lineLen);
                 }
             }
             buffer.Insert(code, start, end);        
@@ -525,7 +525,7 @@ namespace TypeCobol.Codegen.Generators
                 }
                 else if (newLineLen > MAX_COBOL_LINE_LENGTH)
                 {//Here we know that the line the line exceed with only white characters. ==> Remove extra white characters
-                    buffer.Delete(LEGAL_COBOL_LINE_LENGTH, newLineLen);
+                    buffer.Delete(lineStartOffset + LEGAL_COBOL_LINE_LENGTH, lineStartOffset + newLineLen);
                 }
             }
 

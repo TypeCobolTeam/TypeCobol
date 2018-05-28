@@ -3,10 +3,8 @@
        PROGRAM-ID. Pointers.
 
        DATA DIVISION.
+
        LOCAL-STORAGE SECTION.
-
-       01 noPointer PIC S9(2) value 12.
-
       *01 pointer0 pointer.
        01  pointer0 POINTER.
        01 redefines pointer0.
@@ -22,6 +20,9 @@
        01 redefines pointer2.
            03 pointer2db906685 pic S9(05) comp-5.
                            
+       
+       LINKAGE SECTION.
+       01 noPointer PIC S9(2) value 12.
 
        PROCEDURE DIVISION.
 

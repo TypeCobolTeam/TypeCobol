@@ -56,8 +56,9 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 
                     if (picture != null)
                     {
+                        bool globalSeen = false;
                         //If we have a picture, try to extract the original pic string declaration.
-                        string picIt = TypedDataNode.ExtractPicTokensValues(Layout, this.CodeElement().ConsumedTokens, out bHasPeriod);
+                        string picIt = TypedDataNode.ExtractPicTokensValues(Layout, this.CodeElement().ConsumedTokens, out bHasPeriod, out globalSeen);
                         if (picIt.Length != 0)
                         {
                             str.Append(picIt);
@@ -83,8 +84,9 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
                             picture = customtype.CodeElement().Picture;
                             if (picture != null)
                             {
+                                bool globalSeen = false;
                                 //If we have a picture, try to extract the original pic string declaration.
-                                string picIt = TypedDataNode.ExtractPicTokensValues(Layout, customtype.CodeElement(), out bHasPeriod);
+                                string picIt = TypedDataNode.ExtractPicTokensValues(Layout, customtype.CodeElement(), out bHasPeriod, out globalSeen);
                                 if (picIt.Length != 0)
                                     str.Append(picIt);
                                 else

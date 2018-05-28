@@ -2,13 +2,14 @@
        PROGRAM-ID. Pointers.
 
        DATA DIVISION.
+
        LOCAL-STORAGE SECTION.
-
-       01 noPointer PIC S9(2) value 12.
-
        01 pointer0 pointer.
        01 pointer1 pointer.
        01 pointer2 pointer.
+       
+       LINKAGE SECTION.
+       01 noPointer PIC S9(2) value 12.
 
        PROCEDURE DIVISION.
 
