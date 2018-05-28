@@ -235,6 +235,14 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("QualifiedNameCompletionWithFiller", LsrTestingOptions.NoLsrTesting, true);
         }
 
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionCaseInsensitive()
+        {
+            LSRTestHelper.Test("ProcedureCompletionCaseInsensitive", LsrTestingOptions.NoLsrTesting, true);
+        }
+
         #endregion
     }
 }

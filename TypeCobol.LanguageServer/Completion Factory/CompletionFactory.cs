@@ -137,8 +137,8 @@ namespace TypeCobol.LanguageServer
                 calledProcedures =
                     node.SymbolTable.GetFunctions(
                         p =>
-                            p.Name.Equals(procedureName) ||
-                            p.VisualQualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
+                            p.Name.Equals(procedureName, StringComparison.InvariantCultureIgnoreCase) ||
+                            p.VisualQualifiedName.ToString().Equals(procedureName, StringComparison.InvariantCultureIgnoreCase), new List<SymbolTable.Scope>
                         {
                             SymbolTable.Scope.Declarations,
                             SymbolTable.Scope.Intrinsic,
