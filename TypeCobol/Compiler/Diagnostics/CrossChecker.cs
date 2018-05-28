@@ -8,6 +8,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -121,74 +122,42 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
 
-            //get parent of node - DataDescription entries and Data Redefines entries cannot have childrens
-            dynamic nodeParentDataDescription = dataDefinition.Parent?.CodeElement as DataDescriptionEntry;
-            if (nodeParentDataDescription == null)
-            {
-                nodeParentDataDescription = dataDefinition.Parent?.CodeElement as DataRedefinesEntry;
-            }
-
-            //return if node is level 01
-            if (nodeParentDataDescription == null)
+            var nodeData = dataDefinition.CodeElement as DataDescriptionEntry ?? (CommonDataDescriptionAndDataRedefines) (dataDefinition.CodeElement as DataRedefinesEntry);
+            if (nodeData == null || levelNumber.Value > 49)
             {
                 return true;
             }
+            //check if node that has:
+            // - Picture
+            // - Usage as Display, National (blank when zero if both present) or Index
+            // - Usage is Computational, Synchronized, Pointer or Procedure-Pointer
+            // and ha a child that declares data
+            if (!(nodeData.Picture == null && (nodeData.Usage == null ||
+                                                nodeData.Usage.Value == DataUsage.Display ||
+                                                nodeData.Usage.Value == DataUsage.National ||
+                                                nodeData.Usage.Value == DataUsage.Index ||
+                                                nodeData.Usage.Token.TokenType == TokenType.COMPUTATIONAL ||
+                                                nodeData.Usage.Token.TokenType == TokenType.SYNCHRONIZED ||
+                                                nodeData.Usage.Token.TokenType == TokenType.PROCEDURE_POINTER ||
+                                                nodeData.Usage.Token.TokenType == TokenType.POINTER)
 
-            //check parent of all nodes that are not DataCondition entries
-            var parent = GetUpperMostParent(dataDefinition, nodeParentDataDescription);
-
-            if (parentInError == null)
+                  && nodeData.DataType != DataType.Date)
+                 && dataDefinition.Children.Any(elem => (elem.CodeElement as CommonDataDescriptionAndDataRedefines)!= null))
             {
-                parentInError = new List<Node>();
+                DiagnosticUtils.AddError(dataDefinition,
+                    nodeData?.Picture != null
+                        ? "Group item " + dataDefinition.Name +
+                          " contained the \"PICTURE\" clause.  The clause was discarded. "
+                        : nodeData?.Usage != null
+                            ? "The \"PICTURE\" clause was found for item " + dataDefinition.Name +
+                              " with \"USAGE\" clause.  The clause was discarded. "
+                            : "Group item " + dataDefinition.Name +
+                              " contained the \"DATE\" clause.  The clause was discarded. ");
             }
-
-            if (parentInError.Contains(parent))
-            {
-                return true;
-            }
-
-            if (dataDefinition.CodeElement.Type == CodeElementType.DataConditionEntry ||
-                nodeParentDataDescription.Picture == null && (nodeParentDataDescription.Usage == null || 
-                                                              nodeParentDataDescription.Usage.Value == DataUsage.Display ||
-                                                              nodeParentDataDescription.Usage.Value == DataUsage.Index ||
-                                                              nodeParentDataDescription.Usage.Token.TokenType == TokenType.COMPUTATIONAL ) &&
-                nodeParentDataDescription.DataType != DataType.Date)
-            {
-                return true;
-            }
-            DiagnosticUtils.AddError(dataDefinition.Parent, 
-                nodeParentDataDescription.Picture != null
-                ? "Group item " + dataDefinition.Parent.Name +
-                  " contained the \"PICTURE\" clause.  The clause was discarded. "
-                : nodeParentDataDescription.Usage != null
-                    ? "The \"PICTURE\" clause was found for item " + dataDefinition.Parent.Name +
-                      " with \"USAGE\" clause.  The clause was discarded. "
-                    : "Group item " + dataDefinition.Parent.Name +
-                      " contained the \"DATE\" clause.  The clause was discarded. ");
-            parentInError.Add(parent);
             return true;
         }
 
-        private static Node GetUpperMostParent(Node dataDefinition, dynamic nodeParent)
-        {
-            Node upperMostParent = null;
-            //check if the parent is still a variable (avoid to get higher than level 01 in the tree)
-            while (nodeParent != null && (nodeParent.Picture != null || nodeParent.Usage != null || nodeParent.DataType == DataType.Date))
-            {
-                //get current uppermost parent and "hop" to next parent
-                upperMostParent = dataDefinition.Parent;
-                var intermediateParent = dataDefinition.Parent;
-                //"climb" the tree to the next parent
-                nodeParent = intermediateParent?.Parent?.CodeElement as DataDescriptionEntry;
-                if (nodeParent == null)
-                {
-                    nodeParent = dataDefinition?.Parent?.CodeElement as DataRedefinesEntry;
-                }
-
-                dataDefinition = dataDefinition.Parent;
-            }
-            return upperMostParent;
-        }
+        
 
         public override bool Visit(IndexDefinition indexDefinition)
         {
