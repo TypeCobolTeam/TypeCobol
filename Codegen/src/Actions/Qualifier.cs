@@ -129,10 +129,10 @@ namespace TypeCobol.Codegen.Actions
             {
                 if (UsedStorageArea != null && UsedStorageArea.Contains(storage_area))
                     return;
-                string name = storage_area?.SymbolReference?.Name;
+                string name = storage_area?.GetStorageAreaThatNeedDeclaration?.SymbolReference?.Name;
                 GenerateToken item = null;
                 item = new GenerateToken(
-                    new TokenCodeElement(storage_area?.SymbolReference?.NameLiteral?.Token), name + "-value", sourcePositions);
+                    new TokenCodeElement(storage_area?.GetStorageAreaThatNeedDeclaration?.SymbolReference?.NameLiteral?.Token), name + "-value", sourcePositions);
                 item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                 this.CurrentNode.Add(item);
                 if (UsedStorageArea == null)
