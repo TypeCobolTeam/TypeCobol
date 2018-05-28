@@ -249,7 +249,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (found.First().DataType == DataType.Boolean && found.First().CodeElement is DataDefinitionEntry &&
                          ((DataDefinitionEntry) found.First()?.CodeElement)?.LevelNumber?.Value != 88)
                 {
-                    if (!(node is Nodes.If || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch || node is Nodes.When))//Ignore If/Set/Perform/WhenSearch Statement
+                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch || node is Nodes.When))//Ignore If/Set/Perform/WhenSearch Statement
                     {
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
@@ -269,6 +269,25 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node,
                             "Cannot write into " + storageArea + ", " + variabletoCheck +
                             " is declared out of LINKAGE SECTION.");
+                }
+
+                if (specialRegister != null
+                    && specialRegister.SpecialRegisterName.TokenType == TokenType.ADDRESS
+                    && node is Call)
+                {
+                    var callStatement = node.CodeElement as CallStatement;
+                    var currentCheckedParameter = callStatement?.InputParameters.FirstOrDefault(
+                        param => param.StorageAreaOrValue.StorageArea == specialRegister);
+
+                    if (currentCheckedParameter != null)
+                    {
+                        var variabletoCheck = found.First();
+                        //This variable has to be in Linkage Section
+                        if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode) &&
+                            currentCheckedParameter.SharingMode.Value == ParameterSharingMode.ByReference)
+                            DiagnosticUtils.AddError(node,
+                                "CALL with ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE");
+                    }
                 }
 
             }

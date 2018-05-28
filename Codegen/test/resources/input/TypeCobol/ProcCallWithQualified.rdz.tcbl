@@ -12,6 +12,9 @@
                                      
            call DisplayCounter           
 		                  input Disp::LIG-DET
+
+           CALL "zefzef" using Disp::LIG-DET
+           by content length of Disp::LIG-DET.
       
            .
        declare procedure DisplayCounter private
