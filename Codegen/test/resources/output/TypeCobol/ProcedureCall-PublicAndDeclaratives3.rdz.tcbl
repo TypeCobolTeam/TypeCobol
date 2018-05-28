@@ -15,9 +15,11 @@
            02 DD PIC 9(2).
                                   
        01 TC-Callee pic X(08) value 'Callee'.
-       01 TC-Call          PIC X(01) VALUE 'T'.
+       01 TC-Call          PIC X VALUE LOW-VALUE.
            88 TC-FirstCall  VALUE 'T'.
            88 TC-NthCall    VALUE 'F'.
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
 
        LINKAGE SECTION.
       *Common to all librairies used by the program.
