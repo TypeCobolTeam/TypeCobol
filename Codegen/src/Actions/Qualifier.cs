@@ -172,11 +172,11 @@ namespace TypeCobol.Codegen.Actions
             /// <returns>true if some nodes have been generated, false otherwise</returns>
             private bool GenQualifiedStorage(StorageArea storageArea, CodeElement codeElement)
             {
-                if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsTypeCobolQualifiedReference)
+                if (storageArea?.GetStorageAreaThatNeedDeclaration?.SymbolReference != null && !storageArea.GetStorageAreaThatNeedDeclaration.SymbolReference.IsTypeCobolQualifiedReference)
                     return false;
                 if (CurrentNode == null)
                     return false;
-                TypeCobolQualifiedSymbolReference tcqsr = storageArea.SymbolReference as TypeCobolQualifiedSymbolReference;
+                TypeCobolQualifiedSymbolReference tcqsr = storageArea.GetStorageAreaThatNeedDeclaration.SymbolReference as TypeCobolQualifiedSymbolReference;
                 int start = -1;
                 for (int i = 0; i < codeElement.ConsumedTokens.Count; i++)
                 {

@@ -20,6 +20,11 @@
                                  LIG-DET IN Disp
            end-call
                                        
+
+      *    CALL "zefzef" using Disp::LIG-DET
+      *    by content length of Disp::LIG-DET.
+           CALL "zefzef" using LIG-DET OF Disp
+           by content length of LIG-DET OF Disp.
       
            .
       *declare procedure DisplayCounter private
