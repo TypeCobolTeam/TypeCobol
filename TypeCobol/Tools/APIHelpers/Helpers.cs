@@ -96,20 +96,21 @@ namespace TypeCobol.Tools.APIHelpers
 
 #if EUROINFO_RULES
             //Create list of inputFileName according to our naming convention in the case of an usage with RDZ
-            var inputFileNames = new List<string>();
+            var programsNames = new List<string>();
             foreach (var inputFile in inputFiles)
             {
-                var inputFileNameRaw = Path.GetFileNameWithoutExtension(inputFile).Trim();
-                if (inputFileNameRaw != null)
+                string PgmName = null;
+                foreach (var line in File.ReadLines(inputFile))
                 {
-                    // substring in case of MYPGM.rdz.tcbl
-                    var inputFileName = inputFileNameRaw.Substring(0,
-                        inputFileNameRaw.IndexOf(".", StringComparison.Ordinal) != -1 ?
-                            inputFileNameRaw.IndexOf(".", StringComparison.Ordinal) :
-                            inputFileNameRaw.Length
-                    );
-                    inputFileNames.Add(inputFileName);
+                    if (line.StartsWith("       PROGRAM-ID.", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        PgmName = line.Split('.')[1].Trim();
+                        break;
+                    }
                 }
+
+                programsNames.Add(PgmName);
+
             }
 #endif
 
@@ -130,7 +131,7 @@ namespace TypeCobol.Tools.APIHelpers
                             depFileNameRaw.IndexOf(".", StringComparison.Ordinal) :
                             depFileNameRaw.Length
                     );
-                    if (inputFileNames.Any(inputFileName => String.Compare(depFileName, inputFileName, StringComparison.OrdinalIgnoreCase) == 0))
+                    if (programsNames.Any(inputFileName => String.Compare(depFileName, inputFileName, StringComparison.OrdinalIgnoreCase) == 0))
                     {
                         continue;
 

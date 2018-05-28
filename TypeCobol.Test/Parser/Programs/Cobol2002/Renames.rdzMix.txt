@@ -1,0 +1,17 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. RenamesPgm.
+
+       DATA DIVISION.
+
+       WORKING-STORAGE SECTION.
+
+       01 var1.
+         05 D1 PIC X(10).
+       66 var2 renames D1.
+Line 11[8,28] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'var1' is level 01
+       66 var3 renames var1.
+
+       PROCEDURE DIVISION.
+           .
+
+       END PROGRAM RenamesPgm.

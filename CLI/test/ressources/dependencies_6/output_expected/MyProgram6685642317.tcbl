@@ -1,0 +1,14 @@
+﻿      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DUPLICAT.
+
+       DATA DIVISION.
+       Working-STORAGE SECTION.
+
+       01 myVar PIC X(10).
+
+       PROCEDURE DIVISION.
+
+        MOVE "0123456789" to myVar.
+
+       END PROGRAM DUPLICAT.

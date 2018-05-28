@@ -271,6 +271,25 @@ namespace TypeCobol.Compiler.Diagnostics
                             " is declared out of LINKAGE SECTION.");
                 }
 
+                if (specialRegister != null
+                    && specialRegister.SpecialRegisterName.TokenType == TokenType.ADDRESS
+                    && node is Call)
+                {
+                    var callStatement = node.CodeElement as CallStatement;
+                    var currentCheckedParameter = callStatement?.InputParameters.FirstOrDefault(
+                        param => param.StorageAreaOrValue.StorageArea == specialRegister);
+
+                    if (currentCheckedParameter != null)
+                    {
+                        var variabletoCheck = found.First();
+                        //This variable has to be in Linkage Section
+                        if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode) &&
+                            currentCheckedParameter.SharingMode.Value == ParameterSharingMode.ByReference)
+                            DiagnosticUtils.AddError(node,
+                                "CALL with ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE");
+                    }
+                }
+
             }
 
             if (!found.Any())

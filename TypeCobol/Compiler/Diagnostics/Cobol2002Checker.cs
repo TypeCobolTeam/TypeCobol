@@ -173,32 +173,44 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 return; //not my job
             }
-            Check(renames.CodeElement().RenamesFromDataName, renames);
-            Check(renames.CodeElement().RenamesToDataName, renames);
+            if (renames?.CodeElement()?.RenamesFromDataName != null)
+                Check(renames.CodeElement().RenamesFromDataName, renames);
+            if(renames?.CodeElement()?.RenamesToDataName != null)
+                Check(renames.CodeElement().RenamesToDataName, renames);
         }
 
         private static void Check(SymbolReference renames, Node node)
         {
-            var found = node.SymbolTable.GetVariables(renames);
-            if (found.Count() > 1)
+            var founds = node.SymbolTable.GetVariables(renames);
+            if (founds.Count() > 1)
             {
                 string message = "Illegal RENAMES: Ambiguous reference to symbol \'" + renames + "\'";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                return;
             }
-            if (!found.Any())
+            if (!founds.Any())
             {
                 string message = "Illegal RENAMES: Symbol \'" + renames + "\' is not referenced";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                return;
             }
-            foreach (var v in found)
+
+            var found = founds.First();
+            var foundCodeElement = found.CodeElement as DataDefinitionEntry;
+           
+            if (found.IsStronglyTyped || found.IsStrictlyTyped)
             {
-                if (v.IsStronglyTyped || v.IsStrictlyTyped)
-                {
-                    string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames,
-                        v.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
-                    DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
-                }
+                string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames,
+                    found.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
+
+            if (foundCodeElement?.LevelNumber != null && foundCodeElement.LevelNumber.Value == 01)
+            {
+                string message = string.Format("Illegal RENAMES: '{0}' is level 01", renames);
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+            }
+            
         }
     }
 

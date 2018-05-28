@@ -213,7 +213,36 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("MoveZeroSpaceCompletion", LsrTestingOptions.NoLsrTesting, true);
         }
-        
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void OfCompletion()
+        {
+            LSRTestHelper.Test("OfCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void GlobalWithNestedProgramCompletion()
+        {
+            LSRTestHelper.Test("GlobalWithNestedProgramCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void QualifiedNameCompletionWithFiller()
+        {
+            LSRTestHelper.Test("QualifiedNameCompletionWithFiller", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionCaseInsensitive()
+        {
+            LSRTestHelper.Test("ProcedureCompletionCaseInsensitive", LsrTestingOptions.NoLsrTesting, true);
+        }
+
         #endregion
     }
 }
