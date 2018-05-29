@@ -225,6 +225,8 @@
       *Ko: 
            CALL PublicProcedures::case15::unknown
 
+      *Ko: undefinedProcedure is not defined 
+           CALL undefinedProcedure using result
 
        .
        IDENTIFICATION DIVISION.
