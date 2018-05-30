@@ -738,7 +738,9 @@ storageEntry ::= dataDefinitionEntry
 
 execSqlStatement ::= ExecStatement
 	{:  :}
-	| ExecStatement SentenceEnd
+	| ExecStatement:stmt
+	{: my_parser.Builder.StartExecStatement(stmt); my_parser.Builder.EndExecStatement(); :}
+	SentenceEnd
 	{:  :}
 	;
 

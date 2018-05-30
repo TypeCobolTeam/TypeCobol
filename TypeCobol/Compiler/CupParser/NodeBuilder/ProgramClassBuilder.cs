@@ -346,12 +346,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
         {
+            ExitLastLevel1Definition();
             Enter(new FileDescriptionEntryNode(entry), entry);
         }
 
         public virtual void EndFileDescriptionEntry()
-        {
-            ExitLastLevel1Definition();
+        {            
             Exit();
         }
 
@@ -676,6 +676,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartExecStatement(ExecStatement execStmt)
         {
+            ExitLastLevel1Definition();
             Enter(new Exec(execStmt), execStmt);
         }
 
