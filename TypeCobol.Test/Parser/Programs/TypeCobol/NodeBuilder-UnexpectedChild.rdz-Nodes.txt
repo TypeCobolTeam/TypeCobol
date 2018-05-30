@@ -1,0 +1,17 @@
+﻿--- Nodes ---
+?
+  VARTYPEXT
+    data-division
+      file
+        [[FileDescriptionEntry]] [8,9:FD]<FD> --> [22,23:. ]<PeriodSeparator>
+
+        PRINT-REC
+        DUMMY-RECORD
+        [[FileDescriptionEntry]] [8,9:FD]<FD> --> [28,29:. ]<PeriodSeparator>
+
+        TEST-REC
+      working-storage
+        sqlcode
+        [[ExecStatement]] [10,13:EXEC]<EXEC> --> [12,19:END-EXEC]<END_EXEC>
+
+    end
