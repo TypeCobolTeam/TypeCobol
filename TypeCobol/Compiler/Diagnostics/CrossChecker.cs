@@ -76,6 +76,48 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Move move)
+        {
+            var moveCorresponding = move?.CodeElement as MoveCorrespondingStatement;
+            if (moveCorresponding == null)
+                return true;
+
+            //For MoveCorrespondingStatement check children compatibility
+            var FromVariable = move.SymbolTable.GetVariables(moveCorresponding.FromGroupItem); //Left member of the move corr statement
+            var ToVariable = move.SymbolTable.GetVariables(moveCorresponding.ToGroupItem); //Right member of the move corr statement
+
+            if ((FromVariable != null && FromVariable.Count() != 1) || (ToVariable != null && ToVariable.Count() != 1))
+                return true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
+
+            var fromVariableChildren = FromVariable.First().Children;
+            var toVariableChildren = ToVariable.First().Children;
+
+            var matchingChildrenNames = fromVariableChildren.Select(c => c.Name.ToLowerInvariant()).Intersect(toVariableChildren.Select(c => c.Name.ToLowerInvariant()));
+
+            foreach (var matchingChildName in matchingChildrenNames)
+            {
+                var retrievedChildrenFrom = fromVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
+                var retrievedChildrenTo = toVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
+
+                if ((retrievedChildrenFrom != null && retrievedChildrenFrom.Count() != 1) || (retrievedChildrenTo != null && retrievedChildrenTo.Count() != 1))
+                    DiagnosticUtils.AddError(move, string.Format("Multiple symbol \"{0}\" detected in MOVE CORR", matchingChildName));
+
+                var retrievedChildFrom = (retrievedChildrenFrom.First() as DataDefinition);
+                var retrievedChildTo = (retrievedChildrenTo.First() as DataDefinition);
+
+                if (retrievedChildFrom == null || retrievedChildTo == null)
+                    continue; //Doesn't have to happen but in case...
+
+                var fromDataType = retrievedChildFrom.DataType;
+                var toDataType = retrievedChildTo.DataType;
+
+                if (fromDataType != toDataType) //Check DataType matching
+                    DiagnosticUtils.AddError(move, string.Format("Symbol {0} of type {1} do not match symbol {2} of type {3}", retrievedChildFrom.VisualQualifiedName, fromDataType, retrievedChildTo.VisualQualifiedName, toDataType));
+            }
+
+            return true;
+        }
+
         public override bool Visit(TypeDefinition typeDefinition)
         {
             //Cobol 2002 rule
