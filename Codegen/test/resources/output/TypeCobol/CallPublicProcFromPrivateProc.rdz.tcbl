@@ -107,7 +107,7 @@
            88 TC-NthCall    VALUE 'F'
                             X'00' thru 'S'
                             'U' thru X'FF'.
-       01 TC-PersonSe pic X(08) value 'PersonSe'.
+       01 TC-PersonSe pic X(08) value 'PERSONSE'.
 
        linkage section.
        01 mydate.

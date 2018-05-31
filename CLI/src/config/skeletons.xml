@@ -328,7 +328,7 @@
         @{
           var items = "";
           foreach (var pgm in %imports.Programs.Values) {
-            items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n";
+            items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
             items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
             items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
             foreach (var proc in pgm.Procedures.Values) {
@@ -345,7 +345,7 @@
         @{
         var items = "";
         foreach (var pgm in %imports.Programs.Values) {
-        items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n";
+        items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
         }
         if (%imports.HasPublicProcedures) {
         items += "01 TC-Call          PIC X VALUE 'T'.\n";
