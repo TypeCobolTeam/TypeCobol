@@ -60,9 +60,11 @@ namespace TypeCobol.Codegen.Nodes {
 
                         ProgramImports imports = ProgramImportsAttribute.GetProgramImports(originalNode);
                         workingStorageSection.Add(new GeneratedNode2(
-                            "01 TC-Call          PIC X(01) VALUE 'T'.", true));
+                            "01 TC-Call          PIC X     VALUE 'T'.", true));
                         workingStorageSection.Add(new GeneratedNode2("    88 TC-FirstCall  VALUE 'T'.", true));
-                        workingStorageSection.Add(new GeneratedNode2("    88 TC-NthCall    VALUE 'F'.", true));
+                        workingStorageSection.Add(new GeneratedNode2("    88 TC-NthCall    VALUE 'F'", true));
+                        workingStorageSection.Add(new GeneratedNode2("                     X'00' thru 'S'", true));
+                        workingStorageSection.Add(new GeneratedNode2("                     'U' thru X'FF'.", true));
 
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
                     }

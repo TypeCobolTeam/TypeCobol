@@ -90,8 +90,8 @@ namespace TypeCobol.Compiler.Diagnostics
             if ((FromVariable != null && FromVariable.Count() != 1) || (ToVariable != null && ToVariable.Count() != 1))
                 return true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
 
-            var fromVariableChildren = FromVariable.First().Children;
-            var toVariableChildren = ToVariable.First().Children;
+            var fromVariableChildren = FromVariable.First().Children.Where(c => c?.Name != null);
+            var toVariableChildren = ToVariable.First().Children.Where(c => c?.Name != null);
 
             var matchingChildrenNames = fromVariableChildren.Select(c => c.Name.ToLowerInvariant()).Intersect(toVariableChildren.Select(c => c.Name.ToLowerInvariant()));
 

@@ -348,9 +348,11 @@
         items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n";
         }
         if (%imports.HasPublicProcedures) {
-        items += "01 TC-Call          PIC X(01) VALUE 'T'.\n";
+        items += "01 TC-Call          PIC X VALUE 'T'.\n";
         items += "    88 TC-FirstCall  VALUE 'T'.\n";
-        items += "    88 TC-NthCall    VALUE 'F'.\n";
+        items += "    88 TC-NthCall    VALUE 'F'\n";
+        items += "                     X'00' thru 'S'\n";
+        items += "                     'U' thru X'FF'.\n";
         }
         }
         @items
