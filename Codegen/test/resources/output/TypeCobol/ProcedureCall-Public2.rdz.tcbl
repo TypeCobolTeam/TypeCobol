@@ -22,7 +22,7 @@
                            'U' thru X'FF'.
                                   
        01  realformat   PIC X(08).
-       01 TC-Callee pic X(08) value 'Callee'.
+       01 TC-Callee pic X(08) value 'CALLEE'.
        01 TC-Call          PIC X VALUE 'T'.
            88 TC-FirstCall  VALUE 'T'.
            88 TC-NthCall    VALUE 'F'
