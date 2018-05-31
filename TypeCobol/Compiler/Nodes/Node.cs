@@ -159,6 +159,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// Mark that this node contains a boolean variable that has to be considered by CodeGen. 
             /// </summary>
             NodeContainsBoolean = 0x01 << 20,
+            /// <summary>
+            /// Mark that this node contains a pointer variable that has to be considered by CodeGen. 
+            /// </summary>
+            NodeContainsPointer = 0x01 << 21
 
 
         };
