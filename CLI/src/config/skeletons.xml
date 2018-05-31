@@ -35,6 +35,26 @@
     </patterns>
   </skeleton>
 
+  <!-- create redefines for pointers -->
+  <skeleton name="POINTER.REDEFINES" var="level,name,hash">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" Usage="Pointer"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+        @{
+        var items = "";
+        items = %level   + "  " + %name + " POINTER.\n" +
+        %level + " redefines " + %name + ".\n" +
+        (Int32.Parse(%level).CompareTo(8) == -1 ? "    0" : "    ") + 
+        (Int32.Parse(%level)+2).ToString() + " " +
+        (%name.Length.CompareTo(22) != 1 ? %name : %name.Substring(0,22)) + %hash + " pic S9(05) comp-5.";
+        }
+        @items
+      </pattern>
+    </patterns>
+  </skeleton>
+
   <!-- delete and replace TYPE -->
   <skeleton name="TYPE">
     <conditions>
@@ -52,6 +72,25 @@
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">SET %receiver-false TO TRUE</pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace SET <boolean> TO FALSE -->
+  <skeleton name="POINTER.INCREMENT" var="receivers, sender, incrementDirection">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.Set" receiverUsage="Pointer"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+        @{
+        var item = "";
+        item += "ADD " + (%incrementDirection == "Down" ? "-" : "") + %sender.ToString() + " to ";
+        foreach (var receiver in %receivers)
+          item += receiver.Name + receiver.Hash + ", ";
+        item = item.Remove(item.Length - 2);
+        }
+        @item
+      </pattern>
     </patterns>
   </skeleton>
 
@@ -289,7 +328,7 @@
         @{
           var items = "";
           foreach (var pgm in %imports.Programs.Values) {
-            items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n";
+            items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
             items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
             items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
             foreach (var proc in pgm.Procedures.Values) {
@@ -306,12 +345,14 @@
         @{
         var items = "";
         foreach (var pgm in %imports.Programs.Values) {
-        items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name + "'.\n";
+        items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
         }
         if (%imports.HasPublicProcedures) {
-        items += "01 TC-Call          PIC X(01) VALUE 'T'.\n";
+        items += "01 TC-Call          PIC X VALUE 'T'.\n";
         items += "    88 TC-FirstCall  VALUE 'T'.\n";
-        items += "    88 TC-NthCall    VALUE 'F'.\n";
+        items += "    88 TC-NthCall    VALUE 'F'\n";
+        items += "                     X'00' thru 'S'\n";
+        items += "                     'U' thru X'FF'.\n";
         }
         }
         @items
