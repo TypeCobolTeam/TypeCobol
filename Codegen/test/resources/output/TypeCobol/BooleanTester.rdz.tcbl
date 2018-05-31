@@ -51,6 +51,10 @@
        IF myBool = myBool
          continue
        END-IF.
+      *IF ADDRESS OF myBool = "AnyAlpha"
+       IF ADDRESS OF myBool-value = "AnyAlpha"
+         continue
+       END-IF.
        SET myBool TO TRUE.
       *SET myBool TO FALSE.
        SET myBool-false TO TRUE

@@ -1,4 +1,5 @@
 ﻿
+using System.Text;
 using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.Nodes {
@@ -276,7 +277,7 @@ namespace TypeCobol.Compiler.Nodes {
         #endregion
     }
 
-    public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>{
+    public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>, Tools.Hashable{
         public DataDescription(DataDescriptionEntry entry): base(entry) { }
 
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -287,6 +288,16 @@ namespace TypeCobol.Compiler.Nodes {
         /// A Dictonary that gives for a Token that appears in a qualified name its subtitution.
         /// </summary>
         public Dictionary<Token, string> QualifiedTokenSubsitutionMap;
+
+        public string Hash
+        {
+            get
+            {
+                var hash = new StringBuilder();
+                hash.Append(Name);
+                return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8);
+            }
+        }
     }
     public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> 
     {
