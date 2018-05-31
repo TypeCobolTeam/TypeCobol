@@ -112,7 +112,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var fromDataType = retrievedChildFrom.DataType;
                 var toDataType = retrievedChildTo.DataType;
 
-                if (fromDataType != toDataType) //Check DataType matching
+                if (fromDataType != toDataType && fromDataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 && toDataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //Check DataType matching
                     DiagnosticUtils.AddError(move, string.Format("Symbol {0} of type {1} do not match symbol {2} of type {3}", retrievedChildFrom.VisualQualifiedName, fromDataType, retrievedChildTo.VisualQualifiedName, toDataType));
             }
 

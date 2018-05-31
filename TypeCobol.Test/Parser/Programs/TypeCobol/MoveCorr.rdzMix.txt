@@ -60,10 +60,8 @@ Line 51[12,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable is 
            MOVE CORR MyGroup1 TO MyGroup2.
 Line 55[12,41] <27, Error, Syntax> - Syntax error : Symbol MOVECORR.MyGroup1.Data2 of type DATE do not match symbol MOVECORR.MyGroup3.Data2 of type BOOL
            MOVE CORR MyGroup1 TO MyGroup3.
-Line 56[12,41] <27, Error, Syntax> - Syntax error : Symbol MOVECORR.MyGroup1.Data1 of type Numeric do not match symbol MOVECORR.MyGroup4.Data1 of type Alphanumeric
 Line 56[12,41] <27, Error, Syntax> - Syntax error : Symbol MOVECORR.MyGroup1.Data2 of type DATE do not match symbol MOVECORR.MyGroup4.Data2 of type BOOL
            MOVE CORR MyGroup1 TO MyGroup4.
-Line 57[12,41] <27, Error, Syntax> - Syntax error : Symbol MOVECORR.MyGroup3.Data1 of type Numeric do not match symbol MOVECORR.MyGroup4.Data1 of type Alphanumeric
            MOVE CORR MyGroup3 TO MyGroup4.
 Line 58[12,41] <27, Error, Syntax> - Syntax error : Multiple symbol "data2" detected in MOVE CORR
            MOVE CORR MyGroup1 TO MyGroup5.
