@@ -18,7 +18,7 @@ namespace TypeCobol.Transform
         const string Part4MagicLine = "000000*£TC-PART4££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
         static readonly String CompilerOptionsRegExp = "(.......)?([Cc][Oo][Nn][Tt][Rr][Oo][Ll]|[Pp][Rr][Oo][Cc][Ee][Ss][Ss]|[Cc][Bb][Ll]) +";
         static System.Text.RegularExpressions.Regex CompilerOptionsRegExpMatcher;
-        static readonly String TypeCobolVersionRegExp = "......\\*TypeCobol_Version\\:v?[0-9]+\\.[0-9]+(\\.[0-9]+)?(\\(.*\\))?";
+        static readonly String TypeCobolVersionRegExp = "......\\*TypeCobol_Version\\:[Vv]?[0-9]+\\.[0-9]+(\\.[0-9]+)?.*";
         static System.Text.RegularExpressions.Regex TypeCobolVersionRegExpMatcher;
         const int LineLength = 66;
         const int CommentPos = 6;
@@ -26,8 +26,8 @@ namespace TypeCobol.Transform
         /// <summary>
         /// Check if the given line is Compiler Option.
         /// </summary>
-        /// <param name="line">The lien to check</param>
-        /// <returns>True if yes, fals eotherwise</returns>
+        /// <param name="line">The line to check</param>
+        /// <returns>True if yes, false otherwise</returns>
         public static bool MaybeOption(string line)
         {
             if (CompilerOptionsRegExpMatcher == null)
