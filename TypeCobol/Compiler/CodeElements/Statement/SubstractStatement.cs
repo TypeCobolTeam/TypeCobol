@@ -109,14 +109,17 @@ public class SubtractCorrespondingStatement: SubtractStatement {
 	public override Dictionary<StorageArea,List<ArithmeticExpression>> Affectations {
 		get {
 			var map = new Dictionary<StorageArea, List<ArithmeticExpression>>();
-			map[SendingAndReceivingGroupItem] = new List<ArithmeticExpression>();
-			var operation = new ArithmeticOperation(
-					new NumericVariableOperand(new NumericVariable(GroupItem)),
-					new SyntaxProperty<ArithmeticOperator>(ArithmeticOperator.Minus, null),
-					new NumericVariableOperand(new NumericVariable(SendingAndReceivingGroupItem))
-				);
-			if (IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
-			map[SendingAndReceivingGroupItem].Add(operation);
+                if (SendingAndReceivingGroupItem != null)
+                {
+                    map[SendingAndReceivingGroupItem] = new List<ArithmeticExpression>();
+                    var operation = new ArithmeticOperation(
+                            new NumericVariableOperand(new NumericVariable(GroupItem)),
+                            new SyntaxProperty<ArithmeticOperator>(ArithmeticOperator.Minus, null),
+                            new NumericVariableOperand(new NumericVariable(SendingAndReceivingGroupItem))
+                        );
+                    if (IsRounded) operation = ArithmeticOperator.Round.CreateOperation(operation);
+                    map[SendingAndReceivingGroupItem].Add(operation);
+                }
 			return map;
 		}
 	}

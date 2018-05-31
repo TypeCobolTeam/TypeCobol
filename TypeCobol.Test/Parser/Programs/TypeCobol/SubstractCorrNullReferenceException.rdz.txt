@@ -1,0 +1,42 @@
+﻿--- Diagnostics ---
+Line 22[38,39] <27, Error, Syntax> - Syntax error : mismatched input 'TO' expecting {'(', FROM} RuleStack=codeElement>subtractStatement>subtractCorresponding>dataItemReference,  OffendingSymbol=[38,39:TO]<TO>
+--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = MOVECORR
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [40,40+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [10,11:10]<LevelNumber>{10} --> [30,30+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [10,11:10]<LevelNumber>{10} --> [36,36+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [10,11:10]<LevelNumber>{10} --> [30,30+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [10,11:10]<LevelNumber>{10} --> [36,36+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [10,11:10]<LevelNumber>{10} --> [30,30+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [30,30+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [19,19+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [10,11:02]<LevelNumber>{2} --> [21,21+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [12,13:03]<LevelNumber>{3} --> [32,32+:.]<PeriodSeparator>
+
+[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,27:. ]<PeriodSeparator>
+
+[[SubtractStatement]] [11,18:SUBTRACT]<SUBTRACT> --> [67,70:YYYY]<UserDefinedWord>
+
+[[SentenceEnd]] [71,71+:.]<PeriodSeparator> --> [71,71+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = MOVECORR
+

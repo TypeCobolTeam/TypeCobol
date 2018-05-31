@@ -55,6 +55,12 @@ moveSimple: MOVE UNSAFE? (booleanValue | variable7) TO storageArea1+;
 moveCorresponding: MOVE UNSAFE? (CORRESPONDING | CORR) fromGroupItem=dataItemReference TO toGroupItem=dataItemReference;
 
 
+// rule modified to support : 
+// - SET UNSAFE <data> TO <data>
+setStatementForAssignment:
+	SET UNSAFE? setReceivingField=dataOrIndexStorageArea+ TO setSendingField;
+
+
 // rule modified to support:
 // - SET <boolean> TO FALSE
 setStatementForConditions:
