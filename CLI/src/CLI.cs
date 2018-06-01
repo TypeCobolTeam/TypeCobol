@@ -245,12 +245,16 @@ namespace TypeCobol.Server
                         try
                         {
                             cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
+                            string msg = string.Format(
+                                    "Succeed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs.", config.ReportCopyMoveInitializeFilePath);
+                            Console.WriteLine(msg);
                         }
                         catch (Exception e)
                         {
                             string msg = string.Format(
-                                    "Fail to emit report on MOVE and INTIALIZE statements that target COPYs! : {0}",
-                                    e.Message);
+                                    "Failed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs! : {1}",
+                                    config.ReportCopyMoveInitializeFilePath, e.Message);
+                            Console.Error.WriteLine(msg);
                             throw new GenerationException(msg, config.ReportCopyMoveInitializeFilePath, e);                            
                         }
                     }
