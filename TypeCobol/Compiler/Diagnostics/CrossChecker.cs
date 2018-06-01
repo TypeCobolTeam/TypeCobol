@@ -139,6 +139,97 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        /// <summary>
+        /// Determines if the given usage is an ElementaryItem usage
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <returns></returns>
+        public static bool IsElementaryItemUsage(DataUsage usage)
+        {
+            switch (usage)
+            {
+                case DataUsage.None:
+                    return false;
+                /// <summary>
+                /// p230: BINARY
+                /// p231: COMPUTATIONAL or COMP (binary)
+                /// p231: COMPUTATIONAL-4 or COMP-4 (binary)
+                /// </summary>
+                case DataUsage.Binary:
+                    return true;
+                /// <summary>
+                /// p231: COMPUTATIONAL-5 or COMP-5 (native binary)
+                /// </summary>
+                case DataUsage.NativeBinary:
+                    return true;
+                /// <summary>
+                /// p231: PACKED-DECIMAL
+                /// p231: COMPUTATIONAL-3 or COMP-3 (internal decimal)
+                /// </summary>
+                case DataUsage.PackedDecimal:
+                    return true;
+                /// <summary>
+                //// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
+                /// </summary>
+                case DataUsage.FloatingPoint:
+                    return true;
+                /// <summary>
+                /// p231: COMPUTATIONAL-2 or COMP-2 (long floating-point)
+                /// </summary>
+                case DataUsage.LongFloatingPoint:
+                    return true;
+                /// <summary>
+                /// p232: DISPLAY phrase 
+                /// </summary>
+                case DataUsage.Display:
+                    return false;
+                /// <summary>
+                /// p233: DISPLAY-1 phrase
+                /// </summary>
+                case DataUsage.DBCS:
+                    return false;
+                /// <summary>
+                /// p233: FUNCTION-POINTER phrase 
+                /// </summary>
+                case DataUsage.FunctionPointer:
+                    return true;
+                /// <summary>
+                /// p233: INDEX phrase 
+                /// Index data item
+                /// An index data item is a data item that can hold the value of an index.
+                /// You define an index data item by specifying the USAGE IS INDEX clause in a data
+                /// description entry. The name of an index data item is a data-name. An index data
+                /// item can be used anywhere a data-name or identifier can be used, unless stated
+                /// otherwise in the rules of a particular statement. You can use the SET statement to
+                /// save the value of an index (referenced by index-name) in an index data item.
+                /// </summary>
+                case DataUsage.Index:
+                    return false;
+                /// <summary>
+                /// p234: NATIONAL phrase
+                /// </summary>
+                case DataUsage.National:
+                    return false;
+                /// <summary>
+                /// p234: OBJECT REFERENCE phrase 
+                /// </summary>
+                case DataUsage.ObjectReference:
+                    return true;
+                /// <summary>
+                /// p235: POINTER phrase
+                /// </summary>
+                case DataUsage.Pointer:
+                    return true;
+                /// <summary>
+                /// p236: PROCEDURE-POINTER phrase 
+                /// </summary>
+                case DataUsage.ProcedurePointer:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public override bool Visit(DataDefinition dataDefinition)
         {
             if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
@@ -149,7 +240,7 @@ namespace TypeCobol.Compiler.Diagnostics
             //Check if DataDefinition is level 88 and declared under BOOL variable
             if (!(dataDefinition.CodeElement is DataDefinitionEntry)) return true;
 
-            var levelNumber = ((DataDefinitionEntry) dataDefinition.CodeElement).LevelNumber;
+            var levelNumber = ((DataDefinitionEntry)dataDefinition.CodeElement).LevelNumber;
             var dataDefinitionParent = (dataDefinition.Parent as DataDefinition);
             if (levelNumber != null && dataDefinitionParent != null &&
                 dataDefinitionParent.DataType == DataType.Boolean && levelNumber.Value == 88)
@@ -163,44 +254,51 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(dataDefinition.CodeElement,
                     "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77");
             }
-
-
-            var nodeData = dataDefinition.CodeElement as DataDescriptionEntry ?? (CommonDataDescriptionAndDataRedefines) (dataDefinition.CodeElement as DataRedefinesEntry);
-            if (nodeData == null || levelNumber.Value > 49)
+            //Level 88 and 66 cannot have Children.
+            if (levelNumber != null && (levelNumber.Value == 88 || levelNumber.Value == 66) && dataDefinition.ChildrenCount != 0)
             {
-                return true;
+                DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                    "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.");
             }
-            //check if node that has:
-            // - Picture
-            // - Usage as Display, National (blank when zero if both present) or Index
-            // - Usage is Computational, Synchronized, Pointer or Procedure-Pointer
-            // and ha a child that declares data
-            if (!(nodeData.Picture == null && (nodeData.Usage == null ||
-                                                nodeData.Usage.Value == DataUsage.Display ||
-                                                nodeData.Usage.Value == DataUsage.National ||
-                                                nodeData.Usage.Value == DataUsage.Index ||
-                                                nodeData.Usage.Token.TokenType == TokenType.COMPUTATIONAL ||
-                                                nodeData.Usage.Token.TokenType == TokenType.SYNCHRONIZED ||
-                                                nodeData.Usage.Token.TokenType == TokenType.PROCEDURE_POINTER ||
-                                                nodeData.Usage.Token.TokenType == TokenType.POINTER)
-
-                  && nodeData.DataType != DataType.Date)
-                 && dataDefinition.Children.Any(elem => (elem.CodeElement as CommonDataDescriptionAndDataRedefines)!= null))
+            if (dataDefinition.Usage != null)
             {
-                DiagnosticUtils.AddError(dataDefinition,
-                    nodeData?.Picture != null
-                        ? "Group item " + dataDefinition.Name +
-                          " contained the \"PICTURE\" clause.  The clause was discarded. "
-                        : nodeData?.Usage != null
-                            ? "The \"PICTURE\" clause was found for item " + dataDefinition.Name +
-                              " with \"USAGE\" clause.  The clause was discarded. "
-                            : "Group item " + dataDefinition.Name +
-                              " contained the \"DATE\" clause.  The clause was discarded. ");
+                if (levelNumber != null && (levelNumber.Value == 88 || levelNumber.Value == 66))
+                {//page 229 : Level 88 and 66 cannot have uase
+                    DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                        "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.");
+                }
             }
+            if (dataDefinition.Picture != null)
+            {//only children with level 88 can be children of a PICTURE Elementary Item
+                foreach (var child in dataDefinition.Children)
+                {
+                    if (child.CodeElement != null && child.CodeElement.Type != CodeElementType.DataConditionEntry)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition,
+                            "Group item " + dataDefinition.Name +
+                                " contained the \"PICTURE\" clause.");
+                        break;
+                    }
+                }
+            }
+
+            if (dataDefinition.Picture == null && dataDefinition.Usage != null && dataDefinition.ChildrenCount > 0)
+            {   //This DataDefinition Has no PICTURE but has an USAGE and Children : page 230
+                if (IsElementaryItemUsage(dataDefinition.Usage.Value))
+                {
+                    if (dataDefinition.Usage.Value != DataUsage.Binary)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition,
+                            "Elementary item USAGE " + dataDefinition.Name +
+                              " seen has Group Item.");
+                    }
+                }
+            }
+
             return true;
         }
 
-        
+
 
         public override bool Visit(IndexDefinition indexDefinition)
         {
