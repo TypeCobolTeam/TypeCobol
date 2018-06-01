@@ -312,6 +312,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var terminal = context.FileDescriptionEntry();
             var entry = terminal != null ? (FileDescriptionEntry)terminal.Symbol : null;
+            ExitLastLevel1Definition();
             Enter(new FileDescriptionEntryNode(entry), context);
         }
 
@@ -730,6 +731,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.ExecStatement() != null)
             {
                 ExecStatement terminal = (ExecStatement)context.ExecStatement().Symbol;
+                ExitLastLevel1Definition();
                 Enter(new Exec(terminal), context);
             }
         }
