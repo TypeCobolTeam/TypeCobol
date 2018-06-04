@@ -943,8 +943,6 @@ statements ::= statement
 	{: my_parser.Builder.CheckStartSentenceLastStatement(); :}
 	| statements statement
 	{:  :}
-	| statements statement 	
-	{: :}
 	;
 
 statement ::= singleStatement
