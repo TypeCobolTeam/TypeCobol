@@ -96,6 +96,9 @@
            Search MyArray
               when MyBool
                  display "Hello"
-           end-search
+           end-search.
+       TRAITEMENT.
+       .
+        PERFORM TRAITEMENT UNTIL MyBool.
            .
        END PROGRAM BooleanTester.
