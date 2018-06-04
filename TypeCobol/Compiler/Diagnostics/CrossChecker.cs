@@ -270,16 +270,13 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             if (dataDefinition.Picture != null)
             {//only children with level 88 can be children of a PICTURE Elementary Item
-                foreach (var child in dataDefinition.Children)
+                if (dataDefinition.Children.Any(elem => elem.CodeElement != null && 
+                                                        elem.CodeElement.Type != CodeElementType.DataConditionEntry))
                 {
-                    if (child.CodeElement != null && child.CodeElement.Type != CodeElementType.DataConditionEntry)
-                    {
-                        DiagnosticUtils.AddError(dataDefinition,
-                            "Group item " + dataDefinition.Name +
-                                " contained the \"PICTURE\" clause.");
-                        break;
-                    }
-                }
+                    DiagnosticUtils.AddError(dataDefinition,
+                              "Group item " + dataDefinition.Name +
+                                  " contained the \"PICTURE\" clause.");
+                }          
             }
 
             if (dataDefinition.Picture == null && dataDefinition.Usage != null && dataDefinition.ChildrenCount > 0)
@@ -295,9 +292,24 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
+            //Type definitions are considered UserDefinedDataType; 
+            //Types inside a TypeDef are not checked as they may occur as children
+            if ((dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines)!=null&&
+                (dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines).UserDefinedDataType!=null &&
+                dataDefinition.IsPartOfATypeDef == false &&
+                dataDefinition.ChildrenCount > 0 )
+            {
+                if (dataDefinition.Children.Any(elem => elem.CodeElement != null && 
+                                                        elem.CodeElement.Type != CodeElementType.DataConditionEntry))
+                {
+                    //can be type!;
+                    DiagnosticUtils.AddError(dataDefinition,
+                              "Item " + dataDefinition.Name +
+                                " is a TYPE that does not allow Group Item definition.");      
+                }
+            }
             return true;
         }
-
 
 
         public override bool Visit(IndexDefinition indexDefinition)
