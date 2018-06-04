@@ -164,7 +164,19 @@ namespace TypeCobol.LanguageServer
 
 #if EUROINFO_RULES //Issue #583
             SymbolTable arrangedCustomSymbol = null;
-            var inputFileName = fileName.Substring(0, 8);
+            string inputFileName = string.Empty;
+
+            using (var reader = new StringReader(sourceText))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (!line.StartsWith("       PROGRAM-ID.", StringComparison.InvariantCultureIgnoreCase)) continue;
+                    inputFileName = line.Split('.')[1].Trim();
+                    break;
+                }
+            }
+
             var matchingPgm =
                 _customSymbols.Programs.Keys.FirstOrDefault(
                     k => k.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase));
