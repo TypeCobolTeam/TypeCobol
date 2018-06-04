@@ -248,7 +248,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(dataDefinition.CodeElement,
                     "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
             }
-            if (levelNumber != null && !(levelNumber.Value == 01 || levelNumber.Value == 77) &&
+            if (levelNumber != null && !(levelNumber.Value == 01 || levelNumber.Value == 77 || levelNumber.Value == 66) &&
                 dataDefinitionParent == null)
             {
                 DiagnosticUtils.AddError(dataDefinition.CodeElement,
