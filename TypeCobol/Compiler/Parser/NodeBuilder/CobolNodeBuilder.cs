@@ -504,7 +504,6 @@ namespace TypeCobol.Compiler.Parser
         {
             SetCurrentNodeToTopLevelItem(data.LevelNumber);
             var node = new DataRenames(data);
-            ExitLastLevel1Definition();
             Enter(node);
             if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
         }
