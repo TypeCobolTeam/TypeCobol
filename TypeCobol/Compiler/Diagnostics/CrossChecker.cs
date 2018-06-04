@@ -271,7 +271,8 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDefinition.Picture != null)
             {//only children with level 88 can be children of a PICTURE Elementary Item
                 if (dataDefinition.Children.Any(elem => elem.CodeElement != null && 
-                                                        elem.CodeElement.Type != CodeElementType.DataConditionEntry))
+                                                        elem.CodeElement.Type != CodeElementType.DataConditionEntry &&
+                                                        elem.CodeElement.Type != CodeElementType.DataRenamesEntry))
                 {
                     DiagnosticUtils.AddError(dataDefinition,
                               "Group item " + dataDefinition.Name +
@@ -300,7 +301,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 dataDefinition.ChildrenCount > 0 )
             {
                 if (dataDefinition.Children.Any(elem => elem.CodeElement != null && 
-                                                        elem.CodeElement.Type != CodeElementType.DataConditionEntry))
+                                                        elem.CodeElement.Type != CodeElementType.DataConditionEntry &&
+                                                        elem.CodeElement.Type != CodeElementType.DataRenamesEntry))
                 {
                     //can be type!;
                     DiagnosticUtils.AddError(dataDefinition,
