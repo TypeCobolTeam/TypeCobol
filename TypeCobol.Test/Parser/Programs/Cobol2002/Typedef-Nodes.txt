@@ -113,7 +113,7 @@ Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strong
           strongType1-PART1
           strongType1-PART2
         useStrongType1
-          TYPE-GRP-STRONG-REN
+        TYPE-GRP-STRONG-REN
     procedure-division
       sentence-0
         [[MoveStatement]] [1,4:MOVE]<MOVE> --> [46,51:Point2]<UserDefinedWord>
