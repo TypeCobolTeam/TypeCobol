@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CB28015D-980A-4EDB-A879-52D477C5F995} = {CB28015D-980A-4EDB-A879-52D477C5F995}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCobol.Grammar\TypeCobol.Grammar.csproj", "{6E707761-8F1D-409A-8E5B-03953282E435}"
 EndProject
