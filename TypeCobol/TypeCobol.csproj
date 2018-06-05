@@ -109,6 +109,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
+    <None Include="Compiler\CupParser\EmptyTypeCobolProgram.cup" />
+    <None Include="Compiler\CupParser\TypeCobolProgram.cup" />
     <None Include="Documentation\Architecture\Initial requirements.docx" />
     <None Include="Documentation\Architecture\TypeCobolStats_14_04_2015.xlsx" />
     <None Include="Documentation\Reference\DB2 11 for zOs - Application Programming and SQL Guide.pdf" />
@@ -157,6 +159,10 @@
       <Project>{07445710-6b27-443e-9fe8-54b1476bc629}</Project>
       <Name>Analytics</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CSCupRuntime\CSCupRuntime.csproj">
+      <Project>{8cc6ccc3-7ed4-4dc8-a636-733856301aac}</Project>
+      <Name>CSCupRuntime</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TypeCobol.Grammar\TypeCobol.Grammar.csproj">
       <Project>{6e707761-8f1d-409a-8e5b-03953282e435}</Project>
       <Name>TypeCobol.Grammar</Name>
@@ -171,6 +177,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>$(OutDir)\CSCup.exe -nopositions -expect 2000 -parser TypeCobolProgramParser -symbols TypeCobolProgramSymbols $(ProjectDir)\Compiler\CupParser\TypeCobolProgram.cup
+COPY $(TargetDir)TypeCobolProgramParser.cs $(ProjectDir)\Compiler\CupParser\
+COPY $(TargetDir)TypeCobolProgramSymbols.cs $(ProjectDir)\Compiler\CupParser\
+</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

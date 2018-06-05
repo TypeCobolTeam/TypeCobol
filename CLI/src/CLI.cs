@@ -149,6 +149,7 @@ namespace TypeCobol.Server
                                             {
                                                 HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
                                                 ExecToStep = config.ExecToStep,
+                                                UseAntlrProgramParsing = config.UseAntlrProgramParsing
                                             };
 
 #if EUROINFO_RULES
@@ -160,6 +161,28 @@ namespace TypeCobol.Server
                 catch (Exception ex)
                 {
                     throw new ParsingException(MessageCode.ParserInit, ex.Message, path, ex); //Make ParsingException trace back to RunOnce()
+                }
+
+                Compiler.Report.AbstractReport cmrReport = null;
+                if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath))
+                {
+                    //Register Copy Move Initialize Reporter
+                    if (config.UseAntlrProgramParsing)
+                    {
+                        Compiler.Parser.NodeDispatcher<Antlr4.Runtime.ParserRuleContext>.RegisterStaticNodeListenerFactory(
+                            () => {
+                                var report = new Compiler.Report.CopyMoveInitializeReport<Antlr4.Runtime.ParserRuleContext>();
+                                cmrReport = report; return report;
+                            });
+                    }
+                    else
+                    {
+                        Compiler.Parser.NodeDispatcher<Compiler.CodeElements.CodeElement>.RegisterStaticNodeListenerFactory(
+                            () => {
+                                var report = new Compiler.Report.CopyMoveInitializeReport<Compiler.CodeElements.CodeElement>();
+                                cmrReport = report; return report;
+                            });
+                    }
                 }
 
                 parser.Parse(path);
@@ -213,6 +236,29 @@ namespace TypeCobol.Server
                     AnalyticsWrapper.Telemetry.TrackEvent("[Diagnostics] Detected", EventType.Diagnostics);
                     //Exception is thrown just below
                     }
+
+                if (allDiags.Count == 0)
+                {
+                    if (config.ExecToStep >= ExecutionStep.CrossCheck &&
+                        !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
+                    {//Emit any COPY MOVE/INITIALIZE Report.
+                        try
+                        {
+                            cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
+                            string msg = string.Format(
+                                    "Succeed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs.", config.ReportCopyMoveInitializeFilePath);
+                            Console.WriteLine(msg);
+                        }
+                        catch (Exception e)
+                        {
+                            string msg = string.Format(
+                                    "Failed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs! : {1}",
+                                    config.ReportCopyMoveInitializeFilePath, e.Message);
+                            Console.Error.WriteLine(msg);
+                            throw new GenerationException(msg, config.ReportCopyMoveInitializeFilePath, e);                            
+                        }
+                    }
+                }
 
                 //Copy missing is more important than diagnostics
                 if (copyAreMissing) {

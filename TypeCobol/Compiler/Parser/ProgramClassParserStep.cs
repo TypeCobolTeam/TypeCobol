@@ -14,6 +14,10 @@ using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.Nodes;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CupParser;
+using TypeCobol.Compiler.CupParser.NodeBuilder;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -58,11 +62,11 @@ namespace TypeCobol.Compiler.Parser
             cobolParser.AddErrorListener(errorListener);
 
             // Try to parse a Cobol program or class
-            perfStatsForParserInvocation.OnStartAntlrParsing();
+            perfStatsForParserInvocation.OnStartParsing();
             if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.BeginParsingSection();
             ProgramClassParser.CobolCompilationUnitContext programClassParseTree = cobolParser.cobolCompilationUnit();
             if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.EndParsingSection(programClassParseTree.ChildCount);
-            perfStatsForParserInvocation.OnStopAntlrParsing(
+            perfStatsForParserInvocation.OnStopParsing(
                 AntlrPerformanceProfiler != null ? (int)AntlrPerformanceProfiler.CurrentFileInfo.DecisionTimeMs : 0,
                 AntlrPerformanceProfiler != null ? AntlrPerformanceProfiler.CurrentFileInfo.RuleInvocations.Sum() : 0);
 
@@ -73,9 +77,9 @@ namespace TypeCobol.Compiler.Parser
             ParseTreeWalker walker = new ParseTreeWalker();
             CobolNodeBuilder programClassBuilder = new CobolNodeBuilder();
             diagnostics = new List<Diagnostic>();
-            programClassBuilder.SyntaxTree = new SyntaxTree(); //Initializie SyntaxTree for the current source file
-			programClassBuilder.CustomSymbols = customSymbols;
-            programClassBuilder.Dispatcher = new NodeDispatcher();
+            programClassBuilder.SyntaxTree = new SyntaxTree<ParserRuleContext>(); //Initializie SyntaxTree for the current source file
+            programClassBuilder.CustomSymbols = customSymbols;
+            programClassBuilder.Dispatcher = new NodeDispatcher<ParserRuleContext>();
             programClassBuilder.Dispatcher.CreateListeners();
 
             perfStatsForParserInvocation.OnStartTreeBuilding();
@@ -105,6 +109,80 @@ namespace TypeCobol.Compiler.Parser
             if (syntaxTreeDiag != null)
                 diagnostics.AddRange(syntaxTreeDiag);
             nodeCodeElementLinkers = programClassBuilder.NodeCodeElementLinkers;
+
+            if (programClassBuilderError != null)
+            {
+                diagnostics.Add(programClassBuilderError);
+            }
+        }
+
+        private static bool CupPrepared = false;
+        /// <summary>
+        /// This static prepare the parser generated method CUP_TypeCobolProgramParser_do_action.
+        /// Which in debug mode JIT precompilation takes time about 400ms.
+        /// </summary>
+        public static void PrepareCupParser()
+        {
+            if (!CupPrepared)
+            {
+                var method = typeof(CUP_TypeCobolProgramParser_actions).GetMethod("CUP_TypeCobolProgramParser_do_action");
+                if (method != null)
+                {
+                    RuntimeHelpers.PrepareMethod(method.MethodHandle);
+                    CupPrepared = true;
+                }
+            }
+        }
+        public static void CupParseProgramOrClass(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<CodeElementsLine> codeElementsLines, TypeCobolOptions compilerOptions, SymbolTable customSymbols, PerfStatsForParserInvocation perfStatsForParserInvocation, out SourceFile root, out List<Diagnostic> diagnostics, out Dictionary<CodeElement, Node> nodeCodeElementLinkers)
+        {
+            PrepareCupParser();
+#if DEBUG_ANTRL_CUP_TIME
+            var t1 = DateTime.UtcNow;            
+#endif
+            CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines);
+            TypeCobolProgramParser parser = new TypeCobolProgramParser(scanner);
+            CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
+            parser.ErrorReporter = diagReporter;
+            ProgramClassBuilder builder = new ProgramClassBuilder();
+            parser.Builder = builder;
+            ParserDiagnostic programClassBuilderError = null;
+
+            builder.SyntaxTree = new SyntaxTree<CodeElement>(); //Initializie SyntaxTree for the current source file
+            builder.CustomSymbols = customSymbols;
+            builder.Dispatcher = new NodeDispatcher<CodeElement>();
+            builder.Dispatcher.CreateListeners();
+
+            // Try to parse a Cobol program or class, with cup w are also building the The Syntax Tree Node
+            perfStatsForParserInvocation.OnStartParsing();
+            try
+            {
+                TUVienna.CS_CUP.Runtime.Symbol symbol = parser.parse();
+            }
+            catch (Exception ex)
+            {
+                var code = Diagnostics.MessageCode.ImplementationError;
+                programClassBuilderError = new ParserDiagnostic(ex.ToString(), null, null, code, ex);
+            }
+            perfStatsForParserInvocation.OnStopParsing(0, 0);
+
+#if DEBUG_ANTRL_CUP_TIME
+            var t2 = DateTime.UtcNow;
+            var t = t2 - t1;
+            System.Diagnostics.Debug.WriteLine("Time[" + textSourceInfo.Name + "];" + t.Milliseconds);
+#endif
+            root = builder.SyntaxTree.Root; //Set output root node
+
+            perfStatsForParserInvocation.OnStartTreeBuilding();
+
+            //Create link between data definition an Types, will be stored in SymbolTable
+            root.AcceptASTVisitor(new TypeCobolLinker());
+
+            //Stop measuring tree building performance
+            perfStatsForParserInvocation.OnStopTreeBuilding();
+
+            // Register compiler results
+            diagnostics = diagReporter.Diagnostics ?? new List<Diagnostic>();
+            nodeCodeElementLinkers = builder.NodeCodeElementLinkers;
 
             if (programClassBuilderError != null)
             {

@@ -44,6 +44,11 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
+        /// True to use ANTLR for parsing a program
+        /// </summary>
+        public bool UseAntlrProgramParsing { get; set; }
+
+        /// <summary>
         /// Lstr Testing Source document
         /// </summary>
         public bool LsrSourceTesting { get; set; }
@@ -91,6 +96,7 @@ namespace TypeCobol.LanguageServer
             if (LsrParserTesting) typeCobolWorkspace.IsLsrParserTesting = LsrParserTesting;
             if (LsrSemanticTesting) typeCobolWorkspace.IsLsrSemanticTesting = LsrSemanticTesting;
 
+            typeCobolWorkspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
             typeCobolWorkspace.TimerDisabledOption = TimerDisabledOption;
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
             typeCobolWorkspace.ExceptionTriggered += ExceptionTriggered;
