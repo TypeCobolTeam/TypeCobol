@@ -271,8 +271,9 @@ namespace TUVienna.CS_CUP
 				"    -dump_states   produce a dump of parse state machine\n"+
 				"    -dump_tables   produce a dump of the parse tables\n"+
 				"    -dump          produce a dump of all of the above\n"+
-				"    -version       print the version information for CUP and exit\n"
-				);
+				"    -version       print the version information for CUP and exit\n"+
+                "    -nodate        no date version will be generated\n"
+                );
 			System.Environment.Exit(1);
 		}
 
@@ -365,8 +366,12 @@ namespace TUVienna.CS_CUP
 					System.Console.WriteLine(version.title_str);
 					System.Environment.Exit(1);
 				}
-					/* CSA 24-Jul-1999; suggestion by Jean Vaucher */
-				else if (!argv[i].StartsWith("-") && i==len-1) 
+                else if (argv[i].Equals("-nodate"))
+				{
+				    emit.emit_date_version = false;
+				}
+                    /* CSA 24-Jul-1999; suggestion by Jean Vaucher */
+                else if (!argv[i].StartsWith("-") && i==len-1) 
 				{
 					/* use input from file. */
 					try 
