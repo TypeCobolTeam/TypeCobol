@@ -1,14 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CB28015D-980A-4EDB-A879-52D477C5F995} = {CB28015D-980A-4EDB-A879-52D477C5F995}
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCobol.Grammar\TypeCobol.Grammar.csproj", "{6E707761-8F1D-409A-8E5B-03953282E435}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Test", "TypeCobol.Test\TypeCobol.Test.csproj", "{323CC743-ED21-4A15-AD3F-3B7C937F6332}"
 EndProject
@@ -66,18 +64,6 @@ Global
 		{7AC7A3E5-91F2-44BF-955D-86CC61375742}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
 		{7AC7A3E5-91F2-44BF-955D-86CC61375742}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AC7A3E5-91F2-44BF-955D-86CC61375742}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Debug_Net40|Any CPU.ActiveCfg = EI_Debug_Net40|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Debug_Net40|Any CPU.Build.0 = EI_Debug_Net40|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Debug|Any CPU.ActiveCfg = EI_Debug|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Debug|Any CPU.Build.0 = EI_Debug|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Release_Net40|Any CPU.ActiveCfg = EI_Release_Net40|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Release_Net40|Any CPU.Build.0 = EI_Release_Net40|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Release|Any CPU.ActiveCfg = EI_Release|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.Release|Any CPU.Build.0 = Release|Any CPU
 		{323CC743-ED21-4A15-AD3F-3B7C937F6332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{323CC743-ED21-4A15-AD3F-3B7C937F6332}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{323CC743-ED21-4A15-AD3F-3B7C937F6332}.EI_Debug_Net40|Any CPU.ActiveCfg = EI_Debug_Net40|Any CPU

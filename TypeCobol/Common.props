@@ -14,7 +14,7 @@
 	
 	<!--For a per project "obj" folder but in a unique obj folder on the root solution folder-->
     <TC_RootIntermediateOutputPath>$(SolutionDir)\obj\$(Configuration)</TC_RootIntermediateOutputPath>
-    <TC_AntlrGeneratedFiles>$(TC_RootIntermediateOutputPath)\TypeCobol.Grammar</TC_AntlrGeneratedFiles>
+    <TC_AntlrGeneratedFiles>$(TC_RootIntermediateOutputPath)\TypeCobol</TC_AntlrGeneratedFiles>
     <IntermediateOutputPath>$(TC_RootIntermediateOutputPath)\$(MSBuildProjectName)\</IntermediateOutputPath>
 	
 	<!--For a per project "obj" folder -->

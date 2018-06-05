@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Antlr4.4.5.3\build\Antlr4.props" Condition="Exists('..\packages\Antlr4.4.5.3\build\Antlr4.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Import Project="..\TypeCobol.Grammar\Common.props" />
+  <Import Project="..\TypeCobol\Common.props" />
   <PropertyGroup>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7AC7A3E5-91F2-44BF-955D-86CC61375742}</ProjectGuid>
@@ -12,6 +13,8 @@
     <DoNotCopyLocalIfInGac>false</DoNotCopyLocalIfInGac>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <!-- ITEM Group for .NET 4.5 Dependencies -->
   <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
@@ -107,6 +110,40 @@
     <Compile Include="**\*.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Antlr4 Include="AntlrGrammar\Cobol2002CodeElements.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="AntlrGrammar\CobolCodeElements.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="AntlrGrammar\CobolCompilerDirectives.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
+    </Antlr4>
+    <None Include="AntlrGrammar\CobolExpressions.g4" />
+    <Antlr4 Include="AntlrGrammar\CobolProgramClass.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <None Include="AntlrGrammar\CobolWords.g4" />
+    <Antlr4 Include="AntlrGrammar\CodeElements.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="AntlrGrammar\ProgramClass.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="AntlrGrammar\TypeCobolCodeElements.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="AntlrGrammar\TypeCobolProgram.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
+    </Antlr4>
     <None Include="App.config" />
     <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
     <None Include="Compiler\CupParser\EmptyTypeCobolProgram.cup" />
@@ -139,6 +176,8 @@
     <Folder Include="Documentation\Presentations\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AntlrGrammar\How to configure antlr 4 in Visual Studio.txt" />
+    <Content Include="AntlrGrammar\How to edit antlr 4 grammar files.txt" />
     <Content Include="Documentation\Studies\Cobol 2 phases parsing study.txt" />
     <Content Include="Documentation\Studies\Compiler directives study.txt" />
     <Content Include="Documentation\Studies\Copy replacing study.txt" />
@@ -163,10 +202,6 @@
       <Project>{8cc6ccc3-7ed4-4dc8-a636-733856301aac}</Project>
       <Name>CSCupRuntime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TypeCobol.Grammar\TypeCobol.Grammar.csproj">
-      <Project>{6e707761-8f1d-409a-8e5b-03953282e435}</Project>
-      <Name>TypeCobol.Grammar</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="JetBrains.Annotations, Version=11.0.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
@@ -183,6 +218,14 @@ COPY $(TargetDir)TypeCobolProgramParser.cs $(ProjectDir)\Compiler\CupParser\
 COPY $(TargetDir)TypeCobolProgramSymbols.cs $(ProjectDir)\Compiler\CupParser\
 </PreBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Antlr4.4.5.3\build\Antlr4.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.4.5.3\build\Antlr4.props'))" />
+    <Error Condition="!Exists('..\packages\Antlr4.4.5.3\build\Antlr4.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.4.5.3\build\Antlr4.targets'))" />
+  </Target>
+  <Import Project="..\packages\Antlr4.4.5.3\build\Antlr4.targets" Condition="Exists('..\packages\Antlr4.4.5.3\build\Antlr4.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
