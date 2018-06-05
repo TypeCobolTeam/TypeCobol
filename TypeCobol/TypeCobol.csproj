@@ -178,7 +178,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>
-    <PreBuildEvent>$(OutDir)\CSCup.exe -nopositions -expect 2000 -parser TypeCobolProgramParser -symbols TypeCobolProgramSymbols $(ProjectDir)\Compiler\CupParser\TypeCobolProgram.cup
+    <PreBuildEvent>$(OutDir)\CSCup.exe -nodate -nopositions -expect 2000 -parser TypeCobolProgramParser -symbols TypeCobolProgramSymbols $(ProjectDir)\Compiler\CupParser\TypeCobolProgram.cup
 COPY $(TargetDir)TypeCobolProgramParser.cs $(ProjectDir)\Compiler\CupParser\
 COPY $(TargetDir)TypeCobolProgramSymbols.cs $(ProjectDir)\Compiler\CupParser\
 </PreBuildEvent>
