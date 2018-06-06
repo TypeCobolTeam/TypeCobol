@@ -15,16 +15,14 @@ namespace TypeCobol.Compiler.CodeElements {
 	    public bool IsUnsafe { get { return Unsafe != null && Unsafe.Value; } }
     // [/TYPECOBOL]
 
-	    protected IDictionary<QualifiedName,object> variables;
+	    protected IDictionary<StorageArea, object> variables;
 	    protected FunctionCall _functions = null;
 
-        public abstract IDictionary<QualifiedName,object> Variables { get; }
-	    public virtual  IDictionary<QualifiedName,object> VariablesWritten {
+        public abstract IDictionary<StorageArea, object> Variables { get; }
+	    public virtual  IDictionary<StorageArea,object> VariablesWritten {
 		    [NotNull]
 		    get {
-			    var written = new Dictionary<QualifiedName,object>();
-			    foreach(var v in Variables) if (v.Value != null) written.Add(v.Key, v.Value);
-			    return written;
+			    return Variables;
 		    }
 	    }
 
@@ -73,28 +71,29 @@ namespace TypeCobol.Compiler.CodeElements {
                    && this.ContinueVisitToChildren(astVisitor, SendingVariable, SendingBoolean);
         }
 
-	    public override IDictionary<QualifiedName,object> Variables {
-		    [NotNull]
-		    get {
-			    if (variables != null) return variables;
-			    variables = new Dictionary<QualifiedName,object>();
+	    public override IDictionary<StorageArea, object> Variables {
+	        [NotNull]
+	        get
+	        {
+	            if (variables != null) return variables;
+	            variables = new Dictionary<StorageArea, object>();
 
-			    var sending = SendingItem as QualifiedName;
-			    if (sending != null) variables.Add(sending, null);
+	            if (StorageAreaWrites != null)
+	            {
+	                foreach (var writeStorage in StorageAreaWrites)
+	                {
+	                    if (writeStorage?.StorageArea == null) continue;
 
-		        if (StorageAreaWrites != null) {
-		            foreach (var item in StorageAreaWrites) {
-		                var name = new URI(item?.StorageArea?.SymbolReference?.Name);
-		                if (variables.ContainsKey(name))
-		                    if (item?.StorageArea is DataOrConditionStorageArea)
-		                        continue; // same variable with (presumably) different subscript
-		                    else throw new ArgumentException(name+" already written, but not subscripted?");
-		                else variables.Add(name, SendingItem);
-		            }
-		        }
+	                    if (variables.ContainsKey(writeStorage.StorageArea))
+	                        if (writeStorage.StorageArea is DataOrConditionStorageArea)
+	                            continue; // same variable with (presumably) different subscript
+	                        else throw new ArgumentException(writeStorage.StorageArea + " already written, but not subscripted?");
+	                    else variables.Add(writeStorage.StorageArea, SendingItem);
+	                }
+	            }
 
-                return variables;
-		    }
+	            return variables;
+	        }
 	    }
         
 
@@ -162,16 +161,14 @@ namespace TypeCobol.Compiler.CodeElements {
                 && this.ContinueVisitToChildren(astVisitor, FromGroupItem, ToGroupItem);
         }
 
-        public override IDictionary<QualifiedName,object> Variables {
+        public override IDictionary<StorageArea, object> Variables {
 		    [NotNull]
 		    get {
 			    if (variables != null) return variables;
 
-			    variables = new Dictionary<QualifiedName,object>();
-                if (FromGroupItem != null && FromGroupItem.SymbolReference != null)
-                    variables.Add(new URI(FromGroupItem.SymbolReference.Name), null);
-                if (  ToGroupItem != null &&   ToGroupItem.SymbolReference != null)
-                    variables.Add(  new URI(ToGroupItem.SymbolReference.Name), FromGroupItem!=null? new URI(FromGroupItem?.SymbolReference?.Name):null);
+			    variables = new Dictionary<StorageArea, object>();
+		        if (ToGroupItem != null)
+		            variables.Add(ToGroupItem, FromGroupItem);
                 return variables;
 		    }
 	    }

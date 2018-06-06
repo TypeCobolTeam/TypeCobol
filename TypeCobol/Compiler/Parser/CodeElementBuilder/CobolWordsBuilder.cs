@@ -27,7 +27,8 @@ namespace TypeCobol.Compiler.Parser
                 symbolInformationForTokens[nameLiteral.Token] = symbolInfo;
         }
 
-        // --- Compile-time constant values used in the Cobol grammar ---
+        #region --- Compile-time constant values used in the Cobol grammar ---
+        
 
         internal static BooleanValue CreateBooleanValue(IParseTree context)
         {
@@ -246,8 +247,10 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
+        #endregion
 
-        // --- Cobol symbol definitions and symbol references ---
+        #region --- Cobol symbol definitions and symbol references ---
+        
 
         internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition1Context context, SymbolType symbolType)
         {
@@ -418,8 +421,9 @@ namespace TypeCobol.Compiler.Parser
             return externalNameOrSymbolReference;
         }
 
+        #endregion
 
-        // --- Specific symbol types ---
+        #region --- Specific symbol types ---
 
         internal SymbolDefinition CreateProgramNameDefinition(CodeElementsParser.ProgramNameDefinitionContext context)
         {
@@ -590,7 +594,7 @@ namespace TypeCobol.Compiler.Parser
         {
             return CreateSymbolReference(context.UserDefinedWord(), SymbolType.CharacterClassName);
         }
-
+        
         // [COBOL 2002]
         internal SymbolDefinition CreateDataTypeNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
         {
@@ -603,7 +607,16 @@ namespace TypeCobol.Compiler.Parser
             var typeNameRef = context.typeNameReference();
             if (typeNameRef == null)
                 return null;
-            var dataNameContext = typeNameRef.UserDefinedWord() ?? context.typeNameReference().DATE(); //Get variable/type name Context
+
+             ITerminalNode dataNameContext = null;
+            //Get variable/type name Context
+            if (typeNameRef.UserDefinedWord() != null)
+                dataNameContext = typeNameRef.UserDefinedWord();
+            else if (context.typeNameReference().DATE() != null)
+                dataNameContext = context.typeNameReference().DATE();
+            else if (context.typeNameReference().CURRENCY() != null)
+                dataNameContext = context.typeNameReference().CURRENCY();
+
 
             if (dataNameContext == null)
                 return null;
@@ -770,7 +783,9 @@ namespace TypeCobol.Compiler.Parser
         }
 
 
-        // --- Qualified names : give explicit context to resolve ambiguous name references ---
+        #endregion
+
+        #region --- Qualified names : give explicit context to resolve ambiguous name references ---
 
         [CanBeNull]
         internal SymbolReference CreateProcedureName([CanBeNull] CodeElementsParser.ProcedureNameContext context)
@@ -813,7 +828,9 @@ namespace TypeCobol.Compiler.Parser
             var c = context.cobolQualifiedDataName1();
             if (c != null) return CreateQualifiedDataName(c.dataNameReference(), c.dataNameReferenceOrFileNameReference());
             var tc = context.tcQualifiedDataName1();
-            return CreateQualifiedDataName(tc.dataNameReference(), tc.dataNameReferenceOrFileNameReference(), false);
+            var tail = tc.dataNameReferenceOrFileNameReference();
+            Array.Reverse(tail);
+            return CreateQualifiedDataName(tc.dataNameReference(), tail , false);
         }
         private SymbolReference CreateQualifiedDataName(CodeElementsParser.DataNameReferenceContext head, CodeElementsParser.DataNameReferenceOrFileNameReferenceContext[] tail, bool isCOBOL = true)
         {
@@ -977,7 +994,9 @@ namespace TypeCobol.Compiler.Parser
         }
 
 
-        // --- Specific external names ---
+        #endregion
+
+        #region --- Specific external names ---
 
         /// <summary>
         /// System devices or standard system actions taken by the compiler.
@@ -1105,8 +1124,9 @@ namespace TypeCobol.Compiler.Parser
             return CreateExternalName(context.externalName3(), SymbolType.ExecTranslatorName, typeof(ExecTranslatorNameEnum));
         }
 
+        #endregion
 
-        // --- Compiler enumerations ---
+        #region --- Compiler enumerations ---
 
         /// <summary>
         /// With the *CONTROL (or *CBL) statement, you can selectively display or suppress
@@ -1146,5 +1166,7 @@ namespace TypeCobol.Compiler.Parser
         {
             return CreateEnumeratedValue(context.enumeratedValue1(), typeof(RecordingModeEnum));
         }
+
+        #endregion
     }
 }

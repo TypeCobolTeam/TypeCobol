@@ -767,7 +767,7 @@ namespace TypeCobol.Compiler.Parser
 			statement.ToGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
 // [TYPECOBOL]
 			if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
-            // [/TYPECOBOL]
+// [/TYPECOBOL]
 
             // Collect storage area read/writes at the code element level
             if (statement.FromGroupItem != null && statement.ToGroupItem != null)
@@ -1035,7 +1035,10 @@ namespace TypeCobol.Compiler.Parser
             var statement = new SetStatementForAssignment();
 			statement.ReceivingStorageAreas = BuildObjectArrayFromParserRules(context.dataOrIndexStorageArea(), ctx => CobolExpressionsBuilder.CreateDataOrIndexStorageArea(ctx));
 			statement.SendingVariable = CreateSendingVariable(context.setSendingField());
-			return statement;
+
+            if (context.UNSAFE() != null) statement.Unsafe = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.UNSAFE()));
+
+            return statement;
 		}
 
 		private SetSendingVariable CreateSendingVariable(CodeElementsParser.SetSendingFieldContext context) {

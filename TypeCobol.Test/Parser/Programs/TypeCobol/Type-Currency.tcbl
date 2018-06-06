@@ -1,0 +1,33 @@
+﻿IDENTIFICATION DIVISION.
+************************
+  PROGRAM-ID.   TEST-CURRENCY.
+  AUTHOR.       BROCHATO.
+  DATE-WRITTEN. APRIL 2018
+
+DATA DIVISION.
+**************
+WORKING-STORAGE SECTION.
+
+01  oldCurrency    PIC X(03).
+01  myCurrency1    TYPE CURRENCY.
+01  myCurrency2    TYPE CURRENCY.
+01 groupe.
+   05 myCurrency3  TYPE CURRENCY.
+PROCEDURE DIVISION.
+*******************
+TEST-DATE.
+*** legal: from typed to typed
+  MOVE        myCurrency1     TO   myCurrency2
+*** legal: from typed to untyped
+  MOVE        myCurrency1     TO   oldCurrency
+*** legal: from trusted untyped to typed
+  MOVE UNSAFE oldCurrency   TO   myCurrency1.
+
+  DECLARE PROCEDURE MyTestProc
+    INPUT myCurrencyVar TYPE CURRENCY.
+  END-DECLARE.
+*OK
+  CALL MyTestProc INPUT myCurrency1.
+*KO
+  CALL MyTestProc INPUT oldCurrency.
+  .

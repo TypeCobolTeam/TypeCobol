@@ -96,6 +96,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool NoLogsMessageNotification { get; set; }
 
+        /// <summary>
+        /// True to use ANTLR for parsing a program
+        /// </summary>
+        public static bool UseAntlrProgramParsing { get; set; }
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -180,6 +185,7 @@ namespace TypeCobol.LanguageServer
                 { "tpreprocess",  "Preprocessing testing mode.", _ => LsrPreprocessTesting = true},
                 { "tparser",  "parsing testing mode.", _ => LsrParserTesting = true},
                 { "tsemantic",  "Semantic analysis testing mode.", _ => LsrSemanticTesting = true},
+                { "antlrp",  "Use ANTLR to parse a Program.", _ => UseAntlrProgramParsing = true},
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -251,6 +257,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.LsrParserTesting = LsrParserTesting;
                 typeCobolServer.LsrSemanticTesting = LsrSemanticTesting;
                 typeCobolServer.TimerDisabledOption = TimerDisabledOption;
+                typeCobolServer.UseAntlrProgramParsing = UseAntlrProgramParsing;
 
 
                 //Creating the thread that will read mesages and handle them 

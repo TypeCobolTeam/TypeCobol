@@ -250,7 +250,8 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
-                    case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
+                    case TokenType.DATE:     // <= TYPECOBOL : TYPE DATE
+                    case TokenType.CURRENCY: // <= TYPECOBOL : TYPE CURRENCY
                         return false;
                     default:
                         throw new InvalidOperationException("Unexpected literal value: "+Token.TokenType);
@@ -335,7 +336,8 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
-                    case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
+                    case TokenType.DATE:     // <= TYPECOBOL : TYPE DATE
+                    case TokenType.CURRENCY: // <= TYPECOBOL : TYPE CURRENCY
                         return CharacterEncodingType.Alphanumeric;
                     default:
                         throw new InvalidOperationException("Unexpected literal value: "+Token.TokenType);
@@ -384,7 +386,8 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.STANDARD_1:
                     case TokenType.STANDARD_2:
                     case TokenType.NATIVE:
-                    case TokenType.DATE: // <= TYPECOBOL : TYPE DATE
+                    case TokenType.DATE:     // <= TYPECOBOL : TYPE DATE
+                    case TokenType.CURRENCY: // <= TYPECOBOL : TYPE CURRENCY
                         return Token.Text;
                     default:
                         throw new InvalidOperationException("Unexpected literal token type: "+Token.TokenType);

@@ -16,37 +16,88 @@ namespace TypeCobol.Transform
         const string Part2MagicLine = "000000*£TC-PART2££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
         const string Part3MagicLine = "000000*£TC-PART3££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
         const string Part4MagicLine = "000000*£TC-PART4££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
+        static readonly String CompilerOptionsRegExp = "(.......)?([Cc][Oo][Nn][Tt][Rr][Oo][Ll]|[Pp][Rr][Oo][Cc][Ee][Ss][Ss]|[Cc][Bb][Ll]) +";
+        static System.Text.RegularExpressions.Regex CompilerOptionsRegExpMatcher;
+        static readonly String TypeCobolVersionRegExp = "......\\*TypeCobol_Version\\:[Vv]?[0-9]+\\.[0-9]+(\\.[0-9]+)?.*";
+        static System.Text.RegularExpressions.Regex TypeCobolVersionRegExpMatcher;
         const int LineLength = 66;
         const int CommentPos = 6;
+
+        /// <summary>
+        /// Check if the given line is Compiler Option.
+        /// </summary>
+        /// <param name="line">The line to check</param>
+        /// <returns>True if yes, false otherwise</returns>
+        public static bool MaybeOption(string line)
+        {
+            if (CompilerOptionsRegExpMatcher == null)
+                CompilerOptionsRegExpMatcher = new System.Text.RegularExpressions.Regex(CompilerOptionsRegExp);
+            return CompilerOptionsRegExpMatcher.IsMatch(line);
+        }
+
+        /// <summary>
+        /// Check if the gine line is a TypeCobol version line.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public static bool MaybeTypeCobolVersion(string line)
+        {
+            if (TypeCobolVersionRegExpMatcher == null)
+                TypeCobolVersionRegExpMatcher = new System.Text.RegularExpressions.Regex(TypeCobolVersionRegExp);
+            return TypeCobolVersionRegExpMatcher.IsMatch(line);
+        }
 
         /// <summary>
         /// Encoder method that concatenates the TypeCobol Source code with the generated Cobol source code.
         /// </summary>
         /// <param name="typeCobolFilePath">The path to the original TypeCobol source file</param>
-        /// <param name="cobol85FilePath">The path to the generated Cobol 85 source file</param>
+        /// <param name="cobol85FilePath">The path to the generated Cobol 85 source file, if null this means that an empty generated file is requested.</param>
         /// <param name="outputFilePath">The path to the output file which will contains the conactenation.</param>
         /// <returns>true if the conactenation was successful, false otherwise</returns>
 	    public static bool concatenateFiles(string typeCobolFilePath, string cobol85FilePath, string outputFilePath)
         {
             string[] typeCobolLines = File.ReadAllLines(typeCobolFilePath);
-            string[] cobol85Lines = File.ReadAllLines(cobol85FilePath);
+            string[] cobol85Lines = cobol85FilePath != null ? File.ReadAllLines(cobol85FilePath) : new string[0];
             Stream outputStream = File.OpenWrite(outputFilePath);
             var outputWriter = new StreamWriter(outputStream);
             try
             {
-                int part2Start = 3;
-                int part3Start = part2Start + cobol85Lines.Length + 1;
-                int part4Start = part3Start + typeCobolLines.Length + 1;
+
+                var CBLDirectiveLines = new List<string>();
+                foreach (var typeCobolLine in typeCobolLines)
+                {
+                    if (MaybeOption(typeCobolLine))
+                    {
+                        outputWriter.WriteLine(typeCobolLine); //Write CBL lines at the top of the document
+                        CBLDirectiveLines.Add(typeCobolLine);
+                    }
+                    else break;
+                }
+
+                int part2Start = CBLDirectiveLines.Count + 3;
+                int part3Start = part2Start + (cobol85FilePath != null ? cobol85Lines.Length - CBLDirectiveLines.Count : 0) + 1;
+                int part4Start = part3Start + typeCobolLines.Length - CBLDirectiveLines.Count + 1;
                 //string firstLine = string.Format("000000*£TC-PART1£PART2-{0:000000}£PART3-{1:000000}£PART4-{2:000000}£££££££££££££££££", 
                 //                part2Start, part3Start, part4Start);
                 //outputWriter.WriteLine(firstLine);
+
                 outputWriter.WriteLine("000000*£TC-PART1£PART2-{0:000000}£PART3-{1:000000}£PART4-{2:000000}£££££££££££££££££",
-                                part2Start, part3Start, part4Start);                
+                                part2Start, part3Start, part4Start);
                 outputWriter.WriteLine(DoNotEdit);
+
+
                 //Part 2 - Cobol 85 generated code
+                bool stopMaybeOptions = false;
                 outputWriter.WriteLine("000000*£TC-PART2££££££££££££££££££££££££££££££££££££££££££££££££££££££££");
                 foreach (var cobol85Line in cobol85Lines)
                 {
+                    if (!stopMaybeOptions)
+                    {
+                        if (MaybeOption(cobol85Line))
+                            continue; //Ignore this line cause it contains CBL directive
+                        else if (!MaybeTypeCobolVersion(cobol85Line))
+                            stopMaybeOptions = true;
+                    }
                     outputWriter.WriteLine(cobol85Line);
                 }
 
@@ -55,10 +106,13 @@ namespace TypeCobol.Transform
                 System.Text.StringBuilder columns7 = new System.Text.StringBuilder(part4Start - part3Start);
                 foreach (var typeCobolLine in typeCobolLines)
                 {
+                    if (CBLDirectiveLines.Contains(typeCobolLine))
+                        continue; //Ignore this line cause it contains CBL directive
+
                     if (typeCobolLine.Length >= CommentPos)
                     {
                         //TODO Check the length >= 8
-                        if (typeCobolLine.Length > 7)                            
+                        if (typeCobolLine.Length > 7)
                             outputWriter.WriteLine("000000*" + typeCobolLine.Substring(7));
                         else
                             outputWriter.WriteLine("000000*");
@@ -76,7 +130,7 @@ namespace TypeCobol.Transform
 
                 //Part 4 - 7th column of the TypeCobol part 3
                 outputWriter.WriteLine(Part4MagicLine);
-                String s_columns7 = columns7.ToString();                
+                String s_columns7 = columns7.ToString();
                 int c7Length = (LineLength - 1);
                 int nSplit = (s_columns7.Length / c7Length) + ((s_columns7.Length % c7Length) == 0 ? 0 : 1);
                 for (int i = 0, sPos = 0; i < nSplit; i++, sPos += c7Length)
@@ -117,9 +171,25 @@ namespace TypeCobol.Transform
                 int part3Length = 0;
                 int part3StartFromLine1 = 0;
                 int realPart3LineNumber = 0;
+                var CBLDirectiveLines = new List<string>();
 
                 foreach (var line in File.ReadLines(concatenatedFilePath))
                 {
+                    bool stopMaybeOptions = false;
+                    if (!stopMaybeOptions)
+                    {
+                        if (MaybeOption(line))
+                        {
+                            realPart3LineNumber--; //Avoid a false positive line part3 change
+                            CBLDirectiveLines.Add(line);
+                            continue;
+                        }
+                        else
+                        {
+                            stopMaybeOptions = true;
+                        }
+                    }
+
                     if (!isInPart3 && !isInPart4)
                         realPart3LineNumber++;
 
@@ -140,7 +210,7 @@ namespace TypeCobol.Transform
                         continue;
                     }
 
-                    if(isInPart3) //If inside part 3 add lines
+                    if (isInPart3) //If inside part 3 add lines
                     {
                         if (line.Length >= 7)
                             tcLines.Add(line.Substring(7));
@@ -159,6 +229,11 @@ namespace TypeCobol.Transform
                             tcLinesCol7.Append(transcript.PadRight(LineLength - 1));
                         }
                     }
+                }
+
+                foreach (var CBLDirectiveLine in CBLDirectiveLines)
+                {
+                    outputWriter.WriteLine(CBLDirectiveLine);
                 }
 
                 //Write

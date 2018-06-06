@@ -25,6 +25,9 @@
        IF myBool = myBool
          continue
        END-IF.
+       IF ADDRESS OF myBool = "AnyAlpha"
+         continue
+       END-IF.
        SET myBool TO TRUE.
        SET myBool TO FALSE.
 
@@ -58,6 +61,9 @@
            Search MyArray
               when MyBool
                  display "Hello"
-           end-search
+           end-search.
+       TRAITEMENT.
+       .
+        PERFORM TRAITEMENT UNTIL MyBool.
            .
        END PROGRAM BooleanTester.

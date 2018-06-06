@@ -159,6 +159,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// Mark that this node contains a boolean variable that has to be considered by CodeGen. 
             /// </summary>
             NodeContainsBoolean = 0x01 << 20,
+            /// <summary>
+            /// Mark that this node contains a pointer variable that has to be considered by CodeGen. 
+            /// </summary>
+            NodeContainsPointer = 0x01 << 21
 
 
         };
@@ -245,6 +249,8 @@ namespace TypeCobol.Compiler.Nodes {
                         qn = parent.Name + "." + qn;
                     }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
+                        break;
+                    if (parent is Program)
                         break;
                     parent = parent.Parent;
                 }

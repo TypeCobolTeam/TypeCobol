@@ -158,7 +158,7 @@
 
     public class Inspect: Node, CodeElementHolder<InspectStatement>, Statement, VariableWriter {
 	    public Inspect(InspectStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -186,7 +186,7 @@
 	    public Move(MoveStatement statement): base(statement) { }
 	    public FunctionCall FunctionCall { get { return this.CodeElement().FunctionCall; } }
 	   
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea, object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
 
         public FunctionDeclaration FunctionDeclaration { get; set; }
@@ -215,7 +215,7 @@
 
     public class Set: Node, CodeElementHolder<SetStatement>, Statement, VariableWriter {
 	    public Set(SetStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea, object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -249,7 +249,7 @@
 
     public class String: Node, CodeElementHolder<StringStatement>, Statement, VariableWriter {
 	    public String(StringStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -259,7 +259,7 @@
 
     public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement, VariableWriter {
 	    public Unstring(UnstringStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -289,7 +289,7 @@
 
     public class Add: Node, CodeElementHolder<AddStatement>, Statement, VariableWriter {
 	    public Add(AddStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -299,7 +299,7 @@
 
     public class Subtract: Node, CodeElementHolder<SubtractStatement>, Statement, VariableWriter {
 	    public Subtract(SubtractStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -309,7 +309,7 @@
 
     public class Multiply: Node, CodeElementHolder<MultiplyStatement>, Statement, VariableWriter {
 	    public Multiply(MultiplyStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -319,7 +319,7 @@
 
     public class Divide: Node, CodeElementHolder<DivideStatement>, Statement, VariableWriter {
 	    public Divide(DivideStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -329,7 +329,7 @@
 
     public class Compute: Node, CodeElementHolder<ComputeStatement>, Statement, VariableWriter {
 	    public Compute(ComputeStatement statement): base(statement) { }
-	    public IDictionary<QualifiedName,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
+	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {

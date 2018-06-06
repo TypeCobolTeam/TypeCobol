@@ -1,0 +1,1633 @@
+// JavaCup specification for a simple expression evaluator (w/ actions)
+
+namespace TypeCobol.Compiler.CupParser;
+
+using TUVienna.CS_CUP.Runtime;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CupParser.NodeBuilder;
+
+action code {:
+	//Current program identification
+	TypeCobol.Compiler.CodeElements.ProgramIdentification programIdentification;
+	//Curerent library copy;
+	TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement libraryCopy;
+:};
+
+parser code {:
+	// The Program Class Builder instance.
+	public IProgramClassBuilder Builder
+	{
+		get;
+		set;
+	}
+	// The Error Reporter instance
+	public ICupParserErrorReporter ErrorReporter
+	{
+		get;
+		set;
+	}
+
+	// Test wheither or not this parser is a trial parser
+	public bool IsTrial
+	{
+		get;
+		set;
+	}
+
+  // get the current state of the parser.
+  public int getParserState() 
+  {
+	return ((Symbol)stack.Peek()).parse_state;	
+  }
+
+  //get the parser stack.
+  public Stack getParserStack() 
+  {
+	return stack;	
+  }
+
+  public override void report_fatal_error(
+    string   message, 
+    object   info)
+	{
+		if(ErrorReporter != null) {
+			if (ErrorReporter.ReportFatalError(this, message, info))
+			{
+				return;
+			}
+		}
+		base.report_fatal_error(message, info);
+	}
+
+	public override void report_error(string message, object info)
+	{
+		if(ErrorReporter != null) {
+			if (ErrorReporter.ReportError(this, message, info))
+			{
+				return;
+			}
+		}
+		base.report_error(message, info);
+	}
+
+	public override void syntax_error(Symbol cur_token)
+	{
+		if(ErrorReporter != null) {
+			if (ErrorReporter.SyntaxError(this, cur_token))
+			{
+				return;
+			}
+		}
+		base.syntax_error(cur_token);
+	}
+
+	public override void unrecovered_syntax_error(Symbol cur_token)
+	{
+		if(ErrorReporter != null) {
+			if (ErrorReporter.UnrecoveredSyntaxError(this, cur_token))
+			{
+				return;
+			}
+		}
+		base.unrecovered_syntax_error(cur_token);
+	}
+:};
+
+
+/*	These Special Start Terminal symbols This must be declared first.
+	Ans in the class CodeElementTokenizer the constant NSTARTS must be set to the
+	number (count) of start terminal symbols.
+*/
+terminal StatementEntryPoint;
+
+/* Terminals (tokens returned by the scanner). */
+terminal TypeCobol.Compiler.CodeElements.ProgramIdentification ProgramIdentification;
+terminal TypeCobol.Compiler.CodeElements.ProgramEnd ProgramEnd;
+terminal TypeCobol.Compiler.CodeElements.ClassIdentification ClassIdentification;
+terminal TypeCobol.Compiler.CodeElements.ClassEnd ClassEnd;
+terminal TypeCobol.Compiler.CodeElements.FactoryIdentification FactoryIdentification;
+terminal TypeCobol.Compiler.CodeElements.FactoryEnd FactoryEnd;
+terminal TypeCobol.Compiler.CodeElements.ObjectIdentification ObjectIdentification;
+terminal TypeCobol.Compiler.CodeElements.ObjectEnd ObjectEnd;
+terminal TypeCobol.Compiler.CodeElements.MethodIdentification MethodIdentification;
+terminal TypeCobol.Compiler.CodeElements.MethodEnd MethodEnd;
+terminal TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader EnvironmentDivisionHeader;
+terminal TypeCobol.Compiler.CodeElements.DataDivisionHeader DataDivisionHeader;
+terminal TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader ProcedureDivisionHeader;
+terminal TypeCobol.Compiler.CodeElements.DeclarativesHeader DeclarativesHeader;
+terminal TypeCobol.Compiler.CodeElements.DeclarativesEnd DeclarativesEnd;
+terminal TypeCobol.Compiler.CodeElements.SectionHeader SectionHeader;
+terminal TypeCobol.Compiler.CodeElements.ConfigurationSectionHeader ConfigurationSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.InputOutputSectionHeader InputOutputSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.FileSectionHeader FileSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader WorkingStorageSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader LocalStorageSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.LinkageSectionHeader LinkageSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.ParagraphHeader ParagraphHeader;
+terminal TypeCobol.Compiler.CodeElements.FileControlParagraphHeader FileControlParagraphHeader;
+terminal TypeCobol.Compiler.CodeElements.IOControlParagraphHeader IOControlParagraphHeader;
+terminal TypeCobol.Compiler.CodeElements.SentenceEnd SentenceEnd;
+terminal TypeCobol.Compiler.CodeElements.FileDescriptionEntry FileDescriptionEntry;
+terminal TypeCobol.Compiler.CodeElements.DataDescriptionEntry DataDescriptionEntry;
+terminal TypeCobol.Compiler.CodeElements.DataRedefinesEntry DataRedefinesEntry;
+terminal TypeCobol.Compiler.CodeElements.DataRenamesEntry DataRenamesEntry;
+terminal TypeCobol.Compiler.CodeElements.DataConditionEntry DataConditionEntry;
+terminal TypeCobol.Compiler.CodeElements.FileControlEntry FileControlEntry;
+terminal TypeCobol.Compiler.CodeElements.IOControlEntry IOControlEntry;
+terminal TypeCobol.Compiler.CodeElements.SourceComputerParagraph SourceComputerParagraph;
+terminal TypeCobol.Compiler.CodeElements.ObjectComputerParagraph ObjectComputerParagraph;
+terminal TypeCobol.Compiler.CodeElements.SpecialNamesParagraph SpecialNamesParagraph;
+terminal TypeCobol.Compiler.CodeElements.RepositoryParagraph RepositoryParagraph;
+terminal TypeCobol.Compiler.CodeElements.AcceptStatement AcceptStatement;
+terminal TypeCobol.Compiler.CodeElements.AddStatement AddStatement;
+terminal TypeCobol.Compiler.CodeElements.AlterStatement AlterStatement;
+terminal TypeCobol.Compiler.CodeElements.CallStatement CallStatement;
+terminal TypeCobol.Compiler.CodeElements.CancelStatement CancelStatement;
+terminal TypeCobol.Compiler.CodeElements.CloseStatement CloseStatement;
+terminal TypeCobol.Compiler.CodeElements.ComputeStatement ComputeStatement;
+terminal TypeCobol.Compiler.CodeElements.ContinueStatement ContinueStatement;
+terminal TypeCobol.Compiler.CodeElements.DeleteStatement DeleteStatement;
+terminal TypeCobol.Compiler.CodeElements.DisplayStatement DisplayStatement;
+terminal TypeCobol.Compiler.CodeElements.DivideStatement DivideStatement;
+terminal TypeCobol.Compiler.CodeElements.EntryStatement EntryStatement;
+terminal TypeCobol.Compiler.CodeElements.EvaluateStatement EvaluateStatement;
+terminal TypeCobol.Compiler.CodeElements.ExecStatement ExecStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitMethodStatement ExitMethodStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitProgramStatement ExitProgramStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitStatement ExitStatement;
+terminal TypeCobol.Compiler.CodeElements.GobackStatement GobackStatement;
+terminal TypeCobol.Compiler.CodeElements.GotoStatement GotoStatement;
+terminal TypeCobol.Compiler.CodeElements.IfStatement IfStatement;
+terminal TypeCobol.Compiler.CodeElements.InitializeStatement InitializeStatement;
+terminal TypeCobol.Compiler.CodeElements.InspectStatement InspectStatement;
+terminal TypeCobol.Compiler.CodeElements.InvokeStatement InvokeStatement;
+terminal TypeCobol.Compiler.CodeElements.MergeStatement MergeStatement;
+terminal TypeCobol.Compiler.CodeElements.MoveStatement MoveStatement;
+terminal TypeCobol.Compiler.CodeElements.MultiplyStatement MultiplyStatement;
+terminal TypeCobol.Compiler.CodeElements.NextSentenceStatement NextSentenceStatement;
+terminal TypeCobol.Compiler.CodeElements.OpenStatement OpenStatement;
+terminal TypeCobol.Compiler.CodeElements.PerformProcedureStatement PerformProcedureStatement;
+terminal TypeCobol.Compiler.CodeElements.PerformStatement PerformStatement;
+terminal TypeCobol.Compiler.CodeElements.ReadStatement ReadStatement;
+terminal TypeCobol.Compiler.CodeElements.ReleaseStatement ReleaseStatement;
+terminal TypeCobol.Compiler.CodeElements.ReturnStatement ReturnStatement;
+terminal TypeCobol.Compiler.CodeElements.RewriteStatement RewriteStatement;
+terminal TypeCobol.Compiler.CodeElements.SearchStatement SearchStatement;
+terminal TypeCobol.Compiler.CodeElements.SetStatement SetStatement;
+terminal TypeCobol.Compiler.CodeElements.SortStatement SortStatement;
+terminal TypeCobol.Compiler.CodeElements.StartStatement StartStatement;
+terminal TypeCobol.Compiler.CodeElements.StopStatement StopStatement;
+terminal TypeCobol.Compiler.CodeElements.StringStatement StringStatement;
+terminal TypeCobol.Compiler.CodeElements.SubtractStatement SubtractStatement;
+terminal TypeCobol.Compiler.CodeElements.UnstringStatement UnstringStatement;
+terminal TypeCobol.Compiler.CodeElements.UseStatement UseStatement;
+terminal TypeCobol.Compiler.CodeElements.WriteStatement WriteStatement;
+terminal TypeCobol.Compiler.CodeElements.XmlGenerateStatement XmlGenerateStatement;
+terminal TypeCobol.Compiler.CodeElements.XmlParseStatement XmlParseStatement;
+terminal TypeCobol.Compiler.CodeElements.AtEndCondition AtEndCondition;
+terminal TypeCobol.Compiler.CodeElements.NotAtEndCondition NotAtEndCondition;
+terminal TypeCobol.Compiler.CodeElements.AtEndOfPageCondition AtEndOfPageCondition;
+terminal TypeCobol.Compiler.CodeElements.NotAtEndOfPageCondition NotAtEndOfPageCondition;
+terminal TypeCobol.Compiler.CodeElements.OnExceptionCondition OnExceptionCondition;
+terminal TypeCobol.Compiler.CodeElements.NotOnExceptionCondition NotOnExceptionCondition;
+terminal TypeCobol.Compiler.CodeElements.OnOverflowCondition OnOverflowCondition;
+terminal TypeCobol.Compiler.CodeElements.NotOnOverflowCondition NotOnOverflowCondition;
+terminal TypeCobol.Compiler.CodeElements.InvalidKeyCondition InvalidKeyCondition;
+terminal TypeCobol.Compiler.CodeElements.NotInvalidKeyCondition NotInvalidKeyCondition;
+terminal TypeCobol.Compiler.CodeElements.OnSizeErrorCondition OnSizeErrorCondition;
+terminal TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition NotOnSizeErrorCondition;
+terminal TypeCobol.Compiler.CodeElements.ElseCondition ElseCondition;
+terminal TypeCobol.Compiler.CodeElements.WhenCondition WhenCondition;
+terminal TypeCobol.Compiler.CodeElements.WhenOtherCondition WhenOtherCondition;
+terminal TypeCobol.Compiler.CodeElements.WhenSearchCondition WhenSearchCondition;
+terminal TypeCobol.Compiler.CodeElements.AddStatementEnd AddStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.CallStatementEnd CallStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.ComputeStatementEnd ComputeStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.DeleteStatementEnd DeleteStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.DivideStatementEnd DivideStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.EvaluateStatementEnd EvaluateStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.IfStatementEnd IfStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.InvokeStatementEnd InvokeStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.MultiplyStatementEnd MultiplyStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.PerformStatementEnd PerformStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.ReadStatementEnd ReadStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.ReturnStatementEnd ReturnStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.RewriteStatementEnd RewriteStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.SearchStatementEnd SearchStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.StartStatementEnd StartStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.StringStatementEnd StringStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.SubtractStatementEnd SubtractStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.UnstringStatementEnd UnstringStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.WriteStatementEnd WriteStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
+terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
+terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd FunctionDeclarationEnd;
+terminal TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement ProcedureStyleCall;
+terminal TypeCobol.Compiler.CodeElements.Program Program;
+
+/* Non terminals */
+non terminal starts, statementEntry;
+non terminal compilationUnit, cobolCompilationUnit;
+non terminal cobolProgram, cobolClass, cobolProgramBase, nestedProgram;
+non terminal classEndOpt;
+non terminal factoryIdentificationOpt;
+non terminal factoryIdentification;
+non terminal factoryEndOpt;
+non terminal factoryDataDivisionOpt;
+non terminal factoryDataDivision;
+non terminal factoryObjectprocedureDivisionOpt;
+non terminal factoryObjectprocedureDivision;
+non terminal objectIdentificationOpt;
+non terminal objectIdentification;
+non terminal objectEndOpt;
+non terminal methodDefitionsOpt;
+non terminal methodDefitions;
+non terminal methodDefition;
+non terminal methodEnvironmentDivisionOpt;
+non terminal methodEnvironmentDivision;
+
+non terminal programAttributes;
+non terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement libraryCopyOpt;
+non terminal TypeCobol.Compiler.CodeElements.ProgramEnd programEndOpt;
+non terminal nestedProgramOpt;
+
+non terminal TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader environmentDivisionOpt, environmentDivision;
+non terminal configurationSectionOpt, configurationSection;
+non terminal inputOutputSectionOpt, inputOutputSection;
+non terminal configurationParagraphs;
+non terminal configurationParagraph;
+non terminal fileControlParagraphOpt, fileControlParagraph;
+non terminal fileControlEntriesOpt, fileControlEntries;
+non terminal ioControlParagraphOpt, ioControlParagraph, ioControlSentencesOpt;
+non terminal ioControlEntries;
+
+non terminal dataDefinitionEntry;
+non terminal dataDefinitionEntries, dataDefinitionEntriesOpt;
+non terminal execSqlStatement;
+non terminal storageEntry;
+non terminal storageEntries;
+non terminal fileDescriptionEntry;
+non terminal fileDescriptionEntriesOpt;
+non terminal fileDescriptionEntries;
+non terminal fileSection;
+non terminal workingStorageSection;
+non terminal localStorageSection;
+non terminal linkageSection;
+non terminal dataDivisionOpt, dataDivision;
+
+non terminal procedureDivision, procedureDivisionOpt;
+non terminal TypeCobol.Compiler.Nodes.Node statement, singleStatement, compoundStatement;
+non terminal statements;
+non terminal sentence;
+non terminal sentences, sentencesOpt;
+non terminal paragraph;
+non terminal paragraphs;
+non terminal section;
+non terminal sections, declarativesSections;
+non terminal declarativesSection;
+non terminal declaratives, declarativesOpt;
+non terminal functionDeclaration;
+non terminal functionProcedureDivision, functionProcedureDivisionOpt;
+non terminal functionOrSectionDeclaration;
+non terminal functionOrSectionDeclarations;
+non terminal configurationSectionHeader;
+
+non terminal onAtEnd, noAtEnd;
+non terminal endConditions;
+non terminal onException, noException;
+non terminal exceptionConditions;
+non terminal onInvalidKey, noInvalidKey;
+non terminal keyConditions;
+non terminal onOverflow, noOverflow;
+non terminal overflowConditions;
+non terminal onSizeError, noSizeError;
+non terminal sizeErrorConditions;
+
+non terminal addStatementConditional;
+non terminal callStatementConditions;
+non terminal callStatementConditional;
+non terminal computeStatementConditional;
+non terminal deleteStatementConditional;
+non terminal divideStatementConditional;
+non terminal whenConditionClause;
+non terminal whenConditionClauses;
+non terminal whenSearchConditionClauses;
+non terminal whenOtherClause;
+non terminal whenSearchConditionClause;
+non terminal TypeCobol.Compiler.CodeElements.CodeElement whenEvaluateCondition;
+non terminal TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList whenEvaluateConditions;
+non terminal evaluateStatementWithBody;
+non terminal ifStatementWithBody;
+non terminal invokeStatementConditional;
+non terminal multiplyStatementConditional;
+non terminal performStatementWithBody;
+non terminal readStatementConditional;
+non terminal rwStatementCondition;
+non terminal rwStatementConditions;
+non terminal returnStatementConditional;
+non terminal rewriteStatementConditional;
+non terminal startStatementConditional;
+non terminal stringStatementConditional;
+non terminal subtractStatementConditional;
+non terminal unstringStatementConditional;
+non terminal searchStatementWithBody;
+non terminal writeStatementConditional;
+non terminal xmlGenerateStatementConditional;
+non terminal xmlParseStatementConditional;
+
+non terminal procedureDivisionHeader;
+non terminal functionProcedureDivisionHeader;
+non terminal sectionHeader;
+non terminal paragraphHeader;
+
+non terminal ifstatement;
+non terminal elseCondition;
+non terminal nextSentenceStatement;
+non terminal addStatement;
+non terminal callStatement;
+non terminal computeStatement;
+non terminal deleteStatement;
+non terminal divideStatement;
+non terminal evaluateStatement;
+non terminal invokeStatement;
+non terminal multiplyStatement;
+non terminal performStatement;
+non terminal readStatement;
+non terminal returnStatement;
+non terminal rewriteStatement;
+non terminal searchStatement;
+non terminal whenSearchCondition;
+non terminal whenEvaluateConditionsStart;
+non terminal whenOtherCondition;
+non terminal startStatement;
+non terminal stringStatement;
+non terminal subtractStatement;
+non terminal unstringStatement;
+non terminal writeStatement;
+non terminal xmlGenerateStatement;
+non terminal xmlParseStatement;
+
+non terminal atEndCondition;
+non terminal notAtEndCondition;
+non terminal onExceptionCondition;
+non terminal notOnExceptionCondition;
+non terminal invalidKeyCondition;
+non terminal notInvalidKeyCondition;
+non terminal onOverflowCondition;
+non terminal notOnOverflowCondition;
+non terminal onSizeErrorCondition;
+non terminal notOnSizeErrorCondition;
+
+start with starts;
+
+starts ::= compilationUnit		/* rule for starting analyzing a compilation unit */
+	| StatementEntryPoint statementEntry /* rule for starting analyzing a TypeCobol statement */
+	;
+
+compilationUnit ::= {: my_parser.Builder.StartCobolCompilationUnit(); :} cobolCompilationUnit
+	| {: my_parser.Builder.StartCobolCompilationUnit(); :} /*empty*/
+	;
+
+/* The grammar */
+cobolCompilationUnit ::= cobolProgram
+	{:  :}
+	|  cobolClass
+	{:  :}
+	|  cobolCompilationUnit cobolProgram
+	{:  :}
+	|  cobolCompilationUnit cobolClass
+	{:  :}
+	;
+
+/*
+// --- TypeCobol PROGRAM ---
+*/
+
+cobolProgram ::=
+	cobolProgramBase
+    nestedProgramOpt
+	programEndOpt:pe
+	{: my_parser.Builder.EndCobolProgram(pe); :}
+	;
+
+cobolProgramBase ::=
+	programAttributes
+	{: my_parser.Builder.StartCobolProgram(programIdentification, libraryCopy); :}
+	environmentDivisionOpt
+	dataDivisionOpt
+	procedureDivisionOpt
+	{:  :}
+	;
+
+cobolClass ::= 
+	ClassIdentification
+	EnvironmentDivisionHeader
+	factoryIdentificationOpt
+	objectIdentificationOpt
+	classEndOpt
+	{: :}
+	;
+
+classEndOpt ::= /*Empty*/
+		{: :}
+	|	ClassEnd
+		{: :}
+		;
+
+factoryIdentificationOpt ::= /*empty*/
+		{: :}
+	| factoryIdentification
+		{: :}
+	;
+
+factoryIdentification ::= FactoryIdentification factoryDataDivisionOpt factoryObjectprocedureDivisionOpt factoryEndOpt
+		{: :}
+	;
+
+factoryEndOpt ::= /*empty*/
+	{: :}
+	| FactoryEnd
+	{: :}
+	;
+		
+factoryDataDivisionOpt ::= /*empty*/
+		{: :}
+	|	factoryDataDivision
+		{: :}
+	;	
+
+factoryDataDivision ::= DataDivisionHeader workingStorageSection factoryObjectprocedureDivisionOpt
+		{: :}
+	;	
+
+factoryObjectprocedureDivisionOpt ::= /*empty*/
+		{: :}
+	|	factoryObjectprocedureDivision
+		{: :}
+	;	
+
+factoryObjectprocedureDivision ::= ProcedureDivisionHeader methodDefitionsOpt
+		{: :}
+	;	
+
+objectIdentificationOpt ::= /*empty*/
+		{: :}
+	|	objectIdentification
+		{: :}
+	;	
+
+objectIdentification ::= ObjectIdentification workingStorageSection factoryObjectprocedureDivisionOpt objectEndOpt
+		{: :}
+	;	
+
+objectEndOpt ::= /* empty */
+		{: :}
+	| ObjectEnd
+		{: :}
+	;
+
+methodDefitionsOpt ::= /* empty */
+		{: :}
+	|	methodDefitions
+		{: :}
+	;	
+
+methodDefitions ::= methodDefition
+		{: :}
+	| methodDefitions methodDefition
+		{: :}
+	;
+
+methodDefition ::= MethodIdentification methodEnvironmentDivisionOpt dataDivisionOpt procedureDivisionOpt MethodEnd
+	{: :}
+	;
+
+methodEnvironmentDivisionOpt ::= /*empty*/
+	{:  :}
+	| methodEnvironmentDivision
+	{:  :}
+	;
+
+methodEnvironmentDivision ::=
+	EnvironmentDivisionHeader
+	inputOutputSectionOpt
+	{:  :}
+	;
+
+// TCRFUN_LIBRARY_COPY
+programAttributes ::= ProgramIdentification:pid libraryCopyOpt:lc
+	{:  programIdentification = pid; libraryCopy = lc; :}
+	;
+
+libraryCopyOpt ::= /*empty */
+	{:  RESULT = null; :}
+	| LibraryCopy:lc
+	{:  RESULT = lc; :}
+	;
+
+programEndOpt ::= /* empty */
+	| ProgramEnd:pe
+	{:  RESULT = pe; :}
+	;
+
+nestedProgram ::= 	
+	cobolProgramBase
+    nestedProgramOpt
+	ProgramEnd:pe
+	{: my_parser.Builder.EndCobolProgram(pe); :}
+	;
+
+nestedProgramOpt ::= /* Empty */
+	{:  :}
+	| nestedProgramOpt nestedProgram
+	{:  :}
+	;
+
+/*
+// --- ENVIRONMENT DIVISION ---
+*/
+
+environmentDivisionOpt ::= /*empty*/
+	{:  :}
+	| environmentDivision
+	{:  :}
+	;
+
+environmentDivision ::=
+	EnvironmentDivisionHeader:edh  
+	{: my_parser.Builder.StartEnvironmentDivision(edh); :}
+	configurationSectionOpt
+	inputOutputSectionOpt
+	{: my_parser.Builder.EndEnvironmentDivision(); :}
+	;
+
+configurationSectionOpt ::= /*empty*/
+	{:  :}
+	| configurationSection
+	{:  :}
+	;
+
+configurationSection ::= configurationSectionHeader 
+	{: my_parser.Builder.EndConfigurationSection(); :}
+	| configurationSectionHeader
+	  configurationParagraphs
+	{: my_parser.Builder.EndConfigurationSection(); :}
+	;
+
+configurationSectionHeader ::= ConfigurationSectionHeader:csh
+	{: my_parser.Builder.StartConfigurationSection(csh); :}
+	;
+
+configurationParagraphs ::= configurationParagraph
+		{:  :}
+	| configurationParagraphs configurationParagraph
+		{:  :}
+	;
+
+configurationParagraph ::= 
+      SourceComputerParagraph:scp
+	{: my_parser.Builder.StartSourceComputerParagraph(scp); my_parser.Builder.EndSourceComputerParagraph(); :}
+	| ObjectComputerParagraph:ocp
+	{: my_parser.Builder.StartObjectComputerParagraph(ocp); my_parser.Builder.EndObjectComputerParagraph(); :}
+	| SpecialNamesParagraph:snp
+	{: my_parser.Builder.StartSpecialNamesParagraph(snp); my_parser.Builder.EndSpecialNamesParagraph(); :}
+	| RepositoryParagraph:rp
+	{: my_parser.Builder.StartRepositoryParagraph(rp); my_parser.Builder.EndRepositoryParagraph(); :}
+	;
+
+inputOutputSectionOpt ::= /*empty*/
+	{:  :}
+	| inputOutputSection
+	{:  :}
+	;
+
+inputOutputSection ::= 
+	InputOutputSectionHeader:iosh
+	{: my_parser.Builder.StartInputOutputSection(iosh); :}
+	fileControlParagraphOpt
+	ioControlParagraphOpt
+	{: my_parser.Builder.EndInputOutputSection(); :}
+	;
+
+fileControlParagraphOpt ::= /*empty*/
+	{:  :}
+	| fileControlParagraph
+	{:  :}
+	;
+
+fileControlParagraph ::=
+	FileControlParagraphHeader:fcph
+	{: my_parser.Builder.StartFileControlParagraph(fcph); :}
+	fileControlEntriesOpt
+	{: my_parser.Builder.EndFileControlParagraph(); :}
+	;
+
+fileControlEntriesOpt ::= /*empty*/
+		{:  :}
+	| fileControlEntries
+		{:  :}
+	;
+
+fileControlEntries ::= FileControlEntry:fce
+		{: my_parser.Builder.StartFileControlEntry(fce); my_parser.Builder.EndFileControlEntry(); :}
+	| fileControlEntries:fces FileControlEntry:fce
+		{: my_parser.Builder.StartFileControlEntry(fce); my_parser.Builder.EndFileControlEntry(); :}
+	;
+
+ioControlParagraphOpt ::= /*empty*/
+		{:  :}
+	| ioControlParagraph
+		{:  :}
+	;
+
+ioControlParagraph ::= 
+	IOControlParagraphHeader
+	ioControlSentencesOpt
+	{:  :}
+	;
+
+ioControlSentencesOpt ::= /* empty */	
+		{:  :}
+	| ioControlEntries SentenceEnd
+		{:	:}
+	;
+
+ioControlEntries ::= IOControlEntry
+		{:  :}
+	| ioControlEntries IOControlEntry
+		{:  :}
+	;
+
+
+/*
+// --- DATA DIVISION ---
+*/
+dataDivisionOpt ::= /*empty*/
+	{:  :}
+	| dataDivision
+	{:  :}
+	;
+
+dataDivision ::=
+	DataDivisionHeader:ddh
+	{: my_parser.Builder.StartDataDivision(ddh); :}
+	fileSection
+	workingStorageSection
+	localStorageSection
+	linkageSection
+	{: my_parser.Builder.EndDataDivision(); :}
+//|	error FileSectionHeader
+//|	error WorkingStorageSectionHeader
+//|	error LocalStorageSectionHeader
+//|	error LinkageSectionHeader
+	;
+
+fileSection ::= /*empty*/
+	{:  :}
+	| FileSectionHeader:feh 
+	{: my_parser.Builder.StartFileSection(feh); :}
+	fileDescriptionEntriesOpt
+	{: my_parser.Builder.EndFileSection(); :}
+	| error fileDescriptionEntries
+	{: my_parser.Builder.EndFileSection(); :}
+	;
+
+fileDescriptionEntriesOpt ::= /*empty*/
+	{:  :}
+	| fileDescriptionEntries
+	{:  :}
+	;
+
+fileDescriptionEntries ::=
+	fileDescriptionEntry
+	{:  :}
+	| fileDescriptionEntries fileDescriptionEntry
+	{:  :}
+	;
+
+fileDescriptionEntry ::= 
+	FileDescriptionEntry:fde 
+	{: my_parser.Builder.StartFileDescriptionEntry(fde); my_parser.Builder.EndFileDescriptionEntry(); :}
+	dataDefinitionEntries
+	{:  :}
+	;
+
+workingStorageSection ::= /*empty*/
+	{:  :}
+	| WorkingStorageSectionHeader:wssh 
+	{: my_parser.Builder.StartWorkingStorageSection(wssh); :}
+	  storageEntries
+	{: my_parser.Builder.EndWorkingStorageSection(); :}
+	;
+
+storageEntries ::= /*empty*/
+	{:  :}
+	| storageEntries storageEntry
+	{:  :}
+	;
+
+storageEntry ::= dataDefinitionEntry
+	{:  :}
+	| execSqlStatement
+	{:  :}
+	;
+
+execSqlStatement ::= ExecStatement
+	{:  :}
+	| ExecStatement:stmt
+	{: my_parser.Builder.StartExecStatement(stmt); my_parser.Builder.EndExecStatement(); :}
+	SentenceEnd
+	{:  :}
+	;
+
+localStorageSection ::= /*empty*/
+	{:  :}
+	| LocalStorageSectionHeader:lsh 
+	{: my_parser.Builder.StartLocalStorageSection(lsh); :}
+	storageEntries
+	{: my_parser.Builder.EndLocalStorageSection(); :}
+	;
+
+dataDefinitionEntriesOpt ::= /*empty*/
+	{:  :}
+	| dataDefinitionEntries
+	{:  :}
+	;
+
+dataDefinitionEntries ::= dataDefinitionEntry
+	{:  :}
+	| dataDefinitionEntries dataDefinitionEntry
+	{:  :}
+	;
+
+dataDefinitionEntry ::=
+	  DataDescriptionEntry:dde
+	{: my_parser.Builder.StartDataDescriptionEntry(dde); :}
+	| DataRedefinesEntry:dre
+	{: my_parser.Builder.StartDataRedefinesEntry(dre); :}
+	| DataRenamesEntry:dre
+	{: my_parser.Builder.StartDataRenamesEntry(dre); :}
+	| DataConditionEntry:dce
+	{: my_parser.Builder.StartDataConditionEntry(dce); :}
+	;
+
+linkageSection ::= /*empty*/
+	{:  :}
+	| LinkageSectionHeader:lsh 
+	{: my_parser.Builder.StartLinkageSection(lsh); :}
+	dataDefinitionEntriesOpt
+	{: my_parser.Builder.EndLinkageSection(); :}
+	;
+
+procedureDivisionOpt ::= /*empty*/
+	{:  :}
+	| procedureDivision
+	{:  :}
+	;
+
+// TCRFUN_DECLARATION_AS_NESTED_PROGRAM
+procedureDivision ::=
+	procedureDivisionHeader
+	declarativesOpt
+	functionOrSectionDeclarations
+	{: my_parser.Builder.EndProcedureDivision(); :}
+	;
+
+procedureDivisionHeader ::= ProcedureDivisionHeader:pdh 
+	{: my_parser.Builder.StartProcedureDivision(pdh); :}
+	;
+
+functionOrSectionDeclarations ::= /*empty*/
+	{:  :}
+	| functionOrSectionDeclarations functionOrSectionDeclaration
+	{:  :}
+	;
+
+functionOrSectionDeclaration ::= functionDeclaration
+	{:  :}
+	| section
+	{:  :}
+	;
+
+// - custom header
+// TCRFUN_DECLARATION_NO_IDENTIFICATION_DIVISION
+// TCRFUN_DECLARATION_NO_ENVIRONMENT_DIVISION
+// TCRFUN_MANDATORY_END_DECLARE
+functionDeclaration ::=
+	FunctionDeclarationHeader:fdh
+	{: my_parser.Builder.StartFunctionDeclaration(fdh); :}
+	dataDivisionOpt
+	functionProcedureDivisionOpt
+	FunctionDeclarationEnd:fe
+	{: my_parser.Builder.EndFunctionDeclaration(fe); :}
+	;
+
+functionProcedureDivisionOpt ::= /*empty*/
+	{:  :}
+	| functionProcedureDivision
+	{:  :}
+	;
+
+// TCRFUN_DECLARATION_NO_DECLARATIVES
+functionProcedureDivision ::=
+	functionProcedureDivisionHeader 
+	{: my_parser.Builder.EndFunctionProcedureDivision(); :}
+| 	functionProcedureDivisionHeader
+	sections
+	{: my_parser.Builder.EndFunctionProcedureDivision(); :}
+	;
+
+functionProcedureDivisionHeader ::= ProcedureDivisionHeader:pdh 
+	{: my_parser.Builder.StartFunctionProcedureDivision(pdh); :}
+	;
+
+declarativesOpt ::= /*empty*/
+	{:  :}
+	| declaratives
+	{:  :}
+	;
+
+declaratives ::=
+	DeclarativesHeader:dh
+	{: my_parser.Builder.StartDeclaratives(dh); :}
+	declarativesSections
+	DeclarativesEnd:de
+	{: my_parser.Builder.EndDeclaratives(de); :}
+	;
+
+
+declarativesSections ::= declarativesSection
+	{:  :}
+	| declarativesSections declarativesSection
+	{:  :}
+	;
+
+declarativesSection ::= 
+	SectionHeader 
+	UseStatement
+	{:  :}
+	| SectionHeader
+	UseStatement paragraphs
+	{:  :}	
+	;
+
+sections ::= section
+	{:  :}
+	| sections section
+	{:  :}
+	;
+
+section ::= sectionHeader 
+	{: my_parser.Builder.EndSection(); :}
+	| sectionHeader paragraphs
+	{: my_parser.Builder.EndSection(); :}
+	| paragraphs
+	{:  :}
+	| sentences
+	{:  :}
+	;
+
+sectionHeader ::= SectionHeader:sh 
+	{: my_parser.Builder.StartSection(sh); :}
+	;
+
+paragraphHeader ::= ParagraphHeader:ph 
+	{: my_parser.Builder.StartParagraph(ph); :}
+	;
+
+paragraphs ::= paragraph
+	{:  :}
+	| paragraphs paragraph
+	{:  :}
+	;
+
+paragraph ::= 
+	paragraphHeader	
+	{: my_parser.Builder.EndParagraph(); :}
+	| paragraphHeader sentences
+	{: my_parser.Builder.EndParagraph(); :}
+	| sentences
+	{:  :}
+	;
+
+sentences ::= sentence
+	{:  :}
+	| sentences sentence
+	;
+
+sentence ::= SentenceEnd:send
+	  {: my_parser.Builder.StartSentence(); my_parser.Builder.EndSentence(send); :}
+    | statements SentenceEnd:send
+	  {: my_parser.Builder.EndSentence(send, true); :}
+	//JCM RESOLVE THIS TODO
+	| ExecStatement:stmt
+	{: my_parser.Builder.StartExecStatement(stmt); my_parser.Builder.EndExecStatement(); :}
+	| error SentenceEnd:send
+	{: my_parser.Builder.EndSentence(send, true); :}
+	| error statements SentenceEnd:send
+	{: my_parser.Builder.EndSentence(send, true); :}
+	;
+
+statementEntry ::= statement
+	| StatementEntryPoint ifstatement
+	{: my_parser.Builder.EndIfStatementWithBody(); :}
+	| StatementEntryPoint searchStatement
+	{: my_parser.Builder.EndSearchStatementWithBody(); :}
+	;
+
+statements ::= statement
+	{: my_parser.Builder.CheckStartSentenceLastStatement(); :}
+	| statements statement
+	{:  :}
+	;
+
+statement ::= singleStatement
+	{:  :}
+	| compoundStatement
+	{:  :}
+	;
+
+singleStatement ::=
+	ContinueStatement:stmt
+	{: my_parser.Builder.OnContinueStatement(stmt); :}
+	| EntryStatement:stmt
+	{: my_parser.Builder.OnEntryStatement(stmt); :}
+// -- arithmetic --
+// -- see computeStatementConditional --
+// -- data movement --
+	| AcceptStatement:stmt // (DATE, DAY, DAY-OF-WEEK, TIME)
+	{: my_parser.Builder.OnAcceptStatement(stmt); :}
+	| InitializeStatement:stmt
+	{: my_parser.Builder.OnInitializeStatement(stmt); :}
+	| InspectStatement:stmt
+	{: my_parser.Builder.OnInspectStatement(stmt); :}
+	| MoveStatement:stmt
+	{: my_parser.Builder.OnMoveStatement(stmt); :}
+	| SetStatement:stmt
+	{: my_parser.Builder.OnSetStatement(stmt); :}
+// -- ending --
+	| StopStatement:stmt
+	{: my_parser.Builder.OnStopStatement(stmt); :}
+	| ExitMethodStatement:stmt
+	{: my_parser.Builder.OnExitMethodStatement(stmt); :}
+	| ExitProgramStatement:stmt
+	{: my_parser.Builder.OnExitProgramStatement(stmt); :}
+	| GobackStatement:stmt
+	{: my_parser.Builder.OnGobackStatement(stmt); :}
+// -- input-output --
+	| CloseStatement:stmt
+	{: my_parser.Builder.OnCloseStatement(stmt); :}
+	| DisplayStatement:stmt
+	{: my_parser.Builder.OnDisplayStatement(stmt); :}
+	| OpenStatement:stmt
+	{: my_parser.Builder.OnOpenStatement(stmt); :}
+// -- ordering --
+	| MergeStatement:stmt
+	{: my_parser.Builder.OnMergeStatement(stmt); :}
+	| ReleaseStatement:stmt
+	{: my_parser.Builder.OnReleaseStatement(stmt); :}
+	| SortStatement:stmt
+	{: my_parser.Builder.OnSortStatement(stmt); :}
+// -- procedure-branching --
+	| AlterStatement:stmt
+	{: my_parser.Builder.OnAlterStatement(stmt); :}
+	| ExitStatement:stmt
+	{: my_parser.Builder.OnExitStatement(stmt); :}
+	| GotoStatement:stmt
+	{: my_parser.Builder.OnGotoStatement(stmt); :}
+	| PerformProcedureStatement:stmt
+	{: my_parser.Builder.OnPerformProcedureStatement(stmt); :}
+// -- program or method linkage --// TYPECOBOL
+	| ProcedureStyleCall:stmt
+	{: my_parser.Builder.OnProcedureStyleCall(stmt, null); :}
+	| ProcedureStyleCall:stmt CallStatementEnd:end
+	{: my_parser.Builder.OnProcedureStyleCall(stmt, end); :}
+	| CancelStatement:stmt
+	{: my_parser.Builder.OnCancelStatement(stmt); :}
+// -- DB2 & CICS integration --
+	| ExecStatement:stmt
+	{: my_parser.Builder.OnExecStatement(stmt); :}
+	;
+	
+// Statements with optional body  
+compoundStatement ::= addStatementConditional
+		{:  :}
+	|	callStatementConditional
+		{:  :}
+	|	computeStatementConditional
+		{:  :}
+	|	deleteStatementConditional
+		{:  :}
+	|	evaluateStatementWithBody
+		{:  :}
+	|	ifStatementWithBody
+		{:  :}
+	|	invokeStatementConditional
+		{:  :}
+	|	divideStatementConditional
+		{:  :}
+	|	multiplyStatementConditional
+		{:  :}
+	|	performStatementWithBody
+		{:  :}
+	|	readStatementConditional
+		{:  :}
+	|	returnStatementConditional
+		{:  :}
+	|	rewriteStatementConditional
+		{:  :}
+	|	searchStatementWithBody
+		{:  :}
+	|	startStatementConditional
+		{:  :}
+	|	stringStatementConditional
+		{:  :}
+	|	subtractStatementConditional
+		{:  :}
+	|	unstringStatementConditional
+		{:  :}
+	|	writeStatementConditional
+		{:  :}
+	|	xmlGenerateStatementConditional
+		{:  :}
+	|	xmlParseStatementConditional
+		{:  :}
+	;
+
+addStatementConditional ::=
+		addStatement
+		{: my_parser.Builder.EndAddStatementConditional(); :}
+	|	addStatement AddStatementEnd:end
+		{: my_parser.Builder.EndAddStatementConditional(end); :}
+	|	addStatement sizeErrorConditions
+		{:  my_parser.Builder.EndAddStatementConditional(); :}
+	|	addStatement sizeErrorConditions AddStatementEnd:end
+		{:  my_parser.Builder.EndAddStatementConditional(end); :}
+	;
+
+addStatement ::= AddStatement:stmt
+	{: my_parser.Builder.StartAddStatementConditional(stmt); :}
+	;
+
+callStatementConditional ::=
+		callStatement
+		{: my_parser.Builder.EndCallStatementConditional(); :}
+	|	callStatement CallStatementEnd:end
+		{: my_parser.Builder.EndCallStatementConditional(end); :}
+	|	callStatement callStatementConditions
+		{: my_parser.Builder.EndCallStatementConditional(); :}
+	|	callStatement callStatementConditions CallStatementEnd:end
+		{:  my_parser.Builder.EndCallStatementConditional(end); :}
+	;
+
+callStatement ::= CallStatement:stmt
+	{: my_parser.Builder.StartCallStatementConditional(stmt); :}
+	;
+
+callStatementConditions ::=
+	  onException
+	{:  :}
+	| noException
+	{:  :}
+	| onOverflow
+	{:  :}
+	;
+
+computeStatementConditional ::=
+		computeStatement
+		{: my_parser.Builder.EndComputeStatementConditional(); :}
+	|	computeStatement ComputeStatementEnd:end
+		{: my_parser.Builder.EndComputeStatementConditional(end); :}
+	|	computeStatement sizeErrorConditions
+		{: my_parser.Builder.EndComputeStatementConditional(); :}
+	|	computeStatement sizeErrorConditions ComputeStatementEnd:end
+		{: my_parser.Builder.EndComputeStatementConditional(end); :}
+	;
+
+computeStatement ::= ComputeStatement:stmt
+	{: my_parser.Builder.StartComputeStatementConditional(stmt); :}
+	;
+
+deleteStatementConditional ::=
+		deleteStatement
+		{: my_parser.Builder.EndDeleteStatementConditional(); :}
+	|	deleteStatement DeleteStatementEnd:end
+		{: my_parser.Builder.EndDeleteStatementConditional(end); :}
+	|	deleteStatement keyConditions
+		{: my_parser.Builder.EndDeleteStatementConditional(); :}
+	|	deleteStatement keyConditions DeleteStatementEnd:end
+		{: my_parser.Builder.EndDeleteStatementConditional(end); :}
+	;
+
+deleteStatement ::= DeleteStatement:stmt
+	{: my_parser.Builder.StartDeleteStatementConditional(stmt); :}
+	;
+
+
+divideStatementConditional ::=
+		divideStatement
+		{: my_parser.Builder.EndDivideStatementConditional(); :}
+	|	divideStatement DivideStatementEnd:end
+		{: my_parser.Builder.EndDivideStatementConditional(end); :}
+	|	divideStatement sizeErrorConditions
+		{: my_parser.Builder.EndDivideStatementConditional(); :}
+	|	divideStatement sizeErrorConditions DivideStatementEnd:end
+		{: my_parser.Builder.EndDivideStatementConditional(end); :}
+	;
+
+divideStatement ::= DivideStatement:stmt
+	{: my_parser.Builder.StartDivideStatementConditional(stmt); :}
+	;
+
+evaluateStatementWithBody ::=
+		evaluateStatement
+		{: my_parser.Builder.EndEvaluateStatementWithBody(); :}
+	|	evaluateStatement EvaluateStatementEnd:ese
+		{: my_parser.Builder.EndEvaluateStatementWithBody(ese); :}
+	|	evaluateStatement whenConditionClauses
+		{: my_parser.Builder.EndEvaluateStatementWithBody(); :}
+	|	evaluateStatement whenConditionClauses  EvaluateStatementEnd:ese
+		{: my_parser.Builder.EndEvaluateStatementWithBody(ese); :}
+	|	evaluateStatement whenOtherClause
+		{: my_parser.Builder.EndEvaluateStatementWithBody(); :}
+	|	evaluateStatement whenOtherClause EvaluateStatementEnd:ese
+		{: my_parser.Builder.EndEvaluateStatementWithBody(ese); :}
+	|	evaluateStatement whenConditionClauses whenOtherClause
+		{: my_parser.Builder.EndEvaluateStatementWithBody(); :}
+	|	evaluateStatement whenConditionClauses whenOtherClause EvaluateStatementEnd:ese
+		{: my_parser.Builder.EndEvaluateStatementWithBody(ese); :}
+
+	|	evaluateStatement whenConditionClauses error EvaluateStatementEnd:ese
+		{: my_parser.Builder.EndEvaluateStatementWithBody(); :}
+	|	evaluateStatement whenConditionClauses error whenOtherClause
+		{: my_parser.Builder.EndEvaluateStatementWithBody(); :}
+	|	evaluateStatement whenConditionClauses error whenOtherClause EvaluateStatementEnd:ese
+		{: my_parser.Builder.EndEvaluateStatementWithBody(); :}
+	;
+
+evaluateStatement ::= EvaluateStatement:est
+	{: my_parser.Builder.StartEvaluateStatementWithBody(est); :}
+	;
+
+whenConditionClauses ::= 
+		whenConditionClause
+		{:  :}
+	|	whenConditionClauses whenConditionClause
+		{:  :}
+	|	error whenConditionClause
+	|	whenConditionClauses error whenConditionClause
+	;
+
+whenConditionClause ::= whenEvaluateConditionsStart  statements
+	{: my_parser.Builder.EndWhenConditionClause(); :}
+	;
+
+whenEvaluateCondition ::= WhenSearchCondition:wec
+	{: RESULT = wec; :}
+	| WhenCondition:wec
+	{: RESULT = wec; :}
+	;
+
+whenEvaluateConditions ::= whenEvaluateCondition:wec
+	{: RESULT = new CodeElementList(){wec}; :}
+	| whenEvaluateConditions:wecs whenEvaluateCondition:wec
+	{: wecs.Add(wec); RESULT = wecs; :}
+	;
+
+whenEvaluateConditionsStart ::= whenEvaluateConditions:wecs
+	{: my_parser.Builder.StartWhenConditionClause(wecs); :}
+	;
+
+
+whenOtherClause ::= whenOtherCondition:woc statements
+	{: my_parser.Builder.EndWhenOtherClause(); :}
+	;
+
+whenOtherCondition ::= WhenOtherCondition:woc 
+	{: my_parser.Builder.StartWhenOtherClause(woc); :}
+	;
+
+ifStatementWithBody ::=
+	ifstatement statements
+	{: my_parser.Builder.EndIfStatementWithBody(); :}
+	| ifstatement statements IfStatementEnd:end
+	{: my_parser.Builder.EndIfStatementWithBody(end); :}
+
+	| ifstatement nextSentenceStatement
+	{:  my_parser.Builder.EndIfStatementWithBody(); :}
+	| ifstatement nextSentenceStatement IfStatementEnd:end
+	{: my_parser.Builder.EndIfStatementWithBody(end); :}
+
+	| ifstatement statements elseCondition statements
+	{: my_parser.Builder.EndIfStatementWithBody(); :}
+	| ifstatement statements elseCondition nextSentenceStatement
+	{: my_parser.Builder.EndIfStatementWithBody(); :}
+
+	| ifstatement statements elseCondition statements IfStatementEnd:end
+	{: my_parser.Builder.EndIfStatementWithBody(end); :}
+	| ifstatement statements elseCondition nextSentenceStatement IfStatementEnd:end
+	{: my_parser.Builder.EndIfStatementWithBody(end); :}
+
+	| ifstatement nextSentenceStatement elseCondition statements
+	{: my_parser.Builder.EndIfStatementWithBody(); :}
+	| ifstatement nextSentenceStatement elseCondition nextSentenceStatement
+	{: my_parser.Builder.EndIfStatementWithBody(); :}
+
+	| ifstatement nextSentenceStatement elseCondition statements IfStatementEnd:end
+	{: my_parser.Builder.EndIfStatementWithBody(end); :}
+	| ifstatement nextSentenceStatement elseCondition nextSentenceStatement IfStatementEnd:end
+	{: my_parser.Builder.EndIfStatementWithBody(end); :}
+	;
+
+ifstatement ::= IfStatement:ifs
+	{: my_parser.Builder.StartIfStatementWithBody(ifs); :}
+	;
+
+elseCondition ::= ElseCondition:ec 
+	{: my_parser.Builder.EnterElseClause(ec); :}
+	;
+
+nextSentenceStatement ::= NextSentenceStatement:next
+	{: my_parser.Builder.AddNextSentenceStatement(next); :}
+	;
+
+invokeStatementConditional ::=
+		invokeStatement
+		{: my_parser.Builder.EndInvokeStatementConditional(); :}
+	|	invokeStatement InvokeStatementEnd:end
+		{: my_parser.Builder.EndInvokeStatementConditional(end); :}
+	|	invokeStatement exceptionConditions
+		{: my_parser.Builder.EndInvokeStatementConditional(); :}
+	|	invokeStatement exceptionConditions InvokeStatementEnd:end
+		{: my_parser.Builder.EndInvokeStatementConditional(end); :}
+	;
+
+invokeStatement ::= InvokeStatement:stmt
+	{: my_parser.Builder.StartInvokeStatementConditional(stmt); :}
+	;
+
+multiplyStatementConditional ::=
+		multiplyStatement
+		{: my_parser.Builder.EndMultiplyStatementConditional(); :}
+	|	multiplyStatement MultiplyStatementEnd:end
+		{: my_parser.Builder.EndMultiplyStatementConditional(end); :}
+	|	multiplyStatement sizeErrorConditions
+		{: my_parser.Builder.EndMultiplyStatementConditional(); :}
+	|	multiplyStatement sizeErrorConditions MultiplyStatementEnd:end
+		{: my_parser.Builder.EndMultiplyStatementConditional(end); :}
+	;
+
+multiplyStatement ::= MultiplyStatement:stmt
+	{: my_parser.Builder.StartMultiplyStatementConditional(stmt); :}
+	;
+
+performStatementWithBody ::=			
+		performStatement
+		{: my_parser.Builder.EndPerformStatementWithBody(); :}
+	|	performStatement PerformStatementEnd:end
+		{: my_parser.Builder.EndPerformStatementWithBody(end); :}
+	|	performStatement statements
+		{: my_parser.Builder.EndPerformStatementWithBody(); :}
+	|	performStatement statements PerformStatementEnd:end
+		{: my_parser.Builder.EndPerformStatementWithBody(end); :}
+	;
+
+performStatement ::= PerformStatement:stmt
+	{: my_parser.Builder.StartPerformStatementWithBody(stmt); :}
+	;
+
+readStatementConditional ::=
+		readStatement
+		{: my_parser.Builder.EndReadStatementConditional(); :}
+	|	readStatement ReadStatementEnd:end
+		{: my_parser.Builder.EndReadStatementConditional(end); :}
+	|	readStatement rwStatementConditions
+		{: my_parser.Builder.EndReadStatementConditional(); :}
+	|	readStatement rwStatementConditions ReadStatementEnd:end
+		{: my_parser.Builder.EndReadStatementConditional(end); :}
+	;
+
+readStatement ::= ReadStatement:stmt
+	{: my_parser.Builder.EnterReadStatementConditional(stmt); :}
+	;
+
+rwStatementCondition ::=
+	  onAtEnd
+	{:  :}
+	| noAtEnd
+	{:  :}
+	| onInvalidKey
+	{:  :}
+	| noInvalidKey
+	{:  :}
+	;
+
+rwStatementConditions ::=
+		rwStatementCondition
+		{:  :}
+	|	rwStatementConditions rwStatementCondition
+		{:  :}
+	;
+
+returnStatementConditional ::=
+		returnStatement
+		{: my_parser.Builder.EndReturnStatementConditional(); :}
+	|	returnStatement ReturnStatementEnd:end
+		{: my_parser.Builder.EndReturnStatementConditional(end); :}
+	|	returnStatement endConditions
+		{: my_parser.Builder.EndReturnStatementConditional(); :}
+	|	returnStatement endConditions ReturnStatementEnd:end
+		{: my_parser.Builder.EndReturnStatementConditional(end); :}
+	;
+
+returnStatement ::= ReturnStatement:stmt
+	{: my_parser.Builder.EnterReturnStatementConditional(stmt); :}
+	;
+
+rewriteStatementConditional ::=
+		rewriteStatement
+		{: my_parser.Builder.EndRewriteStatementConditional(); :}
+	|	rewriteStatement RewriteStatementEnd:end
+		{: my_parser.Builder.EndRewriteStatementConditional(end); :}
+	|	rewriteStatement keyConditions
+		{: my_parser.Builder.EndRewriteStatementConditional(); :}
+	|	rewriteStatement keyConditions RewriteStatementEnd:end
+		{: my_parser.Builder.EndRewriteStatementConditional(end); :}
+	;
+
+rewriteStatement ::= RewriteStatement:stmt
+	{: my_parser.Builder.StartRewriteStatementConditional(stmt); :}
+	;
+
+searchStatementWithBody ::=
+		searchStatement whenSearchConditionClauses
+		{: my_parser.Builder.EndSearchStatementWithBody(); :}
+	|	searchStatement whenSearchConditionClauses SearchStatementEnd:end
+		{: my_parser.Builder.EndSearchStatementWithBody(end); :}
+	|	searchStatement onAtEnd whenSearchConditionClauses:wsccs
+		{: my_parser.Builder.EndSearchStatementWithBody(); :}
+	|	searchStatement onAtEnd whenSearchConditionClauses SearchStatementEnd:end
+		{: my_parser.Builder.EndSearchStatementWithBody(end); :}
+	;
+
+searchStatement ::= SearchStatement:stmt
+	{: my_parser.Builder.StartSearchStatementWithBody(stmt); :}
+	;
+
+whenSearchConditionClause ::= 
+		whenSearchCondition  statements
+		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
+	|	whenSearchCondition  nextSentenceStatement
+		{: my_parser.Builder.EndWhenSearchConditionClause(); :}
+	;
+
+whenSearchCondition ::= WhenSearchCondition:wsc 
+	{: my_parser.Builder.StartWhenSearchConditionClause(wsc); :}
+	;
+
+whenSearchConditionClauses ::= whenSearchConditionClause
+		{:  :}
+	|	whenSearchConditionClauses whenSearchConditionClause
+		{:  :}
+	;
+
+startStatementConditional ::=
+		startStatement
+		{: my_parser.Builder.EndStartStatementConditional(); :}
+	|	startStatement StartStatementEnd:end
+		{: my_parser.Builder.EndStartStatementConditional(end); :}
+	|	startStatement keyConditions
+		{: my_parser.Builder.EndStartStatementConditional(); :}
+	|	startStatement keyConditions StartStatementEnd:end
+		{: my_parser.Builder.EndStartStatementConditional(end); :}
+	;
+
+startStatement ::= StartStatement:stmt
+	{: my_parser.Builder.StartStartStatementConditional(stmt); :}
+	;
+
+stringStatementConditional ::=
+		stringStatement
+		{: my_parser.Builder.EndStringStatementConditional(); :}
+	|	stringStatement StringStatementEnd:end
+		{: my_parser.Builder.EndStringStatementConditional(end); :}
+	|	stringStatement overflowConditions
+		{: my_parser.Builder.EndStringStatementConditional(); :}
+	|	stringStatement overflowConditions StringStatementEnd:end
+		{: my_parser.Builder.EndStringStatementConditional(end); :}
+	;
+
+stringStatement ::= StringStatement:stmt
+	 {: my_parser.Builder.StartStringStatementConditional(stmt); :}
+	 ;
+
+subtractStatementConditional ::=
+		subtractStatement
+		{: my_parser.Builder.EndSubtractStatementConditional(); :}
+	|	subtractStatement SubtractStatementEnd:end
+		{: my_parser.Builder.EndSubtractStatementConditional(end); :}
+	|	subtractStatement sizeErrorConditions
+		{: my_parser.Builder.EndSubtractStatementConditional(); :}
+	|	subtractStatement sizeErrorConditions SubtractStatementEnd:end
+		{: my_parser.Builder.EndSubtractStatementConditional(end); :}
+	;
+
+subtractStatement ::= SubtractStatement:stmt
+	{: my_parser.Builder.StartSubtractStatementConditional(stmt); :}
+	;
+
+unstringStatementConditional ::=
+		unstringStatement
+		{: my_parser.Builder.EndUnstringStatementConditional(); :}
+	|	unstringStatement UnstringStatementEnd:end
+		{: my_parser.Builder.EndUnstringStatementConditional(end); :}
+	|	unstringStatement overflowConditions
+		{: my_parser.Builder.EndUnstringStatementConditional(); :}
+	|	unstringStatement overflowConditions UnstringStatementEnd:end
+		{: my_parser.Builder.EndUnstringStatementConditional(end); :}
+	;
+
+unstringStatement ::= UnstringStatement:stmt
+	{: my_parser.Builder.StartUnstringStatementConditional(stmt); :}
+	;
+
+writeStatementConditional ::=
+		writeStatement
+		{: my_parser.Builder.EndWriteStatementConditional(); :}
+	|	writeStatement WriteStatementEnd:end
+		{: my_parser.Builder.EndWriteStatementConditional(end); :}
+	|	writeStatement rwStatementConditions
+		{: my_parser.Builder.EndWriteStatementConditional(); :}
+	|	writeStatement rwStatementConditions WriteStatementEnd:end
+		{: my_parser.Builder.EndWriteStatementConditional(end); :}
+	;
+
+writeStatement ::= WriteStatement:stmt
+	{: my_parser.Builder.StartWriteStatementConditional(stmt); :}
+	;
+
+xmlGenerateStatementConditional ::=
+		xmlGenerateStatement
+		{: my_parser.Builder.EndXmlGenerateStatementConditional(); :}
+	|	xmlGenerateStatement XmlStatementEnd:end
+		{: my_parser.Builder.EndXmlGenerateStatementConditional(end); :}
+	|	xmlGenerateStatement exceptionConditions
+		{: my_parser.Builder.EndXmlGenerateStatementConditional(); :}
+	|	xmlGenerateStatement exceptionConditions XmlStatementEnd:end
+		{: my_parser.Builder.EndXmlGenerateStatementConditional(end); :}
+	;
+
+xmlGenerateStatement ::= XmlGenerateStatement:stmt
+	{: my_parser.Builder.StartXmlGenerateStatementConditional(stmt); :}
+	;
+
+xmlParseStatementConditional ::=
+		xmlParseStatement
+		{: my_parser.Builder.EndXmlParseStatementConditional(); :}
+	|	xmlParseStatement XmlStatementEnd:end
+		{: my_parser.Builder.EndXmlParseStatementConditional(end); :}
+	|	xmlParseStatement exceptionConditions
+		{: my_parser.Builder.EndXmlParseStatementConditional(); :}
+	|	xmlParseStatement exceptionConditions XmlStatementEnd:end
+		{: my_parser.Builder.EndXmlParseStatementConditional(end); :}
+	;
+
+xmlParseStatement ::= XmlParseStatement:stmt
+	{: my_parser.Builder.StartXmlParseStatementConditional(stmt); :}
+	;
+
+// Conditional execution of statements
+
+onAtEnd ::= atEndCondition statements
+	{: my_parser.Builder.EndOnAtEnd(); :}
+	;
+
+atEndCondition ::= AtEndCondition:cond 
+	{: my_parser.Builder.StartOnAtEnd(cond); :}
+	;
+
+noAtEnd ::= notAtEndCondition statements
+	{: my_parser.Builder.EndNoAtEnd(); :}
+	;
+
+notAtEndCondition ::= NotAtEndCondition:cond 
+	{: my_parser.Builder.StartNoAtEnd(cond); :}
+	;
+
+endConditions ::= onAtEnd
+	{:  :}
+	| noAtEnd
+	{:  :}
+	| endConditions onAtEnd
+	{:  :}
+	| endConditions noAtEnd
+	{:  :}
+	;
+
+onException ::= onExceptionCondition statements
+	{: my_parser.Builder.EndOnException(); :}
+	;
+
+onExceptionCondition ::= OnExceptionCondition:cond 
+	{: my_parser.Builder.StartOnException(cond); :}
+	;
+
+noException ::= notOnExceptionCondition statements
+	{: my_parser.Builder.EndNoException(); :}
+	;
+
+notOnExceptionCondition ::= NotOnExceptionCondition:cond 
+	{: my_parser.Builder.StartNoException(cond); :}
+	;
+
+exceptionConditions ::= onException
+	{:  :}
+	| noException
+	{:  :}
+	| exceptionConditions onException
+	{:  :}
+	| exceptionConditions noException
+	{:  :}
+	;
+
+
+onInvalidKey ::= invalidKeyCondition statements
+	{: my_parser.Builder.EndOnInvalidKey(); :}
+	;
+
+invalidKeyCondition ::= InvalidKeyCondition:cond 
+	{: my_parser.Builder.StartOnInvalidKey(cond); :}
+	;
+
+noInvalidKey ::= notInvalidKeyCondition statements
+	{: my_parser.Builder.EndNoInvalidKey(); :}
+	;
+
+notInvalidKeyCondition ::= NotInvalidKeyCondition:cond 
+	{: my_parser.Builder.StartNoInvalidKey(cond); :}
+	;
+
+keyConditions ::= onInvalidKey
+	{:  :}
+	| noInvalidKey
+	{:  :}
+	| keyConditions onInvalidKey
+	{:  :}
+	| keyConditions noInvalidKey
+	{:  :}
+	;
+
+onOverflow ::= onOverflowCondition statements
+	{: my_parser.Builder.EndOnOverflow(); :}
+	;
+onOverflowCondition ::= OnOverflowCondition:cond 
+	{: my_parser.Builder.StartOnOverflow(cond); :}
+	;
+
+noOverflow ::= notOnOverflowCondition statements
+	{: my_parser.Builder.EndNoOverflow(); :}
+	;
+
+notOnOverflowCondition ::= NotOnOverflowCondition:cond 
+	{: my_parser.Builder.StartNoOverflow(cond); :}
+	;
+
+overflowConditions ::= onOverflow
+	{:  :}
+	| noOverflow
+	{:  :}
+	| overflowConditions onOverflow
+	{:  :}
+	| overflowConditions noOverflow
+	{:  :}
+	;
+
+onSizeError ::= onSizeErrorCondition statements
+	{:  my_parser.Builder.EndOnSizeError(); :}
+	;
+onSizeErrorCondition ::= OnSizeErrorCondition:cond 
+	{: my_parser.Builder.StartOnSizeError(cond); :}
+	;
+
+noSizeError ::= notOnSizeErrorCondition statements
+	{:  my_parser.Builder.EndNoSizeError(); :}
+	;
+
+notOnSizeErrorCondition ::= NotOnSizeErrorCondition:cond 
+	{: my_parser.Builder.StartNoSizeError(cond); :}
+	;
+
+sizeErrorConditions ::= 
+	  onSizeError
+		{: :}
+	| noSizeError
+		{: :}
+	| sizeErrorConditions onSizeError
+		{: :}
+	| sizeErrorConditions noSizeError
+		{: :}
+	;

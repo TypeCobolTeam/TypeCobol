@@ -16,6 +16,7 @@ PROGRAM: TYPEPGM common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  CURRENCY:CURRENCY
   STRING:STRING
 --- Program ---
 PROGRAM: Stacked common:False initial:False recursive:False
@@ -30,4 +31,5 @@ PROGRAM: Stacked common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  CURRENCY:CURRENCY
   STRING:STRING

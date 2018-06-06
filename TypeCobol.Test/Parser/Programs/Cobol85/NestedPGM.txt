@@ -5,4 +5,5 @@ PROGRAM: EnclosingPgm common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  CURRENCY:CURRENCY
   STRING:STRING

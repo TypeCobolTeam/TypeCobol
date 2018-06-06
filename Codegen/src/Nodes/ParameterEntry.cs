@@ -31,8 +31,10 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 				if (this.CodeElement().DataType == DataType.Boolean) {
 					_cache.Add(new TextLineSnapshot(-1, "01 "+name+"-value PIC X     VALUE LOW-VALUE.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"       VALUE 'T'.", null));
-					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F'.", null));
-				} else {
+					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F' ", null));
+                    _cache.Add(new TextLineSnapshot(-1, "                      X'00' thru 'S'", null));
+                    _cache.Add(new TextLineSnapshot(-1, "                      'U' thru X'FF'.", null));
+                } else {
                     bool bHasPeriod = false;
                     bool bIgnoreUsage = false;
                         var str = new System.Text.StringBuilder();
@@ -54,8 +56,9 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 
                     if (picture != null)
                     {
+                        bool globalSeen = false;
                         //If we have a picture, try to extract the original pic string declaration.
-                        string picIt = TypedDataNode.ExtractPicTokensValues(Layout, this.CodeElement().ConsumedTokens, out bHasPeriod);
+                        string picIt = TypedDataNode.ExtractPicTokensValues(Layout, this.CodeElement().ConsumedTokens, out bHasPeriod, out globalSeen);
                         if (picIt.Length != 0)
                         {
                             str.Append(picIt);
@@ -81,8 +84,9 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
                             picture = customtype.CodeElement().Picture;
                             if (picture != null)
                             {
+                                bool globalSeen = false;
                                 //If we have a picture, try to extract the original pic string declaration.
-                                string picIt = TypedDataNode.ExtractPicTokensValues(Layout, customtype.CodeElement(), out bHasPeriod);
+                                string picIt = TypedDataNode.ExtractPicTokensValues(Layout, customtype.CodeElement(), out bHasPeriod, out globalSeen);
                                 if (picIt.Length != 0)
                                     str.Append(picIt);
                                 else

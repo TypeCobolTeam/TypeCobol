@@ -103,32 +103,39 @@ namespace TypeCobol.Compiler.Text
             }
             throw new System.NotImplementedException("Unsuported ITextLine type: " + layout);
         }
-        private static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text)
+
+        public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text)
+        {
+            return CreateCobolLines(layout, index, indicator, indent, text, 65, 61, true);
+        }
+
+        public static ICollection<ITextLine> CreateCobolLines(ColumnsLayout layout, int index, char indicator, string indent, string text, int pmax, int pmin, bool bConvertFirstLine)
         {
             var result = new List<ITextLine>();
-            int max = 65;
-            int min = 65;
+            int max = pmax;
+            int min = pmax;
             int nLine = (text.Length / max) + ((text.Length % max) != 0 ? 1 : 0);
             if (nLine == 1)
             {
-                result.Add(new TextLineSnapshot(index, Convert(layout, text, indicator, indent), null));
+                result.Add(new TextLineSnapshot(index, bConvertFirstLine ? Convert(layout, text, indicator, indent, pmax) : text, null));
                 return result;
             }
             if (indicator == ' ')
             {
-                max = 65;
-                min = 61;
-                indicator = '-';                
+                max = pmax;
+                min = pmin;
+                indicator = '-';
             }
 
             IList<Tuple<string, bool>> lines = lines = Split(text, max, min);
 
-            for (int i = 0; i < lines.Count; i++) {
+            for (int i = 0; i < lines.Count; i++)
+            {
                 if (index > -1) index++;
-                result.Add(new TextLineSnapshot(index, Convert(layout, lines[i].Item1,
+                result.Add(new TextLineSnapshot(index, !((i == 0 && bConvertFirstLine) || i > 0) ? lines[i].Item1 : Convert(layout, lines[i].Item1,
                     indicator != '-'
-                    ? indicator 
-                    : ((lines[i].Item2 && i != 0) ? indicator : (i == 0 ? NoIndicator : NoOneIndicator)) , indent), null));
+                    ? indicator
+                    : ((lines[i].Item2 && i != 0) ? indicator : (i == 0 ? NoIndicator : NoOneIndicator)), indent, pmax), null));
             }
             return result;
         }
@@ -138,7 +145,7 @@ namespace TypeCobol.Compiler.Text
         private const string ContinuationLinePrefix = "      -    ";
         private const string NoContinuationLinePrefix = "       ";
         private const string NoOneContinuationLinePrefix = "           ";
-        private static string Convert(ColumnsLayout layout, string text, int indicator, string indent)
+        private static string Convert(ColumnsLayout layout, string text, int indicator, string indent, int pmax)
         {
             string result = "";
             if (layout == ColumnsLayout.FreeTextFormat)
@@ -146,7 +153,7 @@ namespace TypeCobol.Compiler.Text
                 result = (indicator == '*' ? "*" : "") + indent + text;
             }
             else {
-                var end = text.Length < 65 ? new string(' ', 65 - text.Length) : "";
+                var end = text.Length < pmax ? new string(' ', pmax - text.Length) : "";
                 if (indicator != '-') {
                     if (indicator == NoIndicator)
                         result = NoContinuationLinePrefix + indent + text + end + "      ";
@@ -193,6 +200,17 @@ namespace TypeCobol.Compiler.Text
                 {
                     if (t.TokenFamily == TokenFamily.Whitespace || (nCurLength == nSpan))
                         bNextNoIndicator = true;
+                    else if (t.TokenFamily == TokenFamily.AlphanumericLiteral && t.TokenType == TokenType.AlphanumericLiteral)
+                    {
+                        if (t.SourceText.IndexOf('\'') == 0 || t.SourceText.IndexOf('"') == 0)
+                        {//The next continuation line must have a '\''
+                            if (lines.Count > (index + 1))
+                            {
+                                string item = lines[index + 1].Item1;
+                                lines[index + 1] = new Tuple<string, bool>(t.SourceText[0] + item, lines[index + 1].Item2);
+                            }
+                        }
+                    }
                     nSpan += min;
                     index++;
                 }

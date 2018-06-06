@@ -1,0 +1,50 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OS3.
+       data DIVISION.
+       working-storage section.
+      
+      *01 EventList TYPEDEF STRICT.
+      *   05 Counter pic 9(04) comp-5.
+      *   05 EventArray.
+      *      10 Event pic X occurs 10
+      *                      depending on Counter.
+      
+      *01 CallingStack typedef strict private.
+      *  05 cnt  pic S9(5) comp-5.
+      *  05 moduleList.
+      *   10 occurs 40
+      *    depending on cnt.
+      *    15 module pic X(8).
+
+      *01 callingStack type CallingStack.
+       01 callingStack.
+           02 cnt pic S9(5) comp-5.
+           02 moduleList.
+             03 occurs 40
+           depending on cnt OF callingStack.
+               04 module pic X(8).
+                                         
+
+       procedure division.
+      
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *     INPUT EventList type EventList.
+       END PROGRAM DVZF0OS3.
+      *
+      *DECLARE PROCEDURE DisplayEventList PRIVATE
+      *     INPUT EventList type EventList.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c715cbccDisplayEventList.
+       DATA DIVISION.
+       LINKAGE SECTION.
+       01 EventList.
+           02 Counter pic 9(04) comp-5.
+           02 EventArray.
+             03 Event pic X occurs 10
+                             depending on Counter OF EventList.
+       PROCEDURE DIVISION
+             USING BY REFERENCE EventList
+           .
+           GOBACK.
+       END PROGRAM c715cbccDisplayEventList.

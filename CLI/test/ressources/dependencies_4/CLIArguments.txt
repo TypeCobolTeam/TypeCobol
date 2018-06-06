@@ -1,1 +1,1 @@
-﻿-1 -i input\PGM3.rdz.tcbl -g -o output\PGM3.rdz.tcbl -d output\error.txt --dependencies input\DoesntExists.rdz.tcbl --dependencies input\Callee.rdz.tcbl -s ..\skeletons.xml -e rdz
+﻿-1 -i input\PGM3.rdz.tcbl -o output\PGM3.rdz.tcbl -d output\error.txt --dependencies input\DoesntExists.rdz.tcbl --dependencies input\Callee.rdz.tcbl -s ..\skeletons.xml -e rdz
