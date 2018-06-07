@@ -62,6 +62,7 @@ namespace TypeCobol.Transform
             var outputWriter = new StreamWriter(outputStream);
             try
             {
+
                 var CBLDirectiveLines = new List<string>();
                 foreach (var typeCobolLine in typeCobolLines)
                 {
@@ -80,12 +81,9 @@ namespace TypeCobol.Transform
                 //                part2Start, part3Start, part4Start);
                 //outputWriter.WriteLine(firstLine);
 
-
                 outputWriter.WriteLine("000000*£TC-PART1£PART2-{0:000000}£PART3-{1:000000}£PART4-{2:000000}£££££££££££££££££",
                                 part2Start, part3Start, part4Start);
                 outputWriter.WriteLine(DoNotEdit);
-
-
 
 
                 //Part 2 - Cobol 85 generated code
@@ -93,7 +91,6 @@ namespace TypeCobol.Transform
                 outputWriter.WriteLine("000000*£TC-PART2££££££££££££££££££££££££££££££££££££££££££££££££££££££££");
                 foreach (var cobol85Line in cobol85Lines)
                 {
-
                     if (!stopMaybeOptions)
                     {
                         if (MaybeOption(cobol85Line))
@@ -109,6 +106,9 @@ namespace TypeCobol.Transform
                 System.Text.StringBuilder columns7 = new System.Text.StringBuilder(part4Start - part3Start);
                 foreach (var typeCobolLine in typeCobolLines)
                 {
+                    if (CBLDirectiveLines.Contains(typeCobolLine))
+                        continue; //Ignore this line cause it contains CBL directive
+
                     if (typeCobolLine.Length >= CommentPos)
                     {
                         //TODO Check the length >= 8
@@ -171,7 +171,6 @@ namespace TypeCobol.Transform
                 int part3Length = 0;
                 int part3StartFromLine1 = 0;
                 int realPart3LineNumber = 0;
-
                 var CBLDirectiveLines = new List<string>();
 
                 foreach (var line in File.ReadLines(concatenatedFilePath))
@@ -230,6 +229,11 @@ namespace TypeCobol.Transform
                             tcLinesCol7.Append(transcript.PadRight(LineLength - 1));
                         }
                     }
+                }
+
+                foreach (var CBLDirectiveLine in CBLDirectiveLines)
+                {
+                    outputWriter.WriteLine(CBLDirectiveLine);
                 }
 
                 //Write
