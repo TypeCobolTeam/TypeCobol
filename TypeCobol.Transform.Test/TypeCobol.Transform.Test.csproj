@@ -93,13 +93,25 @@
     <None Include="ressources\Decode\input\DVZZJCM06091671950858863561.tcmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="ressources\Decode\input\DVZZJCM5275173981815586154.tcmc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\Decode\input\EncodedTypeCobol.tcmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Decode\output_expected\DVZZJCM07743263199481788228.c2tc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="ressources\Decode\output_expected\DVZZJCM5275173981815586154.c2tc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\Decode\output_expected\Result.tcbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Encode\input\DVZZJCM55499349689522088865.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Encode\input\DVZZJCM5971568404687801514.tcbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Encode\input\GeneratedCobolFile.cbl">
@@ -112,6 +124,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Encode\input\TypeCobolFileLine6.tcbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Encode\output_expected\DVZZJCM5275173981815586154.tcmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Encode\output_expected\EncodedTypeCobol.tcmc">
