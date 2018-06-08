@@ -643,6 +643,35 @@ namespace TypeCobol.Compiler.Nodes {
         public bool IsInsideCopy() {
             return CodeElement != null && CodeElement.IsInsideCopy();
         }
+
+        public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaReadsDataDefinition { get; internal set; }
+        public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaWritesDataDefinition { get; internal set; }
+
+        public IEnumerable<Tuple<string,DataDefinition>> GetVariableFromNodeStorageArea(StorageArea storageArea,
+            bool isReadStorageArea)
+        {
+            var uri = storageArea.SymbolReference != null ?
+                storageArea.SymbolReference.URI :
+                new URI(storageArea.ToString());
+            return GetVariableFromNodeQualifiedName(uri,isReadStorageArea);
+        }
+
+        public IEnumerable<Tuple<string,DataDefinition>> GetVariableFromNodeQualifiedName(URI uri, bool isReadStorageArea)
+        {
+            //search in the data reads
+            if (isReadStorageArea)
+            {
+                return StorageAreaReadsDataDefinition
+                    .Where(elem => elem.Key.SymbolReference.URI.Equals(uri))
+                    .Select(elem => elem.Value);
+            }
+            else
+            {
+                return StorageAreaWritesDataDefinition
+                    .Where(elem => elem.Key.SymbolReference.URI.Equals(uri))
+                    .Select(elem => elem.Value);
+            }
+        }
     }
 
 // --- Temporary base classes for data definition noes ---
