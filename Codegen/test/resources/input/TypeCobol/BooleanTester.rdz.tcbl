@@ -25,6 +25,9 @@
        IF myBool = myBool
          continue
        END-IF.
+       IF ADDRESS OF myBool = "AnyAlpha"
+         continue
+       END-IF.
        SET myBool TO TRUE.
        SET myBool TO FALSE.
 

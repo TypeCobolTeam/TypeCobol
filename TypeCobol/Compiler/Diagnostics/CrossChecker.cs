@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
@@ -73,6 +74,48 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Section section)
         {
             SectionOrParagraphUsageChecker.CheckSection(section);
+            return true;
+        }
+
+        public override bool Visit(Move move)
+        {
+            var moveCorresponding = move?.CodeElement as MoveCorrespondingStatement;
+            if (moveCorresponding == null)
+                return true;
+
+            //For MoveCorrespondingStatement check children compatibility
+            var FromVariable = move.SymbolTable.GetVariables(moveCorresponding.FromGroupItem); //Left member of the move corr statement
+            var ToVariable = move.SymbolTable.GetVariables(moveCorresponding.ToGroupItem); //Right member of the move corr statement
+
+            if ((FromVariable != null && FromVariable.Count() != 1) || (ToVariable != null && ToVariable.Count() != 1))
+                return true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
+
+            var fromVariableChildren = FromVariable.First().Children.Where(c => c?.Name != null);
+            var toVariableChildren = ToVariable.First().Children.Where(c => c?.Name != null);
+
+            var matchingChildrenNames = fromVariableChildren.Select(c => c.Name.ToLowerInvariant()).Intersect(toVariableChildren.Select(c => c.Name.ToLowerInvariant()));
+
+            foreach (var matchingChildName in matchingChildrenNames)
+            {
+                var retrievedChildrenFrom = fromVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
+                var retrievedChildrenTo = toVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
+
+                if ((retrievedChildrenFrom != null && retrievedChildrenFrom.Count() != 1) || (retrievedChildrenTo != null && retrievedChildrenTo.Count() != 1))
+                    DiagnosticUtils.AddError(move, string.Format("Multiple symbol \"{0}\" detected in MOVE CORR", matchingChildName));
+
+                var retrievedChildFrom = (retrievedChildrenFrom.First() as DataDefinition);
+                var retrievedChildTo = (retrievedChildrenTo.First() as DataDefinition);
+
+                if (retrievedChildFrom == null || retrievedChildTo == null)
+                    continue; //Doesn't have to happen but in case...
+
+                var fromDataType = retrievedChildFrom.DataType;
+                var toDataType = retrievedChildTo.DataType;
+
+                if (fromDataType != toDataType && fromDataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 && toDataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //Check DataType matching
+                    DiagnosticUtils.AddError(move, string.Format("Symbol {0} of type {1} do not match symbol {2} of type {3}", retrievedChildFrom.VisualQualifiedName, fromDataType, retrievedChildTo.VisualQualifiedName, toDataType));
+            }
+
             return true;
         }
 
@@ -249,11 +292,36 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (found.First().DataType == DataType.Boolean && found.First().CodeElement is DataDefinitionEntry &&
                          ((DataDefinitionEntry) found.First()?.CodeElement)?.LevelNumber?.Value != 88)
                 {
-                    if (!(node is Nodes.If || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch || node is Nodes.When))//Ignore If/Set/Perform/WhenSearch Statement
+                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch || node is Nodes.When))//Ignore If/Set/Perform/WhenSearch Statement
                     {
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
                             foundQualified.First().Key);
+                    }
+                }
+                else if (found.First().Usage == DataUsage.Pointer && found.First().CodeElement is DataDefinitionEntry)
+                {
+                    if (node.CodeElement is SetStatementForIndexes && !node.IsFlagSet(Node.Flag.NodeContainsPointer))
+                    {
+                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsPointer, node, storageArea,
+                            foundQualified.First().Key);
+                        var receivers = node["receivers"] as List<DataDefinition>;
+                        int intSender;
+                        if (!Int32.TryParse(node["sender"].ToString(), out intSender))
+                        {
+                            if (!node.SymbolTable.DataEntries.Any(
+                                x => x.Key == node["sender"].ToString() &&
+                                     x.Value.First().DataType.Name == "Numeric"))
+                                DiagnosticUtils.AddError(node, "Increment only support integer values");
+                        }
+                        foreach (var receiver in receivers)
+                        {
+                            if (receiver.Usage != DataUsage.Pointer)
+                                DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
+                            
+                            if (((DataDefinitionEntry)receiver.CodeElement).LevelNumber.Value > 49)
+                                DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
+                        }
                     }
                 }
 
@@ -269,6 +337,25 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node,
                             "Cannot write into " + storageArea + ", " + variabletoCheck +
                             " is declared out of LINKAGE SECTION.");
+                }
+
+                if (specialRegister != null
+                    && specialRegister.SpecialRegisterName.TokenType == TokenType.ADDRESS
+                    && node is Call)
+                {
+                    var callStatement = node.CodeElement as CallStatement;
+                    var currentCheckedParameter = callStatement?.InputParameters.FirstOrDefault(
+                        param => param.StorageAreaOrValue.StorageArea == specialRegister);
+
+                    if (currentCheckedParameter != null)
+                    {
+                        var variabletoCheck = found.First();
+                        //This variable has to be in Linkage Section
+                        if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode) &&
+                            currentCheckedParameter.SharingMode.Value == ParameterSharingMode.ByReference)
+                            DiagnosticUtils.AddError(node,
+                                "CALL with ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE");
+                    }
                 }
 
             }

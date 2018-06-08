@@ -198,6 +198,12 @@
     <None Include="LSRTests\PerformCompletion\output_expected\PerformCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\ProcedureCompletionCaseInsensitive\input\ProcedureCompletionCaseInsensitive.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionCaseInsensitive\output_expected\ProcedureCompletionCaseInsensitive.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\ProcedureCompletion\input\CustomDependencies\CustomDep.tcbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -205,6 +211,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\ProcedureCompletion\output_expected\ProcedureCompletion.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\QualifiedNameCompletionWithFiller\input\QualifiedNameCompletionWithFiller.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\QualifiedNameCompletionWithFiller\output_expected\QualifiedNameCompletionWithFiller.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\RemoveDataDivisionCtrlZWithDiag\input\RemoveDataDivisionCtrlZWithDiag.tlsp">
