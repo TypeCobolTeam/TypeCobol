@@ -776,6 +776,7 @@ namespace TypeCobol.Compiler.Parser
                 CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact = new GroupCorrespondingImpact()
                 {
                     SendingGroupItem = statement.FromGroupItem,
+                    SendingGroutItemStorageDataType = StorageDataType.Alphanumeric,
                     ReceivingGroupItem = statement.ToGroupItem,
                     ReceivingGroupIsAlsoSending = false
                 };
@@ -1290,6 +1291,7 @@ namespace TypeCobol.Compiler.Parser
                 CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact = new GroupCorrespondingImpact()
                 {
                     SendingGroupItem = statement.GroupItem,
+                    SendingGroutItemStorageDataType = StorageDataType.Alphanumeric,
                     ReceivingGroupItem = statement.SendingAndReceivingGroupItem,
                     ReceivingGroupIsAlsoSending = true
                 };
