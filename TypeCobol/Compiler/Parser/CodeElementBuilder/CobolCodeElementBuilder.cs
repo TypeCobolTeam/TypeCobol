@@ -66,7 +66,8 @@ namespace TypeCobol.Compiler.Parser
                         CodeElement.StorageAreaReads=new List<StorageArea>();
                     }
 
-                    CodeElement.StorageAreaWrites.Add(new ReceivingStorageArea(StorageDataType.Any, CodeElement.StorageAreaGroupsCorrespondingImpact.SendingGroupItem));
+                    CodeElement.StorageAreaWrites.Add(new ReceivingStorageArea(CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact.SendingGroutItemStorageDataType, 
+                        CodeElement.StorageAreaGroupsCorrespondingImpact.SendingGroupItem));
                     CodeElement.StorageAreaReads.Add(CodeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem);
                 }
                 if (CobolExpressionsBuilder.callTarget != null) {

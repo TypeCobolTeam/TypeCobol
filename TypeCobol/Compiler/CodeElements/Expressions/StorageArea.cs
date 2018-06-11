@@ -619,7 +619,8 @@ namespace TypeCobol.Compiler.CodeElements
 
 	public class GroupCorrespondingImpact : IVisitable {
 		public StorageArea SendingGroupItem { get; set; }
-		public StorageArea ReceivingGroupItem { get; set; }
+	    public StorageDataType SendingGroutItemStorageDataType;
+        public StorageArea ReceivingGroupItem { get; set; }
 		public bool ReceivingGroupIsAlsoSending { get; set; }
 	    public bool AcceptASTVisitor(IASTVisitor astVisitor) {
 	        return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, SendingGroupItem, ReceivingGroupItem);
