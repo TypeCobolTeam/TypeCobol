@@ -643,35 +643,19 @@ namespace TypeCobol.Compiler.Nodes {
         public bool IsInsideCopy() {
             return CodeElement != null && CodeElement.IsInsideCopy();
         }
-
+        /// <summary>
+        /// Dictionary that contains pairs of StorageArea and Tuple "string,DataDefintion" for the Read Area
+        /// The tuple stores the complete qualified name of the corresponding node (as string) and the DataDefintion.
+        /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
+        /// </summary>
         public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaReadsDataDefinition { get; internal set; }
+        /// <summary>
+        /// Dictionary that contains pairs of StorageArea and Tuple "string,DataDefintion" for the Write Area
+        /// The tuple stores the complete qualified name of the corresponding node (as string) and the DataDefintion.
+        /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
+        /// </summary>
         public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaWritesDataDefinition { get; internal set; }
-
-        public IEnumerable<Tuple<string,DataDefinition>> GetVariableFromNodeStorageArea(StorageArea storageArea,
-            bool isReadStorageArea)
-        {
-            var uri = storageArea.SymbolReference != null ?
-                storageArea.SymbolReference.URI :
-                new URI(storageArea.ToString());
-            return GetVariableFromNodeQualifiedName(uri,isReadStorageArea);
-        }
-
-        public IEnumerable<Tuple<string,DataDefinition>> GetVariableFromNodeQualifiedName(URI uri, bool isReadStorageArea)
-        {
-            //search in the data reads
-            if (isReadStorageArea)
-            {
-                return StorageAreaReadsDataDefinition
-                    .Where(elem => elem.Key.SymbolReference.URI.Equals(uri))
-                    .Select(elem => elem.Value);
-            }
-            else
-            {
-                return StorageAreaWritesDataDefinition
-                    .Where(elem => elem.Key.SymbolReference.URI.Equals(uri))
-                    .Select(elem => elem.Value);
-            }
-        }
+        
     }
 
 // --- Temporary base classes for data definition noes ---

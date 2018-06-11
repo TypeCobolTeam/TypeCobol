@@ -227,8 +227,18 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string,DataDefinition>>();
             }
 
-            //search for existing daata definitinon before constructing one
-            Tuple<string,DataDefinition> searchExistingDataDefinition = node.GetVariableFromNodeStorageArea(storageArea,isReadStorageArea)?.FirstOrDefault();
+            //search for existing data definitinon before constructing one
+            Tuple<string,DataDefinition> searchExistingDataDefinition;
+            if (isReadStorageArea)
+            {
+                node.StorageAreaReadsDataDefinition
+                    .TryGetValue(storageArea, out searchExistingDataDefinition);
+            }
+            else
+            {
+                node.StorageAreaWritesDataDefinition
+                    .TryGetValue(storageArea, out searchExistingDataDefinition);
+            }
             if (searchExistingDataDefinition!=null)
             {
                 IndexAndFlagDataDefiniton(searchExistingDataDefinition.Item1, searchExistingDataDefinition.Item2,node,area,storageArea);
@@ -525,7 +535,17 @@ namespace TypeCobol.Compiler.Diagnostics
             DataDefinition sendingTypeDefinition = null, receivingTypeDefinition = null;
 
             if (sent == null || wname == null) return; //Both items needed
-            var wsymbol = CrossCompleteChecker.CheckVariable(node, wname,false);
+            //var wsymbol = CrossCompleteChecker.CheckVariable(node, wname,false);
+            Tuple<string, DataDefinition> searchExistingDataDefinition;
+            DataDefinition wsymbol = null;
+            //check if dico not null
+            if (node.StorageAreaWritesDataDefinition != null)
+            {
+                node.StorageAreaWritesDataDefinition.TryGetValue(wname, out searchExistingDataDefinition);
+                wsymbol = searchExistingDataDefinition?.Item2;
+            }
+
+
             if (wsymbol != null)
                 receivingTypeDefinition = wsymbol.TypeDefinition ?? GetDataDefinitionType(node.SymbolTable, wsymbol);
 
@@ -538,7 +558,14 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else if (sent is StorageArea)
             {
-                var rsymbol = CrossCompleteChecker.CheckVariable(node, (StorageArea) sent,true);    
+                DataDefinition rsymbol=null;
+                //var rsymbol = CrossCompleteChecker.CheckVariable(node, (StorageArea) sent,true);    
+                if (node.StorageAreaReadsDataDefinition != null)
+                {
+                    node.StorageAreaReadsDataDefinition.TryGetValue((StorageArea)sent, out searchExistingDataDefinition);
+                    rsymbol = searchExistingDataDefinition?.Item2;
+                }
+
                 if (rsymbol != null)
                     sendingTypeDefinition = rsymbol.TypeDefinition ?? GetDataDefinitionType(node.SymbolTable, rsymbol);
             }
