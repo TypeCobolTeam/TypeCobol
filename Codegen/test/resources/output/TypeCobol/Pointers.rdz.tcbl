@@ -1,0 +1,44 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Pointers.
+
+       DATA DIVISION.
+
+       LOCAL-STORAGE SECTION.
+      *01 pointer0 pointer.
+       01  pointer0 POINTER.
+       01 redefines pointer0.
+           03 pointer0efd9c003 pic S9(05) comp-5.
+                           
+      *01 pointer1 pointer.
+       01  pointer1 POINTER.
+       01 redefines pointer1.
+           03 pointer1fe930f3e pic S9(05) comp-5.
+                           
+      *01 pointer2 pointer.
+       01  pointer2 POINTER.
+       01 redefines pointer2.
+           03 pointer2db906685 pic S9(05) comp-5.
+                           
+       
+       LINKAGE SECTION.
+       01 noPointer PIC S9(2) value 12.
+
+       PROCEDURE DIVISION.
+
+       SET address of noPointer to pointer0.
+
+      *SET pointer0 UP BY 3.
+       ADD 3 to pointer0efd9c003
+                           .
+      *SET pointer0 DOWN BY noPointer.
+       ADD -noPointer to pointer0efd9c003
+                                     .
+      *SET pointer0,pointer1 UP BY noPointer.
+       ADD noPointer to pointer0efd9c003, pointer1fe930f3e
+                                            .
+      *SET pointer0,pointer1,pointer2 DOWN BY 12.
+       ADD -12 to pointer0efd9c003, pointer1fe930f3e, pointer2db906685
+                                                .
+
+       END PROGRAM Pointers.

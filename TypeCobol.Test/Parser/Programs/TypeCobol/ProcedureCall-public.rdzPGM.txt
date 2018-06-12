@@ -43,6 +43,7 @@ Line 216[12,40] <27, Error, Syntax> - Syntax error : No suitable function signat
 Line 220[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case14(no arguments)'
 Line 223[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'PublicProcedures.case15(no arguments)'
 Line 226[12,49] <27, Error, Syntax> - Syntax error : No function or variable found for 'PublicProcedures.case15.unknown'(no arguments)
+Line 229[12,47] <27, Error, Syntax> - Syntax error : Symbol undefinedProcedure is not referenced
 
 --- Program ---
 PROGRAM: CallToPublicProcedure common:False initial:False recursive:False

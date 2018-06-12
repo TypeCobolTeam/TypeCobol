@@ -216,7 +216,7 @@ namespace TypeCobol.Codegen.Nodes {
         {//We must detect a boolean variable
             if (!variable.IsLiteral)
             {
-                var found = table.GetVariables(variable);
+                var found = table.GetVariables(variable.StorageArea.GetStorageAreaThatNeedDeclaration);
                 if (found.Count() >= 1)
                 {
                     var data = found.First() as DataDescription;
@@ -261,7 +261,7 @@ namespace TypeCobol.Codegen.Nodes {
         if (variable != null) {
             if (variable.IsLiteral)
                 return share_mode + name;
-            var found = table.GetVariables(variable);
+            var found = table.GetVariables(variable.StorageArea.GetStorageAreaThatNeedDeclaration);
             if (found.Count() < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
                 return share_mode + variable.ToCobol85();
             }

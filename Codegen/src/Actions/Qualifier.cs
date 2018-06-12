@@ -72,17 +72,13 @@ namespace TypeCobol.Codegen.Actions
                 }
                 else
                 {
-                    //Check if the first element is already in
                     SymbolReference first = items[0];
+                    SymbolReference last = items[items.Count - 1];
                     if (AllItemsListContains(first))
                         return true;
-                    if (ItemsContains(first))
+                    if (ItemsContains(first) || ItemsContains(last))
                     {
-                        foreach (SymbolReference sr in items)
-                        {
-                            if (!ItemsContains(sr))
-                                Items.Add(sr);
-                        }
+                        Items = items;
                     }
                     else
                     {
@@ -133,10 +129,10 @@ namespace TypeCobol.Codegen.Actions
             {
                 if (UsedStorageArea != null && UsedStorageArea.Contains(storage_area))
                     return;
-                string name = storage_area?.SymbolReference?.Name;
+                string name = storage_area?.GetStorageAreaThatNeedDeclaration?.SymbolReference?.Name;
                 GenerateToken item = null;
                 item = new GenerateToken(
-                    new TokenCodeElement(storage_area?.SymbolReference?.NameLiteral?.Token), name + "-value", sourcePositions);
+                    new TokenCodeElement(storage_area?.GetStorageAreaThatNeedDeclaration?.SymbolReference?.NameLiteral?.Token), name + "-value", sourcePositions);
                 item.SetFlag(Node.Flag.HasBeenTypeCobolQualifierVisited, true);
                 this.CurrentNode.Add(item);
                 if (UsedStorageArea == null)
@@ -176,11 +172,11 @@ namespace TypeCobol.Codegen.Actions
             /// <returns>true if some nodes have been generated, false otherwise</returns>
             private bool GenQualifiedStorage(StorageArea storageArea, CodeElement codeElement)
             {
-                if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsTypeCobolQualifiedReference)
+                if (storageArea?.GetStorageAreaThatNeedDeclaration?.SymbolReference != null && !storageArea.GetStorageAreaThatNeedDeclaration.SymbolReference.IsTypeCobolQualifiedReference)
                     return false;
                 if (CurrentNode == null)
                     return false;
-                TypeCobolQualifiedSymbolReference tcqsr = storageArea.SymbolReference as TypeCobolQualifiedSymbolReference;
+                TypeCobolQualifiedSymbolReference tcqsr = storageArea.GetStorageAreaThatNeedDeclaration.SymbolReference as TypeCobolQualifiedSymbolReference;
                 int start = -1;
                 for (int i = 0; i < codeElement.ConsumedTokens.Count; i++)
                 {

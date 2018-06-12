@@ -44,6 +44,11 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
+        /// True to use ANTLR for parsing a program
+        /// </summary>
+        public bool UseAntlrProgramParsing { get; set; }
+
+        /// <summary>
         /// Lstr Testing Source document
         /// </summary>
         public bool LsrSourceTesting { get; set; }
@@ -91,6 +96,7 @@ namespace TypeCobol.LanguageServer
             if (LsrParserTesting) typeCobolWorkspace.IsLsrParserTesting = LsrParserTesting;
             if (LsrSemanticTesting) typeCobolWorkspace.IsLsrSemanticTesting = LsrSemanticTesting;
 
+            typeCobolWorkspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
             typeCobolWorkspace.TimerDisabledOption = TimerDisabledOption;
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
             typeCobolWorkspace.ExceptionTriggered += ExceptionTriggered;
@@ -618,11 +624,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
                                     v => v.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    new List<SymbolTable.Scope>()
-                                    {
-                                        SymbolTable.Scope.Declarations,
-                                        SymbolTable.Scope.Global
-                                    }));
+                                    SymbolTable.Scope.Global));
                                 break;
                             }
                         }

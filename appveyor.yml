@@ -14,7 +14,6 @@ configuration:
 # scripts to run before build
 before_build:
     - nuget restore      #install missing nuget packages
-    - '"%ProgramFiles(x86)%\Microsoft SDKs\F#\4.0\Framework\v4.0\Fsi.exe" build\TweakAntlr.fsscript packages\Antlr4.4.5.3\build\Antlr4.targets'    #fsharp script fixing Antlr4.targets file
     
 before_package:
     - BuildScript.bat

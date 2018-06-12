@@ -4,8 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol", "TypeCobol\TypeCobol.csproj", "{7AC7A3E5-91F2-44BF-955D-86CC61375742}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Grammar", "TypeCobol.Grammar\TypeCobol.Grammar.csproj", "{6E707761-8F1D-409A-8E5B-03953282E435}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CB28015D-980A-4EDB-A879-52D477C5F995} = {CB28015D-980A-4EDB-A879-52D477C5F995}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Test", "TypeCobol.Test\TypeCobol.Test.csproj", "{323CC743-ED21-4A15-AD3F-3B7C937F6332}"
 EndProject
@@ -37,6 +38,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.Transform.Test", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.LanguageServer.Test", "TypeCobol.LanguageServer.Test\TypeCobol.LanguageServer.Test.csproj", "{C8895AA5-6DBC-4800-8AA1-D4217B181976}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSCup", "CSCup\CSCup.csproj", "{CB28015D-980A-4EDB-A879-52D477C5F995}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSCupRuntime", "CSCupRuntime\CSCupRuntime.csproj", "{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,18 +64,6 @@ Global
 		{7AC7A3E5-91F2-44BF-955D-86CC61375742}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
 		{7AC7A3E5-91F2-44BF-955D-86CC61375742}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AC7A3E5-91F2-44BF-955D-86CC61375742}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Debug_Net40|Any CPU.ActiveCfg = EI_Debug_Net40|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Debug_Net40|Any CPU.Build.0 = EI_Debug_Net40|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Debug|Any CPU.ActiveCfg = EI_Debug|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Debug|Any CPU.Build.0 = EI_Debug|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Release_Net40|Any CPU.ActiveCfg = EI_Release_Net40|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Release_Net40|Any CPU.Build.0 = EI_Release_Net40|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Release|Any CPU.ActiveCfg = EI_Release|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E707761-8F1D-409A-8E5B-03953282E435}.Release|Any CPU.Build.0 = Release|Any CPU
 		{323CC743-ED21-4A15-AD3F-3B7C937F6332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{323CC743-ED21-4A15-AD3F-3B7C937F6332}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{323CC743-ED21-4A15-AD3F-3B7C937F6332}.EI_Debug_Net40|Any CPU.ActiveCfg = EI_Debug_Net40|Any CPU
@@ -191,6 +184,30 @@ Global
 		{C8895AA5-6DBC-4800-8AA1-D4217B181976}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
 		{C8895AA5-6DBC-4800-8AA1-D4217B181976}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8895AA5-6DBC-4800-8AA1-D4217B181976}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.EI_Debug_Net40|Any CPU.ActiveCfg = EI_Debug_Net40|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.EI_Debug_Net40|Any CPU.Build.0 = EI_Debug_Net40|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.EI_Debug|Any CPU.ActiveCfg = EI_Debug|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.EI_Debug|Any CPU.Build.0 = EI_Debug|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.EI_Release_Net40|Any CPU.ActiveCfg = EI_Release_Net40|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.EI_Release_Net40|Any CPU.Build.0 = EI_Release_Net40|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.EI_Release|Any CPU.ActiveCfg = EI_Release|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB28015D-980A-4EDB-A879-52D477C5F995}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Debug_Net40|Any CPU.ActiveCfg = EI_Debug_Net40|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Debug_Net40|Any CPU.Build.0 = EI_Debug_Net40|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Debug|Any CPU.ActiveCfg = EI_Debug|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Debug|Any CPU.Build.0 = EI_Debug|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Release_Net40|Any CPU.ActiveCfg = EI_Release_Net40|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Release_Net40|Any CPU.Build.0 = EI_Release_Net40|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Release|Any CPU.ActiveCfg = EI_Release|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.EI_Release|Any CPU.Build.0 = EI_Release|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC6CCC3-7ED4-4DC8-A636-733856301AAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

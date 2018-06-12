@@ -1,4 +1,7 @@
-﻿namespace TypeCobol.Codegen.Nodes
+﻿using System.Linq;
+using TypeCobol.Compiler.Scanner;
+
+namespace TypeCobol.Codegen.Nodes
 {
     using System;
     using System.Collections.Generic;
@@ -116,6 +119,46 @@
         }
 
         /// <summary>
+        /// Get the first token of the gien type in the List
+        /// </summary>
+        /// <param name="tokens">The List of tokens</param>
+        /// <param name="type">The Token Type to find</param>
+        /// <returns>The corresponding token if any, null otherwise</returns>
+        internal static Token GetToken(IList<Token> tokens, TokenType type)
+        {
+            return tokens?.FirstOrDefault(t => t.TokenType == type);
+        }
+
+        /// <summary>
+        /// Determines if the given list of tokens, contains any token of the specified type.
+        /// </summary>
+        /// <param name="tokens">The List of tokens.</param>
+        /// <param name="startIndex">The starting index in the token list</param>
+        /// <param name="type">The specified type.</param>
+        /// <returns>True if yes, false otherwise.</returns>
+        internal static bool ContainsToken(IList<Token> tokens, int startIndex, TokenType type)
+        {
+            if (tokens != null)
+            {
+                for (int i = startIndex; i < tokens.Count; i++)
+                    if (tokens[i].TokenType == type)
+                        return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if the given list of tokens, contains any token of the specified type.
+        /// </summary>
+        /// <param name="tokens">The List of tokens.</param>
+        /// <param name="type">The specified type.</param>
+        /// <returns>True if yes, false otherwise.</returns>
+        internal static bool ContainsToken(IList<Token> tokens, TokenType type)
+        {
+            return ContainsToken(tokens, 0, type);
+        }
+
+        /// <summary>
         /// Tries to detect a TYPEDEF construction for a scalar type.
         /// </summary>
         /// <param name="customtype">The TypeDef definition node</param>
@@ -171,8 +214,10 @@
         /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
         /// <returns>The string representing the Tokens after TYPE Name</returns>
         internal static string ExtractTokensValuesAfterTypeName(ColumnsLayout? layout, DataDescriptionEntry dataDescEntry, out bool bHasPeriod,
+            out bool globalSeen,
             Func<Compiler.Scanner.Token, string> tokenFilter = null)
         {
+            globalSeen = false;
             bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
             if (dataDescEntry.ConsumedTokens != null)
@@ -187,10 +232,10 @@
                 //Ignore qualified type name
                 while (i < dataDescEntry.ConsumedTokens.Count &&
                        dataDescEntry.ConsumedTokens[i].TokenType == Compiler.Scanner.TokenType.QualifiedNameSeparator)
-                {
+                {                    
                     i += 2; //skip  :: and the next type name
                 }
-
+                globalSeen = ContainsToken(dataDescEntry.ConsumedTokens, i - 1, TokenType.GLOBAL);
                 FlushConsumedTokens(layout, i - 1, dataDescEntry.ConsumedTokens, sb, out bHasPeriod, tokenFilter);
             }
             return sb.ToString();
@@ -202,9 +247,9 @@
         /// <param name="dataDescEntry">The Data Description Entry Node</param>
         /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
         /// <returns>The string representing the PIC clause </returns>
-        internal static string ExtractPicTokensValues(ColumnsLayout? layout, DataDescriptionEntry dataDescEntry, out bool bHasPeriod)
+        internal static string ExtractPicTokensValues(ColumnsLayout? layout, DataDescriptionEntry dataDescEntry, out bool bHasPeriod, out bool globalSeen)
         {
-            return ExtractPicTokensValues(layout, dataDescEntry.ConsumedTokens, out bHasPeriod);
+            return ExtractPicTokensValues(layout, dataDescEntry.ConsumedTokens, out bHasPeriod, out globalSeen);
         }
 
         /// <summary>
@@ -213,8 +258,9 @@
         /// <param name="dataDescEntry">The Data Description Entry Node</param>
         /// <param name="bHasPeriod">out true if a period separator has been encountered, false otherwise.</param>
         /// <returns>The string representing the PIC clause </returns>
-        internal static string ExtractPicTokensValues(ColumnsLayout? layout, IList<Compiler.Scanner.Token> consumedTokens, out bool bHasPeriod)
+        internal static string ExtractPicTokensValues(ColumnsLayout? layout, IList<Compiler.Scanner.Token> consumedTokens, out bool bHasPeriod, out bool globalSeen)
         {
+            globalSeen = false;
             bHasPeriod = false;
             StringBuilder sb = new StringBuilder();
             if (consumedTokens != null)
@@ -224,6 +270,10 @@
                     i++;
                 if (i < consumedTokens.Count)
                 {
+                    if (consumedTokens[i].TokenType == TokenType.GLOBAL)
+                    {
+                        globalSeen = true;
+                    }
                     sb.Append(string.Intern(" "));
                     sb.Append(consumedTokens[i].Text);
                 }
@@ -475,6 +525,32 @@
             }
         }
 
+        /// <summary>
+        /// Append in the given StringBuilder the name and any global attribute of the the given DataDefition object.
+        /// </summary>
+        /// <param name="buffer">The String Buffer</param>
+        /// <param name="dataDef">The Data Definition object</param>
+        /// <param name="globalSeen">Global token hass been already seen</param>
+        internal static void AppendNameAndGlobalDataDef(StringBuilder buffer, DataDefinitionEntry dataDef, bool globalSeen)
+        {
+            if (dataDef.Name != null)
+            {
+                buffer.Append(' ').Append(dataDef.Name);
+                if (!globalSeen)
+                {
+                    if (dataDef is CommonDataDescriptionAndDataRedefines)
+                    {
+                        CommonDataDescriptionAndDataRedefines cdadr = dataDef as CommonDataDescriptionAndDataRedefines;
+                        if (cdadr.IsGlobal)
+                        {
+                            Token gtoken = GetToken(dataDef.ConsumedTokens, TokenType.GLOBAL);
+                            buffer.Append(' ').Append(gtoken.Text);
+                        }
+                    }
+                }
+            }
+        }
+
         internal static List<ITextLine> CreateDataDefinition(SymbolTable table, ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
@@ -493,17 +569,16 @@
                     PreGenDependingOnAndIndexed(table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
-                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractPicTokensValues(layout, data, out bHasPeriod) : "";
+                    bool globalSeen = false;
+                    string text = !(bHasDependingOn || bHasIndexes) ? ExtractPicTokensValues(layout, data, out bHasPeriod, out globalSeen) : "";
                     if (text.Length > 0)
                     {
-                        if (data_def.Name != null)
-                            line.Append(' ').Append(data.Name);
+                        AppendNameAndGlobalDataDef(line, data_def, globalSeen);
                         line.Append(text);
                     }
                     else if (!(bHasDependingOn || bHasIndexes) && data.Picture != null && !string.IsNullOrEmpty(data.Picture.ToString()))
                     {
-                        if (data_def.Name != null)
-                            line.Append(' ').Append(data.Name);
+                        AppendNameAndGlobalDataDef(line, data_def, globalSeen);
                         line.Append(" PIC ").Append(data.Picture);
                     }
                     else
@@ -522,8 +597,7 @@
                         }
                         else
                         {
-                            if (data_def.Name != null)
-                                line.Append(' ').Append(data.Name);
+                            AppendNameAndGlobalDataDef(line, data_def, globalSeen);
                         }
                     }
                 }
@@ -541,10 +615,9 @@
 
                     string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod, false) : "";
 
-                    if (data_def.Name != null)
-                        line.Append(' ').Append(data.Name);                    
                     if (text.Length != 0)
                     {
+                        AppendNameAndGlobalDataDef(line, data_def, false);
                         line.Append(text);
                     }
                     else
@@ -555,16 +628,18 @@
                         PostGenDependingOnAndIndexed(ownerDefinition, data_def, bHasDependingOn, bHasIndexes, dependingOnAccessPath, indexesMap,
                             out depenOnTokenFilter, out indexedByTokenFilter);
 
-                        text = ExtractTokensValuesAfterTypeName(layout, data, out bHasPeriod, 
+                        bool globalSeen = false;
+                        text = ExtractTokensValuesAfterTypeName(layout, data, out bHasPeriod, out globalSeen,
                             bHasDependingOn ? depenOnTokenFilter : indexedByTokenFilter);
+
+                        AppendNameAndGlobalDataDef(line, data_def, globalSeen);
                         if (text.Length != 0)
                             line.Append(text);
                     }
                 }
                 else
                 {
-                    if (data_def.Name != null)
-                        line.Append(' ').Append(data.Name);
+                    AppendNameAndGlobalDataDef(line, data_def, false);
                 }
                 if (!bHasPeriod)
                 {
@@ -605,7 +680,7 @@
                 if (child is DataDefinition)
                 {
                     DataDefinition data = child as DataDefinition;
-                    if (data.Name.ToLower().Equals(name))
+                    if (data.Name != null && data.Name.ToLower().Equals(name))
                     {
                         acc.Add(dataDef.Name);
                         acc.Add(data.Name);

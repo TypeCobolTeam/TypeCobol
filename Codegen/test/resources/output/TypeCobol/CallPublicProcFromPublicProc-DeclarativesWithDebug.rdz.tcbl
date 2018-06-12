@@ -126,9 +126,11 @@
        SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 TC-Call          PIC X(01) VALUE 'T'.
+       01 TC-Call          PIC X     VALUE 'T'.
            88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        LINKAGE SECTION.

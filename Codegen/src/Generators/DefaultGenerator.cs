@@ -42,14 +42,32 @@ namespace TypeCobol.Codegen.Generators
         private const int MIN_SPLIT_COLUMN = 12;
 
         /// <summary>
+        /// The 0 based, Line Number where the TypeCobol version can be added.
+        /// </summary>
+        public int TypeCobolVersionLineNumber { get; private set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
         public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion)
-            : base(document, destination, skeletons, typeCobolVersion )
-        {            
+            : base(document, destination, skeletons, null )
+        {
+            TypeCobolVersion = typeCobolVersion;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bTrackFirtNonCblDirectiveLine"></param>
+        /// <returns></returns>
+        protected override int CreateTargetDocument(bool bTrackFirtNonCblDirectiveLine)
+        {
+            int i = base.CreateTargetDocument(true);
+            TypeCobolVersionLineNumber = Math.Max(0,i);
+            return i;
         }
 
         /// <summary>
@@ -92,6 +110,12 @@ namespace TypeCobol.Codegen.Generators
             StringSourceText previousBuffer = null;
             for (int i = 0; i < mapper.LineData.Length; i++)
             {
+                if (i == TypeCobolVersionLineNumber && this.TypeCobolVersion != null)
+                {
+                    targetSourceText.Insert("      *TypeCobol_Version:" + this.TypeCobolVersion, targetSourceText.Size, targetSourceText.Size);
+                    targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                }
+
                 //--------------------------------------------------------------------------------------------------------------
                 //1) A Non commented line with no Associated nodes is generated without any change.
                 if (!mapper.CommentedLines[i] && mapper.LineData[i].LineNodes == null)
@@ -500,7 +524,7 @@ namespace TypeCobol.Codegen.Generators
                 if (lineLen > LEGAL_COBOL_LINE_LENGTH)
                 {
                     int replace_len = lineLen - LEGAL_COBOL_LINE_LENGTH;
-                    buffer.Insert(new string(' ', replace_len), LEGAL_COBOL_LINE_LENGTH, lineLen);
+                    buffer.Insert(new string(' ', replace_len), lineStartOffset + LEGAL_COBOL_LINE_LENGTH, lineStartOffset + lineLen);
                 }
             }
             buffer.Insert(code, start, end);        
@@ -525,7 +549,7 @@ namespace TypeCobol.Codegen.Generators
                 }
                 else if (newLineLen > MAX_COBOL_LINE_LENGTH)
                 {//Here we know that the line the line exceed with only white characters. ==> Remove extra white characters
-                    buffer.Delete(LEGAL_COBOL_LINE_LENGTH, newLineLen);
+                    buffer.Delete(lineStartOffset + LEGAL_COBOL_LINE_LENGTH, lineStartOffset + newLineLen);
                 }
             }
 

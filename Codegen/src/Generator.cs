@@ -13,6 +13,7 @@ using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Codegen
 {
@@ -240,7 +241,7 @@ namespace TypeCobol.Codegen
             SymTable = compilationUnit.ProgramClassDocumentSnapshot.Root.SymbolTable;
             Layout = columns;
             //Create the Initial target document.
-            CreateTargetDocument();
+            CreateTargetDocument(false);
             // STEP 1: modify tree to adapt it to destination language            
             // 1.1 Run the Qualifier action on this node
             Qualifier qualifier = new Qualifier(this, RootNode);
@@ -254,20 +255,35 @@ namespace TypeCobol.Codegen
         }
 
         /// <summary>
-        /// Create the Target Document.
+        /// Create the Target Document.        
         /// </summary>
-        private void CreateTargetDocument()
+        /// <param name="bTrackFirtNonCblDirectiveLine">True if the First non Cobol Directive line must be tracked and return returned</param>
+        /// <returns>if bTrackFirtNonCblDirectiveLine is set to true this method return the first non cbl directive line it a 0 based line number.</returns>
+        protected virtual int CreateTargetDocument(bool bTrackFirtNonCblDirectiveLine)
         {
+            int iNonDirectiveLine = -1;
             TargetDocument = new Compiler.Source.SourceDocument(/*new StringSourceText()*/);
             //Insert all input lines
             StringWriter sw = new StringWriter();
+            int i = 0; //Line count
             foreach (TypeCobol.Compiler.Scanner.ITokensLine line in this.CompilationResults.TokensLines)
             {
+                if (bTrackFirtNonCblDirectiveLine && iNonDirectiveLine < 0)
+                {
+                    TypeCobol.Compiler.Parser.CodeElementsLine cel = (TypeCobol.Compiler.Parser.CodeElementsLine) line;
+                    if (!(cel.TokensWithCompilerDirectives.Count == 1 &&
+                        cel.TokensWithCompilerDirectives[0].TokenFamily == TokenFamily.CompilerDirective))
+                    {
+                        iNonDirectiveLine = i;
+                    }
+                    i++;
+                }
                 sw.WriteLine(line.Text);
             }
             //Load the Original source code
             TargetDocument.LoadSourceText(sw.ToString());
             //TargetDocument.Dump();
+            return iNonDirectiveLine;
         }
 
         /// <summary>

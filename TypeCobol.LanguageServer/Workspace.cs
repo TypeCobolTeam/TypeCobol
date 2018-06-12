@@ -124,6 +124,11 @@ namespace TypeCobol.LanguageServer
             set { LsrTestOptions = value ? (LsrTestOptions | LsrTestingOptions.LsrSemanticPhaseTesting) : LsrTestingOptions.NoLsrTesting; }
         }
 
+        /// <summary>
+        /// True to use ANTLR for parsing a program
+        /// </summary>
+        public bool UseAntlrProgramParsing { get; set; }
+
         #endregion
 
 
@@ -142,6 +147,8 @@ namespace TypeCobol.LanguageServer
                 _workspaceName, _rootDirectoryFullName, _extensions,
                 Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat,
                 new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
+            this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
+                this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
 
             _DepWatcher = new DependenciesFileWatcher(this);
         }
@@ -157,7 +164,19 @@ namespace TypeCobol.LanguageServer
 
 #if EUROINFO_RULES //Issue #583
             SymbolTable arrangedCustomSymbol = null;
-            var inputFileName = fileName.Substring(0, 8);
+            string inputFileName = string.Empty;
+
+            using (var reader = new StringReader(sourceText))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (!line.StartsWith("       PROGRAM-ID.", StringComparison.InvariantCultureIgnoreCase)) continue;
+                    inputFileName = line.Split('.')[1].Trim();
+                    break;
+                }
+            }
+
             var matchingPgm =
                 _customSymbols.Programs.Keys.FirstOrDefault(
                     k => k.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase));
@@ -191,7 +210,7 @@ namespace TypeCobol.LanguageServer
 
             if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
             {
-                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy); //Let's parse file for the first time after opening. 
+                fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy, fileCompiler.CompilerOptions.UseAntlrProgramParsing); //Let's parse file for the first time after opening. 
             }
         }
 
@@ -224,7 +243,7 @@ namespace TypeCobol.LanguageServer
                                                           //further it's for semantic, which is handle by NodeRefresh method
 
 
-                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy);
+                fileCompilerToUpdate.CompileOnce(execStep, fileCompilerToUpdate.CompilerOptions.HaltOnMissingCopy, fileCompilerToUpdate.CompilerOptions.UseAntlrProgramParsing);
                 fileCompilerToUpdate.ExecutionStepEventHandler -= handler.Invoke;
                 
 
@@ -332,7 +351,7 @@ namespace TypeCobol.LanguageServer
 
 
                 if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrSemanticTesting) return;
-                fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
+                fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(fileCompiler.CompilerOptions.UseAntlrProgramParsing); //Produce the temporary snapshot before full cross check
                 fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
             }
         }

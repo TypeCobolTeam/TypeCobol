@@ -202,7 +202,7 @@ namespace TypeCobol.Compiler
         /// </summary>
         public void CompileOnce()
         {
-            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy);
+            CompileOnce(CompilerOptions.ExecToStep, CompilerOptions.HaltOnMissingCopy, CompilerOptions.UseAntlrProgramParsing);
         }
 
         /// <summary>
@@ -210,7 +210,8 @@ namespace TypeCobol.Compiler
         /// </summary>
         /// <param name="exec2Step">The execution step</param>
         /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
-        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy)
+        /// <param name="useAntlrProgramParsing">Shall Antlr be used to parse the program</param>
+        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy, bool useAntlrProgramParsing)
         {
             if (exec2Step == null)
                 exec2Step = ExecutionStep.CrossCheck;
@@ -247,7 +248,7 @@ namespace TypeCobol.Compiler
                 if (!(exec2Step > ExecutionStep.SyntaxCheck)) return;
 
                 AnalyticsWrapper.Telemetry.TrackEvent("[Phase] Semantic Step", EventType.TypeCobolUsage);
-                CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //SemanticCheck
+                CompilationResultsForProgram.ProduceTemporarySemanticDocument(useAntlrProgramParsing); //SemanticCheck
                 ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SemanticCheck });
 
                 if (!(exec2Step > ExecutionStep.SemanticCheck)) return;

@@ -28,7 +28,11 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                   
-       01 myPointer     pointer.
+      *01 myPointer     pointer.
+       01  myPointer POINTER.
+       01 redefines myPointer.
+           03 myPointerae9be588 pic S9(05) comp-5.
+                                
 
        01  someformat   PIC X(08).
       *01  flag         TYPE Bool.
@@ -166,7 +170,7 @@
       *    CALL myProc  INPUT  somedate
       *                        by content 'YYYYMMDD'
       *                        by reference myDate2
-      *                           address of myDate2
+      *                        by content   address of myDate2
       *                 IN-OUT myDate3
       *                        myDate4
       *                 OUTPUT flag
@@ -175,7 +179,7 @@
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
-                                 address of myDate2
+                    by content   address of myDate2
                     by reference myDate3
                                  myDate4
                     by reference flag-value

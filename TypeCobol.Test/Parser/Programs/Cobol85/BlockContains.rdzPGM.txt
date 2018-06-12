@@ -1,5 +1,7 @@
 ﻿--- Diagnostics ---
 Line 11[11,24] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: NOTFOUND
+Line 13[8,62] <27, Error, Syntax> - Syntax error : extraneous input 'FDF-ENT002BLOCKCONTAINS0LABELRECORDSTANDARD.' expecting {DataDescriptionEntry, DataRedefinesEntry, DataRenamesEntry, DataConditionEntry} OffendingSymbol=[[FileDescriptionEntry]] [8,9:FD]<FD> --> [62,62+:.]<PeriodSeparator>
+
 
 --- Program ---
 PROGRAM: MYPGM common:False initial:False recursive:False

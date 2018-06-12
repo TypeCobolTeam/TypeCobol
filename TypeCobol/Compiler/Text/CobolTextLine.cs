@@ -200,6 +200,17 @@ namespace TypeCobol.Compiler.Text
                 {
                     if (t.TokenFamily == TokenFamily.Whitespace || (nCurLength == nSpan))
                         bNextNoIndicator = true;
+                    else if (t.TokenFamily == TokenFamily.AlphanumericLiteral && t.TokenType == TokenType.AlphanumericLiteral)
+                    {
+                        if (t.SourceText.IndexOf('\'') == 0 || t.SourceText.IndexOf('"') == 0)
+                        {//The next continuation line must have a '\''
+                            if (lines.Count > (index + 1))
+                            {
+                                string item = lines[index + 1].Item1;
+                                lines[index + 1] = new Tuple<string, bool>(t.SourceText[0] + item, lines[index + 1].Item2);
+                            }
+                        }
+                    }
                     nSpan += min;
                     index++;
                 }

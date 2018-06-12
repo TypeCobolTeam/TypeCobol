@@ -1,0 +1,299 @@
+{
+  "name": "CompletionWithNestedProgram.tlsp",
+  "session": "C:\\Users\\COLLARBE\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2018_05_03_10_37_22_485\\TestSuite_2018_05_03_10_37_22_485.slsp",
+  "user": "COLLARBE",
+  "date": "2018/05/03 10:37:22 498",
+  "uri": "file:///C:/Users/COLLARBE/Desktop/CompletionWithNestedProgram.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\COLLARBE\\\\Source\\\\Repos\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/COLLARBE/Source/Repos/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\COLLARBE\\\\Source\\\\Repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\",\"-y\",\"C:\\\\Users\\\\COLLARBE\\\\Source\\\\Repos\\\\TypeCobol\\\\TypeCobol.LanguageServer.Test\\\\LSRTests\\\\DefaultIntrinsic.txt\",\"-md\",\"30\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. ProcCall.\\r\\n\\r\\n       DATA DIVISION.\\r\\n\\r\\n       WORKING-STORAGE SECTION.\\r\\n\\r\\n       01 var2 PIC X(10).\\r\\n\\r\\n       01 len PIC 9(2).\\r\\n       01 MyLevel1Test.\\r\\n           05 buf.\\r\\n           07 occurs 1\\r\\n              depending on len.\\r\\n              10 char    pic X.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n\\r\\n\\r\\n       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. NestedProg.\\r\\n\\r\\n       DATA DIVISION.\\r\\n\\r\\n       WORKING-STORAGE SECTION.\\r\\n\\r\\n       01 var2 PIC 9(10).\\r\\n       01 groupA-1.\\r\\n         02 groupA-2.\\r\\n           03 varA type Date.\\r\\n       01 groupB-1.\\r\\n         02 groupB-2.\\r\\n           03 varB type Date.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n           MOVE 2 TO var2\\r\\n\\r\\n           .\\r\\n       END PROGRAM NestedProg.\\r\\n       END PROGRAM ProcCall.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":31},\"end\":{\"line\":25,\"character\":31}},\"rangeLength\":0,\"text\":\"\\r\\n       \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":26,\"character\":7},\"end\":{\"line\":26,\"character\":7}},\"rangeLength\":0,\"text\":\"\\r\\n       \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":7},\"end\":{\"line\":27,\"character\":7}},\"rangeLength\":0,\"text\":\"0\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":8},\"end\":{\"line\":27,\"character\":8}},\"rangeLength\":0,\"text\":\"1\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":9},\"end\":{\"line\":27,\"character\":9}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":10},\"end\":{\"line\":27,\"character\":10}},\"rangeLength\":0,\"text\":\"m\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":11},\"end\":{\"line\":27,\"character\":11}},\"rangeLength\":0,\"text\":\"y\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":12},\"end\":{\"line\":27,\"character\":12}},\"rangeLength\":0,\"text\":\"T\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":13},\"end\":{\"line\":27,\"character\":13}},\"rangeLength\":0,\"text\":\"e\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":14},\"end\":{\"line\":27,\"character\":14}},\"rangeLength\":0,\"text\":\"s\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":15},\"end\":{\"line\":27,\"character\":15}},\"rangeLength\":0,\"text\":\"t\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":16},\"end\":{\"line\":27,\"character\":16}},\"rangeLength\":0,\"text\":\"V\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":17},\"end\":{\"line\":27,\"character\":17}},\"rangeLength\":0,\"text\":\"a\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":18},\"end\":{\"line\":27,\"character\":18}},\"rangeLength\":0,\"text\":\"r\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":19},\"end\":{\"line\":27,\"character\":19}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":20},\"end\":{\"line\":27,\"character\":20}},\"rangeLength\":0,\"text\":\"T\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":21},\"end\":{\"line\":27,\"character\":21}},\"rangeLength\":0,\"text\":\"Y\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":22},\"end\":{\"line\":27,\"character\":22}},\"rangeLength\":0,\"text\":\"P\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":23},\"end\":{\"line\":27,\"character\":23}},\"rangeLength\":0,\"text\":\"E\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":24},\"end\":{\"line\":27,\"character\":24}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":30,\"character\":8},\"end\":{\"line\":30,\"character\":9}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":27,\"character\":25}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"DateOrdinal\",\"kind\":19,\"insertText\":\"DateOrdinal\"},{\"label\":\"DateDB2\",\"kind\":19,\"insertText\":\"DateDB2\"},{\"label\":\"Time6\",\"kind\":19,\"insertText\":\"Time6\"},{\"label\":\"Time8\",\"kind\":19,\"insertText\":\"Time8\"},{\"label\":\"TimeDB2\",\"kind\":19,\"insertText\":\"TimeDB2\"},{\"label\":\"TimeStampDB2\",\"kind\":19,\"insertText\":\"TimeStampDB2\"},{\"label\":\"CountryISO2\",\"kind\":19,\"insertText\":\"CountryISO2\"},{\"label\":\"SmallInt\",\"kind\":19,\"insertText\":\"SmallInt\"},{\"label\":\"Integer\",\"kind\":19,\"insertText\":\"Integer\"},{\"label\":\"BigInt\",\"kind\":19,\"insertText\":\"BigInt\"},{\"label\":\"Real\",\"kind\":19,\"insertText\":\"Real\"},{\"label\":\"Float\",\"kind\":19,\"insertText\":\"Float\"},{\"label\":\"BOOL\",\"kind\":19,\"insertText\":\"BOOL\"},{\"label\":\"DATE\",\"kind\":19,\"insertText\":\"DATE\"},{\"label\":\"CURRENCY\",\"kind\":19,\"insertText\":\"CURRENCY\"},{\"label\":\"STRING\",\"kind\":19,\"insertText\":\"STRING\"},{\"label\":\"ProcCall\",\"kind\":9},{\"label\":\"NestedProg\",\"kind\":9}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":25},\"end\":{\"line\":27,\"character\":25}},\"rangeLength\":0,\"text\":\"BOOL\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":27,\"character\":29},\"end\":{\"line\":27,\"character\":29}},\"rangeLength\":0,\"text\":\".\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":25}},\"rangeLength\":4,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":38,\"character\":21}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"YYYY (Numeric) (groupA-1::groupA-2::varA::YYYY)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::YYYY\"},{\"label\":\"YYYY (Numeric) (groupB-1::groupB-2::varB::YYYY)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::YYYY\"},{\"label\":\"MM (Numeric) (groupA-1::groupA-2::varA::MM)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::MM\"},{\"label\":\"MM (Numeric) (groupB-1::groupB-2::varB::MM)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::MM\"},{\"label\":\"DD (Numeric) (groupA-1::groupA-2::varA::DD)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::DD\"},{\"label\":\"DD (Numeric) (groupB-1::groupB-2::varB::DD)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::DD\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":21}},\"rangeLength\":0,\"text\":\"v\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":39,\"character\":12},\"end\":{\"line\":39,\"character\":22}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : Symbol v is not referenced\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":38,\"character\":22}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":[{\"label\":\"var2 (Numeric) (var2)\",\"kind\":6,\"insertText\":\"var2\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"YYYY (Numeric) (groupA-1::groupA-2::varA::YYYY)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::YYYY\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"YYYY (Numeric) (groupB-1::groupB-2::varB::YYYY)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::YYYY\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"MM (Numeric) (groupA-1::groupA-2::varA::MM)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::MM\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"MM (Numeric) (groupB-1::groupB-2::varB::MM)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::MM\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"DD (Numeric) (groupA-1::groupA-2::varA::DD)\",\"kind\":6,\"insertText\":\"groupA-1::groupA-2::varA::DD\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}},{\"label\":\"DD (Numeric) (groupB-1::groupB-2::varB::DD)\",\"kind\":6,\"insertText\":\"groupB-1::groupB-2::varB::DD\",\"data\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}}}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":22}},\"rangeLength\":1,\"text\":\"var2\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":25}},\"rangeLength\":4,\"text\":\"groupA-1\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":29},\"end\":{\"line\":38,\"character\":29}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":30},\"end\":{\"line\":38,\"character\":30}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":38,\"character\":31}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"groupA-2 (Alphanumeric) (groupA-2)\",\"kind\":6,\"insertText\":\"groupA-2\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":31},\"end\":{\"line\":38,\"character\":31}},\"rangeLength\":0,\"text\":\"groupA-2\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":39},\"end\":{\"line\":38,\"character\":39}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":40},\"end\":{\"line\":38,\"character\":40}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":41,\"character\":12},\"end\":{\"line\":41,\"character\":12}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"position\":{\"line\":38,\"character\":41}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"varA (DATE) (varA)\",\"kind\":6,\"insertText\":\"varA\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":41},\"end\":{\"line\":38,\"character\":41}},\"rangeLength\":0,\"text\":\"varA\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":21},\"end\":{\"line\":38,\"character\":45}},\"rangeLength\":24,\"text\":\"v\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":22},\"end\":{\"line\":38,\"character\":22}},\"rangeLength\":0,\"text\":\"a\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":23},\"end\":{\"line\":38,\"character\":23}},\"rangeLength\":0,\"text\":\"r\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"},\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":38,\"character\":24},\"end\":{\"line\":38,\"character\":24}},\"rangeLength\":0,\"text\":\"2\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL2077551056612636516.cee\"}}}",
+  "IsValid": true
+}

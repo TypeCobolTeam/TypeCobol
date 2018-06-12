@@ -1,5 +1,4 @@
-﻿      *Callee contains public procedure
-       IDENTIFICATION DIVISION.
+﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
 
        DATA DIVISION.
@@ -21,6 +20,11 @@
 
        01  MyType5 TYPEDEF STRICT PUBLIC.
           05 Var5 pic X.
+
+       linkage section.
+       01 MyType2 type MyType2.
+       01 MyType3 type MyType3.
+       01 Mydate  type Date.
 
        PROCEDURE DIVISION.
        

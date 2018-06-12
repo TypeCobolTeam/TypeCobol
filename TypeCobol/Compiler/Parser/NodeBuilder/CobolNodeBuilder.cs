@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Parser
         /// Program object resulting of the visit the parse tree
         /// </summary>
         private Program Program { get; set; }
-        public SyntaxTree SyntaxTree { get; set; }
+        public SyntaxTree<ParserRuleContext> SyntaxTree { get; set; }
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        public NodeDispatcher Dispatcher { get; internal set; }
+        public NodeDispatcher<ParserRuleContext> Dispatcher { get; internal set; }
 
 
 
@@ -312,6 +312,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var terminal = context.FileDescriptionEntry();
             var entry = terminal != null ? (FileDescriptionEntry)terminal.Symbol : null;
+            ExitLastLevel1Definition();
             Enter(new FileDescriptionEntryNode(entry), context);
         }
 
@@ -405,6 +406,16 @@ namespace TypeCobol.Compiler.Parser
             var table = node.SymbolTable;
             if (node.CodeElement().IsGlobal)
                 table = table.GetTableFromScope(SymbolTable.Scope.Global);
+            else
+            {
+                var parent = node.Parent as DataDescription;
+                while (parent != null)
+                {
+                    if (parent.CodeElement().IsGlobal)
+                        table = table.GetTableFromScope(SymbolTable.Scope.Global);
+                    parent = parent.Parent as DataDescription;
+                }
+            }
 
             table.AddVariable(node);
         }
@@ -720,6 +731,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.ExecStatement() != null)
             {
                 ExecStatement terminal = (ExecStatement)context.ExecStatement().Symbol;
+                ExitLastLevel1Definition();
                 Enter(new Exec(terminal), context);
             }
         }
@@ -881,6 +893,13 @@ namespace TypeCobol.Compiler.Parser
                     condition.SelectionObjects = new EvaluateSelectionObject[1];
                     condition.SelectionObjects[0] = new EvaluateSelectionObject();
                     condition.SelectionObjects[0].BooleanComparisonVariable = new BooleanValueOrExpression(whensearch.Condition);
+
+                    var conditionNameConditionOrSwitchStatusCondition = whensearch.Condition as ConditionNameConditionOrSwitchStatusCondition;
+                    if (conditionNameConditionOrSwitchStatusCondition != null)
+                        condition.StorageAreaReads = new List<StorageArea>
+                        {
+                            conditionNameConditionOrSwitchStatusCondition.ConditionReference
+                        };
                 }
                 else
                 {
