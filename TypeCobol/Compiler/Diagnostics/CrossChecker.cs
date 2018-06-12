@@ -20,7 +20,8 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool BeginNode(Node node)
         {
             CurrentNode = node;
-
+            //Build node StorageAreaWritesDataDefinition and StorageAreaReadsDataDefinition dictionaries
+            //from CodelElement StorageAreaReads and StorageAreaWrites
             CodeElement codeElement = node.CodeElement;
             if (codeElement?.StorageAreaReads != null)
             {
@@ -35,6 +36,13 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     CheckVariable(node, storageAreaWrite.StorageArea,false);
                 }
+            }
+            //Build node StorageAreaWritesDataDefinition and StorageAreaReadsDataDefinition dictionaries
+            //for Corresponding instruction from StorageAreaGroupsCorrespondingImpact
+            if (codeElement?.StorageAreaGroupsCorrespondingImpact != null)
+            {
+                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.SendingGroupItem, true);
+                CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
             }
 
             RedefinesChecker<CodeElement>.OnNode(node);
