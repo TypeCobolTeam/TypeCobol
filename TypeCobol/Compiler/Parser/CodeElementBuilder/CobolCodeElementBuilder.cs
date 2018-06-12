@@ -57,6 +57,18 @@ namespace TypeCobol.Compiler.Parser
                 }
                 if (CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact != null) {
                     CodeElement.StorageAreaGroupsCorrespondingImpact = CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact;
+                    if (CodeElement.StorageAreaWrites == null)
+                    {
+                        CodeElement.StorageAreaWrites=new List<ReceivingStorageArea>();
+                    }
+                    if (CodeElement.StorageAreaReads == null)
+                    {
+                        CodeElement.StorageAreaReads=new List<StorageArea>();
+                    }
+
+                    CodeElement.StorageAreaWrites.Add(new ReceivingStorageArea(CobolExpressionsBuilder.storageAreaGroupsCorrespondingImpact.SendingGroutItemStorageDataType, 
+                        CodeElement.StorageAreaGroupsCorrespondingImpact.SendingGroupItem));
+                    CodeElement.StorageAreaReads.Add(CodeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem);
                 }
                 if (CobolExpressionsBuilder.callTarget != null) {
                     CodeElement.CallTarget = CobolExpressionsBuilder.callTarget;
