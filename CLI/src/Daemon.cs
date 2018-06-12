@@ -103,7 +103,8 @@ namespace TypeCobol.Server {
                     {
                         try {
                             namedPipeClient.Connect(100);
-		                } catch (TimeoutException tEx) {
+		                } catch
+                             {
                             System.Diagnostics.Process process = new System.Diagnostics.Process();
                             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
 		                    if (startClient == StartClient.NormalWindow) {
