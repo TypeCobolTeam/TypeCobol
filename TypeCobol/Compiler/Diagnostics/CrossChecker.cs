@@ -368,22 +368,22 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area);
                 }
-                else if (found.First().DataType == DataType.Boolean && found.First().CodeElement is DataDefinitionEntry &&
-                         ((DataDefinitionEntry) found.First()?.CodeElement)?.LevelNumber?.Value != 88)
+                else if (dataDefinition.DataType == DataType.Boolean && dataDefinition.CodeElement is DataDefinitionEntry &&
+                         ((DataDefinitionEntry) dataDefinition?.CodeElement)?.LevelNumber?.Value != 88)
                 {
                     if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
                     {
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
-                            foundQualified.First().Key);
+                            completeQualifiedName);
                     }
                 }
-                else if (found.First().Usage == DataUsage.Pointer && found.First().CodeElement is DataDefinitionEntry)
+                else if (dataDefinition.Usage == DataUsage.Pointer && dataDefinition.CodeElement is DataDefinitionEntry)
                 {
                     if (node.CodeElement is SetStatementForIndexes && !node.IsFlagSet(Node.Flag.NodeContainsPointer))
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsPointer, node, storageArea,
-                            foundQualified.First().Key);
+                            completeQualifiedName);
                         var receivers = node["receivers"] as List<DataDefinition>;
                         int intSender;
                         if (!Int32.TryParse(node["sender"].ToString(), out intSender))
