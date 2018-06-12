@@ -141,7 +141,7 @@ namespace TypeCobol.Compiler.Parser
             var t1 = DateTime.UtcNow;            
 #endif
             CodeElementTokenizer scanner = new CodeElementTokenizer(codeElementsLines);
-            TypeCobolProgramParser parser = new TypeCobolProgramParser(scanner);
+            CupParser.TypeCobolProgramParser parser = new CupParser.TypeCobolProgramParser(scanner);
             CupParserTypeCobolProgramDiagnosticErrorReporter diagReporter = new CupParserTypeCobolProgramDiagnosticErrorReporter();
             parser.ErrorReporter = diagReporter;
             ProgramClassBuilder builder = new ProgramClassBuilder();
