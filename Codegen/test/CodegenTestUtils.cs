@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
@@ -36,12 +37,14 @@ namespace TypeCobol.Codegen {
             // write parsing errors
             WriteErrors(writer, document.Results.AllDiagnostics(), columns);
             // write generated code
-            var codegen = new Generators.DefaultGenerator(document.Results, writer, skeletons, typeCobolVersion);
+            var generatedCobolStringBuilder = new StringBuilder();
+            var codegen = new Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, skeletons, typeCobolVersion);
             try {
                 codegen.Generate(document.Results, columns);
                 if (codegen.Diagnostics != null)
                     WriteErrors(writer, codegen.Diagnostics, columns);
             } finally {
+                writer.Write(generatedCobolStringBuilder);
                 // flush
                 writer.Close();
             }

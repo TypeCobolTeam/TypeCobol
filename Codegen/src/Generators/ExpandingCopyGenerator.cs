@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +25,7 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// The Destination.
         /// </summary>
-        public System.IO.TextWriter Destination
+        public StringBuilder Destination
         {
             get;
             private set;
@@ -38,11 +37,11 @@ namespace TypeCobol.Codegen.Generators
         /// </summary>
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
-        public ExpandingCopyGenerator(TypeCobol.Compiler.CompilationDocument document, System.IO.TextWriter destination)
+        public ExpandingCopyGenerator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination)
         {
             System.Diagnostics.Contracts.Contract.Requires(destination != null);
             this.CompilationResults = document;
-            Destination = destination ?? System.Console.Out;
+            Destination = destination ?? destination.Append(System.Console.Out);
             Actions = new List<Action>();
             CreateTargetDocument();
         }
@@ -132,12 +131,12 @@ namespace TypeCobol.Codegen.Generators
         {
             TargetDocument = new Compiler.Source.SourceDocument(/*new StringSourceText()*/);
             //Insert all input lines
-            StringWriter sw = new StringWriter();
+            StringBuilder sw = new StringBuilder();
             int lineNumber = 0;
             foreach (TypeCobol.Compiler.Scanner.ITokensLine line in this.CompilationResults.TokensLines)
             {
                 lineNumber += 1;
-                sw.WriteLine(line.Text);
+                sw.AppendLine(line.Text);
             }
             //Load the Original source code
             TargetDocument.LoadSourceText(sw.ToString());
@@ -460,8 +459,8 @@ namespace TypeCobol.Codegen.Generators
             }
             //Now Run Actions
             PerformActions();
-            TargetDocument.Write(this.Destination);
-            this.Destination.Flush();
+            TargetDocument.Write(Destination);
+
             //var date2 = DateTime.Now;                
             //var date_diff = date2 - date1;
             //System.Console.Out.WriteLine(date_diff);

@@ -9,6 +9,7 @@ using TypeCobol.Codegen.Config;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
+using System.Text;
 
 namespace TypeCobol.Test {
 
@@ -131,9 +132,11 @@ namespace TypeCobol.Test {
                     //Retrieve skeletons
                     var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : null;
 
-			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, writer, skeletons, null);
+                    var generatedCobolStringBuilder = new StringBuilder();
+			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, skeletons, null);
 			        var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
 			        generator.Generate(document.Results, columns);
+                    writer.Write(generatedCobolStringBuilder);
                     writer.Close();
 
                     //Write duration to GrammarResultFile
