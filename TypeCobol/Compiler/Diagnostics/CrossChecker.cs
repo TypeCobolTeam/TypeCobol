@@ -91,15 +91,36 @@ namespace TypeCobol.Compiler.Diagnostics
             if (moveCorresponding == null)
                 return true;
 
+            Tuple<string, DataDefinition> searchedDataDefintion = null;
+            DataDefinition fromVariable = null;
+            DataDefinition toVariable = null;
             //For MoveCorrespondingStatement check children compatibility
-            var FromVariable = move.SymbolTable.GetVariables(moveCorresponding.FromGroupItem); //Left member of the move corr statement
-            var ToVariable = move.SymbolTable.GetVariables(moveCorresponding.ToGroupItem); //Right member of the move corr statement
+            if (move.StorageAreaReadsDataDefinition.TryGetValue(moveCorresponding.FromGroupItem,
+                out searchedDataDefintion))
+            {
+                fromVariable = searchedDataDefintion.Item2;
+            }
+            if (move.StorageAreaWritesDataDefinition.TryGetValue(moveCorresponding.ToGroupItem,
+                out searchedDataDefintion))
+            {
+                toVariable = searchedDataDefintion.Item2;
+            }
 
-            if ((FromVariable != null && FromVariable.Count() != 1) || (ToVariable != null && ToVariable.Count() != 1))
+            //var FromVariable = move.SymbolTable.GetVariables(moveCorresponding.FromGroupItem); //Left member of the move corr statement
+            //var ToVariable = move.SymbolTable.GetVariables(moveCorresponding.ToGroupItem); //Right member of the move corr statement
+
+            //if ((FromVariable != null && FromVariable.Count() != 1) || (ToVariable != null && ToVariable.Count() != 1))
+            //    return true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
+
+            if (fromVariable == null || toVariable == null)
+            {
                 return true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
+            }
 
-            var fromVariableChildren = FromVariable.First().Children.Where(c => c?.Name != null);
-            var toVariableChildren = ToVariable.First().Children.Where(c => c?.Name != null);
+            //var fromVariableChildren = FromVariable.First().Children.Where(c => c?.Name != null);
+            //var toVariableChildren = ToVariable.First().Children.Where(c => c?.Name != null);
+            var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null);
+            var toVariableChildren = toVariable.Children.Where(c => c?.Name != null);
 
             var matchingChildrenNames = fromVariableChildren.Select(c => c.Name.ToLowerInvariant()).Intersect(toVariableChildren.Select(c => c.Name.ToLowerInvariant()));
 
@@ -555,14 +576,15 @@ namespace TypeCobol.Compiler.Diagnostics
 
 
             if (wsymbol != null)
-                receivingTypeDefinition = wsymbol.TypeDefinition ?? GetDataDefinitionType(node.SymbolTable, wsymbol);
+                receivingTypeDefinition = wsymbol.TypeDefinition ?? GetDataDefinitionType(node, wsymbol,false);
 
             var sname = sent as QualifiedName;
             if (sname != null)
             {
-                var ssymbol = GetSymbol(node.SymbolTable, sname);
+                //var ssymbol = GetSymbol(node.SymbolTable, sname);
+                DataDefinition ssymbol = node.GetDataDefinitionForQualifiedName(sname);
                 if (ssymbol == null) return; // sending symbol name unresolved
-                sendingTypeDefinition = ssymbol.TypeDefinition ?? GetDataDefinitionType(node.SymbolTable, ssymbol);
+                sendingTypeDefinition = ssymbol.TypeDefinition ?? GetDataDefinitionType(node, ssymbol,true);
             }
             else if (sent is StorageArea)
             {
@@ -575,7 +597,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 if (rsymbol != null)
-                    sendingTypeDefinition = rsymbol.TypeDefinition ?? GetDataDefinitionType(node.SymbolTable, rsymbol);
+                    sendingTypeDefinition = rsymbol.TypeDefinition ?? GetDataDefinitionType(node, rsymbol,true);
             }
             else
             {
@@ -623,28 +645,29 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference)
-        {
-            var found = table.GetVariables(symbolReference);
-            if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
-            return found.First();
-        }
+        //private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference)
+        //{
+        //    var found = table.GetVariables(symbolReference);
+        //    if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
+        //    return found.First();
+        //}
 
-        private static DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName)
-        {
-            var found = table.GetVariablesExplicit(qualifiedName);
-            if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
-            return found.First();
-        }
+        //private static DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName)
+        //{
+        //    var found = table.GetVariablesExplicit(qualifiedName);
+        //    if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
+        //    return found.First();
+        //}
 
         //TODO move this method to DataDefinition
         /// <summary>
         /// Allows to get DataType of a DataDefinition Node
         /// </summary>
-        /// <param name="table"></param>
+        /// <param name="node"></param>
         /// <param name="symbol"></param>
+        /// <param name="isReadDictionary"></param>
         /// <returns></returns>
-        private static DataDefinition GetDataDefinitionType(SymbolTable table, Node symbol)
+        private static DataDefinition GetDataDefinitionType(Node node, Node symbol, bool isReadDictionary)
         {
             var data = symbol as DataDefinition;
             if (data != null)
@@ -655,21 +678,31 @@ namespace TypeCobol.Compiler.Diagnostics
                         dataCondition.CodeElement().DataType);
 
                 DataDescriptionEntry entry;
-                if (data.CodeElement is DataDescriptionEntry)
+                var descriptionEntry = data.CodeElement as DataDescriptionEntry;
+                if (descriptionEntry != null)
                 {
-                    entry = (DataDescriptionEntry) data.CodeElement;
+                    entry = descriptionEntry;
                 }
-                else if (data.CodeElement is DataRedefinesEntry)
+                else if (data.CodeElement as DataRedefinesEntry!=null)
                 {
                     var redefines = (DataRedefinesEntry) data.CodeElement;
-                    var node = GetSymbol(table, redefines.RedefinesDataName);
-                    if (node is DataDescription)
+                    //var node = GetSymbol(table, redefines.RedefinesDataName);
+                    //if (node is DataDescription)
+                    //{
+                    //    entry = (DataDescriptionEntry) node.CodeElement;
+                    //}
+                    //else
+                    //{
+                    //entry = GetDataDescriptionEntry(table, redefines);
+                    //}
+                    var searchedDataDefinition = node.GetDataDefinitionForQualifiedName(redefines.RedefinesDataName.URI, isReadDictionary);
+                    if (searchedDataDefinition as DataDescription != null)
                     {
-                        entry = (DataDescriptionEntry) node.CodeElement;
+                        entry = (DataDescriptionEntry) searchedDataDefinition.CodeElement;
                     }
                     else
                     {
-                        entry = GetDataDescriptionEntry(table, redefines);
+                        entry = GetDataDescriptionEntry(node, redefines, isReadDictionary);
                     }
                 }
                 else if (data is IndexDefinition)
@@ -687,34 +720,34 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             ITypedNode typed = symbol as ITypedNode;
             if (typed == null) return null; // symbol untyped
-            var types = table.GetType(typed);
-            if (types.Count != 1) return null; // symbol type not found or ambiguous
-            return types[0];
+            var types = node.SymbolTable.GetType(typed);
+            return types.Count != 1 ? null : types[0];
         }
 
         /// <summary>
         /// Quick and dirty method, this checker need to be refactored
         /// </summary>
-        /// <param name="table"></param>
+        /// <param name="node"></param>
         /// <param name="dataRedefinesEntry"></param>
+        /// <param name="isReadDictionary"></param>
         /// <returns></returns>
-        private static DataDescriptionEntry GetDataDescriptionEntry(SymbolTable table,
-            DataRedefinesEntry dataRedefinesEntry)
+        private static DataDescriptionEntry GetDataDescriptionEntry(Node node,
+            DataRedefinesEntry dataRedefinesEntry, bool isReadDictionary)
         {
-            var node = GetSymbol(table, dataRedefinesEntry.RedefinesDataName);
-            if (node == null)
+            var searchedDataDefinition = node.GetDataDefinitionForQualifiedName(dataRedefinesEntry.RedefinesDataName.URI, isReadDictionary);
+            if (searchedDataDefinition == null)
             {
                 return null;
             }
-            if (node is DataDescription)
+            if (searchedDataDefinition is DataDescription)
             {
-                return (DataDescriptionEntry) node.CodeElement;
+                return (DataDescriptionEntry)searchedDataDefinition.CodeElement;
             }
-            if (node is DataRedefines)
+            if (searchedDataDefinition is DataRedefines)
             {
-                return GetDataDescriptionEntry(table, (DataRedefinesEntry) node.CodeElement);
+                return GetDataDescriptionEntry(node, (DataRedefinesEntry)searchedDataDefinition.CodeElement, isReadDictionary);
             }
-            throw new NotImplementedException(node.Name);
+            throw new NotImplementedException(searchedDataDefinition.Name);
         }
 
     }

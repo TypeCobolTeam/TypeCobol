@@ -655,7 +655,45 @@ namespace TypeCobol.Compiler.Nodes {
         /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
         /// </summary>
         public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaWritesDataDefinition { get; internal set; }
+
+        /// <summary>
+        /// Search both dictionaries for a given StorageArea
+        /// </summary>
+        /// <param name="searchedStorageArea">StorageArea to search for</param>
+        /// <returns>Correpsonding DataDefinition</returns>
+        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea)
+        {
+            Tuple<string, DataDefinition> searchedElem = null;
+            StorageAreaReadsDataDefinition?.TryGetValue(
+                searchedStorageArea, out searchedElem);
+            if (searchedElem == null)
+            {
+                StorageAreaWritesDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+            }
+            return searchedElem?.Item2;
+        }
         
+        public DataDefinition GetDataDefinitionForQualifiedName(QualifiedName qualifiedName, bool? isReadDictionary=null)
+        {
+            Tuple<string, DataDefinition> searchedElem = null;
+            if (isReadDictionary.HasValue)
+            {
+                searchedElem = isReadDictionary.Value
+                    ? StorageAreaReadsDataDefinition
+                        ?.FirstOrDefault(elem => elem.Key.SymbolReference.Name == qualifiedName.ToString()).Value
+                    : StorageAreaWritesDataDefinition
+                        ?.FirstOrDefault(elem => elem.Key.SymbolReference.Name == qualifiedName.ToString()).Value;
+            }
+            else
+            {
+                searchedElem = StorageAreaReadsDataDefinition?.FirstOrDefault(elem => elem.Key.SymbolReference.Name == qualifiedName.ToString()).Value ??
+                               StorageAreaWritesDataDefinition?.FirstOrDefault(elem => elem.Key.SymbolReference.Name == qualifiedName.ToString()).Value;
+
+            }
+
+            return searchedElem?.Item2;
+        }
     }
 
 // --- Temporary base classes for data definition noes ---
