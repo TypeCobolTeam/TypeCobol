@@ -351,12 +351,9 @@ namespace TypeCobol.Codegen.Generators
                     ICollection<ITextLine> lines = CobolTextLine.CreateCobolLines(this.Layout, -1, ' ', "",
                         lefttext + (crlf > 0 ? text.Substring(0, text.Length - crlf) : text), LEGAL_COBOL_LINE_LENGTH, 65, false);
                     StringWriter sw = new StringWriter();
-                    string sep = "";
                     foreach (var line in lines)
                     {
-                        sw.Write(sep);
                         sw.WriteLine(line.Text);
-                        sep = Environment.NewLine;
                     }
                     //We must insert "\r\n" if the target line is empty and the inserted test has one.
                     if ((lineEndOffset == lineStartOffset) && crlf > 0)

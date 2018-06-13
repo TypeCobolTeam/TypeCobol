@@ -208,7 +208,6 @@
            PERFORM TC-INITIALIZATIONS
       *                        call PGM1::StartCheckpoint input param1
                                IF ADDRESS OF TC-PGM1-f1c0385c-Item = NUL
-
       -    L                                                                             
                PERFORM TC-LOAD-POINTERS-PGM1
            ELSE
