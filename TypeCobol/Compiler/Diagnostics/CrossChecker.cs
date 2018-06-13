@@ -105,21 +105,12 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 toVariable = searchedDataDefintion.Item2;
             }
-
-            //var FromVariable = move.SymbolTable.GetVariables(moveCorresponding.FromGroupItem); //Left member of the move corr statement
-            //var ToVariable = move.SymbolTable.GetVariables(moveCorresponding.ToGroupItem); //Right member of the move corr statement
-
-            //if ((FromVariable != null && FromVariable.Count() != 1) || (ToVariable != null && ToVariable.Count() != 1))
-            //    return true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
-
             if (fromVariable == null || toVariable == null)
             {
                 return true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
             }
 
-            //var fromVariableChildren = FromVariable.First().Children.Where(c => c?.Name != null);
-            //var toVariableChildren = ToVariable.First().Children.Where(c => c?.Name != null);
-            var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null);
+           var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null);
             var toVariableChildren = toVariable.Children.Where(c => c?.Name != null);
 
             var matchingChildrenNames = fromVariableChildren.Select(c => c.Name.ToLowerInvariant()).Intersect(toVariableChildren.Select(c => c.Name.ToLowerInvariant()));
@@ -581,8 +572,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var sname = sent as QualifiedName;
             if (sname != null)
             {
-                //var ssymbol = GetSymbol(node.SymbolTable, sname);
-                DataDefinition ssymbol = node.GetDataDefinitionForQualifiedName(sname);
+                var ssymbol = node.GetDataDefinitionForQualifiedName(sname);
                 if (ssymbol == null) return; // sending symbol name unresolved
                 sendingTypeDefinition = ssymbol.TypeDefinition ?? GetDataDefinitionType(node, ssymbol,true);
             }
@@ -645,19 +635,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        //private static DataDefinition GetSymbol(SymbolTable table, SymbolReference symbolReference)
-        //{
-        //    var found = table.GetVariables(symbolReference);
-        //    if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
-        //    return found.First();
-        //}
-
-        //private static DataDefinition GetSymbol(SymbolTable table, QualifiedName qualifiedName)
-        //{
-        //    var found = table.GetVariablesExplicit(qualifiedName);
-        //    if (found.Count() != 1) return null; // symbol undeclared or ambiguous -> not my job
-        //    return found.First();
-        //}
+       
 
         //TODO move this method to DataDefinition
         /// <summary>
@@ -686,15 +664,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (data.CodeElement as DataRedefinesEntry!=null)
                 {
                     var redefines = (DataRedefinesEntry) data.CodeElement;
-                    //var node = GetSymbol(table, redefines.RedefinesDataName);
-                    //if (node is DataDescription)
-                    //{
-                    //    entry = (DataDescriptionEntry) node.CodeElement;
-                    //}
-                    //else
-                    //{
-                    //entry = GetDataDescriptionEntry(table, redefines);
-                    //}
                     var searchedDataDefinition = node.GetDataDefinitionForQualifiedName(redefines.RedefinesDataName.URI, isReadDictionary);
                     if (searchedDataDefinition as DataDescription != null)
                     {
@@ -721,6 +690,7 @@ namespace TypeCobol.Compiler.Diagnostics
             ITypedNode typed = symbol as ITypedNode;
             if (typed == null) return null; // symbol untyped
             var types = node.SymbolTable.GetType(typed);
+            // return null if symbol type not found or ambiguous
             return types.Count != 1 ? null : types[0];
         }
 

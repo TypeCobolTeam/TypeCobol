@@ -485,19 +485,6 @@ namespace TypeCobol.Compiler.CodeElements
                     }
 		            else
 		            {
-                        //if (node != null)
-                        //{
-                        //    var found = node.SymbolTable.GetVariables(parameter);
-
-                        //    foreach (var item in found)
-                        //    {
-                        //        var data = item as Nodes.DataDescription;
-                        //        if (data == null)
-                        //            type = DataType.Unknown;
-                        //        else if (type == null) type = data.DataType;
-                        //        else if (type != data.DataType) type = DataType.Unknown;
-                        //    }
-                        //}
                         if (node != null)
 		                {
 		                    var found = node.GetDataDefinitionFromStorageAreaDictionary(parameter.StorageArea);
