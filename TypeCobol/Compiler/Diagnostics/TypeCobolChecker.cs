@@ -118,7 +118,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     //call to a TypeCobol function/procedure without arguments or to a Variable
 
                     var potentialVariables =
-                        node.SymbolTable.GetVariables(new URI(functionCaller.FunctionCall.FunctionName));
+                        node.SymbolTable.GetVariablesExplicit(new URI(functionCaller.FunctionCall.FunctionName));
 
                     if (functionDeclarations.Count == 1 && !potentialVariables.Any())
                     {

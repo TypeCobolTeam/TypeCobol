@@ -173,37 +173,37 @@ namespace TypeCobol.Compiler.CodeModel
 
         //---------------------------------------------
 
-        public IEnumerable<DataDefinition> GetVariables(VariableBase variable)
-        {
-            if (variable.StorageArea != null)
-            {
-                return GetVariables(variable.StorageArea);
-            }
-            return GetVariables(new URI(variable.ToString()));
-        }
+        //public IEnumerable<DataDefinition> GetVariables(VariableBase variable)
+        //{
+        //    if (variable.StorageArea != null)
+        //    {
+        //        return GetVariables(variable.StorageArea);
+        //    }
+        //    return GetVariables(new URI(variable.ToString()));
+        //}
 
-        public IEnumerable<DataDefinition> GetVariables(StorageArea storageArea)
-        {
-            URI uri;
-            if (storageArea.SymbolReference != null)
-            {
-                uri = storageArea.SymbolReference.URI;
-            }
-            else
-            {
-                uri = new URI(storageArea.ToString());
-            }
-            return GetVariables(uri);
-        }
+        //public IEnumerable<DataDefinition> GetVariables(StorageArea storageArea)
+        //{
+        //    URI uri;
+        //    if (storageArea.SymbolReference != null)
+        //    {
+        //        uri = storageArea.SymbolReference.URI;
+        //    }
+        //    else
+        //    {
+        //        uri = new URI(storageArea.ToString());
+        //    }
+        //    return GetVariables(uri);
+        //}
 
         public IEnumerable<DataDefinition> GetVariables(SymbolReference symbolReference)
         {
-            return GetVariables(symbolReference.URI);
+            return GetVariablesExplicit(symbolReference.URI);
         }
-        public IEnumerable<DataDefinition> GetVariables(QualifiedName name)
-        {
-            return GetVariablesExplicit(name);
-        }
+        //public IEnumerable<DataDefinition> GetVariables(QualifiedName name)
+        //{
+        //    return GetVariablesExplicit(name);
+        //}
 
         private IList<DataDefinition> GetVariables(string name)
         {
