@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.Nodes {
@@ -44,9 +45,11 @@ namespace TypeCobol.Compiler.Nodes {
 		    attributes["definitions"] = new DefinitionsAttribute();
 	        attributes["usage"] = new UsageAttribute();
 	        attributes["hash"] = new HashAttribute();
+	        attributes["displayableReceivers"] = new PointerDisplayableReceiversAttribute();
 	        attributes["receivers"] = new PointerReceiversAttribute();
-	        attributes["receiverusage"] = new ReceiverUsageAttribute();
+            attributes["receiverusage"] = new ReceiverUsageAttribute();
 	        attributes["incrementDirection"] = new incrementDirectionAttribute();
+	        attributes["needCompute"] = new needComputeAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
@@ -117,19 +120,15 @@ namespace TypeCobol.Compiler.Nodes {
                 foreach (var data in setStatement.StorageAreaWrites)
                 {
                     variablesWrittenRaw.Add(
-                        node.SymbolTable.DataEntries.Where(x => x.Key == data.MainSymbolReference.Name).SelectMany(x => x.Value).ToList());
+                        node.SymbolTable.GetVariablesExplicitWithQualifiedName(data.MainSymbolReference.URI).Select(x => x.Value).ToList());
                 }
 
                 foreach (var varWritten in variablesWrittenRaw)
                 {
                     if (varWritten.Count > 1)
-                    {
-                        throw new Exception("Ambiguous -ToTest-");
-                    }
+                        throw new Exception("Ambiguous Receiver Name");// Ambiguous variable handeling is done before, in the checkers
                     else
-                    {
                         variablesWritten.Add(varWritten.First());
-                    }
                 }
 
             }
@@ -232,16 +231,41 @@ namespace TypeCobol.Compiler.Nodes {
             var setCondition = ce as SetStatementForConditions;
             if (setCondition != null)
                 return new URI(setCondition.SendingValue.Value.ToString());
-            else
+            else if (node.IsFlagSet(Node.Flag.NodeContainsPointer))
             {
                 // Used for pointers arithmetics
                 var setIndex = ce as SetStatementForIndexes;
                 if (setIndex != null)
+                {
+                    if (setIndex.SendingVariable.MainSymbolReference != null)
+                        // the sender is a qualified name
+                        return setIndex.SendingVariable.MainSymbolReference.ToString().Replace(" IN ", " OF ");
+                    else if (setIndex.SendingVariable.ArithmeticExpression != null)
+                        // the sender is an arithmetic expression
+                        return setIndex.SourceText.ToLower().Split(new[] {" by "}, StringSplitOptions.None)[1];
                     return new URI(setIndex.SendingVariable.ToString());
+                }
             }
             return null;
         }
     }
+
+    internal class needComputeAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            if (node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            {
+                var setIndex = node.CodeElement as SetStatementForIndexes;
+                if (setIndex?.SendingVariable.ArithmeticExpression != null)
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    
     internal class incrementDirectionAttribute : Attribute
     {
         public object GetValue(object o, SymbolTable table)
@@ -267,6 +291,40 @@ namespace TypeCobol.Compiler.Nodes {
             throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");
         }
     }
+    internal class PointerDisplayableReceiversAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            var codeElement = node.CodeElement;
+            var setStatement = codeElement as SetStatementForIndexes;
+            List<string> displayableWritten = new List<string>();
+            List<DataDefinition> dataDefWritten = new List<DataDefinition>();
+            if (setStatement != null && node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            {
+                foreach (var data in setStatement.StorageAreaWrites)
+                {
+                    //TODO: handle the case of ambiguous variable
+                    DataDescription dataDef = node.SymbolTable.GetVariablesExplicitWithQualifiedName(data.MainSymbolReference.URI)
+                        .Select(x => x.Value).First() as DataDescription;
+
+                    if (dataDef != null)
+                    {
+                        // Usage of Regex.Replace to replace only the first ooccurence of dataDef.Name to avoid probleme with groups like myPtrGroup::myPtr
+                        var regex = new Regex(Regex.Escape(dataDef.Name));
+                        displayableWritten.Add(
+                            regex.Replace(
+                                data.MainSymbolReference.ToString(), dataDef.Name + dataDef.Hash, 1)
+                                .Replace(" IN ", " OF "));
+                    }
+                }
+
+            }
+            if (displayableWritten.Count == 0) return null;
+            return displayableWritten;
+            
+        }
+    }
     internal class PointerReceiversAttribute : Attribute
     {
         public object GetValue(object o, SymbolTable table)
@@ -281,20 +339,23 @@ namespace TypeCobol.Compiler.Nodes {
                 foreach (var data in setStatement.StorageAreaWrites)
                 {
                     variablesWrittenRaw.Add(
-                        node.SymbolTable.DataEntries.Where(x => x.Key == data.MainSymbolReference.Name).SelectMany(x => x.Value).ToList());
+                        node.SymbolTable.GetVariablesExplicitWithQualifiedName(data.MainSymbolReference.URI).Select(x => x.Value).ToList());
                 }
-                
+
                 foreach (var varWritten in variablesWrittenRaw)
                 {
-                    //TODO: handle the case of ambiguous variable (varWritten.Count > 1)
-                    variablesWritten.Add(varWritten.First());
+
+                    if (varWritten.Count > 1)
+                        throw new Exception("Ambiguous Receiver Name");// Ambiguous variable handeling is done before, in the checkers
+                    else
+                        variablesWritten.Add(varWritten.First());
                 }
 
             }
             if (variablesWritten == null) return null;
             if (variablesWritten.Count == 0) return null;
             return variablesWritten;
-            
+
         }
     }
 

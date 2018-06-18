@@ -221,8 +221,8 @@ namespace TypeCobol.Codegen.Generators
                                     //The Function header.
                                     //Erase in the original source code the Function header?
                                     ReplaceByBlanks(curSourceText, f, t);
-                                        //Output the pre-stored comment header
-                                        InsertLineMaybeSplit(funData.FunctionDeclBuffer, funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size, bInsertSplit);
+                                    //Output the pre-stored comment header
+                                    InsertLineMaybeSplit(funData.FunctionDeclBuffer, funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size, bInsertSplit);
                                 }
                                     //Insert the sequence
                                     InsertLineMaybeSplit(funData.FunctionDeclBuffer, text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size, bInsertSplit);
@@ -301,7 +301,7 @@ namespace TypeCobol.Codegen.Generators
             GenerateExceedLineDiagnostics();
             return targetSourceText;
         }
-
+        
         /// <summary>
         /// Insert in the buffer a text line that can be split.
         /// </summary>
@@ -327,12 +327,9 @@ namespace TypeCobol.Codegen.Generators
                     ICollection<ITextLine> lines = CobolTextLine.CreateCobolLines(this.Layout, -1, ' ', "",
                         lefttext + (crlf > 0 ? text.Substring(0, text.Length - crlf) : text), LEGAL_COBOL_LINE_LENGTH, 65, false);
                     StringWriter sw = new StringWriter();
-                    string sep = "";
                     foreach (var line in lines)
                     {
-                        sw.Write(sep);
                         sw.WriteLine(line.Text);
-                        sep = Environment.NewLine;
                     }
                     //We must insert "\r\n" if the target line is empty and the inserted test has one.
                     if ((lineEndOffset == lineStartOffset) && crlf > 0)
@@ -765,13 +762,12 @@ namespace TypeCobol.Codegen.Generators
                     var lines = CobolTextLine.Create(line.Text, Layout, line.LineIndex);
                     foreach (var l in lines) results.Add(SetComment(l, isComment));
                 }
+                else if (Layout == ColumnsLayout.FreeTextFormat)
+                {
+                    results.Add(SetComment(line, isComment));
+                }
                 else
-                    if (Layout == ColumnsLayout.FreeTextFormat)
-                    {
-                        results.Add(SetComment(line, isComment));
-                    }
-                    else
-                        throw new System.NotImplementedException("Unsuported columns layout: " + Layout);
+                    throw new System.NotImplementedException("Unsuported columns layout: " + Layout);
             }
             if (results.Count < 1)
                 throw new System.NotImplementedException("Unsuported ITextLine type: " + line.GetType());

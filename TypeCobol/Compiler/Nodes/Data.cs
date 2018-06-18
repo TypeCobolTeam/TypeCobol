@@ -256,6 +256,15 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         public bool IsIndex { get; internal set; }
+        public string Hash
+        {
+            get
+            {
+                var hash = new StringBuilder();
+                hash.Append(Name);
+                return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8);
+            }
+        }
 
         #region TypeProperties
         public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
@@ -277,7 +286,7 @@ namespace TypeCobol.Compiler.Nodes {
         #endregion
     }
 
-    public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>, Tools.Hashable{
+    public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>{
         public DataDescription(DataDescriptionEntry entry): base(entry) { }
 
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -289,15 +298,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         public Dictionary<Token, string> QualifiedTokenSubsitutionMap;
 
-        public string Hash
-        {
-            get
-            {
-                var hash = new StringBuilder();
-                hash.Append(Name);
-                return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8);
-            }
-        }
+        
     }
     public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> 
     {

@@ -46,8 +46,7 @@
         var items = "";
         items = %level   + "  " + %name + " POINTER.\n" +
         %level + " redefines " + %name + ".\n" +
-        (Int32.Parse(%level).CompareTo(8) == -1 ? "    0" : "    ") + 
-        (Int32.Parse(%level)+2).ToString() + " " +
+        "    " + (Int32.Parse(%level)+1).ToString("00") + " " +
         (%name.Length.CompareTo(22) != 1 ? %name : %name.Substring(0,22)) + %hash + " pic S9(05) comp-5.";
         }
         @items
@@ -75,19 +74,29 @@
     </patterns>
   </skeleton>
 
-  <!-- replace SET <boolean> TO FALSE -->
-  <skeleton name="POINTER.INCREMENT" var="receivers, sender, incrementDirection">
+  <!-- replace SET <pointer> UP BY <integer> -->
+  <skeleton name="POINTER.INCREMENT" var="displayableReceivers, sender, incrementDirection, needCompute">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.Set" receiverUsage="Pointer"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
         @{
-        var item = "";
-        item += "ADD " + (%incrementDirection == "Down" ? "-" : "") + %sender.ToString() + " to ";
-        foreach (var receiver in %receivers)
-          item += receiver.Name + receiver.Hash + ", ";
-        item = item.Remove(item.Length - 2);
+          var item = "";
+          if (%needCompute)
+          {
+            foreach (var receiver in %displayableReceivers)
+            {
+              item += "COMPUTE " + receiver + " = " + receiver + (%incrementDirection == "Down" ? " - " : " + ") + %sender.ToString() + ".\n";
+            }
+          }
+          else
+          {
+            item += "ADD " + (%incrementDirection == "Down" ? "-" : "") + %sender.ToString() + " to ";
+            foreach (var receiver in %displayableReceivers)
+              item += receiver + ", ";
+          }
+          item = item.Remove(item.Length - 2);
         }
         @item
       </pattern>

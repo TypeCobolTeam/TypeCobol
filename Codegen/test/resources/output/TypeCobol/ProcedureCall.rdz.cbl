@@ -31,7 +31,7 @@
       *01 myPointer     pointer.
        01  myPointer POINTER.
        01 redefines myPointer.
-           03 myPointerae9be588 pic S9(05) comp-5.
+           02 myPointerae9be588 pic S9(05) comp-5.
                                 
 
        01  someformat   PIC X(08).

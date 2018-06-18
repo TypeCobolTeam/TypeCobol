@@ -307,12 +307,25 @@ namespace TypeCobol.Compiler.Diagnostics
                             foundQualified.First().Key);
                         var receivers = node["receivers"] as List<DataDefinition>;
                         int intSender;
+                        // if its not an Integer
                         if (!Int32.TryParse(node["sender"].ToString(), out intSender))
                         {
-                            if (!node.SymbolTable.DataEntries.Any(
-                                x => x.Key == node["sender"].ToString() &&
-                                     x.Value.First().DataType.Name == "Numeric"))
-                                DiagnosticUtils.AddError(node, "Increment only support integer values");
+                            // if its not a SetStatementForIndexes
+                            var ce = node.CodeElement as SetStatementForIndexes;
+                            if (ce != null)
+                            {
+                                var variable = node.SymbolTable.GetVariablesExplicit(new URI(ce.SendingVariable.ToString()));
+                                // if its not a Numeric Variable
+                                if (!(variable.Any() && variable.First().DataType.Name == "Numeric"))
+                                {
+                                    // if its not an arithmetic expression
+                                    if (ce.SendingVariable.ArithmeticExpression == null)
+                                        DiagnosticUtils.AddError(node, "Increment only support integer values, numeric variables and arithmetic expressions");
+                                }
+                                
+                            }
+                            else
+                                DiagnosticUtils.AddError(node, "Bad Increment Formulation");
                         }
                         foreach (var receiver in receivers)
                         {
