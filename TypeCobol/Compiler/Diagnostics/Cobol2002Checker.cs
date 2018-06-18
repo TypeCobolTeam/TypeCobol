@@ -126,9 +126,9 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class RedefinesChecker : NodeListener
+    class RedefinesChecker<TCtx> : NodeListener<TCtx> where TCtx : class
     {
-        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program)
+        public void OnNode(Node node, TCtx context, CodeModel.Program program)
         {
             var redefinesNode = node as DataRedefines;
             if (redefinesNode == null)

@@ -43,6 +43,21 @@
                            'U' thru X'FF'.
                            
        PROCEDURE DIVISION.
+      *DECLARE PROCEDURE MyProc PRIVATE
+      *    INPUT    NumericInput PIC S9(9) COMP-5.
+
+
+      *CALL MyProc INPUT ADDRESS OF MyBool.
+       CALL 'a278a8a5MyProc' USING
+                                 address of MyBool-value
+           end-call
+                                          .
+      *CALL MyProc INPUT LENGTH OF MyBool.
+       CALL 'a278a8a5MyProc' USING
+                                 length of MyBool-value
+           end-call
+                                         .
+
        MOVE My88Level TO My88Level.
       *MOVE myBool TO myBool.
        MOVE myBool-value TO myBool-value. 
@@ -96,6 +111,16 @@
            Search MyArray
               when MyBool
                  display "Hello"
-           end-search
+           end-search.
+       TRAITEMENT.
+       .
+        PERFORM TRAITEMENT UNTIL MyBool.
            .
        END PROGRAM BooleanTester.
+      *
+      *DECLARE PROCEDURE MyProc PRIVATE
+      *    INPUT    NumericInput PIC S9(9) COMP-5.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a278a8a5MyProc.
+       END PROGRAM a278a8a5MyProc.

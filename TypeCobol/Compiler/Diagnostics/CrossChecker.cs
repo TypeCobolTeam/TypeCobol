@@ -37,8 +37,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
 
-            RedefinesChecker.OnNode(node);
-            FunctionDeclarationChecker.OnNode(node);
+            RedefinesChecker<CodeElement>.OnNode(node);
+            FunctionDeclarationChecker<CodeElement>.OnNode(node);
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);
@@ -292,7 +292,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (found.First().DataType == DataType.Boolean && found.First().CodeElement is DataDefinitionEntry &&
                          ((DataDefinitionEntry) found.First()?.CodeElement)?.LevelNumber?.Value != 88)
                 {
-                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.WhenSearch || node is Nodes.When))//Ignore If/Set/Perform/WhenSearch Statement
+                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
                     {
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,

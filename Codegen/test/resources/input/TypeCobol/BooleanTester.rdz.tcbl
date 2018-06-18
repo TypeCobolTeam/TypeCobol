@@ -19,6 +19,14 @@
 
        01 myBool TYPE BOOL.
        PROCEDURE DIVISION.
+       DECLARE PROCEDURE MyProc PRIVATE
+           INPUT    NumericInput PIC S9(9) COMP-5.
+        END-DECLARE.
+
+
+       CALL MyProc INPUT ADDRESS OF MyBool.
+       CALL MyProc INPUT LENGTH OF MyBool.
+
        MOVE My88Level TO My88Level.
        MOVE myBool TO myBool. 
        MOVE MyGroup::levelBool TO myBool. 
@@ -61,6 +69,9 @@
            Search MyArray
               when MyBool
                  display "Hello"
-           end-search
+           end-search.
+       TRAITEMENT.
+       .
+        PERFORM TRAITEMENT UNTIL MyBool.
            .
        END PROGRAM BooleanTester.

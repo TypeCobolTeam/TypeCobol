@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.CodeElements {
 		    : base(CodeElementType.FunctionDeclarationHeader) {
 		    this.FunctionName = name;
 		    this.Visibility = visibility;
-		    this.UserDefinedType = type != null ? type : FunctionType.Undefined;
+		    this.UserDefinedType = type;
 		    this.Profile = new ParametersProfile();
 	    }
 

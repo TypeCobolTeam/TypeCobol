@@ -173,9 +173,9 @@ namespace TypeCobol.Transform
                 int realPart3LineNumber = 0;
                 var CBLDirectiveLines = new List<string>();
 
+                bool stopMaybeOptions = false;
                 foreach (var line in File.ReadLines(concatenatedFilePath))
                 {
-                    bool stopMaybeOptions = false;
                     if (!stopMaybeOptions)
                     {
                         if (MaybeOption(line))
