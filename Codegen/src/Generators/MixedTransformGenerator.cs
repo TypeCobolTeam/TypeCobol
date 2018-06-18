@@ -10,13 +10,17 @@ using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Codegen.Generators
 {
-    public class MixedTransformGenerator : DefaultGenerator
+    public class MixedTransformGenerator : Generator
     {
-        public MixedTransformGenerator(CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion) 
-            : base(document, destination, skeletons, typeCobolVersion)
+        /// <summary>
+        /// Generator used to generate Cobol code (Could be Cobol85, Cobol2002 ...)
+        /// </summary>
+        private Generator _usedGenerator;
+        public MixedTransformGenerator(CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, Generator generator) 
+            : base(document, destination, skeletons, null)
         {
-           
-            
+
+            _usedGenerator = generator;
         }
 
         protected override bool Process(Node node)
@@ -26,9 +30,9 @@ namespace TypeCobol.Codegen.Generators
 
         public override void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
-            base.Generate(compilationUnit, columns);
+            _usedGenerator.Generate(compilationUnit, columns);
 
-            //After generation process based on Default CObol85 generator do the transform
+            //After generation get the generated cobol code and mix it with TypeCobol source using Transform project
             var mixedContent = new StringBuilder();
             Transform.Decoder.Encode(compilationUnit.CobolTextLines.Select(l => l.Text).ToArray(), Destination.ToString().Split(new string[] {Environment.NewLine}, StringSplitOptions.None), mixedContent);
             this.Destination.Clear();
