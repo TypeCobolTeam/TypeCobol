@@ -188,7 +188,7 @@ namespace TypeCobol.Compiler.Parser
 						}
 
 						IntegerVariable integerVariable2 = new IntegerVariable(
-							CobolWordsBuilder.CreateIntegerValue(context.withRelativeSubscripting().integerValue()));
+							CobolWordsBuilder.CreateIntegerValue(context.withRelativeSubscripting().IntegerLiteral()));
 						ArithmeticExpression numericOperand2 = new NumericVariableOperand(integerVariable2);
 
 						arithmeticExpression = new ArithmeticOperation(
@@ -282,7 +282,7 @@ namespace TypeCobol.Compiler.Parser
 		}
 
 		internal FunctionCall CreateIntrinsicFunctionCall(CodeElementsParser.IntrinsicFunctionCallContext context) {
-			var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.intrinsicFunctionName());
+			var name = CobolWordsBuilder.CreateIntrinsicFunctionName(context.IntrinsicFunctionName());
 			return new IntrinsicFunctionCall(name, CreateArguments(context.argument()));
 		}
 
@@ -319,8 +319,8 @@ namespace TypeCobol.Compiler.Parser
 		[CanBeNull]
 		internal StorageArea CreateOtherStorageAreaReference([CanBeNull]CodeElementsParser.OtherStorageAreaReferenceContext context) {
 			if (context == null) return null;
-			if (context.intrinsicDataNameReference() != null) {
-                SymbolReference specialRegisterName = CobolWordsBuilder.CreateInstrinsicDataNameReference(context.intrinsicDataNameReference());
+			if (context.specialRegisterReference() != null) {
+                SymbolReference specialRegisterName = CobolWordsBuilder.CreateSpecialRegister(context.specialRegisterReference());
 				StorageArea specialRegister = new IntrinsicStorageArea(specialRegisterName);
 				return specialRegister;
 			}
@@ -932,13 +932,11 @@ namespace TypeCobol.Compiler.Parser
             IntegerVariable variable = null;
 			if(context.identifier() != null)
 			{
-				variable = new IntegerVariable(
-					CreateIdentifier(context.identifier()));
+				variable = new IntegerVariable(CreateIdentifier(context.identifier()));
 			}
 			else
 			{
-				variable = new IntegerVariable(
-					CobolWordsBuilder.CreateIntegerValue(context.integerValue()));
+				variable = new IntegerVariable(CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
 
             // Collect storage area read/writes at the code element level
@@ -962,7 +960,7 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				variable = new IntegerVariable(
-					CobolWordsBuilder.CreateIntegerValue(context.integerValue()));
+					CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
 
             // Collect storage area read/writes at the code element level
@@ -985,7 +983,7 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				variable = new IntegerVariable(
-					CobolWordsBuilder.CreateIntegerValue(context.integerValue()));
+					CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
 
             // Collect storage area read/writes at the code element level
@@ -1009,7 +1007,7 @@ namespace TypeCobol.Compiler.Parser
 			else
 			{
 				variable = new IntegerVariable(
-					CobolWordsBuilder.CreateIntegerValue(context.integerValue()));
+					CobolWordsBuilder.CreateIntegerValue(context.IntegerLiteral()));
 			}
 
             // Collect storage area read/writes at the code element level

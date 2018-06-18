@@ -74,7 +74,7 @@ libraryCopy: SERVICE ID? IS? qualifiedTextName PeriodSeparator?; // TCRFUN_LIBRA
 
 // rules modified to support user defined functions (of arity 0..n)
 functionIdentifier: intrinsicFunctionCall | userDefinedFunctionCall;
-intrinsicFunctionCall: FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?; // argument* instead of argument+ to enable good error messages
+intrinsicFunctionCall: FUNCTION IntrinsicFunctionName (LeftParenthesisSeparator argument* RightParenthesisSeparator)?; // argument* instead of argument+ to enable good error messages
 userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparator argument* RightParenthesisSeparator)?;
 
 // - TCRFUN_NO_DEFAULT_ACCESS_MODIFIER
@@ -133,7 +133,7 @@ tcfuncParameterUsageClause:
 				    ;
 
 functionConditionParameter:
-	levelNumber=integerValue conditionNameDefinition valueClauseForCondition;
+	levelNumber=IntegerLiteral conditionNameDefinition valueClauseForCondition;
 
 functionDeclarationEnd: END_DECLARE PeriodSeparator;
 
