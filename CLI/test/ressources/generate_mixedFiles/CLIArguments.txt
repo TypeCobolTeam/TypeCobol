@@ -1,0 +1,1 @@
+﻿-1 -i input\FunDeclare.rdz.tcbl -o output\FunDeclareMixed.cbl -d output\error.txt  -s ..\skeletons.xml -e rdz -f Cobol85Mixed

@@ -14,6 +14,7 @@ using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
+using System.Text;
 
 namespace TypeCobol.Codegen
 {
@@ -35,7 +36,7 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// The Destination.
         /// </summary>
-        public TextWriter Destination
+        public StringBuilder Destination
         {
             get;
             private set;
@@ -107,7 +108,7 @@ namespace TypeCobol.Codegen
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public Generator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion)
+        public Generator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
         {
             this.CompilationResults = document;
             this.TypeCobolVersion = typeCobolVersion;
@@ -115,7 +116,7 @@ namespace TypeCobol.Codegen
 
             //Add version to output file
             if (!string.IsNullOrEmpty(TypeCobolVersion))
-                Destination.WriteLine("      *TypeCobol_Version:" + TypeCobolVersion);
+                Destination.AppendLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
             Actions = new GeneratorActions(this, skeletons, document);
             //To Store Erased Nodes by the Erase Action.
@@ -225,7 +226,7 @@ namespace TypeCobol.Codegen
         /// </summary>
         /// <param name="compilationUnit"> Compilation Unit resulting from TypeCobol Parsing</param>
         /// <param name="columns">Columns layout</param>
-        public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
+        public virtual void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
             //Check if there is any error in diags
             if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))

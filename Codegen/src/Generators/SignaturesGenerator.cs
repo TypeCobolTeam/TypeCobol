@@ -10,6 +10,7 @@ using FunctionDeclaration = TypeCobol.Compiler.Nodes.FunctionDeclaration;
 using LocalStorageSection = TypeCobol.Compiler.Nodes.LocalStorageSection;
 using ProcedureDivision = TypeCobol.Compiler.Nodes.ProcedureDivision;
 using WorkingStorageSection = TypeCobol.Compiler.Nodes.WorkingStorageSection;
+using System.Text;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -18,7 +19,7 @@ namespace TypeCobol.Codegen.Generators
     /// </summary>
     public class SignaturesGenerator : IGenerator
     {
-        private TextWriter Destination { get; set; }
+        private StringBuilder Destination { get; set; }
 
         /// <summary>
         /// Constructor
@@ -27,7 +28,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
         /// <param name="typeCobolVersion">Version of the TypeCobol Parser/Generator</param>
-        public SignaturesGenerator(TextWriter destination, string typeCobolVersion) {
+        public SignaturesGenerator(StringBuilder destination, string typeCobolVersion) {
             this.Destination = destination;
             TypeCobolVersion = typeCobolVersion;
         }
@@ -35,22 +36,18 @@ namespace TypeCobol.Codegen.Generators
 
 
         public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat) {
-            Destination.Write("");
+            Destination.Append("");
             //Add version to output file
             if (!string.IsNullOrEmpty(TypeCobolVersion))
-                Destination.WriteLine("      *TypeCobol_Version:" + TypeCobolVersion);
+                Destination.AppendLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());
             var lines = sourceFile.SelfAndChildrenLines;
             foreach (var textLine in lines)
             {
-                Destination.WriteLine(textLine.Text);
+                Destination.AppendLine(textLine.Text);
             }
-            Destination.Flush();
-            Destination.Close();
-
-
         }
 
         public List<Diagnostic> Diagnostics { get; }

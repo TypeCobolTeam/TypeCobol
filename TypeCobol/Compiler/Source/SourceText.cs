@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace TypeCobol.Compiler.Source
 {
@@ -621,6 +622,12 @@ namespace TypeCobol.Compiler.Source
         /// </summary>
         /// <param name="writer">The TextWriter instance</param>
         public abstract void Write(TextWriter writer);
+
+        /// <summary>
+        /// Write the content of this SourceText into a StringBuilder
+        /// </summary>
+        /// <param name="writer">The StringBuilder instance</param>
+        public abstract void Write(StringBuilder stringBuilder);
 
         /// <summary>
         /// Dump the content of this Source Text.

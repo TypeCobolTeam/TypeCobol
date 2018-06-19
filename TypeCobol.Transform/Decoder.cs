@@ -48,47 +48,42 @@ namespace TypeCobol.Transform
         }
 
         /// <summary>
-        /// Encoder method that concatenates the TypeCobol Source code with the generated Cobol source code.
+        /// Encode will concatenates typecbolLine and cobol85Lines into outputStringBuilder
         /// </summary>
-        /// <param name="typeCobolFilePath">The path to the original TypeCobol source file</param>
-        /// <param name="cobol85FilePath">The path to the generated Cobol 85 source file, if null this means that an empty generated file is requested.</param>
-        /// <param name="outputFilePath">The path to the output file which will contains the conactenation.</param>
-        /// <returns>true if the conactenation was successful, false otherwise</returns>
-	    public static bool concatenateFiles(string typeCobolFilePath, string cobol85FilePath, string outputFilePath)
+        /// <param name="typeCobolLines">TypeCobol source lines</param>
+        /// <param name="cobol85Lines">Generated Cobol lines</param>
+        /// <param name="outputStringBuilder">Output string builder that contains mixed TypeCobol/GeneratedCobol</param>
+        /// <returns></returns>
+        public static bool Encode(string[] typeCobolLines, string[] cobol85Lines, StringBuilder outputStringBuilder)
         {
-            string[] typeCobolLines = File.ReadAllLines(typeCobolFilePath);
-            string[] cobol85Lines = cobol85FilePath != null ? File.ReadAllLines(cobol85FilePath) : new string[0];
-            Stream outputStream = File.OpenWrite(outputFilePath);
-            var outputWriter = new StreamWriter(outputStream);
             try
             {
-
                 var CBLDirectiveLines = new List<string>();
                 foreach (var typeCobolLine in typeCobolLines)
                 {
                     if (MaybeOption(typeCobolLine))
                     {
-                        outputWriter.WriteLine(typeCobolLine); //Write CBL lines at the top of the document
+                        outputStringBuilder.AppendLine(typeCobolLine); //Write CBL lines at the top of the document
                         CBLDirectiveLines.Add(typeCobolLine);
                     }
                     else break;
                 }
 
                 int part2Start = CBLDirectiveLines.Count + 3;
-                int part3Start = part2Start + (cobol85FilePath != null ? cobol85Lines.Length - CBLDirectiveLines.Count : 0) + 1;
+                int part3Start = part2Start + (cobol85Lines != null ? cobol85Lines.Length - CBLDirectiveLines.Count : 0) + 1;
                 int part4Start = part3Start + typeCobolLines.Length - CBLDirectiveLines.Count + 1;
                 //string firstLine = string.Format("000000*£TC-PART1£PART2-{0:000000}£PART3-{1:000000}£PART4-{2:000000}£££££££££££££££££", 
                 //                part2Start, part3Start, part4Start);
                 //outputWriter.WriteLine(firstLine);
 
-                outputWriter.WriteLine("000000*£TC-PART1£PART2-{0:000000}£PART3-{1:000000}£PART4-{2:000000}£££££££££££££££££",
-                                part2Start, part3Start, part4Start);
-                outputWriter.WriteLine(DoNotEdit);
+                outputStringBuilder.AppendLine(string.Format("000000*£TC-PART1£PART2-{0:000000}£PART3-{1:000000}£PART4-{2:000000}£££££££££££££££££",
+                                part2Start, part3Start, part4Start));
+                outputStringBuilder.AppendLine(DoNotEdit);
 
 
                 //Part 2 - Cobol 85 generated code
                 bool stopMaybeOptions = false;
-                outputWriter.WriteLine("000000*£TC-PART2££££££££££££££££££££££££££££££££££££££££££££££££££££££££");
+                outputStringBuilder.AppendLine("000000*£TC-PART2££££££££££££££££££££££££££££££££££££££££££££££££££££££££");
                 foreach (var cobol85Line in cobol85Lines)
                 {
                     if (!stopMaybeOptions)
@@ -98,11 +93,11 @@ namespace TypeCobol.Transform
                         else if (!MaybeTypeCobolVersion(cobol85Line))
                             stopMaybeOptions = true;
                     }
-                    outputWriter.WriteLine(cobol85Line);
+                    outputStringBuilder.AppendLine(cobol85Line);
                 }
 
                 //Part 3 - TypeCobol without 7th column
-                outputWriter.WriteLine(Part3MagicLine);
+                outputStringBuilder.AppendLine(Part3MagicLine);
                 System.Text.StringBuilder columns7 = new System.Text.StringBuilder(part4Start - part3Start);
                 foreach (var typeCobolLine in typeCobolLines)
                 {
@@ -113,9 +108,9 @@ namespace TypeCobol.Transform
                     {
                         //TODO Check the length >= 8
                         if (typeCobolLine.Length > 7)
-                            outputWriter.WriteLine("000000*" + typeCobolLine.Substring(7));
+                            outputStringBuilder.AppendLine("000000*" + typeCobolLine.Substring(7));
                         else
-                            outputWriter.WriteLine("000000*");
+                            outputStringBuilder.AppendLine("000000*");
                         if (typeCobolLine.Length > CommentPos)
                             columns7.Append(typeCobolLine[CommentPos]);
                         else
@@ -123,20 +118,20 @@ namespace TypeCobol.Transform
                     }
                     else
                     {
-                        outputWriter.WriteLine("000000*");
+                        outputStringBuilder.AppendLine("000000*");
                         columns7.Append(' ');
                     }
                 }
 
                 //Part 4 - 7th column of the TypeCobol part 3
-                outputWriter.WriteLine(Part4MagicLine);
+                outputStringBuilder.AppendLine(Part4MagicLine);
                 String s_columns7 = columns7.ToString();
                 int c7Length = (LineLength - 1);
                 int nSplit = (s_columns7.Length / c7Length) + ((s_columns7.Length % c7Length) == 0 ? 0 : 1);
                 for (int i = 0, sPos = 0; i < nSplit; i++, sPos += c7Length)
                 {
-                    outputWriter.Write("000000*");
-                    outputWriter.WriteLine(s_columns7.Substring(sPos, Math.Min(c7Length, s_columns7.Length - sPos)));
+                    outputStringBuilder.Append("000000*");
+                    outputStringBuilder.AppendLine(s_columns7.Substring(sPos, Math.Min(c7Length, s_columns7.Length - sPos)));
                 }
             }
             catch (Exception e)
@@ -144,10 +139,39 @@ namespace TypeCobol.Transform
                 Console.WriteLine(String.Format("{0} : {1}", PROGNAME, string.Format(Resource.Exception_error, e.Message)));
                 return false;
             }
-            finally
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Encoder method that concatenates the TypeCobol Source code with the generated Cobol source code.
+        /// </summary>
+        /// <param name="typeCobolFilePath">The path to the original TypeCobol source file</param>
+        /// <param name="cobol85FilePath">The path to the generated Cobol 85 source file, if null this means that an empty generated file is requested.</param>
+        /// <param name="outputFilePath">The path to the output file which will contains the conactenation.</param>
+        /// <returns>true if the conactenation was successful, false otherwise</returns>
+	    public static bool concatenateFiles(string typeCobolFilePath, string cobol85FilePath, string outputFilePath)
+        {
+            try
             {
+                Stream outputStream = File.OpenWrite(outputFilePath);
+                var outputWriter = new StreamWriter(outputStream);
+
+                string[] typeCobolLines = File.ReadAllLines(typeCobolFilePath);
+                string[] cobol85Lines = cobol85FilePath != null ? File.ReadAllLines(cobol85FilePath) : new string[0];
+                var outputStringBuilder = new StringBuilder();
+
+                Encode(typeCobolLines, cobol85Lines, outputStringBuilder);
+
+                outputWriter.Write(outputStringBuilder);
+
                 outputWriter.Flush();
                 outputStream.Close();
+            }
+            catch (Exception)
+            {
+                return false;
             }
             return true;
         }
