@@ -5,6 +5,7 @@ using System.Threading;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
@@ -416,12 +417,12 @@ namespace TypeCobol.Compiler.CodeElements
         public abstract Token FunctionNameToken { get; }
 	    public virtual CallSiteParameter[] Arguments { get; private set; }
 
-        public virtual ParameterList AsProfile(CodeModel.SymbolTable table)
+        public virtual ParameterList AsProfile(Node node)
         {
             //Need to be updated in a near future
             var profile = new FunctionCallParameterList
             {
-                InputParameters = FunctionCallParameterList.CreateParameters(Arguments.ToList(), table),
+                InputParameters = FunctionCallParameterList.CreateParameters(Arguments.ToList(), node),
             };
             return profile;
         }
@@ -459,12 +460,12 @@ namespace TypeCobol.Compiler.CodeElements
 
 	        public DataType ReturningParameter { get; set; }
 
-	        internal static IList<DataType> CreateParameters([NotNull] List<CallSiteParameter> parameters, CodeModel.SymbolTable table) {
+	        internal static IList<DataType> CreateParameters([NotNull] List<CallSiteParameter> parameters, Node node) {
 			    var results = new List<DataType>();
-			    foreach(var parameter in parameters) results.Add(CreateParameter(parameter, table));
+			    foreach(var parameter in parameters) results.Add(CreateParameter(parameter, node));
 			    return results;
 		    }
-		    internal static DataType CreateParameter([NotNull] CallSiteParameter p, CodeModel.SymbolTable table) {
+		    internal static DataType CreateParameter([NotNull] CallSiteParameter p,Node node) {
 		        if (p.IsOmitted) {
 		            return DataType.Omitted;
 		        }
@@ -482,24 +483,18 @@ namespace TypeCobol.Compiler.CodeElements
                             type = DataType.Alphanumeric;
                         else type = DataType.Unknown;
                     }
-                    else
-                    {
-                        if (table != null)
-                        {
-                            var found = table.GetVariables(parameter);
-                            foreach (var item in found)
-                            {
-                                var data = item as Nodes.DataDescription;
-                                if (data == null)
-                                    type = DataType.Unknown;
-                                else if (type == null) type = data.DataType;
-                                else if (type != data.DataType) type = DataType.Unknown;
-                            }
-                        }
-                       
-                        if (type == null) type = DataType.Unknown;
-                    }
-                    return type;
+		            else
+		            {
+                        if (node != null)
+		                {
+		                    var found = node.GetDataDefinitionFromStorageAreaDictionary(parameter.StorageArea);
+		                    var data = found as DataDescription;
+		                    type = data == null ? DataType.Unknown : data.DataType;
+		                }
+
+		                if (type == null) type = DataType.Unknown;
+		            }
+		            return type;
                 }
 		        return DataType.Unknown;
 		    }
@@ -591,13 +586,13 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override string Namespace { get { return (ProcedureName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference) ProcedureName).Tail.Name; } }
 
-        public override ParameterList AsProfile(SymbolTable table)
+        public override ParameterList AsProfile(Node node)
 	    {
 	        var profile = new FunctionCallParameterList
 	        {
-	            InputParameters = FunctionCallParameterList.CreateParameters(InputParameters, table),
-	            InoutParameters = FunctionCallParameterList.CreateParameters(InoutParameters, table),
-	            OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, table),
+	            InputParameters = FunctionCallParameterList.CreateParameters(InputParameters, node),
+	            InoutParameters = FunctionCallParameterList.CreateParameters(InoutParameters, node),
+	            OutputParameters = FunctionCallParameterList.CreateParameters(OutputParameters, node),
 	            ReturningParameter = null
 	        };
 	        return profile;

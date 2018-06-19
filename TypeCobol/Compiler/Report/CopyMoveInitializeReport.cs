@@ -145,56 +145,48 @@ namespace TypeCobol.Compiler.Report
             if (area.SymbolReference == null)
                 return;
             
-            List<KeyValuePair<string, DataDefinition>>  foundQualified =
-                node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
-                    ? area.SymbolReference.URI
-                    : new CodeElements.Expressions.URI(area.ToString()),
-                    null);
-            IEnumerable<DataDefinition> found = foundQualified.Select(v => v.Value);
-            if (found.Count() == 1)
-            {//Take in account only if one instance has been discovered.
-                foreach (var v in found)
+            var found = node.GetDataDefinitionFromStorageAreaDictionary(wname);
+            if (found != null)
+            {
+                //Take in account only if one instance has been discovered.
+                List<DataDefinition> dataCopy = new List<DataDefinition>();
+                CollectInsideCopy(found, dataCopy);
+                if (dataCopy.Count > 0)
                 {
-                    List<DataDefinition> dataCopy = new List<DataDefinition>();
-                    CollectInsideCopy(v, dataCopy);
-                    if (dataCopy.Count > 0)
-                    {
-                        string name = v.Name;
-                        string sourceText = node.CodeElement.SourceText.Replace('\r', ' ').Replace('\n', ' ');
-                        int line = node.CodeElement.Line;
-                        int column = node.CodeElement.Column;
-                        string fileName = node.CodeElement.TokenSource.SourceName;
+                    string name = found.Name;
+                    string sourceText = node.CodeElement.SourceText.Replace('\r', ' ').Replace('\n', ' ');
+                    int line = node.CodeElement.Line;
+                    int column = node.CodeElement.Column;
+                    string fileName = node.CodeElement.TokenSource.SourceName;
 
-                        bool isMove = node is Move;
-                        string kind = isMove ? "MOVE" : "INITIALIZE";
-                        foreach (DataDefinition d in dataCopy)
-                        {
-#if DEBUG_REPORT_CMR_FULL_FIELDS                                                
+                    bool isMove = node is Move;
+                    string kind = isMove ? "MOVE" : "INITIALIZE";
+                    foreach (DataDefinition d in dataCopy)
+                    {
+#if DEBUG_REPORT_CMR_FULL_FIELDS
                         string copySourceText = d.CodeElement.SourceText.Replace('\r', ' ').Replace('\n', ' ');
                         int copyLine = d.CodeElement.Line;
                         int copyColumn = d.CodeElement.Column;
 #endif
-                            Preprocessor.ImportedToken firstImportedToken =
-                                d.CodeElement.ConsumedTokens.First(t => t is Preprocessor.ImportedToken) as
-                                    Preprocessor.ImportedToken;
-                            if (firstImportedToken != null)
-                            {
-                                string copyName = firstImportedToken.CopyDirective.TextName;
-#if DEBUG_REPORT_CMR_FULL_FIELDS                                                
+                        Preprocessor.ImportedToken firstImportedToken =
+                            d.CodeElement.ConsumedTokens.First(t => t is Preprocessor.ImportedToken) as
+                                Preprocessor.ImportedToken;
+                        if (firstImportedToken != null)
+                        {
+                            string copyName = firstImportedToken.CopyDirective.TextName;
+#if DEBUG_REPORT_CMR_FULL_FIELDS
                             Writer.WriteLine(string.Format("CopyName={0};{1};Variable={2};SourceText={3};Line={4};Column={5};FileName={6};CopySourceText={7};CopyLine={8};CopyColumn={9};",
                             copyName, kind, name, sourceText, line, column, fileName, copySourceText, copyLine, copyColumn));
 #else
-                                Writer.WriteLine(
-                                    string.Format("CopyName={0};{1};Variable={2};Line={3};Column={4};SourceText={5}",
-                                        copyName, kind, name, line, column, sourceText));
+                            Writer.WriteLine(
+                                string.Format("CopyName={0};{1};Variable={2};Line={3};Column={4};SourceText={5}",
+                                    copyName, kind, name, line, column, sourceText));
 #endif
-                                break; //Don't recurse within move or initialize.
-                            }
+                            break; //Don't recurse within move or initialize.
                         }
                     }
                 }
             }
-            return;
         }
     }
 }
