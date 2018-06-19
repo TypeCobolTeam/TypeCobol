@@ -302,7 +302,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 			if(context.memorySizeClause() != null) {
 				var memorySizeClauseContext = context.memorySizeClause();
-				paragraph.MemorySize = CobolWordsBuilder.CreateIntegerValue(memorySizeClauseContext.integerValue());
+				paragraph.MemorySize = CobolWordsBuilder.CreateIntegerValue(memorySizeClauseContext.IntegerLiteral());
 				if(memorySizeClauseContext.WORDS() != null) {
 					paragraph.MemorySizeUnit = new SyntaxProperty<MemorySizeUnit>(MemorySizeUnit.Words, ParseTreeUtils.GetFirstToken(memorySizeClauseContext.WORDS()));
 				} else
@@ -319,7 +319,7 @@ namespace TypeCobol.Compiler.Parser
 			}
 			if(context.segmentLimitClause() != null) {
 				var segmentLimitClauseContext = context.segmentLimitClause();
-				paragraph.SegmentLimit = CobolWordsBuilder.CreateIntegerValue(segmentLimitClauseContext.priorityNumber().integerValue());
+				paragraph.SegmentLimit = CobolWordsBuilder.CreateIntegerValue(segmentLimitClauseContext.priorityNumber().IntegerLiteral());
 			}
 
 			Context = context;
@@ -456,7 +456,7 @@ namespace TypeCobol.Compiler.Parser
                         for (int i = 0; i < Math.Min(symbolicCharOPContext.symbolicCharacterDefinition().Length, symbolicCharOPContext.ordinalPositionInCollatingSequence().Length); i++)
 						{
 							var symbolicCharacter = CobolWordsBuilder.CreateSymbolicCharacterDefinition(symbolicCharOPContext.symbolicCharacterDefinition()[i]);
-							var ordinalPosition = CobolWordsBuilder.CreateIntegerValue(symbolicCharOPContext.ordinalPositionInCollatingSequence()[i].integerValue());
+							var ordinalPosition = CobolWordsBuilder.CreateIntegerValue(symbolicCharOPContext.ordinalPositionInCollatingSequence()[i].IntegerLiteral());
 							paragraph.SymbolicCharacters.Add(symbolicCharacter,
 								new Tuple<IntegerValue, SymbolReference>(ordinalPosition, alphabetName));
 						}
@@ -548,7 +548,7 @@ namespace TypeCobol.Compiler.Parser
 				chars.CharactersInAlphanmericValue = CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue1());
 			} else
 			if (context.ordinalPositionInCollatingSequence() != null) {
-				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().integerValue());
+				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().IntegerLiteral());
 			}
 			return chars;
 		}
@@ -559,7 +559,7 @@ namespace TypeCobol.Compiler.Parser
 				chars.CharacterValue = CobolWordsBuilder.CreateCharacterValue(context.characterValue2());
 			} else
 			if (context.ordinalPositionInCollatingSequence() != null) {
-				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().integerValue());
+				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().IntegerLiteral());
 			}
 			return chars;
 		}
@@ -622,7 +622,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.reserveClause() != null && context.reserveClause().Length > 0)
 			{
 				var reserveClauseContext = context.reserveClause()[0];
-				entry.ReserveIOBuffersCount = CobolWordsBuilder.CreateIntegerValue(reserveClauseContext.integerValue());
+				entry.ReserveIOBuffersCount = CobolWordsBuilder.CreateIntegerValue(reserveClauseContext.IntegerLiteral());
 			}
 			if (context.accessModeClause() != null && context.accessModeClause().Length > 0)
 			{
@@ -788,7 +788,7 @@ namespace TypeCobol.Compiler.Parser
 				{
 					rerunEntry.CheckPointFrequency = new SyntaxProperty<CheckPointFrequency>(CheckPointFrequency.EveryRecordCount,
 						ParseTreeUtils.GetFirstToken(rerunClauseContext.RECORDS()));
-					rerunEntry.EveryRecordCount = CobolWordsBuilder.CreateIntegerValue(rerunClauseContext.integerValue());
+					rerunEntry.EveryRecordCount = CobolWordsBuilder.CreateIntegerValue(rerunClauseContext.IntegerLiteral());
 				}
 				else if (rerunClauseContext.REEL() != null)
 				{
@@ -843,9 +843,9 @@ namespace TypeCobol.Compiler.Parser
 					var physicalReelOfTapeContext = multipleFTClauseContext.physicalReelOfTape()[i];
 					var physicalReelOfTape = new PhysicalReelOfTape();
 					physicalReelOfTape.FileName = CobolWordsBuilder.CreateFileNameReference(physicalReelOfTapeContext.fileNameReference());
-					if (physicalReelOfTapeContext.integerValue() != null)
+					if (physicalReelOfTapeContext.IntegerLiteral() != null)
 					{
-						physicalReelOfTape.FilePosition = CobolWordsBuilder.CreateIntegerValue(physicalReelOfTapeContext.integerValue());
+						physicalReelOfTape.FilePosition = CobolWordsBuilder.CreateIntegerValue(physicalReelOfTapeContext.IntegerLiteral());
 					}
 					multipleFileEntry.PhysicalReelOfTape[i] = physicalReelOfTape;
 				}
@@ -1454,7 +1454,7 @@ namespace TypeCobol.Compiler.Parser
             sectionHeader.SectionName = CobolWordsBuilder.CreateSectionNameDefinition(context.sectionNameDefinition());
             if (context.priorityNumber() != null)
             {
-                sectionHeader.PriorityNumber = CobolWordsBuilder.CreateIntegerValue(context.priorityNumber().integerValue());
+                sectionHeader.PriorityNumber = CobolWordsBuilder.CreateIntegerValue(context.priorityNumber().IntegerLiteral());
             }
 
             Context = context;

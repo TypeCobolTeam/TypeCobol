@@ -618,7 +618,7 @@ configurationSectionHeader:
 
 sourceComputerParagraph: 
     SOURCE_COMPUTER PeriodSeparator
-    (computerName=alphanumericValue4 
+    (computerName=UserDefinedWord 
      (WITH? DEBUGGING MODE)? 
      PeriodSeparator)?;
 
@@ -665,14 +665,14 @@ sourceComputerParagraph:
 
 objectComputerParagraph:
     OBJECT_COMPUTER PeriodSeparator
-    (computerName=alphanumericValue4 
+    (computerName=UserDefinedWord 
      memorySizeClause?
      programCollatingSequenceClause?
      segmentLimitClause?
      PeriodSeparator)?;
 
 memorySizeClause:
-    MEMORY SIZE? integerValue (WORDS | CHARACTERS | MODULES);
+    MEMORY SIZE? IntegerLiteral (WORDS | CHARACTERS | MODULES);
 
 programCollatingSequenceClause:
     PROGRAM? COLLATING? SEQUENCE IS? alphabetName;
@@ -694,7 +694,7 @@ segmentLimitClause:
 // - In a program that is declared with the RECURSIVE attribute
 // - In a program compiled with the THREAD compiler option
 
-priorityNumber: integerValue;
+priorityNumber: IntegerLiteral;
 
 // p112 : The SPECIAL-NAMES paragraph is the name of an ENVIRONMENT DIVISION
 // paragraph in which environment-names are related to user-specified
@@ -874,7 +874,7 @@ symbolicCharactersOrdinalPositions:
 // - Each numeric literal must have a value that corresponds to a
 // valid ordinal position within the collating sequence in effect.
 
-ordinalPositionInCollatingSequence: integerValue;
+ordinalPositionInCollatingSequence: IntegerLiteral;
 
 // p118: The CLASS clause provides a means for relating a name to the specified set of
 // characters listed in that clause.
@@ -1277,7 +1277,7 @@ assignClause:
 // If the file connector referenced by file-name-1 in the SELECT clause is an external file connector, all file-control entries in the run unit that reference this file connector must have the same value for the integer specified in the RESERVE clause.
 
 reserveClause:
-    RESERVE integerValue (AREA | AREAS)?;
+    RESERVE IntegerLiteral (AREA | AREAS)?;
 
 // p135: ORGANIZATION clause
 // The ORGANIZATION clause identifies the logical structure of the file. 
@@ -1492,7 +1492,7 @@ ioControlEntry:
 
 rerunClause:
     RERUN ON? assignmentNameOrFileNameReference 
-	(EVERY? ( (integerValue RECORDS) | (END OF? (REEL | UNIT)) ) OF? fileNameReference)?;
+	(EVERY? ( (IntegerLiteral RECORDS) | (END OF? (REEL | UNIT)) ) OF? fileNameReference)?;
    
 // p147: The SAME AREA clause is syntax checked, but has no effect on the execution of the program.
 // The SAME AREA clause specifies that two or more files that do not represent sort or merge files are to use the same main storage area during processing.
@@ -1540,7 +1540,7 @@ multipleFileTapeClause:
     MULTIPLE FILE TAPE? CONTAINS? physicalReelOfTape+;
 
 physicalReelOfTape:
-	fileNameReference (POSITION integerValue)?;
+	fileNameReference (POSITION IntegerLiteral)?;
 
 // p149: The APPLY WRITE-ONLY clause optimizes buffer and device space allocation for files that have standard sequential organization, have variable-length records, and are blocked.
 // If you specify this phrase, the buffer is truncated only when the space available in the buffer is smaller than the size of the next record. 
@@ -1837,7 +1837,7 @@ globalClause:
 // clause.
 
 blockContainsClause:
-    BLOCK CONTAINS? (minNumberOfBytes=integerValue TO)? maxNumberOfBytes=integerValue (CHARACTERS | RECORDS)?;
+    BLOCK CONTAINS? (minNumberOfBytes=IntegerLiteral TO)? maxNumberOfBytes=IntegerLiteral (CHARACTERS | RECORDS)?;
 
 // p177: When the RECORD clause is used, the record size must be specified as the number
 // of bytes needed to store the record internally, regardless of the USAGE of the data
@@ -1934,9 +1934,9 @@ blockContainsClause:
 //   the data item referenced by data-name-1 had data-name-1 been specified
 
 recordClause:
-    RECORD ((CONTAINS? numberOfBytes=integerValue CHARACTERS?) |
-            (CONTAINS? minNumberOfBytes=integerValue TO maxNumberOfBytes=integerValue CHARACTERS?) |
-            (IS? VARYING IN? SIZE? (FROM? fromNumberOfBytes=integerValue)? (TO toNumberOfBytes=integerValue)? CHARACTERS? (DEPENDING ON? dataNameReference)?));
+    RECORD ((CONTAINS? numberOfBytes=IntegerLiteral CHARACTERS?) |
+            (CONTAINS? minNumberOfBytes=IntegerLiteral TO maxNumberOfBytes=IntegerLiteral CHARACTERS?) |
+            (IS? VARYING IN? SIZE? (FROM? fromNumberOfBytes=IntegerLiteral)? (TO toNumberOfBytes=IntegerLiteral)? CHARACTERS? (DEPENDING ON? dataNameReference)?));
 
 // p179: For sequential, relative, or indexed files, and for sort/merge SDs, the LABEL
 // RECORDS clause is syntax checked, but has no effect on the execution of the
@@ -2689,7 +2689,7 @@ groupUsageClause:
 //   – Programs compiled with the THREAD option
 
 occursClause:
-	OCCURS (minNumberOfOccurences=integerValue TO)? (maxNumberOfOccurences=integerValue | UNBOUNDED) TIMES?
+	OCCURS (minNumberOfOccurences=IntegerLiteral TO)? (maxNumberOfOccurences=IntegerLiteral | UNBOUNDED) TIMES?
 	(DEPENDING ON? varNumberOfOccurences=numericVariable1)?
 	tableSortingKeys*
 	(INDEXED BY? indexNameDefinition+)?;

@@ -158,7 +158,7 @@ subscript:
 	(integerVariableOrIndex2 withRelativeSubscripting?) | ALL | TALLY;
 
 withRelativeSubscripting: 
-	(PlusOperator | MinusOperator) integerValue;
+	(PlusOperator | MinusOperator) IntegerLiteral;
 
 // - 2. Special registers (allocate a storage area on reference) -
 
@@ -250,7 +250,7 @@ lengthOfSpecialRegister:
 // ... more detail on functions (types, usage rules, arguments ...) p478 to p484 ...
 
 functionIdentifier: 
-	FUNCTION intrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
+	FUNCTION IntrinsicFunctionName (LeftParenthesisSeparator argument+ RightParenthesisSeparator)?;
 
 // p478: argument-1 must be an identifier, a literal (other than a figurative constant),
 // or an arithmetic expression that satisfies the argument requirements for the
@@ -282,7 +282,7 @@ storageAreaReference:
 	| otherStorageAreaReference;
 
 otherStorageAreaReference: 
-	  intrinsicDataNameReference /* specialRegister */
+	  specialRegisterReference
 	| autoAllocatedDataItemReference /* LINAGE-COUNTER, ADDRESS OF, LENGTH OF special registers */
 	| functionIdentifier;
 
@@ -976,13 +976,13 @@ signCondition:
 
 booleanValueOrExpression: booleanValue | conditionalExpression;
 
-integerVariable1: identifier | integerValue;
+integerVariable1: identifier | IntegerLiteral;
 
-integerVariable2: dataNameReference | integerValue;
+integerVariable2: dataNameReference | IntegerLiteral;
 
-integerVariableOrIndex1: identifierOrIndexName | integerValue;
+integerVariableOrIndex1: identifierOrIndexName | IntegerLiteral;
 
-integerVariableOrIndex2: qualifiedDataNameOrIndexName | integerValue;
+integerVariableOrIndex2: qualifiedDataNameOrIndexName | IntegerLiteral;
 
 numericVariable1: identifier;
 		

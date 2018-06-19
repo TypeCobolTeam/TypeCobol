@@ -18,6 +18,7 @@ using TypeCobol.Compiler.CupParser;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using TypeCobolProgramParser = TypeCobol.Compiler.CupParser.TypeCobolProgramParser;
 
 namespace TypeCobol.Compiler.Parser
 {
