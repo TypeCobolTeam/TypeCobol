@@ -6266,7 +6266,7 @@ setSendingField:
 // Format 2: SET for adjusting indexes
 
 setStatementForIndexes:
-	SET indexStorageArea+ (UP | DOWN) BY (variableOrExpression2);
+	SET indexStorageArea+ (UP | DOWN) BY integerVariable1;
 
 // Format 3: SET for external switches
 

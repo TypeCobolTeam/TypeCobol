@@ -38,7 +38,7 @@
   <!-- create redefines for pointers -->
   <skeleton name="POINTER.REDEFINES" var="level,name,hash">
     <conditions>
-      <condition node="TypeCobol.Compiler.Nodes.DataDescription" Usage="Pointer"/>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" Usage="Pointer" isPointerIncrementation="true"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">

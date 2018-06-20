@@ -10,6 +10,8 @@ using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Analytics;
+using Castle.Core.Internal;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -833,5 +835,46 @@ namespace TypeCobol.Compiler.Diagnostics
 	}
 }
 
+    public class SetStatementChecker
+    {
+        public static void OnNode(Node node)
+        {
+            var statement = node.CodeElement as SetStatementForIndexes;
+            if (statement != null)
+            {
+                // Check receivers (incremented)
+                var receivers = node["receivers"] as List<DataDefinition>;
+                if (receivers != null && receivers.Any(x => x.Usage == DataUsage.Pointer))
+                { // Set statement contains at leaste one Pointer
+                    if (!receivers.Any(x => x.Usage != DataUsage.Pointer))
+                    { // All receivers are Pointers
+                        // Set the flags to stipulate that the statement contains pointers. and the pointers are used in an incrementation (used un CodGen)
+                        node.SetFlag(Node.Flag.NodeContainsPointer, true);
+                        receivers.ForEach(delegate(DataDefinition receiver) { receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true); });
 
+                        if (receivers.Any(pntr =>
+                        {
+                            var levelNumber = ((DataDefinitionEntry)pntr.CodeElement).LevelNumber;
+                            return levelNumber != null && levelNumber.Value > 49;
+                        }))
+                            DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
+                    }
+                    else
+                        DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
+                }
+                // Check sender (increment)
+                int outputResult; // not used
+                if (!int.TryParse(statement.SendingVariable.ToString(), out outputResult))
+                {// Not an integer
+                    var variable = node.GetDataDefinitionForQualifiedName(new URI(statement.SendingVariable.ToString()));
+                    if (variable == null || variable.DataType.Name != "Numeric")
+                    {// Not an Variable or a notNumeric variable
+                        if (statement.SendingVariable.ArithmeticExpression == null)
+                            // Not an arithmetic expressions
+                            DiagnosticUtils.AddError(node, "Increment only support integer values, numeric variables and arithmetic expressions");
+                    }
+                }
+            }
+        }
+    }
 }

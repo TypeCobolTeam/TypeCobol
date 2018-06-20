@@ -49,7 +49,8 @@ namespace TypeCobol.Compiler.Nodes {
 	        attributes["receivers"] = new PointerReceiversAttribute();
             attributes["receiverusage"] = new ReceiverUsageAttribute();
 	        attributes["incrementDirection"] = new incrementDirectionAttribute();
-	        attributes["needCompute"] = new needComputeAttribute();
+	        attributes["needCompute"] = new NeedComputeAttribute();
+	        attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
@@ -250,7 +251,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    internal class needComputeAttribute : Attribute
+    internal class NeedComputeAttribute : Attribute
     {
         public object GetValue(object o, SymbolTable table)
         {
@@ -264,8 +265,18 @@ namespace TypeCobol.Compiler.Nodes {
             return false;
         }
     }
+    internal class IsPointerIncrementationAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            return node.IsFlagSet(Node.Flag.NodeisIncrementedPointer);
+        }
+    }
 
     
+
+
     internal class incrementDirectionAttribute : Attribute
     {
         public object GetValue(object o, SymbolTable table)
@@ -299,15 +310,11 @@ namespace TypeCobol.Compiler.Nodes {
             var codeElement = node.CodeElement;
             var setStatement = codeElement as SetStatementForIndexes;
             List<string> displayableWritten = new List<string>();
-            List<DataDefinition> dataDefWritten = new List<DataDefinition>();
             if (setStatement != null && node.IsFlagSet(Node.Flag.NodeContainsPointer))
             {
                 foreach (var data in setStatement.StorageAreaWrites)
                 {
-                    //TODO: handle the case of ambiguous variable
-                    DataDescription dataDef = node.SymbolTable.GetVariablesExplicitWithQualifiedName(data.MainSymbolReference.URI)
-                        .Select(x => x.Value).First() as DataDescription;
-
+                    DataDescription dataDef = node.GetDataDefinitionForQualifiedName(data.MainSymbolReference.URI) as DataDescription;
                     if (dataDef != null)
                     {
                         // Usage of Regex.Replace to replace only the first ooccurence of dataDef.Name to avoid probleme with groups like myPtrGroup::myPtr
@@ -332,27 +339,15 @@ namespace TypeCobol.Compiler.Nodes {
             var node = (Node)o;
             var codeElement = node.CodeElement;
             var setStatement = codeElement as SetStatementForIndexes;
-            List<List<DataDefinition>> variablesWrittenRaw = new List<List<DataDefinition>>();
             List<DataDefinition> variablesWritten = new List<DataDefinition>();
-            if (setStatement != null && node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            if (setStatement != null)
             {
                 foreach (var data in setStatement.StorageAreaWrites)
                 {
-                    variablesWrittenRaw.Add(
-                        node.SymbolTable.GetVariablesExplicitWithQualifiedName(data.MainSymbolReference.URI).Select(x => x.Value).ToList());
+                    variablesWritten.Add(
+                        node.GetDataDefinitionForQualifiedName(data.MainSymbolReference.URI));
                 }
-
-                foreach (var varWritten in variablesWrittenRaw)
-                {
-
-                    if (varWritten.Count > 1)
-                        throw new Exception("Ambiguous Receiver Name");// Ambiguous variable handeling is done before, in the checkers
-                    else
-                        variablesWritten.Add(varWritten.First());
-                }
-
             }
-            if (variablesWritten == null) return null;
             if (variablesWritten.Count == 0) return null;
             return variablesWritten;
 

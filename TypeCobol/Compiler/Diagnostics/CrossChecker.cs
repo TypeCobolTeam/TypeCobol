@@ -48,6 +48,7 @@ namespace TypeCobol.Compiler.Diagnostics
             RedefinesChecker<CodeElement>.OnNode(node);
             FunctionDeclarationChecker<CodeElement>.OnNode(node);
             FunctionCallChecker.OnNode(node);
+            SetStatementChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);
             ReadOnlyPropertiesChecker.OnNode(node);
@@ -388,44 +389,6 @@ namespace TypeCobol.Compiler.Diagnostics
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
                             completeQualifiedName);
-                    }
-                }
-                else if (dataDefinition.Usage == DataUsage.Pointer && dataDefinition.CodeElement is DataDefinitionEntry)
-                {
-                    if (node.CodeElement is SetStatementForIndexes && !node.IsFlagSet(Node.Flag.NodeContainsPointer))
-                    {
-                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsPointer, node, storageArea,
-                            completeQualifiedName);
-                        var receivers = node["receivers"] as List<DataDefinition>;
-                        int intSender;
-                        // if its not an Integer
-                        if (!Int32.TryParse(node["sender"].ToString(), out intSender))
-                        {
-                            // if its not a SetStatementForIndexes
-                            var ce = node.CodeElement as SetStatementForIndexes;
-                            if (ce != null)
-                            {
-                                var variable = node.SymbolTable.GetVariablesExplicit(new URI(ce.SendingVariable.ToString()));
-                                // if its not a Numeric Variable
-                                if (!(variable.Any() && variable.First().DataType.Name == "Numeric"))
-                                {
-                                    // if its not an arithmetic expression
-                                    if (ce.SendingVariable.ArithmeticExpression == null)
-                                        DiagnosticUtils.AddError(node, "Increment only support integer values, numeric variables and arithmetic expressions");
-                                }
-                                
-                            }
-                            else
-                                DiagnosticUtils.AddError(node, "Bad Increment Formulation");
-                        }
-                        foreach (var receiver in receivers)
-                        {
-                            if (receiver.Usage != DataUsage.Pointer)
-                                DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
-                            
-                            if (((DataDefinitionEntry)receiver.CodeElement).LevelNumber.Value > 49)
-                                DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
-                        }
                     }
                 }
 

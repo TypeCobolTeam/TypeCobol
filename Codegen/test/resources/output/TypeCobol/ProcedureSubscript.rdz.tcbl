@@ -9,11 +9,7 @@
           05 MyValue  PIC 2.
        01  StringArray.
            05 OCCURS 10 INDEXED BY StringIdx.
-      *       10  Pnt               POINTER.
-              10  Pnt POINTER.
-       10 redefines Pnt.
-           11 Pnta1605247 pic S9(05) comp-5.
-                                            
+              10  Pnt               POINTER.
               10  Lgt               PIC 9(09) COMP.
       *       10  PrcTyp            TYPE Date.
               10 PrcTyp.

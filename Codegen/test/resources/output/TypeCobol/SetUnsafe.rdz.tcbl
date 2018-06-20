@@ -19,11 +19,7 @@
                               
        01 W-PicVar PIC X(10).
 
-      *01 myPointer POINTER.
-       01  myPointer POINTER.
-       01 redefines myPointer.
-           02 myPointerae9be588 pic S9(05) comp-5.
-                            
+       01 myPointer POINTER.
 
        LINKAGE SECTION.
        01 L-PICVar PIC X(10).
