@@ -108,6 +108,15 @@
     <None Include="LSRTests\AddMultipleLines\output_expected\AddMultipleLines.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\CompletionUsingCopy\input\CompletionUsingCopy.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionUsingCopy\input\CopyFolder\YISCTST.cpy">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionUsingCopy\output_expected\CompletionUsingCopy.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\DeleteCharBeginLine\input\DeleteCharBeginLine.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

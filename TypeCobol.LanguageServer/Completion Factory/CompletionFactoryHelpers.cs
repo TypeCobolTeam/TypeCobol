@@ -173,9 +173,18 @@ namespace TypeCobol.LanguageServer
             if (variable.CodeElement != null && variable.CodeElement.IsInsideCopy())
             {
                 finalQualifiedName.Clear();
+               
+#if EUROINFO_RULES
+                var lastSplited = qualifiedName.Last().Split('-');
+                if(!qualifiedName.First().Contains(lastSplited.First()))
+                    finalQualifiedName.Add(qualifiedName.First());
+#else
                 finalQualifiedName.Add(qualifiedName.First());
+                
+#endif
                 if (qualifiedName.First() != qualifiedName.Last())
                     finalQualifiedName.Add(qualifiedName.Last());
+
             }
 
             var variableArrangedQualifiedName = useQualifiedName ? string.Join("::", finalQualifiedName) : variable.Name;
