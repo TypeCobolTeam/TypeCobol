@@ -8235,7 +8235,7 @@ notOnSizeErrorCondition:
 
 execStatement:
                  (EXEC | EXECUTE) execTranslatorName 
-                 alphanumericValue8* 
+                 ExecStatementText* 
                  execStatementEnd;
 
 execStatementEnd: END_EXEC;

@@ -805,8 +805,6 @@ alphanumericValue6: CommentEntry;
 
 alphanumericValue7: PictureCharacterString;
 
-alphanumericValue8: ExecStatementText;
-
 enumeratedValue1: UserDefinedWord;
 
 enumeratedValue3: ExecTranslatorName;
