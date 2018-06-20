@@ -217,29 +217,29 @@ namespace TypeCobol.Compiler.Parser
 		internal AuthoringProperties CreateAuthoringProperties(CodeElementsParser.AuthoringPropertiesContext context) {
 			var authoringProperties = new AuthoringProperties();
 			if (context.authorParagraph().Length > 0) {
-				var alphanumericValueContexts = context.authorParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.authorParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.Author = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			if (context.dateCompiledParagraph().Length > 0) {
-				var alphanumericValueContexts = context.dateCompiledParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.DateCompiled = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			if (context.dateWrittenParagraph().Length > 0) {
-				var alphanumericValueContexts = context.dateWrittenParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.DateWritten = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			if (context.installationParagraph().Length > 0) {
-				var alphanumericValueContexts = context.installationParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.installationParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.Installation = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			if (context.securityParagraph().Length > 0) {
-				var alphanumericValueContexts = context.securityParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.securityParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.Security = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			return authoringProperties;
 		}
 
-		private AlphanumericValue[] CreateAlphanumericValues(CodeElementsParser.AlphanumericValue6Context[] contexts) {
+		private AlphanumericValue[] CreateAlphanumericValues(ITerminalNode[] contexts) {
 			AlphanumericValue[] alphanumericValues = new AlphanumericValue[contexts.Length];
 			for (int i = 0; i < contexts.Length; i++) {
 				alphanumericValues[i] = CobolWordsBuilder.CreateAlphanumericValue(contexts[i]);

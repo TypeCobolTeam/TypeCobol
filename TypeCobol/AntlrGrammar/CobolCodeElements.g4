@@ -505,19 +505,19 @@ authoringProperties:
 	 securityParagraph     )*;
 
 authorParagraph:
-    AUTHOR PeriodSeparator? alphanumericValue6*;
+    AUTHOR PeriodSeparator? CommentEntry*;
 
 installationParagraph:
-    INSTALLATION PeriodSeparator? alphanumericValue6*;
+    INSTALLATION PeriodSeparator? CommentEntry*;
 
 dateWrittenParagraph:
-    DATE_WRITTEN PeriodSeparator? alphanumericValue6*;
+    DATE_WRITTEN PeriodSeparator? CommentEntry*;
 
 dateCompiledParagraph:
-    DATE_COMPILED PeriodSeparator? alphanumericValue6*;
+    DATE_COMPILED PeriodSeparator? CommentEntry*;
 
 securityParagraph:
-     SECURITY PeriodSeparator? alphanumericValue6*;
+     SECURITY PeriodSeparator? CommentEntry*;
 
 // p105 : The comment-entry in any of the optional paragraphs can be any combination of
 // characters from the character set of the computer. The comment-entry is written in

@@ -801,8 +801,6 @@ alphanumericValue3: alphanumericOrNationalLiteralToken | figurativeConstant;
 
 alphanumericValue5: UserDefinedWord | alphanumericLiteralToken;
 
-alphanumericValue6: CommentEntry;
-
 alphanumericValue7: PictureCharacterString;
 
 enumeratedValue1: UserDefinedWord;
