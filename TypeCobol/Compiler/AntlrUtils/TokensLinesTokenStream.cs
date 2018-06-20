@@ -48,12 +48,12 @@ namespace TypeCobol.Compiler.AntlrUtils
             if (searchedToken != null)
             {
                 var currentToken = Lt(1);
-                while (currentToken != searchedToken && currentToken.Type != TokenConstants.Eof)
+                while (!currentToken.Equals(searchedToken) && currentToken.Type != TokenConstants.Eof)
                 {
                     Consume();
                     currentToken = Lt(1);
                 }
-                if (currentToken != searchedToken && searchedToken.Type != TokenConstants.Eof)
+                if (!currentToken.Equals(searchedToken) && searchedToken.Type != TokenConstants.Eof)
                 {
                     throw new InvalidOperationException("Token not found in this stream");
                 }
