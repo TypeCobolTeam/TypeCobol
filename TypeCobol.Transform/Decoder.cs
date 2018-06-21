@@ -70,7 +70,7 @@ namespace TypeCobol.Transform
                 }
 
                 int part2Start = CBLDirectiveLines.Count + 3;
-                int part3Start = part2Start + (cobol85Lines != null ? cobol85Lines.Length - CBLDirectiveLines.Count : 0) + 1;
+                int part3Start = part2Start + (cobol85Lines != null ? (cobol85Lines.Length != 0 ? cobol85Lines.Length - CBLDirectiveLines.Count : 0) : 0) + 1;
                 int part4Start = part3Start + typeCobolLines.Length - CBLDirectiveLines.Count + 1;
                 //string firstLine = string.Format("000000*£TC-PART1£PART2-{0:000000}£PART3-{1:000000}£PART4-{2:000000}£££££££££££££££££", 
                 //                part2Start, part3Start, part4Start);
