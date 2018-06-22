@@ -78,6 +78,7 @@
     <Compile Include="lalr_state.cs" />
     <Compile Include="lalr_transition.cs" />
     <Compile Include="lexer.cs" />
+    <Compile Include="LexerContext.cs" />
     <Compile Include="lr_item_core.cs" />
     <Compile Include="nonassoc_action.cs" />
     <Compile Include="non_terminal.cs" />
