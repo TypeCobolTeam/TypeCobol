@@ -79,6 +79,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 symbolTable.TypesReferences.Add(type, new List<DataDefinition> {dataEntry});
             }
 
+            dataEntry.TypeDefinition = type; //Set the TypeDefinition on DataDefinition Node so to avoid symbolTable access
+
             //Also add all the typedChildren to reference list
             foreach (var dataDescTypeChild in type.Children.Where(c => c is DataDescription))
             {

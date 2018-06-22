@@ -143,6 +143,22 @@ namespace TypeCobol.Compiler.Nodes {
             return _References ?? (_References = new Dictionary<StorageArea, Node>());
         }
 
+        private TypeDefinition _typeDefinition;
+
+        /// <summary>
+        /// Get the TypeDefinition node associated to this Node
+        /// </summary>
+        public TypeDefinition TypeDefinition
+        {
+            get { return _typeDefinition; }
+            set
+            {
+                if (_typeDefinition == null)
+                    _typeDefinition = value;
+            }
+        }
+
+
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }

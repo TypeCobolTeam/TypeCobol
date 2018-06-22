@@ -37,15 +37,14 @@ namespace TypeCobol.Codegen.Nodes
                     if (data.LevelNumber != null)
                     {
                         int level = (int) (data.LevelNumber.Value);
-                        var customtype = this.Node.SymbolTable.GetType(data.DataType);
+                        var customtype = this.TypeDefinition ?? this.Node.SymbolTable.GetType(data.DataType).FirstOrDefault();
                         //collect root procedure
                         List<string> rootProcedures;
                         //Collect from level 01 Pure Cobol85 root variables                    
                         List<Tuple<string, string>> rootVars;
-                        GeneratorHelper.ComputeTypedProperPaths(this, data, customtype[0], out rootProcedures, out rootVars);
-                        _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
-                        if (customtype.Count > 0)
-                            _cache.AddRange(InsertChildren(Layout, rootProcedures, rootVars,  customtype[0], customtype[0], level + 1, 1));
+                        GeneratorHelper.ComputeTypedProperPaths(this, data, customtype, out rootProcedures, out rootVars);
+                        _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype, data, level, 0, true, true, customtype));
+                        _cache.AddRange(InsertChildren(Layout, rootProcedures, rootVars, customtype, customtype, level + 1, 1));
                     }
                 }
                 return _cache;
@@ -677,23 +676,22 @@ namespace TypeCobol.Codegen.Nodes
         {
             foreach (var child in dataDef.Children)
             {//First lookup in directly accessible
-                if (child is DataDefinition)
+                DataDefinition data = child as DataDefinition;
+                if (data != null)
                 {
-                    DataDefinition data = child as DataDefinition;
                     if (data.Name != null && data.Name.ToLower().Equals(name))
                     {
                         acc.Add(dataDef.Name);
                         acc.Add(data.Name);
                         return true;
                     }
-                    var types = table.GetType(data.DataType);
-                    bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
+                    var type = data.TypeDefinition ?? table.GetType(data.DataType).FirstOrDefault();
+                    bool isCustomTypeToo = !(data is TypeDefinition) && (type != null);
                     var dataDefinitionEntry = data.CodeElement as DataDefinitionEntry;
                     if (isCustomTypeToo && dataDefinitionEntry != null)
                     {                        
-                        DataDefinition typeDef = (DataDefinition)types[0];
                         List<string> sub_acc = new List<string>();
-                        bool bFound = AccessPathForName(table, typeDef, name, sub_acc);
+                        bool bFound = AccessPathForName(table, type, name, sub_acc);
                         if (bFound)
                         {   //Remove the type name
                             sub_acc.RemoveAt(0);
@@ -814,10 +812,13 @@ namespace TypeCobol.Codegen.Nodes
                 }
      
                 List <TypeDefinition> types = new List<TypeDefinition>();
-                if (types.Count == 0 && child.SymbolTable != null)
+                if (types.Count == 0 && child.SymbolTable != null && typed.TypeDefinition == null )
                 {
                     types = child.SymbolTable.GetType(typed.DataType);
                 }
+                else if(typed.TypeDefinition != null)
+                    types.Add(typed.TypeDefinition); //Avoid to reuse SymbolTable to get TypeDefinition
+
                 bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
                 if (dataDefinitionEntry != null)

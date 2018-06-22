@@ -732,17 +732,9 @@ namespace TypeCobol.LanguageServer
             {
                 if (symbolTable.TypesReferences != null) //We are in a typedef, get references of this type
                 {
-                    var types = symbolTable.GetType(variable.GetParentTypeDefinition.DataType);
+                    var type = variable.GetParentTypeDefinition;
                     IEnumerable<DataDefinition> references = null;
-                    if (types.Count == 0)
-                    {
-                        references = symbolTable.TypesReferences.SelectMany(t => t.Value);
-                    }
-                    else
-                    {
-                        var type = types.First();
-                        references = symbolTable.TypesReferences.Where(t => t.Key == type).SelectMany(r => r.Value);
-                    }
+                    references = symbolTable.TypesReferences.Where(t => t.Key == type).SelectMany(r => r.Value);
 
                     foreach (var reference in references)
                     {
