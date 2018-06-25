@@ -125,7 +125,17 @@ namespace TypeCobol.Compiler.Nodes {
 
         protected DataDefinition(DataDefinitionEntry entry) : base(entry) { }
         public override string ID { get { return "data-definition"; } }
-        public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
+        private string _name;
+
+        public override string Name
+        {
+            get
+            {
+                if (_name != null) return _name;
+                _name = ((DataDefinitionEntry) this.CodeElement).Name;
+                return _name;
+            }
+        }
 
         private Dictionary<StorageArea, Node> _References;
 
@@ -163,31 +173,37 @@ namespace TypeCobol.Compiler.Nodes {
             return astVisitor.Visit(this);
         }
 
+        private DataType _dataType;
         public virtual DataType DataType
         {
             get
             {
-                if (this.CodeElement != null)
-                {
-                    return ((DataDefinitionEntry)this.CodeElement).DataType;
-                }
-                return DataType.Unknown;
+                if (_dataType != null) return _dataType;
+
+                _dataType = this.CodeElement != null ? ((DataDefinitionEntry) this.CodeElement).DataType : DataType.Unknown;
+                return _dataType;
             }
         }
 
+        private DataType _primitiveDataType;
         public virtual DataType PrimitiveDataType
         {
             get
             {
+                if (_primitiveDataType != null) return _primitiveDataType;
                 if (this.Picture != null) //Get DataType based on Picture clause
-                    return DataType.Create(this.Picture.Value);
+                    _primitiveDataType = DataType.Create(this.Picture.Value);
                 else if (this.Usage.HasValue) //Get DataType based on Usage clause
-                    return DataType.Create(this.Usage.Value);
+                    _primitiveDataType = DataType.Create(this.Usage.Value);
                 else
                     return null;
+
+                return _primitiveDataType;
             }
         }
 
+
+        private int? _length = null;
         /// <summary>
         /// TODO This method should be split like this:
         /// - PhysicalLength 
@@ -199,27 +215,44 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
+                if (_length != null) return _length.Value;
                 if (this.CodeElement != null)
                 {
-                    return ((DataDefinitionEntry)this.CodeElement).Length;
+                    _length = ((DataDefinitionEntry) this.CodeElement).Length;
                 }
-                return 0;
+                else
+                    return 0;
+
+                return _length.Value;
             }
         }
+
+        private bool? _isPartOfTypeDef;
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
         public bool IsPartOfATypeDef
         {
             get
             {
+                if (_isPartOfTypeDef != null) return _isPartOfTypeDef.Value;
                 var parent = Parent;
                 while (parent != null)
                 {
-                    if (!(parent is DataDefinition)) return false;
-                    if (parent is TypeDefinition) return true;
+                    if (!(parent is DataDefinition))
+                    {
+                        _isPartOfTypeDef = false;
+                        break;
+                    }
+
+                    if (parent is TypeDefinition)
+                    {
+                        _isPartOfTypeDef = true;
+                        break;
+                    }
                     parent = parent.Parent;
                 }
-                return false;
+
+                return _isPartOfTypeDef != null && _isPartOfTypeDef.Value;
             }
         }
 
