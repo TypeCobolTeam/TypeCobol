@@ -45,7 +45,9 @@ namespace CSCup
         public int NextChar4;
 
         /// <summary>
-        /// Handle the #use directive
+        /// Handle the #use directive.
+        /// the syntax is : #use filepath        .
+        /// Every thing trimmed after the #use directive will be considered has the file path to be included.
         /// </summary>
         /// <param name="use">The File path to use</param>
         /// <returns>The next Lexer symbol</returns>
@@ -55,16 +57,15 @@ namespace CSCup
             {
                 return lexer.next_token();
             }
-            FileStream fs = null;
             System.IO.StreamReader sr = null;
             try
             {
-                fs = new FileStream(use, FileMode.Open);
+                FileStream fs = new FileStream(use, FileMode.Open);
                 sr = new System.IO.StreamReader(fs);
             }
             catch (Exception e)
             {
-                lexer.emit_error("Fail to use file : " + use);
+                lexer.emit_error("Fail to use file '" + use + "' : " + e.Message);
                 return lexer.next_token();
             }
             lexer.SwitchLexerContext(use, sr);

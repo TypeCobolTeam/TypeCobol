@@ -233,7 +233,7 @@ namespace TUVienna.CS_CUP
 	    }
 
         /// <summary>
-        /// Restore a previously save Lexer context.
+        /// Restore a previously saved Lexer context.
         /// https://github.com/TypeCobolTeam/TypeCobol/issues/1000
         /// </summary>
 	    public static void RestoreLexerContext()
@@ -629,8 +629,8 @@ namespace TUVienna.CS_CUP
                 if (next_char == '#' && current_position == 1 && (next_char2 == 'u') && (next_char3 == 's') &&
                         (next_char4 == 'e'))
                 {  //https://github.com/TypeCobolTeam/TypeCobol/issues/1000
-                   //#use directive must appears as the first character in the line
-                   //Read the whole inlude line
+                   //#use directive must appears as the first character in the line.
+                   //Read the whole line after the #use directive and trim it as being the file path to be included.
                     string useLine = System.Console.In.ReadLine();
                     current_line += 1;
                     lexer.InitLookaheads();
