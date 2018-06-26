@@ -333,7 +333,7 @@ namespace TypeCobol.Compiler.Nodes {
             var node = (Node)o;
             if (node.CodeElement is SetStatementForIndexes)
             {
-                return node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2).ToList();
+                return node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2);
             }
             return null;
         }
