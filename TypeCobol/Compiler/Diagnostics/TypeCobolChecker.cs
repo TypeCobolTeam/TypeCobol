@@ -837,31 +837,39 @@ namespace TypeCobol.Compiler.Diagnostics
 
     public class SetStatementChecker
     {
-        public static void OnNode(Node node)
+        public static void CheckStatement(Node node)
         {
             var statement = node.CodeElement as SetStatementForIndexes;
             if (statement != null)
             {
-                // Check receivers (incremented)
-                var receivers = node["receivers"] as List<DataDefinition>;
-                if (receivers != null && receivers.Any(x => x.Usage == DataUsage.Pointer))
-                { // Set statement contains at leaste one Pointer
-                    if (!receivers.Any(x => x.Usage != DataUsage.Pointer))
-                    { // All receivers are Pointers
-                        // Set the flags to stipulate that the statement contains pointers. and the pointers are used in an incrementation (used un CodGen)
-                        node.SetFlag(Node.Flag.NodeContainsPointer, true);
-                        receivers.ForEach(delegate(DataDefinition receiver) { receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true); });
-
-                        if (receivers.Any(pntr =>
+                // Check receivers (incremented) 
+                var receivers = node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2).ToList();
+                bool containsPointers = false;
+                bool allArePointers = true;
+                foreach (var receiver in receivers)
+                {
+                    if (receiver.Usage == DataUsage.Pointer)
+                    {
+                        containsPointers = true;
+                        var levelNumber = ((DataDefinitionEntry)receiver.CodeElement).LevelNumber;
+                        if (levelNumber != null && levelNumber.Value > 49)
                         {
-                            var levelNumber = ((DataDefinitionEntry)pntr.CodeElement).LevelNumber;
-                            return levelNumber != null && levelNumber.Value > 49;
-                        }))
                             DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
+                            break;
+                        }
+                        receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true);
                     }
                     else
-                        DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
+                        allArePointers = false; 
+                        // Do note break here because it can be all indexes wich is correct or a pointer as last receiver wich is not
                 }
+
+                if (allArePointers)
+                    node.SetFlag(Node.Flag.NodeContainsPointer, true);
+                // If the receivers contains at least one Pointer, they must all be pointer
+                else if (containsPointers)
+                    DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
+                
                 // Check sender (increment)
                 int outputResult; // not used
                 if (!int.TryParse(statement.SendingVariable.ToString(), out outputResult))

@@ -307,23 +307,17 @@ namespace TypeCobol.Compiler.Nodes {
         public object GetValue(object o, SymbolTable table)
         {
             var node = (Node)o;
-            var codeElement = node.CodeElement;
-            var setStatement = codeElement as SetStatementForIndexes;
             List<string> displayableWritten = new List<string>();
-            if (setStatement != null && node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            if (node.CodeElement is SetStatementForIndexes && node.IsFlagSet(Node.Flag.NodeContainsPointer))
             {
-                foreach (var data in setStatement.StorageAreaWrites)
+                foreach (var data in node.StorageAreaWritesDataDefinition)
                 {
-                    DataDescription dataDef = node.GetDataDefinitionForQualifiedName(data.MainSymbolReference.URI) as DataDescription;
-                    if (dataDef != null)
-                    {
-                        // Usage of Regex.Replace to replace only the first ooccurence of dataDef.Name to avoid probleme with groups like myPtrGroup::myPtr
-                        var regex = new Regex(Regex.Escape(dataDef.Name));
-                        displayableWritten.Add(
-                            regex.Replace(
-                                data.MainSymbolReference.ToString(), dataDef.Name + dataDef.Hash, 1)
-                                .Replace(" IN ", " OF "));
-                    }
+                    // Usage of Regex.Replace to replace only the first ooccurence of dataDef.Name to avoid probleme with groups like myPtrGroup::myPtr
+                    var regex = new Regex(Regex.Escape(data.Value.Item2.Name));
+                    displayableWritten.Add(
+                        regex.Replace(
+                            data.Key.ToString(), data.Value.Item2.Name + data.Value.Item2.Hash, 1)
+                            .Replace(" IN ", " OF "));
                 }
 
             }
@@ -337,20 +331,11 @@ namespace TypeCobol.Compiler.Nodes {
         public object GetValue(object o, SymbolTable table)
         {
             var node = (Node)o;
-            var codeElement = node.CodeElement;
-            var setStatement = codeElement as SetStatementForIndexes;
-            List<DataDefinition> variablesWritten = new List<DataDefinition>();
-            if (setStatement != null)
+            if (node.CodeElement is SetStatementForIndexes)
             {
-                foreach (var data in setStatement.StorageAreaWrites)
-                {
-                    variablesWritten.Add(
-                        node.GetDataDefinitionForQualifiedName(data.MainSymbolReference.URI));
-                }
+                return node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2).ToList();
             }
-            if (variablesWritten.Count == 0) return null;
-            return variablesWritten;
-
+            return null;
         }
     }
 

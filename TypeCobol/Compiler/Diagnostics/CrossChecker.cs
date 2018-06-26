@@ -48,7 +48,6 @@ namespace TypeCobol.Compiler.Diagnostics
             RedefinesChecker<CodeElement>.OnNode(node);
             FunctionDeclarationChecker<CodeElement>.OnNode(node);
             FunctionCallChecker.OnNode(node);
-            SetStatementChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);
             ReadOnlyPropertiesChecker.OnNode(node);
@@ -83,6 +82,12 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Section section)
         {
             SectionOrParagraphUsageChecker.CheckSection(section);
+            return true;
+        }
+
+        public override bool Visit(Set setStatement)
+        {
+            SetStatementChecker.CheckStatement(setStatement);
             return true;
         }
 
