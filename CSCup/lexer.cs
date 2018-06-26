@@ -133,14 +133,24 @@ namespace TUVienna.CS_CUP
         /// </summary>
 	    public static Stack<LexerContext> UseStack = new Stack<LexerContext>();
 
-		/*-----------------------------------------------------------*/
-		/*--- Static Methods ----------------------------------------*/
-		/*-----------------------------------------------------------*/
+        /// <summary>
+        /// The Main file
+        /// https://github.com/TypeCobolTeam/TypeCobol/issues/1000
+        /// </summary>
+	    public static string MainFile;
+        /// <summary>
+        /// The Current File
+        /// </summary>
+        public static string CurrentFile;
 
-		/** Initialize the scanner.  This sets up the keywords and char_symbols
+        /*-----------------------------------------------------------*/
+        /*--- Static Methods ----------------------------------------*/
+        /*-----------------------------------------------------------*/
+
+        /** Initialize the scanner.  This sets up the keywords and char_symbols
 		  * tables and reads the first two characters of lookahead.  
 		  */
-		public static void init() 
+        public static void init() 
 		{
 			/* Set up the keyword table */
 			keywords.Add("namespace",    sym.PACKAGE);
@@ -221,15 +231,21 @@ namespace TUVienna.CS_CUP
 	        LexerContext ctx = new LexerContext();
 	        ctx.FilePath = filePath;
             ctx.In = System.Console.In;
+	        ctx.CurrentFile = CurrentFile;
 	        ctx.CurrentLine = current_line;
 	        ctx.CurrentPosition = current_position;
-	        ctx.NextChar = next_char;
+	        ctx.AbsolutePosition = absolute_position;
+            ctx.NextChar = next_char;
             ctx.NextChar2 = next_char2;
             ctx.NextChar3 = next_char3;
             ctx.NextChar4 = next_char4;
             UseStack.Push(ctx);
 	        System.Console.SetIn(sr);
-	        InitLookaheads();
+	        current_line = 1;
+	        current_position = 1;
+	        absolute_position = 1;
+	        CurrentFile = filePath;
+            InitLookaheads();
 	    }
 
         /// <summary>
@@ -243,8 +259,10 @@ namespace TUVienna.CS_CUP
 	            LexerContext ctx = UseStack.Pop();
                 System.Console.In.Close();
                 System.Console.SetIn(ctx.In);
+	            CurrentFile = ctx.CurrentFile;
 	            current_line = ctx.CurrentLine;
 	            current_position = ctx.CurrentPosition;
+	            absolute_position = ctx.AbsolutePosition;
                 next_char = ctx.NextChar;
 	            next_char2 = ctx.NextChar2;
 	            next_char3 = ctx.NextChar3;
@@ -318,7 +336,7 @@ namespace TUVienna.CS_CUP
 		 */
 		public static void emit_error(string message)
 		{
-			System.Console.Error.WriteLine("Error at " + current_line + "(" + current_position +
+			System.Console.Error.WriteLine((CurrentFile !=  null ? ("File " + CurrentFile + ":") : "") +"Error at " + current_line + "(" + current_position +
 				"): " + message);
 			error_count++;
 		}

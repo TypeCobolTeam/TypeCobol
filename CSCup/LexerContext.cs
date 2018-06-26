@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using TUVienna.CS_CUP;
@@ -20,6 +21,10 @@ namespace CSCup
         public string FilePath;
         public TextReader In;
         /// <summary>
+        /// The CurrentFile
+        /// </summary>
+        public string CurrentFile;
+        /// <summary>
         /// The Current Line
         /// </summary>
         public int CurrentLine;
@@ -27,6 +32,10 @@ namespace CSCup
         /// The Current column position
         /// </summary>
         public int CurrentPosition;
+        /// <summary>
+        /// The Current Absolute position
+        /// </summary>
+        public int AbsolutePosition;
         /// <summary>
         /// First character of lookahead.
         /// </summary>
@@ -60,7 +69,26 @@ namespace CSCup
             System.IO.StreamReader sr = null;
             try
             {
-                FileStream fs = new FileStream(use, FileMode.Open);
+                FileStream fs = null;
+                if (Path.IsPathRooted(use))
+                {
+                    fs = new FileStream(use, FileMode.Open);
+                }
+                else
+                {   //Relative path from the MainFile.
+                    FileInfo fi = new FileInfo(lexer.MainFile);
+                    if (lexer.MainFile != null && fi.DirectoryName != null)
+                    {                        
+                        string usepath = Path.Combine(fi.DirectoryName, use);
+                        fi = new FileInfo(usepath);
+                        usepath = fi.FullName;
+                        fs = new FileStream(usepath, FileMode.Open);
+                    }
+                    else
+                    {
+                        fs = new FileStream(use, FileMode.Open);
+                    }
+                }
                 sr = new System.IO.StreamReader(fs);
             }
             catch (Exception e)
