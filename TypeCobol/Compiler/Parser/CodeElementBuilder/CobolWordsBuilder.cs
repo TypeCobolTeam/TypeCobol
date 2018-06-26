@@ -55,7 +55,7 @@ namespace TypeCobol.Compiler.Parser
             return new NumericValue(ParseTreeUtils.GetFirstToken(context));
         }
 
-        internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue1Context context)
+        internal static CharacterValue CreateCharacterValue(CodeElementsParser.AlphanumericLiteralTokenContext context)
         {
             return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
         }

@@ -976,7 +976,7 @@ userDefinedCharacterClass:
 // p119: The SPECIAL-NAMES paragraph can contain multiple CURRENCY SIGN clauses.
 
 currencySignClause:
-    CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL characterValue1)?;
+    CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL alphanumericLiteralToken)?;
 
 // p120: The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
 // and the comma in PICTURE character-strings and in numeric literals.

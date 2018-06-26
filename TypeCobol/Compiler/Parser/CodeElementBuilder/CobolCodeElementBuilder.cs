@@ -492,9 +492,9 @@ namespace TypeCobol.Compiler.Parser
 				{
 					var currencySign = CobolWordsBuilder.CreateAlphanumericValue(currencySignContext.alphanumericValue1());
 					CharacterValue characterValue = null;
-					if (currencySignContext.characterValue1() != null)
+					if (currencySignContext.alphanumericLiteralToken() != null)
 					{
-						characterValue = CobolWordsBuilder.CreateCharacterValue(currencySignContext.characterValue1());
+						characterValue = CobolWordsBuilder.CreateCharacterValue(currencySignContext.alphanumericLiteralToken());
 					}
 					paragraph.CurrencySymbols.Add(currencySign, characterValue);
 				}
