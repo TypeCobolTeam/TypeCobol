@@ -2716,7 +2716,7 @@ tableSortingKeys:
 // elementary data item.
 
 pictureClause:
-    (PICTURE |PIC) IS? pictureCharacterString=alphanumericValue7;
+    (PICTURE |PIC) IS? pictureCharacterString=PictureCharacterString;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause

@@ -32,7 +32,7 @@ Top rules invocations
 1516	dataNameDefinition
 1433	numericLiteralToken
 1204	pictureClause
-1204	alphanumericValue7
+997	dataNameReferenceOrIndexNameReference
 
 ---------------------
 Rules invocation info
@@ -257,9 +257,6 @@ Rules invocation info
 	157	4:codeElement>dataDescriptionEntry>dataConditionEntry>integerValue2
 	157	4:codeElement>dataDescriptionEntry>dataConditionEntry>conditionNameDefinition
 	157	4:codeElement>dataDescriptionEntry>dataConditionEntry>valueClauseForCondition
-
-4:codeElement>dataDescriptionEntry>pictureClause
-	1190	4:codeElement>dataDescriptionEntry>pictureClause>alphanumericValue7
 
 4:codeElement>dataDescriptionEntry>redefinesClause
 	16	4:codeElement>dataDescriptionEntry>redefinesClause>dataNameReference
@@ -1403,9 +1400,6 @@ Rules invocation info
 
 8:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause
 	21	8:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause>typeNameReference
-
-8:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>pictureClause
-	14	8:codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>pictureClause>alphanumericValue7
 
 8:codeElement>tcCodeElement>functionDeclarationHeader>outputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause
 	22	8:codeElement>tcCodeElement>functionDeclarationHeader>outputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause>typeNameReference

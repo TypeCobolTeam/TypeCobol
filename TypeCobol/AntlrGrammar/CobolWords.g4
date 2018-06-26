@@ -801,8 +801,6 @@ alphanumericValue3: alphanumericOrNationalLiteralToken | figurativeConstant;
 
 alphanumericValue5: UserDefinedWord | alphanumericLiteralToken;
 
-alphanumericValue7: PictureCharacterString;
-
 enumeratedValue1: UserDefinedWord;
 
 enumeratedValue3: ExecTranslatorName;
