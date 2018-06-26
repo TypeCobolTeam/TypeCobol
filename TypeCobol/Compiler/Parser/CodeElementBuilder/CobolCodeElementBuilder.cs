@@ -546,10 +546,11 @@ namespace TypeCobol.Compiler.Parser
 
 		private CharacterInCollatingSequence CreateCharacterInCollatingSequence(CodeElementsParser.CharacterInCollatingSequenceContext context) {
 			var chars = new CharacterInCollatingSequence();
-			if (context.characterValue2() != null) {
-				chars.CharacterValue = CobolWordsBuilder.CreateCharacterValue(context.characterValue2());
-			} else
-			if (context.ordinalPositionInCollatingSequence() != null) {
+			if (context.alphanumericLiteralToken() != null) {
+				chars.CharacterValue = CobolWordsBuilder.CreateCharacterValue(context.alphanumericLiteralToken());
+			} else if (context.figurativeConstant() != null) {
+				chars.CharacterValue = CobolWordsBuilder.CreateFigurativeConstat(context.figurativeConstant());
+			} else if (context.ordinalPositionInCollatingSequence() != null) {
 				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().IntegerLiteral());
 			}
 			return chars;

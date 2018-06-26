@@ -60,11 +60,11 @@ namespace TypeCobol.Compiler.Parser
             return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
         }
 
-        internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue2Context context)
-        {
-            if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
-                return new CharacterValue(CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter));
-            return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
+        [CanBeNull]
+        internal CharacterValue CreateFigurativeConstat(CodeElementsParser.FigurativeConstantContext context) {
+            if (context?.symbolicCharacterReference() != null)
+                return new CharacterValue(CreateSymbolReference(context.symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter));
+            return null;
         }
 
         internal static CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue3Context context)

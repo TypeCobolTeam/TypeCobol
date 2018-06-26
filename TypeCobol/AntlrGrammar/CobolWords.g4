@@ -785,8 +785,6 @@ integerValue2: LevelNumber;
 
 numericValue: numericLiteralToken | numericFigurativeConstant;
 
-characterValue2: alphanumericLiteralToken | figurativeConstant;
-
 characterValue3: alphanumericOrNationalLiteralToken;
 
 characterValue4: alphanumericOrNationalLiteralToken | figurativeConstant;

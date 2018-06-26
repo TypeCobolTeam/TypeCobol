@@ -856,7 +856,7 @@ charactersEqualSet:
 // constant must not be specified.
 
 characterInCollatingSequence: 
-	characterValue2 | ordinalPositionInCollatingSequence;
+	alphanumericLiteralToken | figurativeConstant | ordinalPositionInCollatingSequence;
 
 // p117 : The SYMBOLIC CHARACTERS clause is applicable only to single-byte character
 // sets. Each character represented is an alphanumeric character.
