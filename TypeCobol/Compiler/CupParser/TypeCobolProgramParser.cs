@@ -8,6 +8,7 @@ namespace TypeCobol.Compiler.CupParser
 
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CupCommon;
 using System.Collections.Generic;
 using System.Collections;
 using System;

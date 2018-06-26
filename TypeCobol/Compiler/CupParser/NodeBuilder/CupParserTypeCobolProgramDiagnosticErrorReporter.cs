@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Preprocessor;
 

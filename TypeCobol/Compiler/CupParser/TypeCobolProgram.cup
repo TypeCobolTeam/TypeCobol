@@ -6,6 +6,7 @@ using TUVienna.CS_CUP.Runtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 

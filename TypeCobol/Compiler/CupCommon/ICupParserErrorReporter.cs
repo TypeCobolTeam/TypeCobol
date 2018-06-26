@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TypeCobol.Compiler.CupParser
+namespace TypeCobol.Compiler.CupCommon
 {
     /// <summary>
     /// An interface for a Cup Parser Error Reporter.
