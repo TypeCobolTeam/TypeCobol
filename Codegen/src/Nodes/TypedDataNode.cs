@@ -37,7 +37,7 @@ namespace TypeCobol.Codegen.Nodes
                     if (data.LevelNumber != null)
                     {
                         int level = (int) (data.LevelNumber.Value);
-                        var customtype = this.TypeDefinition ?? this.Node.SymbolTable.GetType(data.DataType).FirstOrDefault();
+                        var customtype = this.Node.TypeDefinition;
                         //collect root procedure
                         List<string> rootProcedures;
                         //Collect from level 01 Pure Cobol85 root variables                    
@@ -685,7 +685,7 @@ namespace TypeCobol.Codegen.Nodes
                         acc.Add(data.Name);
                         return true;
                     }
-                    var type = data.TypeDefinition ?? table.GetType(data.DataType).FirstOrDefault();
+                    var type = data.TypeDefinition;
                     bool isCustomTypeToo = !(data is TypeDefinition) && (type != null);
                     var dataDefinitionEntry = data.CodeElement as DataDefinitionEntry;
                     if (isCustomTypeToo && dataDefinitionEntry != null)
@@ -810,20 +810,12 @@ namespace TypeCobol.Codegen.Nodes
                 {//Unexpected typed value.                    
                     continue;
                 }
-     
-                List <TypeDefinition> types = new List<TypeDefinition>();
-                if (types.Count == 0 && child.SymbolTable != null && typed.TypeDefinition == null )
-                {
-                    types = child.SymbolTable.GetType(typed.DataType);
-                }
-                else if(typed.TypeDefinition != null)
-                    types.Add(typed.TypeDefinition); //Avoid to reuse SymbolTable to get TypeDefinition
 
-                bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
+                bool isCustomTypeToo = !(child is TypeDefinition) && (typed.TypeDefinition != null);
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
                 if (dataDefinitionEntry != null)
                 {
-                    lines.AddRange(CreateDataDefinition(child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
+                    lines.AddRange(CreateDataDefinition(child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? typed.TypeDefinition : null));
                 }
                 else
                 {//Humm ... It will be a bug.
@@ -832,9 +824,9 @@ namespace TypeCobol.Codegen.Nodes
                 if (isCustomTypeToo)
                 {
                     List< Tuple<string,string> > newRootVariableName = new List<Tuple<string, string>>();
-                    newRootVariableName.Add(new Tuple<string, string>(typed.Name, types[0].Name));
+                    newRootVariableName.Add(new Tuple<string, string>(typed.Name, typed.TypeDefinition.Name));
                     newRootVariableName.AddRange(rootVariableName);
-                    lines.AddRange(InsertChildren(layout, rootProcedures, newRootVariableName, typed, types[0], level + 1, indent + 1));
+                    lines.AddRange(InsertChildren(layout, rootProcedures, newRootVariableName, typed, typed.TypeDefinition, level + 1, indent + 1));
                 }
                 else
                     lines.AddRange(InsertChildren(layout, rootProcedures, rootVariableName, typed, typed, level + 1, indent + 1));

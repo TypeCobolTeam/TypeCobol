@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var types = symbolTable.GetType(dataEntry.DataType);
             if (types.Count != 1) return;
             var type = types.First();
-
+            dataEntry.TypeDefinition = type; //Set the TypeDefinition on DataDefinition Node so to avoid symbolTable access
 
             var circularRefInsideChildren = type.Children.Any(c =>
             {
@@ -78,8 +78,6 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 symbolTable.TypesReferences.Add(type, new List<DataDefinition> {dataEntry});
             }
-
-            dataEntry.TypeDefinition = type; //Set the TypeDefinition on DataDefinition Node so to avoid symbolTable access
 
             //Also add all the typedChildren to reference list
             foreach (var dataDescTypeChild in type.Children.Where(c => c is DataDescription))

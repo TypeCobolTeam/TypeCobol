@@ -323,12 +323,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
                             
                         }
-                        else if (actualDataDefinition.DataType != expected.DataType) 
+                        else if (actualDataDefinition.DataType != expected.DataType)
                         {
-                            TypeDefinition callerType = GetSymbolType(actualDataDefinition);
-                            actualDataDefinition.TypeDefinition = callerType;
-                            TypeDefinition calleeType = GetSymbolType(expected);
-                            expected.TypeDefinition = calleeType;
+                            TypeDefinition callerType = actualDataDefinition.TypeDefinition;
+                            TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType == null || calleeType == null)
                             {
                                 //Ignore, it's an unknown DataType. It's already checked
@@ -510,11 +508,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(node, m);
                 }
             }
-        }
-
-        private static TypeDefinition GetSymbolType(DataDefinition node)
-        {
-            return node.TypeDefinition ?? node.SymbolTable.GetType(node.DataType).FirstOrDefault();
         }
     }
 

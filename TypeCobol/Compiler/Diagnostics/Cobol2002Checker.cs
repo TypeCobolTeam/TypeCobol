@@ -300,6 +300,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 var calculatedLevel = startingLevel;
                 if (child.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //If variable is typed
                 {
+                    /*----- This section should be removed when issue #1009 is fixed ----- */
+                    /*----- We'll only need child.TypeDefinition --------------------------*/
                     TypeDefinition foundType;
                     if (child.TypeDefinition == null)
                     {
@@ -311,6 +313,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                     else
                         foundType = child.TypeDefinition;
+                    /* -----------------------------------------------------------------  */
 
                     calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundType);
                 }
