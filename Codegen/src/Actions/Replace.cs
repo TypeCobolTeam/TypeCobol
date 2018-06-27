@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.Nodes;
 
@@ -18,6 +19,10 @@ namespace TypeCobol.Codegen.Actions
         /// True if this replace action is for a "replace SET <boolean> TO FALSE" pattern, false otherwise.
         /// </summary>
         private bool IsReplaceSetBool;
+        /// <summary>
+        /// True if this replace action is for a "replace SET <pointer> UP BY <integer>" pattern, false otherwise.
+        /// </summary>
+        private bool IsReplaceSetUpByPointer;
         private bool UseRazor;
 
         /// <summary>
@@ -30,8 +35,22 @@ namespace TypeCobol.Codegen.Actions
         /// <returns>true if all parameters corresponds to a "replace SET <boolean> TO FALSE" pattern, false otherwise</returns>
         private static bool IsSetBoolVarTemplate(Node node, string template, Dictionary<string, object> variables)
         {
-            return(node is TypeCobol.Compiler.Nodes.Set) && template.Equals("SET %receiver-false TO TRUE") && variables != null &&
-                variables.ContainsKey("receiver");
+            return (node is TypeCobol.Compiler.Nodes.Set) && template.Equals("SET %receiver-false TO TRUE") && variables != null &&
+                   variables.ContainsKey("receiver");
+        }
+
+        /// <summary>
+        /// Determine if the given node, the given template and the set of template variables correspond to a "replace SET <boolean> TO FALSE"
+        /// pattern
+        /// </summary>
+        /// <param name="node">The Node to check</param>
+        /// <param name="template">The replacement template to check</param>
+        /// <param name="variables">The set of variable templates</param>
+        /// <returns>true if all parameters corresponds to a "replace SET <boolean> TO FALSE" pattern, false otherwise</returns>
+        private static bool IsSetPointerInrementVarTemplate(Node node, string template, Dictionary<string, object> variables)
+        {
+            return (node is TypeCobol.Compiler.Nodes.Set) && variables != null &&
+                   variables.ContainsKey("incrementDirection");
         }
 
         /// <summary>
@@ -63,6 +82,8 @@ namespace TypeCobol.Codegen.Actions
         private string CheckCustomReplace(Node node, string template, Dictionary<string, object> variables, string group, string delimiter)
         {
             IsReplaceSetBool = IsSetBoolVarTemplate(node, template, variables) && IsQualifiedNodeReceiver(node);
+            IsReplaceSetUpByPointer = IsSetPointerInrementVarTemplate(node, template, variables) && IsQualifiedNodeReceiver(node);
+
             if (IsReplaceSetBool)
             {
               //Method : Optimization don't use Razor just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
@@ -87,6 +108,11 @@ namespace TypeCobol.Codegen.Actions
                     }
                 }
                 UseRazor = false;
+            }
+            else if (IsReplaceSetUpByPointer)
+            {
+                // In case of pointer incrementation, the name qualification is already done
+                node.RemoveAllChildren();
             }
             return template;
         }

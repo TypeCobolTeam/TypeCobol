@@ -763,36 +763,67 @@ namespace TypeCobol.Codegen.Nodes
             return str;
         }
 
-        private readonly static string[] BoolTypeTemplate = {
-        " {2}{1}  {0}-value PIC X VALUE {3}.",
-        " {2}    88  {0}       VALUE 'T'.",
-        " {2}    88  {0}-false VALUE 'F' ",
-        "                      X'00' thru 'S'",
-        "                      'U' thru X'FF'."
-    };
+        private static readonly string[] BoolTypeTemplate = {
+            " {2}{1}  {0}-value PIC X VALUE {3}.",
+            " {2}    88  {0}       VALUE 'T'.",
+            " {2}    88  {0}-false VALUE 'F' ",
+            "                      X'00' thru 'S'",
+            "                      'U' thru X'FF'."
+        };
+        private static readonly string[] PointerUsageTemplate = {
+            " {2}{1}  {0} Pointer.",
+            " {2}{1}  redefines {0}.",
+            " {2}    {3}  {4}{5} pic S9(05) comp-5."
+
+        };
         public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
             foreach (var child in type.Children)
             {
                 if (child is TypedDataNode) continue;
-                //Special case type BOOL
+                //Special cases BOOL / POINTER
                 if (child is TypeCobol.Compiler.Nodes.DataDescription)
                 {
+                    // For BOOL
                     string attr_type = (string)child["type"];
-                    if (attr_type != null)
+                    if (attr_type != null && attr_type.ToUpper().Equals("BOOL"))
                     {
-                        if (attr_type.ToUpper().Equals("BOOL"))
+                        string attr_name = (string)child["name"];
+                        string margin = "";
+                        for (int i = 0; i < indent; i++)
+                            margin += "  ";
+                        string slevel = level.ToString("00");
+                        string svalue = child["value"] as string;
+                        foreach (string str in BoolTypeTemplate)
+                        {
+                            string sline = string.Format(str, attr_name, slevel, margin, svalue?.Length == 0 ? "LOW-VALUE" : svalue);
+                            TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
+                            lines.Add(line);
+                        }
+                        continue;
+                    }
+                    else
+                    {
+                        // For POINTER
+                        var attr_usage = child["usage"];
+                        if (attr_usage != null && attr_usage.ToString().ToUpper().Equals("POINTER"))
                         {
                             string attr_name = (string)child["name"];
                             string margin = "";
                             for (int i = 0; i < indent; i++)
                                 margin += "  ";
                             string slevel = level.ToString("00");
-                            string svalue = child["value"] as string;
-                            foreach (string str in BoolTypeTemplate)
+                            string shash = (string)child["hash"];
+                            foreach (string str in PointerUsageTemplate)
                             {
-                                string sline = string.Format(str, attr_name, slevel, margin, svalue?.Length == 0 ? "LOW-VALUE" : svalue);
+                                string sline = string.Format(str,
+                                                             attr_name, 
+                                                             slevel,
+                                                             margin,
+                                                             (level+1).ToString("00"),
+                                                             attr_name.Length > 22 ? attr_name.Substring(0, 22) : attr_name,
+                                                             shash);
                                 TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
                                 lines.Add(line);
                             }

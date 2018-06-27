@@ -85,6 +85,12 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Set setStatement)
+        {
+            SetStatementChecker.CheckStatement(setStatement);
+            return true;
+        }
+
         public override bool Visit(Move move)
         {
             var moveCorresponding = move?.CodeElement as MoveCorrespondingStatement;
@@ -388,31 +394,6 @@ namespace TypeCobol.Compiler.Diagnostics
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
                             completeQualifiedName);
-                    }
-                }
-                else if (dataDefinition.Usage == DataUsage.Pointer && dataDefinition.CodeElement is DataDefinitionEntry)
-                {
-                    if (node.CodeElement is SetStatementForIndexes && !node.IsFlagSet(Node.Flag.NodeContainsPointer))
-                    {
-                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsPointer, node, storageArea,
-                            completeQualifiedName);
-                        var receivers = node["receivers"] as List<DataDefinition>;
-                        int intSender;
-                        if (!Int32.TryParse(node["sender"].ToString(), out intSender))
-                        {
-                            if (!node.SymbolTable.DataEntries.Any(
-                                x => x.Key == node["sender"].ToString() &&
-                                     x.Value.First().DataType.Name == "Numeric"))
-                                DiagnosticUtils.AddError(node, "Increment only support integer values");
-                        }
-                        foreach (var receiver in receivers)
-                        {
-                            if (receiver.Usage != DataUsage.Pointer)
-                                DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
-                            
-                            if (((DataDefinitionEntry)receiver.CodeElement).LevelNumber.Value > 49)
-                                DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
-                        }
                     }
                 }
 

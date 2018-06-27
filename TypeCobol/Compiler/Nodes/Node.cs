@@ -162,7 +162,11 @@ namespace TypeCobol.Compiler.Nodes {
             /// <summary>
             /// Mark that this node contains a pointer variable that has to be considered by CodeGen. 
             /// </summary>
-            NodeContainsPointer = 0x01 << 21
+            NodeContainsPointer = 0x01 << 21,
+            /// <summary>
+            /// Mark that this node declare a pointer that is used in an incrementation and need a redefine
+            /// </summary>
+            NodeisIncrementedPointer = 0x01 << 22
 
 
         };

@@ -1068,7 +1068,7 @@ namespace TypeCobol.Compiler.Parser
 			if (context.DOWN() != null) {
 				statement.IncrementDirection = CreateSyntaxProperty(IndexIncrementDirection.Down, context.DOWN());
 			}
-			statement.SendingVariable = CobolExpressionsBuilder.CreateIntegerVariable(context.integerVariable1());
+			statement.SendingVariable = CobolExpressionsBuilder.CreateVariableOrExpression(context.variableOrExpression2());
 			return statement;
 		}
 

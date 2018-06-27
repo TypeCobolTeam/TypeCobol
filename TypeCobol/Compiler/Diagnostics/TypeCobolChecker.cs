@@ -10,6 +10,8 @@ using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Analytics;
+using Castle.Core.Internal;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -823,5 +825,54 @@ namespace TypeCobol.Compiler.Diagnostics
 	}
 }
 
+    public class SetStatementChecker
+    {
+        public static void CheckStatement(Node node)
+        {
+            var statement = node.CodeElement as SetStatementForIndexes;
+            if (statement != null)
+            {
+                // Check receivers (incremented) 
+                var receivers = node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2);
+                bool containsPointers = false;
+                bool allArePointers = true;
+                foreach (var receiver in receivers)
+                {
+                    if (receiver.Usage == DataUsage.Pointer)
+                    {
+                        containsPointers = true;
+                        var levelNumber = ((DataDefinitionEntry)receiver.CodeElement).LevelNumber;
+                        if (levelNumber != null && levelNumber.Value > 49)
+                        {
+                            DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
+                            break;
+                        }
+                        receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true);
+                    }
+                    else
+                        allArePointers = false; 
+                        // Do note break here because it can be all indexes wich is correct or a pointer as last receiver wich is not
+                }
 
+                if (allArePointers)
+                    node.SetFlag(Node.Flag.NodeContainsPointer, true);
+                // If the receivers contains at least one Pointer, they must all be pointer
+                else if (containsPointers)
+                    DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
+                
+                // Check sender (increment)
+                int outputResult; // not used
+                if (!int.TryParse(statement.SendingVariable.ToString(), out outputResult))
+                {// Not an integer
+                    var variable = node.GetDataDefinitionForQualifiedName(new URI(statement.SendingVariable.ToString()));
+                    if (variable == null || variable.DataType.Name != "Numeric")
+                    {// Not an Variable or a notNumeric variable
+                        if (statement.SendingVariable.ArithmeticExpression == null)
+                            // Not an arithmetic expressions
+                            DiagnosticUtils.AddError(node, "Increment only support integer values, numeric variables and arithmetic expressions");
+                    }
+                }
+            }
+        }
+    }
 }
