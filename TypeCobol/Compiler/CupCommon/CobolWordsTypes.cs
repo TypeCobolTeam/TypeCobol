@@ -9,6 +9,19 @@ using TypeCobol.Compiler.Scanner;
 namespace TypeCobol.Compiler.CupCommon
 {
     /// <summary>
+    /// Type that represents a list of tokens.
+    /// </summary>
+    public class TokenList : List<Token> {};
+    /// <summary>
+    /// A list of Pair of tokens.
+    /// </summary>
+    public class PairTokenList : List<Tuple<Token,Token>> { };
+    /// <summary>
+    /// A list of Pair of list of tokens
+    /// </summary>
+    public class PairTokenListList : List<Tuple<List<Token>, List<Token>>> { };
+
+    /// <summary>
     /// Representation of:
     /// allFigurativeConstant: ALL figurativeConstant
     /// </summary>

@@ -33,6 +33,9 @@
 // -> figurativeConstant, externalName1, literalOrUserDefinedWordOReservedWordExceptCopy
 //------------------------------------------------------------------
 
+//Special Token introduced to represent ANY Token for CUP that does not support ~ operator
+terminal TypeCobol.Compiler.Scanner.Token CUP_ANY_TOKEN;
+
 // Separators - Whitespace
 terminal TypeCobol.Compiler.Scanner.Token SpaceSeparator;
 terminal TypeCobol.Compiler.Scanner.Token CommaSeparator;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,12 +37,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             Diagnostics.Add(diag);
         }
-        public bool ReportFatalError(lr_parser parser, string message, object info)
+        public bool ReportFatalError(lr_parser parser, Stack stack, string message, object info)
         {
             return true;
         }
 
-        public bool ReportError(lr_parser parser, string message, object info)
+        public bool ReportError(lr_parser parser, Stack stack, string message, object info)
         {
             return true;
         }
@@ -68,7 +69,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             return newParser;
         }
 
-        public bool SyntaxError(lr_parser parser, Symbol curToken)
+        public bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
         {
             TypeCobolProgramParser tcpParser = parser as TypeCobolProgramParser;
             if (tcpParser.IsTrial)
@@ -81,7 +82,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             CupParserDiagnostic diagnostic = new CupParserDiagnostic(msg, curToken, null);
             AddDiagnostic(diagnostic);
             //Try to add the last encountered statement in the stack if it is not already entered. 
-            System.Collections.Stack stack = tcpParser.getParserStack();
             object[] items = stack.ToArray();
             foreach (var item in items)
             {
@@ -97,7 +97,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             return true;
         }
 
-        public bool UnrecoveredSyntaxError(lr_parser parser, Symbol curToken)
+        public bool UnrecoveredSyntaxError(lr_parser parser, Stack stack, Symbol curToken)
         {
             return true;
         }

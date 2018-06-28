@@ -1423,7 +1423,7 @@ new short[450][] {
     object   info)
 	{
 		if(ErrorReporter != null) {
-			if (ErrorReporter.ReportFatalError(this, message, info))
+			if (ErrorReporter.ReportFatalError(this, getParserStack(), message, info))
 			{
 				return;
 			}
@@ -1434,7 +1434,7 @@ new short[450][] {
 	public override void report_error(string message, object info)
 	{
 		if(ErrorReporter != null) {
-			if (ErrorReporter.ReportError(this, message, info))
+			if (ErrorReporter.ReportError(this, getParserStack(), message, info))
 			{
 				return;
 			}
@@ -1445,7 +1445,7 @@ new short[450][] {
 	public override void syntax_error(Symbol cur_token)
 	{
 		if(ErrorReporter != null) {
-			if (ErrorReporter.SyntaxError(this, cur_token))
+			if (ErrorReporter.SyntaxError(this, getParserStack(), cur_token))
 			{
 				return;
 			}
@@ -1456,7 +1456,7 @@ new short[450][] {
 	public override void unrecovered_syntax_error(Symbol cur_token)
 	{
 		if(ErrorReporter != null) {
-			if (ErrorReporter.UnrecoveredSyntaxError(this, cur_token))
+			if (ErrorReporter.UnrecoveredSyntaxError(this, getParserStack(), cur_token))
 			{
 				return;
 			}

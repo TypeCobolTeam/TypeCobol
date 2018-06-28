@@ -17,9 +17,15 @@ namespace TypeCobol.Compiler.CupCommon
     public class CobolWordsTokenizer : TokensLinesIterator, TUVienna.CS_CUP.Runtime.Scanner, IEnumerable<TUVienna.CS_CUP.Runtime.Symbol>, IEnumerator<TUVienna.CS_CUP.Runtime.Symbol>
     {
         /// <summary>
-        /// With CS CUP real toke start at 0, 0 is for EOF and 1 for error.
+        /// With CS CUP real toke start at 0, 0 is for EOF and 1 for error
+        /// and we have introduced the CUP_ANY_TOKEN token.
         /// </summary>
-        public const int CsCupStartToken = 2;
+        public const int CsCupStartToken = 3;
+        
+        /// <summary>
+        /// The ID od the Any Token
+        /// </summary>
+        public const int ANY_TOKEN = 2;
 
         /// <summary>
         /// The EOF symbol
@@ -55,6 +61,47 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
+        /// Is the Tokenizer in the Any Token Nmode ?
+        /// </summary>
+        public bool IsAnyTokenMode { get; private set; }
+        /// <summary>
+        /// Excluded Tokens from the Current Any Token Mode.
+        /// </summary>
+        private TokenType[] ExcludedTokens { get; set; }
+
+        /// <summary>
+        /// Call this method to enter in the any token mode
+        /// </summary>
+        /// <param name="excluded">Excludes Tokens from the Any Toke Mode</param>
+        public void EnterAnyTokenMode(params TokenType[] excluded)
+        {
+            ExcludedTokens = excluded;
+            if (excluded != null && excluded.Length != 0)
+                IsAnyTokenMode = true;
+        }
+
+        /// <summary>
+        /// Consume the given token type if it is the next token type at the same line than the current Token.
+        /// </summary>
+        /// <param name="nextTokenType">The next token type to check</param>
+        public void ConsumeNextTokenOnTheSameLine(TokenType nextTokenType)
+        {
+            Token currentToken = base.CurrentToken;
+            if (currentToken == Token.END_OF_FILE)
+                return;//Ignore if end of file
+            Token nextToken = base.NextToken();
+            if (nextToken != null && currentToken != null &&
+                nextToken.TokensLine == currentToken.TokensLine && nextToken.TokenType == nextTokenType)
+            {
+                return;//Consume it
+            }
+            else if (nextToken != null && currentToken != null)
+            {//Rollback
+                base.PreviousToken();
+            }
+        }
+
+        /// <summary>
         /// Symbol Enumerator over Scanner.Token
         /// </summary>
         /// <returns></returns>
@@ -64,6 +111,17 @@ namespace TypeCobol.Compiler.CupCommon
             while ((token = base.NextToken()) != Token.END_OF_FILE)
             {
                 TUVienna.CS_CUP.Runtime.Symbol symbol = new TUVienna.CS_CUP.Runtime.Symbol(((int)token.TokenType) + CsCupStartToken - 1, token);
+                if (IsAnyTokenMode)
+                {
+                    if (ExcludedTokens.Contains(token.TokenType))
+                    {   //Leave the mode, the token is an excluded token.
+                        IsAnyTokenMode = false;
+                    }
+                    else
+                    {   //Change the symbol to the any token symbol.
+                        symbol.sym = ANY_TOKEN;
+                    }
+                }
                 yield return symbol;
             }
             yield return EOF;
@@ -105,6 +163,26 @@ namespace TypeCobol.Compiler.CupCommon
         object IEnumerator.Current
         {
             get { return Current; }
+        }
+
+        /// <summary>
+        /// Get the string representation of a CodeElementType
+        /// </summary>
+        /// <param name="ceType"></param>
+        /// <returns></returns>
+        public static string ToString(TokenType ceType)
+        {
+            return TokenUtils.GetDisplayNameForTokenType(ceType);
+        }
+
+        /// <summary>
+        /// Get the string representation of the CodeElementType correponding to a Cup Token.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static string CupTokenToString(int token)
+        {
+            return ToString((TokenType)(token - CsCupStartToken + 1));
         }
     }
 }
