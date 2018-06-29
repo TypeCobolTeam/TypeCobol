@@ -122,7 +122,28 @@ non terminal ejectCompilerStatement;
 
 non terminal enterCompilerStatement;
 non terminal Token languageName;
-non terminal Token routineName:
+non terminal Token routineName;
+
+non terminal Token execToken;
+non terminal execSqlIncludeStatement;
+
+non terminal insertCompilerStatement;
+non terminal Token sequenceNumber;
+
+non terminal Token readyOrReset;
+non terminal readyOrResetTraceCompilerStatement;
+
+non terminal replaceCompilerStatement;
+non terminal PairTokenListList pseudoTextReplaces;
+
+non terminal serviceLabelCompilerStatement;
+
+non terminal serviceReloadCompilerStatement;
+
+non terminal Token skipTokens;
+non terminal skipCompilerStatement;
+
+non terminal titleCompilerStatement;
 
 
 // A typical COBOL compiler has a pre-step where comments and compiler directing 
@@ -170,7 +191,6 @@ compilerDirectingStatement ::= basisCompilerStatement
 		| deleteCompilerStatement 
 		| ejectCompilerStatement
 		| enterCompilerStatement
-/*		 		 
 		| execSqlIncludeStatement 
 		| insertCompilerStatement 
 		| readyOrResetTraceCompilerStatement 
@@ -179,7 +199,6 @@ compilerDirectingStatement ::= basisCompilerStatement
 		| serviceReloadCompilerStatement 
 		| skipCompilerStatement 
 		| titleCompilerStatement
-*/
 		;
 
 // p527: BASIS statement 
@@ -555,9 +574,9 @@ copyCompilerStatement ::= COPY:c
 ;
              
 copyCompilerStatementBody ::= qualifiedTextName:name replacingCopyReplacingOperandOpts:operands
-	{: my_parser.Builder.EnterCopyCompilerStatementBody(true, name, null, operands); :}
+	{: my_parser.Builder.EnterCopyCompilerStatementBody(name, null, operands); :}
 | qualifiedTextName:name SUPPRESS:s replacingCopyReplacingOperandOpts:operands
-	{: my_parser.Builder.EnterCopyCompilerStatementBody(true, name, s, operands); :}
+	{: my_parser.Builder.EnterCopyCompilerStatementBody(name, s, operands); :}
 ;
 
 replacingCopyReplacingOperandOpts ::= /* empty */
@@ -684,7 +703,7 @@ enterCompilerStatement ::=
 	{: my_parser.Builder.EnterEnterCompilerStatement(e, ln, rn); :}
 	;
 
-languageName :: UserDefinedWord:w
+languageName ::= UserDefinedWord:w
 {: RESULT = w; :}
 ;
 
@@ -693,3 +712,236 @@ routineName ::= /* empty */
 |	UserDefinedWord:w
 	{: RESULT = w; :}
 ;
+
+// p424: An SQL INCLUDE statement is treated identically to a native COBOL COPY statement
+// when you use the SQL compiler option.
+// The following two lines are therefore treated the same way. (The period that ends
+// the EXEC SQL INCLUDE statement is required.)
+// EXEC SQL INCLUDE name END-EXEC.
+// COPY "name".
+// The processing of the name in an SQL INCLUDE statement follows the same rules as
+// those of the literal in a COPY literal-1 statement that does not have a REPLACING
+// phrase.
+// The library search order for SQL INCLUDE statements is the same SYSLIB
+// concatenation as the compiler uses to resolve COBOL COPY statements that do not
+// specify a library-name.
+
+// p431: Precompiler: The DB2 precompiler does not require that a period end each EXEC
+// SQL INCLUDE statement. If a period is specified, the precompiler processes it as part
+// of the statement. If a period is not specified, the precompiler accepts the statement
+// as if a period had been specified.
+// Coprocessor: The DB2 coprocessor treats each EXEC SQL INCLUDE statement like a
+// COPY statement, and requires that a period end the statement. For example:
+// IF A = B THEN
+// EXEC SQL INCLUDE some_code_here END-EXEC.
+// ELSE
+// . . .
+// END-IF
+// Note that the period does not terminate the IF statement.
+
+// p431: Precompiler: With the DB2 precompiler, an EXEC SQL INCLUDE statement can
+// reference a copybook that contains a COPY statement that uses the REPLACING
+// phrase.
+// Coprocessor: With the DB2 coprocessor, an EXEC SQL INCLUDE statement cannot
+// reference a copybook that contains a COPY statement that uses the REPLACING
+// phrase. The coprocessor processes each EXEC SQL INCLUDE statement identically to a
+// COPY statement, and nested COPY statements cannot have the REPLACING phrase.
+
+// p424: Code an EXEC SQL INCLUDE statement to include an SQL communication area
+// (SQLCA) in the WORKING-STORAGE SECTION or LOCAL-STORAGE SECTION of the
+// outermost program. LOCAL-STORAGE is recommended for recursive programs and
+// programs that use the THREAD compiler option.
+
+execToken ::= EXEC:t
+	{: RESULT = t; :}
+| EXECUTE:t
+	{: RESULT = t; :}
+;
+
+execSqlIncludeStatement ::= execToken:t 
+	{: my_parser.Builder.EnterExecSqlIncludeStatement(t); :}
+	ExecTranslatorName	
+    EXEC_SQL
+    copyCompilerStatementBody
+    END_EXEC PeriodSeparator
+	;
+
+// p540: INSERT statement
+// The INSERT statement is a library statement that adds COBOL statements to a
+// source program that was included by a BASIS statement.
+// sequence-number
+// Can optionally appear in columns 1 through 6, followed by a space. The
+// content of this field is ignored.
+// INSERT
+// >>> Can appear anywhere within columns 1 through 72, followed by a space
+// >>> and the sequence-number-field. There must be no other text in the statement.
+// sequence-number-field
+// A number that must be equal to a sequence-number in the BASIS source
+// program. This sequence-number is a six-digit number that the programmer
+// assigns in columns 1 through 6 of the COBOL source line.
+// The numbers referenced in the sequence-number-field of INSERT or DELETE
+// statements must always be specified in ascending numeric order.
+// The sequence-number-field must be a single number (for example, 000130). At
+// least one new source program statement must follow the INSERT
+// statement for insertion after the statement number specified by the
+// sequence-number-field.
+// New source program statements following the INSERT statement can include any
+// COBOL syntax.
+// Usage note: If INSERT or DELETE statements are used to modify the COBOL
+// source program provided by a BASIS statement, the sequence field of the COBOL
+// source program must contain numeric sequence numbers in ascending order. The
+// source file remains unchanged. Any INSERT or DELETE statements referring to
+// these sequence numbers must occur in ascending order.
+
+insertCompilerStatement ::=
+    /* sequenceNumber? */ INSERT:tins sequenceNumber:sn
+	{: my_parser.Builder.EnterInsertCompilerStatement(tins,sn); :}
+	;
+
+// A number that must be equal to a sequence-number in the BASIS source
+// program. This sequence-number is a six-digit number that the programmer
+// assigns in columns 1 through 6 of the COBOL source line.
+
+sequenceNumber ::= IntegerLiteral:il
+	{: RESULT = il; :}
+	;
+
+// p540: READY or RESET TRACE statement
+// The READY or RESET TRACE statement was designed to trace the execution of
+// procedures. The READY or RESET TRACE statement can appear only in the
+// PROCEDURE DIVISION, but has no effect on your program.
+// You can trace the execution of procedures by using the USE FOR DEBUGGING
+// declarative as described in Example: USE FOR DEBUGGING in the Enterprise
+// COBOL Programming Guide.
+
+readyOrReset ::= READY : t
+	{: RESULT = t; :}
+| RESET : t
+	{: RESULT = t; :}
+;
+
+readyOrResetTraceCompilerStatement ::= readyOrReset:rt TRACE PeriodSeparator
+{: RESULT = my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); :}
+	;
+
+	// p541: REPLACE statement
+// The REPLACE statement is used to replace source text.
+// >>> A REPLACE statement can occur anywhere in the source text that a
+// >>> character-string can occur. It must be preceded by a separator period except when
+// >>> it is the first statement in a separately compiled program. It must be terminated by
+// >>> a separator period.
+// The REPLACE statement provides a means of applying a change to an entire
+// COBOL compilation group, or part of a compilation group, without manually
+// having to find and modify all places that need to be changed. It is an easy method
+// of doing simple string substitutions. It is similar in action to the REPLACING
+// phrase of the COPY statement, except that it acts on the entire source text, not just
+// on the text in COPY libraries.
+// >>> If the word REPLACE appears in a comment-entry or in the place where a
+// >>> comment-entry can appear, it is considered part of the comment-entry.
+// Format 1 : Each matched occurrence of pseudo-text-1 in the source text is replaced by the
+// corresponding pseudo-text-2.
+// Format 2 : Any text replacement currently in effect is discontinued with the format-2 form of
+// REPLACE. If format 2 is not specified, a given occurrence of the REPLACE
+// statement is in effect from the point at which it is specified until the next
+// occurrence of a REPLACE statement or the end of the separately compiled
+// program.
+// >>> The compiler processes REPLACE statements in source text after the processing of
+// >>> any COPY statements. COPY must be processed first, to assemble complete source
+// >>> text. Then REPLACE can be used to modify that source text, performing simple
+// >>> string substitution. REPLACE statements cannot themselves contain COPY
+// statements.
+// The text produced as a result of the processing of a REPLACE statement must not
+// contain a REPLACE statement.
+// ... more rules on REPLACE behavior p542 -> p544
+
+replaceCompilerStatement ::= REPLACE:r pseudoTextReplaces:replaces PeriodSeparator
+	{: my_parser.Builder.EnterReplaceCompilerStatement(r, null, replaces); :}
+| REPLACE:r OFF:o PeriodSeparator
+	{: my_parser.Builder.EnterReplaceCompilerStatement(r, o, null); :}
+;
+
+pseudoTextReplaces ::= pseudoText:from BY pseudoText:by
+	{: RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(from,by)}; :}
+| pseudoTextReplaces:replaces pseudoText:from BY pseudoText:by
+	{: replaces.Add(new Tuple<List<Token>, List<Token>>(from,by)); RESULT = replaces; :}
+;
+
+// p544: SERVICE LABEL statement
+// This statement is generated by the CICS integrated language translator (and the separate CICS translator) 
+// to indicate control flow. It is also used after calls to CEE3SRP when using Language Environment condition handling. 
+// For more information about CEE3SRP, see the Language Environment Programming Guide.
+// The SERVICE LABEL statement can appear only in the PROCEDURE DIVISION, but not in the declaratives section.        
+
+serviceLabelCompilerStatement ::= SERVICE_CD:s LABEL:l
+	{: my_parser.Builder.EnterServiceLabelCompilerStatement(s, l); :}
+	;
+
+// p545: SERVICE RELOAD statement
+// The SERVICE RELOAD statement is syntax checked, but has no effect on the execution of the program.
+
+serviceReloadCompilerStatement ::= SERVICE_CD:s RELOAD:l UserDefinedWord:w
+	{: my_parser.Builder.EnterServiceReloadCompilerStatement(s, l, w); :}
+	;
+
+	// p545: SKIP statements
+// The SKIP1, SKIP2, and SKIP3 statements specify blank lines that the compiler should add when printing the source listing. 
+// SKIP statements have no effect on the compilation of the source text itself.
+// SKIP1
+// Specifies a single blank line to be inserted in the source listing.
+// SKIP2
+// Specifies two blank lines to be inserted in the source listing.
+// SKIP3
+// Specifies three blank lines to be inserted in the source listing.
+// SKIP1, SKIP2, or SKIP3 can be written anywhere in either Area A or Area B, and can be terminated with a separator period. 
+// It must be the only statement on the line.
+// The SKIP statements must be embedded in a program source. 
+// For example, in the case of batch applications, a SKIP1, SKIP2, or SKIP3 statement must be placed between the CBL (PROCESS) statement and the end of the program or class (or the END CLASS marker or END PROGRAM marker, if specified).
+
+skipTokens ::= SKIP1 : t
+	{: RESULT = t; :}
+| SKIP2 : t
+	{: RESULT = t; :}
+| SKIP3 : t
+	{: RESULT = t; :}	
+;
+
+skipCompilerStatement ::= skipTokens : t
+	{: 
+		((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLine(TokenType.PeriodSeparator);  
+		my_parser.Builder.EnterSkipCompilerStatement(t);
+	:} 
+	;
+
+	// p545: TITLE statement
+// The TITLE statement specifies a title to be printed at the top of each page of the source listing produced during compilation.
+// If no TITLE statement is found, a title containing the identification of the compiler and the current release level is generated. 
+// The title is left-justified on the title line.
+// literal
+// Must be an alphanumeric literal, DBCS literal, or national literal and can be followed by a separator period. Must not be a figurative constant.
+//In addition to the default or chosen title, the right side of the title line contains the following items: 
+// - For programs, the name of the program from the PROGRAM-ID paragraph for the outermost program. (This space is blank on pages preceding the PROGRAM-ID paragraph for the outermost program.) 
+// - For classes, the name of the class from the CLASS-ID paragraph. 
+// - Current page number. 
+// - Date and time of compilation.
+// The TITLE statement: 
+// - Forces a new page immediately, if the SOURCE compiler option is in effect 
+// - Is not itself printed on the source listing 
+// - Has no other effect on compilation 
+// - Has no effect on program execution 
+// - Cannot be continued on another line 
+// - Can appear anywhere in any of the divisions
+// A title line is produced for each page in the listing produced by the LIST option. This title line uses the last TITLE statement found in the source statements or the default.
+// The word TITLE can begin in either Area A or Area B.
+// The TITLE statement must be embedded in a class or program source. For example, in the case of batch applications, the TITLE statement must be placed between the CBL (PROCESS) statement and the end of the class or program (or the END CLASS marker or END PROGRAM marker, if specified).
+// No other statement can appear on the same line as the TITLE statement.
+
+titleCompilerStatement ::= TITLE:t alphanumericValue2:a						  
+	{: 
+		((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLine(TokenType.PeriodSeparator);  
+		my_parser.Builder.EnterTitleCompilerStatement(t, a);
+	:} 
+	;
+						 
+// p546: USE statement
+// -> see the DECLARATIVES section in CobolCodeElements.g4
+

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CupCommon;
+using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 
@@ -56,14 +57,15 @@ namespace TypeCobol.Compiler.CupPreprocessor
             CompilerDirective = new CopyDirective(CompilerDirectiveType.COPY, copy);
         }
 
-        public virtual void EnterCopyCompilerStatementBody(bool isCopy, QualifiedTextName qualifiedTextName, 
+        public virtual void EnterCopyCompilerStatementBody(QualifiedTextName qualifiedTextName, 
             TypeCobol.Compiler.Scanner.Token suppress, PairTokenListList replacingOperands)
         {
             var copy = (CopyDirective)CompilerDirective;
+            bool isCopy = copy.COPYToken.TokenType == TokenType.COPY;
+            copy.TextName = GetName(qualifiedTextName.TextName);
+            copy.TextNameSymbol = qualifiedTextName.TextName;
             if (isCopy)
             {                
-                copy.TextName = GetName(qualifiedTextName.TextName);
-                copy.TextNameSymbol = qualifiedTextName.TextName;
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
                 if (copy.TextName != null)
                 {
@@ -105,10 +107,9 @@ namespace TypeCobol.Compiler.CupPreprocessor
                     }
                 }
 #endif
-                copy.LibraryName = GetName(qualifiedTextName.LibraryName);
-                copy.LibraryNameSymbol = qualifiedTextName.LibraryName;
             }
-
+            copy.LibraryName = GetName(qualifiedTextName.LibraryName);
+            copy.LibraryNameSymbol = qualifiedTextName.LibraryName;
 
             copy.Suppress = suppress != null;
 
@@ -268,5 +269,100 @@ namespace TypeCobol.Compiler.CupPreprocessor
                 enterDirective.RoutineName = routineName.Text;
         }
 
+        public virtual void EnterExecSqlIncludeStatement(Token execToken)
+        {
+            var copyDirective = new CopyDirective(CompilerDirectiveType.EXEC_SQL_INCLUDE, execToken);
+            CompilerDirective = copyDirective;
+        }
+
+        public virtual void EnterInsertCompilerStatement(Token insertToken, Token sequenceNumber)
+        {
+            InsertDirective insertDirective = new InsertDirective();
+            CompilerDirective = insertDirective;
+
+            System.Diagnostics.Debug.Assert(sequenceNumber.TokenType == TokenType.IntegerLiteral);
+
+            insertDirective.SequenceNumber = (int)((IntegerLiteralTokenValue)sequenceNumber.LiteralValue).Number;
+            if (insertDirective.SequenceNumber < 0)
+            {
+                Token errorToken = sequenceNumber;
+                Diagnostic error = new Diagnostic(
+                    MessageCode.InvalidNumericLiteralFormat,
+                    errorToken.Column, errorToken.EndColumn,
+                    errorToken.Line, "TODO");
+                CompilerDirective.AddDiagnostic(error);//TODO proper diagnostic error
+            }
+        }
+
+        public virtual void EnterReadyOrResetTraceCompilerStatement(Token readyOrResetToken)
+        {
+            CompilerDirective = new ReadyOrResetTraceDirective(readyOrResetToken.TokenType == TokenType.READY ? CompilerDirectiveType.READY_TRACE : CompilerDirectiveType.RESET_TRACE);
+        }
+
+        public virtual void EnterReplaceCompilerStatement(Token replaceTokn, Token offToken, PairTokenListList replacingOperands)
+        {
+            ReplaceDirective replaceDirective = new ReplaceDirective(offToken == null ? CompilerDirectiveType.REPLACE : CompilerDirectiveType.REPLACE_OFF);
+            CompilerDirective = replaceDirective;
+
+            if (replacingOperands != null)
+            {
+                // Data used to build the current replace operation             
+                Token comparisonToken = null;
+                Token[] followingComparisonTokens = null;
+                Token replacementToken = null;
+                Token[] replacementTokens = null;
+
+                foreach (Tuple<List<Token>, List<Token>> copyReplacingOperands in replacingOperands)
+                {
+                    // Get relevant tokens
+                    List<Token> relevantTokens = copyReplacingOperands.Item1;
+                    List<Token> replaceTokens = copyReplacingOperands.Item2;
+                    BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
+                        ref replacementToken, ref replacementTokens, false, relevantTokens);
+
+                    BuildReplaceOperation(replaceDirective.ReplaceOperations, ref comparisonToken, ref followingComparisonTokens,
+                        ref replacementToken, ref replacementTokens, true, replaceTokens);
+                }
+            }
+        }
+
+        public virtual void EnterServiceLabelCompilerStatement(Token serviceToken, Token labelToken)
+        {
+            CompilerDirective = new ServiceLabelDirective();
+        }
+
+        public virtual void EnterServiceReloadCompilerStatement(Token serviceToken, Token reloadToken, Token userDefinedWord)
+        {
+            ServiceReloadDirective serviceReloadDirective = new ServiceReloadDirective();
+            CompilerDirective = serviceReloadDirective;
+
+            serviceReloadDirective.UserDefinedWord = userDefinedWord.Text;
+        }
+
+        public virtual void EnterSkipCompilerStatement(Token skipTolen)
+        {
+            switch (skipTolen.TokenType)
+            {
+                case TokenType.SKIP1:
+                    CompilerDirective = new SkipDirective(CompilerDirectiveType.SKIP1);
+                    break;
+                case TokenType.SKIP2:
+                    CompilerDirective = new SkipDirective(CompilerDirectiveType.SKIP2);
+                    break;
+                case TokenType.SKIP3:
+                    CompilerDirective = new SkipDirective(CompilerDirectiveType.SKIP3);
+                    break;
+            }
+        }
+
+        public virtual void EnterTitleCompilerStatement(Token titleToken, Token titleLiteral)
+        {
+            TitleDirective titleDirective = new TitleDirective();
+            CompilerDirective = titleDirective;
+
+            System.Diagnostics.Debug.Assert(titleLiteral.TokenFamily == TokenFamily.AlphanumericLiteral);
+            string title = ((AlphanumericLiteralTokenValue)titleLiteral.LiteralValue).Text;
+            titleDirective.Title = title;
+        }
     }
 }
