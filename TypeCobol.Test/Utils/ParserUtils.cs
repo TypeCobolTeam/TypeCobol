@@ -8,6 +8,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Parser;
@@ -86,26 +87,44 @@ namespace TypeCobol.Test.Utils
 		}
 
 		public static string DiagnosticsToString(IEnumerable<Diagnostic> diagnostics, bool printDiagnosticLine = true) {
-			StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             //Sort diagnostics by line order
-            foreach (Diagnostic d in diagnostics.OrderBy(d => d.Line)) {
-			    var diagnostic = d as ParserDiagnostic;
-			    var errmsg = diagnostic != null ? diagnostic.ToStringWithRuleStack() : d.ToString();
+            foreach (Diagnostic d in diagnostics.OrderBy(d => d.Line))
+            {
+                string errmsg = null;
 
+                if (d is ParserDiagnostic)
+                {
+                    var diagnostic = d as ParserDiagnostic;
+                    errmsg = diagnostic.ToStringWithRuleStack();
+                }
+                else if (d is CupParserDiagnostic)
+                {
+                    var diagnostic = d as CupParserDiagnostic;
+                    errmsg = diagnostic.ToStringWithRuleStack();
+                }
+                else
+                {
+                    errmsg = d.ToString();
+                }
 
-				builder.AppendLine(errmsg);
-			}
-			if(builder.Length > 0) {
-			    if (printDiagnosticLine) {
-			        builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
-			    }
-			    return builder.ToString();
-			} else {
-				return String.Empty;
-			}
-		}
+                builder.AppendLine(errmsg);
+            }
+            if (builder.Length > 0)
+            {
+                if (printDiagnosticLine)
+                {
+                    builder.Insert(0, "--- Diagnostics ---" + Environment.NewLine);
+                }
+                return builder.ToString();
+            }
+            else
+            {
+                return String.Empty;
+            }
+        }
 
-		public static string CodeElementsToString(IEnumerable<CodeElement> elements) {
+        public static string CodeElementsToString(IEnumerable<CodeElement> elements) {
 			StringBuilder builder = new StringBuilder();
 			bool hasCodeElement = false;
 			foreach (CodeElement e in elements) {

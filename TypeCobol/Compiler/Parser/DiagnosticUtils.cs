@@ -37,6 +37,12 @@ namespace TypeCobol.Compiler.Parser
         {
             AddError(node, message, ParseTreeUtils.GetFirstToken(context), RuleStackBuilder.GetRuleStack(context), code);
         }
+
+        internal static void AddError(Node node, string message, CodeElement context, MessageCode code = MessageCode.SyntaxErrorInParser)
+        {   //CUP PORT -- TODO Get the rule concerned --> Uses a context that can provide such information
+            AddError(node, message, context.ConsumedTokens != null ? context.ConsumedTokens[0] : null, /*RuleStackBuilder.GetRuleStack(context)*/ null, code);
+        }
+
         internal static void AddError(Node node, string message, Scanner.Token token, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser)
         {
             var diagnostic = new ParserDiagnostic(message, token, rulestack, code);

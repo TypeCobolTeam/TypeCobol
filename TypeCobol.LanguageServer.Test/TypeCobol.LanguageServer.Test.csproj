@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\TypeCobol.Grammar\Common.props" />
+  <Import Project="..\TypeCobol\Common.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -106,6 +106,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\AddMultipleLines\output_expected\AddMultipleLines.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionUsingCopy\input\CompletionUsingCopy.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionUsingCopy\input\CopyFolder\YISCTST.cpy">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\CompletionUsingCopy\output_expected\CompletionUsingCopy.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\DeleteCharBeginLine\input\DeleteCharBeginLine.tlsp">

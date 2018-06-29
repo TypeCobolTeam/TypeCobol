@@ -16,7 +16,7 @@ namespace TypeCobol.Compiler.AntlrUtils
         /// </summary>
         public bool ActivateDetailedAntlrPofiling { get; private set; }
 
-        public int AntlrParsingTime { get; set; }
+        public int ParsingTime { get; set; }
 
         // Details of Antlr parsing time
         // Non zero only when Antlr performance profiling is activated
@@ -27,20 +27,18 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         private Stopwatch stopWatch = new Stopwatch();
 
-        public void OnStartAntlrParsing()
+        public void OnStartParsing()
         {
             stopWatch.Restart();
         }
 
-        public void OnStopAntlrParsing(int decisionTimeMs, int ruleInvocationsCount)
+        public void OnStopParsing(int decisionTimeMs, int ruleInvocationsCount)
         {
             stopWatch.Stop();
-            AntlrParsingTime += (int)stopWatch.ElapsedMilliseconds;
+            ParsingTime += (int)stopWatch.ElapsedMilliseconds;
             DecisionTimeMs += decisionTimeMs;
             RuleInvocationsCount += ruleInvocationsCount;
         }
-
-
 
         public void OnStartTreeBuilding()
         {
@@ -55,7 +53,7 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         internal void Add(PerfStatsForParserInvocation perfStats)
         {
-            AntlrParsingTime += perfStats.AntlrParsingTime;
+            ParsingTime += perfStats.ParsingTime;
             DecisionTimeMs += perfStats.DecisionTimeMs;
             RuleInvocationsCount += perfStats.RuleInvocationsCount;
             TreeBuildingTime += TreeBuildingTime;

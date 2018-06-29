@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Parser
         /// Program object resulting of the visit the parse tree
         /// </summary>
         private Program Program { get; set; }
-        public SyntaxTree SyntaxTree { get; set; }
+        public SyntaxTree<ParserRuleContext> SyntaxTree { get; set; }
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -77,7 +77,7 @@ namespace TypeCobol.Compiler.Parser
 
 
 
-        public NodeDispatcher Dispatcher { get; internal set; }
+        public NodeDispatcher<ParserRuleContext> Dispatcher { get; internal set; }
 
 
 
@@ -312,6 +312,7 @@ namespace TypeCobol.Compiler.Parser
         {
             var terminal = context.FileDescriptionEntry();
             var entry = terminal != null ? (FileDescriptionEntry)terminal.Symbol : null;
+            ExitLastLevel1Definition();
             Enter(new FileDescriptionEntryNode(entry), context);
         }
 
@@ -730,6 +731,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.ExecStatement() != null)
             {
                 ExecStatement terminal = (ExecStatement)context.ExecStatement().Symbol;
+                ExitLastLevel1Definition();
                 Enter(new Exec(terminal), context);
             }
         }

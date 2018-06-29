@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace TypeCobol.Compiler.Source
 {
@@ -581,6 +582,17 @@ namespace TypeCobol.Compiler.Source
             writer.Write(body, 0, part1len);
             int afterGap = part1len + gaplen;
             writer.Write(body, afterGap, length - part1len);
+        }
+
+        /// <summary>
+        /// Write the content of this SourceText into a StringBuilder
+        /// </summary>
+        /// <param name="writer">The StringBuilder instance</param>
+        public override void Write(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append(body, 0, part1len);
+            int afterGap = part1len + gaplen;
+            stringBuilder.Append(body, afterGap, length - part1len);
         }
 
         /// <summary>

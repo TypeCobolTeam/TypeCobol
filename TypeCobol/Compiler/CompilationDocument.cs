@@ -316,6 +316,11 @@ namespace TypeCobol.Compiler
                             // Line indexes are not impacted
                             break;
                         case TextChangeType.LineRemoved:
+                            if (compilationDocumentLines.LastOrDefault() == null)
+                                continue;
+                            if (compilationDocumentLines.Count < textChange.LineIndex) //Avoid line remove exception
+                                continue;
+
                             compilationDocumentLines.RemoveAt(textChange.LineIndex);
                             encounteredCodeElement = false; //Will allow to update allow line index without erasing all diagnostics after the first encountered line with CodeElements
 

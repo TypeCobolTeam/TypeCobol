@@ -206,7 +206,7 @@
         public SyntaxProperty<IndexIncrementDirection> IncrementDirection { get; set; }
 
         /// <summary>identifier(numeric integer item) or positive integer</summary>
-        public IntegerVariable SendingVariable { get; set; }
+        public VariableOrExpression SendingVariable { get; set; }
 
         public override string ToString()
         {

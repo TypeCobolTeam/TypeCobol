@@ -127,12 +127,12 @@ namespace TypeCobol.Compiler.Text
                 indicator = '-';
             }
 
-            IList<Tuple<string, bool>> lines = lines = Split(text, max, min);
+            IList<Tuple<string, bool>> lines = Split(text, max, min);
 
             for (int i = 0; i < lines.Count; i++)
             {
                 if (index > -1) index++;
-                result.Add(new TextLineSnapshot(index, !((i == 0 && bConvertFirstLine) || i > 0) ? lines[i].Item1 : Convert(layout, lines[i].Item1,
+                result.Add(new TextLineSnapshot(index,(i == 0 && !bConvertFirstLine) ? lines[i].Item1 : Convert(layout, lines[i].Item1,
                     indicator != '-'
                     ? indicator
                     : ((lines[i].Item2 && i != 0) ? indicator : (i == 0 ? NoIndicator : NoOneIndicator)), indent, pmax), null));

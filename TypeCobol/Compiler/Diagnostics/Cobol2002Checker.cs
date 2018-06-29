@@ -126,9 +126,9 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class RedefinesChecker : NodeListener
+    class RedefinesChecker<TCtx> : NodeListener<TCtx> where TCtx : class
     {
-        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program)
+        public void OnNode(Node node, TCtx context, CodeModel.Program program)
         {
             var redefinesNode = node as DataRedefines;
             if (redefinesNode == null)
@@ -300,11 +300,22 @@ namespace TypeCobol.Compiler.Diagnostics
                 var calculatedLevel = startingLevel;
                 if (child.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //If variable is typed
                 {
-                    var foundedTypes = node.SymbolTable.GetType(child.DataType);
-                    if (foundedTypes.Count != 1)
-                        continue; //If none or multiple corresponding type, it's useless to check
+                    /*----- This section should be removed when issue #1009 is fixed ----- */
+                    /*----- We'll only need child.TypeDefinition --------------------------*/
+                    TypeDefinition foundType;
+                    if (child.TypeDefinition == null)
+                    {
+                        var foundedTypes = node.SymbolTable.GetType(child.DataType);
+                        if (foundedTypes.Count != 1)
+                            continue; //If none or multiple corresponding type, it's useless to check
 
-                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundedTypes.First());
+                        foundType = foundedTypes.First();
+                    }
+                    else
+                        foundType = child.TypeDefinition;
+                    /* -----------------------------------------------------------------  */
+
+                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundType);
                 }
                 else if (child.Children.Count > 0) //If variable is not typed, check if there is children
                 {
@@ -335,6 +346,13 @@ namespace TypeCobol.Compiler.Diagnostics
             foundedType = null;
             if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
                 return; //nothing to do, Type exists from Cobol 2002
+            var dataDefinition = node as DataDefinition;
+            if (dataDefinition?.TypeDefinition != null)
+            {
+                foundedType = dataDefinition.TypeDefinition;
+                return;
+            }
+
             var found = node.SymbolTable.GetType(type);
             if (found.Count < 1)
             {
@@ -348,8 +366,10 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else
             {
+                //In case TypeDefinition is not already set, or it's not a DataDefinition Node
                 foundedType = found[0];
-                node.TypeDefinition = foundedType;
+                if (dataDefinition != null)
+                    dataDefinition.TypeDefinition = foundedType;
             }
 
         }

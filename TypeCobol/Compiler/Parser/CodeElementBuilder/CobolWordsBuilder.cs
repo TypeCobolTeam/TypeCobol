@@ -36,9 +36,13 @@ namespace TypeCobol.Compiler.Parser
             return new BooleanValue(ParseTreeUtils.GetFirstToken(context));
         }
 
-        internal static IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValueContext context)
+        internal static IntegerValue CreateIntegerValue([CanBeNull] ITerminalNode node) {
+            if (node == null) return null;
+            return new IntegerValue(ParseTreeUtils.GetTokenFromTerminalNode(node));
+        }
+        internal static IntegerValue CreateIntegerValue(IToken token)
         {
-            return new IntegerValue(ParseTreeUtils.GetFirstToken(context));
+            return new IntegerValue((Token) token);
         }
 
         internal static IntegerValue CreateIntegerValue(CodeElementsParser.IntegerValue2Context context)
@@ -59,7 +63,7 @@ namespace TypeCobol.Compiler.Parser
         internal CharacterValue CreateCharacterValue(CodeElementsParser.CharacterValue2Context context)
         {
             if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
-                return new CharacterValue(CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter));
+                return new CharacterValue(CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter));
             return new CharacterValue(ParseTreeUtils.GetFirstToken(context));
         }
 
@@ -72,7 +76,7 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
             {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
                 return new CharacterValue(symbolicCharacterReference);
             }
             else
@@ -87,9 +91,9 @@ namespace TypeCobol.Compiler.Parser
         {
             if (context == null) return null;
             var c = context.figurativeConstant();
-            if (c != null && c.symbolicCharacterReference() != null)
+            if (c?.symbolicCharacterReference() != null)
             {
-                return new AlphanumericValue(CreateSymbolReference(c.symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter));
+                return new AlphanumericValue(CreateSymbolReference(c.symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter));
             }
             Token token = ParseTreeUtils.GetFirstToken(context);
             return new AlphanumericValue(token);
@@ -100,9 +104,16 @@ namespace TypeCobol.Compiler.Parser
             if (token == null) return null;
             return new AlphanumericValue(token);
         }
+
         internal AlphanumericValue CreateAlphanumericValue(ITerminalNode node)
         {
-            var token = ParseTreeUtils.GetFirstToken(node);
+            return CreateAlphanumericValue(ParseTreeUtils.GetFirstToken(node));
+        }
+
+        internal AlphanumericValue CreateAlphanumericValue(IToken node) {
+            return CreateAlphanumericValue((Token)node);
+        }
+        internal AlphanumericValue CreateAlphanumericValue(Token token) {
             if (token == null) return null;
             // [COBOL 2002]
             if (token.TokenType == TokenType.DATE) token.TokenType = TokenType.UserDefinedWord;
@@ -116,9 +127,9 @@ namespace TypeCobol.Compiler.Parser
             return new EnumeratedValue(valueToken, enumType);
         }
 
-        internal EnumeratedValue CreateEnumeratedValue(CodeElementsParser.EnumeratedValue2Context context, Type enumType)
+        internal EnumeratedValue CreateEnumeratedValue(ITerminalNode IntrinsicFunctionName, Type enumType)
         {
-            Token valueToken = ParseTreeUtils.GetFirstToken(context);
+            Token valueToken = ParseTreeUtils.GetTokenFromTerminalNode(IntrinsicFunctionName);
             return new EnumeratedValue(valueToken, enumType);
         }
 
@@ -136,7 +147,7 @@ namespace TypeCobol.Compiler.Parser
             {
                 if (context.figurativeConstant() != null && context.figurativeConstant().symbolicCharacterReference() != null)
                 {
-                    SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                    SymbolReference symbolicCharacterReference = CreateSymbolReference(context.figurativeConstant().symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
                     return new RepeatedCharacterValue(null, symbolicCharacterReference);
                 }
                 else
@@ -164,7 +175,7 @@ namespace TypeCobol.Compiler.Parser
 
             if (figurativeConstantContext != null && figurativeConstantContext.symbolicCharacterReference() != null)
             {
-                SymbolReference symbolicCharacterReference = CreateSymbolReference(figurativeConstantContext.symbolicCharacterReference().symbolReference10(), SymbolType.SymbolicCharacter);
+                SymbolReference symbolicCharacterReference = CreateSymbolReference(figurativeConstantContext.symbolicCharacterReference().standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
                 return new RepeatedCharacterValue(optionalALLToken, symbolicCharacterReference);
             }
             else
@@ -258,10 +269,10 @@ namespace TypeCobol.Compiler.Parser
         }
 
         [CanBeNull]
-        internal SymbolDefinition CreateSymbolDefinition([CanBeNull] CodeElementsParser.SymbolDefinition4Context context, SymbolType symbolType)
+        internal SymbolDefinition CreateSymbolDefinition([CanBeNull] ITerminalNode node, SymbolType symbolType)
         {
-            if (context == null) return null;
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            if (node == null) return null;
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(node);
             var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinition);
             return symbolDefinition;
@@ -270,22 +281,6 @@ namespace TypeCobol.Compiler.Parser
         internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition5Context context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue5());
-            var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolDefinition);
-            return symbolDefinition;
-        }
-
-        internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition11Context context, SymbolType symbolType)
-        {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue11());
-            var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolDefinition);
-            return symbolDefinition;
-        }
-
-        internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition12Context context, SymbolType symbolType)
-        {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue12());
             var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinition);
             return symbolDefinition;
@@ -307,9 +302,9 @@ namespace TypeCobol.Compiler.Parser
             return symbolReference;
         }
 
-        internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference4Context context, SymbolType symbolType)
+        internal SymbolReference CreateSymbolReference(ITerminalNode node, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(node);
             var symbolReference = new SymbolReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolReference);
             return symbolReference;
@@ -323,25 +318,9 @@ namespace TypeCobol.Compiler.Parser
             return symbolReference;
         }
 
-        internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference9Context context, SymbolType symbolType)
+        internal SymbolReference CreateSymbolReference(CodeElementsParser.StandardCollatingSequenceReferenceContext context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue9());
-            var symbolReference = new SymbolReference(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolReference);
-            return symbolReference;
-        }
-
-        internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference10Context context, SymbolType symbolType)
-        {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue10());
-            var symbolReference = new SymbolReference(nameLiteral, symbolType);
-            AddToSymbolInformations(nameLiteral, symbolReference);
-            return symbolReference;
-        }
-
-        internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference11Context context, SymbolType symbolType)
-        {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue11());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context);
             var symbolReference = new SymbolReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolReference);
             return symbolReference;
@@ -350,9 +329,9 @@ namespace TypeCobol.Compiler.Parser
         internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference12Context context, SymbolType symbolType)
         {
             AlphanumericValue nameLiteral = null;
-            if (context.alphanumericValue4() != null)
+            if (context.UserDefinedWord() != null)
             {
-                nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+                nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
             }
             else if (context.DATE() != null)
             {
@@ -373,7 +352,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal AmbiguousSymbolReference CreateAmbiguousSymbolReference(CodeElementsParser.AmbiguousSymbolReference4Context context, SymbolType[] candidateTypes)
         {
-            var nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            var nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
             var ambiguousSymbolReference = new AmbiguousSymbolReference(nameLiteral, candidateTypes);
             AddToSymbolInformations(nameLiteral, ambiguousSymbolReference);
             return ambiguousSymbolReference;
@@ -389,7 +368,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference4Context context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
             var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
             return symbolDefinitionOrReference;
@@ -402,15 +381,14 @@ namespace TypeCobol.Compiler.Parser
             AddToSymbolInformations(nameLiteral, externalName);
             return externalName;
         }
-
-        internal ExternalName CreateExternalName(CodeElementsParser.ExternalName2Context context, SymbolType symbolType, Type enumType)
+        
+        internal ExternalName CreateExternalName(ITerminalNode IntrinsicFunctionName, SymbolType symbolType, Type enumType)
         {
-            AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue2(), enumType);
+            AlphanumericValue nameLiteral = CreateEnumeratedValue(IntrinsicFunctionName, enumType);
             var externalName = new ExternalName(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, externalName);
             return externalName;
         }
-
         internal ExternalName CreateExternalName(CodeElementsParser.ExternalName3Context context, SymbolType symbolType, Type enumType)
         {
             AlphanumericValue nameLiteral = CreateEnumeratedValue(context.enumeratedValue3(), enumType);
@@ -429,7 +407,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal ExternalNameOrSymbolReference CreateExternalNameOrSymbolReference(CodeElementsParser.ExternalNameOrSymbolReference4Context context, SymbolType[] candidateTypes)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue4());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.UserDefinedWord());
             var externalNameOrSymbolReference = new ExternalNameOrSymbolReference(nameLiteral, candidateTypes);
             AddToSymbolInformations(nameLiteral, externalNameOrSymbolReference);
             return externalNameOrSymbolReference;
@@ -475,22 +453,22 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition12(), SymbolType.SectionName);
+            return CreateSymbolDefinition(context.SectionParagraphName(), SymbolType.SectionName);
         }
 
         internal SymbolReference CreateSectionNameReference(CodeElementsParser.SectionNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.SectionName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.SectionName);
         }
 
         internal SymbolDefinition CreateParagraphNameDefinition(CodeElementsParser.ParagraphNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition12(), SymbolType.ParagraphName);
+            return CreateSymbolDefinition(context.SectionParagraphName(), SymbolType.ParagraphName);
         }
 
         internal SymbolReference CreateParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.ParagraphName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.ParagraphName);
         }
 
         internal AmbiguousSymbolReference CreateParagraphNameReferenceOrSectionNameReference(CodeElementsParser.ParagraphNameReferenceOrSectionNameReferenceContext context)
@@ -500,12 +478,12 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateClassNameDefinition(CodeElementsParser.ClassNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.ClassName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.ClassName);
         }
 
         internal SymbolReference CreateClassNameReference(CodeElementsParser.ClassNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.ClassName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.ClassName);
         }
 
         internal SymbolDefinitionOrReference CreateClassNameDefOrRef(CodeElementsParser.ClassNameDefOrRefContext context)
@@ -530,24 +508,24 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateFunctionNameDefinition(CodeElementsParser.FunctionNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.MethodName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.MethodName);
         }
 
         internal SymbolReference CreateFunctionNameReference(CodeElementsParser.FunctionNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.MethodName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.MethodName);
         }
 
         internal SymbolDefinition CreateMnemonicForEnvironmentNameDefinition(CodeElementsParser.MnemonicForEnvironmentNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.MnemonicForEnvironmentName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.MnemonicForEnvironmentName);
         }
 
         [CanBeNull]
         internal SymbolReference CreateMnemonicForEnvironmentNameReference([CanBeNull] CodeElementsParser.MnemonicForEnvironmentNameReferenceContext context)
         {
             if (context == null) return null;
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.MnemonicForEnvironmentName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.MnemonicForEnvironmentName);
         }
 
         internal ExternalNameOrSymbolReference CreateMnemonicForEnvironmentNameReferenceOrEnvironmentName(CodeElementsParser.MnemonicForEnvironmentNameReferenceOrEnvironmentNameContext context)
@@ -557,42 +535,42 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateMnemonicForUPSISwitchNameDefinition(CodeElementsParser.MnemonicForUPSISwitchNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.MnemonicForUPSISwitchName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.MnemonicForUPSISwitchName);
         }
 
         internal SymbolReference CreateMnemonicForUPSISwitchNameReference(CodeElementsParser.MnemonicForUPSISwitchNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.MnemonicForUPSISwitchName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.MnemonicForUPSISwitchName);
         }
 
         internal SymbolDefinition CreateConditionForUPSISwitchNameDefinition(CodeElementsParser.ConditionForUPSISwitchNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.ConditionForUPSISwitchName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.ConditionForUPSISwitchName);
         }
 
         internal SymbolDefinition CreateSymbolicCharacterDefinition(CodeElementsParser.SymbolicCharacterDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition11(), SymbolType.SymbolicCharacter);
+            return CreateSymbolDefinition(context.SymbolicCharacter(), SymbolType.SymbolicCharacter);
         }
 
         internal SymbolReference CreateSymbolicCharacterReference(CodeElementsParser.SymbolicCharacterReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference10(), SymbolType.SymbolicCharacter);
+            return CreateSymbolReference(context.standardCollatingSequenceReference(), SymbolType.SymbolicCharacter);
         }
 
         internal SymbolDefinition CreateAlphabetNameDefinition(CodeElementsParser.AlphabetNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.AlphabetName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.AlphabetName);
         }
 
         internal SymbolReference CreateAlphabetNameReference(CodeElementsParser.AlphabetNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.AlphabetName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.AlphabetName);
         }
 
         internal SymbolReference CreateIntrinsicAlphabetNameReference(CodeElementsParser.IntrinsicAlphabetNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference10(), SymbolType.AlphabetName);
+            return CreateSymbolReference(context.standardCollatingSequenceReference(), SymbolType.AlphabetName);
         }
 
         internal SymbolReference CreateAlphabetName(CodeElementsParser.AlphabetNameContext context)
@@ -609,18 +587,18 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateCharacterClassNameDefinition(CodeElementsParser.CharacterClassNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.CharacterClassName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.CharacterClassName);
         }
 
         internal SymbolReference CreateCharacterClassNameReference(CodeElementsParser.CharacterClassNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.CharacterClassName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.CharacterClassName);
         }
         
         // [COBOL 2002]
         internal SymbolDefinition CreateDataTypeNameDefinition(CodeElementsParser.DataNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.DataName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.DataName);
         }
 
         internal SymbolReference CreateQualifiedDataTypeReference(CodeElementsParser.Cobol2002TypeClauseContext context)
@@ -671,19 +649,22 @@ namespace TypeCobol.Compiler.Parser
         internal SymbolDefinition CreateDataNameDefinition([CanBeNull] CodeElementsParser.DataNameDefinitionContext context)
         {
             if (context == null) return null;
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.DataName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.DataName);
         }
 
         [CanBeNull]
         internal SymbolReference CreateDataNameReference([CanBeNull] CodeElementsParser.DataNameReferenceContext context)
         {
             if (context == null) return null;
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.DataName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.DataName);
         }
-
-        internal SymbolReference CreateInstrinsicDataNameReference(CodeElementsParser.IntrinsicDataNameReferenceContext context)
+        
+        internal SymbolReference CreateSpecialRegister(CodeElementsParser.SpecialRegisterReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference9(), SymbolType.DataName);
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context);
+            var symbolReference = new SymbolReference(nameLiteral, SymbolType.DataName);
+            AddToSymbolInformations(nameLiteral, symbolReference);
+            return symbolReference;
         }
 
         internal AmbiguousSymbolReference CreateDataNameReferenceOrFileNameReference(CodeElementsParser.DataNameReferenceOrFileNameReferenceContext context)
@@ -729,7 +710,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateConditionNameDefinition(CodeElementsParser.ConditionNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.ConditionName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.ConditionName);
         }
 
         internal AmbiguousSymbolReference CreateConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.ConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
@@ -739,17 +720,17 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateIndexNameDefinition(CodeElementsParser.IndexNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.IndexName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.IndexName);
         }
 
         internal SymbolReference CreateIndexNameReference(CodeElementsParser.IndexNameReferenceContext context)
         {
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.IndexName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.IndexName);
         }
 
         internal SymbolReference CreateIndexNameReference(CodeElementsParser.QualifiedIndexNameContext context)
         {
-            CodeElementsParser.SymbolReference4Context head = null;
+            IToken head = null;
 
             //Detect if it's Cobol Qualified (IN|OF)
             if (context.indexName != null)
@@ -757,17 +738,17 @@ namespace TypeCobol.Compiler.Parser
             else //Else it typecobol qualified
             {
                 head = context.TcHeadDefiniiton;
-                if (context.children.Any(x => x.Payload is Token && ((Token)x.Payload).TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
-                    return null; //If not UserDefiedWord or QualifiedSeprator it's a mistake. 
+                if (context.children.Any(x => (x.Payload as Token)?.TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
+                    return null; //If not UserDefiedWord or QualifiedSeparator it's a mistake. 
             }
-            var tail = context.symbolReference4();
-            tail = tail.Where(t => t != head).ToArray();
+            var tail = context.UserDefinedWord();
+            tail = tail.Where(t => t.Symbol != head).ToArray();
                 Array.Reverse(tail);
 
             return CreateQualifiedIndexName(head, tail, false);
         }
 
-        private SymbolReference CreateQualifiedIndexName(CodeElementsParser.SymbolReference4Context head, CodeElementsParser.SymbolReference4Context[] tail, bool isCOBOL = true)
+        private SymbolReference CreateQualifiedIndexName(IToken head, ITerminalNode[] tail, bool isCOBOL = true)
         {
             if (head == null)
                 return null; //If head is null -> retrun null, we can't create the QualifiedReference properly.
@@ -779,26 +760,26 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateFileNameDefinition(CodeElementsParser.FileNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.FileName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.FileName);
         }
 
         [CanBeNull]
         internal SymbolReference CreateFileNameReference([CanBeNull] CodeElementsParser.FileNameReferenceContext context)
         {
             if (context == null) return null;
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.FileName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.FileName);
         }
 
         internal SymbolDefinition CreateXmlSchemaNameDefinition(CodeElementsParser.XmlSchemaNameDefinitionContext context)
         {
-            return CreateSymbolDefinition(context.symbolDefinition4(), SymbolType.XmlSchemaName);
+            return CreateSymbolDefinition(context.UserDefinedWord(), SymbolType.XmlSchemaName);
         }
 
         [CanBeNull]
         internal SymbolReference CreateXmlSchemaNameReference([CanBeNull] CodeElementsParser.XmlSchemaNameReferenceContext context)
         {
             if (context == null) return null;
-            return CreateSymbolReference(context.symbolReference4(), SymbolType.XmlSchemaName);
+            return CreateSymbolReference(context.UserDefinedWord(), SymbolType.XmlSchemaName);
         }
 
 
@@ -1118,9 +1099,9 @@ namespace TypeCobol.Compiler.Parser
             YEAR_TO_YYYY
         }
 
-        internal ExternalName CreateIntrinsicFunctionName(CodeElementsParser.IntrinsicFunctionNameContext context)
+        internal ExternalName CreateIntrinsicFunctionName(ITerminalNode IntrinsicFunctionName)
         {
-            return CreateExternalName(context.externalName2(), SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
+            return CreateExternalName(IntrinsicFunctionName, SymbolType.IntrinsicFunctionName, typeof(FunctionNameEnum));
         }
 
         /// <summary>

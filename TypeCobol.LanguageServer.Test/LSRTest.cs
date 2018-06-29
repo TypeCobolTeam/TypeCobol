@@ -243,6 +243,14 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("ProcedureCompletionCaseInsensitive", LsrTestingOptions.NoLsrTesting, true);
         }
 
-        #endregion
+#if EUROINFO_RULES
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionUsingCopy()
+        {
+            LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+        }
+#endif
+#endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements {
 
@@ -197,11 +198,24 @@ namespace TypeCobol.Compiler.CodeElements {
                 }
                 if (StorageArea != null)
                 {
-                    var qualifiedName = StorageArea?.SymbolReference?.ToString(isBoolType);
+                    var qualifiedName = StorageArea?.GetStorageAreaThatNeedDeclaration?.SymbolReference?.ToString(isBoolType);
                     if (StorageArea is DataOrConditionStorageArea && ((DataOrConditionStorageArea)StorageArea).Subscripts.Count > 0)
                     {
                         var subscript = ((DataOrConditionStorageArea) StorageArea).ToString(true);
                         qualifiedName = qualifiedName + " " + subscript;
+                    }
+
+                    var specialRegisterStorageArea = StorageArea as StorageAreaPropertySpecialRegister;
+                    if (specialRegisterStorageArea != null) //If it's a specialRegister (LENGTH OF / ADDRESS OF) we need to had it to the output string
+                    {
+                        if (specialRegisterStorageArea.SpecialRegisterName.TokenType == TokenType.ADDRESS)
+                        {
+                            qualifiedName = "address of " + qualifiedName;
+                        }
+                        else if (specialRegisterStorageArea.SpecialRegisterName.TokenType == TokenType.LENGTH)
+                        {
+                            qualifiedName = "length of " + qualifiedName;
+                        }
                     }
 
                     return bUseToString ? qualifiedName : StorageArea?.SymbolReference?.Name + (isBoolType ? "-value" : "");

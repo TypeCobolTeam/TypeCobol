@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Server;
@@ -34,6 +35,14 @@ namespace CLI.Test
         [TestMethod]
         public void TestGenerate_1() {
             CLITestHelper.Test("generate_1", ReturnCode.Success);
+        }
+
+        /// <summary>
+        /// Perform a generation using transform to mix Cobol / TypeCobol
+        /// </summary>
+        [TestMethod]
+        public void TestGenerate_MixedFiles() {
+            CLITestHelper.Test("generate_mixedFiles", ReturnCode.Success);
         }
 
         /// <summary>

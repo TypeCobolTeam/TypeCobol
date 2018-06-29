@@ -54,10 +54,20 @@ namespace TypeCobol.Compiler.CodeModel
 
         // -- IDENTIFICATION DIVISION --
 
+
+        private ProgramIdentification _identificaton;
         /// <summary>
         /// Program name, Initial / 
         /// </summary>
-        public ProgramIdentification Identification { get { return this.CodeElement as ProgramIdentification; } }        
+        public ProgramIdentification Identification
+        {
+            get
+            {
+                if (_identificaton != null) return _identificaton;
+                _identificaton = (ProgramIdentification) this.CodeElement;
+                return _identificaton;
+            }
+        }
 
         // -- ENVIRONMENT DIVISION --
 

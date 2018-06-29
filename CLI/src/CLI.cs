@@ -149,6 +149,7 @@ namespace TypeCobol.Server
                                             {
                                                 HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
                                                 ExecToStep = config.ExecToStep,
+                                                UseAntlrProgramParsing = config.UseAntlrProgramParsing
                                             };
 
 #if EUROINFO_RULES
@@ -160,6 +161,28 @@ namespace TypeCobol.Server
                 catch (Exception ex)
                 {
                     throw new ParsingException(MessageCode.ParserInit, ex.Message, path, ex); //Make ParsingException trace back to RunOnce()
+                }
+
+                Compiler.Report.AbstractReport cmrReport = null;
+                if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath))
+                {
+                    //Register Copy Move Initialize Reporter
+                    if (config.UseAntlrProgramParsing)
+                    {
+                        Compiler.Parser.NodeDispatcher<Antlr4.Runtime.ParserRuleContext>.RegisterStaticNodeListenerFactory(
+                            () => {
+                                var report = new Compiler.Report.CopyMoveInitializeReport<Antlr4.Runtime.ParserRuleContext>();
+                                cmrReport = report; return report;
+                            });
+                    }
+                    else
+                    {
+                        Compiler.Parser.NodeDispatcher<Compiler.CodeElements.CodeElement>.RegisterStaticNodeListenerFactory(
+                            () => {
+                                var report = new Compiler.Report.CopyMoveInitializeReport<Compiler.CodeElements.CodeElement>();
+                                cmrReport = report; return report;
+                            });
+                    }
                 }
 
                 parser.Parse(path);
@@ -214,6 +237,29 @@ namespace TypeCobol.Server
                     //Exception is thrown just below
                     }
 
+                if (allDiags.Count == 0)
+                {
+                    if (config.ExecToStep >= ExecutionStep.CrossCheck &&
+                        !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
+                    {//Emit any COPY MOVE/INITIALIZE Report.
+                        try
+                        {
+                            cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
+                            string msg = string.Format(
+                                    "Succeed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs.", config.ReportCopyMoveInitializeFilePath);
+                            Console.WriteLine(msg);
+                        }
+                        catch (Exception e)
+                        {
+                            string msg = string.Format(
+                                    "Failed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs! : {1}",
+                                    config.ReportCopyMoveInitializeFilePath, e.Message);
+                            Console.Error.WriteLine(msg);
+                            throw new GenerationException(msg, config.ReportCopyMoveInitializeFilePath, e);                            
+                        }
+                    }
+                }
+
                 //Copy missing is more important than diagnostics
                 if (copyAreMissing) {
                     throw new MissingCopyException("Some copy are missing", path, null, logged: false, needMail: false);
@@ -234,10 +280,14 @@ namespace TypeCobol.Server
                 {
                     try
                     {
+                        StringBuilder generatedCobolStringBuilder = new StringBuilder();
                         var generator = GeneratorFactoryManager.Instance.Create(TypeCobol.Tools.Options_Config.OutputFormat.ExpandingCopy.ToString(),
-                            parser.Results,
-                            new StreamWriter(config.ExpandingCopyFilePath), null, null);
+                            parser.Results, generatedCobolStringBuilder, null, null);
+                        var streamWriter =  new StreamWriter(config.ExpandingCopyFilePath);
                         generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
+                        streamWriter.Write(generatedCobolStringBuilder);
+                        streamWriter.Flush();
+                        streamWriter.Close();
                     }
                     catch(Exception e)
                     {
@@ -245,36 +295,52 @@ namespace TypeCobol.Server
                     }
                 }
                 if (config.ExecToStep >= ExecutionStep.Generate) {
-
+                    var streamWriter = new StreamWriter(config.OutputFiles[c]);
                     try
                     {
                         //Load skeletons if necessary
                         List<Skeleton> skeletons = null;
-                        if (!(string.IsNullOrEmpty(config.skeletonPath))) {
+                        if (!(string.IsNullOrEmpty(config.skeletonPath)))
+                        {
                             skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
                         }
 
-
+                        var sb = new StringBuilder();
                         //Get Generator from specified config.OutputFormat
-                        var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(), parser.Results,
-                            new StreamWriter(config.OutputFiles[c]), skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion);
+                        var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(),
+                            parser.Results,
+                            sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion);
 
-                        if (generator == null) {
+                        if (generator == null)
+                        {
                             throw new GenerationException("Unknown OutputFormat=" + config.OutputFormat + "_", path);
                         }
 
                         //Generate and check diagnostics
                         generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
-                        if (generator.Diagnostics != null) {
+                        if (generator.Diagnostics != null)
+                        {
                             errorWriter.AddErrors(path, generator.Diagnostics); //Write diags into error file
                             throw new PresenceOfDiagnostics("Diagnostics Detected");
                             //Make ParsingException trace back to RunOnce()
                         }
-                    } catch (PresenceOfDiagnostics) { 
+
+                        
+                        streamWriter.Write(sb); //Write generated Cobol inside file
+                        streamWriter.Flush();
+                        streamWriter.Close();                                          
+                    }
+                    catch (PresenceOfDiagnostics)
+                    {
                         throw; //Throw the same exception to let runOnce() knows there is a problem
-                    } catch (GenerationException) {
+                    }
+                    catch (GenerationException)
+                    {
                         throw; //Throw the same exception to let runOnce() knows there is a problem
-                    } catch(Exception e) { //Otherwise create a new GenerationException
+                    }
+                    catch (Exception e)
+                    {
+                        //Otherwise create a new GenerationException
                         throw new GenerationException(e.Message, path, e);
                     }
                 }

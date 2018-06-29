@@ -24,6 +24,10 @@ namespace TypeCobol.Compiler.Directives
         /// Option used to defined the maximum processing step. (See FileCompiler for usage)
         /// </summary>
         public ExecutionStep? ExecToStep { get; set; }
+        /// <summary>
+        /// Shall we use Antlr for Parsing the Program.
+        /// </summary>
+        public bool UseAntlrProgramParsing { get; set; }
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file

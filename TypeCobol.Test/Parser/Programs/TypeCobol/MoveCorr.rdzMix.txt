@@ -52,8 +52,8 @@ Line 48[12,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to str
            MOVE CORR groupA-1::varA
                   To groupB-1::varB
 
-Line 51[12,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable2 is not referenced
 Line 51[12,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable is not referenced
+Line 51[12,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable2 is not referenced
            MOVE CORR undefinedVariable
                   To undefinedVariable2
 

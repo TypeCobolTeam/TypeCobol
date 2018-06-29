@@ -22,7 +22,11 @@ namespace TypeCobol.LanguageServer.Test
         /// -init Give the initialize file path
         /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"  -init={1} -config={2}\" -script={3} {4} {5}"; 
+        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"  -init={1} -config={2}\" -script={3} {4} {5}";
+        /// <summary>
+        /// LSR Test Timeout in milli secondes.
+        /// </summary>
+        public const int LSR_TEST_TIMEOUT = 1000 * 30;
 
         public static void Test(string testFolderName, LsrTestingOptions lsrTestingOption, bool activateTdOption = false, string copyFolder = null, string customIntrinsicFile = null, string customDependenciesFolder = null)
         {
@@ -80,9 +84,7 @@ namespace TypeCobol.LanguageServer.Test
             startInfo.Arguments =  arguments;
             process.StartInfo = startInfo;
             process.Start();
-            while (!process.HasExited)
-                continue;
-
+            process.WaitForExit(LSR_TEST_TIMEOUT);
             DirectoryInfo expectedOutputDir = new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "output_expected");
             DirectoryInfo resultOutputDir = new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" + Path.DirectorySeparatorChar + "Results");
             bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, resultOutputDir);

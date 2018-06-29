@@ -513,7 +513,7 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary>
     /// Value for tokens :
     /// UserDefinedWord
-    /// TCFunctionName | LENGTH | RANDOM | WHEN_COMPILED
+    /// IntrinsicFunctionName | LENGTH | RANDOM | WHEN_COMPILED
     /// ExecTranslatorName
     /// </summary>
     public class EnumeratedValue : AlphanumericValue
