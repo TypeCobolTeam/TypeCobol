@@ -2327,7 +2327,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
 		Token rt = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		 RESULT = my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); 
+		 my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(163/*readyOrResetTraceCompilerStatement*/, RESULT);
             }
           return CUP_CobolCompilerDirectivesParser_result;

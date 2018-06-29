@@ -821,7 +821,7 @@ readyOrReset ::= READY : t
 ;
 
 readyOrResetTraceCompilerStatement ::= readyOrReset:rt TRACE PeriodSeparator
-{: RESULT = my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); :}
+{: my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); :}
 	;
 
 	// p541: REPLACE statement
