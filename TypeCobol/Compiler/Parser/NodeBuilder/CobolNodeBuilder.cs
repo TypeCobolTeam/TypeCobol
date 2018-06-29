@@ -27,6 +27,12 @@ namespace TypeCobol.Compiler.Parser
         private Program Program { get; set; }
         public SyntaxTree<ParserRuleContext> SyntaxTree { get; set; }
 
+        private TypeDefinition _CurrentTypeDefinition;
+        private bool _IsInsideWorkingStorageContext;
+        private bool _IsInsideLinkageSectionContext;
+        private bool _IsInsideLocalStorageSectionContext;
+        private bool _IsInsideFileSectionContext;
+
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
 
@@ -303,7 +309,7 @@ namespace TypeCobol.Compiler.Parser
             var terminal = context.FileSectionHeader();
             var header = terminal != null ? (FileSectionHeader)terminal.Symbol : null;
             Enter(new FileSection(header), context);
-
+            _IsInsideFileSectionContext = true;
             //FileDescriptionEntry and DataDescriptionEntry are set with their own methods:
             //EnterFileDescriptionEntry and EnterDataDescriptionEntry
         }
@@ -326,6 +332,7 @@ namespace TypeCobol.Compiler.Parser
         {
             ExitLastLevel1Definition();
             Exit();
+            _IsInsideFileSectionContext = false;
         }
         /// <summary>parent: DATA DIVISION</summary>
         /// <param name="context">WORKING-STORAGE SECTION</param>
@@ -334,11 +341,13 @@ namespace TypeCobol.Compiler.Parser
             var terminal = context.WorkingStorageSectionHeader();
             var header = terminal != null ? (WorkingStorageSectionHeader)terminal.Symbol : null;
             Enter(new WorkingStorageSection(header), context);
+            _IsInsideWorkingStorageContext = true;
         }
         public override void ExitWorkingStorageSection(ProgramClassParser.WorkingStorageSectionContext context)
         {
             ExitLastLevel1Definition();
             Exit(); // Exit WorkingStorageSection
+            _IsInsideWorkingStorageContext = false;
         }
         /// <summary>parent: DATA DIVISION</summary>
         /// <param name="context">LOCAL-STORAGE SECTION</param>
@@ -347,11 +356,13 @@ namespace TypeCobol.Compiler.Parser
             var terminal = context.LocalStorageSectionHeader();
             var header = terminal != null ? (LocalStorageSectionHeader)terminal.Symbol : null;
             Enter(new LocalStorageSection(header), context);
+            _IsInsideLocalStorageSectionContext = true;
         }
         public override void ExitLocalStorageSection(ProgramClassParser.LocalStorageSectionContext context)
         {
             ExitLastLevel1Definition();
             Exit(); // Exit LocalStorageSection
+            _IsInsideLocalStorageSectionContext = false;
         }
         /// <summary>parent: DATA DIVISION</summary>
         /// <param name="context">LINKAGE SECTION</param>
@@ -360,11 +371,13 @@ namespace TypeCobol.Compiler.Parser
             var terminal = context.LinkageSectionHeader();
             var header = terminal != null ? (LinkageSectionHeader)terminal.Symbol : null;
             Enter(new LinkageSection(header), context);
+            _IsInsideLinkageSectionContext = true;
         }
         public override void ExitLinkageSection(ProgramClassParser.LinkageSectionContext context)
         {
             ExitLastLevel1Definition();
             Exit(); // Exit LinkageSection
+            _IsInsideLinkageSectionContext = false;
         }
 
         public override void EnterDataDefinitionEntry(ProgramClassParser.DataDefinitionEntryContext context)
@@ -395,6 +408,8 @@ namespace TypeCobol.Compiler.Parser
             else
                 table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
             table.AddType(node);
+
+            _CurrentTypeDefinition = node;
 
             AnalyticsWrapper.Telemetry.TrackEvent("[Type-Declared] " + node.Name, EventType.TypeCobolUsage);
         }
@@ -427,6 +442,8 @@ namespace TypeCobol.Compiler.Parser
             //Update DataType of CodeElement by searching info on the declared Type into SymbolTable.
             //Note that the AST is not complete here, but you can only refer to a Type that has previously been defined.
             var node = new DataDescription(data);
+            if (_CurrentTypeDefinition != null)
+                node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
 
             if (data.Indexes != null && data.Indexes.Any())
@@ -439,7 +456,9 @@ namespace TypeCobol.Compiler.Parser
 
                     var indexNode = new IndexDefinition(index);
                     Enter(indexNode, null, table);
-                    if (!indexNode.IsPartOfATypeDef) //If index is inside a Typedef do not add to symboltable
+                    if (_CurrentTypeDefinition != null)
+                        indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
+                    else //If index is inside a Typedef do not add to symboltable
                         table.AddVariable(indexNode);
                     Exit();
                 }
@@ -452,34 +471,14 @@ namespace TypeCobol.Compiler.Parser
             }
             //else do nothing, it's an error that will be handled by Cobol2002Checker
 
-            var parent = node.Parent;
-            while(parent !=null)
-            {
-                if (parent is WorkingStorageSection)
-                {
-                    //Set flag to know that this node belongs to working storage section
-                    node.SetFlag(Node.Flag.WorkingSectionNode, true); 
-                    break;
-                }
-                else if (parent is LinkageSection)
-                {
-                    //Set flag to know that this node belongs to linkage section
-                    node.SetFlag(Node.Flag.LinkageSectionNode, true);
-                    break;
-                }
-                else if (parent is LocalStorageSection)
-                {
-                    //Set flag to know that this node belongs to local storage section
-                    node.SetFlag(Node.Flag.LocalStorageSectionNode, true);
-                    break;
-                }
-                else if (parent is FileSection)
-                {
-                    node.SetFlag(Node.Flag.FileSectionNode, true);
-                    break;
-                }
-                parent = parent.Parent;
-            }
+            if(_IsInsideWorkingStorageContext)
+                node.SetFlag(Node.Flag.WorkingSectionNode, true);      //Set flag to know that this node belongs to Working Storage Section
+            if(_IsInsideLinkageSectionContext)               
+                node.SetFlag(Node.Flag.LinkageSectionNode, true);      //Set flag to know that this node belongs to Linkage Section
+            if(_IsInsideLocalStorageSectionContext)
+                node.SetFlag(Node.Flag.LocalStorageSectionNode, true); //Set flag to know that this node belongs to Local Storage Section
+            if (_IsInsideFileSectionContext)
+                node.SetFlag(Node.Flag.FileSectionNode, true);         //Set flag to know that this node belongs to File Section
 
             AddToSymbolTable(node);
         }
@@ -488,6 +487,8 @@ namespace TypeCobol.Compiler.Parser
         {
             SetCurrentNodeToTopLevelItem(data.LevelNumber);
             var node = new DataCondition(data);
+            if (_CurrentTypeDefinition != null)
+                node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
             if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
         }
@@ -496,6 +497,8 @@ namespace TypeCobol.Compiler.Parser
         {
             SetCurrentNodeToTopLevelItem(data.LevelNumber);
             var node = new DataRedefines(data);
+            if (_CurrentTypeDefinition != null)
+                node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
             if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
         }
@@ -504,6 +507,8 @@ namespace TypeCobol.Compiler.Parser
         {
             SetCurrentNodeToTopLevelItem(data.LevelNumber);
             var node = new DataRenames(data);
+            if (_CurrentTypeDefinition != null)
+                node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
             if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
         }
@@ -553,7 +558,8 @@ namespace TypeCobol.Compiler.Parser
         /// <summary>Exit last level-01 data definition entry, as long as all its subordinates.</summary>
         private void ExitLastLevel1Definition()
         {
-            while (CurrentNode.CodeElement != null && TypeCobol.Tools.Reflection.IsTypeOf(CurrentNode.CodeElement.GetType(), typeof(DataDefinitionEntry))) Exit();
+            _CurrentTypeDefinition = null;
+            while (CurrentNode.CodeElement != null && CurrentNode.CodeElement is DataDefinitionEntry) Exit();
         }
 
 

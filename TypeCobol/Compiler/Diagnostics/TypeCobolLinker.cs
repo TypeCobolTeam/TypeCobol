@@ -57,9 +57,9 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (dataChild == null) return false;
                 var childrenType = symbolTable.GetType(dataChild.DataType).FirstOrDefault();
                 if (childrenType == null) return false;
-                return dataEntry.GetParentTypeDefinition == childrenType; //Circular reference detected will return true
+                return dataEntry.ParentTypeDefinition == childrenType; //Circular reference detected will return true
             });
-            if (type == dataEntry.GetParentTypeDefinition || circularRefInsideChildren) 
+            if (type == dataEntry.ParentTypeDefinition || circularRefInsideChildren) 
             {
                 DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", MessageCode.SemanticTCErrorInParser);
                 return; //Do not continue to prevent further work/crash with circular references

@@ -227,42 +227,22 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        private bool? _isPartOfTypeDef;
-
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
-        public bool IsPartOfATypeDef
-        {
-            get
-            {
-                if (_isPartOfTypeDef != null) return _isPartOfTypeDef.Value;
-                var parent = Parent;
-                while (parent != null)
-                {
-                    if (!(parent is DataDefinition))
-                    {
-                        _isPartOfTypeDef = false;
-                        break;
-                    }
-
-                    if (parent is TypeDefinition)
-                    {
-                        _isPartOfTypeDef = true;
-                        break;
-                    }
-                    parent = parent.Parent;
-                }
-
-                return _isPartOfTypeDef != null && _isPartOfTypeDef.Value;
-            }
-        }
-
+        public bool IsPartOfATypeDef { get { return _ParentTypeDefinition != null; } }
+    
+        private TypeDefinition _ParentTypeDefinition;
         /// <summary>
         /// Return Parent TypeDefinition if this node is under it
         /// Otherwise return null
         /// </summary>
         [CanBeNull]
-        public TypeDefinition GetParentTypeDefinition {
-            get { return GetParentTypeDefinitionWithPath(new List<string>()); }
+        public TypeDefinition ParentTypeDefinition {
+            get { return _ParentTypeDefinition; }
+            set
+            {
+                if (_ParentTypeDefinition == null)
+                    _ParentTypeDefinition = value;
+            }
         }
 
         public TypeDefinition GetParentTypeDefinitionWithPath([NotNull] List<string> qualifiedPath)

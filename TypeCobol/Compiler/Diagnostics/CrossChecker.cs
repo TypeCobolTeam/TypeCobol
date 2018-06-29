@@ -192,9 +192,9 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var found =
                 indexDefinition.SymbolTable.GetVariablesExplicit(new URI(indexDefinition.Name))
-                    .Where(i => i.GetParentTypeDefinition == null)
+                    .Where(i => i.ParentTypeDefinition == null)
                     .ToList();
-            if (indexDefinition.GetParentTypeDefinition != null) return true;
+            if (indexDefinition.ParentTypeDefinition != null) return true;
             if (found.Count > 1) //If multiple index with same name found, display a warning.
             {
                 DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement,
@@ -278,7 +278,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
                     ? area.SymbolReference.URI
                     : new URI(area.ToString()),
-                    isPartOfTypeDef ? ((DataDefinition) node).GetParentTypeDefinition
+                    isPartOfTypeDef ? ((DataDefinition) node).ParentTypeDefinition
                     :null);
             var found = foundQualified.Select(v => v.Value);
             
