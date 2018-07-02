@@ -85,6 +85,12 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Set setStatement)
+        {
+            SetStatementChecker.CheckStatement(setStatement);
+            return true;
+        }
+
         public override bool Visit(Move move)
         {
             var moveCorresponding = move?.CodeElement as MoveCorrespondingStatement;
@@ -186,9 +192,9 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var found =
                 indexDefinition.SymbolTable.GetVariablesExplicit(new URI(indexDefinition.Name))
-                    .Where(i => i.GetParentTypeDefinition == null)
+                    .Where(i => i.ParentTypeDefinition == null)
                     .ToList();
-            if (indexDefinition.GetParentTypeDefinition != null) return true;
+            if (indexDefinition.ParentTypeDefinition != null) return true;
             if (found.Count > 1) //If multiple index with same name found, display a warning.
             {
                 DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement,
@@ -272,7 +278,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
                     ? area.SymbolReference.URI
                     : new URI(area.ToString()),
-                    isPartOfTypeDef ? ((DataDefinition) node).GetParentTypeDefinition
+                    isPartOfTypeDef ? ((DataDefinition) node).ParentTypeDefinition
                     :null);
             var found = foundQualified.Select(v => v.Value);
             
@@ -388,31 +394,6 @@ namespace TypeCobol.Compiler.Diagnostics
                         //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
                             completeQualifiedName);
-                    }
-                }
-                else if (dataDefinition.Usage == DataUsage.Pointer && dataDefinition.CodeElement is DataDefinitionEntry)
-                {
-                    if (node.CodeElement is SetStatementForIndexes && !node.IsFlagSet(Node.Flag.NodeContainsPointer))
-                    {
-                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsPointer, node, storageArea,
-                            completeQualifiedName);
-                        var receivers = node["receivers"] as List<DataDefinition>;
-                        int intSender;
-                        if (!Int32.TryParse(node["sender"].ToString(), out intSender))
-                        {
-                            if (!node.SymbolTable.DataEntries.Any(
-                                x => x.Key == node["sender"].ToString() &&
-                                     x.Value.First().DataType.Name == "Numeric"))
-                                DiagnosticUtils.AddError(node, "Increment only support integer values");
-                        }
-                        foreach (var receiver in receivers)
-                        {
-                            if (receiver.Usage != DataUsage.Pointer)
-                                DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
-                            
-                            if (((DataDefinitionEntry)receiver.CodeElement).LevelNumber.Value > 49)
-                                DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
-                        }
                     }
                 }
 
@@ -689,6 +670,10 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             ITypedNode typed = symbol as ITypedNode;
             if (typed == null) return null; // symbol untyped
+
+            if (data?.TypeDefinition != null)
+                return data.TypeDefinition;
+
             var types = node.SymbolTable.GetType(typed);
             // return null if symbol type not found or ambiguous
             return types.Count != 1 ? null : types[0];

@@ -49,7 +49,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var types = symbolTable.GetType(dataEntry.DataType);
             if (types.Count != 1) return;
             var type = types.First();
-
+            dataEntry.TypeDefinition = type; //Set the TypeDefinition on DataDefinition Node so to avoid symbolTable access
 
             var circularRefInsideChildren = type.Children.Any(c =>
             {
@@ -57,9 +57,9 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (dataChild == null) return false;
                 var childrenType = symbolTable.GetType(dataChild.DataType).FirstOrDefault();
                 if (childrenType == null) return false;
-                return dataEntry.GetParentTypeDefinition == childrenType; //Circular reference detected will return true
+                return dataEntry.ParentTypeDefinition == childrenType; //Circular reference detected will return true
             });
-            if (type == dataEntry.GetParentTypeDefinition || circularRefInsideChildren) 
+            if (type == dataEntry.ParentTypeDefinition || circularRefInsideChildren) 
             {
                 DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", MessageCode.SemanticTCErrorInParser);
                 return; //Do not continue to prevent further work/crash with circular references

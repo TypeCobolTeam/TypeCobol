@@ -543,7 +543,7 @@ namespace TypeCobol.Compiler.CodeModel
                 //If typedefcontext is set : Ignore references of this typedefContext to avoid loop seeking
                 //                           Only takes variable references that are declared inside the typeDefContext
                 if (typeDefContext != null)
-                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.GetParentTypeDefinition == typeDefContext).ToList();
+                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext).ToList();
 
                 var primaryPath = completeQualifiedNames.Last().ToArray(); //PrmiaryPath that will be added in front of every reference's path found
                 foreach (var reference in references)
@@ -587,7 +587,7 @@ namespace TypeCobol.Compiler.CodeModel
             //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
             //                              + Only takes variable references that are declared inside the typeDefContext
             if (typeDefContext != null)
-                references = references.Where(r => r.DataType != typeDefContext.DataType && r.GetParentTypeDefinition == typeDefContext).ToList();
+                references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext).ToList();
             var typePath = completeQualifiedNames.Last().ToArray();
             var referenceCounter = 0;
             foreach (var reference in references)

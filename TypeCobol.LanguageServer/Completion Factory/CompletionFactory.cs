@@ -721,7 +721,7 @@ namespace TypeCobol.LanguageServer
         private static void SearchVariableInTypesAndLevels(Node node, DataDefinition variable, ref List<CompletionItem> completionItems)
         {
             var symbolTable = node.SymbolTable;
-            if (variable.GetParentTypeDefinition == null)  //Variable is not comming from a type. 
+            if (!variable.IsPartOfATypeDef)  //Variable is not comming from a type. 
             {
                 if (symbolTable.GetVariablesExplicit(new URI(variable.Name)).Any())   //Check if this variable is present locally. 
                 {
@@ -732,23 +732,15 @@ namespace TypeCobol.LanguageServer
             {
                 if (symbolTable.TypesReferences != null) //We are in a typedef, get references of this type
                 {
-                    var types = symbolTable.GetType(variable.GetParentTypeDefinition.DataType);
+                    var type = variable.ParentTypeDefinition;
                     IEnumerable<DataDefinition> references = null;
-                    if (types.Count == 0)
-                    {
-                        references = symbolTable.TypesReferences.SelectMany(t => t.Value);
-                    }
-                    else
-                    {
-                        var type = types.First();
-                        references = symbolTable.TypesReferences.Where(t => t.Key == type).SelectMany(r => r.Value);
-                    }
+                    references = symbolTable.TypesReferences.Where(t => t.Key == type).SelectMany(r => r.Value);
 
                     foreach (var reference in references)
                     {
                         if (symbolTable.GetVariablesExplicit(new URI(reference.Name)).Any())  //Check if this variable is present locally. If not just ignore it
                         {
-                            if (reference.GetParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final varaible
+                            if (reference.ParentTypeDefinition == null) //Check if the variable is inside a typedef or not, if not it's a final varaible
                             {
                                 var referenceArrangedQualifiedName = string.Join("::", reference.VisualQualifiedName.ToString().Split(reference.VisualQualifiedName.Separator).Skip(1)); //Skip Program Name
                                 var finalQualifiedName = string.Format("{0}::{1}", referenceArrangedQualifiedName, variable.VisualQualifiedName.Head);

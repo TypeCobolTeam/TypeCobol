@@ -37,15 +37,14 @@ namespace TypeCobol.Codegen.Nodes
                     if (data.LevelNumber != null)
                     {
                         int level = (int) (data.LevelNumber.Value);
-                        var customtype = this.Node.SymbolTable.GetType(data.DataType);
+                        var customtype = this.Node.TypeDefinition;
                         //collect root procedure
                         List<string> rootProcedures;
                         //Collect from level 01 Pure Cobol85 root variables                    
                         List<Tuple<string, string>> rootVars;
-                        GeneratorHelper.ComputeTypedProperPaths(this, data, customtype[0], out rootProcedures, out rootVars);
-                        _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype[0], data, level, 0, true, true, customtype[0]));
-                        if (customtype.Count > 0)
-                            _cache.AddRange(InsertChildren(Layout, rootProcedures, rootVars,  customtype[0], customtype[0], level + 1, 1));
+                        GeneratorHelper.ComputeTypedProperPaths(this, data, customtype, out rootProcedures, out rootVars);
+                        _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype, data, level, 0, true, true, customtype));
+                        _cache.AddRange(InsertChildren(Layout, rootProcedures, rootVars, customtype, customtype, level + 1, 1));
                     }
                 }
                 return _cache;
@@ -677,23 +676,22 @@ namespace TypeCobol.Codegen.Nodes
         {
             foreach (var child in dataDef.Children)
             {//First lookup in directly accessible
-                if (child is DataDefinition)
+                DataDefinition data = child as DataDefinition;
+                if (data != null)
                 {
-                    DataDefinition data = child as DataDefinition;
                     if (data.Name != null && data.Name.ToLower().Equals(name))
                     {
                         acc.Add(dataDef.Name);
                         acc.Add(data.Name);
                         return true;
                     }
-                    var types = table.GetType(data.DataType);
-                    bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
+                    var type = data.TypeDefinition;
+                    bool isCustomTypeToo = !(data is TypeDefinition) && (type != null);
                     var dataDefinitionEntry = data.CodeElement as DataDefinitionEntry;
                     if (isCustomTypeToo && dataDefinitionEntry != null)
                     {                        
-                        DataDefinition typeDef = (DataDefinition)types[0];
                         List<string> sub_acc = new List<string>();
-                        bool bFound = AccessPathForName(table, typeDef, name, sub_acc);
+                        bool bFound = AccessPathForName(table, type, name, sub_acc);
                         if (bFound)
                         {   //Remove the type name
                             sub_acc.RemoveAt(0);
@@ -765,36 +763,67 @@ namespace TypeCobol.Codegen.Nodes
             return str;
         }
 
-        private readonly static string[] BoolTypeTemplate = {
-        " {2}{1}  {0}-value PIC X VALUE {3}.",
-        " {2}    88  {0}       VALUE 'T'.",
-        " {2}    88  {0}-false VALUE 'F' ",
-        "                      X'00' thru 'S'",
-        "                      'U' thru X'FF'."
-    };
+        private static readonly string[] BoolTypeTemplate = {
+            " {2}{1}  {0}-value PIC X VALUE {3}.",
+            " {2}    88  {0}       VALUE 'T'.",
+            " {2}    88  {0}-false VALUE 'F' ",
+            "                      X'00' thru 'S'",
+            "                      'U' thru X'FF'."
+        };
+        private static readonly string[] PointerUsageTemplate = {
+            " {2}{1}  {0} Pointer.",
+            " {2}{1}  redefines {0}.",
+            " {2}    {3}  {4}{5} pic S9(05) comp-5."
+
+        };
         public static List<ITextLine> InsertChildren(ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, DataDefinition ownerDefinition, DataDefinition type, int level, int indent)
         {
             var lines = new List<ITextLine>();
             foreach (var child in type.Children)
             {
                 if (child is TypedDataNode) continue;
-                //Special case type BOOL
+                //Special cases BOOL / POINTER
                 if (child is TypeCobol.Compiler.Nodes.DataDescription)
                 {
+                    // For BOOL
                     string attr_type = (string)child["type"];
-                    if (attr_type != null)
+                    if (attr_type != null && attr_type.ToUpper().Equals("BOOL"))
                     {
-                        if (attr_type.ToUpper().Equals("BOOL"))
+                        string attr_name = (string)child["name"];
+                        string margin = "";
+                        for (int i = 0; i < indent; i++)
+                            margin += "  ";
+                        string slevel = level.ToString("00");
+                        string svalue = child["value"] as string;
+                        foreach (string str in BoolTypeTemplate)
+                        {
+                            string sline = string.Format(str, attr_name, slevel, margin, svalue?.Length == 0 ? "LOW-VALUE" : svalue);
+                            TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
+                            lines.Add(line);
+                        }
+                        continue;
+                    }
+                    else
+                    {
+                        // For POINTER
+                        var attr_usage = child["usage"];
+                        if (attr_usage != null && attr_usage.ToString().ToUpper().Equals("POINTER"))
                         {
                             string attr_name = (string)child["name"];
                             string margin = "";
                             for (int i = 0; i < indent; i++)
                                 margin += "  ";
                             string slevel = level.ToString("00");
-                            string svalue = child["value"] as string;
-                            foreach (string str in BoolTypeTemplate)
+                            string shash = (string)child["hash"];
+                            foreach (string str in PointerUsageTemplate)
                             {
-                                string sline = string.Format(str, attr_name, slevel, margin, svalue?.Length == 0 ? "LOW-VALUE" : svalue);
+                                string sline = string.Format(str,
+                                                             attr_name, 
+                                                             slevel,
+                                                             margin,
+                                                             (level+1).ToString("00"),
+                                                             attr_name.Length > 22 ? attr_name.Substring(0, 22) : attr_name,
+                                                             shash);
                                 TextLineSnapshot line = new TextLineSnapshot(-1, sline, null);
                                 lines.Add(line);
                             }
@@ -812,17 +841,12 @@ namespace TypeCobol.Codegen.Nodes
                 {//Unexpected typed value.                    
                     continue;
                 }
-     
-                List <TypeDefinition> types = new List<TypeDefinition>();
-                if (types.Count == 0 && child.SymbolTable != null)
-                {
-                    types = child.SymbolTable.GetType(typed.DataType);
-                }
-                bool isCustomTypeToo = !(child is TypeDefinition) && (types.Count > 0);
+
+                bool isCustomTypeToo = !(child is TypeDefinition) && (typed.TypeDefinition != null);
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
                 if (dataDefinitionEntry != null)
                 {
-                    lines.AddRange(CreateDataDefinition(child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? types[0] : null));
+                    lines.AddRange(CreateDataDefinition(child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? typed.TypeDefinition : null));
                 }
                 else
                 {//Humm ... It will be a bug.
@@ -831,9 +855,9 @@ namespace TypeCobol.Codegen.Nodes
                 if (isCustomTypeToo)
                 {
                     List< Tuple<string,string> > newRootVariableName = new List<Tuple<string, string>>();
-                    newRootVariableName.Add(new Tuple<string, string>(typed.Name, types[0].Name));
+                    newRootVariableName.Add(new Tuple<string, string>(typed.Name, typed.TypeDefinition.Name));
                     newRootVariableName.AddRange(rootVariableName);
-                    lines.AddRange(InsertChildren(layout, rootProcedures, newRootVariableName, typed, types[0], level + 1, indent + 1));
+                    lines.AddRange(InsertChildren(layout, rootProcedures, newRootVariableName, typed, typed.TypeDefinition, level + 1, indent + 1));
                 }
                 else
                     lines.AddRange(InsertChildren(layout, rootProcedures, rootVariableName, typed, typed, level + 1, indent + 1));

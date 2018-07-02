@@ -125,7 +125,17 @@ namespace TypeCobol.Compiler.Nodes {
 
         protected DataDefinition(DataDefinitionEntry entry) : base(entry) { }
         public override string ID { get { return "data-definition"; } }
-        public override string Name { get { return ((DataDefinitionEntry)this.CodeElement).Name; } }
+        private string _name;
+
+        public override string Name
+        {
+            get
+            {
+                if (_name != null) return _name;
+                _name = ((DataDefinitionEntry) this.CodeElement).Name;
+                return _name;
+            }
+        }
 
         private Dictionary<StorageArea, Node> _References;
 
@@ -143,35 +153,57 @@ namespace TypeCobol.Compiler.Nodes {
             return _References ?? (_References = new Dictionary<StorageArea, Node>());
         }
 
+        private TypeDefinition _typeDefinition;
+
+        /// <summary>
+        /// Get the TypeDefinition node associated to this Node
+        /// </summary>
+        public TypeDefinition TypeDefinition
+        {
+            get { return _typeDefinition; }
+            set
+            {
+                if (_typeDefinition == null)
+                    _typeDefinition = value;
+            }
+        }
+
+
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
         }
 
+        private DataType _dataType;
         public virtual DataType DataType
         {
             get
             {
-                if (this.CodeElement != null)
-                {
-                    return ((DataDefinitionEntry)this.CodeElement).DataType;
-                }
-                return DataType.Unknown;
+                if (_dataType != null) return _dataType;
+
+                _dataType = this.CodeElement != null ? ((DataDefinitionEntry) this.CodeElement).DataType : DataType.Unknown;
+                return _dataType;
             }
         }
 
+        private DataType _primitiveDataType;
         public virtual DataType PrimitiveDataType
         {
             get
             {
+                if (_primitiveDataType != null) return _primitiveDataType;
                 if (this.Picture != null) //Get DataType based on Picture clause
-                    return DataType.Create(this.Picture.Value);
+                    _primitiveDataType = DataType.Create(this.Picture.Value);
                 else if (this.Usage.HasValue) //Get DataType based on Usage clause
-                    return DataType.Create(this.Usage.Value);
+                    _primitiveDataType = DataType.Create(this.Usage.Value);
                 else
                     return null;
+
+                return _primitiveDataType;
             }
         }
 
+
+        private int? _length = null;
         /// <summary>
         /// TODO This method should be split like this:
         /// - PhysicalLength 
@@ -183,37 +215,34 @@ namespace TypeCobol.Compiler.Nodes {
         {
             get
             {
+                if (_length != null) return _length.Value;
                 if (this.CodeElement != null)
                 {
-                    return ((DataDefinitionEntry)this.CodeElement).Length;
+                    _length = ((DataDefinitionEntry) this.CodeElement).Length;
                 }
-                return 0;
+                else
+                    return 0;
+
+                return _length.Value;
             }
         }
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
-        public bool IsPartOfATypeDef
-        {
-            get
-            {
-                var parent = Parent;
-                while (parent != null)
-                {
-                    if (!(parent is DataDefinition)) return false;
-                    if (parent is TypeDefinition) return true;
-                    parent = parent.Parent;
-                }
-                return false;
-            }
-        }
-
+        public bool IsPartOfATypeDef { get { return _ParentTypeDefinition != null; } }
+    
+        private TypeDefinition _ParentTypeDefinition;
         /// <summary>
         /// Return Parent TypeDefinition if this node is under it
         /// Otherwise return null
         /// </summary>
         [CanBeNull]
-        public TypeDefinition GetParentTypeDefinition {
-            get { return GetParentTypeDefinitionWithPath(new List<string>()); }
+        public TypeDefinition ParentTypeDefinition {
+            get { return _ParentTypeDefinition; }
+            set
+            {
+                if (_ParentTypeDefinition == null)
+                    _ParentTypeDefinition = value;
+            }
         }
 
         public TypeDefinition GetParentTypeDefinitionWithPath([NotNull] List<string> qualifiedPath)
@@ -256,6 +285,15 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         public bool IsIndex { get; internal set; }
+        public string Hash
+        {
+            get
+            {
+                var hash = new StringBuilder();
+                hash.Append(Name);
+                return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8);
+            }
+        }
 
         #region TypeProperties
         public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
@@ -277,7 +315,7 @@ namespace TypeCobol.Compiler.Nodes {
         #endregion
     }
 
-    public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>, Tools.Hashable{
+    public class DataDescription: DataDefinition, CodeElementHolder<DataDescriptionEntry>, Parent<DataDescription>{
         public DataDescription(DataDescriptionEntry entry): base(entry) { }
 
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -289,15 +327,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         public Dictionary<Token, string> QualifiedTokenSubsitutionMap;
 
-        public string Hash
-        {
-            get
-            {
-                var hash = new StringBuilder();
-                hash.Append(Name);
-                return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8);
-            }
-        }
+        
     }
     public class DataCondition: DataDefinition, CodeElementHolder<DataConditionEntry> 
     {

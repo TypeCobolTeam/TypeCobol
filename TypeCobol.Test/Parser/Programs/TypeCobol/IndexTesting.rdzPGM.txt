@@ -2,12 +2,12 @@
 Line 21[12,70] <27, Error, Syntax> - Syntax error : Index name 'MyIdx3azeazeazeazeazeazeazeaz' is over 22 characters.
 Line 25[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
 Line 26[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
-Line 59[8,42] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx
-Line 62[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx 
+Line 60[8,42] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx
+Line 63[8,22] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol BadIdx 
 Symbols found: IndexTesting::Bad::BadType::BadVar::BadIdx | IndexTesting::Bad::BadType::BadVar2::BadIdx
-Line 64[8,28] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol
-Line 69[8,41] <27, Error, Syntax> - Syntax error : [Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.
-Line 71[8,33] <27, Error, Syntax> - Syntax error : Increment only support integer values
+Line 65[8,28] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol
+Line 70[8,41] <27, Error, Syntax> - Syntax error : [Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.
+Line 72[8,49] <27, Error, Syntax> - Syntax error : Increment only support integer values, numeric variables and arithmetic expressions
 
 --- Program ---
 PROGRAM: IndexTesting common:False initial:False recursive:False
@@ -34,6 +34,7 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   Dup2:Array
   Account1:Account
   Bad:BadType
+  myPointerGroup:Alphanumeric
   myPointer:Alphanumeric
   strVar:Alphanumeric
   ThisIndexNameIsClearlyToLong:Numeric

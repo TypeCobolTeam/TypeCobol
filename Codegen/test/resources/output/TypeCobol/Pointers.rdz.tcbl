@@ -5,40 +5,74 @@
        DATA DIVISION.
 
        LOCAL-STORAGE SECTION.
-      *01 pointer0 pointer.
-       01  pointer0 POINTER.
-       01 redefines pointer0.
-           03 pointer0efd9c003 pic S9(05) comp-5.
-                           
+      *01 PointerContainer typedef Strict.
+      *    02 pntr pointer.
+      *    02 pointerStat.
+      *       05 counter pic 9(5).
+      *       05 increment pic 9(2).
+      *       05 backupPointer pointer.
+
+      *01 pointer0 type PointerContainer.
+       01 pointer0.
+          02  pntr Pointer.
+          02  redefines pntr.
+              03  pntrc20a8a84 pic S9(05) comp-5.
+           02 pointerStat.
+             03 counter pic 9(5).
+             03 increment pic 9(2).
+            03  backupPointer Pointer.
+            03  redefines backupPointer.
+                04  backupPointera4fc7f95 pic S9(05) comp-5.
+                                         
       *01 pointer1 pointer.
        01  pointer1 POINTER.
        01 redefines pointer1.
-           03 pointer1fe930f3e pic S9(05) comp-5.
+           02 pointer1fe930f3e pic S9(05) comp-5.
                            
-      *01 pointer2 pointer.
-       01  pointer2 POINTER.
-       01 redefines pointer2.
-           03 pointer2db906685 pic S9(05) comp-5.
-                           
-       
-       LINKAGE SECTION.
-       01 noPointer PIC S9(2) value 12.
+       01 notUsedPointer pointer.
+       01 notUsedPointerOccurs pointer OCCURS 10.
+
+       01 noPointer pic 9(8) value 12.
 
        PROCEDURE DIVISION.
 
-       SET address of noPointer to pointer0.
-
-      *SET pointer0 UP BY 3.
-       ADD 3 to pointer0efd9c003
+      * Normal case
+      *SET pointer1 UP BY 3.
+       ADD 3 to pointer1fe930f3e
                            .
-      *SET pointer0 DOWN BY noPointer.
-       ADD -noPointer to pointer0efd9c003
-                                     .
-      *SET pointer0,pointer1 UP BY noPointer.
-       ADD noPointer to pointer0efd9c003, pointer1fe930f3e
-                                            .
-      *SET pointer0,pointer1,pointer2 DOWN BY 12.
-       ADD -12 to pointer0efd9c003, pointer1fe930f3e, pointer2db906685
-                                                .
+
+      * Increment with variable
+      *SET pointer1 DOWN BY pointer0::increment.
+       ADD -increment OF pointer0 to pointer1fe930f3e
+                                               .
+
+      * Usage of qualified Name
+      *SET pointer0::pntr UP BY noPointer.
+       ADD noPointer to pntrc20a8a84 OF pointer0
+                                         .
+      * Usage of qualified Name
+      *SET pointer0::pointerStat::backupPointer UP BY noPointer.
+       ADD noPointer to backupPointera4fc7f95 OF pointerStat OF pointer0
+                                                               .
+
+      * Multiple Increment 
+      *SET pointer0::pntr,pointer0::backupPointer, pointer1 DOWN BY 12.
+       ADD -12 to pntrc20a8a84 OF pointer0, backupPointera4fc7f95 OF poi
+      -    nter0, pointer1fe930f3e                                                       
+                                                                      .
+
+      * Arithmetic expression 
+      *SET pointer0::pntr, pointer0::backupPointer UP BY ((4 + 8)/2**2).
+       COMPUTE pntrc20a8a84 OF pointer0 = pntrc20a8a84 OF pointer0 + ((4
+            + 8)/2**2).                                                                  
+       COMPUTE backupPointera4fc7f95 OF pointer0 = backupPointera4fc7f95
+            OF pointer0 + ((4 + 8)/2**2)
+                                                                       .
+
+      * Arithmetic expression using variables
+      *SET pointer0::pntr Down BY (pointer0::counter + increment).
+       COMPUTE pntrc20a8a84 OF pointer0 = pntrc20a8a84 OF pointer0 - (po
+      -    inter0::counter + increment)                                                  
+                                                                 .
 
        END PROGRAM Pointers.
