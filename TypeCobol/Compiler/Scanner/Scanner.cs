@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Analytics;
+using Antlr4.Runtime.Atn;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Scanner
@@ -92,12 +94,16 @@ namespace TypeCobol.Compiler.Scanner
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
             if (textLine.Type == CobolTextLineType.Comment ||
-               (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
+                (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
-                Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
-                tokensLine.AddToken(commentToken);
-                return;
+                if (textLine.Text.Substring(6, 3) != "*<<" && textLine.Text.Substring(6, 3) != "*>>")
+                {
+                    Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
+                    tokensLine.AddToken(commentToken);
+                    return;
+                }
             }
+
             // Invalid indicator, the line type is unknown => the whole line text is handled as a single invalid token
             else if (textLine.Type == CobolTextLineType.Invalid)
             {
@@ -124,7 +130,7 @@ namespace TypeCobol.Compiler.Scanner
             Scanner scanner = new Scanner(line, startIndex, lastIndex, tokensLine, compilerOptions);
             Token nextToken = null;
             while((nextToken = scanner.GetNextToken()) != null)
-            {                
+            {
                 tokensLine.AddToken(nextToken);
             }    
         }
@@ -612,6 +618,52 @@ namespace TypeCobol.Compiler.Scanner
                 return ScanPictureCharacterStringOrISOrSYMBOL(startIndex);
             }
 
+            // --- switch dedicated to formalized Comments as they are not compatible with TypeCobol grammar ---
+            if (currentState.InsideFormalizedComment)
+            {
+                switch (line[startIndex])
+                {
+                    case ' ':
+                        //SpaceSeparator=1,
+                        return ScanWhitespace(startIndex);
+                    case '-':
+                        currentIndex++;
+                        return new Token(TokenType.MinusOperator, startIndex, currentIndex - 1, tokensLine);
+                    case ':':
+                        // The colon char can appears inside the formalized comments as a separator between keys and value
+                        // Consume the rest of the line and create a FloatingComment token as value for the formalized comment
+                        currentIndex = lastIndex + 1;
+                        return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>");
+                    case '*':
+                        if (line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
+                        {
+                            // We are in the case of a Formalize Comment stop with the '*' on column other than 7
+                            // consume the * char and the two < chars
+                            currentIndex += 3;
+                            return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 2, tokensLine);
+                        }
+                        currentIndex ++;
+                        return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
+                    case '>':
+                        if (line[currentIndex + 1] == '>' && line[currentIndex - 1] == '*')
+                        {
+                            // We are in the case of a Formalize Comment stop with the '*' on column 7
+                            // consume the two > chars
+                            currentIndex += 2;
+                            return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 1, tokensLine);
+                        }
+                        currentIndex++;
+                        return new Token(TokenType.GreaterThanOperator, startIndex, currentIndex - 1, tokensLine);
+                    default:
+                        // register the keys or the description if no '-' was given
+                        if (tokensLine.SourceTokens.Count > 1 && tokensLine.SourceTokens[1].TokenType == TokenType.MinusOperator)
+                            // it is a key
+                            return ScanCharacterString(startIndex);
+                        // It's a description without key
+                        return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>");
+                }
+            }
+
             // --- Main switch ---
 
             switch (line[startIndex])
@@ -694,6 +746,13 @@ namespace TypeCobol.Compiler.Scanner
                         // match 8 chars                       
                         currentIndex += 8;
                         return new Token(TokenType.ASTERISK_CONTROL, startIndex, startIndex + 7, tokensLine);
+                    }
+                    else if (line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
+                    {
+                        // We are in the case of a Formalize Comment start
+                        // consume the * char and the two < chars
+                        currentIndex += 3;
+                        return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 2, tokensLine);
                     }
                     else
                     {
@@ -795,7 +854,16 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         // scan the = char and a space
                         return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.LessThanOrEqualOperator);
-                    } else {
+                    }
+                    else if (line[currentIndex + 1] == '<' && line[currentIndex - 1] == '*')
+                    {
+                        // We are in the case of a Formalize Comment start
+                        // consume the two < chars
+                        currentIndex += 2;
+                        return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 1, tokensLine);
+                    }
+                    else
+                    {
                         // consume < char and try to match it as a less than operator
                         currentIndex++;
                         return new Token(TokenType.LessThanOperator, startIndex, startIndex, tokensLine);
@@ -1116,7 +1184,7 @@ namespace TypeCobol.Compiler.Scanner
             return ScanOneCharFollowedBySpace(startIndex, tokenType, MessageCode.ImplementationError, false);
         }
 
-    private Token ScanOneCharFollowedBySpace(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterisMandatory =true)
+        private Token ScanOneCharFollowedBySpace(int startIndex, TokenType tokenType, MessageCode messageCode, bool spaceAfterisMandatory =true)
         {
             if (currentIndex == lastIndex)
             {
@@ -1747,6 +1815,10 @@ namespace TypeCobol.Compiler.Scanner
             {
                 tokenType = TokenType.IntrinsicFunctionName;
             }
+            else if (tokensLine.ScanState.InsideFormalizedComment)
+            {
+                tokenType = TokenUtils.GetFormalComTokenTypeFromTokenString(tokenText);
+            }
             else
             {
                 // p12: A reserved word is a character-string with a predefined meaning in a COBOL source
@@ -1949,6 +2021,15 @@ namespace TypeCobol.Compiler.Scanner
                 tokensLine.AddDiagnostic(MessageCode.InvalidCblProcessCompilerDirective, compilerDirectiveToken);
             }
             return compilerDirectiveToken;
+        }
+
+        private Token ScanUntilDelimiter(int startIndex, TokenType tokenType, string delimiter)
+        {
+            int end = line.IndexOf(delimiter, StringComparison.Ordinal)-1;
+            if (end == -2)
+                end = lastIndex;
+            currentIndex = end + 1;
+            return new Token(tokenType, startIndex, end, tokensLine);
         }
 
         /// <summary>

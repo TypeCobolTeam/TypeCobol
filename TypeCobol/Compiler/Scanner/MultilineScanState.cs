@@ -45,6 +45,11 @@ namespace TypeCobol.Compiler.Scanner
         public bool InsideSymbolicCharacterDefinitions { get; private set; }
 
         /// <summary>
+        /// True if we are between two formalizedComments markups
+        /// </summary>
+        public bool InsideFormalizedComment { get; private set; }
+
+        /// <summary>
         /// True as soon as the keyword DECIMAL-POINT has been encountered
         /// </summary>
         public bool DecimalPointIsComma { get; private set; }
@@ -96,17 +101,18 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
-            this(insideDataDivision, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+            this(insideDataDivision, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool insideFormalizedComment, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
             InsidePseudoText = insidePseudoText;
+            InsideFormalizedComment = insideFormalizedComment;
             InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
@@ -118,7 +124,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, InsideFormalizedComment, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -206,6 +212,15 @@ namespace TypeCobol.Compiler.Scanner
                     // Register the start of a SYMBOLIC CHARACTERS? clause
                     InsideSymbolicCharacterDefinitions = true;
                     break;
+                case TokenType.FormalizedCommentsStart:
+                    // Register the begin of the formalized Comments
+                    InsideFormalizedComment = true;
+                    break;
+                case TokenType.FormalizedCommentsStop:
+                    // Register the end of the formalized Comments
+                    InsideFormalizedComment = false;
+                    break;
+
             }
             // Register the end of a SYMBOLIC CHARACTERS? clause
             if (InsideSymbolicCharacterDefinitions &&

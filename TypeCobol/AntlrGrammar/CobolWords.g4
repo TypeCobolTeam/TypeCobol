@@ -562,7 +562,22 @@ tokens
     PRIVATE,
     IN_OUT,
 	STRICT,
-	QuestionMark
+	QuestionMark,
+	CompilerDirective,
+	CopyImportDirective,
+	ReplaceDirective,
+	ContinuationTokenGroup,
+	FormalizedCommentsStart,
+	FormalizedCommentsStop,
+	FormComsDescription,
+	FormComsParameters,
+	FormComsDeprecated,
+	FormComsReplacedBy,
+	FormComsRestriction,
+	FormComsNeed,
+	FormComsSee,
+	FormComsToDo,
+	FormComsValue
 }
 
 

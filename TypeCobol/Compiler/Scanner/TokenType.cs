@@ -54,7 +54,9 @@ namespace TypeCobol.Compiler.Scanner
         // 506 -> 508 : Compiler directives
         CompilerDirective = 506,
         // 509 -> 509 : Internal token groups - used by the preprocessor only
-        InternalTokenGroup = 509
+        InternalTokenGroup = 509,
+        // 510 -> 520 : Formalized Comments Tokens
+        FormalizedCommentsFamily = 510
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -573,6 +575,19 @@ namespace TypeCobol.Compiler.Scanner
         CopyImportDirective = 507,
         ReplaceDirective = 508,
         ContinuationTokenGroup = 509,
+        FormalizedCommentsStart = 510,
+        FormalizedCommentsStop = 511,
+        FormComsDescription = 512,
+        FormComsParameters = 513,
+        FormComsDeprecated = 514,
+        FormComsReplacedBy = 515,
+        FormComsRestriction = 516,
+        FormComsNeed = 517,
+        FormComsSee = 518,
+        FormComsToDo = 519,
+        FormComsValue = 520,
+
+
 
 
 
