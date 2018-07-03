@@ -96,7 +96,9 @@ namespace TypeCobol.Compiler.Scanner
             if (textLine.Type == CobolTextLineType.Comment ||
                 (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
-                if (textLine.Text.Substring(6, 3) != "*<<" && textLine.Text.Substring(6, 3) != "*>>")
+                int comIndex = textLine.Text.IndexOf('*');
+                if (!(comIndex > 0 && textLine.Text.Length >= comIndex + 3 &&
+                    (textLine.Text.Substring(comIndex, 3) == "*<<" || textLine.Text.Substring(comIndex, 3) == "*>>")))
                 {
                     Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
                     tokensLine.AddToken(commentToken);

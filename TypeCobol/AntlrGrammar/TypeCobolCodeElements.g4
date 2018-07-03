@@ -191,5 +191,5 @@ dataDescriptionEntry:
 	| dataRenamesEntry
 	| dataConditionEntry;
 
- setStatementForIndexes:
+setStatementForIndexes:
 	SET indexStorageArea+ (UP | DOWN) BY variableOrExpression2;
