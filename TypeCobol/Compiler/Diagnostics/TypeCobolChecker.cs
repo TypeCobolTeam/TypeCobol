@@ -13,6 +13,7 @@ using Analytics;
 using Castle.Core.Internal;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -513,31 +514,29 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class FunctionDeclarationTypeChecker : CodeElementListener
+    class FunctionDeclarationTypeChecker
     {
-        public void OnCodeElement(CodeElement ce, ParserRuleContext context)
+        public static void OnCodeElement(FunctionDeclarationHeader function, CodeElementsParser.FunctionDeclarationHeaderContext context)
         {
-		var function = ce as FunctionDeclarationHeader;
-            if (function == null)
-            {
-                return; //not my job
-            }
+
             if (function.ActualType == FunctionType.Undefined)
             {
-                DiagnosticUtils.AddError(ce,
+                DiagnosticUtils.AddError(function,
                     "Incompatible parameter clauses for " + ToString(function.UserDefinedType) + " \"" + function.Name +
                     "\"", context);
-	    }
-            else if ((function.ActualType == FunctionType.Function && function.UserDefinedType == FunctionType.Procedure)
-                     || (function.ActualType == FunctionType.Procedure && function.UserDefinedType == FunctionType.Function))
+            }
+            else if ((function.ActualType == FunctionType.Function &&
+                      function.UserDefinedType == FunctionType.Procedure)
+                     || (function.ActualType == FunctionType.Procedure &&
+                         function.UserDefinedType == FunctionType.Function))
             {
                 var message = "Symbol \"" + function.Name + "\" is defined as " + ToString(function.UserDefinedType)
                               + ", but parameter clauses describe a " + ToString(function.ActualType);
-			DiagnosticUtils.AddError(ce, message, context);
-		}
-	}
+                DiagnosticUtils.AddError(function, message, context);
+            }
+        }
 
-        private string ToString(FunctionType type)
+        private static string ToString(FunctionType type)
         {
 		if (type == FunctionType.Undefined) return "symbol";
 		if (type == FunctionType.Function) return "function";

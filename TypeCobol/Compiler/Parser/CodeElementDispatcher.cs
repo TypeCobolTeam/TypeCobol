@@ -7,46 +7,6 @@ using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Parser
 {
-    public interface CodeElementListener {
-        /// <summary>
-        /// Called when a CodeElement is created during CodeElementParserStep,
-        /// if the CodeElement type equals one of those returned by GetCodeElements.
-        /// </summary>
-        /// <param name="ce">CodeElement created</param>
-        /// <param name="context">Context associated to ce's creation</param>
-        void OnCodeElement(CodeElement ce, ParserRuleContext context);
-    }
-
-    public class CodeElementDispatcher: CodeElementListener {
-        public IList<System.Type> GetCodeElements() { return null; }
-
-        /// <summary>Notifies listeners about the creation of a new CodeElement.</summary>
-        public void OnCodeElement(CodeElement e, ParserRuleContext context) {
-            foreach(var listener in _listeners) {
-                listener.OnCodeElement(e, context);
-            }
-        }
-
-        private IList<CodeElementListener> _listeners = null;
-
-        /// <summary>
-        /// Adds to listeners one instance of each type implementing CodeElementListener interface
-        /// and defined in namespace TypeCobol.Compiler.Diagnostics.
-        /// TODO: the list of namespace where CodeElementListeners are searched for should not be hard-coded
-        /// </summary>
-        internal void CreateListeners() {
-            if (_listeners == null) {
-                _listeners = new List<CodeElementListener>();
-                var namespaces = new[] { "TypeCobol.Compiler.Diagnostics", };
-                var assembly = Assembly.GetExecutingAssembly();
-                foreach (var names in namespaces) {
-                    var instances = Reflection.GetInstances<CodeElementListener>(assembly, names);
-                    foreach (var checker in instances) _listeners.Add(checker);
-                }
-            }
-        }
-    }
-
     /// <summary>
     /// An delegate for Factories used to create Node Listener
     /// </summary>

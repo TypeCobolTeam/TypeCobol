@@ -143,8 +143,6 @@ namespace TypeCobol.Compiler.Parser
             // Prepare to analyze the parse tree
             ParseTreeWalker walker = new ParseTreeWalker();
             CodeElementBuilder codeElementBuilder = new CodeElementBuilder();
-            codeElementBuilder.Dispatcher = new CodeElementDispatcher();
-            codeElementBuilder.Dispatcher.CreateListeners();
 
             // --- INCREMENTAL PARSING ---
 
