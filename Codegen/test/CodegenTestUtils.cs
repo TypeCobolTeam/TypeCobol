@@ -27,11 +27,13 @@ namespace TypeCobol.Codegen {
         /// </summary>
         /// <param name="path"></param>
         /// <param name="skeletons"></param>
-        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null) {
-            ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks);
+        /// <param name="autoRemarks"></param>
+        /// <param name="copies"></param>        
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
+            ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
         }
-        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false) {
-            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks);
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null) {
+            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies);
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors

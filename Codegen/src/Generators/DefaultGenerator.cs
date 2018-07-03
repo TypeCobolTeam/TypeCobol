@@ -118,23 +118,28 @@ namespace TypeCobol.Codegen.Generators
                 //1) A Non commented line with no Associated nodes is generated without any change.
                 if (!mapper.CommentedLines[i] && mapper.LineData[i].LineNodes == null)
                 {
-                    //If there was a previous buffer ==> Flush it
-                    if (previousBuffer != null)
+                    if (!mapper.LineData[i].Skip)
                     {
-                        if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
-                            AppendBufferContent(targetSourceText, previousBuffer);
-                        previousBuffer = null;
-                    }
-                    string text = Input[i].Text;
-                    if (mapper.LineData[i].Buffer != null)
-                    {//This line has been assigned a target Buffer
-                        mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                        mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                    }
-                    else
-                    {
-                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        //If there was a previous buffer ==> Flush it
+                        if (previousBuffer != null)
+                        {
+                            if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                                AppendBufferContent(targetSourceText, previousBuffer);
+                            previousBuffer = null;
+                        }
+                        string text = Input[i].Text;
+                        if (mapper.LineData[i].Buffer != null)
+                        {
+                        //This line has been assigned a target Buffer
+                            mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size,
+                                targetSourceText.Size);
+                        }
+                        else
+                        {
+                            targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        }
                     }
                     continue;
                 }

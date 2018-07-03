@@ -95,6 +95,10 @@ namespace TypeCobol.Codegen.Generators
             /// The Buffer associated to this line when it is generated in a function body.
             /// </summary>
             public StringSourceText FunctionBodyBuffer;
+            /// <summary>
+            /// Force the Generator to skip this line, if it has no nodes associated to it.
+            /// </summary>
+            public bool Skip;
         }
         /// <summary>
         /// The Map which give for each line the associated Node.
@@ -825,11 +829,49 @@ namespace TypeCobol.Codegen.Generators
                     data.Buffer.Insert(Environment.NewLine, data.Buffer.Size, data.Buffer.Size);
                     //Add the Global Node list this new Node
                     Nodes.Add(data);
+                    //------------------------------------------------------------------------------
+                    // This is a fix for: https://github.com/TypeCobolTeam/TypeCobol/issues/1014
+                    // The main idea is to insert the dummy node after the first non generated valid
+                    // node having a valid position. 
+                    // Thus to give to this dummy node the line of the first previous valid non
+                    // generated node having a position.
+                    //-------------------------------------------------------------------------------
+                    bool bGotOne = false;
+                    int lineGot = i;
+                    for (int k = i - 1; k >= funData.BodyFistLineIndex + 1 && !bGotOne; k--)
+                    {
+                        if (LineData[k - 1].LineNodes != null)
+                        {
+                            for (int m = 0; m < LineData[k - 1].LineNodes.Count && !bGotOne; m++)
+                            {
+                                int node = LineData[k - 1].LineNodes[m];
+                                NodeData nodedata = Nodes[node];
+                                if (!(nodedata.node is LinearGeneratedNode))
+                                {
+                                    var nodePos = nodedata.Positions;
+                                    if (nodePos != null)
+                                    {
+                                        bGotOne = true;
+                                        lineGot = k;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //------------------------------------------------------------------------------
                     //Set for the list its new associated node
-                    LineData[i - 1].LineNodes = new List<int>();
-                    LineData[i - 1].LineNodes.Add(dummy_node.NodeIndex);
+                    if (LineData[lineGot - 1].LineNodes == null)
+                    {
+                        LineData[lineGot - 1].LineNodes = new List<int>();
+                    }
+                    LineData[lineGot - 1].LineNodes.Add(dummy_node.NodeIndex);
                     //Set associated source text buffer of the line
-                    LineData[i - 1].FunctionBodyBuffer = LineData[i - 1].Buffer = data.Buffer;
+                    if (lineGot != i)
+                    {
+                        LineData[lineGot - 1].FunctionBodyBuffer = LineData[lineGot - 1].Buffer = data.Buffer;
+                        //Skip the current line if not needed.
+                        LineData[i - 1].Skip = true;
+                    }
                     //Inset the Function nodes list this new node at the right insertion index
                     funData.FunctionDeclNodes.Insert(insert_index, dummy_node.NodeIndex);
                     //Increase insertion offset
@@ -838,7 +880,7 @@ namespace TypeCobol.Codegen.Generators
                     int from = 0;//From the beginning of the buffer
                     int to = data.Buffer.Size;//To the end of the buffer
                     int span = 0;
-                    List<int> lines = new List<int>(){i};//Line number
+                    List<int> lines = new List<int>(){ lineGot };//Line number
                     List<int> offsets = new List<int>(){0};//Line number start at offse 0
                     Tuple<int, int, int, List<int>, List<int>> pos = new Tuple<int, int, int, List<int>, List<int>>(from, to, span, lines, offsets);
                     dummy_node.Positions = pos; 

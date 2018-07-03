@@ -702,7 +702,19 @@ namespace TypeCobol.Codegen {
         {
             var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenTCobVersionAfterOptions") + ".rdz.cbl", skeletons, false, "TestTypeCobolVersion");
-        }        
+        }
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        //This test is marked ignored, to make it pass you must create the directory C:\TypeCobol\Copys
+        //and put inside this directory a valid MSVCOUT.cpy file.
+        [Ignore]
+        public void CopyReplaceInProcLinkage()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CopyReplaceInProcLinkage") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion", new List<string>() { "C:\\TypeCobol\\Copys"});
+        }
 
 #if EUROINFO_RULES
         [TestMethod]
