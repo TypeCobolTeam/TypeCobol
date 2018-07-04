@@ -244,7 +244,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node, "missing '(' or ')'");
             }
             // if the first '(' is after first ')' OR last '(' is after last ')'
-            else if (codeElement.Picture.Value.IndexOf("(") > codeElement.Picture.Value.IndexOf(")") || codeElement.Picture.Value.LastIndexOf("(") > codeElement.Picture.Value.LastIndexOf(")"))
+            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
+                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
                 DiagnosticUtils.AddError(node, "missing '(' or ')'");
             else
             {

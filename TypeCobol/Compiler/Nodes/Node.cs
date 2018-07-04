@@ -441,7 +441,7 @@ namespace TypeCobol.Compiler.Nodes {
             var results = new List<T>();
             foreach (var child in children) {
                 var typedChild = child as T;
-                if (typedChild != null && name.Equals(child.Name, StringComparison.InvariantCultureIgnoreCase)) results.Add(typedChild);
+                if (typedChild != null && name.Equals(child.Name, StringComparison.OrdinalIgnoreCase)) results.Add(typedChild);
                 if (deep) results.AddRange(child.GetChildren<T>(name, true));
             }
             return results;
