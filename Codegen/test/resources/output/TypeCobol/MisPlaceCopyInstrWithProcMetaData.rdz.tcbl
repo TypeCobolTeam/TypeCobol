@@ -1,0 +1,125 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       data division.
+       WORKING-STORAGE SECTION.
+       01 TC-DVZF0OS2 pic X(08) value 'DVZF0OS2'.
+       01 TC-Call          PIC X VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+
+                     
+       linkage section.
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+          05 TC-Library-PntNbr          PIC S9(04) COMP.
+          05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
+      *DVZF0OS2::Foo
+       01 TC-DVZF0OS2-bdb3e928-Item.
+          05 TC-DVZF0OS2-bdb3e928-Idt PIC X(08).
+          05 TC-DVZF0OS2-bdb3e928 PROCEDURE-POINTER.
+
+                       
+       01 MyGroup.
+       COPY Codegen-SecondCopy.
+       PROCEDURE DIVISION.
+      *
+           PERFORM TC-INITIALIZATIONS
+
+                          
+      *    call DVZF0OS2::Foo
+           IF ADDRESS OF TC-DVZF0OS2-bdb3e928-Item = NULL
+               PERFORM TC-LOAD-POINTERS-DVZF0OS2
+           ELSE
+               IF TC-DVZF0OS2-bdb3e928-Idt not = 'bdb3e928'
+                   PERFORM TC-LOAD-POINTERS-DVZF0OS2
+               END-IF
+           END-IF
+           CALL TC-DVZF0OS2-bdb3e928
+           end-call
+                             
+
+           .
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-DVZF0OS2-bdb3e928-Item  TO NULL
+            END-IF
+            .
+      *=================================================================
+        TC-LOAD-POINTERS-DVZF0OS2.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-DVZF0OS2
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'bdb3e928'
+                     SET ADDRESS OF
+                     TC-DVZF0OS2-bdb3e928-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                END-EVALUATE
+            END-PERFORM
+            .
+
+       END PROGRAM DVZF0OSM.
+
+       ID DIVISION.
+       PROGRAM-ID. DVZF0OS2.
+       DATA DIVISION.
+                                                 
+       WORKING-STORAGE SECTION.
+       01  TC-DVZF0OS2-FctList-Loaded PIC X(02).
+           88 TC-DVZF0OS2-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-DVZF0OS2-PntTab.
+           05 TC-DVZF0OS2-PntNbr         PIC S9(04) COMP VALUE 1.
+      *DVZF0OS2::Foo
+           05 TC-DVZF0OS2-bdb3e928-Idt   PIC X(08) VALUE 'bdb3e928'.
+           05 TC-DVZF0OS2-bdb3e928 PROCEDURE-POINTER.
+
+       
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-DVZF0OS2-FctList-IsLoaded
+              SET TC-DVZF0OS2-bdb3e928   TO ENTRY 'bdb3e928'
+
+              SET TC-DVZF0OS2-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-DVZF0OS2-PntTab
+
+           .
+                          
+      *declare procedure Foo public.
+       END PROGRAM DVZF0OSM.
+      *
+      *declare procedure Foo public.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. bdb3e928Foo.
+       END PROGRAM bdb3e928Foo.
