@@ -20,4 +20,7 @@
        move var2::9 to var1.
       * OK 
        move 'val' to var1::var2. 
+      * illegal intrinsic function after TO
+       MOVE var2 TO FUNCTION RANDOM.
+       MOVE var2 TO FUNCTION LENGTH (var1).
        END PROGRAM MOVEQUA.

@@ -10,7 +10,10 @@ using TypeCobol.Compiler.CodeModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Analytics;
+using Castle.Core.Internal;
+using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -323,10 +326,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
                             
                         }
-                        else if (actualDataDefinition.DataType != expected.DataType) 
+                        else if (actualDataDefinition.DataType != expected.DataType)
                         {
-                            DataDefinition callerType = GetSymbolType(actualDataDefinition);
-                            DataDefinition calleeType = GetSymbolType(expected);
+                            TypeDefinition callerType = actualDataDefinition.TypeDefinition;
+                            TypeDefinition calleeType = expected.TypeDefinition;
                             if (callerType == null || calleeType == null)
                             {
                                 //Ignore, it's an unknown DataType. It's already checked
@@ -509,43 +512,31 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
         }
-
-        private static TypeDefinition GetSymbolType(DataDefinition node)
-        {
-            var found = node.SymbolTable.GetType(node.DataType);
-
-            if (found != null)
-                return found.FirstOrDefault();
-            else
-                return null;
-        }
     }
 
-    class FunctionDeclarationTypeChecker : CodeElementListener
+    class FunctionDeclarationTypeChecker
     {
-        public void OnCodeElement(CodeElement ce, ParserRuleContext context)
+        public static void OnCodeElement(FunctionDeclarationHeader function, CodeElementsParser.FunctionDeclarationHeaderContext context)
         {
-		var function = ce as FunctionDeclarationHeader;
-            if (function == null)
-            {
-                return; //not my job
-            }
+
             if (function.ActualType == FunctionType.Undefined)
             {
-                DiagnosticUtils.AddError(ce,
+                DiagnosticUtils.AddError(function,
                     "Incompatible parameter clauses for " + ToString(function.UserDefinedType) + " \"" + function.Name +
                     "\"", context);
-	    }
-            else if ((function.ActualType == FunctionType.Function && function.UserDefinedType == FunctionType.Procedure)
-                     || (function.ActualType == FunctionType.Procedure && function.UserDefinedType == FunctionType.Function))
+            }
+            else if ((function.ActualType == FunctionType.Function &&
+                      function.UserDefinedType == FunctionType.Procedure)
+                     || (function.ActualType == FunctionType.Procedure &&
+                         function.UserDefinedType == FunctionType.Function))
             {
                 var message = "Symbol \"" + function.Name + "\" is defined as " + ToString(function.UserDefinedType)
                               + ", but parameter clauses describe a " + ToString(function.ActualType);
-			DiagnosticUtils.AddError(ce, message, context);
-		}
-	}
+                DiagnosticUtils.AddError(function, message, context);
+            }
+        }
 
-        private string ToString(FunctionType type)
+        private static string ToString(FunctionType type)
         {
 		if (type == FunctionType.Undefined) return "symbol";
 		if (type == FunctionType.Function) return "function";
@@ -833,5 +824,54 @@ namespace TypeCobol.Compiler.Diagnostics
 	}
 }
 
+    public class SetStatementChecker
+    {
+        public static void CheckStatement(Node node)
+        {
+            var statement = node.CodeElement as SetStatementForIndexes;
+            if (statement != null)
+            {
+                // Check receivers (incremented) 
+                var receivers = node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2);
+                bool containsPointers = false;
+                bool allArePointers = true;
+                foreach (var receiver in receivers)
+                {
+                    if (receiver.Usage == DataUsage.Pointer)
+                    {
+                        containsPointers = true;
+                        var levelNumber = ((DataDefinitionEntry)receiver.CodeElement).LevelNumber;
+                        if (levelNumber != null && levelNumber.Value > 49)
+                        {
+                            DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
+                            break;
+                        }
+                        receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true);
+                    }
+                    else
+                        allArePointers = false; 
+                        // Do note break here because it can be all indexes wich is correct or a pointer as last receiver wich is not
+                }
 
+                if (allArePointers)
+                    node.SetFlag(Node.Flag.NodeContainsPointer, true);
+                // If the receivers contains at least one Pointer, they must all be pointer
+                else if (containsPointers)
+                    DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
+                
+                // Check sender (increment)
+                int outputResult; // not used
+                if (!int.TryParse(statement.SendingVariable.ToString(), out outputResult))
+                {// Not an integer
+                    var variable = node.GetDataDefinitionForQualifiedName(new URI(statement.SendingVariable.ToString()));
+                    if (variable == null || variable.DataType.Name != "Numeric")
+                    {// Not an Variable or a notNumeric variable
+                        if (statement.SendingVariable.ArithmeticExpression == null)
+                            // Not an arithmetic expressions
+                            DiagnosticUtils.AddError(node, "Increment only support integer values, numeric variables and arithmetic expressions");
+                    }
+                }
+            }
+        }
+    }
 }

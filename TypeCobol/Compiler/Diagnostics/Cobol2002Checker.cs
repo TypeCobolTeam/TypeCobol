@@ -12,18 +12,10 @@ using Analytics;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
-    class TypeDefinitionEntryChecker : CodeElementListener
+    class TypeDefinitionEntryChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            var context = c as CodeElementsParser.DataDescriptionEntryContext;
-            CheckRedefines(e as DataRedefinesEntry, context);
-            CheckTypedef(e as DataTypeDescriptionEntry, context);
-        }
-
-        private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
-        {
-            if (redefines == null) return;
             if (context.cobol2002TypedefClause() != null)
             {
                 string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
@@ -31,11 +23,8 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private void CheckTypedef(DataTypeDescriptionEntry typedef,
-            CodeElementsParser.DataDescriptionEntryContext context)
+        public static void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            if (typedef == null) return;
-
             if (typedef.LevelNumber?.Value != 1)
             {
                 string message = "TYPEDEF clause can only be specified for level 01 entries";
@@ -300,11 +289,22 @@ namespace TypeCobol.Compiler.Diagnostics
                 var calculatedLevel = startingLevel;
                 if (child.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //If variable is typed
                 {
-                    var foundedTypes = node.SymbolTable.GetType(child.DataType);
-                    if (foundedTypes.Count != 1)
-                        continue; //If none or multiple corresponding type, it's useless to check
+                    /*----- This section should be removed when issue #1009 is fixed ----- */
+                    /*----- We'll only need child.TypeDefinition --------------------------*/
+                    TypeDefinition foundType;
+                    if (child.TypeDefinition == null)
+                    {
+                        var foundedTypes = node.SymbolTable.GetType(child.DataType);
+                        if (foundedTypes.Count != 1)
+                            continue; //If none or multiple corresponding type, it's useless to check
 
-                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundedTypes.First());
+                        foundType = foundedTypes.First();
+                    }
+                    else
+                        foundType = child.TypeDefinition;
+                    /* -----------------------------------------------------------------  */
+
+                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundType);
                 }
                 else if (child.Children.Count > 0) //If variable is not typed, check if there is children
                 {
@@ -335,6 +335,13 @@ namespace TypeCobol.Compiler.Diagnostics
             foundedType = null;
             if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
                 return; //nothing to do, Type exists from Cobol 2002
+            var dataDefinition = node as DataDefinition;
+            if (dataDefinition?.TypeDefinition != null)
+            {
+                foundedType = dataDefinition.TypeDefinition;
+                return;
+            }
+
             var found = node.SymbolTable.GetType(type);
             if (found.Count < 1)
             {
@@ -348,8 +355,10 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else
             {
+                //In case TypeDefinition is not already set, or it's not a DataDefinition Node
                 foundedType = found[0];
-                node.TypeDefinition = foundedType;
+                if (dataDefinition != null)
+                    dataDefinition.TypeDefinition = foundedType;
             }
 
         }

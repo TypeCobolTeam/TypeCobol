@@ -29,14 +29,9 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
 
         public abstract string Head { get; }
-        public virtual string Tail
-        {
-            get
-            {
-                var uri = this.ToString();
-                return uri.Split('.')[0];
-            }
-        }
+        public virtual string Tail { get; }
+
+        
         public abstract QualifiedName Parent { get; }
         public abstract int Count { get; }
         public abstract IEnumerator<string> GetEnumerator();
@@ -144,6 +139,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         }
 
         public override string ToString() { return string.Join(_separator.ToString(), parts); }
+
+        public override string Tail {get { return parts.First(); }}
 
         public override string Head { get { return parts.Last(); } }
         public override QualifiedName Parent

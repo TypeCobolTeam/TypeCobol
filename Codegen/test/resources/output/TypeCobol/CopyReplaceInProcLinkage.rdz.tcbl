@@ -1,0 +1,34 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       PROCEDURE DIVISION.
+           .
+
+      *declare toto input IsOk type bool.
+       END PROGRAM DVZF0OSM.
+      *
+      *declare toto input IsOk type bool.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. da82b615toto.
+       DATA DIVISION.
+       linkage section.
+      *01 tzer type Date.
+       01 tzer.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
+                         
+       COPY MSVCOUT replacing ==:MSVCOUT:== by ==SVCOUT==.
+      *---------------------------------------------------
+       01 IsOk-value PIC X     VALUE LOW-VALUE.
+           88 IsOk       VALUE 'T'.
+           88 IsOk-false VALUE 'F'
+                             X'00' thru 'S'
+                             'U' thru X'FF'.
+       PROCEDURE DIVISION
+             USING BY REFERENCE IsOk-value
+           .
+
+           .
+       END PROGRAM da82b615toto.

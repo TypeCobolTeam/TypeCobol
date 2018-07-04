@@ -114,6 +114,7 @@
            11 NOMCLN PIC X(10).
            11 VALCLN PIC X(50).
                                                                         12370011
+                                                                        12380000
        LINKAGE SECTION.
        01 liste-a-chercher.
            02 TBL10-CTGCPL-RTA-tbl
@@ -145,7 +146,6 @@
                    BY REFERENCE trouve-value
                    BY REFERENCE lis-trouvee
            .
-                                                                        12380000
 
       * recherche de l'element dans la table
       *    PERFORM VARYING L-I FROM 1 BY 1

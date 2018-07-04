@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler;
+﻿using System.Linq;
+using TypeCobol.Compiler;
 
 namespace TypeCobol.Codegen.Nodes {
 
@@ -43,9 +44,10 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
                     //Type exists from Cobol 2002
 				    string typedef = null;
 					if (this.CodeElement().DataType.CobolLanguageLevel >= TypeCobol.Compiler.CobolLanguageLevel.Cobol2002) {
-						var found = this.SymbolTable.GetType(this.CodeElement().DataType);
-						if (found.Count > 0) {
-							customtype = found[0];
+					    var type = this.Description?.TypeDefinition ?? this.SymbolTable.GetType(this.CodeElement().DataType).FirstOrDefault();
+					    if (type != null)
+					    {
+							customtype = type;
 						    typedef = TypedDataNode.ExtractAnyCobolScalarTypeDef(Layout, customtype, out bHasPeriod, true);
 						    if (typedef.Length != 0)
 						    {
@@ -77,10 +79,10 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 
 				    if (picture == null && this.CodeElement().Usage == null && this.CodeElement().DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
                     {//JCM humm... Type without picture lookup enclosing scope.
-                        var found = this.SymbolTable.GetType(this.CodeElement().DataType);
-                        if (found.Count > 0)
+                        var type = this.Description?.TypeDefinition ?? this.SymbolTable.GetType(this.CodeElement().DataType).FirstOrDefault();
+                        if (type != null)
                         {
-                            customtype = found[0];
+                            customtype = type;
                             picture = customtype.CodeElement().Picture;
                             if (picture != null)
                             {

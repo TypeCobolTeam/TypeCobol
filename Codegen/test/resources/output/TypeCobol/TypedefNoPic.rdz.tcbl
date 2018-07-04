@@ -26,9 +26,15 @@
       
       *01 var1 type MyType.
        01 var1.
-           02 Pointer1 usage is pointer.
-           02 Pointer2 usage pointer.
-           02 Pointer3 pointer.
+          02  Pointer1 Pointer.
+          02  redefines Pointer1.
+              03  Pointer1fe930f3e pic S9(05) comp-5.
+          02  Pointer2 Pointer.
+          02  redefines Pointer2.
+              03  Pointer2db906685 pic S9(05) comp-5.
+          02  Pointer3 Pointer.
+          02  redefines Pointer3.
+              03  Pointer3f6dd786f pic S9(05) comp-5.
                            
       
        END PROGRAM TCOZDATE.

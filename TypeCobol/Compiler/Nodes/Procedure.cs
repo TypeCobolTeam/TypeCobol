@@ -84,15 +84,22 @@ namespace TypeCobol.Compiler.Nodes {
 	    public string Copy { get { return Library+"cpy"; } }
 	    //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
         public ParametersProfileNode Profile{ get; set; }
+
+
+        private string _hash;
 	    public string Hash {
-		    get {
+		    get
+		    {
+		        if (_hash != null) return _hash;
 			    var hash = new StringBuilder();
 			    hash.Append(Library).Append('.').Append(Name);
 			    encode(hash, Profile.InputParameters).Append(':');
 			    encode(hash, Profile.InoutParameters).Append(':');
 			    encode(hash, Profile.OutputParameters).Append(':');
 			    hash.Append(encode(Profile.ReturningParameter));
-			    return Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8, this);
+		        _hash = Tools.Hash.CreateCOBOLNameHash(hash.ToString(), 8, this);
+
+		        return _hash;
 		    }
 	    }
 	    private StringBuilder encode(StringBuilder str, IList<ParameterDescription> parameters) {
@@ -142,7 +149,12 @@ namespace TypeCobol.Compiler.Nodes {
     public class Paragraph: Node, CodeElementHolder<ParagraphHeader> {
 	    public Paragraph(ParagraphHeader header): base(header) { }
 	    public override string ID { get { return "paragraph"; } }
-        public override string Name { get { return this.CodeElement().ParagraphName.Name; } }
+        private string _Name;
+        public override string Name { get {
+            if (_Name == null)
+                _Name = this.CodeElement().ParagraphName.Name;
+            return _Name;
+        } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);

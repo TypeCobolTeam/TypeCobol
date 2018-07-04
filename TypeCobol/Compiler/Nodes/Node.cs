@@ -162,7 +162,11 @@ namespace TypeCobol.Compiler.Nodes {
             /// <summary>
             /// Mark that this node contains a pointer variable that has to be considered by CodeGen. 
             /// </summary>
-            NodeContainsPointer = 0x01 << 21
+            NodeContainsPointer = 0x01 << 21,
+            /// <summary>
+            /// Mark that this node declare a pointer that is used in an incrementation and need a redefine
+            /// </summary>
+            NodeisIncrementedPointer = 0x01 << 22
 
 
         };
@@ -216,9 +220,12 @@ namespace TypeCobol.Compiler.Nodes {
             get { return string.Empty; }
         }
 
+        private QualifiedName _qualifiedName;
+
         public virtual QualifiedName QualifiedName {
             get {
                 if (string.IsNullOrEmpty(Name)) return null;
+                if (_qualifiedName != null) return _qualifiedName;
 
                 string qn = Name;
                 var parent = this.Parent;
@@ -229,16 +236,19 @@ namespace TypeCobol.Compiler.Nodes {
                     }
                     parent = parent.Parent;
                 }
-                
-                return new URI(qn);
+                _qualifiedName = new URI(qn);
+                return _qualifiedName;
             }
         }
 
+
+        private QualifiedName _visualQualifiedName;
         public virtual QualifiedName VisualQualifiedName
         {
             get
             {
                 if (string.IsNullOrEmpty(Name)) return null;
+                if (_visualQualifiedName != null) return _visualQualifiedName;
 
                 var qn = Name;
                 var parent = this.Parent;
@@ -255,7 +265,8 @@ namespace TypeCobol.Compiler.Nodes {
                     parent = parent.Parent;
                 }
 
-                return new URI(qn);
+                _visualQualifiedName = new URI(qn);
+                return _visualQualifiedName;
             }
         }
 
@@ -264,25 +275,32 @@ namespace TypeCobol.Compiler.Nodes {
             get { return null; }
         }
 
+        private string _URI;
         /// <summary>Node unique identifier (scope: tree this Node belongs to)</summary>
         public string URI {
-            get {
+            get
+            {
+                if (_URI != null) return _URI;
                 if (ID == null) return null;
-                var puri = Parent == null ? null : Parent.URI;
+                var puri = Parent?.URI;
                 if (puri == null) return ID;
-                return puri + '.' + ID;
+                _URI =  puri + '.' + ID;
+                return _URI;
             }
         }
 
-       
 
 
+        private Node _root;
         /// <summary>First Node with null Parent among the parents of this Node.</summary>
         public Node Root {
-            get {
+            get
+            {
+                if (_root != null) return _root;
                 var current = this;
                 while (current.Parent != null) current = current.Parent;
-                return current;
+                _root = current;
+                return _root;
             }
         }
 
@@ -305,22 +323,6 @@ namespace TypeCobol.Compiler.Nodes {
 
 
         public SymbolTable SymbolTable { get; set; }
-
-
-        private TypeDefinition _typeDefinition;
-
-        /// <summary>
-        /// Get the TypeDefinition node associated to this Node
-        /// </summary>
-        public TypeDefinition TypeDefinition
-        {
-            get { return _typeDefinition; }
-            set
-            {
-                if (_typeDefinition == null)
-                    _typeDefinition = value;
-            }
-        }
 
         public object this[string attribute] {
             get { return Attributes.Get(this, attribute); }
@@ -413,6 +415,8 @@ namespace TypeCobol.Compiler.Nodes {
             return results;
         }
 
+
+        private Program _programNode;
         /// <summary>
         /// Get the Program Node corresponding to a Child
         /// </summary>
@@ -420,10 +424,13 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns>The Program Node</returns>
         public Program GetProgramNode()
         {
+            if (_programNode != null) return _programNode;
             Node child = this;
             while (child != null && !(child is Program))
                 child = child.Parent;
-            return (Program)child;
+            _programNode = (Program)child;
+
+            return _programNode;
         }
         
         /// <summary>Search for all children of a specific Name</summary>

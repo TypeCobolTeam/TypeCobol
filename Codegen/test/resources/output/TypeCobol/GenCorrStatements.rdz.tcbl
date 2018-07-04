@@ -66,10 +66,10 @@
        PROCEDURE DIVISION.
       *    MOVE CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
            MOVE CORR YYYY OF myDate TO YYYY OF varB OF groupB-2 OF 
-           groupB-1.
+                                                               groupB-1.
       *    ADD CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
            ADD CORR YYYY OF myDate TO YYYY OF varB OF groupB-2 OF 
-           groupB-1.
+                                                               groupB-1.
       *    SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
 
       *    MOVE CORR SharedData::TechnicalContext::SystemTime to

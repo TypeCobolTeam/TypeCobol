@@ -36,7 +36,8 @@
        01 Account1 type Account.
        01 Bad        TYPE BadType.
 
-       01 myPointer pointer.
+       01 myPointerGroup.
+        05 myPointer pointer.
 
        01 strVar Pic x(15) value "string sample".
 
@@ -68,6 +69,8 @@
       *KO increment pointer and no pointer variables
        SET myPointer,Account1,Bad UP BY 1.
       *KO increment can only be performed by integer variables
-       SET myPointer UP BY strVar.
+       SET myPointerGroup::myPointer UP BY strVar.
+
+       SET myPointer Down BY ((MyFinalIdxVar::Counter)**2).
 
        END PROGRAM IndexTesting.
