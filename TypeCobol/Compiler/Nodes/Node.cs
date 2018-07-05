@@ -458,6 +458,22 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
+        /// Adds children to this node
+        /// </summary>
+        /// <param name="toAdd">children to be added</param>
+        /// <param name="index">children position</param>
+        public virtual void AddRange(IEnumerable<Node> toAdd, int index = -1)
+        {            
+            if (index < 0)
+                children.AddRange(toAdd);
+            else children.InsertRange(index, toAdd);
+            foreach (Node child in toAdd)
+            {
+                child.Parent = this;
+            }
+        }
+
+        /// <summary>
         /// Allow to manually set the parent node
         /// </summary>
         /// <param name="parent">Parent node</param>
