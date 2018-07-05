@@ -114,8 +114,6 @@
     <Compile Include="**\*.cs" />
     <Content Include="Parser\**\*" Exclude="Parser\**\*.cs" />
     <Content Include="NewTestsToFix\**" />
-    <Content Include="Parser\Programs\TypeCobol\TypePicNoChild.rdzPGM.txt" />
-    <Content Include="Parser\Programs\TypeCobol\NodeBuilder-UnexpectedChild.rdz-Nodes.txt" />
     <Content Include="ThirdParty\**" />
     <Content Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

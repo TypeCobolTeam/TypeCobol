@@ -11,6 +11,7 @@
          05 var4     pic 9.
 
       *KO because var1 contains a child
+Line 14[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the "PICTURE" clause.
        01 var1 pic X.
          05 var2 pic X.
 
@@ -38,14 +39,17 @@
          05 var3 pic 9.
 
       *KO because var1 contains a child
+Line 41[8,23] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
        01 var1 pointer.
          05 var2 pic X.
 
       *KO because var1 contains a child
+Line 45[8,32] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
        01 var1 usage is pointer.
          05 var2 pic X.
 
       *KO because var1 contains a child
+Line 49[8,25] <27, Error, Syntax> - Syntax error : Item var1 is a TYPE that does not allow Group Item definition.
        01 var1 type Date.
          05 var2 pic X.
 
@@ -54,6 +58,7 @@
 
        01 var1.
       *KO because var2 contains a child
+Line 57[10,23] <27, Error, Syntax> - Syntax error : Group item var2 contained the "PICTURE" clause.
          05 var2 pic X.
            10 var3   pic X.
 
@@ -67,6 +72,7 @@
 
        01 var1.
       *KO because var2 contains a child (only 1 error expected)
+Line 70[10,34] <27, Error, Syntax> - Syntax error : Elementary item USAGE var2 seen has Group Item.
          05 var2 usage is pointer.
            10 var3 pic X.
            10 var4 pic 9.
@@ -74,11 +80,13 @@
 
        01 var1.
       *KO because var2 contains a child
+Line 77[10,27] <27, Error, Syntax> - Syntax error : Item var2 is a TYPE that does not allow Group Item definition.
          05 var2 type Date.
            10 var3   pic X.
 
 
       *KO because var1 contains a child
+Line 82[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the "PICTURE" clause.
        01 var1 pic X.
          05 var2.
            10 var3   pic X.
@@ -91,11 +99,13 @@
            10 var3   pic X.
 
       *KO because var1 contains a child
+Line 94[8,32] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
        01 var1 usage is pointer.
          05 var2.
            10 var3   pic X.
 
       *KO because var1 contains a child
+Line 99[8,25] <27, Error, Syntax> - Syntax error : Item var1 is a TYPE that does not allow Group Item definition.
        01 var1 type Date.
          05 var2.
            10 var3   pic X.
@@ -103,12 +113,14 @@
 
        01 var1 pic X(100).
       *KO because var1 contains a child
+Line 106[8,41] <27, Error, Syntax> - Syntax error : Group item var2 contained the "PICTURE" clause.
        01 var2 redefines var1 pic X(100).
           05 var3   pic X.
 
        01 var1.
           05 var2 pic X(10).
       *KO because var3 contains children (only 1 error expected)
+Line 112[11,43] <27, Error, Syntax> - Syntax error : Group item var3 contained the "PICTURE" clause.
           05 var3 redefines var2 pic X(10).
             10 var4   pic X.
             10 var5   pic X(09).

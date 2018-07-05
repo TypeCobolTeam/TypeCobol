@@ -1,22 +1,23 @@
 ﻿--- Diagnostics ---
 Line 14[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the "PICTURE" clause.
-Line 24[8,23] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
-Line 28[8,32] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
-Line 32[8,25] <27, Error, Syntax> - Syntax error : Item var1 is a TYPE that does not allow Group Item definition.
-Line 40[10,23] <27, Error, Syntax> - Syntax error : Group item var2 contained the "PICTURE" clause.
-Line 51[10,34] <27, Error, Syntax> - Syntax error : Elementary item USAGE var2 seen has Group Item.
-Line 58[10,27] <27, Error, Syntax> - Syntax error : Item var2 is a TYPE that does not allow Group Item definition.
-Line 63[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the "PICTURE" clause.
-Line 73[8,32] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
-Line 78[8,25] <27, Error, Syntax> - Syntax error : Item var1 is a TYPE that does not allow Group Item definition.
-Line 85[8,41] <27, Error, Syntax> - Syntax error : Group item var2 contained the "PICTURE" clause.
-Line 91[11,43] <27, Error, Syntax> - Syntax error : Group item var3 contained the "PICTURE" clause.
+Line 41[8,23] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
+Line 45[8,32] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
+Line 49[8,25] <27, Error, Syntax> - Syntax error : Item var1 is a TYPE that does not allow Group Item definition.
+Line 57[10,23] <27, Error, Syntax> - Syntax error : Group item var2 contained the "PICTURE" clause.
+Line 70[10,34] <27, Error, Syntax> - Syntax error : Elementary item USAGE var2 seen has Group Item.
+Line 77[10,27] <27, Error, Syntax> - Syntax error : Item var2 is a TYPE that does not allow Group Item definition.
+Line 82[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the "PICTURE" clause.
+Line 94[8,32] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
+Line 99[8,25] <27, Error, Syntax> - Syntax error : Item var1 is a TYPE that does not allow Group Item definition.
+Line 106[8,41] <27, Error, Syntax> - Syntax error : Group item var2 contained the "PICTURE" clause.
+Line 112[11,43] <27, Error, Syntax> - Syntax error : Group item var3 contained the "PICTURE" clause.
 
 --- Program ---
 PROGRAM: DVZF0OSM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:Global:Declarations:Program
 -- DATA --------
+  var1:Alphanumeric
   var1:Alphanumeric
   var1:Alphanumeric
   var1:Alphanumeric
@@ -51,6 +52,7 @@ PROGRAM: DVZF0OSM common:False initial:False recursive:False
   var2:Alphanumeric
   var3:Alphanumeric
   var3:Numeric
+  var3:Numeric
   var3:Alphanumeric
   var3:Alphanumeric
   var3:Alphanumeric
@@ -65,6 +67,12 @@ PROGRAM: DVZF0OSM common:False initial:False recursive:False
   var4:Alphanumeric
   var4:Numeric
   var4:Alphanumeric
+  toto:Alphanumeric
+  toto:Alphanumeric
+  toto:Alphanumeric
+  titi:Alphanumeric
+  titi:Alphanumeric
+  titi:Numeric
   var5:Alphanumeric
   var5:Alphanumeric
 --- Intrinsic

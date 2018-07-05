@@ -17,10 +17,6 @@ namespace TypeCobol.Compiler.Diagnostics
     public class CrossCompleteChecker : AbstractAstVisitor
     {
         private Node CurrentNode { get; set; }
-        /// <summary>
-        /// List of nodes that have inconsistent structure
-        /// </summary>
-        private static List<Node> parentInError;
 
         public override bool BeginNode(Node node)
         {
@@ -143,8 +139,8 @@ namespace TypeCobol.Compiler.Diagnostics
         /// Determines if the given usage is an ElementaryItem usage
         /// </summary>
         /// <param name="usage"></param>
-        /// <returns></returns>
-        public static bool IsElementaryItemUsage(DataUsage usage)
+        /// <returns>true if the usage is ElementaryItem</returns>
+        public static bool CanBeElementaryItemUsage(DataUsage usage)
         {
             switch (usage)
             {
@@ -232,7 +228,9 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(DataDefinition dataDefinition)
         {
-            if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
+            CommonDataDescriptionAndDataRedefines commonDataDataDefinitionCodeElement =
+                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
+            if (commonDataDataDefinitionCodeElement!=null)
             {
                 CheckPicture(dataDefinition);
             }
@@ -263,13 +261,13 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDefinition.Usage != null)
             {
                 if (levelNumber != null && (levelNumber.Value == 88 || levelNumber.Value == 66))
-                {//page 229 : Level 88 and 66 cannot have uase
+                {//page 229 : Level 88 and 66 cannot have use
                     DiagnosticUtils.AddError(dataDefinition.CodeElement,
                         "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.");
                 }
             }
             if (dataDefinition.Picture != null)
-            {//only children with level 88 can be children of a PICTURE Elementary Item
+            {//only children with level 77 or 88 can be children of a PICTURE Elementary Item
                 if (dataDefinition.Children.Any(elem => elem.CodeElement != null && 
                                                         elem.CodeElement.Type != CodeElementType.DataConditionEntry &&
                                                         elem.CodeElement.Type != CodeElementType.DataRenamesEntry))
@@ -282,9 +280,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (dataDefinition.Picture == null && dataDefinition.Usage != null && dataDefinition.ChildrenCount > 0)
             {   //This DataDefinition Has no PICTURE but has an USAGE and Children : page 230
-                if (IsElementaryItemUsage(dataDefinition.Usage.Value))
+                if (CanBeElementaryItemUsage(dataDefinition.Usage.Value))
                 {
-                    if (dataDefinition.Usage.Value != DataUsage.Binary)
+                    
+                    if (dataDefinition.Usage.Value != DataUsage.Binary &&
+                        dataDefinition.Usage.Value != DataUsage.NativeBinary &&
+                        dataDefinition.Usage.Value != DataUsage.PackedDecimal &&
+                        dataDefinition.Usage.Value != DataUsage.FloatingPoint &&
+                        dataDefinition.Usage.Value != DataUsage.LongFloatingPoint)
                     {
                         DiagnosticUtils.AddError(dataDefinition,
                             "Elementary item USAGE " + dataDefinition.Name +
@@ -295,10 +298,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             //Type definitions are considered UserDefinedDataType; 
             //Types inside a TypeDef are not checked as they may occur as children
-            if ((dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines)!=null&&
-                (dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines).UserDefinedDataType!=null &&
-                dataDefinition.IsPartOfATypeDef == false &&
-                dataDefinition.ChildrenCount > 0 )
+            if (commonDataDataDefinitionCodeElement?.UserDefinedDataType != null && dataDefinition.IsPartOfATypeDef == false && dataDefinition.ChildrenCount > 0 )
             {
                 if (dataDefinition.Children.Any(elem => elem.CodeElement != null && 
                                                         elem.CodeElement.Type != CodeElementType.DataConditionEntry &&
