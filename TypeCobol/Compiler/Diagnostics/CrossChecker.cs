@@ -291,6 +291,13 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         DiagnosticUtils.AddError(dataDefinition,
                             "Elementary item USAGE " + dataDefinition.Name +
+                            " seen has Group Item.");
+                    }
+                    if (dataDefinition.Usage.Value == DataUsage.LongFloatingPoint &&
+                         dataDefinition.Children.Any(elem => (elem as DataDescription)?.Picture!=null))
+                    {
+                        DiagnosticUtils.AddError(dataDefinition,
+                            "Elementary item USAGE " + dataDefinition.Name +
                               " seen has Group Item.");
                     }
                 }
