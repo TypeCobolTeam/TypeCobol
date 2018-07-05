@@ -667,13 +667,30 @@ namespace TypeCobol.Compiler.Nodes {
         /// Search both dictionaries for a given StorageArea
         /// </summary>
         /// <param name="searchedStorageArea">StorageArea to search for</param>
+        /// <param name="isReadDataDefiniton">[Optional] True if storage area needs to be searched in StorageAreaReadsDataDefinition,
+        /// false if storage area needs to be searched in StorageAreaWritesDataDefinition.
+        /// If parameter is not present, the search is done in both dictionaries</param>
         /// <returns>Correpsonding DataDefinition</returns>
-        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea)
+        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
         {
             Tuple<string, DataDefinition> searchedElem = null;
-            StorageAreaReadsDataDefinition?.TryGetValue(
-                searchedStorageArea, out searchedElem);
-            if (searchedElem == null)
+            if (isReadDataDefiniton == null)
+            {
+                StorageAreaReadsDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+                if (searchedElem == null)
+                {
+                    StorageAreaWritesDataDefinition?.TryGetValue(
+                        searchedStorageArea, out searchedElem);
+                }
+            }
+            if (isReadDataDefiniton.HasValue&&isReadDataDefiniton.Value)
+            {
+                StorageAreaReadsDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+            }
+
+            if (isReadDataDefiniton.HasValue && !isReadDataDefiniton.Value)
             {
                 StorageAreaWritesDataDefinition?.TryGetValue(
                     searchedStorageArea, out searchedElem);

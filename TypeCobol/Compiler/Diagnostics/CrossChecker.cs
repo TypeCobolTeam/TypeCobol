@@ -102,17 +102,9 @@ namespace TypeCobol.Compiler.Diagnostics
                 DataDefinition fromVariable = null;
                 DataDefinition toVariable = null;
                 //For MoveCorrespondingStatement check children compatibility
-                if (move.StorageAreaReadsDataDefinition!=null && move.StorageAreaReadsDataDefinition.TryGetValue(moveCorresponding.FromGroupItem,
-                    out searchedDataDefintion))
-                {
-                    fromVariable = searchedDataDefintion.Item2;
-                }
-
-                if (move.StorageAreaWritesDataDefinition!=null && move.StorageAreaWritesDataDefinition.TryGetValue(moveCorresponding.ToGroupItem,
-                    out searchedDataDefintion))
-                {
-                    toVariable = searchedDataDefintion.Item2;
-                }
+                fromVariable = move.GetDataDefinitionFromStorageAreaDictionary(moveCorresponding.FromGroupItem, true);
+                toVariable = move.GetDataDefinitionFromStorageAreaDictionary(moveCorresponding.ToGroupItem, false);
+                
 
                 if (fromVariable == null || toVariable == null)
                 {
