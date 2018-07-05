@@ -102,17 +102,9 @@ namespace TypeCobol.Compiler.Diagnostics
                 DataDefinition fromVariable = null;
                 DataDefinition toVariable = null;
                 //For MoveCorrespondingStatement check children compatibility
-                if (move.StorageAreaReadsDataDefinition.TryGetValue(moveCorresponding.FromGroupItem,
-                    out searchedDataDefintion))
-                {
-                    fromVariable = searchedDataDefintion.Item2;
-                }
-
-                if (move.StorageAreaWritesDataDefinition.TryGetValue(moveCorresponding.ToGroupItem,
-                    out searchedDataDefintion))
-                {
-                    toVariable = searchedDataDefintion.Item2;
-                }
+                fromVariable = move.GetDataDefinitionFromStorageAreaDictionary(moveCorresponding.FromGroupItem, true);
+                toVariable = move.GetDataDefinitionFromStorageAreaDictionary(moveCorresponding.ToGroupItem, false);
+                
 
                 if (fromVariable == null || toVariable == null)
                 {
@@ -273,36 +265,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (area.SymbolReference == null) return null;
             //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return null;
-            //need to initialize the dictionaries before the search
-            if (isReadStorageArea && node.StorageAreaReadsDataDefinition == null)
-            {
-                node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
-            }
-            if (!isReadStorageArea && node.StorageAreaWritesDataDefinition == null)
-            {
-                node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string,DataDefinition>>();
-            }
-
-            //search for existing data definitinon before constructing one
-            Tuple<string,DataDefinition> searchExistingDataDefinition;
-            if (isReadStorageArea)
-            {
-                node.StorageAreaReadsDataDefinition
-                    .TryGetValue(storageArea, out searchExistingDataDefinition);
-            }
-            else
-            {
-                node.StorageAreaWritesDataDefinition
-                    .TryGetValue(storageArea, out searchExistingDataDefinition);
-            }
-            if (searchExistingDataDefinition!=null)
-            {
-                IndexAndFlagDataDefiniton(searchExistingDataDefinition.Item1, searchExistingDataDefinition.Item2,node,area,storageArea);
-                return searchExistingDataDefinition.Item2;
-            }
-            //IEnumerable<DataDefinition> found;
-            //var foundQualified = new List<KeyValuePair<string, DataDefinition>>();
-
+           
             var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition)node).IsPartOfATypeDef;
             var foundQualified =
                 node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
@@ -342,11 +305,21 @@ namespace TypeCobol.Compiler.Diagnostics
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
+                    //need to initialize the dictionaries
+                    if (node.StorageAreaReadsDataDefinition == null)
+                    {
+                        node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
+                    }
                     string completeQualifiedName = foundQualified.First().Key;
                     node.StorageAreaReadsDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,found.First()));
                 }
                 else
                 {
+                    //need to initialize the dictionaries
+                    if (node.StorageAreaWritesDataDefinition == null)
+                    {
+                        node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
+                    }
                     string completeQualifiedName = foundQualified.First().Key;
                     node.StorageAreaWritesDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,found.First()));
                 }
