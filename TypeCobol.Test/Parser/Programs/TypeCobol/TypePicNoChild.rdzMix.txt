@@ -30,8 +30,7 @@ Line 14[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the
       *OK
        01 toto comp-2.
            05 titi comp-2.
-      *KO
-Line 33[8,23] <27, Error, Syntax> - Syntax error : Elementary item USAGE toto2 seen has Group Item.
+      *OK
        01 toto comp-2.
            05 titi pic 9.
 
@@ -40,12 +39,10 @@ Line 33[8,23] <27, Error, Syntax> - Syntax error : Elementary item USAGE toto2 s
          05 var3 pic 9.
 
       *KO because var1 contains a child
-Line 41[8,23] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
        01 var1 pointer.
          05 var2 pic X.
 
       *KO because var1 contains a child
-Line 45[8,32] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
        01 var1 usage is pointer.
          05 var2 pic X.
 
@@ -73,7 +70,6 @@ Line 57[10,23] <27, Error, Syntax> - Syntax error : Group item var2 contained th
 
        01 var1.
       *KO because var2 contains a child (only 1 error expected)
-Line 70[10,34] <27, Error, Syntax> - Syntax error : Elementary item USAGE var2 seen has Group Item.
          05 var2 usage is pointer.
            10 var3 pic X.
            10 var4 pic 9.
@@ -100,7 +96,6 @@ Line 82[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the
            10 var3   pic X.
 
       *KO because var1 contains a child
-Line 94[8,32] <27, Error, Syntax> - Syntax error : Elementary item USAGE var1 seen has Group Item.
        01 var1 usage is pointer.
          05 var2.
            10 var3   pic X.

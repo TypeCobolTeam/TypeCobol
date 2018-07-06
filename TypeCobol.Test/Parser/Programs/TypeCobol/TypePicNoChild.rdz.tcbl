@@ -29,7 +29,7 @@
       *OK
        01 toto comp-2.
            05 titi comp-2.
-      *KO
+      *OK
        01 toto comp-2.
            05 titi pic 9.
 

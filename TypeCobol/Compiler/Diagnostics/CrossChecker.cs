@@ -140,7 +140,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         /// <param name="usage"></param>
         /// <returns>true if the usage is ElementaryItem</returns>
-        public static bool CanBeElementaryItemUsage(DataUsage usage)
+        public static bool IsOnlyElementaryItemUsage(DataUsage usage)
         {
             switch (usage)
             {
@@ -152,28 +152,28 @@ namespace TypeCobol.Compiler.Diagnostics
                 /// p231: COMPUTATIONAL-4 or COMP-4 (binary)
                 /// </summary>
                 case DataUsage.Binary:
-                    return true;
+                    return false;
                 /// <summary>
                 /// p231: COMPUTATIONAL-5 or COMP-5 (native binary)
                 /// </summary>
                 case DataUsage.NativeBinary:
-                    return true;
+                    return false;
                 /// <summary>
                 /// p231: PACKED-DECIMAL
                 /// p231: COMPUTATIONAL-3 or COMP-3 (internal decimal)
                 /// </summary>
                 case DataUsage.PackedDecimal:
-                    return true;
+                    return false;
                 /// <summary>
                 //// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
                 /// </summary>
                 case DataUsage.FloatingPoint:
-                    return true;
+                    return false;
                 /// <summary>
                 /// p231: COMPUTATIONAL-2 or COMP-2 (long floating-point)
                 /// </summary>
                 case DataUsage.LongFloatingPoint:
-                    return true;
+                    return false;
                 /// <summary>
                 /// p232: DISPLAY phrase 
                 /// </summary>
@@ -188,7 +188,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 /// p233: FUNCTION-POINTER phrase 
                 /// </summary>
                 case DataUsage.FunctionPointer:
-                    return true;
+                    return false;
                 /// <summary>
                 /// p233: INDEX phrase 
                 /// Index data item
@@ -210,17 +210,17 @@ namespace TypeCobol.Compiler.Diagnostics
                 /// p234: OBJECT REFERENCE phrase 
                 /// </summary>
                 case DataUsage.ObjectReference:
-                    return true;
+                    return false;
                 /// <summary>
                 /// p235: POINTER phrase
                 /// </summary>
                 case DataUsage.Pointer:
-                    return true;
+                    return false;
                 /// <summary>
                 /// p236: PROCEDURE-POINTER phrase 
                 /// </summary>
                 case DataUsage.ProcedurePointer:
-                    return true;
+                    return false;
                 default:
                     return false;
             }
@@ -240,37 +240,46 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var levelNumber = ((DataDefinitionEntry)dataDefinition.CodeElement).LevelNumber;
             var dataDefinitionParent = (dataDefinition.Parent as DataDefinition);
-            if (levelNumber != null && dataDefinitionParent != null &&
-                dataDefinitionParent.DataType == DataType.Boolean && levelNumber.Value == 88)
+            if (levelNumber != null)
             {
-                DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                    "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
-            }
-            if (levelNumber != null && !(levelNumber.Value == 01 || levelNumber.Value == 77) &&
-                dataDefinitionParent == null)
-            {
-                DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                    "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77");
-            }
-            //Level 88 and 66 cannot have Children.
-            if (levelNumber != null && (levelNumber.Value == 88 || levelNumber.Value == 66) && dataDefinition.ChildrenCount != 0)
-            {
-                DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                    "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.");
-            }
-            if (dataDefinition.Usage != null)
-            {
-                if (levelNumber != null && (levelNumber.Value == 88 || levelNumber.Value == 66))
-                {//page 229 : Level 88 and 66 cannot have use
-                    DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                        "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.");
+                if (dataDefinitionParent != null)
+                {
+                    if (dataDefinitionParent.DataType == DataType.Boolean && levelNumber.Value == 88)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
+                    }
                 }
+                else
+                {
+                    if (!(levelNumber.Value == 01 || levelNumber.Value == 77))
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77");
+                    }
+                    
+                }
+                //Level 88 and 66 cannot have Children.
+                if ((levelNumber.Value == 88 || levelNumber.Value == 66))
+                {
+                    if (dataDefinition.ChildrenCount != 0)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.");
+                    }
+
+                    if (dataDefinition.Usage != null)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.");
+                    }
+                }
+
             }
+
             if (dataDefinition.Picture != null)
             {//only children with level 77 or 88 can be children of a PICTURE Elementary Item
-                if (dataDefinition.Children.Any(elem => elem.CodeElement != null && 
-                                                        elem.CodeElement.Type != CodeElementType.DataConditionEntry &&
-                                                        elem.CodeElement.Type != CodeElementType.DataRenamesEntry))
+                if (HasOtherChildrenThanAllowed(dataDefinition))
                 {
                     DiagnosticUtils.AddError(dataDefinition,
                               "Group item " + dataDefinition.Name +
@@ -278,48 +287,38 @@ namespace TypeCobol.Compiler.Diagnostics
                 }          
             }
 
-            if (dataDefinition.Picture == null && dataDefinition.Usage != null && dataDefinition.ChildrenCount > 0)
-            {   //This DataDefinition Has no PICTURE but has an USAGE and Children : page 230
-                if (CanBeElementaryItemUsage(dataDefinition.Usage.Value))
-                {
-                    
-                    if (dataDefinition.Usage.Value != DataUsage.Binary &&
-                        dataDefinition.Usage.Value != DataUsage.NativeBinary &&
-                        dataDefinition.Usage.Value != DataUsage.PackedDecimal &&
-                        dataDefinition.Usage.Value != DataUsage.FloatingPoint &&
-                        dataDefinition.Usage.Value != DataUsage.LongFloatingPoint)
-                    {
-                        DiagnosticUtils.AddError(dataDefinition,
-                            "Elementary item USAGE " + dataDefinition.Name +
-                            " seen has Group Item.");
-                    }
-                    if (dataDefinition.Usage.Value == DataUsage.LongFloatingPoint &&
-                         dataDefinition.Children.Any(elem => (elem as DataDescription)?.Picture!=null))
-                    {
-                        DiagnosticUtils.AddError(dataDefinition,
-                            "Elementary item USAGE " + dataDefinition.Name +
-                              " seen has Group Item.");
-                    }
-                }
-            }
-
             //Type definitions are considered UserDefinedDataType; 
             //Types inside a TypeDef are not checked as they may occur as children
-            if (commonDataDataDefinitionCodeElement?.UserDefinedDataType != null && dataDefinition.IsPartOfATypeDef == false && dataDefinition.ChildrenCount > 0 )
+            // IsPartOfATypeDef - need to check as the following situation is allowed,
+            //but is flaged as an error if condition is not checked:
+            // 01 Point TYPEDEF strict.
+            //    02 Location TYPE Vector.
+            //    02 Movment TYPE Vector.  <- error on this member if IsPartOfATypeDef is not checked
+            //       04 Speed TYPE Vector.
+            //       04 Acceleration TYPE Vector.
+            if (commonDataDataDefinitionCodeElement?.UserDefinedDataType != null && dataDefinition.IsPartOfATypeDef == false &&
+                HasOtherChildrenThanAllowed(dataDefinition))
             {
-                if (dataDefinition.Children.Any(elem => elem.CodeElement != null && 
-                                                        elem.CodeElement.Type != CodeElementType.DataConditionEntry &&
-                                                        elem.CodeElement.Type != CodeElementType.DataRenamesEntry))
-                {
-                    //can be type!;
-                    DiagnosticUtils.AddError(dataDefinition,
-                              "Item " + dataDefinition.Name +
-                                " is a TYPE that does not allow Group Item definition.");      
-                }
+                //can be type!;
+                DiagnosticUtils.AddError(dataDefinition,
+                    "Item " + dataDefinition.Name +
+                    " is a TYPE that does not allow Group Item definition.");
             }
+
             return true;
         }
 
+        /// <summary>
+        /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
+        /// </summary>
+        /// <param name="dataDefinition">Item to check</param>
+        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry childrens</returns>
+        private bool HasOtherChildrenThanAllowed(DataDefinition dataDefinition)
+        {
+            return dataDefinition.Children.Any(elem=>elem.CodeElement != null && 
+                                                     elem.CodeElement.Type != CodeElementType.DataConditionEntry && 
+                                                     elem.CodeElement.Type != CodeElementType.DataRenamesEntry);
+        }
 
         public override bool Visit(IndexDefinition indexDefinition)
         {
