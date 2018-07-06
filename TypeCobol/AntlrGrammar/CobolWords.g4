@@ -842,8 +842,6 @@ symbolReference5: alphanumericValue5;
 // [TYPECOBOL] extension : rule modified to supportTYPE DATE (instead of TC-DATE or something)
 symbolReference12: UserDefinedWord | DATE;
 
-ambiguousSymbolReference1: alphanumericValue1;
-
 symbolDefinitionOrReference1: alphanumericValue1;
 
 symbolDefinitionOrReference4: UserDefinedWord;
@@ -948,7 +946,7 @@ programNameReference3: UserDefinedWord;
 programEntryDefinition: symbolDefinition1;
 
 // [Type ambiguity] at this parsing stage
-programNameReferenceOrProgramEntryReference: ambiguousSymbolReference1;
+programNameReferenceOrProgramEntryReference: alphanumericValue1;
 
 // p252: Section-name
 // A user-defined word that identifies a section. A referenced
