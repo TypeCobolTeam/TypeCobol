@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
 using System.Text;
+using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Test {
 
@@ -25,6 +26,77 @@ namespace TypeCobol.Test {
 	        string root = PlatformUtils.GetPathForProjectFile(samples);
 	        CheckTests(root, @"GrammarTest", @"CheckGrammarResults.txt", regex);
 
+	    }
+
+	    [TestMethod]
+	    [TestCategory("Parsing")]
+	    [TestProperty("Time", "long")]
+	    public void FullParsingAndGenerationTest()
+	    {
+	        string[] copiesFolder = new string[] { };
+	        string pwd = Directory.GetCurrentDirectory();
+
+	        var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
+	        string rootFolder = Directory.GetParent(pwd)?.Parent?.FullName +
+	                            "\\TypeCobol.Test\\Parser\\Samples";
+	        string textName = "BigBatch";
+
+	        string filename = Path.GetFileName(textName);
+	        string path = Path.Combine(rootFolder, filename);
+	        Stopwatch watch = new Stopwatch();
+            
+            TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
+	        int iterationNumber = 20;
+            //Warmup before measurement
+	        var documentWarmup = new TypeCobol.Parser();
+	        var optionsWarmup = new TypeCobolOptions
+	        {
+	            ExecToStep = ExecutionStep.CrossCheck,
+#if EUROINFO_RULES
+                    AutoRemarksEnable = autoRemarks
+#endif
+	        };
+	        documentWarmup.Init(path, optionsWarmup, format, copiesFolder);
+	        documentWarmup.Parse(path);
+
+            for (int i = 0; i < iterationNumber; i++)
+	        {
+	            watch.Start();
+                var document = new TypeCobol.Parser();
+                var options = new TypeCobolOptions
+	            {
+	                ExecToStep = ExecutionStep.CrossCheck,
+#if EUROINFO_RULES
+                    AutoRemarksEnable = autoRemarks
+#endif
+	            };
+                document.Init(path, options, format, copiesFolder);
+                document.Parse(path);
+	            watch.Stop();
+	            stats.AverageTotalProcessingTime += watch.ElapsedMilliseconds;
+	            stats.AverageTextUpdateTime += document.Results.PerfStatsForText.FirstCompilationTime;
+	            stats.AverageScannerTime += document.Results.PerfStatsForScanner.FirstCompilationTime;
+	            stats.AveragePreprocessorTime += document.Results.PerfStatsForPreprocessor.FirstCompilationTime;
+	            stats.AverageCodeElementParserTime += document.Results.PerfStatsForCodeElementsParser.FirstCompilationTime;
+	            stats.AverateTemporarySemanticsParserTime +=
+	                document.Results.PerfStatsForTemporarySemantic.FirstCompilationTime;
+	            stats.AverageCrossCheckerParserTime += document.Results.PerfStatsForProgramCrossCheck.FirstCompilationTime;
+            }
+
+	        stats.AverageTextUpdateTime = stats.AverageTextUpdateTime / (float) iterationNumber;
+	        stats.AverageScannerTime = stats.AverageScannerTime / (float) iterationNumber;
+	        stats.AveragePreprocessorTime = stats.AveragePreprocessorTime / (float) iterationNumber;
+	        stats.AverageCodeElementParserTime =
+	            stats.AverageCodeElementParserTime / (float) iterationNumber;
+	        stats.AverateTemporarySemanticsParserTime =
+	            stats.AverateTemporarySemanticsParserTime / (float) iterationNumber;
+	        stats.AverageCrossCheckerParserTime =
+	            stats.AverageCrossCheckerParserTime / (float) iterationNumber;
+	        stats.AverageTotalProcessingTime = stats.AverageTotalProcessingTime / (float) iterationNumber;
+	        stats.Line = documentWarmup.Results.CobolTextLines.Count;
+	        stats.TotalCodeElements = documentWarmup.Results.CodeElementsDocumentSnapshot.CodeElements.Count();
+
+            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), filename + "FullParsing", null,stats);
 	    }
 
 	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string expectedResultFile = null) {
