@@ -844,8 +844,6 @@ symbolReference12: UserDefinedWord | DATE;
 
 ambiguousSymbolReference1: alphanumericValue1;
 
-ambiguousSymbolReference4: UserDefinedWord;
-
 symbolDefinitionOrReference1: alphanumericValue1;
 
 symbolDefinitionOrReference4: UserDefinedWord;
@@ -972,7 +970,7 @@ paragraphNameDefinition: SectionParagraphName;
 paragraphNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-paragraphNameReferenceOrSectionNameReference: ambiguousSymbolReference4;
+paragraphNameReferenceOrSectionNameReference: UserDefinedWord;
 
 // p103 : class-name
 // A user-defined word that identifies the class. class-name can optionally
@@ -1136,25 +1134,25 @@ dataNameDefinition: UserDefinedWord;
 dataNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrFileNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrFileNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrIndexNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrIndexNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference: UserDefinedWord;
 
 // p115 : condition-1, condition-2
 // Condition-names follow the rules for user-defined names. At least one
@@ -1171,7 +1169,7 @@ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOr
 conditionNameDefinition: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-conditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolReference4;
+conditionNameReferenceOrConditionForUPSISwitchNameReference: UserDefinedWord;
 
 // p194: index-name-1
 // Each index-name specifies an index to be created by the compiler for use
