@@ -1,0 +1,59 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA. 
+
+       DATA DIVISION.
+       working-storage section.
+       01 TaxElm TYPEDEF STRICT PRIVATE.
+         10 TaxTyp  PIC X(03).
+
+       01 Table-Tax.
+         05 Tax TYPE TaxElm
+           OCCURS 200 TIMES INDEXED BY Idx-TaxElm.
+
+
+      *---------------------------------------------------
+       PROCEDURE DIVISION.
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display DEBUG-NAME
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
+	  
+       declare procedure Titi PUBLIC.
+       data division.
+       working-storage section.
+       01 Table-Tax.
+         05 Tax TYPE TaxElm
+           OCCURS 200
+           TIMES INDEXED BY Idx-TaxElm.
+
+       procedure division.
+            set Table-Tax::Tax::Idx-TaxElm to 1
+           goback
+           .
+       end-declare.
+
+       declare procedure Toto.
+       data division.
+       working-storage section.
+       01 Table-Tax.
+         05 Tax TYPE TaxElm
+           OCCURS 200
+           TIMES INDEXED BY Idx-TaxElm.
+
+       procedure division.
+            set Table-Tax::Tax::Idx-TaxElm to 1
+           goback
+           .
+       end-declare.
+
+       END PROGRAM DVZF0OSM.
