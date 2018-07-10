@@ -77,7 +77,15 @@ namespace TypeCobol.Compiler.Parser
                 }
                 // TODO#249: use a COPY for these
                 foreach (var type in DataType.BuiltInCustomTypes)
-                    TableOfIntrisic.AddType(DataType.CreateBuiltIn(type)); //Add default TypeCobol types BOOLEAN and DATE
+                {
+                    var createdType = DataType.CreateBuiltIn(type);
+                    TableOfIntrisic.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
+                    //Add children to dictionary in Intrinsic symbol table
+                    if (createdType.Children.Count != 0)
+                    {
+                        TableOfIntrisic.AddTypeDataDefinition(createdType);
+                    }
+                }
             }
         }
 
@@ -402,11 +410,7 @@ namespace TypeCobol.Compiler.Parser
             SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
             var node = new TypeDefinition(typedef);
             Enter(node);
-            SymbolTable table;
-            if (node.CodeElement().IsGlobal) // TCTYPE_GLOBAL_TYPEDEF
-                table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
-            else
-                table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+            var table = node.SymbolTable.GetTableFromScope(node.CodeElement().IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
             table.AddType(node);
 
             _CurrentTypeDefinition = node;
@@ -417,7 +421,6 @@ namespace TypeCobol.Compiler.Parser
 
         private void AddToSymbolTable(DataDescription node)
         {
-            if (node.IsPartOfATypeDef) return;
             var table = node.SymbolTable;
             if (node.CodeElement().IsGlobal)
                 table = table.GetTableFromScope(SymbolTable.Scope.Global);
@@ -490,7 +493,7 @@ namespace TypeCobol.Compiler.Parser
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
-            if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+            node.SymbolTable.AddVariable(node);
         }
 
         private void EnterDataRedefinesEntry(DataRedefinesEntry data)
@@ -500,7 +503,7 @@ namespace TypeCobol.Compiler.Parser
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
-            if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+            node.SymbolTable.AddVariable(node);
         }
 
         private void EnterDataRenamesEntry(DataRenamesEntry data)
@@ -510,7 +513,7 @@ namespace TypeCobol.Compiler.Parser
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
-            if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+            node.SymbolTable.AddVariable(node);
         }
 
         /// <summary>Exit() every Node that is not the top-level item for a data of a given level.</summary>

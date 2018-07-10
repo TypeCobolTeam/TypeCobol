@@ -72,7 +72,15 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
                 // TODO#249: use a COPY for these
                 foreach (var type in DataType.BuiltInCustomTypes)
-                    TableOfIntrisic.AddType(DataType.CreateBuiltIn(type)); //Add default TypeCobol types BOOLEAN and DATE
+                {
+                    var createdType = DataType.CreateBuiltIn(type);
+                    TableOfIntrisic.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
+                    //Add children to dictionary in Intrinsic symbol table
+                    if (createdType.Children.Count != 0)
+                    {
+                        TableOfIntrisic.AddTypeDataDefinition(createdType);
+                    }
+                }
             }
         }
 
@@ -171,7 +179,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         private void AddToSymbolTable(DataDescription node)
         {
-            if (node.IsPartOfATypeDef) return;
             var table = node.SymbolTable;
             if (node.CodeElement().IsGlobal)
                 table = table.GetTableFromScope(SymbolTable.Scope.Global);
@@ -193,7 +200,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             if (TableOfNamespaces == null)
                 TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace);
-
+            
             TableOfGlobals = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.Global);
             Program = null;
 
@@ -430,7 +437,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     node.SetFlag(Node.Flag.LocalStorageSectionNode, true); //Set flag to know that this node belongs to Local Storage Section
                 if (_IsInsideFileSectionContext)
                     node.SetFlag(Node.Flag.FileSectionNode, true);         //Set flag to know that this node belongs to File Section
-
+                
                 AddToSymbolTable(node);
             }
         }
@@ -442,7 +449,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
-            if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+            node.SymbolTable.AddVariable(node);
         }
 
         public virtual void StartDataRenamesEntry(DataRenamesEntry entry)
@@ -452,7 +459,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
-            if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+            node.SymbolTable.AddVariable(node);
         }
 
         public virtual void StartDataConditionEntry(DataConditionEntry entry)
@@ -462,7 +469,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (_CurrentTypeDefinition != null)
                 node.ParentTypeDefinition = _CurrentTypeDefinition;
             Enter(node);
-            if (!node.IsPartOfATypeDef) node.SymbolTable.AddVariable(node);
+                node.SymbolTable.AddVariable(node);
         }
 
         public virtual void StartTypeDefinitionEntry(DataTypeDescriptionEntry typedef)
@@ -470,11 +477,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
             var node = new TypeDefinition(typedef);
             Enter(node);
-            SymbolTable table;
-            if (node.CodeElement().IsGlobal) // TCTYPE_GLOBAL_TYPEDEF
-                table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global);
-            else
-                table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
+            var table = node.SymbolTable.GetTableFromScope(node.CodeElement().IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
             table.AddType(node);
 
             _CurrentTypeDefinition = node;

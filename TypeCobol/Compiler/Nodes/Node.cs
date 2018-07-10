@@ -432,7 +432,7 @@ namespace TypeCobol.Compiler.Nodes {
 
             return _programNode;
         }
-        
+
         /// <summary>Search for all children of a specific Name</summary>
         /// <param name="name">Name we search for</param>
         /// <param name="deep">true for deep search, false for shallow search</param>

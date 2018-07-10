@@ -108,7 +108,6 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (moveCorresponding != null)
             {
-                Tuple<string, DataDefinition> searchedDataDefintion = null;
                 DataDefinition fromVariable = null;
                 DataDefinition toVariable = null;
                 //For MoveCorrespondingStatement check children compatibility
@@ -122,8 +121,8 @@ namespace TypeCobol.Compiler.Diagnostics
                         true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
                 }
 
-                var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null);
-                var toVariableChildren = toVariable.Children.Where(c => c?.Name != null);
+                var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null).AsQueryable();
+                var toVariableChildren = toVariable.Children.Where(c => c?.Name != null).AsQueryable();
 
                 var matchingChildrenNames = fromVariableChildren.Select(c => c.Name.ToLowerInvariant())
                     .Intersect(toVariableChildren.Select(c => c.Name.ToLowerInvariant()));
@@ -135,8 +134,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     var retrievedChildrenTo =
                         toVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
 
-                    if ((retrievedChildrenFrom != null && retrievedChildrenFrom.Count() != 1) ||
-                        (retrievedChildrenTo != null && retrievedChildrenTo.Count() != 1))
+                    if (retrievedChildrenFrom.Count() != 1 || retrievedChildrenTo.Count() != 1)
                         DiagnosticUtils.AddError(move,
                             string.Format("Multiple symbol \"{0}\" detected in MOVE CORR", matchingChildName));
 
@@ -158,19 +156,19 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
             }
-            else if (moveSimple != null)
+            else
             {
-                if (moveSimple.StorageAreaWrites != null)
+                if (moveSimple?.StorageAreaWrites == null)
                 {
-                    for (int i = 0; i < moveSimple.StorageAreaWrites.Count; i++)
-                    {
-                        var receiver = moveSimple.StorageAreaWrites[i].StorageArea;
-                        if (receiver is FunctionCallResult)
-                            DiagnosticUtils.AddError(moveSimple, "MOVE: illegal <function call> after TO");
-                    }
+                    return true;
+                }
+                foreach (var area in moveSimple.StorageAreaWrites)
+                {
+                    var receiver = area.StorageArea;
+                    if (receiver is FunctionCallResult)
+                        DiagnosticUtils.AddError(moveSimple, "MOVE: illegal <function call> after TO");
                 }
             }
-
 
 
             return true;
