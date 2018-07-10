@@ -45,8 +45,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
             }
 
-            RedefinesChecker<CodeElement>.OnNode(node);
-            FunctionDeclarationChecker<CodeElement>.OnNode(node);
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);
@@ -59,6 +57,18 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             //This checker is only for Node after the full AST has been created
             return false;
+        }
+
+        public override bool Visit(FunctionDeclaration functionDeclaration)
+        {
+            FunctionDeclarationChecker.OnNode(functionDeclaration);
+            return true;
+        }
+
+        public override bool Visit(DataRedefines dataRedefines)
+        {
+            RedefinesChecker.OnNode(dataRedefines);
+            return true;
         }
 
         public override bool Visit(PerformProcedure performProcedureNode)
