@@ -38,11 +38,11 @@ Line 14[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the
        01 var1 comp.
          05 var3 pic 9.
 
-      *KO because var1 contains a child
+      *Should be KO, but outside the scope of this issue
        01 var1 pointer.
          05 var2 pic X.
 
-      *KO because var1 contains a child
+      *Should be KO, but outside the scope of this issue
        01 var1 usage is pointer.
          05 var2 pic X.
 
@@ -69,7 +69,7 @@ Line 57[10,23] <27, Error, Syntax> - Syntax error : Group item var2 contained th
            10 var3   pic X.
 
        01 var1.
-      *KO because var2 contains a child (only 1 error expected)
+      *Should be KO, but outside the scope of this issue
          05 var2 usage is pointer.
            10 var3 pic X.
            10 var4 pic 9.
@@ -95,7 +95,7 @@ Line 82[8,21] <27, Error, Syntax> - Syntax error : Group item var1 contained the
          05 var2.
            10 var3   pic X.
 
-      *KO because var1 contains a child
+      *Should be KO, but outside the scope of this issue
        01 var1 usage is pointer.
          05 var2.
            10 var3   pic X.

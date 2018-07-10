@@ -277,16 +277,17 @@ namespace TypeCobol.Compiler.Diagnostics
 
             }
 
-            if (dataDefinition.Picture != null)
-            {//only children with level 77 or 88 can be children of a PICTURE Elementary Item
-                if (HasOtherChildrenThanAllowed(dataDefinition))
-                {
-                    DiagnosticUtils.AddError(dataDefinition,
-                              "Group item " + dataDefinition.Name +
-                                  " contained the \"PICTURE\" clause.");
-                }          
+            if (!HasOtherChildrenThanAllowed(dataDefinition))
+            {
+                return true;
             }
 
+            if (dataDefinition.Picture != null)
+            {//only children with level 77 or 88 can be children of a PICTURE Elementary Item
+                DiagnosticUtils.AddError(dataDefinition,
+                    "Group item " + dataDefinition.Name +
+                    " contained the \"PICTURE\" clause.");
+            }
             //Type definitions are considered UserDefinedDataType; 
             //Types inside a TypeDef are not checked as they may occur as children
             // IsPartOfATypeDef - need to check as the following situation is allowed,
@@ -296,8 +297,7 @@ namespace TypeCobol.Compiler.Diagnostics
             //    02 Movment TYPE Vector.  <- error on this member if IsPartOfATypeDef is not checked
             //       04 Speed TYPE Vector.
             //       04 Acceleration TYPE Vector.
-            if (commonDataDataDefinitionCodeElement?.UserDefinedDataType != null && dataDefinition.IsPartOfATypeDef == false &&
-                HasOtherChildrenThanAllowed(dataDefinition))
+            if (commonDataDataDefinitionCodeElement?.UserDefinedDataType != null && dataDefinition.IsPartOfATypeDef == false)
             {
                 //can be type!;
                 DiagnosticUtils.AddError(dataDefinition,
@@ -313,7 +313,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// </summary>
         /// <param name="dataDefinition">Item to check</param>
         /// <returns>True if there are only DataConditionEntry or DataRenamesEntry childrens</returns>
-        private bool HasOtherChildrenThanAllowed(DataDefinition dataDefinition)
+        private static bool HasOtherChildrenThanAllowed(DataDefinition dataDefinition)
         {
             return dataDefinition.Children.Any(elem=>elem.CodeElement != null && 
                                                      elem.CodeElement.Type != CodeElementType.DataConditionEntry && 
