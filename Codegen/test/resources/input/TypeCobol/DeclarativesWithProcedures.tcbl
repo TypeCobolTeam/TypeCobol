@@ -37,6 +37,14 @@
            TIMES INDEXED BY Idx-TaxElm.
 
        procedure division.
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display "Titi-Proc"
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
             set Table-Tax::Tax::Idx-TaxElm to 1
            goback
            .

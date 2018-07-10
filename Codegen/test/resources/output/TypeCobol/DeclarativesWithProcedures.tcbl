@@ -98,6 +98,14 @@
        PROCEDURE DIVISION
            .
 
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display "Titi-Proc"
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
       *     set Table-Tax::Tax::Idx-TaxElm to 1
             set ae5bf0a5Idx-TaxElm to 1
            goback
