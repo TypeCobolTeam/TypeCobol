@@ -47,7 +47,17 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (symbolTable == null) return;
             var types = symbolTable.GetType(dataEntry.DataType);
-            if (types.Count != 1) return;
+            if (types.Count != 1)
+            {
+                //Check the existing children, if they use a type
+                foreach (var child in dataEntry.Children) 
+                {
+                    var childDataDesc = child as DataDescription;
+                    if (childDataDesc != null)
+                        TypeReferencer(childDataDesc, symbolTable);
+                }
+                return;
+            }
             var type = types.First();
             dataEntry.TypeDefinition = type; //Set the TypeDefinition on DataDefinition Node so to avoid symbolTable access
 
