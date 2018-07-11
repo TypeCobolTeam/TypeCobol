@@ -545,99 +545,73 @@ namespace TypeCobol.Compiler.Diagnostics
 	}
 }
 
-    class FunctionDeclarationChecker<TCtx> : NodeListener<TCtx> where TCtx : class
+    class FunctionDeclarationChecker
     {
-        public IList<Type> GetNodes()
+     
+        public static void OnNode(FunctionDeclaration functionDeclaration)
         {
-            return new List<Type> {typeof(FunctionDeclaration),};
-	}
-
-        public void OnNode([NotNull] Node node, TCtx context, CodeModel.Program program)
-        {
-            var functionDeclaration = node as FunctionDeclaration;
-            if (functionDeclaration == null) return; //not my job
-            var header = node.CodeElement as FunctionDeclarationHeader;
-	        if (header == null) return; //not my job
-
-		    var filesection = node.Get<FileSection>("file");
+            var header = functionDeclaration?.CodeElement as FunctionDeclarationHeader;
+            if (header == null) return; //not my job
+            var filesection = functionDeclaration.Get<FileSection>("file");
             if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
             {
-                string msg = "Illegal FILE SECTION in function \"" + header.Name + "\" declaration";
-                if (context is ParserRuleContext)
-                {
-                    DiagnosticUtils.AddError(filesection, msg, context as ParserRuleContext);
-                }
-                else if (context is CodeElement)
-                {
-                    DiagnosticUtils.AddError(filesection, msg, context as CodeElement);
-                }
-                else
-                {
-                    DiagnosticUtils.AddError(filesection,msg);
-                }
+                
+                DiagnosticUtils.AddError(filesection, "Illegal FILE SECTION in function \"" + header.Name + "\" declaration");
             }
 
-            CheckNoGlobalOrExternal(node.Get<DataDivision>("data-division"));
-            CheckNoLinkageItemIsAParameter(node.Get<LinkageSection>("linkage"), header.Profile);
-        }
+            CheckNoGlobalOrExternal(functionDeclaration.Get<DataDivision>("data-division"));
+            CheckNoLinkageItemIsAParameter(functionDeclaration.Get<LinkageSection>("linkage"), header.Profile);
 
-        public static void OnNode(Node node)
-        {
-            var functionDeclaration = node as FunctionDeclaration;
-            if (functionDeclaration == null) return; //not my job
-            var header = node.CodeElement as FunctionDeclarationHeader;
-            if (header == null) return; //not my job
+            CheckParameters(header.Profile, functionDeclaration);
+            CheckNoPerform(functionDeclaration.SymbolTable.EnclosingScope, functionDeclaration);
 
-            CheckParameters(header.Profile, node);
-		CheckNoPerform(node.SymbolTable.EnclosingScope, node);
-
-	    var headerNameURI = new URI(header.Name);
-	    var functions = node.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
-		if (functions.Count > 1)
-                DiagnosticUtils.AddError(node,
+            var headerNameURI = new URI(header.Name);
+            var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
+            if (functions.Count > 1)
+                DiagnosticUtils.AddError(functionDeclaration,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
                     headerNameURI.Tail + "\".");
-	}
+        }
 
-        private void CheckNoGlobalOrExternal(DataDivision node)
+        private static void CheckNoGlobalOrExternal(DataDivision node)
         {
-		if (node == null) return; // no DATA DIVISION
+            if (node == null) return; // no DATA DIVISION
             foreach (var section in node.Children())
             {
                 // "storage" sections
                 foreach (var child in section.Children)
                 {
-			        var data = child.CodeElement as DataDescriptionEntry;
-			        if (data == null) continue;
-			        if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
-			            DiagnosticUtils.AddError(child, "Illegal GLOBAL clause in function data item.");
-			}
-		}
-	}
+                    var data = child.CodeElement as DataDescriptionEntry;
+                    if (data == null) continue;
+                    if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
+                        DiagnosticUtils.AddError(child, "Illegal GLOBAL clause in function data item.");
+                }
+            }
+        }
 
         private static void CheckParameters([NotNull] ParametersProfile profile, Node node)
-    {
-        var parameters = profile.Parameters;
+        {
+            var parameters = profile.Parameters;
             foreach (var parameter in profile.InputParameters) CheckParameter(parameter, node);
             foreach (var parameter in profile.InoutParameters) CheckParameter(parameter, node);
             foreach (var parameter in profile.OutputParameters) CheckParameter(parameter, node);
-        if (profile.ReturningParameter != null)
-        {
+            if (profile.ReturningParameter != null)
+            {
                 CheckParameter(profile.ReturningParameter, node);
-            parameters.Add(profile.ReturningParameter);
-        }
+                parameters.Add(profile.ReturningParameter);
+            }
 
             foreach (
                     var duplicatedParameter in
                     parameters.GroupBy(p => p.Name).Where(g => g.Skip(1).Any()).SelectMany(g => g))
                 //Group on parameter.Name //where group contains more than one item //reexpand to get all duplicated parameters 
-        {
-            DiagnosticUtils.AddError(node,
-                string.Format("Parameter with name '{0}' declared multiple times", duplicatedParameter.Name));
+            {
+                DiagnosticUtils.AddError(node,
+                    string.Format("Parameter with name '{0}' declared multiple times", duplicatedParameter.Name));
+            }
+
+
         }
-
-
-    }
 
         private static void CheckParameter([NotNull] ParameterDescriptionEntry parameter, Node node)
         {
@@ -671,17 +645,17 @@ namespace TypeCobol.Compiler.Diagnostics
 
         }
 
-	/// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
-	/// <param name="node">LINKAGE SECTION node</param>
-	/// <param name="profile">Parameters for original function</param>
-        private void CheckNoLinkageItemIsAParameter(LinkageSection node, ParametersProfile profile)
+        /// <summary>TCRFUN_DECLARATION_NO_DUPLICATE_NAME</summary>
+        /// <param name="node">LINKAGE SECTION node</param>
+        /// <param name="profile">Parameters for original function</param>
+        private static void CheckNoLinkageItemIsAParameter(LinkageSection node, ParametersProfile profile)
         {
-		if (node == null) return; // no LINKAGE SECTION
-		var linkage = new List<DataDefinition>();
-		AddEntries(linkage, node);
+            if (node == null) return; // no LINKAGE SECTION
+            var linkage = new List<DataDefinition>();
+            AddEntries(linkage, node);
             foreach (var description in linkage)
             {
-			var used = Validate(profile.ReturningParameter, description.Name);
+                var used = Validate(profile.ReturningParameter, description.Name);
                 if (used != null)
                 {
                     AddErrorAlreadyParameter(description, description.QualifiedName);
@@ -693,7 +667,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     AddErrorAlreadyParameter(description, description.QualifiedName);
                     continue;
                 }
-			used = GetParameter(profile.OutputParameters, description.Name);
+                used = GetParameter(profile.OutputParameters, description.Name);
                 if (used != null)
                 {
                     AddErrorAlreadyParameter(description, description.QualifiedName);
@@ -705,67 +679,67 @@ namespace TypeCobol.Compiler.Diagnostics
                     AddErrorAlreadyParameter(description, description.QualifiedName);
                     continue;
                 }
-		}
-	}
+            }
+        }
 
-        private void AddEntries(List<DataDefinition> linkage, LinkageSection node)
+        private static void AddEntries(List<DataDefinition> linkage, LinkageSection node)
         {
             foreach (var definition in node.Children())
-			AddEntries(linkage, definition);
-	}
+                AddEntries(linkage, definition);
+        }
 
-        private void AddEntries([NotNull] List<DataDefinition> linkage, DataDefinition node)
+        private static void AddEntries([NotNull] List<DataDefinition> linkage, DataDefinition node)
         {
-		linkage.Add(node);
+            linkage.Add(node);
             foreach (var child in node.Children())
-			AddEntries(linkage, child);
-	}
+                AddEntries(linkage, child);
+        }
 
-        private ParameterDescriptionEntry GetParameter(IList<ParameterDescriptionEntry> parameters, string name)
+        private static ParameterDescriptionEntry GetParameter(IList<ParameterDescriptionEntry> parameters, string name)
         {
-		if (name == null) return null;
+            if (name == null) return null;
             foreach (var p in parameters)
-			if (Validate(p, name) != null) return p;
-		return null;
-	}
+                if (Validate(p, name) != null) return p;
+            return null;
+        }
 
-        private ParameterDescriptionEntry Validate(ParameterDescriptionEntry parameter, string name)
+        private static ParameterDescriptionEntry Validate(ParameterDescriptionEntry parameter, string name)
         {
-		if (parameter != null && parameter.Name.Equals(name)) return parameter;
-		return null;
-	}
+            if (parameter != null && parameter.Name.Equals(name)) return parameter;
+            return null;
+        }
 
-        private void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] QualifiedName name)
+        private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] QualifiedName name)
         {
             DiagnosticUtils.AddError(node, name.Head + " is already a parameter.");
-	}
+        }
 
         private static void CheckNoPerform(SymbolTable table, [NotNull] Node node)
         {
             if (node is PerformProcedure)
             {
                 var perform = (PerformProcedureStatement) node.CodeElement;
-			CheckNotInTable(table, perform.Procedure, node);
-			CheckNotInTable(table, perform.ThroughProcedure, node);
-		}
+                CheckNotInTable(table, perform.Procedure, node);
+                CheckNotInTable(table, perform.ThroughProcedure, node);
+            }
             foreach (var child in node.Children) CheckNoPerform(table, child);
-	}
+        }
 
         private static void CheckNotInTable(SymbolTable table, SymbolReference symbol, Node node)
         {
-		if (symbol == null) return;
-		string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
-		var found = table.GetSection(symbol.Name);
-		if (found.Count > 0) DiagnosticUtils.AddError(node, message);
+            if (symbol == null) return;
+            string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
+            var found = table.GetSection(symbol.Name);
+            if (found.Count > 0) DiagnosticUtils.AddError(node, message);
             else
             {
-			var paragraphFounds = table.GetParagraph(symbol.Name);
-			if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message);
-		}
-	}
-}
+                var paragraphFounds = table.GetParagraph(symbol.Name);
+                if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message);
+            }
+        }
+    }
 
-/// <summary>
+    /// <summary>
 /// Checks the TypeCobol rules for Library
 /// </summary>
     public class LibraryChecker
