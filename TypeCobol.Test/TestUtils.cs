@@ -65,6 +65,7 @@ namespace TypeCobol.Test
             report.AppendLine("- " + (compiler?.CodeElementsDocumentSnapshot.CodeElements.Count() ?? stats?.TotalCodeElements) + " code elements");
             if (compiler != null)
             {
+                report.AppendLine("");
                 report.AppendLine("First compilation performance");
                 report.AppendLine("- " + compiler.PerfStatsForText.FirstCompilationTime + " ms : text update");
                 report.AppendLine("- " + compiler.PerfStatsForScanner.FirstCompilationTime + " ms : scanner");
@@ -79,6 +80,8 @@ namespace TypeCobol.Test
 
             if (stats != null)
             {
+
+                report.AppendLine("");
                 report.AppendLine(compiler != null
                     ? "Incremental compilation performance (average time)"
                     : "Full compilation performance (average time)");
