@@ -4,10 +4,11 @@ using TypeCobol.Compiler.CodeElements;
 
     public class EnvironmentDivision: Node, CodeElementHolder<EnvironmentDivisionHeader> {
 	    public EnvironmentDivision(EnvironmentDivisionHeader header): base(header) { }
-	    public override string ID { get { return "environment-division"; } }
+	    public override string ID => "environment-division";
 
-        public override bool VisitNode(IASTVisitor astVisitor) {
-            return astVisitor.Visit(this);
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return true;
         }
     }
 

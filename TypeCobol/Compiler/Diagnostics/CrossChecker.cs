@@ -1,8 +1,6 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.CodeModel;
@@ -66,24 +64,18 @@ namespace TypeCobol.Compiler.Diagnostics
             SectionOrParagraphUsageChecker.CheckReferenceToParagraphOrSection(performProcedureNode);
             return true;
         }
-
-        public override bool Visit(Paragraph paragraph)
+        
+        public override bool Visit(Program program)
         {
-            SectionOrParagraphUsageChecker.CheckParagraph(paragraph);
+            // check if a program has a procedure division and launch checker if true (see issue #1039)
+            var procedureDivision = program.Children.FirstOrDefault(elem => elem as ProcedureDivision!=null) as ProcedureDivision;
+            if (procedureDivision!=null)
+            {
+                LibraryChecker.CheckLibrary(procedureDivision);
+            }
             return true;
         }
 
-        public override bool Visit(ProcedureDivision procedureDivision)
-        {
-            LibraryChecker.CheckLibrary(procedureDivision);
-            return true;
-        }
-
-        public override bool Visit(Section section)
-        {
-            SectionOrParagraphUsageChecker.CheckSection(section);
-            return true;
-        }
 
         public override bool Visit(Set setStatement)
         {
@@ -502,21 +494,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
             return null;
-        }
-
-        protected static void Check<T>(T node, [NotNull] IList<T> found) where T : Node
-        {
-            if (found.Count > 1) DiagnosticUtils.AddError(node, "Symbol \'" + node.Name + "\' already declared");
-        }
-
-        public static void CheckSection(Section section)
-        {
-            Check(section, section.SymbolTable.GetSection(section.Name));
-        }
-
-        public static void CheckParagraph(Paragraph paragraph)
-        {
-            Check(paragraph, paragraph.SymbolTable.GetParagraph(paragraph.Name));
         }
     }
 
