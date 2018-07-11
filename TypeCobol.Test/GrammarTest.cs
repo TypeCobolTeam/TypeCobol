@@ -52,9 +52,6 @@ namespace TypeCobol.Test {
 	        var optionsWarmup = new TypeCobolOptions
 	        {
 	            ExecToStep = ExecutionStep.CrossCheck,
-#if EUROINFO_RULES
-                    AutoRemarksEnable = autoRemarks
-#endif
 	        };
 	        documentWarmup.Init(path, optionsWarmup, format, copiesFolder);
 	        documentWarmup.Parse(path);
@@ -66,9 +63,6 @@ namespace TypeCobol.Test {
                 var options = new TypeCobolOptions
 	            {
 	                ExecToStep = ExecutionStep.CrossCheck,
-#if EUROINFO_RULES
-                    AutoRemarksEnable = autoRemarks
-#endif
 	            };
                 document.Init(path, options, format, copiesFolder);
                 document.Parse(path);
