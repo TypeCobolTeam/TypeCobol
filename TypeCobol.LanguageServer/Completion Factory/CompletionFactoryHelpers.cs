@@ -85,9 +85,15 @@ namespace TypeCobol.LanguageServer
 
                 var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
+
                 completionItem.insertText = typeIsPublic
-                    ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
-                    : type.Name;
+                    ? node is FunctionDeclaration
+                        ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
+                        : string.Format("{0}::{1}.", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
+                    : node is FunctionDeclaration
+                        ? type.Name 
+                        : type.Name + ".";
+
                 completionItem.kind = typeIsIntrinsic ? CompletionItemKind.IntrinsicType : CompletionItemKind.Class;
                 completionItems.Add(completionItem);
             }
