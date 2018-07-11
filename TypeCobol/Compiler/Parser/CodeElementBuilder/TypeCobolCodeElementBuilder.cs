@@ -381,6 +381,7 @@ namespace TypeCobol.Compiler.Parser
 
             Context = context;
             CodeElement = function;
+            FunctionDeclarationTypeChecker.OnCodeElement(function, context);
         }
 
         private static CallTargetParameter CreateCallTargetParameter(ParameterDescriptionEntry param)

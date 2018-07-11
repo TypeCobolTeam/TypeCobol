@@ -38,5 +38,5 @@
            MOVE YYYY OF myDate TO YYYY OF varB OF groupB-2 OF groupB-1.
       *    MOVE CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
            MOVE CORR YYYY OF myDate TO YYYY OF varB OF groupB-2 OF 
-           groupB-1.
+                                                               groupB-1.
        END PROGRAM MOVECORR.

@@ -146,7 +146,7 @@ namespace TypeCobol.Compiler.CodeModel
         ///   any of the above conditions.
         /// </summary>
         public IDictionary<string, List<DataDefinition>> DataEntries =
-            new Dictionary<string, List<DataDefinition>>(StringComparer.InvariantCultureIgnoreCase);
+            new Dictionary<string, List<DataDefinition>>(StringComparer.OrdinalIgnoreCase);
 
         internal void AddVariable([NotNull] DataDefinition symbol)
         {
@@ -339,11 +339,11 @@ namespace TypeCobol.Compiler.CodeModel
                 {
                     if (child.DataName != null &&
                         string.Equals(child.DataName.Name, symbolReference.Name,
-                            StringComparison.InvariantCultureIgnoreCase))
+                            StringComparison.OrdinalIgnoreCase))
                         return childrens[index] as DataDefinition;
                     else if (child.DataName != null && child is DataDescriptionEntry &&
                              !string.Equals(child.DataName.Name, symbolReference.Name,
-                                 StringComparison.InvariantCultureIgnoreCase))
+                                 StringComparison.OrdinalIgnoreCase))
                         return null;
                 }
                 else
@@ -485,7 +485,7 @@ namespace TypeCobol.Compiler.CodeModel
 
             //Name match ?
             if (currentTypeDef == null && //Do not try to match a TYPEDEF name
-                name[nameIndex].Equals(currentDataDefinition.Name, StringComparison.InvariantCultureIgnoreCase)) {
+                name[nameIndex].Equals(currentDataDefinition.Name, StringComparison.OrdinalIgnoreCase)) {
 
                 nameIndex--;
                 if (nameIndex < 0) { //We reached the end of the name : it's a complete match
@@ -543,7 +543,7 @@ namespace TypeCobol.Compiler.CodeModel
                 //If typedefcontext is set : Ignore references of this typedefContext to avoid loop seeking
                 //                           Only takes variable references that are declared inside the typeDefContext
                 if (typeDefContext != null)
-                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.GetParentTypeDefinition == typeDefContext).ToList();
+                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext).ToList();
 
                 var primaryPath = completeQualifiedNames.Last().ToArray(); //PrmiaryPath that will be added in front of every reference's path found
                 foreach (var reference in references)
@@ -587,7 +587,7 @@ namespace TypeCobol.Compiler.CodeModel
             //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
             //                              + Only takes variable references that are declared inside the typeDefContext
             if (typeDefContext != null)
-                references = references.Where(r => r.DataType != typeDefContext.DataType && r.GetParentTypeDefinition == typeDefContext).ToList();
+                references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext).ToList();
             var typePath = completeQualifiedNames.Last().ToArray();
             var referenceCounter = 0;
             foreach (var reference in references)
@@ -677,7 +677,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 foreach (var item in items)
                 {
-                    if (typename.Head.Equals(item.DataType.Name, System.StringComparison.InvariantCultureIgnoreCase))
+                    if (typename.Head.Equals(item.DataType.Name, StringComparison.OrdinalIgnoreCase))
                         variables.Add(item);
                 }
             }
@@ -720,7 +720,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 string part1 = name1[c];
                 string part2 = name2[offset];
-                if (part1.Equals(part2, StringComparison.InvariantCultureIgnoreCase)) offset++;
+                if (part1.Equals(part2, StringComparison.OrdinalIgnoreCase)) offset++;
                 else if (name1.IsExplicit) return false;
                 if (offset == name2.Count) return true;
             }
@@ -744,7 +744,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 var parent = GetAncestor(symbol, generation);
                 if (parent == null) continue;
-                if (parent.Name.Equals(pname, StringComparison.InvariantCultureIgnoreCase)) filtered.Add(symbol);
+                if (parent.Name.Equals(pname, StringComparison.OrdinalIgnoreCase)) filtered.Add(symbol);
             }
             return filtered;
         }
@@ -764,7 +764,7 @@ namespace TypeCobol.Compiler.CodeModel
         #region SECTIONS
 
         private IDictionary<string, List<Section>> Sections =
-            new Dictionary<string, List<Section>>(StringComparer.InvariantCultureIgnoreCase);
+            new Dictionary<string, List<Section>>(StringComparer.OrdinalIgnoreCase);
 
         internal void AddSection(Section section)
         {
@@ -786,7 +786,7 @@ namespace TypeCobol.Compiler.CodeModel
         #region PARAGRAPHS
 
         private IDictionary<string, List<Paragraph>> Paragraphs =
-            new Dictionary<string, List<Paragraph>>(StringComparer.InvariantCultureIgnoreCase);
+            new Dictionary<string, List<Paragraph>>(StringComparer.OrdinalIgnoreCase);
 
         internal void AddParagraph(Paragraph paragraph)
         {
@@ -817,7 +817,7 @@ namespace TypeCobol.Compiler.CodeModel
         #region TYPES
 
         public IDictionary<string, List<TypeDefinition>> Types =
-            new Dictionary<string, List<TypeDefinition>>(StringComparer.InvariantCultureIgnoreCase);
+            new Dictionary<string, List<TypeDefinition>>(StringComparer.OrdinalIgnoreCase);
 
         public void AddType(TypeDefinition type)
         {
@@ -859,7 +859,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             var found = GetType(name.Head);
 
-            if (string.IsNullOrEmpty(name.Tail) || found.Any(f => string.Compare(f.QualifiedName.Tail, name.Tail, StringComparison.InvariantCultureIgnoreCase) == 0))
+            if (string.IsNullOrEmpty(name.Tail) || found.Any(f => string.Compare(f.QualifiedName.Tail, name.Tail, StringComparison.OrdinalIgnoreCase) == 0))
                 return Get(found, name);
 
             found = GetType(name, name.Tail, found); //Pass name.Tail as a program name 
@@ -934,7 +934,7 @@ namespace TypeCobol.Compiler.CodeModel
             return programTypes
                 .Where(p =>
                     p.Value.All(f => ((DataTypeDescriptionEntry) f.CodeElement).Visibility == AccessModifier.Public)) 
-                .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort types to get only the ones with public AccessModifier
+                .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort types to get only the ones with public AccessModifier
         }
 
         private List<TypeDefinition> GetType(string name)
@@ -952,7 +952,7 @@ namespace TypeCobol.Compiler.CodeModel
         #region FUNCTIONS
 
         public IDictionary<string, List<FunctionDeclaration>> Functions =
-            new Dictionary<string, List<FunctionDeclaration>>(StringComparer.InvariantCultureIgnoreCase);
+            new Dictionary<string, List<FunctionDeclaration>>(StringComparer.OrdinalIgnoreCase);
 
         public void AddFunction(FunctionDeclaration function)
         {
@@ -1068,7 +1068,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             var result = GetFromTableAndEnclosing(head, GetFunctionTable);
 
-            if (string.IsNullOrEmpty(nameSpace) || result.Any(f => string.Compare(f.QualifiedName.Tail, nameSpace, StringComparison.InvariantCultureIgnoreCase) == 0))
+            if (string.IsNullOrEmpty(nameSpace) || result.Any(f => string.Compare(f.QualifiedName.Tail, nameSpace, StringComparison.OrdinalIgnoreCase) == 0))
                 return result;
 
             var program = GetProgramHelper(nameSpace); //Get the program corresponding to the given namespace
@@ -1078,7 +1078,7 @@ namespace TypeCobol.Compiler.CodeModel
                 programFunctions = programFunctions
                                     .Where(p =>
                                             p.Value.All(f => ((FunctionDeclarationHeader) f.CodeElement).Visibility == AccessModifier.Public))
-                                            .ToDictionary(f => f.Key, f => f.Value, StringComparer.InvariantCultureIgnoreCase); //Sort functions to get only the one with public AccessModifier
+                                            .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort functions to get only the one with public AccessModifier
 
                 result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
             }
@@ -1099,7 +1099,7 @@ namespace TypeCobol.Compiler.CodeModel
         #region PROGRAMS
 
         public IDictionary<string, List<Program>> Programs =
-            new Dictionary<string, List<Program>>(StringComparer.InvariantCultureIgnoreCase);
+            new Dictionary<string, List<Program>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Add a program to this symbolTable
@@ -1161,7 +1161,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             return this.GetTableFromScope(Scope.Namespace)
                 .Programs.Values.SelectMany(t => t)
-                .Where(fd => fd.Name.StartsWith(filter, StringComparison.InvariantCultureIgnoreCase));
+                .Where(fd => fd.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
         }
 
         public List<Program> GetPrograms()

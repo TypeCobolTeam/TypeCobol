@@ -12,18 +12,10 @@ using Analytics;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
-    class TypeDefinitionEntryChecker : CodeElementListener
+    class TypeDefinitionEntryChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            var context = c as CodeElementsParser.DataDescriptionEntryContext;
-            CheckRedefines(e as DataRedefinesEntry, context);
-            CheckTypedef(e as DataTypeDescriptionEntry, context);
-        }
-
-        private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
-        {
-            if (redefines == null) return;
             if (context.cobol2002TypedefClause() != null)
             {
                 string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
@@ -31,11 +23,8 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private void CheckTypedef(DataTypeDescriptionEntry typedef,
-            CodeElementsParser.DataDescriptionEntryContext context)
+        public static void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            if (typedef == null) return;
-
             if (typedef.LevelNumber?.Value != 1)
             {
                 string message = "TYPEDEF clause can only be specified for level 01 entries";

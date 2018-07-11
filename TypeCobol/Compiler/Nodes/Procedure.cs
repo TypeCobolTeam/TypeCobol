@@ -149,7 +149,12 @@ namespace TypeCobol.Compiler.Nodes {
     public class Paragraph: Node, CodeElementHolder<ParagraphHeader> {
 	    public Paragraph(ParagraphHeader header): base(header) { }
 	    public override string ID { get { return "paragraph"; } }
-        public override string Name { get { return this.CodeElement().ParagraphName.Name; } }
+        private string _Name;
+        public override string Name { get {
+            if (_Name == null)
+                _Name = this.CodeElement().ParagraphName.Name;
+            return _Name;
+        } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);

@@ -59,13 +59,15 @@ namespace TypeCobol.Codegen.Nodes {
                         var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(), dataDivision);
 
                         ProgramImports imports = ProgramImportsAttribute.GetProgramImports(originalNode);
-                        workingStorageSection.Add(new GeneratedNode2(
-                            "01 TC-Call          PIC X     VALUE 'T'.", true));
-                        workingStorageSection.Add(new GeneratedNode2("    88 TC-FirstCall  VALUE 'T'.", true));
-                        workingStorageSection.Add(new GeneratedNode2("    88 TC-NthCall    VALUE 'F'", true));
-                        workingStorageSection.Add(new GeneratedNode2("                     X'00' thru 'S'", true));
-                        workingStorageSection.Add(new GeneratedNode2("                     'U' thru X'FF'.", true));
-
+                        Node[] toAddRange =
+                        {
+                            new GeneratedNode2("01 TC-Call          PIC X     VALUE 'T'.", true),
+                            new GeneratedNode2("    88 TC-FirstCall  VALUE 'T'.", true),
+                            new GeneratedNode2("    88 TC-NthCall    VALUE 'F'", true),
+                            new GeneratedNode2("                     X'00' thru 'S'", true),
+                            new GeneratedNode2("                     'U' thru X'FF'.", true)
+                        };
+                        workingStorageSection.AddRange(toAddRange, 0);
                         GenerateCodeToCallPublicProc(originalNode, pdiv,  workingStorageSection, linkageSection);
                     }
                 } else {
@@ -112,31 +114,32 @@ namespace TypeCobol.Codegen.Nodes {
 
             foreach (var pgm in imports.Programs.Values) {
                 workingStorageSection.Add(
-                    new GeneratedNode2("01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n", true));
+                    new GeneratedNode2("01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n", true), 0);
             }
 
-            
-            linkageSection.Add(new GeneratedNode2("*Common to all librairies used by the program.", true));
-            linkageSection.Add(new GeneratedNode2("01 TC-Library-PntTab.", false));
-            linkageSection.Add(new GeneratedNode2("    05 TC-Library-PntNbr          PIC S9(04) COMP.", true));
-            linkageSection.Add(new GeneratedNode2(
+            List<Node> toAddRange = new List<Node>();
+            toAddRange.Add(new GeneratedNode2("*Common to all librairies used by the program.", true));
+            toAddRange.Add(new GeneratedNode2("01 TC-Library-PntTab.", false));
+            toAddRange.Add(new GeneratedNode2("    05 TC-Library-PntNbr          PIC S9(04) COMP.", true));
+            toAddRange.Add(new GeneratedNode2(
                 "    05 TC-Library-Item OCCURS 1000\n                        DEPENDING ON TC-Library-PntNbr\n                        INDEXED   BY TC-Library-Idx.",
                 false));
-            linkageSection.Add(new GeneratedNode2("       10 TC-Library-Item-Idt      PIC X(08).", true));
-            linkageSection.Add(new GeneratedNode2("       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.", true));
+            toAddRange.Add(new GeneratedNode2("       10 TC-Library-Item-Idt      PIC X(08).", true));
+            toAddRange.Add(new GeneratedNode2("       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.", true));
 
 
             foreach (var pgm in imports.Programs.Values) {
                 foreach (var proc in pgm.Procedures.Values) {
                     proc.IsNotByExternalPointer = true;
-                    linkageSection.Add(new GeneratedNode2(" ", true));
-                    linkageSection.Add(new GeneratedNode2("*" + pgm.Name + "::" + proc.Name, true));
-                    linkageSection.Add(new GeneratedNode2("01 TC-" + pgm.Name + "-" + proc.Hash + "-Item.", false));
-                    linkageSection.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + "-Idt PIC X(08).", true));
-                    linkageSection.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + " PROCEDURE-POINTER.",
+                    toAddRange.Add(new GeneratedNode2(" ", true));
+                    toAddRange.Add(new GeneratedNode2("*" + pgm.Name + "::" + proc.Name, true));
+                    toAddRange.Add(new GeneratedNode2("01 TC-" + pgm.Name + "-" + proc.Hash + "-Item.", false));
+                    toAddRange.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + "-Idt PIC X(08).", true));
+                    toAddRange.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + " PROCEDURE-POINTER.",
                         true));
                 }
             }
+            linkageSection.AddRange(toAddRange, 0);
 
 
             if (imports.HasPublicProcedures)

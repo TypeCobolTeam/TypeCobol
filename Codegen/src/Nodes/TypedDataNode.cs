@@ -43,7 +43,7 @@ namespace TypeCobol.Codegen.Nodes
                         //Collect from level 01 Pure Cobol85 root variables                    
                         List<Tuple<string, string>> rootVars;
                         GeneratorHelper.ComputeTypedProperPaths(this, data, customtype, out rootProcedures, out rootVars);
-                        _cache.AddRange(CreateDataDefinition(this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype, data, level, 0, true, true, customtype));
+                        _cache.AddRange(CreateDataDefinition(this.Node, this.Node.SymbolTable, Layout, rootProcedures, rootVars, customtype, data, level, 0, true, true, customtype));
                         _cache.AddRange(InsertChildren(Layout, rootProcedures, rootVars, customtype, customtype, level + 1, 1));
                     }
                 }
@@ -334,7 +334,7 @@ namespace TypeCobol.Codegen.Nodes
         /// <param name="indexes">The Array of Index Symbol Definition</param>
         /// <param name="ownerDefinition">The Owner of the definition that contains the INDEXED BY clause</param>
         /// <returns>The Dictionary</returns>
-        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
+        private static Dictionary<Compiler.Scanner.Token, string> BuiltIndexMap(Node rootNode, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, SymbolDefinition[] indexes, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition)
         {
             Dictionary<Compiler.Scanner.Token, string> map = new Dictionary<Compiler.Scanner.Token, string>(indexes.Length);
             List<string> pathProcedures;
@@ -360,7 +360,21 @@ namespace TypeCobol.Codegen.Nodes
 
             list_items.AddRange(pathVariables);
             string qn = string.Join(".", list_items.ToArray());
-            foreach (Node child in ownerDefinition.Children)
+            AddIndexMap(rootNode, rootNode.QualifiedName.ToString(), indexes, map);
+            AddIndexMap(ownerDefinition, qn, indexes, map);
+            return map;
+        }
+
+        /// <summary>
+        /// Add In the Index Map all indices that match an IndexDefinition children node of a parent node.
+        /// </summary>
+        /// <param name="parentNode">The parent Node</param>
+        /// <param name="qn">Root qualified name of the indes</param>
+        /// <param name="indexes">SymbolDefinition[] indexes</param>
+        /// <param name="map">Map of token indexes to their hashname</param>
+        private static void AddIndexMap(Node parentNode, string qn, SymbolDefinition[] indexes, Dictionary<Compiler.Scanner.Token, string> map)
+        {
+            foreach (Node child in parentNode.Children)
             {
                 if (child is IndexDefinition)
                 {
@@ -370,15 +384,13 @@ namespace TypeCobol.Codegen.Nodes
                         if (sym.Name.Equals(index.Name))
                         {
                             string qualified_name = qn + '.' + index.Name;
-                            string hash_name = GeneratorHelper.ComputeIndexHashName(qualified_name, ownerDefinition);
+                            string hash_name = GeneratorHelper.ComputeIndexHashName(qualified_name, parentNode);
                             map[sym.NameLiteral.Token] = hash_name;
                         }
                     }
                 }
             }
-            return map;
         }
-
         /// <summary>
         /// Pre Generation calculation for collection variable path access and index variable map.
         /// </summary>
@@ -391,7 +403,7 @@ namespace TypeCobol.Codegen.Nodes
         /// <param name="bHasIndexes">[out] true if the current variable definition have indexed variables, fals eotherwise.</param>
         /// <param name="dependingOnAccessPath">[out] depending on variables access path list</param>
         /// <param name="indexesMap">[out] Indexed variable map to tokens</param>
-        internal static void PreGenDependingOnAndIndexed(SymbolTable table, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,
+        internal static void PreGenDependingOnAndIndexed(Node rootNode, SymbolTable table, List<string> rootProcedures, List<Tuple<string, string>> rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def,
             out bool bHasDependingOn,
             out bool bHasIndexes,
             out List<string> dependingOnAccessPath,
@@ -440,7 +452,7 @@ namespace TypeCobol.Codegen.Nodes
             {
                 bHasIndexes = true;
                 //So Children of the owner definition contains all indexes
-                indexesMap = BuiltIndexMap(rootProcedures, rootVariableName, data.Indexes, ownerDefinition);
+                indexesMap = BuiltIndexMap(rootNode, rootProcedures, rootVariableName, data.Indexes, ownerDefinition);
             }
         }
 
@@ -550,7 +562,7 @@ namespace TypeCobol.Codegen.Nodes
             }
         }
 
-        internal static List<ITextLine> CreateDataDefinition(SymbolTable table, ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
+        internal static List<ITextLine> CreateDataDefinition(Node node, SymbolTable table, ColumnsLayout? layout, List<string> rootProcedures, List< Tuple<string,string> > rootVariableName, TypeCobol.Compiler.Nodes.DataDefinition ownerDefinition, DataDefinitionEntry data_def, int level, int indent, bool isCustomType, bool isFirst, TypeDefinition customtype = null)
         {
             var data = data_def as DataDescriptionEntry;
             if (data != null)
@@ -565,7 +577,7 @@ namespace TypeCobol.Codegen.Nodes
                     List<string> dependingOnAccessPath = null;
                     Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
 
-                    PreGenDependingOnAndIndexed(table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
+                    PreGenDependingOnAndIndexed(node, table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
                     bool globalSeen = false;
@@ -609,7 +621,7 @@ namespace TypeCobol.Codegen.Nodes
                     List<string> dependingOnAccessPath = null;
                     Dictionary<Compiler.Scanner.Token, string> indexesMap = null;
 
-                    PreGenDependingOnAndIndexed(table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
+                    PreGenDependingOnAndIndexed(node, table, rootProcedures, rootVariableName, ownerDefinition, data_def, out bHasDependingOn, out bHasIndexes,
                         out dependingOnAccessPath, out indexesMap);
 
                     string text = !(bHasDependingOn || bHasIndexes) ? ExtractAnyCobolScalarTypeDef(layout, customtype, out bHasPeriod, false) : "";
@@ -846,7 +858,7 @@ namespace TypeCobol.Codegen.Nodes
                 var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
                 if (dataDefinitionEntry != null)
                 {
-                    lines.AddRange(CreateDataDefinition(child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? typed.TypeDefinition : null));
+                    lines.AddRange(CreateDataDefinition(child, child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? typed.TypeDefinition : null));
                 }
                 else
                 {//Humm ... It will be a bug.

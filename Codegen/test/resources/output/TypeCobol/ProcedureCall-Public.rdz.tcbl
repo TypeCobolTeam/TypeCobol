@@ -3,6 +3,15 @@
 
        DATA DIVISION.
        Working-STORAGE SECTION.
+       01 TC-Callee pic X(08) value 'CALLEE'.
+       01 TC-PersonSe pic X(08) value 'PERSONSE'.
+       01 TC-Call          PIC X VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+
+                               
 
       *01  somedate     TYPE Date.
        01 somedate.
@@ -27,14 +36,6 @@
            02 LastName pic X(30).
            02 FirstName pic X(30).
                                                 
-       01 TC-Callee pic X(08) value 'CALLEE'.
-       01 TC-PersonSe pic X(08) value 'PERSONSE'.
-       01 TC-Call          PIC X VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
-
        LINKAGE SECTION.
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.

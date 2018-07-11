@@ -68,7 +68,13 @@ namespace TypeCobol.Compiler.CodeElements {
                 && this.ContinueVisitToChildren(astVisitor, LevelNumber, DataName);
 	    }
 
-	    public override string Name { get { return DataName != null? DataName.Name : null; } }
+	    private string _Name;
+	    public override string Name { get {
+	        if (_Name == null)
+	            _Name = DataName != null? DataName.Name : null;
+
+	        return _Name;
+	    } }
 
         private DataType _dataType;
 

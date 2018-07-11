@@ -110,15 +110,14 @@
        PROGRAM-ID. f73481e6CheckContract.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+       01 TC-PGM1 pic X(08) value 'PGM1'.
+
        01 TC-Call          PIC X     VALUE 'T'.
            88 TC-FirstCall  VALUE 'T'.
            88 TC-NthCall    VALUE 'F'
                             X'00' thru 'S'
                             'U' thru X'FF'.
-       01 TC-PGM1 pic X(08) value 'PGM1'.
-
        LINKAGE SECTION.
-       01 param1 pic X.
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -132,6 +131,7 @@
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
+       01 param1 pic X.
        PROCEDURE DIVISION
              USING BY REFERENCE param1
            .
@@ -181,16 +181,16 @@
        PROGRAM-ID. bfc74757testos.
        data division.
        working-storage section.
-       01 var1 pic X.
+       01 TC-PGM2 pic X(08) value 'PGM2'.
+
+       01 TC-PGM1 pic X(08) value 'PGM1'.
+
        01 TC-Call          PIC X     VALUE 'T'.
            88 TC-FirstCall  VALUE 'T'.
            88 TC-NthCall    VALUE 'F'
                             X'00' thru 'S'
                             'U' thru X'FF'.
-       01 TC-PGM1 pic X(08) value 'PGM1'.
-
-       01 TC-PGM2 pic X(08) value 'PGM2'.
-
+       01 var1 pic X.
        LINKAGE SECTION.
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.

@@ -441,7 +441,7 @@ namespace TypeCobol.Compiler.Nodes {
             var results = new List<T>();
             foreach (var child in children) {
                 var typedChild = child as T;
-                if (typedChild != null && name.Equals(child.Name, StringComparison.InvariantCultureIgnoreCase)) results.Add(typedChild);
+                if (typedChild != null && name.Equals(child.Name, StringComparison.OrdinalIgnoreCase)) results.Add(typedChild);
                 if (deep) results.AddRange(child.GetChildren<T>(name, true));
             }
             return results;
@@ -455,6 +455,22 @@ namespace TypeCobol.Compiler.Nodes {
             if (index < 0) children.Add(child);
             else children.Insert(index, child);
             child.Parent = this;
+        }
+
+        /// <summary>
+        /// Adds children to this node
+        /// </summary>
+        /// <param name="toAdd">children to be added</param>
+        /// <param name="index">children position</param>
+        public virtual void AddRange(IEnumerable<Node> toAdd, int index = -1)
+        {            
+            if (index < 0)
+                children.AddRange(toAdd);
+            else children.InsertRange(index, toAdd);
+            foreach (Node child in toAdd)
+            {
+                child.Parent = this;
+            }
         }
 
         /// <summary>
@@ -667,13 +683,30 @@ namespace TypeCobol.Compiler.Nodes {
         /// Search both dictionaries for a given StorageArea
         /// </summary>
         /// <param name="searchedStorageArea">StorageArea to search for</param>
+        /// <param name="isReadDataDefiniton">[Optional] True if storage area needs to be searched in StorageAreaReadsDataDefinition,
+        /// false if storage area needs to be searched in StorageAreaWritesDataDefinition.
+        /// If parameter is not present, the search is done in both dictionaries</param>
         /// <returns>Correpsonding DataDefinition</returns>
-        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea)
+        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
         {
             Tuple<string, DataDefinition> searchedElem = null;
-            StorageAreaReadsDataDefinition?.TryGetValue(
-                searchedStorageArea, out searchedElem);
-            if (searchedElem == null)
+            if (isReadDataDefiniton == null)
+            {
+                StorageAreaReadsDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+                if (searchedElem == null)
+                {
+                    StorageAreaWritesDataDefinition?.TryGetValue(
+                        searchedStorageArea, out searchedElem);
+                }
+            }
+            if (isReadDataDefiniton.HasValue&&isReadDataDefiniton.Value)
+            {
+                StorageAreaReadsDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+            }
+
+            if (isReadDataDefiniton.HasValue && !isReadDataDefiniton.Value)
             {
                 StorageAreaWritesDataDefinition?.TryGetValue(
                     searchedStorageArea, out searchedElem);

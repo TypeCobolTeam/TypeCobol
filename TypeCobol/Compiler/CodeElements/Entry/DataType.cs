@@ -174,9 +174,9 @@ namespace TypeCobol.Compiler.CodeElements
 		}
 		private static Nodes.TypeDefinition CreateDate() {
 			var node = CreateBase(DataType.Date);
-			node.Add(CreateData(5, "YYYY", '9',4));
-			node.Add(CreateData(5, "MM",   '9',2));
-			node.Add(CreateData(5, "DD",   '9',2));
+			node.Add(CreateData(5, "YYYY", '9',4, node));
+			node.Add(CreateData(5, "MM",   '9',2, node));
+			node.Add(CreateData(5, "DD",   '9',2, node));
 			return node;
 	    }
 	    private static Nodes.TypeDefinition CreateCurrency()
@@ -197,13 +197,16 @@ namespace TypeCobol.Compiler.CodeElements
 	        entry.ConsumedTokens.Add(new Token(TokenType.PeriodSeparator, 43, 43, tokenLine));
             return new Nodes.TypeDefinition(entry);
 	    }
-        private static Nodes.DataDescription CreateData(int level, string name, char type, int length) {
+        private static Nodes.DataDescription CreateData(int level, string name, char type, int length, TypeDefinition parentTypeDef) {
 			var data = new DataDescriptionEntry();
 			data.LevelNumber = new GeneratedIntegerValue(level);
 			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
 			data.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", type, length));
 			data.DataType = DataType.Create(data.Picture.Value);
-			return new Nodes.DataDescription(data);
+            var node = new Nodes.DataDescription(data);
+
+            node.ParentTypeDefinition = parentTypeDef;
+			return node;
 		}
 
 		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String};

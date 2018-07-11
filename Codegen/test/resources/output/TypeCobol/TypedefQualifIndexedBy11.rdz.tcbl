@@ -1,0 +1,49 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION.
+       working-storage section.
+      *01 TaxElm TYPEDEF STRICT PRIVATE.
+      *  10 TaxTyp  PIC X(03).
+
+       01 Table-Tax.
+      *  05 Tax TYPE TaxElm
+      *    OCCURS 200 TIMES INDEXED BY Idx-TaxElm.
+         05 Tax
+           OCCURS 200 TIMES INDEXED BY b3c45d20Idx-TaxElm.
+           06 TaxTyp PIC X(03).
+                                                  
+
+
+      *---------------------------------------------------
+       PROCEDURE DIVISION.
+
+
+      *     set Table-Tax::Tax::Idx-TaxElm to 1
+            set b3c45d20Idx-TaxElm to 1
+            .
+      *declare procedure Toto.
+       END PROGRAM DVZF0OSM.
+      *
+      *declare procedure Toto.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c9ad76ebToto.
+       data division.
+       working-storage section.
+       01 Table-Tax.
+      *  05 Tax TYPE TaxElm
+      *    OCCURS 200
+      *    TIMES INDEXED BY Idx-TaxElm.
+         05 Tax
+           OCCURS 200
+           TIMES INDEXED BY ac7b6441Idx-TaxElm.
+           06 TaxTyp PIC X(03).
+                                       
+       PROCEDURE DIVISION
+           .
+
+      *     set Table-Tax::Tax::Idx-TaxElm to 1
+            set ac7b6441Idx-TaxElm to 1
+           goback
+           .
+       END PROGRAM c9ad76ebToto.

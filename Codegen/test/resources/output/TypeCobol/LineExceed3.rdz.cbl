@@ -9,7 +9,7 @@
       *                                                      SET    v::
       *              value1 TO true.
                                                              SET    
-           value1 OF 
+                                                              value1 OF 
                      v TO true.
            .
        END PROGRAM MyPgm.

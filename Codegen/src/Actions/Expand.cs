@@ -79,7 +79,6 @@ namespace TypeCobol.Codegen.Actions
                     //Its destination has parent.
                     nodegen.SetParent(Destination);
                 }
-
             }
             // comment out original "line" (=~ non expanded node)
             this.Source.Comment = true;
@@ -89,6 +88,17 @@ namespace TypeCobol.Codegen.Actions
             erasedNodes.TrimExcess();
             ErasedNodes = erasedNodes;
             this.Source.RemoveAllChildren();
+            if (nodegen is TypedDataNode)
+            {
+                erasedNodes.ForEach(n =>
+                {
+                    if (n is IndexDefinition )
+                        this.Source.Add((n)); // Re-Add IndexDefinition Node to the original Node for further generation
+                });
+                ErasedNodes = erasedNodes.Where(n => !(n is IndexDefinition || n is Qualifier.GenerateToken)).ToList();
+            }
+
+            //Special case for NodeIndex and Qualifier node
             if (nodegen != null)
             {//Remove from the Erased nodes all reused nodes.
                 List<Node> ng_child = new List<Node>();

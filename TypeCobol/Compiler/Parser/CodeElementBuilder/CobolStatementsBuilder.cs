@@ -101,7 +101,7 @@ namespace TypeCobol.Compiler.Parser
 		 // ADD STATEMENT //
 		///////////////////
 
-		internal CodeElement CreateAddStatement(CodeElementsParser.AddSimpleContext context) {
+		internal AddStatement CreateAddStatement(CodeElementsParser.AddSimpleContext context) {
 			var statement = new AddSimpleStatement();
 			statement.VariablesTogether = BuildObjectArrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
 			statement.SendingAndReceivingStorageAreas = BuildObjectArrayFromParserRules(context.numericStorageAreaRounded(), ctx => CreateRoundedResult(ctx));
@@ -115,7 +115,7 @@ namespace TypeCobol.Compiler.Parser
 			return roundedResult;
 		}
 
-		internal CodeElement CreateAddGivingStatement(CodeElementsParser.AddGivingContext context) {
+		internal AddStatement CreateAddGivingStatement(CodeElementsParser.AddGivingContext context) {
 			var statement = new AddGivingStatement();
 			statement.VariablesTogether = BuildObjectArrayFromParserRules(context.numericVariable3(), ctx => CobolExpressionsBuilder.CreateNumericVariable(ctx));
 			statement.Operand = CobolExpressionsBuilder.CreateNumericVariable(context.toOperand);
@@ -123,7 +123,7 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		internal CodeElement CreateAddCorrespondingStatement(CodeElementsParser.AddCorrespondingContext context) {
+		internal AddStatement CreateAddCorrespondingStatement(CodeElementsParser.AddCorrespondingContext context) {
 			var statement = new AddCorrespondingStatement();
 			statement.GroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.groupItem);
 			statement.SendingAndReceivingGroupItem = CobolExpressionsBuilder.CreateDataItemReference(context.toGroupItem);
@@ -226,7 +226,7 @@ namespace TypeCobol.Compiler.Parser
 		 // CANCEL STATEMENT //
 		//////////////////////
 
-		internal CodeElement CreateCancelStatement(CodeElementsParser.CancelStatementContext context) {
+		internal CancelStatement CreateCancelStatement(CodeElementsParser.CancelStatementContext context) {
 			var statement = new CancelStatement();
 			statement.Programs = BuildObjectArrayFromParserRules(context.programNameVariable(), ctx => CobolExpressionsBuilder.CreateProgramNameVariable(ctx));
 			return statement;
@@ -498,7 +498,7 @@ namespace TypeCobol.Compiler.Parser
 		// INSPECT STATEMENT //
 		///////////////////////
 
-		internal CodeElement CreateInspectStatement(CodeElementsParser.InspectStatementContext context)
+		internal InspectStatement CreateInspectStatement(CodeElementsParser.InspectStatementContext context)
 		{
 			if (context.convertingPhrase() != null) {
 				var statement = new InspectConvertingStatement();
@@ -1009,7 +1009,7 @@ namespace TypeCobol.Compiler.Parser
 		 // SEARCH STATEMENT //
 		//////////////////////
 
-		internal CodeElement CreateSerialSearchStatement(CodeElementsParser.SerialSearchContext context) {
+		internal SearchStatement CreateSerialSearchStatement(CodeElementsParser.SerialSearchContext context) {
 			var statement = new SearchSerialStatement();
 			statement.TableToSearch = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			if(context.dataOrIndexStorageArea() != null) {
@@ -1018,7 +1018,7 @@ namespace TypeCobol.Compiler.Parser
 			return statement;
 		}
 
-		internal CodeElement CreateBinarySearchStatement(CodeElementsParser.BinarySearchContext context) {
+		internal SearchStatement CreateBinarySearchStatement(CodeElementsParser.BinarySearchContext context) {
 			var statement = new SearchBinaryStatement();
 			statement.TableToSearch = CobolExpressionsBuilder.CreateVariable(context.variable1());
 			return statement;
@@ -1028,7 +1028,7 @@ namespace TypeCobol.Compiler.Parser
 		 // SET STATEMENT //
 		///////////////////
 
-		internal CodeElement CreateSetStatementForAssignment(CodeElementsParser.SetStatementForAssignmentContext context) {
+		internal SetStatementForAssignment CreateSetStatementForAssignment(CodeElementsParser.SetStatementForAssignmentContext context) {
             if (context.dataOrIndexStorageArea() == null || context.setSendingField() == null)
                 return new SetStatementPartial();
 
@@ -1059,7 +1059,7 @@ namespace TypeCobol.Compiler.Parser
 			return variable;
 		}
 
-		internal CodeElement CreateSetStatementForIndexes(CodeElementsParser.SetStatementForIndexesContext context) {
+		internal SetStatementForIndexes CreateSetStatementForIndexes(CodeElementsParser.SetStatementForIndexesContext context) {
 			var statement = new SetStatementForIndexes();
 			statement.ReceivingIndexes = BuildObjectArrayFromParserRules(context.indexStorageArea(), ctx => CobolExpressionsBuilder.CreateIndexStorageArea(ctx));
 			if(context.UP() != null) {
@@ -1173,7 +1173,7 @@ namespace TypeCobol.Compiler.Parser
         // START STATEMENT //
         /////////////////////
 
-        internal CodeElement CreateStartStatement(CodeElementsParser.StartStatementContext context)
+        internal StartStatement CreateStartStatement(CodeElementsParser.StartStatementContext context)
         {
             var statement = new StartStatement();
 
