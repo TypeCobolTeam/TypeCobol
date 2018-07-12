@@ -603,7 +603,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolReference CreateQualifiedDataTypeReference(CodeElementsParser.Cobol2002TypeClauseContext context)
         {
-            var pgmNameContext = context.programNameReference3(); //Get program name Context
+            var pgmNameOrNameSpaceContext = context.nameSpaceReference(); //Get program name Context
             var typeNameRef = context.typeNameReference();
             if (typeNameRef == null)
                 return null;
@@ -629,13 +629,22 @@ namespace TypeCobol.Compiler.Parser
             dataAlpha = new AlphanumericValue(dataToken);
             dataSymbol = new SymbolReference(dataAlpha, SymbolType.DataName);
 
-            if (pgmNameContext != null)
+            if (pgmNameOrNameSpaceContext != null)
             {
-                pgmToken = ParseTreeUtils.GetFirstToken(pgmNameContext);
-                pgmAlph = new AlphanumericValue(pgmToken);
-                pgmSymbol = new SymbolReference(pgmAlph, SymbolType.ProgramName);
+                var tokens = pgmNameOrNameSpaceContext.GetTokens((int)TokenType.UserDefinedWord);
+                if (tokens.Length > 1)
+                {
+                    var namespaceReference = this.CreateQualifiedNameSpaceReference(pgmNameOrNameSpaceContext);
 
-                symbolReference = new QualifiedSymbolReference(dataSymbol, pgmSymbol);
+                    symbolReference = new QualifiedSymbolReference(dataSymbol, namespaceReference);
+                }
+                else {
+                    pgmToken = ParseTreeUtils.GetFirstToken(pgmNameOrNameSpaceContext);
+                    pgmAlph = new AlphanumericValue(pgmToken);
+                    pgmSymbol = new SymbolReference(pgmAlph, SymbolType.ProgramName);
+
+                    symbolReference = new QualifiedSymbolReference(dataSymbol, pgmSymbol);
+                }
             }
             else
                 symbolReference = dataSymbol;
@@ -682,7 +691,8 @@ namespace TypeCobol.Compiler.Parser
             return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.DataName, SymbolType.FileName, SymbolType.MnemonicForUPSISwitchName });
         }
 
-        internal AmbiguousSymbolReference CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
+        internal AmbiguousSymbolReference 
+            CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
         {
             return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new SymbolType[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName });
         }
@@ -690,7 +700,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal AmbiguousSymbolReference CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrTCFunctionProcedure(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceContext context)
         {
-            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.TCFunctionName });
+            return CreateAmbiguousSymbolReference(context.ambiguousSymbolReference4(), new[] { SymbolType.DataName, SymbolType.ConditionName, SymbolType.ConditionForUPSISwitchName, SymbolType.TCFunctionName});
         }
 
         internal AmbiguousSymbolReference CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference(CodeElementsParser.DataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReferenceContext context)
@@ -860,6 +870,10 @@ namespace TypeCobol.Compiler.Parser
             if (isCOBOL) return new QualifiedSymbolReference(head, tail);
             else return new TypeCobolQualifiedSymbolReference(head, tail);
         }
+        private TypeCobolQualifiedSymbolDefinition CreateQualifiedSymbolDefinition(SymbolDefinition head, SymbolDefinition tail)
+        {
+            return new TypeCobolQualifiedSymbolDefinition(head, tail);
+        }
 
         internal SymbolReference CreateRecordName(CodeElementsParser.RecordNameContext context)
         {
@@ -993,6 +1007,52 @@ namespace TypeCobol.Compiler.Parser
             }
         }
 
+        internal SymbolReference CreateQualifiedNameSpaceReference(CodeElementsParser.NameSpaceReferenceContext context)
+        {
+            if (context.children.Any(x => ((Token)x.Payload).TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
+                return null; //If not UserDefinedWord or QualifiedSeprator it's a mistake. 
+
+            ITerminalNode[] tail = context.UserDefinedWord();
+            Array.Reverse(tail);
+
+            var reference = CreateNameSpaceReference(context.head);
+            for (int c = 0; c < tail.Length; c++)
+                reference = CreateQualifiedSymbolReference(reference, CreateNameSpaceReference(tail[c].Symbol), false);
+            symbolInformationForTokens[reference.NameLiteral.Token] = reference;
+            return reference;
+        }
+
+        private SymbolReference CreateNameSpaceReference(IToken head)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(head);
+            var symbolDefinitionOrReference = new AmbiguousSymbolReference(nameLiteral, new SymbolType[] {SymbolType.Namespace, SymbolType.ProgramName});
+            AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
+            return symbolDefinitionOrReference;
+        }
+
+
+        internal SymbolDefinition CreateQualifiedNameSpaceDefinition(CodeElementsParser.NameSpaceDefinitionContext context)
+        {
+            if (context.children.Any(x => ((Token)x.Payload).TokenType != TokenType.UserDefinedWord && ((Token)x.Payload).TokenType != TokenType.QualifiedNameSeparator))
+                return null; //If not UserDefinedWord or QualifiedSeprator it's a mistake. 
+
+            ITerminalNode[] tail = context.UserDefinedWord();
+            Array.Reverse(tail);
+
+            var reference = CreateNameSpaceDefinition(context.head);
+            for (int c = 0; c < tail.Length; c++)
+                reference = CreateQualifiedSymbolDefinition(reference, CreateNameSpaceDefinition(tail[c].Symbol));
+            symbolInformationForTokens[reference.NameLiteral.Token] = reference;
+            return reference;
+        }
+
+        private SymbolDefinition CreateNameSpaceDefinition(IToken head)
+        {
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(head);
+            var symbolDefinitionOrReference = new SymbolDefinition(nameLiteral, SymbolType.Namespace);
+            AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
+            return symbolDefinitionOrReference;
+        }
 
         #endregion
 

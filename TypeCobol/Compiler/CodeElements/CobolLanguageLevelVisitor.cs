@@ -352,6 +352,10 @@ namespace TypeCobol.Compiler.CodeElements
 
         bool Visit([NotNull] CodeModel.Program program);
 
+        bool Visit([NotNull] NestedProgram nestedProgram);
+        
+        bool Visit([NotNull] StackedProgram stackedProgram);
+
         bool Visit([NotNull] ParametersProfileNode profile);
         bool Visit ([NotNull] IndexDefinition indexDefinition);
     }
@@ -1379,6 +1383,16 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit([NotNull] IndexDefinition indexDefinition)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] NestedProgram nestedProgram)
+        {
+            return true;
+        }
+
+        public virtual bool Visit([NotNull] StackedProgram stackedProgram)
         {
             return true;
         }

@@ -163,7 +163,7 @@ typeNameReference: (UserDefinedWord | DATE | CURRENCY);
 
 // When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
 cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? (PRIVATE | PUBLIC)?;
-cobol2002TypeClause:    TYPE (programNameReference3 QualifiedNameSeparator)? typeNameReference;
+cobol2002TypeClause:    TYPE (nameSpaceReference QualifiedNameSeparator)? typeNameReference;
 
 //Similar to valueClause but add the possibility to set value as a boolean (TRUE/FALSE)
 valueClauseWithBoolean:
@@ -193,3 +193,24 @@ dataDescriptionEntry:
 
  setStatementForIndexes:
 	SET indexStorageArea+ (UP | DOWN) BY variableOrExpression2;
+
+programIdentification:
+	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
+	PROGRAM_ID PeriodSeparator? programNameDefinition
+	(IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
+	(nameSpaceClause PeriodSeparator?)?
+	authoringProperties
+	using*;
+
+nameSpaceClause: (
+				{ string.Equals(CurrentToken.Text, "NAMESPACE", System.StringComparison.OrdinalIgnoreCase) }? 
+				UserDefinedWord namespaceDefinitionVariable=nameSpaceDefinition
+	  );
+using: 
+	  USING nameSpaceReference PeriodSeparator?;
+
+nameSpaceReference:
+	(UserDefinedWord QualifiedNameSeparator)* head=UserDefinedWord;
+
+nameSpaceDefinition:
+	(UserDefinedWord QualifiedNameSeparator)* head=UserDefinedWord;

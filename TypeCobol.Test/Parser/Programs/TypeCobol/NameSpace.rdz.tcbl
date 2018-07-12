@@ -1,0 +1,54 @@
+﻿       id division.
+       program-id. PgmA.
+       namespace banking::currentaccount.
+       data division.
+       WORKING-STORAGE SECTION.
+       01 MyType typedef strict public pic X.  
+       procedure division.
+       .
+       id division.
+       program-id. nested.
+       namespace banking::currentaccount::bill.
+      *Using clause = allow to access all type in
+       using banking::currentaccount.
+       data division.
+       WORKING-STORAGE SECTION.
+      *> Ko, because we need at least the program name PgmA to find the type
+       01 var1 type MyType.
+      *> Ok, because we can find PgmA with the using clause
+       01 var2 type PgmA::MyType. 
+      *> full namespace Ok
+       01 var3 type banking::currentaccount::PgmA::MyType 
+       .
+       end program nested.
+
+       end program PgmA.
+       id division.
+       program-id. PgmB.
+       namespace banking::currentaccount::bill.
+       data division.
+       WORKING-STORAGE SECTION.
+      *> invalid because there is no using and no program prefix
+       01 var1 type MyType. 
+      *> KO, because PgmA is not referenced by an using clause
+       01 var2 type PgmA::MyType.
+      *> full namespace Ok
+       01 var3 type banking::currentaccount::PgmA::MyType 
+       .
+       end program PgmB.
+       
+       id division.
+       program-id. PgmC.
+      * namespace banking::currentaccount::bill.
+      *Using clause = allow to access all type in
+       using banking::currentaccount.
+       data division.
+       WORKING-STORAGE SECTION.
+      *> Ko, because we need at least the program name PgmA to find the type
+       01 var1 type MyType.
+      *> Ok, because we can find PgmA with the using clause
+       01 var2 type PgmA::MyType. 
+      *> full namespace Ok
+       01 var3 type banking::currentaccount::PgmA::MyType 
+       .
+       end program PgmC.

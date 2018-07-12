@@ -417,7 +417,7 @@ namespace TypeCobol.Codegen.Nodes
             indexesMap = null;
             if (data?.OccursDependingOn != null)
             {
-                if (!data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
+                if (!data.OccursDependingOn.MainSymbolReference.IsQualified)
                 {
                     dependingOnAccessPath = new List<string>();
                     if (LookupAccessPathForName(table, ownerDefinition, data.OccursDependingOn.MainSymbolReference.Name.ToLower(), dependingOnAccessPath))
@@ -484,7 +484,7 @@ namespace TypeCobol.Codegen.Nodes
             }
             if (bHasDependingOn)
             {
-                if (data != null && !data.OccursDependingOn.MainSymbolReference.IsQualifiedReference)
+                if (data != null && !data.OccursDependingOn.MainSymbolReference.IsQualified)
                     depenOnTokenFilter = (token) =>
                     {
                         if (bHasIndexes)
@@ -507,7 +507,7 @@ namespace TypeCobol.Codegen.Nodes
                                 return indexesMap[token];
                         }
                         QualifiedSymbolReference qualSymRef = (QualifiedSymbolReference)data?.OccursDependingOn.MainSymbolReference;
-                        if (qualSymRef != null && qualSymRef.IsTypeCobolQualifiedReference)
+                        if (qualSymRef != null && qualSymRef.IsTypeCobolQualified)
                         {
                             DataDescription dataDescription = ownerDefinition as DataDescription;
                             if (dataDescription?.QualifiedTokenSubsitutionMap != null && dataDescription.QualifiedTokenSubsitutionMap.ContainsKey(token))

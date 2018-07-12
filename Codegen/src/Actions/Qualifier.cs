@@ -144,7 +144,7 @@ namespace TypeCobol.Codegen.Actions
 
             private void QualifiedStorageAreaSelecterForIndexes(StorageArea storageArea, Tuple<int, int, int, List<int>, List<int>> sourcePositions)
             {
-                if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsQualifiedReference)
+                if (storageArea.SymbolReference != null && !storageArea.SymbolReference.IsQualified)
                 {
                     if (UsedStorageArea != null && UsedStorageArea.Contains(storageArea))
                         return;
@@ -172,7 +172,7 @@ namespace TypeCobol.Codegen.Actions
             /// <returns>true if some nodes have been generated, false otherwise</returns>
             private bool GenQualifiedStorage(StorageArea storageArea, CodeElement codeElement)
             {
-                if (storageArea?.GetStorageAreaThatNeedDeclaration?.SymbolReference != null && !storageArea.GetStorageAreaThatNeedDeclaration.SymbolReference.IsTypeCobolQualifiedReference)
+                if (storageArea?.GetStorageAreaThatNeedDeclaration?.SymbolReference != null && !storageArea.GetStorageAreaThatNeedDeclaration.SymbolReference.IsTypeCobolQualified)
                     return false;
                 if (CurrentNode == null)
                     return false;
@@ -509,7 +509,7 @@ namespace TypeCobol.Codegen.Actions
                     return false;
                 foreach (TypeCobol.Compiler.CodeElements.StorageArea storage_area in sourceNode.QualifiedStorageAreas.Keys)
                 {
-                    if (storage_area.SymbolReference != null && storage_area.SymbolReference.IsTypeCobolQualifiedReference)
+                    if (storage_area.SymbolReference != null && storage_area.SymbolReference.IsTypeCobolQualified)
                     {
                         TypeCobolQualifiedSymbolReference tc_sr = storage_area.SymbolReference as TypeCobolQualifiedSymbolReference;
                         IList<SymbolReference> tcsr_items = tc_sr?.AsList();

@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Compiler.CodeElements {
+﻿using System.Collections.Generic;
+
+namespace TypeCobol.Compiler.CodeElements {
 
     public class ProgramIdentification : CodeElement
     {
@@ -74,6 +76,17 @@
         /// </summary>
         public SyntaxProperty<bool> Common { get; set; }
         public bool IsCommon { get { return Common != null && Common.Value; } }
+
+        /// <summary>
+        /// Namespace of the program.
+        /// Optional.
+        /// </summary>
+        public SymbolDefinition Namespace { get; set; }
+
+        /// <summary>
+        /// List of namespaces referenced by using clause.
+        /// </summary>
+        public IList<SymbolReference> Usings { get; set; }
 
 		public override string ToString() {
 			var sb = new System.Text.StringBuilder(base.ToString());

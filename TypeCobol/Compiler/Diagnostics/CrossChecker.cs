@@ -88,6 +88,21 @@ namespace TypeCobol.Compiler.Diagnostics
             LibraryChecker.CheckLibrary(procedureDivision);
             return true;
         }
+        public override bool Visit(NestedProgram nestedProgram)
+        {
+            if(nestedProgram.Identification.Namespace!=null)
+                DiagnosticUtils.AddError(nestedProgram.Identification,
+                    string.Format("Nested program \"{0}\" cannot declare namespace", nestedProgram.Name));
+            return true;
+        }
+
+        public override bool Visit(StackedProgram stackedProgram)
+        {
+            if(stackedProgram.Identification.Namespace!=null)
+                DiagnosticUtils.AddError(stackedProgram.Identification,
+                    string.Format("Stacked program \"{0}\" cannot declare namespace", stackedProgram.Name));
+            return true;
+        }
 
         public override bool Visit(Section section)
         {
@@ -349,7 +364,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
 
-                if (area.SymbolReference.IsQualifiedReference)
+                if (area.SymbolReference.IsQualified)
                 {
                     if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
                         DiagnosticUtils.AddError(index.Parent,
@@ -361,7 +376,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
                 }
 
-                if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
+                if (area.SymbolReference.IsQualified || index.IsPartOfATypeDef)
                 //Index name is qualified or belongs to a typedef
                 {
                     //Mark this node for generator
@@ -376,7 +391,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             reference.Key, completeQualifiedName);
                     }
                 }
-                else if (!area.SymbolReference.IsQualifiedReference)
+                else if (!area.SymbolReference.IsQualified)
                 //If it's an index but not use with qualified reference 
                 {
                     //Check the previous references to see if one has been flagged as NodeContainsIndex then flag this node
@@ -388,14 +403,14 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 //No matter which node uses this index, if at least one time a node with the index with a qualified name, we need to flag the index parent 
-                if (area.SymbolReference.IsQualifiedReference && !index.IsPartOfATypeDef)
+                if (area.SymbolReference.IsQualified && !index.IsPartOfATypeDef)
                 //If index is used with qualified name but doesn't belongs to typedef
                 {
                     //Flag index node for code generator to let it know that this index will need hash.
                     index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
                 }
 
-                    if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                    if (area.SymbolReference.IsQualified && !area.SymbolReference.IsTypeCobolQualified)
                         DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area);
                 }

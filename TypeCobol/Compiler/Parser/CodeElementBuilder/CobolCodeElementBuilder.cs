@@ -128,8 +128,26 @@ namespace TypeCobol.Compiler.Parser
 			if (context.RECURSIVE() != null) {
 				program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
 			}
-			program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
-			Context = context;
+
+            if (context.nameSpaceClause() != null)
+            {
+                program.Namespace =
+                    CobolWordsBuilder.CreateQualifiedNameSpaceDefinition(context.nameSpaceClause().nameSpaceDefinition());
+            }
+            if (context.@using() != null) {
+                program.Usings = new List<SymbolReference>();
+                foreach (var usingClause in context.@using())
+                {
+                    program.Usings.Add(CobolWordsBuilder.CreateQualifiedNameSpaceReference(usingClause.nameSpaceReference()));
+                }
+            }
+
+            if (context.authoringProperties() != null)
+            {
+                program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
+            }
+
+            Context = context;
 			CodeElement = program;
 		}
 

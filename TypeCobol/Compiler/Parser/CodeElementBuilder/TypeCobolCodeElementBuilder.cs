@@ -548,7 +548,7 @@ namespace TypeCobol.Compiler.Parser
                 {
                     SymbolReferenceVariable TCFunctionNameRefVariable;
 
-                    if (ambiguousSymbolReference.MainSymbolReference.IsQualifiedReference)
+                    if (ambiguousSymbolReference.MainSymbolReference.IsQualified)
                     {
                         var nonAmbiguousHead =
                             new SymbolReference(
@@ -619,7 +619,7 @@ namespace TypeCobol.Compiler.Parser
 
                     //TODO think about uniformity of CandidateTypes inside QualifiedReference.
                     //Maybe just define CandidatesTypes for the Head...
-                    if (ambiguousSymbolReference.MainSymbolReference.IsQualifiedReference) {
+                    if (ambiguousSymbolReference.MainSymbolReference.IsQualified) {
                         var qualifiedSymbolReference = (QualifiedSymbolReference) ambiguousSymbolReference.MainSymbolReference;
 
                         

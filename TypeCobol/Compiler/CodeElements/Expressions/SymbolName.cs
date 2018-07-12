@@ -33,6 +33,21 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         /// <summary>
+        /// True of the type of the symbol reference is ambiguous 
+        /// during the first parsing phase
+        /// </summary>
+        public bool IsAmbiguous { get; protected set; }
+        
+        /// <summary>
+        /// True if the symbol reference is a combination of child and
+        /// parent symbols in a symbols hierarchy
+        /// </summary>
+        public bool IsQualified { get; protected set; }
+
+        
+        public bool IsTypeCobolQualified { get; set; }
+
+        /// <summary>
         /// Token defining the name of the symbol in source text
         /// </summary>
         public SyntaxValue<string> NameLiteral { get; private set; }
@@ -123,25 +138,13 @@ namespace TypeCobol.Compiler.CodeElements
             base(nameLiteral, SymbolRole.SymbolReference, type)
         {
             IsAmbiguous = false;
-            IsQualifiedReference = false;
+            IsQualified = false;
         }
 
 		public SymbolReference(SymbolDefinition symbol)
 			: this(symbol.NameLiteral, symbol.Type) { }
 
-        /// <summary>
-        /// True of the type of the symbol reference is ambiguous 
-        /// during the first parsing phase
-        /// </summary>
-        public bool IsAmbiguous { get; protected set; }
         
-        /// <summary>
-        /// True if the symbol reference is a combination of child and
-        /// parent symbols in a symbols hierarchy
-        /// </summary>
-        public bool IsQualifiedReference { get; protected set; }
-
-        public bool IsTypeCobolQualifiedReference { get; set; }
 
         /// <summary>
         /// Used to resolve the symbol reference in a hierarchy of names
@@ -213,7 +216,7 @@ namespace TypeCobol.Compiler.CodeElements
         {
             if (symbolReference.IsAmbiguous)
             {
-                if (symbolReference.IsQualifiedReference)
+                if (symbolReference.IsQualified)
                 {
                     var qualifiedSymbolReference = (QualifiedSymbolReference)symbolReference;
                     ApplyCandidatesTypes(qualifiedSymbolReference.Head, symbolTypes);
@@ -237,7 +240,7 @@ namespace TypeCobol.Compiler.CodeElements
 	public class QualifiedSymbolReference: SymbolReference, IList<SymbolReference> {
 		public QualifiedSymbolReference(SymbolReference head, SymbolReference tail): base(head.NameLiteral, head.Type) {
 			IsAmbiguous = head.IsAmbiguous || tail.IsAmbiguous;
-			IsQualifiedReference = true;
+			IsQualified = true;
 			Head = head;
 			Tail = tail;
 
@@ -248,7 +251,7 @@ namespace TypeCobol.Compiler.CodeElements
 		public SymbolReference First {
 			get {
 				var head = Head;
-				while (head.IsQualifiedReference) {
+				while (head.IsQualified) {
 					head = ((QualifiedSymbolReference)head).Head;
 				}
 				return head;
@@ -280,7 +283,7 @@ namespace TypeCobol.Compiler.CodeElements
 	    public override string ToString(bool isBoolType)
 	    {
 	        string head = "";
-	        if (Head.IsQualifiedReference)
+	        if (Head.IsQualified)
 	            head = Head.ToString(isBoolType);
 	        else
 	        {
@@ -358,10 +361,133 @@ namespace TypeCobol.Compiler.CodeElements
 			throw new NotImplementedException();
 		}
 	}
+
+    
+	public class TypeCobolQualifiedSymbolDefinition: SymbolDefinition, IList<SymbolDefinition> {
+		public TypeCobolQualifiedSymbolDefinition(SymbolDefinition head, SymbolDefinition tail): base(head.NameLiteral, head.Type) {
+			IsAmbiguous = head.IsAmbiguous || tail.IsAmbiguous;
+			IsQualified = true;
+			Head = head;
+			Tail = tail;
+		    IsTypeCobolQualified = true;
+		}
+
+	    public SymbolDefinition Head { get; private set; }
+		public SymbolDefinition Tail { get; private set; }
+		public SymbolDefinition First {
+			get {
+				var head = Head;
+				while (head.IsQualified) {
+					head = ((TypeCobolQualifiedSymbolDefinition)head).Head;
+				}
+				return head;
+			}
+		}
+
+        public override bool IsOrCanBeOfType(SymbolType symbolType) {
+            return Head.IsOrCanBeOfType(symbolType) || Tail.IsOrCanBeOfType(symbolType);
+        }
+
+        public override bool IsOrCanBeOfType([NotNull] params SymbolType[] symbolTypes) {
+            return Head.IsOrCanBeOfType(symbolTypes) || Tail.IsOrCanBeOfType(symbolTypes);
+        }
+
+        public override bool IsOrCanBeOnlyOfTypes(params SymbolType[] symbolTypes) {
+            return Head.IsOrCanBeOnlyOfTypes(symbolTypes) || Tail.IsOrCanBeOnlyOfTypes(symbolTypes);
+        }
+
+        
+	    public override string ToString()
+	    {
+	        return Head + " IN " + Tail;
+	    }
+
+	    public override string ToString(bool isBoolType)
+	    {
+	        string head = "";
+	        if (Head.IsQualified)
+	            head = Head.ToString(isBoolType);
+	        else
+	        {
+	            head = Head.ToString() + (isBoolType ? "-value" : "");
+	        }
+            return head + " IN " + Tail;
+        }
+        public override string Name { get { return Tail.Name+'.'+Head.Name; } }
+
+
+
+
+		public bool IsReadOnly { get { return true; } }
+
+		public int Count { get { return AsList().Count; } }
+
+		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+		public IEnumerator<SymbolDefinition> GetEnumerator() { return AsList().GetEnumerator(); }
+		public IList<SymbolDefinition> AsList() {
+			var refs = new List<SymbolDefinition>();
+			if (Head is TypeCobolQualifiedSymbolDefinition)
+				 refs.AddRange(((TypeCobolQualifiedSymbolDefinition)Head).AsList());
+			else refs.Add(Head);
+			if (Tail is TypeCobolQualifiedSymbolDefinition)
+				 refs.AddRange(((TypeCobolQualifiedSymbolDefinition)Tail).AsList());
+			else refs.Add(Tail);
+			return refs;
+		}
+
+	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
+	        return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this)
+                && this.ContinueVisitToChildren(astVisitor, Head, Tail);
+	    }
+
+	    // UNIMPLEMENTED BECAUSE OF LAZYNESS
+
+        public int IndexOf(SymbolDefinition item) {
+			throw new NotImplementedException("TODO");
+		}
+
+		public void Insert(int index,SymbolDefinition item) {
+			throw new NotImplementedException();
+		}
+
+		public void RemoveAt(int index) {
+			throw new NotImplementedException();
+		}
+
+		public SymbolDefinition this[int index] {
+			get {
+				throw new NotImplementedException("TODO");
+			}
+			set {
+				throw new NotImplementedException();
+			}
+		}
+
+		public void Add(SymbolDefinition item) {
+			throw new NotImplementedException();
+		}
+
+		public void Clear() {
+			throw new NotImplementedException();
+		}
+
+		public bool Contains(SymbolDefinition item) {
+			throw new NotImplementedException("TODO");
+		}
+
+		public void CopyTo(SymbolDefinition[] array, int index) {
+			throw new NotImplementedException();
+		}
+
+		public bool Remove(SymbolDefinition item) {
+			throw new NotImplementedException();
+		}
+	}
+
 	public class TypeCobolQualifiedSymbolReference: QualifiedSymbolReference {
 	    public TypeCobolQualifiedSymbolReference(SymbolReference head, SymbolReference tail) : base(head, tail)
 	    {
-	        IsTypeCobolQualifiedReference = true;
+	        IsTypeCobolQualified = true;
 	    }
 
 	    public override bool AcceptASTVisitor(IASTVisitor astVisitor) {

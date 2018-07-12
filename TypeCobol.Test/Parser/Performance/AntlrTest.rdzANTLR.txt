@@ -251,7 +251,7 @@ Rules invocation info
 
 4:codeElement>dataDescriptionEntry>cobol2002TypeClause
 	8	4:codeElement>dataDescriptionEntry>cobol2002TypeClause>typeNameReference
-	2	4:codeElement>dataDescriptionEntry>cobol2002TypeClause>programNameReference3
+	2	4:codeElement>dataDescriptionEntry>cobol2002TypeClause>nameSpaceReference
 
 4:codeElement>dataDescriptionEntry>dataConditionEntry
 	157	4:codeElement>dataDescriptionEntry>dataConditionEntry>integerValue2

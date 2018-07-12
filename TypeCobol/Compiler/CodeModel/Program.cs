@@ -45,7 +45,10 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         //TODO: As to change in the future when implementing the full namespace functionnality.
-        public string Namespace { get { return Identification != null ? Identification.ProgramName.Name : null; } }
+        public virtual SymbolDefinition Namespace { get { return Identification?.Namespace; }}
+
+
+        public IList<SymbolReference> Usings { get { return Identification?.Usings;} }
 
         /// <summary>
         /// True if the current program is contained in another program.
@@ -217,6 +220,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         public override bool IsStacked => true;
+        public override SymbolDefinition Namespace => this.Root.MainProgram.Namespace;
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
