@@ -202,9 +202,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
         {
+            
             if (Program == null)
             {
-                Program = new SourceProgram(TableOfGlobals, programIdentification);
+                if (SyntaxTree.Root.MainProgram == null)
+                {
+                    SyntaxTree.Root.MainProgram = new SourceProgram(TableOfGlobals, programIdentification);
+                    Program = SyntaxTree.Root.MainProgram;
+                }
+                else
+                {
+                    Program = new StackedProgram(TableOfGlobals, programIdentification);                    
+                }
+                
                 programsStack = new Stack<Program>();
                 CurrentProgram = Program;
                 Enter(CurrentProgram, programIdentification, CurrentProgram.SymbolTable);

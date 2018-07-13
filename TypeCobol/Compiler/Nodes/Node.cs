@@ -291,15 +291,15 @@ namespace TypeCobol.Compiler.Nodes {
 
 
 
-        private Node _root;
+        private SourceFile _root;
         /// <summary>First Node with null Parent among the parents of this Node.</summary>
-        public Node Root {
+        public SourceFile Root {
             get
             {
                 if (_root != null) return _root;
                 var current = this;
                 while (current.Parent != null) current = current.Parent;
-                _root = current;
+                _root = (SourceFile) current;
                 return _root;
             }
         }
@@ -837,6 +837,8 @@ namespace TypeCobol.Compiler.Nodes {
                 return this.children.Where(c => c is Program && !((Program)c).IsNested).Select(c => c as Program);
             }
         }
+
+        public SourceProgram MainProgram { get; internal set; }
 
         public IEnumerable<Class> Classes
         {
