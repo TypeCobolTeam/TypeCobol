@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZS0OSM.
+
+       data division.
+       working-storage section.
+
+       01 DateNaissance pic 9(8).
+
+       procedure division.
+Line 10[17,36] <27, Error, Syntax> - Syntax error : Number is too big : 46546546546545646546
+           move 46546546546545646546 to DateNaissance
+           .
+       END PROGRAM DVZS0OSM.
