@@ -47,6 +47,11 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
+        /// Children count.
+        /// </summary>
+        public int ChildrenCount => children?.Count ?? 0;
+
+        /// <summary>
         /// Get the Index position of the given child.
         /// </summary>
         /// <param name="child">The child to get the index position</param>
