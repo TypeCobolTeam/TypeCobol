@@ -9,7 +9,8 @@ namespace TypeCobol.Compiler.CodeElements {
 	    public SymbolDefinition FunctionName { get; private set; }
 	    public AccessModifier Visibility { get; private set; }
 	    public FunctionType UserDefinedType { get; private set; }
-	    public FunctionType ActualType {
+        public Documentation Documentation { get; private set; }
+        public FunctionType ActualType {
 		    get {
 			    if ( Profile.IsFunction && !Profile.IsProcedure) return FunctionType.Function;
 			    if (!Profile.IsFunction &&  Profile.IsProcedure) return FunctionType.Procedure;
@@ -21,12 +22,13 @@ namespace TypeCobol.Compiler.CodeElements {
 		    }
 	    }
 
-	    public FunctionDeclarationHeader(SymbolDefinition name, AccessModifier visibility, FunctionType type)
+	    public FunctionDeclarationHeader(SymbolDefinition name, AccessModifier visibility, FunctionType type, Documentation documentation = null)
 		    : base(CodeElementType.FunctionDeclarationHeader) {
 		    this.FunctionName = name;
 		    this.Visibility = visibility;
 		    this.UserDefinedType = type;
 		    this.Profile = new ParametersProfile();
+	        this.Documentation = documentation;
 	    }
 
 	    // TO DO : remove this and move to second parsing phase

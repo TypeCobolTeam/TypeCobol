@@ -138,7 +138,13 @@ namespace TypeCobol.Compiler.Parser
 				program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
 			}
 			program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
-			Context = context;
+
+            // [TypeCobol]
+            if (context.formalizedComment() != null)
+                program.Documentation = new Documentation(context.formalizedComment().formalizedCommentLine());
+            // [/TypeCobol]
+
+            Context = context;
 			CodeElement = program;
 		}
 
@@ -1005,8 +1011,9 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = entry;
 		}
 
-		public override void EnterDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context) {
-			if (context.dataRenamesEntry() != null || context.dataConditionEntry() != null) {
+		public override void EnterDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context)
+		{
+            if (context.dataRenamesEntry() != null || context.dataConditionEntry() != null) {
 				// For levels 66 and 88, the DataDefinitionEntry is created by the following methods
 				// - EnterDataRenamesEntry
 				// - EnterDataConditionEntry
@@ -1038,9 +1045,15 @@ namespace TypeCobol.Compiler.Parser
                 var restrictionLevel = typedef.Strong.Value ? RestrictionLevel.STRONG 
                                         : typedef.Strict.Value ? RestrictionLevel.STRICT 
                                         : RestrictionLevel.WEAK;
+        
+        // [TypeCobol]
+                if (context.formalizedComment() != null)
+                    typedef.Documentation = new Documentation(context.formalizedComment().formalizedCommentLine());
+        // [/TypeCobol]
+        
                 entry = typedef;
                 entry.DataName = typedef.DataTypeName;
-                entry.DataType = new DataType(typedef.DataTypeName.Name, restrictionLevel, CobolLanguageLevel.Cobol2002);               
+                entry.DataType = new DataType(typedef.DataTypeName.Name, restrictionLevel, CobolLanguageLevel.Cobol2002); 
             }
 // [/COBOL 2002]
             else {               
@@ -1092,7 +1105,7 @@ namespace TypeCobol.Compiler.Parser
 
 		private void EnterDataRedefinesEntry(CodeElementsParser.DataDescriptionEntryContext context)
 		{
-			var entry = new DataRedefinesEntry();
+            var entry = new DataRedefinesEntry();
 			entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 			
 			if (context.redefinesClause() != null) {
@@ -1105,7 +1118,8 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = entry;
 		}
 
-	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context) {
+	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context)
+	    {
             if (context.levelNumber != null)
                 entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
             if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));

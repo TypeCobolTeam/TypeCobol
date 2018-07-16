@@ -906,6 +906,8 @@ namespace TypeCobol.Compiler.CodeElements {
             }
         }
 
+        public Documentation Documentation { get; internal set; }
+
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)

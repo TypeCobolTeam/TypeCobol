@@ -74,8 +74,9 @@
         /// </summary>
         public SyntaxProperty<bool> Common { get; set; }
         public bool IsCommon { get { return Common != null && Common.Value; } }
+        public Documentation Documentation { get; internal set; }
 
-		public override string ToString() {
+        public override string ToString() {
 			var sb = new System.Text.StringBuilder(base.ToString());
 			sb.AppendLine("- ProgramName = " + ProgramName);
 			sb.AppendLine("- IsInitial = " + IsInitial);

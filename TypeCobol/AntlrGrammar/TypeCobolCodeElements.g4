@@ -87,7 +87,7 @@ userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparato
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
 functionDeclarationHeader:
-	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
+	formalizedComment? DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  parameterDescription+;
@@ -170,26 +170,59 @@ valueClauseWithBoolean:
 	VALUE (value2 | booleanValue);
 
 
+	
 dataDescriptionEntry:
-	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
-
-		levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
-		( pictureClause
-		| blankWhenZeroClause
-		| externalClause
-		| globalClause
-		| justifiedClause
-		| groupUsageClause
-		| occursClause
-		| signClause
-		| synchronizedClause
-		| usageClause
-		| valueClause
-		| (cobol2002TypeClause valueClauseWithBoolean?)
-		)* PeriodSeparator
-	)
-	| dataRenamesEntry
-	| dataConditionEntry;
+	formalizedComment?
+	(
+		( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
+			levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
+			( pictureClause
+			| blankWhenZeroClause
+			| externalClause
+			| globalClause
+			| justifiedClause
+			| groupUsageClause
+			| occursClause
+			| signClause
+			| synchronizedClause
+			| usageClause
+			| valueClause
+			| (cobol2002TypeClause valueClauseWithBoolean?)
+			)* PeriodSeparator
+		)
+		| dataRenamesEntry
+		| dataConditionEntry
+	);
 
 setStatementForIndexes:
 	SET indexStorageArea+ (UP | DOWN) BY variableOrExpression2;
+
+// ------ Formalized Comment specific ------ 
+ 
+formalizedCommentParam: 
+      FormComsDescription 
+    | FormComsParameters 
+    | FormComsDeprecated 
+    | FormComsReplacedBy 
+    | FormComsRestriction 
+    | FormComsNeed 
+    | FormComsSee 
+    | FormComsToDo; 
+ 
+formalizedCommentKeyValueParam: 
+    MinusOperator (formalizedCommentParam | UserDefinedWord)  FormComsValue?; 
+     
+// a line can be the description without key, the key value couple, the key as a flag or a value line wrapping 
+formalizedCommentLine: 
+    (MinusOperator? FormComsValue) | formalizedCommentKeyValueParam; 
+ 
+formalizedComment: 
+    FormalizedCommentsStart formalizedCommentLine* FormalizedCommentsStop; 
+
+	
+programIdentification:
+	formalizedComment?
+	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
+	PROGRAM_ID PeriodSeparator? programNameDefinition
+	(IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
+	authoringProperties;

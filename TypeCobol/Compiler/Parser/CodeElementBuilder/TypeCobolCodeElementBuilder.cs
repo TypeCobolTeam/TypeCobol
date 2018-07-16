@@ -14,6 +14,7 @@ namespace TypeCobol.Compiler.Parser
 
     internal partial class CodeElementBuilder : CodeElementsBaseListener
     {
+
         public override void EnterLibraryCopy(CodeElementsParser.LibraryCopyContext context)
         {
             var copy = new LibraryCopyCodeElement();
@@ -42,8 +43,13 @@ namespace TypeCobol.Compiler.Parser
             {
                 name = CobolWordsBuilder.CreateFunctionNameDefinition(context.functionNameDefinition());
             }
+
+            Documentation documentation = null;
+            if (context.formalizedComment() != null)
+                documentation = new Documentation(context.formalizedComment().formalizedCommentLine());
+
             Context = context;
-            CodeElement = new FunctionDeclarationHeader(name, visibility, type);
+            CodeElement = new FunctionDeclarationHeader(name, visibility, type, documentation);
         }
 
         public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context)

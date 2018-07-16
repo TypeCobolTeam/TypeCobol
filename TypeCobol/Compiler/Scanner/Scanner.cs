@@ -97,12 +97,12 @@ namespace TypeCobol.Compiler.Scanner
                 (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
                 int comIndex = textLine.Text.IndexOf('*');
-                if (!(comIndex > 0 && textLine.Text.Length >= comIndex + 3 &&
+                if (!(comIndex != -1 && textLine.Text.Length >= comIndex + 3 &&
                     (textLine.Text.Substring(comIndex, 3) == "*<<" || textLine.Text.Substring(comIndex, 3) == "*>>")))
                 {
                     Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
                     tokensLine.AddToken(commentToken);
-                    return;
+                     return;
                 }
             }
 
@@ -658,10 +658,18 @@ namespace TypeCobol.Compiler.Scanner
                         return new Token(TokenType.GreaterThanOperator, startIndex, currentIndex - 1, tokensLine);
                     default:
                         // register the keys or the description if no '-' was given
-                        if (tokensLine.SourceTokens.Count > 1 && tokensLine.SourceTokens[1].TokenType == TokenType.MinusOperator)
-                            // it is a key
-                            return ScanCharacterString(startIndex);
-                        // It's a description without key
+                        if (tokensLine.SourceTokens.Count > 1 &&
+                            tokensLine.SourceTokens[1].TokenType == TokenType.MinusOperator)
+                        {
+                            Token token = ScanCharacterString(startIndex);
+                            int i = token.StopIndex + 1;
+                            for (;tokensLine.Text.Length > i && tokensLine.Text[i] == ' '; i++) { }
+
+                             if ((tokensLine.Text.Length > i && tokensLine.Text[i] == ':') || tokensLine.Text.Length <= i)
+                                // It is a keyword or a parameter name
+                                return token;
+                        }
+                        // It's a description without key or a list Item
                         return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>");
                 }
             }

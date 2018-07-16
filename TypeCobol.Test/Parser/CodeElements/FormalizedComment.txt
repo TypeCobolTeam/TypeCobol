@@ -1,0 +1,18 @@
+﻿--- Diagnostics ---
+Line 22[1,4] <27, Error, Syntax> - Syntax error : no viable alternative at input '<< ... DATA' RuleStack=codeElement,  OffendingSymbol=[1,4:DATA]<DATA>
+--- Code Elements ---
+[[ProgramIdentification]] [2,3:<<]<FormalizedCommentsStart> --> [23,23+:.]<PeriodSeparator>
+- ProgramName = MyFonction
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [1,4:DATA]<DATA> --> [14,14+:.]<PeriodSeparator>
+
+[[LocalStorageSectionHeader]] [1,13:LOCAL-STORAGE]<LOCAL_STORAGE> --> [22,22+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [2,3:<<]<FormalizedCommentsStart> --> [42,42+:.]<PeriodSeparator>
+
+currentDate():():():(result:DATE):Private:Function/Function
+[[ProcedureDivisionHeader]] [1,9:PROCEDURE]<PROCEDURE> --> [19,19+:.]<PeriodSeparator>
+
