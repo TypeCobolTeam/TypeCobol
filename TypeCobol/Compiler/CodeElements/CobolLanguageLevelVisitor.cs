@@ -81,6 +81,11 @@ namespace TypeCobol.Compiler.CodeElements
             get;
         }
 
+        /// <summary>
+        /// Can this visitor modify Node children?
+        /// </summary>
+        bool CanModifyChildrenNode { get; }
+
         bool BeginNode([NotNull] Node node);
         void EndNode([NotNull] Node node);
 
@@ -374,6 +379,11 @@ namespace TypeCobol.Compiler.CodeElements
                 return true;
             }
         }
+
+        /// <summary>
+        /// By default the visitor cannot modify Node's children
+        /// </summary>
+        public virtual bool CanModifyChildrenNode => false;
 
         public virtual bool BeginNode(Node node) {
             return true;
