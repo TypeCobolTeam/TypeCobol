@@ -479,7 +479,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             _CurrentTypeDefinition = node;
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Declared] " + node.Name, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypeDeclared, node.Name, LogType.TypeCobolUsage);
         }
 
         public virtual void StartWorkingStorageSection(WorkingStorageSectionHeader header)
@@ -604,7 +604,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionDeclared, declaration.FunctionName.ToString(), LogType.TypeCobolUsage);
         }
 
         public virtual void EndFunctionDeclaration(FunctionDeclarationEnd end)
