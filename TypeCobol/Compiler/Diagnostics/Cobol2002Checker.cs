@@ -12,18 +12,10 @@ using Analytics;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
-    class TypeDefinitionEntryChecker : CodeElementListener
+    class TypeDefinitionEntryChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            var context = c as CodeElementsParser.DataDescriptionEntryContext;
-            CheckRedefines(e as DataRedefinesEntry, context);
-            CheckTypedef(e as DataTypeDescriptionEntry, context);
-        }
-
-        private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
-        {
-            if (redefines == null) return;
             if (context.cobol2002TypedefClause() != null)
             {
                 string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
@@ -31,11 +23,8 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private void CheckTypedef(DataTypeDescriptionEntry typedef,
-            CodeElementsParser.DataDescriptionEntryContext context)
+        public static void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            if (typedef == null) return;
-
             if (typedef.LevelNumber?.Value != 1)
             {
                 string message = "TYPEDEF clause can only be specified for level 01 entries";
@@ -126,35 +115,26 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class RedefinesChecker<TCtx> : NodeListener<TCtx> where TCtx : class
+    class RedefinesChecker
     {
-        public void OnNode(Node node, TCtx context, CodeModel.Program program)
+        public static void OnNode(DataRedefines redefinesNode)
         {
-            var redefinesNode = node as DataRedefines;
             if (redefinesNode == null)
                 return; //not my job
 
             if (redefinesNode.IsPartOfATypeDef)
             {
-                DiagnosticUtils.AddError(node, "Illegal REDEFINES as part of a TYPEDEF",
+                DiagnosticUtils.AddError(redefinesNode, "Illegal REDEFINES as part of a TYPEDEF",
                     MessageCode.SemanticTCErrorInParser);
             }
 
-        }
-
-        public static void OnNode(Node node)
-        {
-            var redefinesNode = node as DataRedefines;
-            if (redefinesNode == null)
-                return; //not my job
-
             var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
-            var redefinedVariable = node.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
+            var redefinedVariable = redefinesNode.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
 
             if (redefinedVariable == null)
             {
                 string message = "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced";
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(redefinesNode, message, MessageCode.SemanticTCErrorInParser);
                 return;
             }
 
@@ -162,7 +142,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 string message = string.Format("Illegal REDEFINES: '{0}' is {1}", redefinesSymbolReference,
                     redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(redefinesNode, message, MessageCode.SemanticTCErrorInParser);
             }
         }
     }

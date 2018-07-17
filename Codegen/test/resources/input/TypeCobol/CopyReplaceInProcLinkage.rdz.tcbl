@@ -1,0 +1,16 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       PROCEDURE DIVISION.
+           .
+
+       declare toto input IsOk type bool.
+       DATA DIVISION.
+       linkage section.
+       01 tzer type Date.
+       COPY MSVCOUT replacing ==:MSVCOUT:== by ==SVCOUT==.
+      *---------------------------------------------------
+       PROCEDURE DIVISION.
+
+           .
+       end-declare.
+       END PROGRAM DVZF0OSM.

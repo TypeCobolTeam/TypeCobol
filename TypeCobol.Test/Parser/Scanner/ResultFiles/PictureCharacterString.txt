@@ -67,7 +67,7 @@
 [12,12: ]<SpaceSeparator>
 [13,16:cdef]<PictureCharacterString>
 [17,17+:;]<SemicolonSeparator>
-Line -1[5,5] <3, Error, Tokens> - Semicolon separator should be followed by a space
+Line 0[5,5] <3, Error, Tokens> - Semicolon separator should be followed by a space
 
 -- Line 8 --
 [1,3:PIC]<PIC>

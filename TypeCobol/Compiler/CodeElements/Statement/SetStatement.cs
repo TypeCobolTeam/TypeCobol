@@ -64,6 +64,7 @@
     public class SetStatementForAssignment : SetStatement
     {
         public SetStatementForAssignment() : base(StatementType.SetStatementForAssignment) { }
+        public SetStatementForAssignment(StatementType statementType) : base(statementType) { }
 
         /// <summary>index-name, identifier(numeric integer item), pointer, procedure-pointer, function-pointer, object reference id</summary>
         public ReceivingStorageArea[] ReceivingStorageAreas { get; set; }
@@ -354,7 +355,7 @@
         }
     }
 
-    internal class SetStatementPartial : SetStatement
+    internal class SetStatementPartial : SetStatementForAssignment
     {
         public SetStatementPartial() : base(StatementType.SetStatementPartial)
         {

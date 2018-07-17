@@ -1,0 +1,16 @@
+       CBL ARITH(EXTEND)
+       CBL NOLIST
+      *CONTROL LIST
+       CBL FLAG(I,W)
+       IDENTIFICATION DIVISION.											2323232
+       PROGRAM-ID. DVZXERRM.											2323232
+       DATA DIVISION.													2323232
+       																	2323232
+       WORKING-STORAGE SECTION.											
+       01 Counter PIC 9999.												2323232
+      *CONTROL NOLIST													2323232
+       PROCEDURE DIVISION.												2323232
+       																	.a
+           MOVE 10 TO Counter.											2323232
+      *CBL NOSOURCE														2323232
+       END PROGRAM DVZXERRM.											2323232

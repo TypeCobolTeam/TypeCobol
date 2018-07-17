@@ -102,18 +102,14 @@
        PROGRAM-ID. a0508f35check.
        data division.
        working-storage section.
+       01 TC-PersonSe pic X(08) value 'PERSONSE'.
+
        01 TC-Call          PIC X     VALUE 'T'.
            88 TC-FirstCall  VALUE 'T'.
            88 TC-NthCall    VALUE 'F'
                             X'00' thru 'S'
                             'U' thru X'FF'.
-       01 TC-PersonSe pic X(08) value 'PERSONSE'.
-
        linkage section.
-       01 mydate.
-           02 YYYY PIC 9(4).
-           02 MM PIC 9(2).
-           02 DD PIC 9(2).
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -127,6 +123,10 @@
        01 TC-PersonSe-cd991005-Item.
           05 TC-PersonSe-cd991005-Idt PIC X(08).
           05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
+       01 mydate.
+           02 YYYY PIC 9(4).
+           02 MM PIC 9(2).
+           02 DD PIC 9(2).
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .

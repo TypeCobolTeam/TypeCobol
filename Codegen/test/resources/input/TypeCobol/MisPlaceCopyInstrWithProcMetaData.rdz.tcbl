@@ -1,0 +1,18 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       data division.
+       linkage section.
+       01 MyGroup.
+       COPY Codegen-SecondCopy.
+       PROCEDURE DIVISION.
+           call DVZF0OS2::Foo
+
+           .
+       END PROGRAM DVZF0OSM.
+
+       ID DIVISION.
+       PROGRAM-ID. DVZF0OS2.
+       PROCEDURE DIVISION.
+       declare procedure Foo public.
+       end-declare.
+       END PROGRAM DVZF0OSM.

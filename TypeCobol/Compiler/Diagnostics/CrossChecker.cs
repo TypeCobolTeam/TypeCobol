@@ -45,8 +45,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
             }
 
-            RedefinesChecker<CodeElement>.OnNode(node);
-            FunctionDeclarationChecker<CodeElement>.OnNode(node);
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);
@@ -59,6 +57,18 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             //This checker is only for Node after the full AST has been created
             return false;
+        }
+
+        public override bool Visit(FunctionDeclaration functionDeclaration)
+        {
+            FunctionDeclarationChecker.OnNode(functionDeclaration);
+            return true;
+        }
+
+        public override bool Visit(DataRedefines dataRedefines)
+        {
+            RedefinesChecker.OnNode(dataRedefines);
+            return true;
         }
 
         public override bool Visit(PerformProcedure performProcedureNode)
@@ -94,53 +104,74 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Move move)
         {
             var moveCorresponding = move?.CodeElement as MoveCorrespondingStatement;
-            if (moveCorresponding == null)
-                return true;
+            var moveSimple = move?.CodeElement as MoveSimpleStatement;
 
-            Tuple<string, DataDefinition> searchedDataDefintion = null;
-            DataDefinition fromVariable = null;
-            DataDefinition toVariable = null;
-            //For MoveCorrespondingStatement check children compatibility
-            if (move.StorageAreaReadsDataDefinition.TryGetValue(moveCorresponding.FromGroupItem,
-                out searchedDataDefintion))
+            if (moveCorresponding != null)
             {
-                fromVariable = searchedDataDefintion.Item2;
+                Tuple<string, DataDefinition> searchedDataDefintion = null;
+                DataDefinition fromVariable = null;
+                DataDefinition toVariable = null;
+                //For MoveCorrespondingStatement check children compatibility
+                fromVariable = move.GetDataDefinitionFromStorageAreaDictionary(moveCorresponding.FromGroupItem, true);
+                toVariable = move.GetDataDefinitionFromStorageAreaDictionary(moveCorresponding.ToGroupItem, false);
+                
+
+                if (fromVariable == null || toVariable == null)
+                {
+                    return
+                        true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
+                }
+
+                var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null);
+                var toVariableChildren = toVariable.Children.Where(c => c?.Name != null);
+
+                var matchingChildrenNames = fromVariableChildren.Select(c => c.Name.ToLowerInvariant())
+                    .Intersect(toVariableChildren.Select(c => c.Name.ToLowerInvariant()));
+
+                foreach (var matchingChildName in matchingChildrenNames)
+                {
+                    var retrievedChildrenFrom =
+                        fromVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
+                    var retrievedChildrenTo =
+                        toVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
+
+                    if ((retrievedChildrenFrom != null && retrievedChildrenFrom.Count() != 1) ||
+                        (retrievedChildrenTo != null && retrievedChildrenTo.Count() != 1))
+                        DiagnosticUtils.AddError(move,
+                            string.Format("Multiple symbol \"{0}\" detected in MOVE CORR", matchingChildName));
+
+                    var retrievedChildFrom = (retrievedChildrenFrom.First() as DataDefinition);
+                    var retrievedChildTo = (retrievedChildrenTo.First() as DataDefinition);
+
+                    if (retrievedChildFrom == null || retrievedChildTo == null)
+                        continue; //Doesn't have to happen but in case...
+
+                    var fromDataType = retrievedChildFrom.DataType;
+                    var toDataType = retrievedChildTo.DataType;
+
+                    if (fromDataType != toDataType && fromDataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 &&
+                        toDataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //Check DataType matching
+                        DiagnosticUtils.AddError(move,
+                            string.Format("Symbol {0} of type {1} do not match symbol {2} of type {3}",
+                                retrievedChildFrom.VisualQualifiedName, fromDataType,
+                                retrievedChildTo.VisualQualifiedName, toDataType));
+                }
+
             }
-            if (move.StorageAreaWritesDataDefinition.TryGetValue(moveCorresponding.ToGroupItem,
-                out searchedDataDefintion))
+            else if (moveSimple != null)
             {
-                toVariable = searchedDataDefintion.Item2;
+                if (moveSimple.StorageAreaWrites != null)
+                {
+                    for (int i = 0; i < moveSimple.StorageAreaWrites.Count; i++)
+                    {
+                        var receiver = moveSimple.StorageAreaWrites[i].StorageArea;
+                        if (receiver is FunctionCallResult)
+                            DiagnosticUtils.AddError(moveSimple, "MOVE: illegal <function call> after TO");
+                    }
+                }
             }
-            if (fromVariable == null || toVariable == null)
-            {
-                return true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
-            }
 
-           var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null);
-            var toVariableChildren = toVariable.Children.Where(c => c?.Name != null);
 
-            var matchingChildrenNames = fromVariableChildren.Select(c => c.Name.ToLowerInvariant()).Intersect(toVariableChildren.Select(c => c.Name.ToLowerInvariant()));
-
-            foreach (var matchingChildName in matchingChildrenNames)
-            {
-                var retrievedChildrenFrom = fromVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
-                var retrievedChildrenTo = toVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
-
-                if ((retrievedChildrenFrom != null && retrievedChildrenFrom.Count() != 1) || (retrievedChildrenTo != null && retrievedChildrenTo.Count() != 1))
-                    DiagnosticUtils.AddError(move, string.Format("Multiple symbol \"{0}\" detected in MOVE CORR", matchingChildName));
-
-                var retrievedChildFrom = (retrievedChildrenFrom.First() as DataDefinition);
-                var retrievedChildTo = (retrievedChildrenTo.First() as DataDefinition);
-
-                if (retrievedChildFrom == null || retrievedChildTo == null)
-                    continue; //Doesn't have to happen but in case...
-
-                var fromDataType = retrievedChildFrom.DataType;
-                var toDataType = retrievedChildTo.DataType;
-
-                if (fromDataType != toDataType && fromDataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 && toDataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //Check DataType matching
-                    DiagnosticUtils.AddError(move, string.Format("Symbol {0} of type {1} do not match symbol {2} of type {3}", retrievedChildFrom.VisualQualifiedName, fromDataType, retrievedChildTo.VisualQualifiedName, toDataType));
-            }
 
             return true;
         }
@@ -215,7 +246,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node, "missing '(' or ')'");
             }
             // if the first '(' is after first ')' OR last '(' is after last ')'
-            else if (codeElement.Picture.Value.IndexOf("(") > codeElement.Picture.Value.IndexOf(")") || codeElement.Picture.Value.LastIndexOf("(") > codeElement.Picture.Value.LastIndexOf(")"))
+            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
+                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
                 DiagnosticUtils.AddError(node, "missing '(' or ')'");
             else
             {
@@ -243,36 +275,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (area.SymbolReference == null) return null;
             //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return null;
-            //need to initialize the dictionaries before the search
-            if (isReadStorageArea && node.StorageAreaReadsDataDefinition == null)
-            {
-                node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
-            }
-            if (!isReadStorageArea && node.StorageAreaWritesDataDefinition == null)
-            {
-                node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string,DataDefinition>>();
-            }
-
-            //search for existing data definitinon before constructing one
-            Tuple<string,DataDefinition> searchExistingDataDefinition;
-            if (isReadStorageArea)
-            {
-                node.StorageAreaReadsDataDefinition
-                    .TryGetValue(storageArea, out searchExistingDataDefinition);
-            }
-            else
-            {
-                node.StorageAreaWritesDataDefinition
-                    .TryGetValue(storageArea, out searchExistingDataDefinition);
-            }
-            if (searchExistingDataDefinition!=null)
-            {
-                IndexAndFlagDataDefiniton(searchExistingDataDefinition.Item1, searchExistingDataDefinition.Item2,node,area,storageArea);
-                return searchExistingDataDefinition.Item2;
-            }
-            //IEnumerable<DataDefinition> found;
-            //var foundQualified = new List<KeyValuePair<string, DataDefinition>>();
-
+           
             var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition)node).IsPartOfATypeDef;
             var foundQualified =
                 node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
@@ -312,11 +315,21 @@ namespace TypeCobol.Compiler.Diagnostics
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
+                    //need to initialize the dictionaries
+                    if (node.StorageAreaReadsDataDefinition == null)
+                    {
+                        node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
+                    }
                     string completeQualifiedName = foundQualified.First().Key;
                     node.StorageAreaReadsDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,found.First()));
                 }
                 else
                 {
+                    //need to initialize the dictionaries
+                    if (node.StorageAreaWritesDataDefinition == null)
+                    {
+                        node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
+                    }
                     string completeQualifiedName = foundQualified.First().Key;
                     node.StorageAreaWritesDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,found.First()));
                 }

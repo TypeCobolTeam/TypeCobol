@@ -31,7 +31,7 @@
       *                                       ::AppelTSUI::Nordre(1)
            MOVE 0                          TO Nordre
                                                OF AppelTSUI OF 
-                                           W-ListeAppelTSUI(1)
+                                                     W-ListeAppelTSUI(1)
            .
        END PROGRAM MyPgm.
       

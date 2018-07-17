@@ -18,12 +18,8 @@ namespace TypeCobol.Compiler.Parser
 	internal partial class CodeElementBuilder: CodeElementsBaseListener {
 
 		private ParserRuleContext Context;
-
 		/// <summary>CodeElement object resulting of the visit the parse tree</summary>
 		public CodeElement CodeElement { get; set; }
-		public CodeElementDispatcher Dispatcher { get; internal set; }
-
-
 		private CobolWordsBuilder CobolWordsBuilder { get; set; }
 		private CobolExpressionsBuilder CobolExpressionsBuilder { get; set; }
 		private CobolStatementsBuilder CobolStatementsBuilder { get; set; }
@@ -41,8 +37,6 @@ namespace TypeCobol.Compiler.Parser
 		public override void ExitCodeElement(CodeElementsParser.CodeElementContext context) {
 			if(CodeElement != null)
             {
-               
-
                 if (CobolWordsBuilder.symbolInformationForTokens.Keys.Count > 0) {
                     CodeElement.SymbolInformationForTokens = CobolWordsBuilder.symbolInformationForTokens;
                 }
@@ -64,9 +58,6 @@ namespace TypeCobol.Compiler.Parser
                 if (CobolExpressionsBuilder.callSites.Count > 0) {
                     CodeElement.CallSites = CobolExpressionsBuilder.callSites;
                 }
-
-                Dispatcher.OnCodeElement(CodeElement, Context);
-
                 // Attach all tokens consumed by the parser for this code element
                 // Collect all error messages encoutered while parsing this code element
                 IList<Diagnostic> diagnostics = CodeElement.Diagnostics ?? new List<Diagnostic>();
@@ -1071,6 +1062,12 @@ namespace TypeCobol.Compiler.Parser
 
             Context = context;
 			CodeElement = entry;
+
+
+		    DataDescriptionChecker.OnCodeElement(entry, context);
+		    if (context.cobol2002TypedefClause() != null)
+		        TypeDefinitionEntryChecker.CheckTypedef(entry as DataTypeDescriptionEntry, context);
+
 		}
 		private SyntaxProperty<DataUsage> CreateUsageClause(CodeElementsParser.UsageClauseContext c) {
 			return  CreateDataUsageProperty(DataUsage.Binary, c.BINARY()) ??
@@ -1116,6 +1113,8 @@ namespace TypeCobol.Compiler.Parser
 
             Context = context;
 			CodeElement = entry;
+
+		    TypeDefinitionEntryChecker.CheckRedefines(entry, context);
 		}
 
 	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context)
@@ -1337,6 +1336,8 @@ namespace TypeCobol.Compiler.Parser
 
 			Context = context;
 			CodeElement = entry;
+
+            DataRenamesChecker.OnCodeElement(entry, context);
 		}
 
 		public override void EnterDataConditionEntry(CodeElementsParser.DataConditionEntryContext context) {
@@ -1347,6 +1348,8 @@ namespace TypeCobol.Compiler.Parser
 
 			Context = context;
 			CodeElement = entry;
+
+		    DataConditionChecker.OnCodeElement(entry, context);
 		}
 
 		private void SetConditionValues(DataConditionEntry entry,CodeElementsParser.ValueClauseForConditionContext context) {
@@ -1511,20 +1514,23 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterAddStatement(CodeElementsParser.AddStatementContext context) {
 			Context = context;
+		    AddStatement addStatement = null;
 			if(context.addSimple() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAddStatement(context.addSimple());
+			    addStatement = CobolStatementsBuilder.CreateAddStatement(context.addSimple());
 			} else
 			if (context.addGiving() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAddGivingStatement(context.addGiving());
+			    addStatement = CobolStatementsBuilder.CreateAddGivingStatement(context.addGiving());
 			} else
 			if (context.addCorresponding() != null) {
-				CodeElement = CobolStatementsBuilder.CreateAddCorrespondingStatement(context.addCorresponding());
+			    addStatement = CobolStatementsBuilder.CreateAddCorrespondingStatement(context.addCorresponding());
 			} 
             else
             {
-                CodeElement = new AddSimpleStatement();
+                addStatement = new AddSimpleStatement();
             }
-                
+
+		    CodeElement = addStatement;
+		    AddStatementChecker.OnCodeElement(addStatement, context);
 		}
 		public override void EnterAddStatementEnd(CodeElementsParser.AddStatementEndContext context) {
 			Context = context;
@@ -1662,9 +1668,10 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterCallStatement([NotNull] CodeElementsParser.CallStatementContext context)
         {
             Context = context;
+            CallStatement callStatement = null;
             if (context.cobolCallStatement() != null)
             {
-                CodeElement = CobolStatementsBuilder.CreateCallStatement(context.cobolCallStatement());
+                callStatement = CobolStatementsBuilder.CreateCallStatement(context.cobolCallStatement());
             }
             else if (context.tcCallStatement() != null)
             {
@@ -1672,8 +1679,11 @@ namespace TypeCobol.Compiler.Parser
             }
             else
             {
-                CodeElement = new CallStatement();
+                callStatement = new CallStatement();
             }
+
+            CodeElement = callStatement;
+            CallStatementChecker.OnCodeElement(callStatement, context);
         }
 
 		public override void EnterCallStatementEnd(CodeElementsParser.CallStatementEndContext context) {
@@ -1685,7 +1695,10 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterCancelStatement(CodeElementsParser.CancelStatementContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateCancelStatement(context);
+		    CancelStatement cancelStatement = CobolStatementsBuilder.CreateCancelStatement(context);
+		    CodeElement = cancelStatement;
+            
+		    CancelStatementChecker.OnCodeElement(cancelStatement, context);
 		}
 
 		// --- CONTINUE ---
@@ -1829,7 +1842,13 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterInspectStatement(CodeElementsParser.InspectStatementContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateInspectStatement(context);
+			var inspectStatement = CobolStatementsBuilder.CreateInspectStatement(context);
+		    CodeElement = inspectStatement;
+
+
+		    var inscpectCorresponding = inspectStatement as InspectConvertingStatement;
+		    if (inscpectCorresponding != null)
+		        InspectConvertingChecker.OnCodeElement(inscpectCorresponding, context);
 		}
 
 		// --- INVOKE ---
@@ -1843,7 +1862,10 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterMergeStatement(CodeElementsParser.MergeStatementContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateMergeStatement(context);
+			var mergeStatement = CobolStatementsBuilder.CreateMergeStatement(context);
+		    CodeElement = mergeStatement;
+
+		    MergeUsingChecker.OnCodeElement(mergeStatement, context);
 		}
 
 
@@ -1891,12 +1913,16 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterSearchStatement(CodeElementsParser.SearchStatementContext context) {
 			Context = context;
+		    SearchStatement searchStatement = null;
 			if (context.serialSearch() != null) {
-				CodeElement = CobolStatementsBuilder.CreateSerialSearchStatement(context.serialSearch());
+			    searchStatement = CobolStatementsBuilder.CreateSerialSearchStatement(context.serialSearch());
 			} else
 			if (context.binarySearch() != null) {
-				CodeElement = CobolStatementsBuilder.CreateBinarySearchStatement(context.binarySearch());
+			    searchStatement = CobolStatementsBuilder.CreateBinarySearchStatement(context.binarySearch());
 			}
+		    CodeElement = searchStatement;
+		    if (searchStatement != null)
+		        SearchStatementChecker.OnCodeElement(searchStatement, context);
 		}
 		public override void EnterSearchStatementEnd(CodeElementsParser.SearchStatementEndContext context) {
 			Context = context;
@@ -1914,7 +1940,9 @@ namespace TypeCobol.Compiler.Parser
 
 		public override void EnterStartStatement(CodeElementsParser.StartStatementContext context) {
 			Context = context;
-			CodeElement = CobolStatementsBuilder.CreateStartStatement(context);
+			var startStatement = CobolStatementsBuilder.CreateStartStatement(context);
+		    CodeElement = startStatement;
+		    StartStatementChecker.OnCodeElement(startStatement, context);
 		}
 		public override void EnterStartStatementEnd(CodeElementsParser.StartStatementEndContext context) {
 			Context = context;
@@ -1979,13 +2007,13 @@ namespace TypeCobol.Compiler.Parser
 	        if (context.moveSimple() != null)
 	        {
                 CodeElement = CobolStatementsBuilder.CreateMoveStatement(context.moveSimple());
-            }
+	        }
 	        else if (context.moveCorresponding() != null)
 	        {
                 CodeElement = CobolStatementsBuilder.CreateMoveStatement(context.moveCorresponding());
-            }
-            else 
-                CodeElement = new MoveSimpleStatement(null, null, null);
+	        }
+	        else
+	            CodeElement = new MoveSimpleStatement(null, null, null);
 	    }
 
 		// --- SET STATEMENT ---
@@ -1993,11 +2021,15 @@ namespace TypeCobol.Compiler.Parser
 		public override void EnterSetStatement(CodeElementsParser.SetStatementContext context) {
 			if (context.setStatementForAssignment() != null) {
 				Context = context.setStatementForAssignment();
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForAssignment(context.setStatementForAssignment());
+				var setStatementForAssignment = CobolStatementsBuilder.CreateSetStatementForAssignment(context.setStatementForAssignment());
+			    CodeElement = setStatementForAssignment;
+			    SetStatementForAssignmentChecker.OnCodeElement(setStatementForAssignment, context.setStatementForAssignment());
 			} else
 			if (context.setStatementForIndexes() != null) {
 				Context = context.setStatementForIndexes();
-				CodeElement = CobolStatementsBuilder.CreateSetStatementForIndexes(context.setStatementForIndexes());
+				var setStatementForIndexes = CobolStatementsBuilder.CreateSetStatementForIndexes(context.setStatementForIndexes());
+			    CodeElement = setStatementForIndexes;
+			    SetStatementForIndexesChecker.OnCodeElement(setStatementForIndexes, context.setStatementForIndexes());
 			} else
 			if (context.setStatementForSwitches() != null) {
 				Context = context.setStatementForSwitches();

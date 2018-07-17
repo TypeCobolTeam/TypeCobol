@@ -152,6 +152,7 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                  
+
        LINKAGE SECTION.
        01 Result.
            02 YYYY PIC 9(04).
@@ -162,7 +163,6 @@
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
-
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
       *    move W-Dat :: YYYY       to Result :: YYYY
@@ -194,6 +194,7 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                  
+
        LINKAGE SECTION.
        01 Result.
            02 YYYY PIC 9(04).
@@ -201,7 +202,6 @@
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
-
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
       *    move unsafe W-Dat to Result
@@ -231,6 +231,7 @@
            02 MM PIC 9(2).
            02 DD PIC 9(2).
                                  
+
        LINKAGE SECTION.
        01 dateType PIC X(01).
        01 direction PIC X(01).
@@ -248,7 +249,6 @@
                    BY REFERENCE returnCode
                    BY REFERENCE Result
            .
-
 
            continue
            .
