@@ -133,8 +133,20 @@ namespace TypeCobol.LanguageServer
                 var completionItem =
                     new CompletionItem(string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams));
                 completionItem.insertText = procIsPublic
-                    ? string.Format("{0}::{1}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
-                    : proc.Name;
+                    ? inputParams != null
+                            ? string.Format("{0}::{1} INPUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                            : inoutParams != null
+                                ? string.Format("{0}::{1} IN-OUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                                : outputParams != null
+                                    ? string.Format("{0}::{1} OUTPUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                                    : proc.Name
+                    : inputParams != null
+                        ? proc.Name + " INPUT"
+                        : inoutParams != null
+                            ? proc.Name + " IN-OUT"
+                            : outputParams != null
+                                ? proc.Name + " OUTPUT"
+                                : proc.Name;
                 completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
                 completionItem.data = new object[3];
