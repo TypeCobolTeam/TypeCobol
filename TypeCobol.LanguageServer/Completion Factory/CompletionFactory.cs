@@ -169,11 +169,12 @@ namespace TypeCobol.LanguageServer
                     previousTokenType = givenToken.TokenType;
                 }
 
-
+            IEnumerable<ParameterDescription> procParams = null;
+            List<int> countParamsPerProc = new List<int>();
+            bool procHasInoutParams = false;
             IEnumerable<DataDefinition> potentialVariablesForCompletion = null;
             foreach (var procedure in calledProcedures)
             {
-                IEnumerable<ParameterDescription> procParams = null;
                 //Switch to select the correct parameters profile
                 #region Selective parameters Switch
                 switch (lastSignificantToken.TokenType)
@@ -181,6 +182,8 @@ namespace TypeCobol.LanguageServer
                     case TokenType.INPUT:
                         {
                             procParams = procedure.Profile.InputParameters;
+                            //Get number of input parameters left per procedure
+                            countParamsPerProc.Add(procParams.Count());
                             break;
                         }
                     case TokenType.OUTPUT:
@@ -191,6 +194,8 @@ namespace TypeCobol.LanguageServer
                     case TokenType.IN_OUT:
                         {
                             procParams = procedure.Profile.InoutParameters;
+                            //Get number of inout parameters left per procedure
+                            countParamsPerProc.Add(procParams.Count());
                             break;
                         }
                     default:
@@ -200,6 +205,12 @@ namespace TypeCobol.LanguageServer
 
                 #endregion
 
+                
+
+                //If one procedure has at least one Inout parameter
+                if (procedure.Profile.InoutParameters.Count() != 0)
+                    procHasInoutParams = true;
+                
                 //If the user already written all or more parameters than required let's check for an other proc signature
                 if (alreadyGivenParametersCount >= procParams.Count())
                     continue;
@@ -215,9 +226,29 @@ namespace TypeCobol.LanguageServer
             if (potentialVariablesForCompletion == null) return completionItems;
 
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
-                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems
+                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems*           
+
+
+            //If signature of procdure is available and all parameters informed 
+            if (procedureSignatureContext != null && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InputParameters.Count - 1))
+                AddParameterTypeToCompletion(lastSignificantToken, completionItems, procHasInoutParams);
+
+            //(since we don't have the signature and consequently no way of knowing the number of parameters left for the procedure,
+            // we check if other procedures have the same number of parameters left)
+            //Else if number of parameters left per procedure are all equal
+            else if (procedureSignatureContext == null  && alreadyGivenParametersCount == (procParams.Count() - 1))
+                    
+                AddParameterTypeToCompletion(lastSignificantToken, completionItems, procHasInoutParams);
 
             return completionItems;
+        }
+
+        private static void AddParameterTypeToCompletion(Token lastSignificantToken, List<CompletionItem> completionItems, bool procHasInoutParams)
+        {
+            if (lastSignificantToken.TokenType == TokenType.INPUT && procHasInoutParams)
+                completionItems.ForEach(ci => ci.insertText += " IN_OUT ");
+            else
+                completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
         }
 
         #endregion
