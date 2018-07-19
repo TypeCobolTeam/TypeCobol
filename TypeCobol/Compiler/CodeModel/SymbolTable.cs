@@ -641,33 +641,10 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="name">QualifiedName</param>
         /// <param name="table">SymbolTable that can have the searched DataDefinition</param>
         /// <returns>List of found DataDefinitions that correspond to the passed name</returns>
-        private List<DataDefinition> GetCustomTypesFromSymbolTable(QualifiedName name, SymbolTable table)
+        private static IEnumerable<DataDefinition> GetCustomTypesFromSymbolTable(QualifiedName name, SymbolTable table)
         {
-             return table.DataTypeEntries.Where(elem => NameMatch(elem.Key.ToArray(), name.ToArray())).SelectMany(def => def.Value).ToList();
-        }
-
-        /// <summary>
-        /// Search for a match starting from the end on the name; The match will be made on the whole name
-        /// </summary>
-        /// <param name="compareElement">element that is used for comparison</param>
-        /// <param name="elementToMatch">element to match</param>
-        /// <returns>Tue if elementToMatch has a part in compareElement</returns>
-        /// <remarks>e.g. if compareElement is a.b.cd.ef and elementToMatch is x.y.cd.ef
-        /// the method returns true as the match is cd and ef.
-        /// </remarks>
-        private static bool NameMatch(IReadOnlyList<string> compareElement,IReadOnlyList<string> elementToMatch)
-        {
-            for (var i = 1; i <= Math.Min(compareElement.Count, elementToMatch.Count); i++)
-            {
-                if (!compareElement[compareElement.Count - 1].Equals(elementToMatch[elementToMatch.Count - i], StringComparison.OrdinalIgnoreCase))
-                {
-                    break;
-                }
-                //if a match is found, return immediately
-                return true;
-            }
-            //match not found
-            return false;
+            //match only last part of the qualified name - the most specific one regardless of the case
+            return table.DataTypeEntries.Where(elem => elem.Key.ToArray().Last().Equals(name.ToArray().Last(),StringComparison.OrdinalIgnoreCase)).SelectMany(def => def.Value);
         }
 
         /// <summary>
@@ -676,7 +653,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="symbolTable">Top SymbolTable</param>
         /// <param name="name">name to search for</param>
         /// <returns>List of found DataDefinition</returns>
-        private List<DataDefinition> SeekSymbolTable(SymbolTable symbolTable, QualifiedName name)
+        private static IEnumerable<DataDefinition> SeekSymbolTable(SymbolTable symbolTable, QualifiedName name)
         {
             var currSymbolTable = symbolTable;
             var datadefinitions = new List<DataDefinition>();
@@ -690,26 +667,7 @@ namespace TypeCobol.Compiler.CodeModel
             return datadefinitions;
         }
 
-        /// <summary>Gets all data items of a specific type, accross all scopes.</summary>
-        /// <param name="typename">Name of type we search for</param>
-        /// <returns>All data items of type typename</returns>
-        //private IList<DataDefinition> GetVariablesTyped(QualifiedName typename)
-        //{
-        //    var variables = new List<DataDefinition>();
-        //    foreach (var items in DataEntries.Values)
-        //    {
-        //        foreach (var item in items)
-        //        {
-        //            if (typename.Head.Equals(item.DataType.Name, StringComparison.OrdinalIgnoreCase))
-        //                variables.Add(item);
-        //        }
-        //    }
-        //    if (EnclosingScope != null)
-        //        variables.AddRange(EnclosingScope.GetVariablesTyped(typename));
-        //    return variables;
-        //}
-
-
+        
         private List<T> Get<T>(List<T> found, QualifiedName name) where T : Node
         {
             if (found.Count < 1) return found;
