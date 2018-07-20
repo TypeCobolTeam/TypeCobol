@@ -450,8 +450,10 @@
     </Antlr4>
     <None Include="App.config" />
     <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
+    <None Include="Compiler\CupCommon\CobolWordsDirectiveRules.cup" />
     <None Include="Compiler\CupCommon\CobolWordsRules.cup" />
     <None Include="Compiler\CupCommon\CobolWordsSymbols.cup" />
+    <None Include="Compiler\CupCommon\CodeElementStartingKeyword.cup" />
     <None Include="Compiler\CupParser\EmptyTypeCobolProgram.cup" />
     <None Include="Compiler\CupParser\TypeCobolProgram.cup" />
     <None Include="Compiler\CupPreprocessor\CobolCompilerDirectives.cup" />

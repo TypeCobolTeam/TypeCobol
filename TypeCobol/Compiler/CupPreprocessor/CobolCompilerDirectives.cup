@@ -114,6 +114,7 @@ non terminal PairTokenListList replacingCopyReplacingOperandOpts;
 non terminal PairTokenListList copyReplacingOperands;
 non terminal TokenList copyReplacingOperand;
 non terminal TokenList pseudoText;
+non terminal pseudoTextDelimiter;
 
 non terminal deleteCompilerStatement;
 non terminal TokenList sequenceNumberField;
@@ -133,6 +134,7 @@ non terminal Token sequenceNumber;
 non terminal Token readyOrReset;
 non terminal readyOrResetTraceCompilerStatement;
 
+non terminal Token replaceToken;
 non terminal replaceCompilerStatement;
 non terminal PairTokenListList pseudoTextReplaces;
 
@@ -145,6 +147,8 @@ non terminal skipCompilerStatement;
 
 non terminal titleCompilerStatement;
 
+non terminal codeElementStartingKeyword;
+
 
 // A typical COBOL compiler has a pre-step where comments and compiler directing 
 // statements are processed to generate a source text suitable for subsequent parsing. 
@@ -153,7 +157,8 @@ non terminal titleCompilerStatement;
 
 start with starts;
 
-#use ..\CupCommon\CobolWordsRules.cup
+#use ..\CupCommon\CobolWordsDirectiveRules.cup
+#use ..\CupCommon\CodeElementStartingKeyword.cup
 
 
 starts ::= compilerDirectingStatement
@@ -199,6 +204,11 @@ compilerDirectingStatement ::= basisCompilerStatement
 		| serviceReloadCompilerStatement 
 		| skipCompilerStatement 
 		| titleCompilerStatement
+		| error LevelNumber
+		| error SectionParagraphName
+		| error PeriodSeparator
+		| error compilerDirectingStatement
+		| error codeElementStartingKeyword
 		;
 
 // p527: BASIS statement 
@@ -598,9 +608,7 @@ copyReplacingOperand ::= pseudoText:tokens
 ;
 
 pseudoText ::= 
-	PseudoTextDelimiter 
-	/* any kind of token except PseudoTextDelimiter and the word COPY */
-	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterAnyTokenMode(TokenType.PseudoTextDelimiter,TokenType.COPY); :}
+	PseudoTextDelimiter
 	anyTokens:tokens
 	PseudoTextDelimiter
 	{: RESULT = tokens; :}
@@ -854,11 +862,23 @@ readyOrResetTraceCompilerStatement ::= readyOrReset:rt TRACE PeriodSeparator
 // contain a REPLACE statement.
 // ... more rules on REPLACE behavior p542 -> p544
 
-replaceCompilerStatement ::= REPLACE:r pseudoTextReplaces:replaces PeriodSeparator
+replaceToken ::= REPLACE:r 
+	{: 
+		((CobolWordsTokenizer)my_parser.getScanner()).EnterPseudoTextAnyTokenMode();
+		RESULT = r;
+	:}
+	;
+
+replaceCompilerStatement ::= replaceToken:r pseudoTextReplaces:replaces 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).LeavePseudoTextAnyTokenMode(); :}
+	PeriodSeparator
 	{: my_parser.Builder.EnterReplaceCompilerStatement(r, null, replaces); :}
-| REPLACE:r OFF:o PeriodSeparator
+| replaceToken:r 
+	OFF:o 
+	PeriodSeparator
 	{: my_parser.Builder.EnterReplaceCompilerStatement(r, o, null); :}
 ;
+
 
 pseudoTextReplaces ::= pseudoText:from BY pseudoText:by
 	{: RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(from,by)}; :}

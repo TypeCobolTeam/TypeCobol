@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TUVienna.CS_CUP.Runtime;
+using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.CupCommon
 {
@@ -13,6 +14,27 @@ namespace TypeCobol.Compiler.CupCommon
     /// </summary>
     public class CupCobolErrorStrategy : ICupParserErrorReporter
     {
+        /// <summary>
+        /// Stores all encoutered diagnostics
+        /// </summary>
+        public List<Diagnostic> Diagnostics
+        {
+            get;
+            private set;
+        }
+        /// <summary>
+        /// Add a diagnostic
+        /// </summary>
+        /// <param name="diag">The diagnostic to be added</param>
+        private void AddDiagnostic(Diagnostic diag)
+        {
+            if (Diagnostics == null)
+            {
+                Diagnostics = new List<Diagnostic>();
+            }
+            Diagnostics.Add(diag);
+        }
+
         public virtual bool ReportFatalError(lr_parser parser, Stack stack, string message, object info)
         {
             throw new NotImplementedException();

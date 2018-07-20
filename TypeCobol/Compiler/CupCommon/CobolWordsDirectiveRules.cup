@@ -1,0 +1,619 @@
+﻿enumeratedValue1 ::= UserDefinedWord : v
+	{: RESULT = v; :}
+	;
+
+// - 2. Alphanumeric literals -
+
+// p33: A literal is a character-string whose value is specified either by the characters of
+// which it is composed or by the use of a figurative constant.
+// p34: The formats of alphanumeric literals are:
+// - Format 1: “Basic alphanumeric literals ?
+// - Format 2: “Alphanumeric literals with DBCS characters ? on page 35
+// - Format 3: “Hexadecimal notation for alphanumeric literals ? on page 36
+// - Format 4: “Null-terminated alphanumeric literals ? on page 37
+
+alphanumericLiteralToken ::= AlphanumericLiteral : lit
+	{: RESULT = lit; :}
+	| HexadecimalAlphanumericLiteral : lit 
+	{: RESULT = lit; :}
+	| NullTerminatedAlphanumericLiteral : lit
+	{: RESULT = lit; :}
+	;
+
+alphanumericOrNationalLiteralToken ::= alphanumericLiteralToken : lit
+	{: RESULT = lit; :}
+	| DBCSLiteral : lit
+	{: RESULT = lit; :}
+	| NationalLiteral : lit
+	{: RESULT = lit; :}
+	| HexadecimalNationalLiteral : lit
+	{: RESULT = lit; :}
+;
+
+alphanumericValue2 ::= alphanumericOrNationalLiteralToken : v
+	{: RESULT = v; :}
+	;
+
+alphanumericValue5 ::= UserDefinedWord : v
+	{: RESULT = v; :}
+	| alphanumericLiteralToken : v
+	{: RESULT = v; :}
+	;
+
+externalName5 ::= alphanumericValue5 : v
+	{: RESULT = v; :}
+	;
+
+// * text-name , library-name
+// text-name identifies the copy text. library-name identifies where the copy text
+// exists.
+// - Can be from 1-30 characters in length
+// - Can contain the following characters: Latin uppercase letters A-Z, Latin
+//   lowercase letters a-z, digits 0-9, and hyphen
+// - The first or last character must not be a hyphen
+// - Cannot contain an underscore
+// Neither text-name nor library-name need to be unique within a program.
+// They can be identical to other user-defined words in the program.
+// text-name need not be qualified. If text-name is not qualified, a library-name
+// of SYSLIB is assumed.
+// When compiling from JCL or TSO, only the first eight characters are used
+// as the identifying name. When compiling with the cob2 command and
+// processing COPY text residing in the z/OS UNIX file system, all characters
+// are significant.
+// * literal-1 , literal-2
+// Must be alphanumeric literals. literal-1 identifies the copy text. literal-2
+// identifies where the copy text exists.
+// When compiling from JCL or TSO:
+// - Literals can be from 1-30 characters in length.
+// - Literals can contain characters: A-Z, a-z, 0-9, hyphen, @, #, or $.
+// - The first or last character must not be a hyphen.
+// - Literals cannot contain an underscore.
+// - Only the first eight characters are used as the identifying name.
+// When compiling with the cob2 command and processing COPY text
+// residing in the z/OS UNIX file system, the literal can be from 1 to 160
+// characters in length.
+// The uniqueness of text-name and library-name is determined after the formation and
+// conversion rules for a system-dependent name have been applied.
+// For information about the mapping of characters in the text-name, library-name, and
+// literals, see Compiler-directing statements in the Enterprise COBOL Programming
+// Guide.
+
+textName ::= externalName5 : n
+	{: RESULT = n; :}
+	;
+
+libraryName ::= externalName5 : n
+	{: RESULT = n; :}
+	;
+
+qualifiedTextName ::= textName:n
+	{: RESULT = new QualifiedTextName(n); :}
+| textName:n in_of:t libraryName:ln
+	{: RESULT = new QualifiedTextName(n, t, ln); :}
+;
+
+	// p528: *CONTROL (*CBL) statement
+// With the *CONTROL (or *CBL) statement, you can selectively display or suppress
+// the listing of source code, object code, and storage maps throughout the source
+// text. 
+// These are not reserved words, but the only possible values are the following
+// SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
+
+controlCblOption ::= enumeratedValue1 : v
+	{: RESULT = v; :}
+	;
+
+// - 5. Reserved words -
+
+// This list of reserved words is useful to parse the COPY REPLACING operands
+// -> it must be updated each time a new token type is added above
+
+literalOrUserDefinedWordOReservedWordExceptCopy ::=
+      // Separators - Whitespace
+      // => excluded
+      // Comments
+      // => excluded
+      // Separators - Syntax
+      // => excluded
+      // Special character word - Arithmetic operators
+      // => excluded
+      // Special character word - Relational operators
+      // => excluded
+      // Literals - Alphanumeric
+      AlphanumericLiteral : rw {: RESULT = rw; :}
+    | HexadecimalAlphanumericLiteral : rw {: RESULT = rw; :}
+    | NullTerminatedAlphanumericLiteral : rw {: RESULT = rw; :}
+    | NationalLiteral : rw {: RESULT = rw; :}
+    | HexadecimalNationalLiteral : rw {: RESULT = rw; :}
+    | DBCSLiteral : rw {: RESULT = rw; :}
+      // Literals - Numeric
+    | LevelNumber : rw {: RESULT = rw; :}
+    | IntegerLiteral : rw {: RESULT = rw; :}
+    | DecimalLiteral : rw {: RESULT = rw; :}
+    | FloatingPointLiteral : rw {: RESULT = rw; :}
+      // Literals - Syntax tokens
+      // => excluded
+
+
+      // Symbols
+    | SectionParagraphName : rw {: RESULT = rw; :}
+    | IntrinsicFunctionName : rw {: RESULT = rw; :}
+    | ExecTranslatorName : rw {: RESULT = rw; :}
+    | PartialCobolWord : rw {: RESULT = rw; :}
+    | UserDefinedWord : rw {: RESULT = rw; :}
+      // Keywords - Compiler directive starting tokens
+    | ASTERISK_CBL : rw {: RESULT = rw; :}
+    | ASTERISK_CONTROL : rw {: RESULT = rw; :}
+    | BASIS : rw {: RESULT = rw; :}
+    | CBL : rw {: RESULT = rw; :}
+      // COPY => excluded
+    | DELETE_CD : rw {: RESULT = rw; :}
+    | EJECT : rw {: RESULT = rw; :}
+    | ENTER : rw {: RESULT = rw; :}
+    | EXEC_SQL : rw {: RESULT = rw; :}
+    | INSERT : rw {: RESULT = rw; :}
+    | PROCESS : rw {: RESULT = rw; :}
+    | READY : rw {: RESULT = rw; :}
+    | RESET : rw {: RESULT = rw; :}
+    | REPLACE : rw {: RESULT = rw; :}
+    | SERVICE_CD : rw {: RESULT = rw; :}
+    | SKIP1 : rw {: RESULT = rw; :}
+    | SKIP2 : rw {: RESULT = rw; :}
+    | SKIP3 : rw {: RESULT = rw; :}
+    | TITLE : rw {: RESULT = rw; :}
+      // Keywords - Code element starting tokens
+    | ACCEPT : rw {: RESULT = rw; :}
+    | ADD : rw {: RESULT = rw; :}
+    | ALTER : rw {: RESULT = rw; :}
+    | APPLY : rw {: RESULT = rw; :}
+    | CALL : rw {: RESULT = rw; :}
+    | CANCEL : rw {: RESULT = rw; :}
+    | CLOSE : rw {: RESULT = rw; :}
+    | COMPUTE : rw {: RESULT = rw; :}
+    | CONFIGURATION : rw {: RESULT = rw; :}
+    | CONTINUE : rw {: RESULT = rw; :}
+    | DATA : rw {: RESULT = rw; :}
+    | DECLARATIVES : rw {: RESULT = rw; :}
+    | DECLARE : rw {: RESULT = rw; :}
+    | DELETE : rw {: RESULT = rw; :}
+    | DISPLAY : rw {: RESULT = rw; :}
+    | DIVIDE : rw {: RESULT = rw; :}
+    | ELSE : rw {: RESULT = rw; :}
+    | END : rw {: RESULT = rw; :}
+    | END_ADD : rw {: RESULT = rw; :}
+    | END_CALL : rw {: RESULT = rw; :}
+    | END_COMPUTE : rw {: RESULT = rw; :}
+    | END_DECLARE : rw {: RESULT = rw; :}
+    | END_DELETE : rw {: RESULT = rw; :}
+    | END_DIVIDE : rw {: RESULT = rw; :}
+    | END_EVALUATE : rw {: RESULT = rw; :}
+    | END_EXEC : rw {: RESULT = rw; :}
+    | END_IF : rw {: RESULT = rw; :}
+    | END_INVOKE : rw {: RESULT = rw; :}
+    | END_MULTIPLY : rw {: RESULT = rw; :}
+    | END_PERFORM : rw {: RESULT = rw; :}
+    | END_READ : rw {: RESULT = rw; :}
+    | END_RETURN : rw {: RESULT = rw; :}
+    | END_REWRITE : rw {: RESULT = rw; :}
+    | END_SEARCH : rw {: RESULT = rw; :}
+    | END_START : rw {: RESULT = rw; :}
+    | END_STRING : rw {: RESULT = rw; :}
+    | END_SUBTRACT : rw {: RESULT = rw; :}
+    | END_UNSTRING : rw {: RESULT = rw; :}
+    | END_WRITE : rw {: RESULT = rw; :}
+    | END_XML : rw {: RESULT = rw; :}
+    | ENTRY : rw {: RESULT = rw; :}
+    | ENVIRONMENT : rw {: RESULT = rw; :}
+    | EVALUATE : rw {: RESULT = rw; :}
+    | EXEC : rw {: RESULT = rw; :}
+    | EXECUTE : rw {: RESULT = rw; :}
+    | EXIT : rw {: RESULT = rw; :}
+    | FD : rw {: RESULT = rw; :}
+    | FILE : rw {: RESULT = rw; :}
+    | FILE_CONTROL : rw {: RESULT = rw; :}
+    | GO : rw {: RESULT = rw; :}
+    | GOBACK : rw {: RESULT = rw; :}
+    | I_O_CONTROL : rw {: RESULT = rw; :}
+    | ID : rw {: RESULT = rw; :}
+    | IDENTIFICATION : rw {: RESULT = rw; :}
+    | IF : rw {: RESULT = rw; :}
+    | INITIALIZE : rw {: RESULT = rw; :}
+    | INPUT_OUTPUT : rw {: RESULT = rw; :}
+    | INSPECT : rw {: RESULT = rw; :}
+    | INVOKE : rw {: RESULT = rw; :}
+    | LINKAGE : rw {: RESULT = rw; :}
+    | LOCAL_STORAGE : rw {: RESULT = rw; :}
+    | MERGE : rw {: RESULT = rw; :}
+    | MOVE : rw {: RESULT = rw; :}
+    | MULTIPLE : rw {: RESULT = rw; :}
+    | MULTIPLY : rw {: RESULT = rw; :}
+    | NEXT : rw {: RESULT = rw; :}
+    | OBJECT_COMPUTER : rw {: RESULT = rw; :}
+    | OPEN : rw {: RESULT = rw; :}
+    | PERFORM : rw {: RESULT = rw; :}
+    | PROCEDURE : rw {: RESULT = rw; :}
+    | READ : rw {: RESULT = rw; :}
+    | RELEASE : rw {: RESULT = rw; :}
+    | REPOSITORY : rw {: RESULT = rw; :}
+    | RERUN : rw {: RESULT = rw; :}
+    | RETURN : rw {: RESULT = rw; :}
+    | REWRITE : rw {: RESULT = rw; :}
+    | SAME : rw {: RESULT = rw; :}
+    | SD : rw {: RESULT = rw; :}
+    | SEARCH : rw {: RESULT = rw; :}
+    | SELECT : rw {: RESULT = rw; :}
+    | SERVICE : rw {: RESULT = rw; :}
+    | SET : rw {: RESULT = rw; :}
+    | SORT : rw {: RESULT = rw; :}
+    | SOURCE_COMPUTER : rw {: RESULT = rw; :}
+    | SPECIAL_NAMES : rw {: RESULT = rw; :}
+    | START : rw {: RESULT = rw; :}
+    | STOP : rw {: RESULT = rw; :}
+    | STRING : rw {: RESULT = rw; :}
+    | SUBTRACT : rw {: RESULT = rw; :}
+    | UNSTRING : rw {: RESULT = rw; :}
+    | USE : rw {: RESULT = rw; :}
+    | WHEN : rw {: RESULT = rw; :}
+    | WORKING_STORAGE : rw {: RESULT = rw; :}
+    | WRITE : rw {: RESULT = rw; :}
+    | XML : rw {: RESULT = rw; :}
+      // Keywords - Special registers
+    | ADDRESS : rw {: RESULT = rw; :}
+    | DEBUG_CONTENTS : rw {: RESULT = rw; :}
+    | DEBUG_ITEM : rw {: RESULT = rw; :}
+    | DEBUG_LINE : rw {: RESULT = rw; :}
+    | DEBUG_NAME : rw {: RESULT = rw; :}
+    | DEBUG_SUB_1 : rw {: RESULT = rw; :}
+    | DEBUG_SUB_2 : rw {: RESULT = rw; :}
+    | DEBUG_SUB_3 : rw {: RESULT = rw; :}
+    | JNIENVPTR : rw {: RESULT = rw; :}
+    | LENGTH : rw {: RESULT = rw; :}
+    | LINAGE_COUNTER : rw {: RESULT = rw; :}
+    | RETURN_CODE : rw {: RESULT = rw; :}
+    | SHIFT_IN : rw {: RESULT = rw; :}
+    | SHIFT_OUT : rw {: RESULT = rw; :}
+    | SORT_CONTROL : rw {: RESULT = rw; :}
+    | SORT_CORE_SIZE : rw {: RESULT = rw; :}
+    | SORT_FILE_SIZE : rw {: RESULT = rw; :}
+    | SORT_MESSAGE : rw {: RESULT = rw; :}
+    | SORT_MODE_SIZE : rw {: RESULT = rw; :}
+    | SORT_RETURN : rw {: RESULT = rw; :}
+    | TALLY : rw {: RESULT = rw; :}
+    | WHEN_COMPILED : rw {: RESULT = rw; :}
+    | XML_CODE : rw {: RESULT = rw; :}
+    | XML_EVENT : rw {: RESULT = rw; :}
+    | XML_INFORMATION : rw {: RESULT = rw; :}
+    | XML_NAMESPACE : rw {: RESULT = rw; :}
+    | XML_NAMESPACE_PREFIX : rw {: RESULT = rw; :}
+    | XML_NNAMESPACE : rw {: RESULT = rw; :}
+    | XML_NNAMESPACE_PREFIX : rw {: RESULT = rw; :}
+    | XML_NTEXT : rw {: RESULT = rw; :}
+    | XML_TEXT : rw {: RESULT = rw; :}
+      // Keywords - Figurative constants
+    | HIGH_VALUE : rw {: RESULT = rw; :}
+    | HIGH_VALUES : rw {: RESULT = rw; :}
+    | LOW_VALUE : rw {: RESULT = rw; :}
+    | LOW_VALUES : rw {: RESULT = rw; :}
+    | NULL : rw {: RESULT = rw; :}
+    | NULLS : rw {: RESULT = rw; :}
+    | QUOTE : rw {: RESULT = rw; :}
+    | QUOTES : rw {: RESULT = rw; :}
+    | SPACE : rw {: RESULT = rw; :}
+    | SPACES : rw {: RESULT = rw; :}
+    | ZERO : rw {: RESULT = rw; :}
+    | ZEROES : rw {: RESULT = rw; :}
+    | ZEROS : rw {: RESULT = rw; :}
+    | SymbolicCharacter : rw {: RESULT = rw; :}
+      // Keywords - Special object identifiers
+    | SELF : rw {: RESULT = rw; :}
+    | SUPER : rw {: RESULT = rw; :}
+      // Keywords - Syntax tokens
+    | ACCESS : rw {: RESULT = rw; :}
+    | ADVANCING : rw {: RESULT = rw; :}
+    | AFTER : rw {: RESULT = rw; :}
+    | ALL : rw {: RESULT = rw; :}
+    | ALPHABET : rw {: RESULT = rw; :}
+    | ALPHABETIC : rw {: RESULT = rw; :}
+    | ALPHABETIC_LOWER : rw {: RESULT = rw; :}
+    | ALPHABETIC_UPPER : rw {: RESULT = rw; :}
+    | ALPHANUMERIC : rw {: RESULT = rw; :}
+    | ALPHANUMERIC_EDITED : rw {: RESULT = rw; :}
+    | ALSO : rw {: RESULT = rw; :}
+    | ALTERNATE : rw {: RESULT = rw; :}
+    | AND : rw {: RESULT = rw; :}
+    | ANY : rw {: RESULT = rw; :}
+    | ARE : rw {: RESULT = rw; :}
+    | AREA : rw {: RESULT = rw; :}
+    | AREAS : rw {: RESULT = rw; :}
+    | ASCENDING : rw {: RESULT = rw; :}
+    | ASSIGN : rw {: RESULT = rw; :}
+    | AT : rw {: RESULT = rw; :}
+    | AUTHOR : rw {: RESULT = rw; :}
+    | BEFORE : rw {: RESULT = rw; :}
+    | BEGINNING : rw {: RESULT = rw; :}
+    | BINARY : rw {: RESULT = rw; :}
+    | BLANK : rw {: RESULT = rw; :}
+    | BLOCK : rw {: RESULT = rw; :}
+    | BOTTOM : rw {: RESULT = rw; :}
+    | BY : rw {: RESULT = rw; :}
+    | CHARACTER : rw {: RESULT = rw; :}
+    | CHARACTERS : rw {: RESULT = rw; :}
+    | CLASS : rw {: RESULT = rw; :}
+    | CLASS_ID : rw {: RESULT = rw; :}
+    | COBOL : rw {: RESULT = rw; :}
+    | CODE : rw {: RESULT = rw; :}
+    | CODE_SET : rw {: RESULT = rw; :}
+    | COLLATING : rw {: RESULT = rw; :}
+    | COM_REG : rw {: RESULT = rw; :}
+    | COMMA : rw {: RESULT = rw; :}
+    | COMMON : rw {: RESULT = rw; :}
+    | COMP : rw {: RESULT = rw; :}
+    | COMP_1 : rw {: RESULT = rw; :}
+    | COMP_2 : rw {: RESULT = rw; :}
+    | COMP_3 : rw {: RESULT = rw; :}
+    | COMP_4 : rw {: RESULT = rw; :}
+    | COMP_5 : rw {: RESULT = rw; :}
+    | COMPUTATIONAL : rw {: RESULT = rw; :}
+    | COMPUTATIONAL_1 : rw {: RESULT = rw; :}
+    | COMPUTATIONAL_2 : rw {: RESULT = rw; :}
+    | COMPUTATIONAL_3 : rw {: RESULT = rw; :}
+    | COMPUTATIONAL_4 : rw {: RESULT = rw; :}
+    | COMPUTATIONAL_5 : rw {: RESULT = rw; :}
+    | CONTAINS : rw {: RESULT = rw; :}
+    | CONTENT : rw {: RESULT = rw; :}
+    | CONVERTING : rw {: RESULT = rw; :}
+    | CORR : rw {: RESULT = rw; :}
+    | CORRESPONDING : rw {: RESULT = rw; :}
+    | COUNT : rw {: RESULT = rw; :}
+    | CURRENCY : rw {: RESULT = rw; :}
+    | DATE : rw {: RESULT = rw; :}
+    | DATE_COMPILED : rw {: RESULT = rw; :}
+    | DATE_WRITTEN : rw {: RESULT = rw; :}
+    | DAY : rw {: RESULT = rw; :}
+    | DAY_OF_WEEK : rw {: RESULT = rw; :}
+    | DBCS : rw {: RESULT = rw; :}
+    | DEBUGGING : rw {: RESULT = rw; :}
+    | DECIMAL_POINT : rw {: RESULT = rw; :}
+    | DELIMITED : rw {: RESULT = rw; :}
+    | DELIMITER : rw {: RESULT = rw; :}
+    | DEPENDING : rw {: RESULT = rw; :}
+    | DESCENDING : rw {: RESULT = rw; :}
+    | DISPLAY_1 : rw {: RESULT = rw; :}
+    | DIVISION : rw {: RESULT = rw; :}
+    | DOWN : rw {: RESULT = rw; :}
+    | DUPLICATES : rw {: RESULT = rw; :}
+    | DYNAMIC : rw {: RESULT = rw; :}
+    | EGCS : rw {: RESULT = rw; :}
+    | END_OF_PAGE : rw {: RESULT = rw; :}
+    | ENDING : rw {: RESULT = rw; :}
+    | EOP : rw {: RESULT = rw; :}
+    | EQUAL : rw {: RESULT = rw; :}
+    | ERROR : rw {: RESULT = rw; :}
+    | EVERY : rw {: RESULT = rw; :}
+    | EXCEPTION : rw {: RESULT = rw; :}
+    | EXTEND : rw {: RESULT = rw; :}
+    | EXTERNAL : rw {: RESULT = rw; :}
+    | FACTORY : rw {: RESULT = rw; :}
+    | FALSE : rw {: RESULT = rw; :}
+    | FILLER : rw {: RESULT = rw; :}
+    | FIRST : rw {: RESULT = rw; :}
+    | FOOTING : rw {: RESULT = rw; :}
+    | FOR : rw {: RESULT = rw; :}
+    | FROM : rw {: RESULT = rw; :}
+    | FUNCTION : rw {: RESULT = rw; :}
+    | FUNCTION_POINTER : rw {: RESULT = rw; :}
+    | GENERATE : rw {: RESULT = rw; :}
+    | GIVING : rw {: RESULT = rw; :}
+    | GLOBAL : rw {: RESULT = rw; :}
+    | GREATER : rw {: RESULT = rw; :}
+    | GROUP_USAGE : rw {: RESULT = rw; :}
+    | I_O : rw {: RESULT = rw; :}
+    | IN : rw {: RESULT = rw; :}
+    | INDEX : rw {: RESULT = rw; :}
+    | INDEXED : rw {: RESULT = rw; :}
+    | INHERITS : rw {: RESULT = rw; :}
+    | INITIAL : rw {: RESULT = rw; :}
+    | INPUT : rw {: RESULT = rw; :}
+    | INSTALLATION : rw {: RESULT = rw; :}
+    | INTO : rw {: RESULT = rw; :}
+    | INVALID : rw {: RESULT = rw; :}
+    | IS : rw {: RESULT = rw; :}
+    | JUST : rw {: RESULT = rw; :}
+    | JUSTIFIED : rw {: RESULT = rw; :}
+    | KANJI : rw {: RESULT = rw; :}
+    | KEY : rw {: RESULT = rw; :}
+    | LABEL : rw {: RESULT = rw; :}
+    | LEADING : rw {: RESULT = rw; :}
+    | LEFT : rw {: RESULT = rw; :}
+    | LESS : rw {: RESULT = rw; :}
+    | LINAGE : rw {: RESULT = rw; :}
+    | LINE : rw {: RESULT = rw; :}
+    | LINES : rw {: RESULT = rw; :}
+    | LOCK : rw {: RESULT = rw; :}
+    | MEMORY : rw {: RESULT = rw; :}
+    | METHOD : rw {: RESULT = rw; :}
+    | METHOD_ID : rw {: RESULT = rw; :}
+    | MODE : rw {: RESULT = rw; :}
+    | MODULES : rw {: RESULT = rw; :}
+    | MORE_LABELS : rw {: RESULT = rw; :}
+    | NATIONAL : rw {: RESULT = rw; :}
+    | NATIONAL_EDITED : rw {: RESULT = rw; :}
+    | NATIVE : rw {: RESULT = rw; :}
+    | NEGATIVE : rw {: RESULT = rw; :}
+    | NEW : rw {: RESULT = rw; :}
+    | NO : rw {: RESULT = rw; :}
+    | NOT : rw {: RESULT = rw; :}
+    | NUMERIC : rw {: RESULT = rw; :}
+    | NUMERIC_EDITED : rw {: RESULT = rw; :}
+    | OBJECT : rw {: RESULT = rw; :}
+    | OCCURS : rw {: RESULT = rw; :}
+    | OF : rw {: RESULT = rw; :}
+    | OFF : rw {: RESULT = rw; :}
+    | OMITTED : rw {: RESULT = rw; :}
+    | ON : rw {: RESULT = rw; :}
+    | OPTIONAL : rw {: RESULT = rw; :}
+    | OR : rw {: RESULT = rw; :}
+    | ORDER : rw {: RESULT = rw; :}
+    | ORGANIZATION : rw {: RESULT = rw; :}
+    | OTHER : rw {: RESULT = rw; :}
+    | OUTPUT : rw {: RESULT = rw; :}
+    | OVERFLOW : rw {: RESULT = rw; :}
+    | OVERRIDE : rw {: RESULT = rw; :}
+    | PACKED_DECIMAL : rw {: RESULT = rw; :}
+    | PADDING : rw {: RESULT = rw; :}
+    | PAGE : rw {: RESULT = rw; :}
+    | PASSWORD : rw {: RESULT = rw; :}
+    | PIC : rw {: RESULT = rw; :}
+    | PICTURE : rw {: RESULT = rw; :}
+    | POINTER : rw {: RESULT = rw; :}
+    | POSITION : rw {: RESULT = rw; :}
+    | POSITIVE : rw {: RESULT = rw; :}
+    | PROCEDURE_POINTER : rw {: RESULT = rw; :}
+    | PROCEDURES : rw {: RESULT = rw; :}
+    | PROCEED : rw {: RESULT = rw; :}
+    | PROCESSING : rw {: RESULT = rw; :}
+    | PROGRAM : rw {: RESULT = rw; :}
+    | PROGRAM_ID : rw {: RESULT = rw; :}
+    | RANDOM : rw {: RESULT = rw; :}
+    | RECORD : rw {: RESULT = rw; :}
+    | RECORDING : rw {: RESULT = rw; :}
+    | RECORDS : rw {: RESULT = rw; :}
+    | RECURSIVE : rw {: RESULT = rw; :}
+    | REDEFINES : rw {: RESULT = rw; :}
+    | REEL : rw {: RESULT = rw; :}
+    | REFERENCE : rw {: RESULT = rw; :}
+    | REFERENCES : rw {: RESULT = rw; :}
+    | RELATIVE : rw {: RESULT = rw; :}
+    | RELOAD : rw {: RESULT = rw; :}
+    | REMAINDER : rw {: RESULT = rw; :}
+    | REMOVAL : rw {: RESULT = rw; :}
+    | RENAMES : rw {: RESULT = rw; :}
+    | REPLACING : rw {: RESULT = rw; :}
+    | RESERVE : rw {: RESULT = rw; :}
+    | RETURNING : rw {: RESULT = rw; :}
+    | REVERSED : rw {: RESULT = rw; :}
+    | REWIND : rw {: RESULT = rw; :}
+    | RIGHT : rw {: RESULT = rw; :}
+    | ROUNDED : rw {: RESULT = rw; :}
+    | RUN : rw {: RESULT = rw; :}
+    | SECTION : rw {: RESULT = rw; :}
+    | SECURITY : rw {: RESULT = rw; :}
+    | SEGMENT_LIMIT : rw {: RESULT = rw; :}
+    | SENTENCE : rw {: RESULT = rw; :}
+    | SEPARATE : rw {: RESULT = rw; :}
+    | SEQUENCE : rw {: RESULT = rw; :}
+    | SEQUENTIAL : rw {: RESULT = rw; :}
+    | SIGN : rw {: RESULT = rw; :}
+    | SIZE : rw {: RESULT = rw; :}
+    | SORT_MERGE : rw {: RESULT = rw; :}
+    | SQL : rw {: RESULT = rw; :}
+    | SQLIMS : rw {: RESULT = rw; :}
+    | STANDARD : rw {: RESULT = rw; :}
+    | STANDARD_1 : rw {: RESULT = rw; :}
+    | STANDARD_2 : rw {: RESULT = rw; :}
+    | STATUS : rw {: RESULT = rw; :}
+    | SUPPRESS : rw {: RESULT = rw; :}
+    | SYMBOL : rw {: RESULT = rw; :}
+    | SYMBOLIC : rw {: RESULT = rw; :}
+    | SYNC : rw {: RESULT = rw; :}
+    | SYNCHRONIZED : rw {: RESULT = rw; :}
+    | TALLYING : rw {: RESULT = rw; :}
+    | TAPE : rw {: RESULT = rw; :}
+    | TEST : rw {: RESULT = rw; :}
+    | THAN : rw {: RESULT = rw; :}
+    | THEN : rw {: RESULT = rw; :}
+    | THROUGH : rw {: RESULT = rw; :}
+    | THRU : rw {: RESULT = rw; :}
+    | TIME : rw {: RESULT = rw; :}
+    | TIMES : rw {: RESULT = rw; :}
+    | TO : rw {: RESULT = rw; :}
+    | TOP : rw {: RESULT = rw; :}
+    | TRACE : rw {: RESULT = rw; :}
+    | TRAILING : rw {: RESULT = rw; :}
+    | TRUE : rw {: RESULT = rw; :}
+    | TYPE : rw {: RESULT = rw; :}
+    | UNBOUNDED : rw {: RESULT = rw; :}
+    | UNIT : rw {: RESULT = rw; :}
+    | UNTIL : rw {: RESULT = rw; :}
+    | UP : rw {: RESULT = rw; :}
+    | UPON : rw {: RESULT = rw; :}
+    | USAGE : rw {: RESULT = rw; :}
+    | USING : rw {: RESULT = rw; :}
+    | VALUE : rw {: RESULT = rw; :}
+    | VALUES : rw {: RESULT = rw; :}
+    | VARYING : rw {: RESULT = rw; :}
+    | WITH : rw {: RESULT = rw; :}
+    | WORDS : rw {: RESULT = rw; :}
+    | WRITE_ONLY : rw {: RESULT = rw; :}
+    | XML_SCHEMA : rw {: RESULT = rw; :}
+	| ALLOCATE : rw {: RESULT = rw; :}
+    | CD : rw {: RESULT = rw; :}
+    | CF : rw {: RESULT = rw; :}
+    | CH : rw {: RESULT = rw; :}
+    | CLOCK_UNITS : rw {: RESULT = rw; :}
+    | COLUMN : rw {: RESULT = rw; :}
+    | COMMUNICATION : rw {: RESULT = rw; :}
+    | CONTROL : rw {: RESULT = rw; :}
+    | CONTROLS : rw {: RESULT = rw; :}
+    | DE : rw {: RESULT = rw; :}
+    | DEFAULT : rw {: RESULT = rw; :}
+    | DESTINATION : rw {: RESULT = rw; :}
+    | DETAIL : rw {: RESULT = rw; :}
+    | DISABLE : rw {: RESULT = rw; :}
+    | EGI : rw {: RESULT = rw; :}
+    | EMI : rw {: RESULT = rw; :}
+    | ENABLE : rw {: RESULT = rw; :}
+    | END_RECEIVE : rw {: RESULT = rw; :}
+    | ESI : rw {: RESULT = rw; :}
+    | FINAL : rw {: RESULT = rw; :}
+    | FREE : rw {: RESULT = rw; :}
+    | GROUP : rw {: RESULT = rw; :}
+    | HEADING : rw {: RESULT = rw; :}
+    | INDICATE : rw {: RESULT = rw; :}
+    | INITIATE : rw {: RESULT = rw; :}
+    | LAST : rw {: RESULT = rw; :}
+    | LIMIT : rw {: RESULT = rw; :}
+    | LIMITS : rw {: RESULT = rw; :}
+    | LINE_COUNTER : rw {: RESULT = rw; :}
+    | MESSAGE : rw {: RESULT = rw; :}
+    | NUMBER : rw {: RESULT = rw; :}
+    | PAGE_COUNTER : rw {: RESULT = rw; :}
+    | PF : rw {: RESULT = rw; :}
+    | PH : rw {: RESULT = rw; :}
+    | PLUS : rw {: RESULT = rw; :}
+    | PRINTING : rw {: RESULT = rw; :}
+    | PURGE : rw {: RESULT = rw; :}
+    | QUEUE : rw {: RESULT = rw; :}
+    | RD : rw {: RESULT = rw; :}
+    | RECEIVE : rw {: RESULT = rw; :}
+    | REPORT : rw {: RESULT = rw; :}
+    | REPORTING : rw {: RESULT = rw; :}
+    | REPORTS : rw {: RESULT = rw; :}
+    | RF : rw {: RESULT = rw; :}
+    | RH : rw {: RESULT = rw; :}
+    | SEGMENT : rw {: RESULT = rw; :}
+    | SEND : rw {: RESULT = rw; :}
+    | SOURCE : rw {: RESULT = rw; :}
+    | SUB_QUEUE_1 : rw {: RESULT = rw; :}
+    | SUB_QUEUE_2 : rw {: RESULT = rw; :}
+    | SUB_QUEUE_3 : rw {: RESULT = rw; :}
+    | SUM : rw {: RESULT = rw; :}
+    | TABLE : rw {: RESULT = rw; :}
+    | TERMINAL : rw {: RESULT = rw; :}
+    | TERMINATE : rw {: RESULT = rw; :}
+    | TEXT : rw {: RESULT = rw; :}
+	// Keywords - Cobol V6
+    | END_JSON : rw {: RESULT = rw; :}
+    | JSON : rw {: RESULT = rw; :}
+    | VOLATILE : rw {: RESULT = rw; :}
+      // Keywords - Cobol 2002
+    | TYPEDEF : rw {: RESULT = rw; :}
+    | STRONG : rw {: RESULT = rw; :}
+      // Keywords - TypeCobol
+    | UNSAFE : rw {: RESULT = rw; :}
+    | PUBLIC : rw {: RESULT = rw; :}
+    | PRIVATE : rw {: RESULT = rw; :}
+    | IN_OUT : rw {: RESULT = rw; :} 
+	| STRICT  : rw {: RESULT = rw; :}
+	| QuestionMark  : rw {: RESULT = rw; :}
+;
