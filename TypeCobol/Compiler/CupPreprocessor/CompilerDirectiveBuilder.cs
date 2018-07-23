@@ -35,10 +35,14 @@ namespace TypeCobol.Compiler.CupPreprocessor
             return name?.Text.Trim('\'').Trim('\"');
         }
 
-        public virtual void EnterBasisCompilerStatement(TypeCobol.Compiler.Scanner.Token textName)
+        public virtual void StartBasisCompilerStatement()
         {
             var basisDirective = new BasisDirective();
             CompilerDirective = basisDirective;
+        }
+        public virtual void EnterBasisCompilerStatement(TypeCobol.Compiler.Scanner.Token textName)
+        {
+            var basisDirective = (BasisDirective)CompilerDirective;            
 
             if (textName != null)
             {
@@ -47,9 +51,13 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        public virtual void EnterControlCblCompilerStatement(TypeCobol.Compiler.Scanner.Token controlCbl)
+        public virtual void StartControlCblCompilerStatement(CompilerDirectiveType type)
         {
-            CompilerDirective = new ControlCblDirective(controlCbl.TokenType == TokenType.ASTERISK_CONTROL ? CompilerDirectiveType.ASTERISK_CONTROL : CompilerDirectiveType.ASTERISK_CBL);
+            CompilerDirective = new ControlCblDirective(type);
+        }
+
+        public virtual void EnterControlCblCompilerStatement(TypeCobol.Compiler.Scanner.Token controlCbl)
+        {            
         }
 
         public virtual void EnterCopyCompilerStatement(TypeCobol.Compiler.Scanner.Token copy)

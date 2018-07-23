@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Antlr4.Runtime;
 using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CupCommon
 {
@@ -20,7 +22,7 @@ namespace TypeCobol.Compiler.CupCommon
         public List<Diagnostic> Diagnostics
         {
             get;
-            private set;
+            set;
         }
         /// <summary>
         /// Add a diagnostic
@@ -37,22 +39,64 @@ namespace TypeCobol.Compiler.CupCommon
 
         public virtual bool ReportFatalError(lr_parser parser, Stack stack, string message, object info)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public virtual bool ReportError(lr_parser parser, Stack stack, string message, object info)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public virtual bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
         {
-            throw new NotImplementedException();
+            string input = "<unknown input>";
+            IToken token = null;
+            if (curToken != null && curToken.value != null)
+            {
+                input = (token = ((IToken)curToken.value)).Text;
+            }
+            List<string> expected = ExpectedSymbols(parser, stack, curToken);
+            string msg = "";
+            if (expected != null && expected.Count == 1)
+            {
+                msg = "mismatched input " + GetTokenErrorDisplay(curToken != null ? (IToken)curToken.value : null) + 
+                    " expecting " + expected[0];
+            }
+            else
+            {
+                msg = "no viable alternative at input " + EscapeWSAndQuote(input);
+            }
+            CupParserDiagnostic diag = new CupParserDiagnostic(msg, token,null);
+            AddDiagnostic(diag);            
+            return true;
         }
 
         public virtual bool UnrecoveredSyntaxError(lr_parser parser, Stack stack, Symbol curToken)
         {
-            throw new NotImplementedException();
+            return true;
+        }
+
+        public static String EscapeWSAndQuote(String s)
+        { 
+            String result = s; 
+            result = s.Replace("\n", "\\n");
+            result = s.Replace("\r","\\r");
+            result = s.Replace("\t","\\t"); 
+            return "'" + result + "'"; 
+        }
+
+        protected string GetTokenErrorDisplay(IToken t)
+        {
+            if (t == null)
+            {
+                return "<no token>";
+            }
+            string s = t.Text;
+            if (s == null)
+            {
+                s = "<" + TokenUtils.GetDisplayNameForTokenType((TokenType)t.Type) + ">";
+            }
+            return EscapeWSAndQuote(s);
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CupCommon;
+using TypeCobol.Compiler.Directives;
 
 namespace TypeCobol.Compiler.CupPreprocessor
 {
@@ -13,10 +14,20 @@ namespace TypeCobol.Compiler.CupPreprocessor
     public interface ICompilerDirectiveBuilder
     {
         /// <summary>
+        /// Start a Basic Compiler Statement
+        /// </summary>
+        void StartBasisCompilerStatement();
+        /// <summary>
         /// Enter a Basic Compiler Statement
         /// </summary>
         /// <param name="textName">The Text Name Token</param>
         void EnterBasisCompilerStatement(TypeCobol.Compiler.Scanner.Token textName);
+
+        /// <summary>
+        /// Start an Asterisk Control or Cbl Compiler Statement option.
+        /// </summary>
+        /// <param name="type"></param>
+        void StartControlCblCompilerStatement(CompilerDirectiveType type);
 
         /// <summary>
         /// Enter an Asterisk Control or Cbl Compiler Statement option.

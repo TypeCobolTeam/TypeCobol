@@ -33,7 +33,13 @@ namespace TypeCobol.Compiler.CupCommon
         public enum AnyTokenCategory
         {
             None,
-            PseudoText
+            PseudoText,
+            ControlCblCompilerStatement,
+            DeleteCompilerStatement,
+            /// <summary>
+            /// No further scanning mode ==> return EOF.
+            /// </summary>
+            StopScanningMode,
         }
 
         private AnyTokenCategory AnyTokenCategoryMode { get; set; }
@@ -135,6 +141,63 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
+        /// Enter the Stop Scanning Mode.
+        /// </summary>
+        public void EnterStopScanningMode()
+        {
+            LeaveAnyTokenMode();
+            AnyTokenCategoryMode = AnyTokenCategory.StopScanningMode;
+        }
+
+        /// <summary>
+        /// Leave the stop scanning mode
+        /// </summary>
+        public void LeaveStopScanningMode()
+        {
+            AnyTokenCategoryMode = AnyTokenCategory.None;
+            LeaveAnyTokenMode();
+        }
+
+        /// <summary>
+        /// Enter the Contol Cbl Compiler Statement mode: in this mode
+        /// all UserDefinedWord are recognized and the PeriodSeparator also,
+        /// otherwise we enter in the StopScanningMode.
+        /// </summary>
+        public void EnterControlCblCompilerStatementMode()
+        {
+            LeaveAnyTokenMode();
+            AnyTokenCategoryMode = AnyTokenCategory.ControlCblCompilerStatement;
+        }
+
+        /// <summary>
+        /// Leave the ControlCblCompilerStatement mode.
+        /// </summary>
+        public void LeaveControlCblCompilerStatementMode()
+        {
+            AnyTokenCategoryMode = AnyTokenCategory.None;
+            LeaveAnyTokenMode();
+        }
+
+        /// <summary>
+        /// Enter the Delete Compiler Statement mode: in this mode
+        /// Only IntegerLiteral are recognized, otherwise we enter in the StopScanningMode.
+        /// </summary>
+        public void EnterDeleteCompilerStatementMode()
+        {
+            LeaveAnyTokenMode();
+            AnyTokenCategoryMode = AnyTokenCategory.DeleteCompilerStatement;
+        }
+
+        /// <summary>
+        /// Leave the DeleteCompilerStatement mode.
+        /// </summary>
+        public void LeaveDeleteCompilerStatementMode()
+        {
+            AnyTokenCategoryMode = AnyTokenCategory.None;
+            LeaveAnyTokenMode();
+        }
+
+        /// <summary>
         /// Leave the any token mode.
         /// </summary>
         public void LeaveAnyTokenMode()
@@ -196,7 +259,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// </summary>
         /// <param name="token"></param>
         /// <param name="symbol"></param>
-        private void HandleAnyTokenMode(Token token, Symbol symbol)
+        private bool HandleAnyTokenMode(Token token, Symbol symbol)
         {
             switch (AnyTokenCategoryMode)
             {
@@ -214,7 +277,23 @@ namespace TypeCobol.Compiler.CupCommon
                         }
                 }
                     break;
+                case AnyTokenCategory.ControlCblCompilerStatement:
+                {
+                    if (token.TokenType == TokenType.UserDefinedWord || token.TokenType == TokenType.PeriodSeparator)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                case AnyTokenCategory.StopScanningMode:
+                    {
+                        return false;
+                    }
             }
+            return true;
         }
 
         /// <summary>
@@ -224,8 +303,7 @@ namespace TypeCobol.Compiler.CupCommon
         public IEnumerator<Symbol> GetEnumerator()
         {
             FirstToken = null;
-            LastToken = null;
-            ;
+            LastToken = null;            
             Token token = null;
             while ((token = base.NextToken()) != Token.END_OF_FILE)
             {
@@ -234,7 +312,8 @@ namespace TypeCobol.Compiler.CupCommon
                     this.FirstToken = token;
                 }
                 TUVienna.CS_CUP.Runtime.Symbol symbol = new TUVienna.CS_CUP.Runtime.Symbol(((int)token.TokenType) + CsCupStartToken - 1, token);
-                HandleAnyTokenMode(token, symbol);
+                if (!HandleAnyTokenMode(token, symbol))
+                    break;
                 this.LastToken = token;
                 yield return symbol;
             }

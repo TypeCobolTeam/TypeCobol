@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Directives;
 
 action code {:
 :};
@@ -162,6 +163,7 @@ start with starts;
 
 
 starts ::= compilerDirectingStatement
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).LeaveStopScanningMode(); :}
 	;
 
 // **************
@@ -204,11 +206,13 @@ compilerDirectingStatement ::= basisCompilerStatement
 		| serviceReloadCompilerStatement 
 		| skipCompilerStatement 
 		| titleCompilerStatement
+		/*
 		| error LevelNumber
 		| error SectionParagraphName
 		| error PeriodSeparator
 		| error compilerDirectingStatement
 		| error codeElementStartingKeyword
+		*/
 		;
 
 // p527: BASIS statement 
@@ -234,7 +238,14 @@ compilerDirectingStatement ::= basisCompilerStatement
 // source text must contain numeric sequence numbers in ascending order.
 
 basisCompilerStatement ::=
-    /* sequenceNumber? */ BASIS:t textName:n
+	{: 		
+		my_parser.Builder.StartBasisCompilerStatement();
+	:}
+    /* sequenceNumber? */ BASIS:t 
+	{: 		
+		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
+    :}
+	textName:n
 	{: my_parser.Builder.EnterBasisCompilerStatement(n); :}
 	;
 
@@ -391,15 +402,24 @@ controlCblOptions ::= controlCblOption
 | controlCblOptions controlCblOption
 ;
 
-asteriskControlCbl ::= ASTERISK_CONTROL : t
-| ASTERISK_CBL : t
+asteriskControlCbl ::= {: my_parser.Builder.StartControlCblCompilerStatement(CompilerDirectiveType.ASTERISK_CONTROL); :} ASTERISK_CONTROL : t
+{: 
+	RESULT = t; 
+:}
+| {: my_parser.Builder.StartControlCblCompilerStatement(CompilerDirectiveType.ASTERISK_CBL); :} ASTERISK_CBL : t
+{: 
+	RESULT = t; 
+:}
 ;
 
 periodSeparatorOpt ::= /* empty */
 | PeriodSeparator
 ;
 
-controlCblCompilerStatement ::= asteriskControlCbl:t controlCblOptions periodSeparatorOpt
+controlCblCompilerStatement ::= asteriskControlCbl:t 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterControlCblCompilerStatementMode();  :}
+	controlCblOptions 
+	periodSeparatorOpt
 	{: my_parser.Builder.EnterControlCblCompilerStatement(t); :}
 ;
 
@@ -580,6 +600,7 @@ controlCblCompilerStatement ::= asteriskControlCbl:t controlCblOptions periodSep
 copyCompilerStatement ::= COPY:c 
 	{: my_parser.Builder.EnterCopyCompilerStatement(c); :}
 	copyCompilerStatementBody 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); :}
 	PeriodSeparator
 ;
              
@@ -655,7 +676,9 @@ pseudoText ::=
 // these sequence numbers must occur in ascending order.
 
 deleteCompilerStatement ::=
-    /* sequenceNumber? */ DELETE_CD:t sequenceNumberField:fields
+    /* sequenceNumber? */ DELETE_CD:t 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterDeleteCompilerStatementMode();  :}
+	sequenceNumberField:fields
 	{: my_parser.Builder.EnterDeleteCompilerStatement(t); my_parser.Builder.EnterSequenceNumberField(fields); :}
 	;
 
@@ -870,11 +893,15 @@ replaceToken ::= REPLACE:r
 	;
 
 replaceCompilerStatement ::= replaceToken:r pseudoTextReplaces:replaces 
-	{: ((CobolWordsTokenizer)my_parser.getScanner()).LeavePseudoTextAnyTokenMode(); :}
+	{: 
+		((CobolWordsTokenizer)my_parser.getScanner()).LeavePseudoTextAnyTokenMode(); 
+		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode();
+	:}
 	PeriodSeparator
 	{: my_parser.Builder.EnterReplaceCompilerStatement(r, null, replaces); :}
 | replaceToken:r 
 	OFF:o 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); :}
 	PeriodSeparator
 	{: my_parser.Builder.EnterReplaceCompilerStatement(r, o, null); :}
 ;

@@ -451,7 +451,8 @@ namespace TypeCobol.Compiler.Preprocessor
                 // Reset Cup Tokenizer
                 tokensIterator.Reset(false);
 
-                // Reset parsing error diagnostics                
+                // Reset parsing error diagnostics            
+                cupCobolErrorStrategy.Diagnostics = null;
 
                 // 3. Try to parse a compiler directive starting with the current token
                 perfStatsForParserInvocation.OnStartParsing();
