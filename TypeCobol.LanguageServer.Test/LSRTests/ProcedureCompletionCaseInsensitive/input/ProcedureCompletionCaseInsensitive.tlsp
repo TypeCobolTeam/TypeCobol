@@ -119,7 +119,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date IN_OUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date IN-OUT \"}]}"
     },
     {
       "category": 0,
@@ -231,7 +231,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"W-DateDb2 (DateDB2) (W-DateDb2)\",\"kind\":6,\"insertText\":\"W-DateDb2 OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"W-DateDb2 (DateDB2) (W-DateDb2)\",\"kind\":6,\"insertText\":\"W-DateDb2.\"}]}"
     },
     {
       "category": 0,

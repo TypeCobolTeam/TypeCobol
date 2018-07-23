@@ -225,7 +225,8 @@ namespace TypeCobol.LanguageServer
             //If signature of procedure is available
             if (procedureSignatureContext != null)
             { 
-                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InputParameters.Count - 1))
+                if (lastSignificantToken.TokenType == TokenType.INPUT
+                    && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InputParameters.Count - 1))
                     if (procedureSignatureContext.Profile.InoutParameters.Count != 0)
                         completionItems.ForEach(ci => ci.insertText += " IN-OUT ");
                     else if (procedureSignatureContext.Profile.OutputParameters.Count != 0)
@@ -237,6 +238,11 @@ namespace TypeCobol.LanguageServer
             }
             else
             {
+                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == (procParams.Count() - 1))
+                    if (calledProcedures.Any(cp => cp.Profile.InputParameters.Count-1 == alreadyGivenParametersCount && cp.Profile.InoutParameters.Count != 0))
+                        completionItems.ForEach(ci => ci.insertText += " IN-OUT ");
+                    else 
+                        completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
                 if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procParams.Count() - 1))
                     completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
                 if (lastSignificantToken.TokenType == TokenType.OUTPUT && alreadyGivenParametersCount == (procParams.Count() - 1))

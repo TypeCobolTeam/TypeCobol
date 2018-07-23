@@ -208,7 +208,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date OUTPUT \"},{\"label\":\"W-OutDate (DATE) (W-OutDate)\",\"kind\":6,\"insertText\":\"W-OutDate OUTPUT \"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"W-Date (DATE) (W-Date)\",\"kind\":6,\"insertText\":\"W-Date.\"},{\"label\":\"W-OutDate (DATE) (W-OutDate)\",\"kind\":6,\"insertText\":\"W-OutDate.\"}]}"
     },
     {
       "category": 0,
