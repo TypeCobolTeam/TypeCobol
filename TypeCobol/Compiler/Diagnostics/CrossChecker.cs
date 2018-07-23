@@ -377,8 +377,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (!area.SymbolReference.IsQualifiedReference)
                 //If it's an index but not use with qualified reference 
                 {
-                    //Check the previous references to see if one has been flagged as NodeContainsIndex then flag this node
-                    if (index.GetReferences().Any(n => n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                    //If the index has already been flaged UsedWithQualifiedName, we need to flag the current node
+                    if(index.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
                             completeQualifiedName);

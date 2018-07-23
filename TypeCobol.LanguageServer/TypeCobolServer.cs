@@ -169,7 +169,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 // Document cleared
-                if (contentChange.range == null)
+                if (contentChange.range == null || contentChange.rangeLength == -1)
                 {
                     //JCM: I have noticed that if the entire text has changed, is better to reload the entire file
                     //To avoid crashes.
