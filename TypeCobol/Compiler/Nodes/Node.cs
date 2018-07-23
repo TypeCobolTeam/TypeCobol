@@ -227,15 +227,16 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_qualifiedName != null) return _qualifiedName;
 
-                string qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name)) {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     parent = parent.Parent;
                 }
+                qn.Reverse();
                 _qualifiedName = new URI(qn);
                 return _qualifiedName;
             }
@@ -250,13 +251,13 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_visualQualifiedName != null) return _visualQualifiedName;
 
-                var qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name))
                     {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
                         break;
@@ -264,7 +265,7 @@ namespace TypeCobol.Compiler.Nodes {
                         break;
                     parent = parent.Parent;
                 }
-
+                qn.Reverse();
                 _visualQualifiedName = new URI(qn);
                 return _visualQualifiedName;
             }

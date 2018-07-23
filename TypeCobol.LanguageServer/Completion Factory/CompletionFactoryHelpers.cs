@@ -170,9 +170,7 @@ namespace TypeCobol.LanguageServer
         public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
         {
 
-            var qualifiedName = variable.VisualQualifiedName.ToString()
-                .Split(variable.VisualQualifiedName.Separator)
-                .Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
+            var qualifiedName = variable.VisualQualifiedName.Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
 
             var finalQualifiedName = qualifiedName.ToList();
 
