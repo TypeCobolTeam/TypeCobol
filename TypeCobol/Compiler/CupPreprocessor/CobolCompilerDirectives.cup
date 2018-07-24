@@ -89,6 +89,11 @@ parser code {:
 		}
 		base.unrecovered_syntax_error(cur_token);
 	}
+
+	public void ReportScannerDirectiveError()
+	{
+		ErrorReporter.SyntaxError(this, getParserStack(), ((CobolWordsTokenizer)getScanner()).LastStopSymbol);
+	}
 :};
 
 // Include Cobol Words Symbols
@@ -402,11 +407,17 @@ controlCblOptions ::= controlCblOption
 | controlCblOptions controlCblOption
 ;
 
-asteriskControlCbl ::= {: my_parser.Builder.StartControlCblCompilerStatement(CompilerDirectiveType.ASTERISK_CONTROL); :} ASTERISK_CONTROL : t
+asteriskControlCbl ::= 
+{: 
+	my_parser.Builder.StartControlCblCompilerStatement(CompilerDirectiveType.ASTERISK_CONTROL); 	
+:} ASTERISK_CONTROL : t
 {: 
 	RESULT = t; 
 :}
-| {: my_parser.Builder.StartControlCblCompilerStatement(CompilerDirectiveType.ASTERISK_CBL); :} ASTERISK_CBL : t
+| 
+{: 
+	my_parser.Builder.StartControlCblCompilerStatement(CompilerDirectiveType.ASTERISK_CBL); 	
+:} ASTERISK_CBL : t
 {: 
 	RESULT = t; 
 :}
@@ -676,6 +687,7 @@ pseudoText ::=
 // these sequence numbers must occur in ascending order.
 
 deleteCompilerStatement ::=
+	{: my_parser.Builder.StartDeleteCompilerStatement();  :}
     /* sequenceNumber? */ DELETE_CD:t 
 	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterDeleteCompilerStatementMode();  :}
 	sequenceNumberField:fields
@@ -708,9 +720,13 @@ sequenceNumberField ::=
 // The EJECT statement has no effect on the compilation of the source unit itself.
 
 
-ejectCompilerStatement ::= EJECT:e
+ejectCompilerStatement ::= 
 	{: 
-		((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLine(TokenType.PeriodSeparator); 
+		my_parser.Builder.StartEjectCompilerStatement();  
+		((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator); 
+	:}
+	EJECT:e
+	{: 		
 		my_parser.Builder.EnterEjectCompilerStatement(e);
 	:}
 ;
@@ -730,7 +746,10 @@ ejectCompilerStatement ::= EJECT:e
 // character must be alphabetic.
 
 enterCompilerStatement ::=
-	ENTER:e languageName:ln routineName:rn PeriodSeparator
+	{: my_parser.Builder.StartEnterCompilerStatement(); :}
+	ENTER:e 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterEnterCompilerStatementMode(); :}
+	languageName:ln routineName:rn PeriodSeparator
 	{: my_parser.Builder.EnterEnterCompilerStatement(e, ln, rn); :}
 	;
 

@@ -264,6 +264,7 @@
     <Compile Include="Compiler\CupCommon\CobolWordsTokenizer.cs" />
     <Compile Include="Compiler\CupCommon\CobolWordsTypes.cs" />
     <Compile Include="Compiler\CupCommon\CupCobolErrorStrategy.cs" />
+    <Compile Include="Compiler\CupCommon\CupParserDiagnostic.cs" />
     <Compile Include="Compiler\CupParser\CodeElementTokenizer.cs" />
     <Compile Include="Compiler\CupParser\NodeBuilder\CupParserTypeCobolProgramDiagnosticErrorReporter.cs" />
     <Compile Include="Compiler\CupParser\NodeBuilder\IProgramClassBuilder.cs" />

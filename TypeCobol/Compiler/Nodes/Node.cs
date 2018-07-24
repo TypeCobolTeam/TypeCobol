@@ -227,15 +227,16 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_qualifiedName != null) return _qualifiedName;
 
-                string qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name)) {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     parent = parent.Parent;
                 }
+                qn.Reverse();
                 _qualifiedName = new URI(qn);
                 return _qualifiedName;
             }
@@ -250,13 +251,13 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_visualQualifiedName != null) return _visualQualifiedName;
 
-                var qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name))
                     {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
                         break;
@@ -264,7 +265,7 @@ namespace TypeCobol.Compiler.Nodes {
                         break;
                     parent = parent.Parent;
                 }
-
+                qn.Reverse();
                 _visualQualifiedName = new URI(qn);
                 return _visualQualifiedName;
             }
@@ -291,15 +292,15 @@ namespace TypeCobol.Compiler.Nodes {
 
 
 
-        private Node _root;
+        private SourceFile _root;
         /// <summary>First Node with null Parent among the parents of this Node.</summary>
-        public Node Root {
+        public SourceFile Root {
             get
             {
                 if (_root != null) return _root;
                 var current = this;
                 while (current.Parent != null) current = current.Parent;
-                _root = current;
+                _root = (SourceFile) current;
                 return _root;
             }
         }
@@ -441,7 +442,7 @@ namespace TypeCobol.Compiler.Nodes {
             var results = new List<T>();
             foreach (var child in children) {
                 var typedChild = child as T;
-                if (typedChild != null && name.Equals(child.Name, StringComparison.InvariantCultureIgnoreCase)) results.Add(typedChild);
+                if (typedChild != null && name.Equals(child.Name, StringComparison.OrdinalIgnoreCase)) results.Add(typedChild);
                 if (deep) results.AddRange(child.GetChildren<T>(name, true));
             }
             return results;
@@ -455,6 +456,22 @@ namespace TypeCobol.Compiler.Nodes {
             if (index < 0) children.Add(child);
             else children.Insert(index, child);
             child.Parent = this;
+        }
+
+        /// <summary>
+        /// Adds children to this node
+        /// </summary>
+        /// <param name="toAdd">children to be added</param>
+        /// <param name="index">children position</param>
+        public virtual void AddRange(IEnumerable<Node> toAdd, int index = -1)
+        {            
+            if (index < 0)
+                children.AddRange(toAdd);
+            else children.InsertRange(index, toAdd);
+            foreach (Node child in toAdd)
+            {
+                child.Parent = this;
+            }
         }
 
         /// <summary>
@@ -667,13 +684,30 @@ namespace TypeCobol.Compiler.Nodes {
         /// Search both dictionaries for a given StorageArea
         /// </summary>
         /// <param name="searchedStorageArea">StorageArea to search for</param>
+        /// <param name="isReadDataDefiniton">[Optional] True if storage area needs to be searched in StorageAreaReadsDataDefinition,
+        /// false if storage area needs to be searched in StorageAreaWritesDataDefinition.
+        /// If parameter is not present, the search is done in both dictionaries</param>
         /// <returns>Correpsonding DataDefinition</returns>
-        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea)
+        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
         {
             Tuple<string, DataDefinition> searchedElem = null;
-            StorageAreaReadsDataDefinition?.TryGetValue(
-                searchedStorageArea, out searchedElem);
-            if (searchedElem == null)
+            if (isReadDataDefiniton == null)
+            {
+                StorageAreaReadsDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+                if (searchedElem == null)
+                {
+                    StorageAreaWritesDataDefinition?.TryGetValue(
+                        searchedStorageArea, out searchedElem);
+                }
+            }
+            if (isReadDataDefiniton.HasValue&&isReadDataDefiniton.Value)
+            {
+                StorageAreaReadsDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+            }
+
+            if (isReadDataDefiniton.HasValue && !isReadDataDefiniton.Value)
             {
                 StorageAreaWritesDataDefinition?.TryGetValue(
                     searchedStorageArea, out searchedElem);
@@ -804,6 +838,8 @@ namespace TypeCobol.Compiler.Nodes {
                 return this.children.Where(c => c is Program && !((Program)c).IsNested).Select(c => c as Program);
             }
         }
+
+        public SourceProgram MainProgram { get; internal set; }
 
         public IEnumerable<Class> Classes
         {

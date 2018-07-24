@@ -63,14 +63,14 @@
        PROGRAM-ID. d58351d5testos.
        data division.
        working-storage section.
-       01 var1 pic X.
+       01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
+
        01 TC-Call          PIC X     VALUE 'T'.
            88 TC-FirstCall  VALUE 'T'.
            88 TC-NthCall    VALUE 'F'
                             X'00' thru 'S'
                             'U' thru X'FF'.
-       01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
-
+       01 var1 pic X.
        LINKAGE SECTION.
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.

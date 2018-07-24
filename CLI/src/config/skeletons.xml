@@ -350,7 +350,7 @@
       </pattern>
 
       <!-- CALLER WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
-      <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
+      <pattern location="program.data-division.working-storage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
         @{
         var items = "";
         foreach (var pgm in %imports.Programs.Values) {
@@ -368,7 +368,7 @@
       </pattern>
 
       <!-- CALLER LINKAGE SECTION WITHOUT EXTERNAL-->
-      <pattern location="program.data-division.linkage" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
+      <pattern location="program.data-division.linkage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
 *Common to all librairies used by the program.
 01 TC-Library-PntTab.
    05 TC-Library-PntNbr          PIC S9(04) COMP.

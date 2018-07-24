@@ -169,7 +169,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 // Document cleared
-                if (contentChange.range == null)
+                if (contentChange.range == null || contentChange.rangeLength == -1)
                 {
                     //JCM: I have noticed that if the entire text has changed, is better to reload the entire file
                     //To avoid crashes.
@@ -342,7 +342,7 @@ namespace TypeCobol.LanguageServer
 
         public override Hover OnHover(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[LSP] Hover", EventType.Completion);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Hover, "Hover event", LogType.Completion);
 
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
             if (fileCompiler == null)
@@ -406,7 +406,7 @@ namespace TypeCobol.LanguageServer
 
                 if (lastSignificantToken != null)
                 {
-                    AnalyticsWrapper.Telemetry.TrackEvent("[Completion] " + lastSignificantToken.TokenType, EventType.Completion);
+                    AnalyticsWrapper.Telemetry.TrackEvent(EventType.Completion, lastSignificantToken.TokenType.ToString(), LogType.Completion);
                     switch (lastSignificantToken.TokenType)
                     {
                         case TokenType.PERFORM:
@@ -547,7 +547,7 @@ namespace TypeCobol.LanguageServer
 
         public override Definition OnDefinition(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[Definition]", EventType.Completion); //Send event to analytics
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Definition, "Definition event", LogType.Completion); //Send event to analytics
             var defaultDefinition = new Definition(parameters.uri, new Range());
             Uri objUri = new Uri(parameters.uri);
             if (objUri.IsFile)
@@ -664,7 +664,7 @@ namespace TypeCobol.LanguageServer
 
         public override SignatureHelp OnSignatureHelp(TextDocumentPosition parameters)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[SignatureHelp]", EventType.Completion); //Send event to analytics
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.SignatureHelp, "Signature help event", LogType.Completion); //Send event to analytics
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
 
             if (fileCompiler?.CompilationResultsForProgram?.ProcessedTokensDocumentSnapshot == null) //Semantic snapshot is not available

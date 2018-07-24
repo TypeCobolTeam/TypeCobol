@@ -36,6 +36,7 @@ namespace TypeCobol.Compiler.CupCommon
             PseudoText,
             ControlCblCompilerStatement,
             DeleteCompilerStatement,
+            EnterCompilerStatement,
             /// <summary>
             /// No further scanning mode ==> return EOF.
             /// </summary>
@@ -63,6 +64,11 @@ namespace TypeCobol.Compiler.CupCommon
         public Token LastToken { get; private set; }
 
         /// <summary>
+        /// The Last stop symbol encountered.
+        /// </summary>
+        public Symbol LastStopSymbol { get; private set; }
+
+        /// <summary>
         /// Constructor à la TokensLinesIterator
         /// </summary>
         /// <param name="textName"></param>
@@ -85,6 +91,13 @@ namespace TypeCobol.Compiler.CupCommon
             return EOF;
         }
 
+        /// <summary>
+        /// Revert the Last token to be the first one
+        /// </summary>
+        public void RevertLastToken()
+        {
+            LastToken = PreviousToken();
+        }
         /// <summary>
         /// Is the Tokenizer in the Any Token Nmode ?
         /// </summary>
@@ -198,6 +211,24 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
+        /// Enter the Enter Compiler Statement scanning mode.
+        /// </summary>
+        public void EnterEnterCompilerStatementMode()
+        {
+            LeaveAnyTokenMode();
+            AnyTokenCategoryMode = AnyTokenCategory.EnterCompilerStatement;
+        }
+
+        /// <summary>
+        /// Leave the Enter Compiler Statement scanning mode.
+        /// </summary>
+        public void LeaveEnterCompilerStatementMode()
+        {
+            AnyTokenCategoryMode = AnyTokenCategory.None;
+            LeaveAnyTokenMode();
+        }
+
+        /// <summary>
         /// Leave the any token mode.
         /// </summary>
         public void LeaveAnyTokenMode()
@@ -218,12 +249,23 @@ namespace TypeCobol.Compiler.CupCommon
             if (nextToken != null && currentToken != null &&
                 nextToken.TokensLine == currentToken.TokensLine && nextToken.TokenType == nextTokenType)
             {
+                LastToken = nextToken;
                 return;//Consume it
             }
             else if (nextToken != null && currentToken != null)
             {//Rollback
                 base.PreviousToken();
             }
+        }
+
+        /// <summary>
+        /// Same as ConsumeNextTokenOnTheSameLine(..) but stop scanning afterward.
+        /// </summary>
+        /// <param name="nextTokenType"></param>
+        public void ConsumeNextTokenOnTheSameLineAndStop(TokenType nextTokenType)
+        {
+            ConsumeNextTokenOnTheSameLine(nextTokenType);
+            EnterStopScanningMode();
         }
 
         /// <summary>
@@ -279,19 +321,20 @@ namespace TypeCobol.Compiler.CupCommon
                     break;
                 case AnyTokenCategory.ControlCblCompilerStatement:
                 {
-                    if (token.TokenType == TokenType.UserDefinedWord || token.TokenType == TokenType.PeriodSeparator)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return (token.TokenType == TokenType.UserDefinedWord || token.TokenType == TokenType.PeriodSeparator);
+                }
+                case AnyTokenCategory.DeleteCompilerStatement:
+                {
+                    return token.TokenType == TokenType.IntegerLiteral;
+                }
+                case AnyTokenCategory.EnterCompilerStatement:
+                {
+                    return (token.TokenType == TokenType.UserDefinedWord || token.TokenType == TokenType.PeriodSeparator);
                 }
                 case AnyTokenCategory.StopScanningMode:
-                    {
-                        return false;
-                    }
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -313,7 +356,10 @@ namespace TypeCobol.Compiler.CupCommon
                 }
                 TUVienna.CS_CUP.Runtime.Symbol symbol = new TUVienna.CS_CUP.Runtime.Symbol(((int)token.TokenType) + CsCupStartToken - 1, token);
                 if (!HandleAnyTokenMode(token, symbol))
+                {
+                    LastStopSymbol = symbol;
                     break;
+                }
                 this.LastToken = token;
                 yield return symbol;
             }

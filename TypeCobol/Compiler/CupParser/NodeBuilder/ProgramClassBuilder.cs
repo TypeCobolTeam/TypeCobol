@@ -202,9 +202,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
         {
+            
             if (Program == null)
             {
-                Program = new SourceProgram(TableOfGlobals, programIdentification);
+                if (SyntaxTree.Root.MainProgram == null)
+                {
+                    SyntaxTree.Root.MainProgram = new SourceProgram(TableOfGlobals, programIdentification);
+                    Program = SyntaxTree.Root.MainProgram;
+                }
+                else
+                {
+                    Program = new StackedProgram(TableOfGlobals, programIdentification);                    
+                }
+                
                 programsStack = new Stack<Program>();
                 CurrentProgram = Program;
                 Enter(CurrentProgram, programIdentification, CurrentProgram.SymbolTable);
@@ -469,7 +479,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             _CurrentTypeDefinition = node;
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Declared] " + node.Name, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypeDeclared, node.Name, LogType.TypeCobolUsage);
         }
 
         public virtual void StartWorkingStorageSection(WorkingStorageSectionHeader header)
@@ -594,7 +604,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionDeclared, declaration.FunctionName.ToString(), LogType.TypeCobolUsage);
         }
 
         public virtual void EndFunctionDeclaration(FunctionDeclarationEnd end)

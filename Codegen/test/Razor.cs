@@ -128,7 +128,7 @@ namespace TypeCobol.Codegen.Config {
 */
 		private class RazorFactory {
 			public static Function Create(string name, string library = "TC-DEFAULT") {
-				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(library+"."+name),
+				return new Function(new TypeCobol.Compiler.CodeElements.Expressions.URI(new List<string>() {library, name}), 
 					new List<ParameterDescriptionEntry>() {
 						new RazorParameter(null),
 						new RazorParameter(null, 3),

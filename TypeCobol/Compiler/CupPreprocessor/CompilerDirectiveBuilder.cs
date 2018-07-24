@@ -216,9 +216,12 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        public virtual void EnterDeleteCompilerStatement(Token delToken)
+        public virtual void StartDeleteCompilerStatement()
         {
             CompilerDirective = new DeleteDirective();
+        }
+        public virtual void EnterDeleteCompilerStatement(Token delToken)
+        {            
         }
 
         public void EnterSequenceNumberField(List<Token> seqNumField)
@@ -263,15 +266,23 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        public void EnterEjectCompilerStatement(Token ejectToken)
+        public void StartEjectCompilerStatement()
         {
             CompilerDirective = new EjectDirective();
         }
 
-        public void EnterEnterCompilerStatement(Token enterToken, Token languageName, Token routineName)
+        public void EnterEjectCompilerStatement(Token ejectToken)
+        {            
+        }
+
+        public void StartEnterCompilerStatement()
         {
             EnterDirective enterDirective = new EnterDirective();
             CompilerDirective = enterDirective;
+        }
+        public void EnterEnterCompilerStatement(Token enterToken, Token languageName, Token routineName)
+        {
+            EnterDirective enterDirective = (EnterDirective)CompilerDirective;
             enterDirective.LanguageName = languageName.Text;
             if (routineName != null)
                 enterDirective.RoutineName = routineName.Text;

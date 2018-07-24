@@ -8,10 +8,7 @@ using System.IO;
 using System.Diagnostics;
 using System.DirectoryServices.AccountManagement;
 using System.Reflection;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using NLog;
-using Microsoft.ApplicationInsights.DataContracts;
 using System.Text;
 using System.Security.Cryptography;
 
@@ -33,12 +30,28 @@ namespace Analytics
     /// Type of Analytics event. This will allow AnalyticsWrapper 
     /// if the event has to send or not regarding to TelemetryVerboseLevel. 
     /// </summary>
-    public enum EventType
+    public enum LogType
     {
         Completion = 0,
         TypeCobolUsage = 1,
-        Diagnostics = 2,
-        Genration = 3,
+        Genration = 2
+    }
+
+    public enum EventType
+    {
+        Duration, 
+        Diagnostic,
+        ReturnCode,
+        Generation,
+        Hover,
+        Completion,
+        Definition,
+        SignatureHelp,
+        TypeDeclared,
+        FunctionDeclared,
+        TypedUsed,
+        FunctionCalled,
+        Exception,
     }
 
 
@@ -49,7 +62,7 @@ namespace Analytics
     {
         private static readonly Lazy<AnalyticsWrapper> _LazyAccess = new Lazy<AnalyticsWrapper>(() => new AnalyticsWrapper()); //Singleton pattern
        
-        private static TelemetryClient _TelemetryClient;
+        
         private Configuration _AppConfig;
         private string _TypeCobolVersion;
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -59,24 +72,20 @@ namespace Analytics
             try
             {
                 _AppConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location); //Load custom app.config for this assembly
-                var appKey = _AppConfig.AppSettings.Settings["AppInsightKey"].Value;//Get API Key CLI project config file
-                _TypeCobolVersion = _AppConfig.AppSettings.Settings["TypeCobolVersion"].Value; 
+                _TypeCobolVersion = _AppConfig.AppSettings.Settings["TypeCobolVersion"].Value;
 
-                // ----- Initiliaze AppInsights Telemetry Client -------//
-                _TelemetryClient = new TelemetryClient(new TelemetryConfiguration(appKey));
-                _TelemetryClient.Context.User.Id = CreateSHA256(Environment.UserName);
-                _TelemetryClient.Context.Session.Id = Guid.NewGuid().ToString();
-                _TelemetryClient.Context.Component.Version = _TypeCobolVersion;
-                _TelemetryClient.Context.Device.OperatingSystem = "N/A";
-                _TelemetryClient.Context.Location.Ip = "N/A";
-                _TelemetryClient.Context.Cloud.RoleInstance = "N/A";
-                _TelemetryClient.Context.Cloud.RoleName = "N/A";
-                _TelemetryClient.Context.Device.Type = "N/A";
-                // --------------------------------------- //
+                //Init base event, contains version, generated session id, user id.
+                _EventBase = new TelemetryEventBase()
+                {
+                    SessionId = Guid.NewGuid().ToString(),
+                    UserId = Environment.UserName,
+                    TypeCobolVersion = _TypeCobolVersion
+                };
             }
             catch (Exception e) { logger.Fatal(e); }
-
         }
+
+        private TelemetryEventBase _EventBase;
 
         /// <summary>
         /// Instance to use to track telemetry of the application
@@ -97,29 +106,41 @@ namespace Analytics
         /// <param name="eventName">Text name of the event</param>
         /// <param name="properties">Named string values you can use to search and classify events.</param>
         /// <param name="metrics">Measurements associated with this event.</param>
-        public void TrackEvent(string eventName, EventType eventType, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
+        public void TrackEvent(EventType eventType, string content, LogType logType)
         {
             try
             {
                 if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
+                
+                if ((TelemetryVerboseLevel == TelemetryVerboseLevel.Completion && logType == LogType.Completion)
+                    || (TelemetryVerboseLevel > TelemetryVerboseLevel.Completion && logType > LogType.Completion))
+                {
+                    ElasticTelemetry.Elastic.IndexEvent( new TelemetryEvent(_EventBase, eventType, content));
+                }
 
-                if((TelemetryVerboseLevel == TelemetryVerboseLevel.Completion && eventType == EventType.Completion) 
-                    || (TelemetryVerboseLevel > TelemetryVerboseLevel.Completion && eventType > EventType.Completion))
-                _TelemetryClient.TrackEvent(eventName, properties, metrics);
             }
             catch (Exception e) { logger.Fatal(e); }
         }
 
         /// <summary>
-        /// Track a log information. By default the severity level of a trace is set to Error. 
+        /// Track a new event with metrics data
         /// </summary>
-        /// <param name="logMessage">Text to log</param>
-        public void TrackTrace(string logMessage)
+        /// <param name="evenType"></param>
+        /// <param name="logType"></param>
+        /// <param name="metricName"></param>
+        /// <param name="metricValue"></param>
+        public void TrackMetricsEvent(EventType eventType, LogType logType, string metricName, double metricValue)
         {
             try
             {
                 if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
-                _TelemetryClient.TrackTrace(new TraceTelemetry(logMessage, SeverityLevel.Error));
+                
+                if ((TelemetryVerboseLevel == TelemetryVerboseLevel.Completion && logType == LogType.Completion)
+                    || (TelemetryVerboseLevel > TelemetryVerboseLevel.Completion && logType > LogType.Completion))
+                {
+                    ElasticTelemetry.Elastic.IndexEvent( new TelemetryMetricsEvent(_EventBase, eventType, metricName, metricValue));
+                }
+
             }
             catch (Exception e) { logger.Fatal(e); }
         }
@@ -133,24 +154,10 @@ namespace Analytics
             try
             {
                 if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
-                _TelemetryClient.TrackException(exception);
+                ElasticTelemetry.Elastic.IndexEvent( new TelemetryExceptionEvent(_EventBase, exception));
             }
             catch (Exception e) { logger.Fatal(e); }
         }
-
-        /// <summary>
-        /// Method to end the current Telemetry session. It will also force data sending to Application Insights.
-        /// </summary>
-        public void EndSession()
-        {
-            try
-            {
-                if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
-                _TelemetryClient.Flush();
-            }
-            catch (Exception e) { logger.Fatal(e); }
-        }
-
 
         public void SendMail(Exception exception, List<string> sourceFilePaths, List<string> CopyFolders, string config)
         {

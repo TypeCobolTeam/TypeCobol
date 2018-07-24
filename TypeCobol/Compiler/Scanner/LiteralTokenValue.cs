@@ -84,7 +84,26 @@ namespace TypeCobol.Compiler.Scanner
         {
             HasSign = !String.IsNullOrEmpty(sign);
             Number = Int64.Parse(number);
-            if(sign == "-")
+
+
+
+            if (sign == "-")
+            {
+                Number = -Number;
+            }
+        }
+
+        /// <summary>
+        /// Long number instead of string
+        /// </summary>
+        public IntegerLiteralTokenValue(string sign, long number) : base(LiteralTokenValueType.Integer)
+        {
+            HasSign = !String.IsNullOrEmpty(sign);
+            Number = number;
+
+
+
+            if (sign == "-")
             {
                 Number = -Number;
             }

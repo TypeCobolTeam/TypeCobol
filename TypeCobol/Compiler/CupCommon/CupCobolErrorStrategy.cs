@@ -55,6 +55,9 @@ namespace TypeCobol.Compiler.CupCommon
             {
                 input = (token = ((IToken)curToken.value)).Text;
             }
+            else
+            {//Look back the stack to find a valid token.
+            }
             List<string> expected = ExpectedSymbols(parser, stack, curToken);
             string msg = "";
             if (expected != null && expected.Count == 1)

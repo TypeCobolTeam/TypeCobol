@@ -51,6 +51,11 @@ namespace TypeCobol.Compiler.CupPreprocessor
             TypeCobol.Compiler.Scanner.Token suppress, PairTokenListList replacingOperands);
 
         /// <summary>
+        /// Start a Delete Compiler directive
+        /// </summary>
+        void StartDeleteCompilerStatement();
+
+        /// <summary>
         /// Enter a Delete Compiler directive
         /// </summary>
         /// <param name="delToken">The DELETE Token</param>
@@ -63,10 +68,20 @@ namespace TypeCobol.Compiler.CupPreprocessor
         void EnterSequenceNumberField(List<TypeCobol.Compiler.Scanner.Token> seqNumField);
 
         /// <summary>
+        /// Starts the EJECT Compiler Directive
+        /// </summary>
+        void StartEjectCompilerStatement();
+
+        /// <summary>
         /// Enter an EJECT Compiler Directive
         /// </summary>
         /// <param name="ejectToken"></param>
         void EnterEjectCompilerStatement(TypeCobol.Compiler.Scanner.Token ejectToken);
+
+        /// <summary>
+        /// Start an ENTER Compiler directive.
+        /// </summary>
+        void StartEnterCompilerStatement();
 
         /// <summary>
         /// Enter an ENTER Compiler directive.

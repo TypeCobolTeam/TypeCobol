@@ -833,7 +833,6 @@ functionProcedureDivisionOpt ::= /*empty*/
 	{:  :}
 	;
 
-// TCRFUN_DECLARATION_NO_DECLARATIVES
 functionProcedureDivision ::=
 	functionProcedureDivisionHeader 
 	{: my_parser.Builder.EndFunctionProcedureDivision(); :}
@@ -844,6 +843,7 @@ functionProcedureDivision ::=
 
 functionProcedureDivisionHeader ::= ProcedureDivisionHeader:pdh 
 	{: my_parser.Builder.StartFunctionProcedureDivision(pdh); :}
+	declarativesOpt
 	;
 
 declarativesOpt ::= /*empty*/
