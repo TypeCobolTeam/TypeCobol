@@ -247,7 +247,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void ProcedureCompletionInputInoutOutput()
         {
-            LSRTestHelper.Test("QualifiedNameCompletionWithFiller", LsrTestingOptions.NoLsrTesting, true);
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput", LsrTestingOptions.NoLsrTesting, true);
         }
 
 #if EUROINFO_RULES
