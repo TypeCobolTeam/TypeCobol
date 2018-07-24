@@ -36,6 +36,9 @@
 //Special Token introduced to represent ANY Token for CUP that does not support ~ operator
 terminal TypeCobol.Compiler.Scanner.Token CUP_ANY_TOKEN;
 
+//Special token for an END_EXEC followed by a Period Separator
+terminal TypeCobol.Compiler.Scanner.Token CUP_END_EXEC_PERIOD_SEPARATOR;
+
 // Separators - Whitespace
 terminal TypeCobol.Compiler.Scanner.Token SpaceSeparator;
 terminal TypeCobol.Compiler.Scanner.Token CommaSeparator;

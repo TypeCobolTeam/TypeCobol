@@ -18,14 +18,19 @@ namespace TypeCobol.Compiler.CupCommon
     {
         /// <summary>
         /// With CS CUP real toke start at 0, 0 is for EOF and 1 for error
-        /// and we have introduced the CUP_ANY_TOKEN token.
+        /// and we have introduced the CUP_ANY_TOKEN token and END_EXEC_PERIOD_SEPARATOR token.
         /// </summary>
-        public const int CsCupStartToken = 3;
+        public const int CsCupStartToken = 4;
         
         /// <summary>
-        /// The ID od the Any Token
+        /// The ID of the Any Token
         /// </summary>
         public const int ANY_TOKEN = 2;
+
+        /// <summary>
+        /// The ID of the CUP_END_EXEC_PERIOD_SEPARATOR
+        /// </summary>
+        public const int END_EXEC_PERIOD_SEPARATOR = 3;
 
         /// <summary>
         /// Any Token Category Modes
@@ -37,6 +42,8 @@ namespace TypeCobol.Compiler.CupCommon
             ControlCblCompilerStatement,
             DeleteCompilerStatement,
             EnterCompilerStatement,
+            InsertCompilerStatement,
+            ReadyOrResetTraceCompilerStatement,
             /// <summary>
             /// No further scanning mode ==> return EOF.
             /// </summary>
@@ -183,15 +190,6 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
-        /// Leave the ControlCblCompilerStatement mode.
-        /// </summary>
-        public void LeaveControlCblCompilerStatementMode()
-        {
-            AnyTokenCategoryMode = AnyTokenCategory.None;
-            LeaveAnyTokenMode();
-        }
-
-        /// <summary>
         /// Enter the Delete Compiler Statement mode: in this mode
         /// Only IntegerLiteral are recognized, otherwise we enter in the StopScanningMode.
         /// </summary>
@@ -199,15 +197,6 @@ namespace TypeCobol.Compiler.CupCommon
         {
             LeaveAnyTokenMode();
             AnyTokenCategoryMode = AnyTokenCategory.DeleteCompilerStatement;
-        }
-
-        /// <summary>
-        /// Leave the DeleteCompilerStatement mode.
-        /// </summary>
-        public void LeaveDeleteCompilerStatementMode()
-        {
-            AnyTokenCategoryMode = AnyTokenCategory.None;
-            LeaveAnyTokenMode();
         }
 
         /// <summary>
@@ -220,19 +209,33 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
-        /// Leave the Enter Compiler Statement scanning mode.
+        /// Enter the Insert Compiler Statement mode: in this mode
+        /// Only IntegerLiteral are recognized, otherwise we enter in the StopScanningMode.
         /// </summary>
-        public void LeaveEnterCompilerStatementMode()
+        public void EnterInsertCompilerStatementMode()
         {
-            AnyTokenCategoryMode = AnyTokenCategory.None;
             LeaveAnyTokenMode();
+            AnyTokenCategoryMode = AnyTokenCategory.InsertCompilerStatement;
+        }
+
+        /// <summary>
+        /// Enter the Ready or Reset Compiler Statement mode: in this mode
+        /// </summary>
+        public void EnterReadyOrResetTraceCompilerStatementMode()
+        {
+            LeaveAnyTokenMode();
+            AnyTokenCategoryMode = AnyTokenCategory.ReadyOrResetTraceCompilerStatement;
         }
 
         /// <summary>
         /// Leave the any token mode.
         /// </summary>
-        public void LeaveAnyTokenMode()
+        public void LeaveAnyTokenMode(bool bAllMode = false)
         {
+            if (bAllMode)
+            {
+                AnyTokenCategoryMode = AnyTokenCategory.None;
+            }
             IsAnyTokenMode = false;
         }
 
@@ -297,6 +300,28 @@ namespace TypeCobol.Compiler.CupCommon
         }
 
         /// <summary>
+        /// Try to match the next token with the given expected token
+        /// If match a resulting token is returned, otherwise a default token is returned.
+        /// </summary>
+        /// <param name="expected">The expected next token</param>
+        /// <param name="resulting">The resulting token if matching</param>
+        /// <param name="defaultToken">The defualt token if no matching</param>
+        /// <returns></returns>
+        private int TryMatchNextToken(TokenType expected, int resulting, int defaultToken)
+        {
+            Token nextToken = base.NextToken();
+            if (nextToken != null)
+            {
+                base.PreviousToken();
+                if (nextToken.TokenType == expected)
+                {                    
+                    return resulting;
+                }
+            }
+            return defaultToken;
+        }
+
+        /// <summary>
         /// Handle the any token mode.
         /// </summary>
         /// <param name="token"></param>
@@ -317,6 +342,10 @@ namespace TypeCobol.Compiler.CupCommon
                         {//Enter again in the any token mode
                             EnterAnyTokenMode(TokenType.PseudoTextDelimiter, TokenType.PseudoTextDelimiter, TokenType.COPY);
                         }
+                    if (token.TokenType == TokenType.END_EXEC && symbol.sym == TokenType2CupTokenType(TokenType.END_EXEC))
+                    {
+                        symbol.sym = TryMatchNextToken(TokenType.PeriodSeparator, END_EXEC_PERIOD_SEPARATOR, symbol.sym);
+                    }
                 }
                     break;
                 case AnyTokenCategory.ControlCblCompilerStatement:
@@ -327,10 +356,20 @@ namespace TypeCobol.Compiler.CupCommon
                 {
                     return token.TokenType == TokenType.IntegerLiteral;
                 }
+                case AnyTokenCategory.InsertCompilerStatement:
+                {   //Only one time
+                    EnterStopScanningMode();
+                    return token.TokenType == TokenType.IntegerLiteral;
+                }
                 case AnyTokenCategory.EnterCompilerStatement:
                 {
                     return (token.TokenType == TokenType.UserDefinedWord || token.TokenType == TokenType.PeriodSeparator);
                 }
+                case AnyTokenCategory.ReadyOrResetTraceCompilerStatement:
+                {
+                    return (token.TokenType == TokenType.TRACE || token.TokenType == TokenType.PeriodSeparator);
+                }
+                    break;
                 case AnyTokenCategory.StopScanningMode:
                 {
                     return false;
@@ -393,7 +432,7 @@ namespace TypeCobol.Compiler.CupCommon
         {
             if (bBaseAlso)
                 base.Reset();
-
+            LeaveAnyTokenMode(true);
             _symbolYielder = GetEnumerator();
         }
 

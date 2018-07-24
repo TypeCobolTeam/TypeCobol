@@ -266,6 +266,7 @@
     <Compile Include="Compiler\CupCommon\CupCobolErrorStrategy.cs" />
     <Compile Include="Compiler\CupCommon\CupParserDiagnostic.cs" />
     <Compile Include="Compiler\CupParser\CodeElementTokenizer.cs" />
+    <Compile Include="Compiler\CupParser\ICupParserErrorReporter.cs" />
     <Compile Include="Compiler\CupParser\NodeBuilder\CupParserTypeCobolProgramDiagnosticErrorReporter.cs" />
     <Compile Include="Compiler\CupParser\NodeBuilder\IProgramClassBuilder.cs" />
     <Compile Include="Compiler\CupParser\NodeBuilder\ProgramClassBuilder.cs" />

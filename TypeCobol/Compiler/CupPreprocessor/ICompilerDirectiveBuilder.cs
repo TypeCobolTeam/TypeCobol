@@ -98,11 +98,22 @@ namespace TypeCobol.Compiler.CupPreprocessor
         void EnterExecSqlIncludeStatement(TypeCobol.Compiler.Scanner.Token execToken);
 
         /// <summary>
-        /// Enter an Inser Compiler Directive
+        /// Start an Inser Compiler Directive
+        /// </summary>
+        void StartInsertCompilerStatement();
+
+        /// <summary>
+        /// Enter an Insert Compiler Directive
         /// </summary>
         /// <param name="insertToken"></param>
         /// <param name="sequenceNumber"></param>
         void EnterInsertCompilerStatement(TypeCobol.Compiler.Scanner.Token insertToken, TypeCobol.Compiler.Scanner.Token sequenceNumber);
+
+        /// <summary>
+        /// Starts a READY or RESET Compiler directive.
+        /// <param name="type">the Type READY or RESET</param>
+        /// </summary>
+        void StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType type);
 
         /// <summary>
         /// Enter a READY or RESET Compiler directive.

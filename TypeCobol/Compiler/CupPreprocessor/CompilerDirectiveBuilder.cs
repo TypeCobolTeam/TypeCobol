@@ -294,10 +294,15 @@ namespace TypeCobol.Compiler.CupPreprocessor
             CompilerDirective = copyDirective;
         }
 
-        public virtual void EnterInsertCompilerStatement(Token insertToken, Token sequenceNumber)
+        public void StartInsertCompilerStatement()
         {
             InsertDirective insertDirective = new InsertDirective();
             CompilerDirective = insertDirective;
+        }
+
+        public virtual void EnterInsertCompilerStatement(Token insertToken, Token sequenceNumber)
+        {
+            InsertDirective insertDirective = (InsertDirective)CompilerDirective;
 
             System.Diagnostics.Debug.Assert(sequenceNumber.TokenType == TokenType.IntegerLiteral);
 
@@ -313,9 +318,13 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        public virtual void EnterReadyOrResetTraceCompilerStatement(Token readyOrResetToken)
+        public void StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType type)
         {
-            CompilerDirective = new ReadyOrResetTraceDirective(readyOrResetToken.TokenType == TokenType.READY ? CompilerDirectiveType.READY_TRACE : CompilerDirectiveType.RESET_TRACE);
+            CompilerDirective = new ReadyOrResetTraceDirective(type);
+        }
+
+        public virtual void EnterReadyOrResetTraceCompilerStatement(Token readyOrResetToken)
+        {            
         }
 
         public virtual void EnterReplaceCompilerStatement(Token replaceTokn, Token offToken, PairTokenListList replacingOperands)

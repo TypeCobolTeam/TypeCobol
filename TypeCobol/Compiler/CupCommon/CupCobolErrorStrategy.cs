@@ -47,8 +47,32 @@ namespace TypeCobol.Compiler.CupCommon
             return true;
         }
 
+        /// <summary>
+        /// Get the first valid Symbol on the parser stack having a value.
+        /// </summary>
+        /// <param name="parser">The parser stack</param>
+        /// <param name="curToken">The current Symbol</param>
+        /// <returns>The first valid symbol if any, null otherwise</returns>
+        private static Symbol GetParserValidStackSymbol(lr_parser parser, Stack stack, Symbol curToken)
+        {
+            if (curToken.value != null)
+                return curToken;
+            //lookback in the stack to find a Symbol having a valid value.
+            Symbol lastValid = null;
+            foreach (Symbol s in stack)
+            {
+                if (s.value != null)
+                {
+                    lastValid = s;
+                }
+            }
+            return lastValid;
+        }
+
         public virtual bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
         {
+            ((CobolWordsTokenizer)parser.getScanner()).EnterStopScanningMode();
+            curToken = GetParserValidStackSymbol(parser, stack, curToken);
             string input = "<unknown input>";
             IToken token = null;
             if (curToken != null && curToken.value != null)

@@ -6,7 +6,6 @@ using TUVienna.CS_CUP.Runtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 
@@ -55,7 +54,7 @@ parser code {:
     object   info)
 	{
 		if(ErrorReporter != null) {
-			if (ErrorReporter.ReportFatalError(this, getParserStack(), message, info))
+			if (ErrorReporter.ReportFatalError(this, message, info))
 			{
 				return;
 			}
@@ -66,7 +65,7 @@ parser code {:
 	public override void report_error(string message, object info)
 	{
 		if(ErrorReporter != null) {
-			if (ErrorReporter.ReportError(this, getParserStack(), message, info))
+			if (ErrorReporter.ReportError(this, message, info))
 			{
 				return;
 			}
@@ -77,7 +76,7 @@ parser code {:
 	public override void syntax_error(Symbol cur_token)
 	{
 		if(ErrorReporter != null) {
-			if (ErrorReporter.SyntaxError(this, getParserStack(), cur_token))
+			if (ErrorReporter.SyntaxError(this, cur_token))
 			{
 				return;
 			}
@@ -88,7 +87,7 @@ parser code {:
 	public override void unrecovered_syntax_error(Symbol cur_token)
 	{
 		if(ErrorReporter != null) {
-			if (ErrorReporter.UnrecoveredSyntaxError(this, getParserStack(), cur_token))
+			if (ErrorReporter.UnrecoveredSyntaxError(this, cur_token))
 			{
 				return;
 			}

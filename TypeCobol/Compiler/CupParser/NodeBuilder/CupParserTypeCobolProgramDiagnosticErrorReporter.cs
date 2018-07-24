@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.CodeElements;
-using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Preprocessor;
 
@@ -37,12 +35,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             }
             Diagnostics.Add(diag);
         }
-        public bool ReportFatalError(lr_parser parser, Stack stack, string message, object info)
+        public bool ReportFatalError(lr_parser parser, string message, object info)
         {
             return true;
         }
 
-        public bool ReportError(lr_parser parser, Stack stack, string message, object info)
+        public bool ReportError(lr_parser parser, string message, object info)
         {
             return true;
         }
@@ -65,23 +63,48 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             TypeCobolProgramParser newParser = new TypeCobolProgramParser(newTokenizer);
             newParser.Builder = builder;
             newParser.ErrorReporter = errorReporter;
-            newParser.IsTrial = trial;            
+            newParser.IsTrial = trial;
             return newParser;
         }
 
-        public bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
+        /// <summary>
+        /// Get the first valid Symbol on the parser stack having a value.
+        /// </summary>
+        /// <param name="parser">The parser stack</param>
+        /// <param name="curToken">The current Symbol</param>
+        /// <returns>The first valid symbol if any, null otherwise</returns>
+        private static Symbol GetParserValidStackSymbol(lr_parser parser, Symbol curToken)
+        {
+            if (curToken.value != null)
+                return curToken;
+            //lookback in the stack to find a Symbol having a valid value.
+            System.Collections.Stack stack = ((TypeCobolProgramParser)parser).getParserStack();
+            Symbol lastValid = null;
+            foreach (Symbol s in stack)
+            {
+                if (s.value != null)
+                {
+                    lastValid = s;
+                }
+            }
+            return lastValid;
+        }
+
+        public bool SyntaxError(lr_parser parser, Symbol curToken)
         {
             TypeCobolProgramParser tcpParser = parser as TypeCobolProgramParser;
             if (tcpParser.IsTrial)
                 return true;
             List<string> expected = ExpectedSymbols(parser, curToken);
             string symName = CodeElementTokenizer.CupTokenToString(curToken.sym);
-            string text = (curToken.value as CodeElement).Text;
+            Symbol validSymbol = GetParserValidStackSymbol(parser, curToken);
+            string text = validSymbol != null ? (validSymbol.value as CodeElement).Text : "";
             string msg = string.Format("extraneous input '{0}' expecting {{{1}}}", text, string.Join(", ", expected));
             System.Diagnostics.Debug.WriteLine(msg);
-            CupParserDiagnostic diagnostic = new CupParserDiagnostic(msg, curToken, null);
+            CupParserDiagnostic diagnostic = new CupParserDiagnostic(msg, validSymbol, null);
             AddDiagnostic(diagnostic);
             //Try to add the last encountered statement in the stack if it is not already entered. 
+            System.Collections.Stack stack = tcpParser.getParserStack();
             object[] items = stack.ToArray();
             foreach (var item in items)
             {
@@ -97,7 +120,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             return true;
         }
 
-        public bool UnrecoveredSyntaxError(lr_parser parser, Stack stack, Symbol curToken)
+        public bool UnrecoveredSyntaxError(lr_parser parser, Symbol curToken)
         {
             return true;
         }
@@ -137,8 +160,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     public class CupParserDiagnostic : Diagnostic
     {
         public CupParserDiagnostic(string message, Symbol offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null) :
-            base(code, offendingSymbol == null ? -1 : (offendingSymbol.value as CodeElement).Column, 
-                offendingSymbol == null ? -1 : ((offendingSymbol.value as CodeElement).StopIndex < 0 ? -1 : ((offendingSymbol.value as CodeElement).StopIndex + 1)), 
+            base(code, (offendingSymbol == null || offendingSymbol.value == null) ? -1 : (offendingSymbol.value as CodeElement).Column,
+                offendingSymbol == null ? -1 : ((offendingSymbol.value as CodeElement).StopIndex < 0 ? -1 : ((offendingSymbol.value as CodeElement).StopIndex + 1)),
                 offendingSymbol == null ? -1 : (offendingSymbol.value as CodeElement).Line, message, exception)
         {
             OffendingSymbol = offendingSymbol;

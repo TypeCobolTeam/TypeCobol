@@ -86,6 +86,12 @@ libraryName ::= externalName5 : n
 	{: RESULT = n; :}
 	;
 
+in_of ::= IN:t
+{: RESULT = t; :}
+| OF:t
+{: RESULT = t; :}
+;
+
 qualifiedTextName ::= textName:n
 	{: RESULT = new QualifiedTextName(n); :}
 | textName:n in_of:t libraryName:ln

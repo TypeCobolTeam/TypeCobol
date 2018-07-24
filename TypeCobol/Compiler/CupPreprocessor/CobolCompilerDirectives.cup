@@ -154,6 +154,7 @@ non terminal skipCompilerStatement;
 non terminal titleCompilerStatement;
 
 non terminal codeElementStartingKeyword;
+non terminal end_exec;
 
 
 // A typical COBOL compiler has a pre-step where comments and compiler directing 
@@ -623,7 +624,8 @@ copyCompilerStatementBody ::= qualifiedTextName:name replacingCopyReplacingOpera
 
 replacingCopyReplacingOperandOpts ::= /* empty */
 	{: RESULT = null; :}
-| REPLACING copyReplacingOperands:operands
+| REPLACING {: ((CobolWordsTokenizer)my_parser.getScanner()).EnterPseudoTextAnyTokenMode(); :}
+	copyReplacingOperands:operands
 	{: RESULT = operands; :}
 ;
 
@@ -746,9 +748,8 @@ ejectCompilerStatement ::=
 // character must be alphabetic.
 
 enterCompilerStatement ::=
-	{: my_parser.Builder.StartEnterCompilerStatement(); :}
-	ENTER:e 
-	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterEnterCompilerStatementMode(); :}
+	{: my_parser.Builder.StartEnterCompilerStatement(); ((CobolWordsTokenizer)my_parser.getScanner()).EnterEnterCompilerStatementMode(); :}
+	ENTER:e 	
 	languageName:ln routineName:rn PeriodSeparator
 	{: my_parser.Builder.EnterEnterCompilerStatement(e, ln, rn); :}
 	;
@@ -808,12 +809,18 @@ execToken ::= EXEC:t
 	{: RESULT = t; :}
 ;
 
+end_exec ::= END_EXEC
+| CUP_END_EXEC_PERIOD_SEPARATOR
+;
+
 execSqlIncludeStatement ::= execToken:t 
 	{: my_parser.Builder.EnterExecSqlIncludeStatement(t); :}
 	ExecTranslatorName	
     EXEC_SQL
     copyCompilerStatementBody
-    END_EXEC PeriodSeparator
+    end_exec
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); :}
+	PeriodSeparator
 	;
 
 // p540: INSERT statement
@@ -844,7 +851,12 @@ execSqlIncludeStatement ::= execToken:t
 // these sequence numbers must occur in ascending order.
 
 insertCompilerStatement ::=
-    /* sequenceNumber? */ INSERT:tins sequenceNumber:sn
+	{: 
+		my_parser.Builder.StartInsertCompilerStatement(); 
+		((CobolWordsTokenizer)my_parser.getScanner()).EnterInsertCompilerStatementMode(); 
+	:}
+    /* sequenceNumber? */ INSERT:tins 
+	sequenceNumber:sn
 	{: my_parser.Builder.EnterInsertCompilerStatement(tins,sn); :}
 	;
 
@@ -864,14 +876,20 @@ sequenceNumber ::= IntegerLiteral:il
 // declarative as described in Example: USE FOR DEBUGGING in the Enterprise
 // COBOL Programming Guide.
 
-readyOrReset ::= READY : t
+readyOrReset ::= {: my_parser.Builder.StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType.READY_TRACE);  :} 
+	READY : t
 	{: RESULT = t; :}
-| RESET : t
+| {: my_parser.Builder.StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType.RESET_TRACE);  :}  
+	RESET : t
 	{: RESULT = t; :}
 ;
 
-readyOrResetTraceCompilerStatement ::= readyOrReset:rt TRACE PeriodSeparator
-{: my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); :}
+readyOrResetTraceCompilerStatement ::= 
+	{: 		
+		((CobolWordsTokenizer)my_parser.getScanner()).EnterReadyOrResetTraceCompilerStatementMode();
+	:}
+	readyOrReset:rt TRACE PeriodSeparator
+	{: my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); :}
 	;
 
 	// p541: REPLACE statement
