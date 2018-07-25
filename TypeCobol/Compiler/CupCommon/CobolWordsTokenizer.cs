@@ -103,8 +103,16 @@ namespace TypeCobol.Compiler.CupCommon
         /// </summary>
         public void RevertLastToken()
         {
-            LastToken = PreviousToken();
+            if (LastToken == null)
+                return;
+            if (LastToken.TokenType == TokenType.PeriodSeparator)
+                return;
+            Token prevToken = PreviousToken();
+            if (prevToken == null)
+                return;            
+            LastToken = prevToken;
         }
+
         /// <summary>
         /// Is the Tokenizer in the Any Token Nmode ?
         /// </summary>
@@ -367,9 +375,12 @@ namespace TypeCobol.Compiler.CupCommon
                 }
                 case AnyTokenCategory.ReadyOrResetTraceCompilerStatement:
                 {
-                    return (token.TokenType == TokenType.TRACE || token.TokenType == TokenType.PeriodSeparator);
-                }
-                    break;
+                    if (token.TokenType == TokenType.PeriodSeparator)
+                    {
+                            EnterStopScanningMode();
+                    }
+                    return true;
+                }                    
                 case AnyTokenCategory.StopScanningMode:
                 {
                     return false;

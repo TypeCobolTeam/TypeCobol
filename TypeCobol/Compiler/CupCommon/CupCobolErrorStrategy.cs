@@ -71,7 +71,6 @@ namespace TypeCobol.Compiler.CupCommon
 
         public virtual bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
         {
-            ((CobolWordsTokenizer)parser.getScanner()).EnterStopScanningMode();
             curToken = GetParserValidStackSymbol(parser, stack, curToken);
             string input = "<unknown input>";
             IToken token = null;
@@ -84,10 +83,10 @@ namespace TypeCobol.Compiler.CupCommon
             }
             List<string> expected = ExpectedSymbols(parser, stack, curToken);
             string msg = "";
-            if (expected != null && expected.Count == 1)
+            if (expected != null && expected.Count >= 1)
             {
                 msg = "mismatched input " + GetTokenErrorDisplay(curToken != null ? (IToken)curToken.value : null) + 
-                    " expecting " + expected[0];
+                    " expecting " + (expected.Count == 1 ? expected[0] : (" expecting {" + string.Join(", ", expected) + "}")); 
             }
             else
             {

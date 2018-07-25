@@ -266,7 +266,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        public void StartEjectCompilerStatement()
+        public virtual void StartEjectCompilerStatement()
         {
             CompilerDirective = new EjectDirective();
         }
@@ -275,7 +275,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
         {            
         }
 
-        public void StartEnterCompilerStatement()
+        public virtual void StartEnterCompilerStatement()
         {
             EnterDirective enterDirective = new EnterDirective();
             CompilerDirective = enterDirective;
@@ -294,7 +294,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             CompilerDirective = copyDirective;
         }
 
-        public void StartInsertCompilerStatement()
+        public virtual void StartInsertCompilerStatement()
         {
             InsertDirective insertDirective = new InsertDirective();
             CompilerDirective = insertDirective;
@@ -318,7 +318,7 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        public void StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType type)
+        public virtual void StartReadyOrResetTraceCompilerStatement(CompilerDirectiveType type)
         {
             CompilerDirective = new ReadyOrResetTraceDirective(type);
         }
@@ -327,10 +327,14 @@ namespace TypeCobol.Compiler.CupPreprocessor
         {            
         }
 
+        public virtual void StartReplaceCompilerStatement(CompilerDirectiveType type)
+        {
+            ReplaceDirective replaceDirective = new ReplaceDirective(type);
+            CompilerDirective = replaceDirective;
+        }
         public virtual void EnterReplaceCompilerStatement(Token replaceTokn, Token offToken, PairTokenListList replacingOperands)
         {
-            ReplaceDirective replaceDirective = new ReplaceDirective(offToken == null ? CompilerDirectiveType.REPLACE : CompilerDirectiveType.REPLACE_OFF);
-            CompilerDirective = replaceDirective;
+            ReplaceDirective replaceDirective = (ReplaceDirective)CompilerDirective;            
 
             if (replacingOperands != null)
             {
@@ -354,15 +358,29 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
-        public virtual void EnterServiceLabelCompilerStatement(Token serviceToken, Token labelToken)
+        public virtual void StartServiceLabelCompilerStatement()
         {
             CompilerDirective = new ServiceLabelDirective();
         }
 
-        public virtual void EnterServiceReloadCompilerStatement(Token serviceToken, Token reloadToken, Token userDefinedWord)
+        public virtual void EnterServiceLabelCompilerStatement(Token serviceToken, Token labelToken)
+        {            
+        }
+
+        public virtual void StartServiceReloadCompilerStatement(Token serviceToken, Token reloadToken,
+            Token userDefinedWord)
+        {
+        }
+
+        public virtual void StartServiceReloadCompilerStatement()
         {
             ServiceReloadDirective serviceReloadDirective = new ServiceReloadDirective();
             CompilerDirective = serviceReloadDirective;
+        }
+
+        public virtual void EnterServiceReloadCompilerStatement(Token serviceToken, Token reloadToken, Token userDefinedWord)
+        {
+            ServiceReloadDirective serviceReloadDirective =  (ServiceReloadDirective)CompilerDirective;
 
             serviceReloadDirective.UserDefinedWord = userDefinedWord.Text;
         }

@@ -421,7 +421,7 @@ namespace TypeCobol.Compiler.Preprocessor
                 Token.CHANNEL_SourceTokens);
 
             // Init a CUP compiler directive parser
-            CupCobolErrorStrategy cupCobolErrorStrategy = new CupCobolErrorStrategy();
+            CupCobolErrorStrategy cupCobolErrorStrategy = new CupPreprocessor.CompilerDirectiveErrorStrategy();
 
             // Prepare to analyze the parse tree            
             TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder directiveBuilder = new TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder(compilerOptions, copyTextNameVariations);

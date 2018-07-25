@@ -275,6 +275,7 @@
     <Compile Include="Compiler\CupPreprocessor\CobolCompilerDirectivesParser.cs" />
     <Compile Include="Compiler\CupPreprocessor\CobolCompilerDirectivesSymbols.cs" />
     <Compile Include="Compiler\CupPreprocessor\CompilerDirectiveBuilder.cs" />
+    <Compile Include="Compiler\CupPreprocessor\CompilerDirectiveErrorStrategy.cs" />
     <Compile Include="Compiler\CupPreprocessor\ICompilerDirectiveBuilder.cs" />
     <Compile Include="Compiler\Diagnostics\Cobol2002Checker.cs" />
     <Compile Include="Compiler\Diagnostics\CodeElementCheckers.cs" />

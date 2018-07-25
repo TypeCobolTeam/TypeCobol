@@ -922,21 +922,22 @@ readyOrResetTraceCompilerStatement ::=
 // contain a REPLACE statement.
 // ... more rules on REPLACE behavior p542 -> p544
 
-replaceToken ::= REPLACE:r 
+replaceToken ::= {: my_parser.Builder.StartReplaceCompilerStatement(CompilerDirectiveType.REPLACE); :} REPLACE:r 
 	{: 
 		((CobolWordsTokenizer)my_parser.getScanner()).EnterPseudoTextAnyTokenMode();
 		RESULT = r;
 	:}
 	;
 
-replaceCompilerStatement ::= replaceToken:r pseudoTextReplaces:replaces 
-	{: 
-		((CobolWordsTokenizer)my_parser.getScanner()).LeavePseudoTextAnyTokenMode(); 
+replaceCompilerStatement ::= replaceToken:r 
+	pseudoTextReplaces:replaces 
+	{: 		
 		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode();
 	:}
 	PeriodSeparator
 	{: my_parser.Builder.EnterReplaceCompilerStatement(r, null, replaces); :}
 | replaceToken:r 
+	{: my_parser.Builder.StartReplaceCompilerStatement(CompilerDirectiveType.REPLACE_OFF); :}
 	OFF:o 
 	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); :}
 	PeriodSeparator
@@ -956,14 +957,24 @@ pseudoTextReplaces ::= pseudoText:from BY pseudoText:by
 // For more information about CEE3SRP, see the Language Environment Programming Guide.
 // The SERVICE LABEL statement can appear only in the PROCEDURE DIVISION, but not in the declaratives section.        
 
-serviceLabelCompilerStatement ::= SERVICE_CD:s LABEL:l
+serviceLabelCompilerStatement ::= 
+	SERVICE_CD:s 
+	{: 
+		my_parser.Builder.StartServiceLabelCompilerStatement();
+		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
+	:}
+	LABEL:l
 	{: my_parser.Builder.EnterServiceLabelCompilerStatement(s, l); :}
 	;
 
 // p545: SERVICE RELOAD statement
 // The SERVICE RELOAD statement is syntax checked, but has no effect on the execution of the program.
 
-serviceReloadCompilerStatement ::= SERVICE_CD:s RELOAD:l UserDefinedWord:w
+serviceReloadCompilerStatement ::= SERVICE_CD:s 
+	{: my_parser.Builder.StartServiceReloadCompilerStatement(); :}
+	RELOAD:l 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); :}
+	UserDefinedWord:w
 	{: my_parser.Builder.EnterServiceReloadCompilerStatement(s, l, w); :}
 	;
 

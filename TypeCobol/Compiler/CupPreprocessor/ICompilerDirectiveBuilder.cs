@@ -122,6 +122,12 @@ namespace TypeCobol.Compiler.CupPreprocessor
         void EnterReadyOrResetTraceCompilerStatement(TypeCobol.Compiler.Scanner.Token readyOrResetToken);
 
         /// <summary>
+        /// Start a replace compiler directive.
+        /// </summary>
+        /// <param name="type"></param>
+        void StartReplaceCompilerStatement(CompilerDirectiveType type);
+
+        /// <summary>
         /// Enter a replace compiler directive.
         /// </summary>
         /// <param name="replaceTokn"></param>
@@ -131,11 +137,21 @@ namespace TypeCobol.Compiler.CupPreprocessor
             TypeCobol.Compiler.Scanner.Token offToken, PairTokenListList replacingOperands);
 
         /// <summary>
+        /// Start a SERVICE LABEL compiler directive.
+        /// </summary>
+        void StartServiceLabelCompilerStatement();
+
+        /// <summary>
         /// Enter a SERVICE LABEL compiler directive
         /// </summary>
         /// <param name="serviceToken"></param>
         /// <param name="labelToken"></param>
         void EnterServiceLabelCompilerStatement(TypeCobol.Compiler.Scanner.Token serviceToken, TypeCobol.Compiler.Scanner.Token labelToken);
+
+        /// <summary>
+        /// Start a SERVICE RELOAD compiler directive.
+        /// </summary>
+        void StartServiceReloadCompilerStatement();
 
         /// <summary>
         /// Enter a SERVICE RELOAD compiler directive.
