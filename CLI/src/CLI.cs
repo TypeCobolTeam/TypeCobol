@@ -291,7 +291,6 @@ namespace TypeCobol.Server
                     }
                 }
                 if (config.ExecToStep >= ExecutionStep.Generate) {
-                    var streamWriter = new StreamWriter(config.OutputFiles[c]);
                     try
                     {
                         //Load skeletons if necessary
@@ -321,10 +320,37 @@ namespace TypeCobol.Server
                             //Make ParsingException trace back to RunOnce()
                         }
 
-                        
-                        streamWriter.Write(sb); //Write generated Cobol inside file
-                        streamWriter.Flush();
-                        streamWriter.Close();                                          
+                        var outputDirectory= new FileInfo(config.OutputFiles[c]).Directory;
+                        var lockFilePath = outputDirectory.FullName + Path.DirectorySeparatorChar + "~.lock";
+                        if (File.Exists(lockFilePath))
+                        {
+                            errorWriter.AddErrors(path, new Diagnostic(MessageCode.GenerationFailled, 0, 0, 0));
+                            
+                        }
+                        else
+                        {
+                            var lockWriter = new StreamWriter(lockFilePath);
+                            lockWriter.Flush();
+                            lockWriter.Close();
+
+                            using (var streamWriter = new StreamWriter(config.OutputFiles[c]))
+                            {
+                                try
+                                {
+                                    streamWriter.Write(sb); //Write generated Cobol inside file
+                                    streamWriter.Flush();
+                                }
+                                catch (Exception)
+                                {
+                                    throw;
+                                }
+                                finally
+                                {
+                                    File.Delete(lockFilePath); //Remove lock to allow watchers to read the file
+                                    streamWriter.Close();     
+                                }
+                            }
+                        }
                     }
                     catch (PresenceOfDiagnostics)
                     {
