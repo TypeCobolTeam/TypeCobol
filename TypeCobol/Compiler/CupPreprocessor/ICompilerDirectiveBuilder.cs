@@ -24,6 +24,12 @@ namespace TypeCobol.Compiler.CupPreprocessor
         void EnterBasisCompilerStatement(TypeCobol.Compiler.Scanner.Token textName);
 
         /// <summary>
+        /// Enter a CONTROL CBL Option.
+        /// </summary>
+        /// <param name="optionToken"></param>
+        void EnterControlCblOption(TypeCobol.Compiler.Scanner.Token optionToken);
+
+        /// <summary>
         /// Start an Asterisk Control or Cbl Compiler Statement option.
         /// </summary>
         /// <param name="type"></param>
@@ -163,10 +169,21 @@ namespace TypeCobol.Compiler.CupPreprocessor
             TypeCobol.Compiler.Scanner.Token reloadToken, TypeCobol.Compiler.Scanner.Token userDefinedWord);
 
         /// <summary>
+        /// StartSKIP compiler directive
+        /// <param name="type">The SKIP token type</param>
+        /// </summary>
+        void StartSkipCompilerStatement(CompilerDirectiveType type);
+
+        /// <summary>
         /// Enter a SKIP compiler directive.
         /// </summary>
         /// <param name="skipTolen"></param>
         void EnterSkipCompilerStatement(TypeCobol.Compiler.Scanner.Token skipTolen);
+
+        /// <summary>
+        /// Start TITLE compiler directive
+        /// </summary>
+        void StartTitleCompilerStatement();
 
         /// <summary>
         /// Enter TITLE compiler directive

@@ -53,20 +53,36 @@ namespace TypeCobol.Compiler.CupCommon
         /// <param name="parser">The parser stack</param>
         /// <param name="curToken">The current Symbol</param>
         /// <returns>The first valid symbol if any, null otherwise</returns>
-        private static Symbol GetParserValidStackSymbol(lr_parser parser, Stack stack, Symbol curToken)
+        protected virtual Symbol GetParserValidStackSymbol(lr_parser parser, Stack stack, Symbol curToken)
         {
-            if (curToken.value != null)
+            if (curToken != null && curToken.value != null)
                 return curToken;
             //lookback in the stack to find a Symbol having a valid value.
             Symbol lastValid = null;
             foreach (Symbol s in stack)
-            {
+            {//The first one will be the top of the stack wil be the last symbol encountered
                 if (s.value != null)
                 {
                     lastValid = s;
+                    break;
                 }
             }
             return lastValid;
+        }
+
+        /// <summary>
+        /// Determines if the given token has been consumed. A token is consumed if it is
+        /// present on the parser stack.
+        /// </summary>
+        /// <param name="parser">The parser</param>
+        /// <param name="stack">The parser stack</param>
+        /// <param name="curToken">The Token to check</param>
+        /// <returns>true if the token is consumed, false otherwise</returns>
+        public bool IsTokenConsumed(lr_parser parser, Stack stack, Symbol curToken)
+        {
+            if (curToken?.value == null)
+                return false;
+            return stack.Contains(curToken);
         }
 
         public virtual bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
@@ -76,7 +92,7 @@ namespace TypeCobol.Compiler.CupCommon
             IToken token = null;
             if (curToken != null && curToken.value != null)
             {
-                input = (token = ((IToken)curToken.value)).Text;
+                input = GetTokenErrorDisplay(token = ((IToken)curToken.value));
             }
             else
             {//Look back the stack to find a valid token.
@@ -85,12 +101,21 @@ namespace TypeCobol.Compiler.CupCommon
             string msg = "";
             if (expected != null && expected.Count >= 1)
             {
-                msg = "mismatched input " + GetTokenErrorDisplay(curToken != null ? (IToken)curToken.value : null) + 
-                    " expecting " + (expected.Count == 1 ? expected[0] : (" expecting {" + string.Join(", ", expected) + "}")); 
+                if (IsTokenConsumed(parser, stack, curToken))
+                {
+                    msg = "missing " +  (expected.Count == 1 ? expected[0] : (" {" + string.Join(", ", expected) + "}"))
+                        + " at " + input;
+                }
+                else
+                {
+                    msg = "mismatched input " + input +
+                          " expecting " +
+                          (expected.Count == 1 ? expected[0] : (" expecting {" + string.Join(", ", expected) + "}"));
+                }
             }
             else
             {
-                msg = "no viable alternative at input " + EscapeWSAndQuote(input);
+                msg = "no viable alternative at input " + input;
             }
             CupParserDiagnostic diag = new CupParserDiagnostic(msg, token,null);
             AddDiagnostic(diag);            

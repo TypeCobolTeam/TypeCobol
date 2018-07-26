@@ -51,6 +51,25 @@ namespace TypeCobol.Compiler.CupPreprocessor
             }
         }
 
+        public virtual void EnterControlCblOption(Token optionToken)
+        {
+            string option = optionToken.Text;
+            ControlCblDirective.ControlCblOption optionValue;
+            if (Enum.TryParse<ControlCblDirective.ControlCblOption>(option, out optionValue))
+            {
+                ((ControlCblDirective)CompilerDirective).OptionsList.Add(optionValue);
+            }
+            else
+            {
+                Token errorToken = optionToken;
+                Diagnostic diag = new Diagnostic(
+                    MessageCode.InvalidControlCblCompilerStatementOption,
+                    errorToken.Column, errorToken.EndColumn,
+                    errorToken.Line, option);
+                CompilerDirective.AddDiagnostic(diag);
+            }
+        }
+
         public virtual void StartControlCblCompilerStatement(CompilerDirectiveType type)
         {
             CompilerDirective = new ControlCblDirective(type);
@@ -385,26 +404,27 @@ namespace TypeCobol.Compiler.CupPreprocessor
             serviceReloadDirective.UserDefinedWord = userDefinedWord.Text;
         }
 
+        public virtual void StartSkipCompilerStatement(CompilerDirectiveType type)
+        {
+            System.Diagnostics.Debug.Assert(type == CompilerDirectiveType.SKIP1 || 
+                type == CompilerDirectiveType.SKIP2 ||
+                type == CompilerDirectiveType.SKIP3);
+            CompilerDirective = new SkipDirective(type);
+        }
+
         public virtual void EnterSkipCompilerStatement(Token skipTolen)
         {
-            switch (skipTolen.TokenType)
-            {
-                case TokenType.SKIP1:
-                    CompilerDirective = new SkipDirective(CompilerDirectiveType.SKIP1);
-                    break;
-                case TokenType.SKIP2:
-                    CompilerDirective = new SkipDirective(CompilerDirectiveType.SKIP2);
-                    break;
-                case TokenType.SKIP3:
-                    CompilerDirective = new SkipDirective(CompilerDirectiveType.SKIP3);
-                    break;
-            }
+        }
+
+        public virtual void StartTitleCompilerStatement()
+        {
+            TitleDirective titleDirective = new TitleDirective();
+            CompilerDirective = titleDirective;
         }
 
         public virtual void EnterTitleCompilerStatement(Token titleToken, Token titleLiteral)
         {
-            TitleDirective titleDirective = new TitleDirective();
-            CompilerDirective = titleDirective;
+            TitleDirective titleDirective = (TitleDirective)CompilerDirective;
 
             System.Diagnostics.Debug.Assert(titleLiteral.TokenFamily == TokenFamily.AlphanumericLiteral);
             string title = ((AlphanumericLiteralTokenValue)titleLiteral.LiteralValue).Text;

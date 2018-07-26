@@ -123,7 +123,7 @@ non terminal TokenList pseudoText;
 non terminal pseudoTextDelimiter;
 
 non terminal deleteCompilerStatement;
-non terminal TokenList sequenceNumberField;
+non terminal TokenList deleteSequenceNumberField;
 
 non terminal ejectCompilerStatement;
 
@@ -155,6 +155,7 @@ non terminal titleCompilerStatement;
 
 non terminal codeElementStartingKeyword;
 non terminal end_exec;
+non terminal replacing_by;
 
 
 // A typical COBOL compiler has a pre-step where comments and compiler directing 
@@ -212,13 +213,6 @@ compilerDirectingStatement ::= basisCompilerStatement
 		| serviceReloadCompilerStatement 
 		| skipCompilerStatement 
 		| titleCompilerStatement
-		/*
-		| error LevelNumber
-		| error SectionParagraphName
-		| error PeriodSeparator
-		| error compilerDirectingStatement
-		| error codeElementStartingKeyword
-		*/
 		;
 
 // p527: BASIS statement 
@@ -301,11 +295,14 @@ compilerOptions ::= compilerOption
 ;
 
 skipAnyTokens ::= /*empty*/
+| CUP_ANY_TOKEN
 | skipAnyTokens CUP_ANY_TOKEN
 ;
 
 anyTokens ::= /*empty*/
 	{: RESULT = new TokenList(); :}
+| CUP_ANY_TOKEN:t
+	{: RESULT = new TokenList(); RESULT.Add(t); :}
 | anyTokens:tokens CUP_ANY_TOKEN:t
 	{: tokens.Add(t); RESULT = tokens; :}
 ;
@@ -325,8 +322,9 @@ anyTokens ::= /*empty*/
 // NB : this rule is matched by the Scanner
 // => the approximate grammar below is never used by the directive parser
 compilerOption ::= UserDefinedWord
-|	UserDefinedWord LeftParenthesisSeparator 
+|	UserDefinedWord 
 	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterAnyTokenMode(TokenType.RightParenthesisSeparator); :} 
+	LeftParenthesisSeparator 	
 	skipAnyTokens
 	RightParenthesisSeparator
 ;
@@ -404,8 +402,10 @@ compilerOption ::= UserDefinedWord
 // 02 B 02 B
 // *CONTROL MAP *CBL MAP
 
-controlCblOptions ::= controlCblOption
-| controlCblOptions controlCblOption
+controlCblOptions ::= controlCblOption:o
+	{: my_parser.Builder.EnterControlCblOption(o); :}
+| controlCblOptions controlCblOption:o
+	{: my_parser.Builder.EnterControlCblOption(o); :}
 ;
 
 asteriskControlCbl ::= 
@@ -624,24 +624,31 @@ copyCompilerStatementBody ::= qualifiedTextName:name replacingCopyReplacingOpera
 
 replacingCopyReplacingOperandOpts ::= /* empty */
 	{: RESULT = null; :}
-| REPLACING {: ((CobolWordsTokenizer)my_parser.getScanner()).EnterPseudoTextAnyTokenMode(); :}
+| {: ((CobolWordsTokenizer)my_parser.getScanner()).CheckLiteralOrUserDefinedWordOReservedWordExceptCopy = true; :}
+	REPLACING 
 	copyReplacingOperands:operands
 	{: RESULT = operands; :}
 ;
 
-copyReplacingOperands ::= copyReplacingOperand:from BY copyReplacingOperand:by
+replacing_by ::= BY
+| CUP_PSEUDO_TEXT_DELIMITER_BY
+;
+
+copyReplacingOperands ::= 
+	 copyReplacingOperand:from replacing_by copyReplacingOperand:by
 	{: RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(from,by)}; :}
-| copyReplacingOperands:operands copyReplacingOperand:from BY copyReplacingOperand:by
+| copyReplacingOperands:operands copyReplacingOperand:from replacing_by copyReplacingOperand:by
 	{: operands.Add(new Tuple<List<Token>, List<Token>>(from,by)); RESULT = operands; :}
 ;
 
 copyReplacingOperand ::= pseudoText:tokens
 	{: RESULT = tokens; :}
-| literalOrUserDefinedWordOReservedWordExceptCopy:t
+| CUP_LiteralOrUserDefinedWordOReservedWordExceptCopy:t
 	{: RESULT = new TokenList(){t}; :}
 ;
 
 pseudoText ::= 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterPseudoTextAnyTokenMode(); :}
 	PseudoTextDelimiter
 	anyTokens:tokens
 	PseudoTextDelimiter
@@ -691,8 +698,8 @@ pseudoText ::=
 deleteCompilerStatement ::=
 	{: my_parser.Builder.StartDeleteCompilerStatement();  :}
     /* sequenceNumber? */ DELETE_CD:t 
-	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterDeleteCompilerStatementMode();  :}
-	sequenceNumberField:fields
+	/*{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterDeleteCompilerStatementMode();  :}*/
+	deleteSequenceNumberField:fields
 	{: my_parser.Builder.EnterDeleteCompilerStatement(t); my_parser.Builder.EnterSequenceNumberField(fields); :}
 	;
 
@@ -703,10 +710,13 @@ deleteCompilerStatement ::=
 // Implementation detail 3 : the spec constraint below
 // Each entry in the sequence-number-field must be separated from the preceding entry 
 // by a comma >>> followed by a space <<<.
-sequenceNumberField ::=
+deleteSequenceNumberField ::=
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral); :} 
 	IntegerLiteral:il
 	{: RESULT = new TokenList() {il}; :}
-|	sequenceNumberField:snf IntegerLiteral:il
+|	deleteSequenceNumberField:snf 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral); :} 
+	IntegerLiteral:il
 	{: snf.Add(il); RESULT = snf; :}
 ;
 
@@ -748,9 +758,11 @@ ejectCompilerStatement ::=
 // character must be alphabetic.
 
 enterCompilerStatement ::=
-	{: my_parser.Builder.StartEnterCompilerStatement(); ((CobolWordsTokenizer)my_parser.getScanner()).EnterEnterCompilerStatementMode(); :}
+	{: my_parser.Builder.StartEnterCompilerStatement(); :}
 	ENTER:e 	
-	languageName:ln routineName:rn PeriodSeparator
+	languageName:ln routineName:rn 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); :}
+	PeriodSeparator
 	{: my_parser.Builder.EnterEnterCompilerStatement(e, ln, rn); :}
 	;
 
@@ -852,10 +864,10 @@ execSqlIncludeStatement ::= execToken:t
 
 insertCompilerStatement ::=
 	{: 
-		my_parser.Builder.StartInsertCompilerStatement(); 
-		((CobolWordsTokenizer)my_parser.getScanner()).EnterInsertCompilerStatementMode(); 
-	:}
-    /* sequenceNumber? */ INSERT:tins 
+		my_parser.Builder.StartInsertCompilerStatement(); 		
+	:}    
+	INSERT:tins 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); :}
 	sequenceNumber:sn
 	{: my_parser.Builder.EnterInsertCompilerStatement(tins,sn); :}
 	;
@@ -885,10 +897,9 @@ readyOrReset ::= {: my_parser.Builder.StartReadyOrResetTraceCompilerStatement(Co
 ;
 
 readyOrResetTraceCompilerStatement ::= 
-	{: 		
-		((CobolWordsTokenizer)my_parser.getScanner()).EnterReadyOrResetTraceCompilerStatementMode();
-	:}
-	readyOrReset:rt TRACE PeriodSeparator
+	readyOrReset:rt TRACE 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); :}
+	PeriodSeparator
 	{: my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); :}
 	;
 
@@ -924,7 +935,6 @@ readyOrResetTraceCompilerStatement ::=
 
 replaceToken ::= {: my_parser.Builder.StartReplaceCompilerStatement(CompilerDirectiveType.REPLACE); :} REPLACE:r 
 	{: 
-		((CobolWordsTokenizer)my_parser.getScanner()).EnterPseudoTextAnyTokenMode();
 		RESULT = r;
 	:}
 	;
@@ -992,17 +1002,24 @@ serviceReloadCompilerStatement ::= SERVICE_CD:s
 // The SKIP statements must be embedded in a program source. 
 // For example, in the case of batch applications, a SKIP1, SKIP2, or SKIP3 statement must be placed between the CBL (PROCESS) statement and the end of the program or class (or the END CLASS marker or END PROGRAM marker, if specified).
 
-skipTokens ::= SKIP1 : t
+skipTokens ::= 
+	{: my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP1); 
+	((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator); :} 
+	SKIP1 : t
 	{: RESULT = t; :}
-| SKIP2 : t
+| {: my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP2); 
+	((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator);  :} 
+	SKIP2 : t
 	{: RESULT = t; :}
-| SKIP3 : t
+| {: my_parser.Builder.StartSkipCompilerStatement(CompilerDirectiveType.SKIP3); 
+	((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator);  :} 
+	SKIP3 : t
 	{: RESULT = t; :}	
 ;
 
-skipCompilerStatement ::= skipTokens : t
-	{: 
-		((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLine(TokenType.PeriodSeparator);  
+skipCompilerStatement ::= 
+	skipTokens : t
+	{: 		
 		my_parser.Builder.EnterSkipCompilerStatement(t);
 	:} 
 	;
@@ -1030,9 +1047,12 @@ skipCompilerStatement ::= skipTokens : t
 // The TITLE statement must be embedded in a class or program source. For example, in the case of batch applications, the TITLE statement must be placed between the CBL (PROCESS) statement and the end of the class or program (or the END CLASS marker or END PROGRAM marker, if specified).
 // No other statement can appear on the same line as the TITLE statement.
 
-titleCompilerStatement ::= TITLE:t alphanumericValue2:a						  
-	{: 
-		((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLine(TokenType.PeriodSeparator);  
+titleCompilerStatement ::= 
+	{: my_parser.Builder.StartTitleCompilerStatement(); :}
+	TITLE:t 
+	{: ((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator);  :}
+	alphanumericValue2:a						  
+	{: 		
 		my_parser.Builder.EnterTitleCompilerStatement(t, a);
 	:} 
 	;

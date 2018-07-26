@@ -39,6 +39,13 @@ terminal TypeCobol.Compiler.Scanner.Token CUP_ANY_TOKEN;
 //Special token for an END_EXEC followed by a Period Separator
 terminal TypeCobol.Compiler.Scanner.Token CUP_END_EXEC_PERIOD_SEPARATOR;
 
+//Special Token for terminal LiteralOrUserDefinedWordOReservedWordExceptCopy used in EXEC directives.
+terminal TypeCobol.Compiler.Scanner.Token CUP_LiteralOrUserDefinedWordOReservedWordExceptCopy;
+
+//Special Token for the combination of the terminal symbosl == BY in replacing mode
+terminal TypeCobol.Compiler.Scanner.Token CUP_PSEUDO_TEXT_DELIMITER_BY;
+
+
 // Separators - Whitespace
 terminal TypeCobol.Compiler.Scanner.Token SpaceSeparator;
 terminal TypeCobol.Compiler.Scanner.Token CommaSeparator;

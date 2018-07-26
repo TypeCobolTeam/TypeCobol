@@ -83,23 +83,23 @@ namespace TypeCobol.Test {
         [TestProperty("Time", "fast")]
         public void CheckPreprocessor()
         {
-            //TestCompilerDirectiveBuilder.CheckBASIS();
-            //TestCompilerDirectiveBuilder.CheckCBL_PROCESS();
-            //TestCompilerDirectiveBuilder.CheckASTERISK_CONTROL_CBL();
+            TestCompilerDirectiveBuilder.CheckBASIS();
+            TestCompilerDirectiveBuilder.CheckCBL_PROCESS();
+            TestCompilerDirectiveBuilder.CheckASTERISK_CONTROL_CBL();
 #if EUROINFO_RULES
             TestCompilerDirectiveBuilder.CheckCOPY(); //Because of the presence of remarks directive and non use of comprarator
 #endif
-            //TestCompilerDirectiveBuilder.CheckDELETE();
+            TestCompilerDirectiveBuilder.CheckDELETE();
             //TestCompilerDirectiveBuilder.CheckEJECT();
             //TestCompilerDirectiveBuilder.CheckENTER();
             //TestCompilerDirectiveBuilder.CheckEXEC_SQL_INCLUDE();
             //TestCompilerDirectiveBuilder.CheckINSERT();
             //TestCompilerDirectiveBuilder.CheckREADY_RESET_TRACE();
             //TestCompilerDirectiveBuilder.CheckREPLACE();
-            TestCompilerDirectiveBuilder.CheckSERVICE_LABEL();
-            TestCompilerDirectiveBuilder.CheckSERVICE_RELOAD();
-            TestCompilerDirectiveBuilder.CheckSKIP1_2_3();
-            TestCompilerDirectiveBuilder.CheckTITLE();
+            //TestCompilerDirectiveBuilder.CheckSERVICE_LABEL();
+            //TestCompilerDirectiveBuilder.CheckSERVICE_RELOAD();
+            //TestCompilerDirectiveBuilder.CheckSKIP1_2_3();
+            //TestCompilerDirectiveBuilder.CheckTITLE();
             TestCompilerDirectiveBuilder.CheckRealFiles();
 
             TestCopyDirective.CheckCopy();
