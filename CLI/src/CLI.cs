@@ -99,9 +99,7 @@ namespace TypeCobol.Server
             File.AppendAllText("TypeCobol.CLI.log", debugLine);
             Console.WriteLine(debugLine);
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Duration] Execution Time", EventType.Genration, 
-                                                    new Dictionary<string, string> { { "Duration", "Duration"} }, //Custom properties for metrics
-                                                    new Dictionary<string, double> { { "ExecutionTime", stopWatch.Elapsed.Milliseconds} }); //Metrics fo duration
+            AnalyticsWrapper.Telemetry.TrackMetricsEvent(EventType.Duration, LogType.Genration, "ExecutionTime", stopWatch.Elapsed.Milliseconds); 
             
             return returnCode;
         }
@@ -232,8 +230,6 @@ namespace TypeCobol.Server
                             AnalyticsWrapper.Telemetry.SendMail(diag.CatchedException, config.InputFiles, config.CopyFolders, config.CommandLine);
                         }
                     }
-
-                    AnalyticsWrapper.Telemetry.TrackEvent("[Diagnostics] Detected", EventType.Diagnostics);
                     //Exception is thrown just below
                     }
 

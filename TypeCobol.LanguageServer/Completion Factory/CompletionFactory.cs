@@ -316,7 +316,7 @@ namespace TypeCobol.LanguageServer
 
                //For MOVE INPUT OUTPUT variables etc.. , get all the children of a variable that are accessible
                //Try to find corresponding variables
-               var qualifiedName = string.Join(".",
+               var qualifiedName = 
                     filteredQualifiedNameTokens.Where(
                             t =>
                                 t.TokenType == TokenType.UserDefinedWord &&
@@ -325,7 +325,8 @@ namespace TypeCobol.LanguageServer
                                 ((firstSignificantToken != null && ((t.StartIndex >= firstSignificantToken.EndColumn && t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line)) 
                                 || firstSignificantToken == null) 
                                 && ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
-                        .Select(t => t.Text));
+                        .Select(t => t.Text);
+                qualifiedName.Reverse();
                 var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
 
                 if (possibleVariables != null && possibleVariables.Any()) 
@@ -531,7 +532,7 @@ namespace TypeCobol.LanguageServer
                 {
                     var foundedVars =
                         node.SymbolTable.GetVariablesExplicit(
-                            new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
+                            new URI(qualifiedNameTokens.Select(t => t.Text)));
 
                     if (foundedVars != null && foundedVars.Any())
                         seekedDataTypes.Add(foundedVars.First().DataType);

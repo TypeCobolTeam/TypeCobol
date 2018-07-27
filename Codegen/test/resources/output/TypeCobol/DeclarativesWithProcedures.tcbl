@@ -1,0 +1,149 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA. 
+
+       DATA DIVISION.
+       working-storage section.
+      *01 TaxElm TYPEDEF STRICT PRIVATE.
+      *  10 TaxTyp  PIC X(03).
+
+       01 Table-Tax.
+      *  05 Tax TYPE TaxElm
+      *    OCCURS 200 TIMES INDEXED BY Idx-TaxElm.
+         05 Tax
+           OCCURS 200 TIMES INDEXED BY b3c45d20Idx-TaxElm.
+           06 TaxTyp PIC X(03).
+                                                  
+       01  TC-DVZF0OSM-FctList-Loaded PIC X(02).
+           88 TC-DVZF0OSM-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-DVZF0OSM-PntTab.
+           05 TC-DVZF0OSM-PntNbr         PIC S9(04) COMP VALUE 1.
+      *DVZF0OSM::Titi
+           05 TC-DVZF0OSM-d6385c17-Idt   PIC X(08) VALUE 'd6385c17'.
+           05 TC-DVZF0OSM-d6385c17 PROCEDURE-POINTER.
+
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
+
+
+      *---------------------------------------------------
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display DEBUG-NAME
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
+	  
+      *declare procedure Titi PUBLIC.
+       
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-DVZF0OSM-FctList-IsLoaded
+              SET TC-DVZF0OSM-d6385c17   TO ENTRY 'd6385c17'
+
+              SET TC-DVZF0OSM-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-DVZF0OSM-PntTab
+
+           .
+                                     
+
+      *declare procedure Toto.
+
+       END PROGRAM DVZF0OSM.
+      *
+      *declare procedure Titi PUBLIC.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d6385c17Titi.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       data division.
+       working-storage section.
+       01 Table-Tax.
+      *  05 Tax TYPE TaxElm
+      *    OCCURS 200
+      *    TIMES INDEXED BY Idx-TaxElm.
+         05 Tax
+           OCCURS 200
+           TIMES INDEXED BY ae5bf0a5Idx-TaxElm.
+           06 TaxTyp PIC X(03).
+                                       
+       PROCEDURE DIVISION
+           .
+
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display "Titi-Proc"
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
+      *     set Table-Tax::Tax::Idx-TaxElm to 1
+            set ae5bf0a5Idx-TaxElm to 1
+           goback
+           .
+       END PROGRAM d6385c17Titi.
+      *
+      *declare procedure Toto.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c9ad76ebToto.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+                      WITH DEBUGGING MODE
+                      .
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+       data division.
+       working-storage section.
+       01 Table-Tax.
+      *  05 Tax TYPE TaxElm
+      *    OCCURS 200
+      *    TIMES INDEXED BY Idx-TaxElm.
+         05 Tax
+           OCCURS 200
+           TIMES INDEXED BY ac7b6441Idx-TaxElm.
+           06 TaxTyp PIC X(03).
+                                       
+       PROCEDURE DIVISION
+           .
+      DDECLARATIVES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display DEBUG-NAME
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
+
+      *     set Table-Tax::Tax::Idx-TaxElm to 1
+            set ac7b6441Idx-TaxElm to 1
+           goback
+           .
+       END PROGRAM c9ad76ebToto.

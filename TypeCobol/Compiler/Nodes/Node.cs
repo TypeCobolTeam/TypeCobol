@@ -227,15 +227,16 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_qualifiedName != null) return _qualifiedName;
 
-                string qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name)) {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     parent = parent.Parent;
                 }
+                qn.Reverse();
                 _qualifiedName = new URI(qn);
                 return _qualifiedName;
             }
@@ -250,13 +251,13 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_visualQualifiedName != null) return _visualQualifiedName;
 
-                var qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name))
                     {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
                         break;
@@ -264,7 +265,7 @@ namespace TypeCobol.Compiler.Nodes {
                         break;
                     parent = parent.Parent;
                 }
-
+                qn.Reverse();
                 _visualQualifiedName = new URI(qn);
                 return _visualQualifiedName;
             }
@@ -291,15 +292,15 @@ namespace TypeCobol.Compiler.Nodes {
 
 
 
-        private Node _root;
+        private SourceFile _root;
         /// <summary>First Node with null Parent among the parents of this Node.</summary>
-        public Node Root {
+        public SourceFile Root {
             get
             {
                 if (_root != null) return _root;
                 var current = this;
                 while (current.Parent != null) current = current.Parent;
-                _root = current;
+                _root = (SourceFile) current;
                 return _root;
             }
         }
@@ -837,6 +838,8 @@ namespace TypeCobol.Compiler.Nodes {
                 return this.children.Where(c => c is Program && !((Program)c).IsNested).Select(c => c as Program);
             }
         }
+
+        public SourceProgram MainProgram { get; internal set; }
 
         public IEnumerable<Class> Classes
         {

@@ -45,8 +45,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 CheckVariable(node, codeElement.StorageAreaGroupsCorrespondingImpact.ReceivingGroupItem, false);
             }
 
-            RedefinesChecker<CodeElement>.OnNode(node);
-            FunctionDeclarationChecker<CodeElement>.OnNode(node);
             FunctionCallChecker.OnNode(node);
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);
@@ -59,6 +57,18 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             //This checker is only for Node after the full AST has been created
             return false;
+        }
+
+        public override bool Visit(FunctionDeclaration functionDeclaration)
+        {
+            FunctionDeclarationChecker.OnNode(functionDeclaration);
+            return true;
+        }
+
+        public override bool Visit(DataRedefines dataRedefines)
+        {
+            RedefinesChecker.OnNode(dataRedefines);
+            return true;
         }
 
         public override bool Visit(PerformProcedure performProcedureNode)
@@ -369,8 +379,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (!area.SymbolReference.IsQualifiedReference)
                 //If it's an index but not use with qualified reference 
                 {
-                    //Check the previous references to see if one has been flagged as NodeContainsIndex then flag this node
-                    if (index.GetReferences().Any(n => n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                    //If the index has already been flaged UsedWithQualifiedName, we need to flag the current node
+                    if(index.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
                             completeQualifiedName);
