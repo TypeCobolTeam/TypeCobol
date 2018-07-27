@@ -16,9 +16,11 @@ namespace TypeCobol.Compiler.CupPreprocessor
     {
         public override bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
         {
-            ((CobolWordsTokenizer) parser.getScanner()).EnterStopScanningMode();
-            ((CobolWordsTokenizer) parser.getScanner()).RevertLastToken();
-            return base.SyntaxError(parser, stack, curToken);
+            LastMismatchedSymbol = null;
+            bool bResult = base.SyntaxError(parser, stack, curToken);
+            ((CobolWordsTokenizer)parser.getScanner()).EnterStopScanningMode();
+            ((CobolWordsTokenizer)parser.getScanner()).RevertLastToken(LastMismatchedSymbol);
+            return bResult;
         }
     }
 }

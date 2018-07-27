@@ -113,7 +113,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// <summary>
         /// Revert the Last token to be the first one
         /// </summary>
-        public void RevertLastToken()
+        public void RevertLastToken(Symbol lastMismatchedSymbol)
         {
             if (LastToken == null)
                 return;
@@ -513,6 +513,19 @@ namespace TypeCobol.Compiler.CupCommon
         /// <returns></returns>
         public static string CupTokenToString(int token)
         {
+            switch (token)
+            {
+                case 0:
+                    return "EOF";
+                case ANY_TOKEN:
+                    return "AnyToken";
+                case END_EXEC_PERIOD_SEPARATOR:
+                    return null;
+                case CUP_LITERALORUSERDEFINEDWORDORESERVEDWORDEXCEPTCOPY:
+                    return "Literal, UserDefinedWord, ReservedWord";
+                case PSEUDO_TEXT_DELIMITER_BY:
+                    return null;
+            }
             return ToString((TokenType)(token - CsCupStartToken + 1));
         }
 
@@ -524,6 +537,16 @@ namespace TypeCobol.Compiler.CupCommon
         public int TokenType2CupTokenType(TokenType t)
         {
             return (int)t + CsCupStartToken - 1;
+        }
+
+        /// <summary>
+        /// Get the TokenType corresponding to a Cup Token.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns>The Corresponding TokenType</returns>
+        public TokenType CupTokenType2TokenType(int t)
+        {
+            return (TokenType)(t - CsCupStartToken + 1);
         }
 
         /// <summary>

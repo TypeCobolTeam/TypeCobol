@@ -90,16 +90,16 @@ namespace TypeCobol.Test {
             TestCompilerDirectiveBuilder.CheckCOPY(); //Because of the presence of remarks directive and non use of comprarator
 #endif
             TestCompilerDirectiveBuilder.CheckDELETE();
-            //TestCompilerDirectiveBuilder.CheckEJECT();
-            //TestCompilerDirectiveBuilder.CheckENTER();
-            //TestCompilerDirectiveBuilder.CheckEXEC_SQL_INCLUDE();
-            //TestCompilerDirectiveBuilder.CheckINSERT();
-            //TestCompilerDirectiveBuilder.CheckREADY_RESET_TRACE();
-            //TestCompilerDirectiveBuilder.CheckREPLACE();
-            //TestCompilerDirectiveBuilder.CheckSERVICE_LABEL();
-            //TestCompilerDirectiveBuilder.CheckSERVICE_RELOAD();
-            //TestCompilerDirectiveBuilder.CheckSKIP1_2_3();
-            //TestCompilerDirectiveBuilder.CheckTITLE();
+            TestCompilerDirectiveBuilder.CheckEJECT();
+            TestCompilerDirectiveBuilder.CheckENTER();
+            TestCompilerDirectiveBuilder.CheckEXEC_SQL_INCLUDE();
+            TestCompilerDirectiveBuilder.CheckINSERT();
+            TestCompilerDirectiveBuilder.CheckREADY_RESET_TRACE();
+            TestCompilerDirectiveBuilder.CheckREPLACE();
+            TestCompilerDirectiveBuilder.CheckSERVICE_LABEL();
+            TestCompilerDirectiveBuilder.CheckSERVICE_RELOAD();
+            TestCompilerDirectiveBuilder.CheckSKIP1_2_3();
+            TestCompilerDirectiveBuilder.CheckTITLE();
             TestCompilerDirectiveBuilder.CheckRealFiles();
 
             TestCopyDirective.CheckCopy();
@@ -158,8 +158,14 @@ namespace TypeCobol.Test {
 
 			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
 				var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
-				try { folderTester.Test(); }
-				catch (Exception ex) { errors.Add(ex); }
+                try
+                {
+                    folderTester.Test();
+                }
+                catch (Exception ex)
+                {
+                    errors.Add(ex);
+                }
 				nbOfTests += folderTester.GetTestCount();
 				Console.WriteLine();
 			}

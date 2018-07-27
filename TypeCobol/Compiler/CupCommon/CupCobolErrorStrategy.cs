@@ -85,6 +85,14 @@ namespace TypeCobol.Compiler.CupCommon
             return stack.Contains(curToken);
         }
 
+        /// <summary>
+        /// The Last mismatched Token.
+        /// </summary>
+        protected Symbol LastMismatchedSymbol
+        {
+            get; set;
+        }
+
         public virtual bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
         {
             curToken = GetParserValidStackSymbol(parser, stack, curToken);
@@ -108,6 +116,7 @@ namespace TypeCobol.Compiler.CupCommon
                 }
                 else
                 {
+                    LastMismatchedSymbol = curToken;
                     msg = "mismatched input " + input +
                           " expecting " +
                           (expected.Count == 1 ? expected[0] : (" expecting {" + string.Join(", ", expected) + "}"));

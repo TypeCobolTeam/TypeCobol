@@ -46,6 +46,6 @@ Line 8[26,26] <27, Error, Syntax> - Syntax error : mismatched input '.' expectin
 [8,17:ICE RELOAD]<InvalidToken>
 
 -- Line 12 --
-*** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD <missing UserDefinedWord> ([8,14:service]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,21:reload]<RELOAD>) ***
-Line 0[1,0] <27, Error, Syntax> - Syntax error : missing user defined word at ''
+*** DIRECTIVE INVALID SYNTAX -> SERVICE_RELOAD  ([8,14:service]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,21:reload]<RELOAD>) ***
+Line 12[16,21] <27, Error, Syntax> - Syntax error : missing user defined word at 'reload'
 

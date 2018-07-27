@@ -45,8 +45,11 @@
 [39,39+:.]<PeriodSeparator>
 
 -- Line 12 --
-*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL>[24,24: ]<SpaceSeparator>[25,32:end-exec]<END_EXEC>[33,33+:.]<PeriodSeparator>) ***
-Line 12[25,32] <27, Error, Syntax> - Syntax error : no viable alternative at input 'end-exec'
+*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL>) ***
+[24,24: ]<SpaceSeparator>
+[25,32:end-exec]<END_EXEC>
+[33,33+:.]<PeriodSeparator>
+Line 12[25,32] <27, Error, Syntax> - Syntax error : mismatched input 'end-exec' expecting  expecting {alphanumeric literal, hexadecimal alphanumeric literal, null terminated alphanumeric literal, user defined word}
 
 -- Line 13 --
 *** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE textname4 ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL>[24,24: ]<SpaceSeparator>[25,33:textname4]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,42:end-exec]<END_EXEC>) ***
@@ -54,7 +57,7 @@ Line 14[8,11] <27, Error, Syntax> - Syntax error : mismatched input 'exec' expec
 
 -- Line 14 --
 *** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE textname5 ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL>[24,24: ]<SpaceSeparator>[25,33:textname5]<UserDefinedWord>[34,34+:.]<PeriodSeparator>) ***
-Line 14[34,34] <27, Error, Syntax> - Syntax error : missing END-EXEC at '.'
+Line 14[34,34] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting END-EXEC
 
 -- Line 15 --
 [8,11:exec]<EXEC>
@@ -73,8 +76,11 @@ Line 14[34,34] <27, Error, Syntax> - Syntax error : missing END-EXEC at '.'
 [16,16+:.]<PeriodSeparator>
 
 -- Line 19 --
-*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE textname6 ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL>[24,24: ]<SpaceSeparator>[25,33:textname6]<UserDefinedWord>[34,34: ]<SpaceSeparator>[35,41:endexec]<UserDefinedWord>[42,42+:.]<PeriodSeparator>) ***
-Line 19[35,41] <27, Error, Syntax> - Syntax error : mismatched input 'endexec' expecting END-EXEC
+*** DIRECTIVE INVALID SYNTAX -> EXEC_SQL_INCLUDE ([8,11:exec]<EXEC>[12,12: ]<SpaceSeparator>[13,15:sql]<ExecTranslatorName>[16,16: ]<SpaceSeparator>[17,23:include]<EXEC_SQL>[24,24: ]<SpaceSeparator>[25,33:textname6]<UserDefinedWord>) ***
+[34,34: ]<SpaceSeparator>
+[35,41:endexec]<UserDefinedWord>
+[42,42+:.]<PeriodSeparator>
+Line 19[35,41] <27, Error, Syntax> - Syntax error : mismatched input 'endexec' expecting  expecting {EOF, '.', END-EXEC, IN, OF, REPLACING, SUPPRESS}
 
 -- Line 20 --
 [8,14:display]<DISPLAY>

@@ -91,7 +91,6 @@ namespace TypeCobol.Compiler.CupPreprocessor
             bool isCopy = copy.COPYToken.TokenType == TokenType.COPY;
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
-            if (isCopy)
             {                
 #if EUROINFO_LEGACY_REPLACING_SYNTAX
                 if (copy.TextName != null)
