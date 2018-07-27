@@ -210,7 +210,13 @@
     <None Include="LSRTests\ProcedureCompletionCaseInsensitive\input\ProcedureCompletionCaseInsensitive.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\ProcedureCompletionPotentialChildrenWithNoName\input\ProcedureCompletionPotentialChildrenWithNoName.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\ProcedureCompletionCaseInsensitive\output_expected\ProcedureCompletionCaseInsensitive.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionPotentialChildrenWithNoName\output_expected\ProcedureCompletionPotentialChildrenWithNoName.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="LSRTests\ProcedureCompletion\input\CustomDependencies\CustomDep.tcbl">

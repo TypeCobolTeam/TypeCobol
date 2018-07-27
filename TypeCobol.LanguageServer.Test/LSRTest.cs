@@ -243,6 +243,13 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("ProcedureCompletionCaseInsensitive", LsrTestingOptions.NoLsrTesting, true);
         }
 
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionPotentialChildrenWithNoName()
+        {
+            LSRTestHelper.Test("ProcedureCompletionPotentialChildrenWithNoName", LsrTestingOptions.NoLsrTesting, true);
+        }
+
 #if EUROINFO_RULES
         [TestMethod]
         [TestCategory("Completion")]
