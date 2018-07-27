@@ -57,11 +57,7 @@ namespace TypeCobol.Server {
 
         private int GenerateNumber()
         {
-#if EUROINFO_RULES
-            return count; //Remove this when our client is updated, temporary workaround for our own use #786 !!!
-#endif
             return count++; 
-
         }
 
         public abstract void Write(ReturnCode returnCode);
