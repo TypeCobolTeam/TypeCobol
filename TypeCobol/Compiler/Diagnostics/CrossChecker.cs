@@ -368,9 +368,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
                         completeQualifiedName);
 
-                    foreach (
-                        var reference in
-                        index.GetReferences().Where(n => !n.Value.IsFlagSet(Node.Flag.NodeContainsIndex)))
+                    foreach (var reference in index.GetReferences())
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, reference.Value,
                             reference.Key, completeQualifiedName);
