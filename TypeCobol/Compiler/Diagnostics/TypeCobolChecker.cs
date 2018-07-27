@@ -72,6 +72,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var functionDeclarations =
                     node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
                     parameterList, functionCaller.FunctionCall.Namespace);
+                var programName = new URI(functionCaller.FunctionCall.FunctionName).Tail;
 
                 string message;
                 //There is one CallSite per function call
@@ -79,6 +80,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (node.CodeElement.CallSites.Count == 1 &&
                     node.CodeElement.CallSites[0].CallTarget.IsOrCanBeOnlyOfTypes(SymbolType.TCFunctionName))
                 {
+                    if (!node.SymbolTable.GetProgramsContains(functionCaller.FunctionCall.Namespace).Any())
+                    {
+                        message = string.Format("Program not found '{0}'", programName);
+                        DiagnosticUtils.AddError(node, message);
+                        return; //Do not continue the program doesn't exist
+                    }
                     if (functionDeclarations.Count == 1)
                     {
                         functionCaller.FunctionDeclaration = functionDeclarations.First();
