@@ -86,13 +86,21 @@ namespace TypeCobol.LanguageServer
                 var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
 
-                completionItem.insertText = typeIsPublic
-                    ? node is FunctionDeclaration
-                        ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
-                        : string.Format("{0}::{1}.", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
-                    : node is FunctionDeclaration
-                        ? type.Name 
-                        : type.Name + ".";
+                //Statement to know if we need to add a point at the end of the variable or not
+                if (typeIsPublic)
+                {
+                    completionItem.insertText = 
+                        node.CodeElement.ConsumedTokens.Last().SourceText == "." //Check if last element is a point, so the completion does not make a duplicate
+                            ? $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}" 
+                            : $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}.";
+                }
+                else
+                {
+                    completionItem.insertText =
+                        node.CodeElement.ConsumedTokens.Last().SourceText == "." //Check if last element is a point, so the completion does not make a duplicate
+                            ? completionItem.insertText = type.Name
+                            : completionItem.insertText = type.Name + ".";
+                }
 
                 completionItem.kind = typeIsIntrinsic ? CompletionItemKind.IntrinsicType : CompletionItemKind.Class;
                 completionItems.Add(completionItem);
