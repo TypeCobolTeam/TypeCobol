@@ -1163,12 +1163,6 @@ namespace TypeCobol.Compiler.CodeModel
                 .Programs.Values.SelectMany(t => t)
                 .Where(fd => fd.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
         }
-        public IEnumerable<Program> GetProgramsContains(string filter)
-        {
-            return this.GetTableFromScope(Scope.Namespace)
-                .Programs.Values.SelectMany(t => t)
-                .Where(fd => fd.Name.Split(' ').First().Equals(filter, StringComparison.OrdinalIgnoreCase));
-        }
 
         public List<Program> GetPrograms()
         {
