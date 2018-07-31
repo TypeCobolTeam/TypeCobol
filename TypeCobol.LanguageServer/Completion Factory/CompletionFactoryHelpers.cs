@@ -86,21 +86,21 @@ namespace TypeCobol.LanguageServer
                 var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
 
-                //Statement to know if we need to add a point at the end of the variable or not
-                if (typeIsPublic)
-                {
-                    completionItem.insertText = 
-                        node.CodeElement.ConsumedTokens.Last().SourceText == "." //Check if last element is a point, so the completion does not make a duplicate
-                            ? $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}" 
-                            : $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}.";
-                }
-                else
-                {
-                    completionItem.insertText =
-                        node.CodeElement.ConsumedTokens.Last().SourceText == "." //Check if last element is a point, so the completion does not make a duplicate
-                            ? completionItem.insertText = type.Name
-                            : completionItem.insertText = type.Name + ".";
-                }
+                if (!(node is FunctionDeclaration))
+                    if (typeIsPublic)
+                    {
+                        completionItem.insertText =
+                            node.CodeElement.ConsumedTokens.Last().SourceText == "." //Check if last element is a point, so the completion does not make a duplicate
+                                ? $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}" 
+                                : $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}.";
+                    }
+                    else
+                    {
+                        completionItem.insertText =
+                            node.CodeElement.ConsumedTokens.Last().SourceText == "." //Check if last element is a point, so the completion does not make a duplicate
+                                ? completionItem.insertText = type.Name
+                                : completionItem.insertText = type.Name + ".";
+                    }
 
                 completionItem.kind = typeIsIntrinsic ? CompletionItemKind.IntrinsicType : CompletionItemKind.Class;
                 completionItems.Add(completionItem);
