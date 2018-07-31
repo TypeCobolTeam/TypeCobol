@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Permissions;
 using TypeCobol.Compiler;
 
 namespace TypeCobol.Codegen.Nodes {
@@ -18,11 +19,16 @@ namespace TypeCobol.Codegen.Nodes {
 /// </summary>
 internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry>, Generated {
 	public ParameterDescription Description { get; private set; }
-	public ParameterEntry(ParameterDescriptionEntry entry, SymbolTable table): base(entry) {
-		this.SymbolTable = table;
-	}
+    public ParameterEntry(ParameterDescriptionEntry entry, SymbolTable table) : base(entry)
+    {
+        this.SymbolTable = table;
+    }
+    public ParameterEntry(ParameterDescriptionEntry entry, SymbolTable table, ParameterDescription description) : this(entry, table)
+    {
+        this.Description = description;
+    }
 
-	private List<ITextLine> _cache = null;
+        private List<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
@@ -119,6 +125,13 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 						_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 					}
 				}
+                    if (this.CodeElement().Usage?.Value == DataUsage.Pointer && this.IsFlagSet(Node.Flag.NodeisIncrementedPointer) )
+                    {
+                        _cache.Add(new TextLineSnapshot(-1, "01 redefines " + name + ".", null));
+                        string temp = "    02 " + (name.Length > 22 ? name.Substring(0, 22) : name) +
+                                      this.Description?.Hash + " pic S9(05) comp-5.";
+                        _cache.Add(new TextLineSnapshot(-1, temp, null));
+                    }
                 if (customtype != null)
                 {
                     List<string> rootProcedures;
