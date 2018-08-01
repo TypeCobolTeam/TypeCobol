@@ -64,17 +64,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 return;
 
             AnalyticsWrapper.Telemetry.TrackEvent("[Function-Call] " + functionCaller.FunctionCall.FunctionName, EventType.TypeCobolUsage);
-
             if (functionCaller.FunctionDeclaration == null)
             {
                 //Get Funtion by name and profile (matches on precise parameters)
                 var parameterList = functionCaller.FunctionCall.AsProfile(node);
                 var qualifiedFunctionName = new URI(functionCaller.FunctionCall.FunctionName);
                 var functionDeclarations =
-                    node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
+                    node.SymbolTable.GetFunction(qualifiedFunctionName,
                     parameterList, functionCaller.FunctionCall.Namespace);
                
-
                 string message;
                 //There is one CallSite per function call
                 //This is a call to a TypeCobol function or procedure with arguments
@@ -92,7 +90,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count > 0)
                     {
                         message = string.Format("Same function '{0}' {1} declared '{2}' times",
-                            functionCaller.FunctionCall.FunctionName, parameterList.GetSignature(),
+                            qualifiedFunctionName, parameterList.GetSignature(),
                             functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message, MessageCode.ImplementationError);
                         return; //Do not continue the function/procedure is defined multiple times
@@ -104,6 +102,7 @@ namespace TypeCobol.Compiler.Diagnostics
                    
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
+                        //check if this is a function or a program::function && if the program exists
                         if (functionCaller.FunctionCall.Namespace != null && !node.SymbolTable.GetProgram(new URI(qualifiedFunctionName.Tail)).Any())
                         {
                             message = string.Format("Program not found '{0}'", qualifiedFunctionName.Tail);
@@ -111,7 +110,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             return; //Do not continue the program doesn't exist
                         }
 
-                        message = string.Format("Function not found '{0}' {1}", functionCaller.FunctionCall.FunctionName,
+                        message = string.Format("Function not found '{0}' {1}", qualifiedFunctionName,
                             parameterList.GetSignature());
                         DiagnosticUtils.AddError(node, message);
                         return; //Do not continue the function/procedure does not exists
@@ -119,7 +118,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (otherDeclarations.Count > 1)
                     {
                         message = string.Format("No suitable function signature found for '{0}' {1}",
-                            functionCaller.FunctionCall.FunctionName, parameterList.GetSignature());
+                            qualifiedFunctionName, parameterList.GetSignature());
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -129,9 +128,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 else
                 {
                     //call to a TypeCobol function/procedure without arguments or to a Variable
-
                     var potentialVariables =
-                        node.SymbolTable.GetVariablesExplicit(new URI(functionCaller.FunctionCall.FunctionName));
+                        node.SymbolTable.GetVariablesExplicit(qualifiedFunctionName);
 
                     if (functionDeclarations.Count == 1 && !potentialVariables.Any())
                     {
@@ -140,14 +138,14 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
 
                     functionDeclarations =
-                        node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null,
+                        node.SymbolTable.GetFunction(qualifiedFunctionName, null,
                             functionCaller.FunctionCall.Namespace);
 
                     if (potentialVariables.Count() > 1)
                     {
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times",
-                            functionCaller.FunctionCall.FunctionName,
+                            qualifiedFunctionName,
                             potentialVariables.Count() + functionDeclarations.Count);
                         DiagnosticUtils.AddError(node, message);
                         return;
@@ -156,7 +154,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count > 1 && !potentialVariables.Any())
                     {
                         message = string.Format("No suitable function signature found for '{0}(no arguments)'",
-                            functionCaller.FunctionCall.FunctionName);
+                            qualifiedFunctionName);
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -164,7 +162,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count >= 1 && potentialVariables.Count() == 1)
                     {
                         message = string.Format("Warning: Risk of confusion in call of '{0}'",
-                            functionCaller.FunctionCall.FunctionName);
+                            qualifiedFunctionName);
                         DiagnosticUtils.AddError(node, message);
                         return;
                     }
@@ -172,7 +170,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (functionDeclarations.Count == 0 && !potentialVariables.Any())
                     {
                         message = string.Format("No function or variable found for '{0}'(no arguments)",
-                            functionCaller.FunctionCall.FunctionName);
+                            qualifiedFunctionName);
                         DiagnosticUtils.AddError(node, message);
                         return; //Do not continue the function/procedure does not exists
                     }
