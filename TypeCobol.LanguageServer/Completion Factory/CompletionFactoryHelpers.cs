@@ -90,14 +90,16 @@ namespace TypeCobol.LanguageServer
                     if (typeIsPublic)
                     {
                         completionItem.insertText =
-                            node.CodeElement.ConsumedTokens.Last().SourceText == "." //Check if last element is a point, so the completion does not make a duplicate
+                            //Check if last element is of type PeriodSperator (ie : a dot), so the completion does not make a duplicate
+                            (node.CodeElement.ConsumedTokens.Last().TokenType == TokenType.PeriodSeparator)
                                 ? $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}" 
                                 : $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}.";
                     }
                     else
                     {
                         completionItem.insertText =
-                            node.CodeElement.ConsumedTokens.Last().SourceText == "." //Check if last element is a point, so the completion does not make a duplicate
+                            //Check if last element is of type PeriodSperator (ie : a dot), so the completion does not make a duplicate
+                            (node.CodeElement.ConsumedTokens.Last().TokenType == TokenType.PeriodSeparator)
                                 ? completionItem.insertText = type.Name
                                 : completionItem.insertText = type.Name + ".";
                     }
