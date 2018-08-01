@@ -169,11 +169,11 @@ namespace TypeCobol.LanguageServer
                     previousTokenType = givenToken.TokenType;
                 }
 
-
+            IEnumerable<ParameterDescription> procParams = null;
+            List<int> countParamsPerProc = new List<int>();
             IEnumerable<DataDefinition> potentialVariablesForCompletion = null;
             foreach (var procedure in calledProcedures)
             {
-                IEnumerable<ParameterDescription> procParams = null;
                 //Switch to select the correct parameters profile
                 #region Selective parameters Switch
                 switch (lastSignificantToken.TokenType)
@@ -181,6 +181,8 @@ namespace TypeCobol.LanguageServer
                     case TokenType.INPUT:
                         {
                             procParams = procedure.Profile.InputParameters;
+                            //Get number of input parameters left per procedure
+                            countParamsPerProc.Add(procParams.Count());
                             break;
                         }
                     case TokenType.OUTPUT:
@@ -191,6 +193,8 @@ namespace TypeCobol.LanguageServer
                     case TokenType.IN_OUT:
                         {
                             procParams = procedure.Profile.InoutParameters;
+                            //Get number of inout parameters left per procedure
+                            countParamsPerProc.Add(procParams.Count());
                             break;
                         }
                     default:
@@ -199,7 +203,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 #endregion
-
+                
                 //If the user already written all or more parameters than required let's check for an other proc signature
                 if (alreadyGivenParametersCount >= procParams.Count())
                     continue;
@@ -215,7 +219,35 @@ namespace TypeCobol.LanguageServer
             if (potentialVariablesForCompletion == null) return completionItems;
 
             foreach (var potentialVariable in potentialVariablesForCompletion.Where(v => v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)).Distinct())
-                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems
+                SearchVariableInTypesAndLevels(node, potentialVariable, ref completionItems); //Add potential variables to completionItems*           
+
+
+            //If signature of procedure is available
+            if (procedureSignatureContext != null)
+            { 
+                if (lastSignificantToken.TokenType == TokenType.INPUT
+                    && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InputParameters.Count - 1))
+                    if (procedureSignatureContext.Profile.InoutParameters.Count != 0)
+                        completionItems.ForEach(ci => ci.insertText += " IN-OUT ");
+                    else if (procedureSignatureContext.Profile.OutputParameters.Count != 0)
+                        completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
+                if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InoutParameters.Count - 1))
+                        completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
+                if (lastSignificantToken.TokenType == TokenType.OUTPUT && alreadyGivenParametersCount == (procedureSignatureContext.Profile.OutputParameters.Count - 1))
+                    completionItems.ForEach(ci => ci.insertText += ".");
+            }
+            else
+            {
+                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == (procParams.Count() - 1))
+                    if (calledProcedures.Any(cp => cp.Profile.InputParameters.Count-1 == alreadyGivenParametersCount && cp.Profile.InoutParameters.Count != 0))
+                        completionItems.ForEach(ci => ci.insertText += " IN-OUT ");
+                    else 
+                        completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
+                if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procParams.Count() - 1))
+                    completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
+                if (lastSignificantToken.TokenType == TokenType.OUTPUT && alreadyGivenParametersCount == (procParams.Count() - 1))
+                    completionItems.ForEach(ci => ci.insertText += ".");
+            }
 
             return completionItems;
         }
@@ -316,7 +348,7 @@ namespace TypeCobol.LanguageServer
 
                //For MOVE INPUT OUTPUT variables etc.. , get all the children of a variable that are accessible
                //Try to find corresponding variables
-               var qualifiedName = string.Join(".",
+               var qualifiedName = 
                     filteredQualifiedNameTokens.Where(
                             t =>
                                 t.TokenType == TokenType.UserDefinedWord &&
@@ -325,7 +357,8 @@ namespace TypeCobol.LanguageServer
                                 ((firstSignificantToken != null && ((t.StartIndex >= firstSignificantToken.EndColumn && t.Line == firstSignificantToken.Line) || t.Line > firstSignificantToken.Line)) 
                                 || firstSignificantToken == null) 
                                 && ((t.EndColumn <= position.character && t.Line == position.line + 1) || t.Line < position.line + 1))
-                        .Select(t => t.Text));
+                        .Select(t => t.Text);
+                qualifiedName.Reverse();
                 var possibleVariables = node.SymbolTable.GetVariablesExplicit(new URI(qualifiedName));
 
                 if (possibleVariables != null && possibleVariables.Any()) 
@@ -531,7 +564,7 @@ namespace TypeCobol.LanguageServer
                 {
                     var foundedVars =
                         node.SymbolTable.GetVariablesExplicit(
-                            new URI(string.Join(".", qualifiedNameTokens.Select(t => t.Text))));
+                            new URI(qualifiedNameTokens.Select(t => t.Text)));
 
                     if (foundedVars != null && foundedVars.Any())
                         seekedDataTypes.Add(foundedVars.First().DataType);

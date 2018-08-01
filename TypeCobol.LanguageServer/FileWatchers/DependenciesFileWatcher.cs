@@ -31,7 +31,7 @@ namespace TypeCobol.LanguageServer
                     NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |
                     NotifyFilters.DirectoryName
             };
-            //watcher.Filter = "*.tcbl|*.cpy" //Does not work like this, may need to initialize multiple filewatcher for each file extension. 
+            watcher.Filter = "*.tcbl";
 
             // Add event handlers.
             watcher.Changed += OnChanged;
@@ -47,6 +47,10 @@ namespace TypeCobol.LanguageServer
 
         private void OnChanged(object sender, FileSystemEventArgs e)
         {
+            var directory= new FileInfo(e.FullPath).Directory;
+            if (File.Exists(directory.FullName + Path.DirectorySeparatorChar + "~.lock"))
+                return;
+        
             Action refreshAction = () => { _TypeCobolWorkSpace.RefreshOpenedFiles(); };
             lock (_TypeCobolWorkSpace.MessagesActionsQueue)
             {

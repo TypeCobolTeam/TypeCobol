@@ -272,7 +272,8 @@ namespace TypeCobol.Codegen
             location = NormalizeLocation(node, location, out index);
             if (location == null || location.ToLower().Equals("node")) 
                 return true;
-            var root = CurrentProgram ?? (node.GetProgramNode() ?? node.Root);
+            Node root = CurrentProgram ?? node.GetProgramNode();
+            root = root ?? node.Root;
             var result = root.Get(location);
             return result != null;
         }
@@ -292,7 +293,8 @@ namespace TypeCobol.Codegen
             {
                 return node;
             }
-            var root = CurrentProgram ?? (node.GetProgramNode() ?? node.Root);
+            Node root = (CurrentProgram ?? node.GetProgramNode());
+            root = root ?? node.Root;
             var result = root.Get(subPaths != null ? subPaths[0] : location);
             if (result != null)
             {                

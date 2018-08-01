@@ -83,32 +83,26 @@ namespace TypeCobol.Compiler.Parser
         /// </summary>
         internal void CreateListeners()
         {
-            if (_listeners == null)
+            //Do nothig if listners already exist
+            if (_listeners != null)
             {
-                _listeners = new List<NodeListener<TCtx>>();
-                var namespaces = new[] { "TypeCobol.Compiler.Diagnostics", };
-                var assembly = Assembly.GetExecutingAssembly();
-                foreach (var names in namespaces)
+                return;
+            }
+            _listeners = new List<NodeListener<TCtx>>();
+            //Return if no StaticNodeListenerFactory exist
+            if (StaticNodeListenerFactory == null)
+            {
+                return;
+            }
+            lock (typeof(NodeDispatcher<TCtx>))
+            {
+                foreach (NodeListenerFactory<TCtx> factory in StaticNodeListenerFactory)
                 {
-                    var instances = Reflection.GetInstances<NodeListener<TCtx>>(assembly, names);
-                    foreach (var checker in instances)
+                    //Allocate listeners from static factories.
+                    NodeListener<TCtx> listener = factory();
+                    if (listener != null)
                     {
-                        _listeners.Add(checker);
-                    }
-                }
-                //Allocate listeners from static factories.
-                if (StaticNodeListenerFactory != null)
-                {
-                    lock (typeof(NodeDispatcher<TCtx>))
-                    {
-                        foreach (NodeListenerFactory<TCtx> factory in StaticNodeListenerFactory)
-                        {
-                            NodeListener<TCtx> listener = factory();
-                            if (listener != null)
-                            {
-                                _listeners.Add(listener);
-                            }
-                        }
+                        _listeners.Add(listener);
                     }
                 }
             }

@@ -641,7 +641,6 @@ functionProcedureDivisionOpt ::= /*empty*/
 	{:  :}
 	;
 
-// TCRFUN_DECLARATION_NO_DECLARATIVES
 functionProcedureDivision ::=
 	ProcedureDivisionHeader:pdh 
 	{:  :}
