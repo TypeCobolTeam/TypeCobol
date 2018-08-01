@@ -75,4 +75,29 @@
       -    inter0::counter + increment)                                                  
                                                                  .
 
+      * Procedure
+      *declare procedure PointerProcedure PRIVATE
+      *  input ptr pointer.
        END PROGRAM Pointers.
+      *
+      *declare procedure PointerProcedure PRIVATE
+      *  input ptr pointer.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. e0410090PointerProcedure.
+  
+         data division.
+         working-storage section.
+       LINKAGE SECTION.
+       01 ptr pointer.
+       01 redefines ptr.
+           02 ptrdbef1f3d pic S9(05) comp-5.
+       PROCEDURE DIVISION
+             USING BY REFERENCE ptr
+           .
+      *      set ptr up by 1
+             ADD 1 to ptrdbef1f3d
+                            
+             goback
+             .
+       END PROGRAM e0410090PointerProcedure.
