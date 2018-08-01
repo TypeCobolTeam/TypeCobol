@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Security.Permissions;
 using TypeCobol.Compiler;
 
 namespace TypeCobol.Codegen.Nodes {
