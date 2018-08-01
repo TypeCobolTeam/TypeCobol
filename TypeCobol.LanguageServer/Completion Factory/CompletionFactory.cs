@@ -233,8 +233,6 @@ namespace TypeCobol.LanguageServer
                         completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
                 if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InoutParameters.Count - 1))
                         completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
-                if (lastSignificantToken.TokenType == TokenType.OUTPUT && alreadyGivenParametersCount == (procedureSignatureContext.Profile.OutputParameters.Count - 1) && !codeElement.ConsumedTokens.Last().InputStream.ToString().EndsWith("."))
-                    completionItems.ForEach(ci => ci.insertText += ".");
             }
             else
             {
@@ -245,8 +243,6 @@ namespace TypeCobol.LanguageServer
                         completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
                 if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procParams.Count() - 1))
                     completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
-                if (lastSignificantToken.TokenType == TokenType.OUTPUT && alreadyGivenParametersCount == (procParams.Count() - 1) && !codeElement.ConsumedTokens.Last().InputStream.ToString().EndsWith("."))
-                    completionItems.ForEach(ci => ci.insertText += ".");
             }
 
             return completionItems;
