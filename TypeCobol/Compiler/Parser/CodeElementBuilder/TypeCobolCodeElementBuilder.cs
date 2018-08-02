@@ -44,12 +44,12 @@ namespace TypeCobol.Compiler.Parser
                 name = CobolWordsBuilder.CreateFunctionNameDefinition(context.functionNameDefinition());
             }
 
-            Documentation documentation = null;
+            FormalizedCommentDocumentation formalizedCommentDocumentation = null;
             if (context.formalizedComment() != null)
-                documentation = new Documentation(context.formalizedComment().formalizedCommentLine());
+                formalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
 
             Context = context;
-            CodeElement = new FunctionDeclarationHeader(name, visibility, type, documentation);
+            CodeElement = new FunctionDeclarationHeader(name, visibility, type, formalizedCommentDocumentation);
         }
 
         public override void EnterInputPhrase(CodeElementsParser.InputPhraseContext context)

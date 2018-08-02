@@ -13,13 +13,12 @@ namespace TypeCobol.Compiler.CodeElements
     /// <summary> 
     /// Is used to specify the Formalized Comments content if any.
     /// </summary> 
-    public class Documentation
+    public class FormalizedCommentDocumentation
     {
         /// in the Formalized comments fields can have 3 states:
         /// - missing
         /// - Flag (present but no value is given)
         /// - Key-Value
-        public List<Fields> GivenParameters;
 
         public Dictionary<string, string> Parameters { get; private set; }
         public List<string> Needs { get; private set; }
@@ -29,6 +28,8 @@ namespace TypeCobol.Compiler.CodeElements
         public string ReplacedBy { get; private set; }
         public string Restriction { get; private set; }
         public string See { get; private set; }
+
+        private string _lastParameterRegistered { get; set; }
 
         public enum Fields
         {
@@ -42,13 +43,12 @@ namespace TypeCobol.Compiler.CodeElements
             See
         }
 
-        // ctor complete the documentation with the context
-        public Documentation(CodeElementsParser.FormalizedCommentLineContext[] lines)
+        // ctor complete the formalizedCommentDocumentation with the context
+        public FormalizedCommentDocumentation(CodeElementsParser.FormalizedCommentLineContext[] lines)
         {
             Parameters      = new Dictionary<string, string>();
             Needs           = new List<string>();
             ToDo            = new List<string>();
-            GivenParameters = new List<Fields>();
 
             if (lines.Any())
             {
@@ -61,90 +61,103 @@ namespace TypeCobol.Compiler.CodeElements
                         {
                             if (comLine.formalizedCommentKeyValueParam().formalizedCommentParam()
                                          .FormComsDescription() != null)
-                                currentParameter = Documentation.Fields.Description;
+                                currentParameter = FormalizedCommentDocumentation.Fields.Description;
                             else if (comLine.formalizedCommentKeyValueParam().formalizedCommentParam()
                                          .FormComsParameters() != null)
-                                currentParameter = Documentation.Fields.Parameters;
+                                currentParameter = FormalizedCommentDocumentation.Fields.Parameters;
                             else if (comLine.formalizedCommentKeyValueParam().formalizedCommentParam()
                                          .FormComsDeprecated() != null)
-                                currentParameter = Documentation.Fields.Deprecated;
+                                currentParameter = FormalizedCommentDocumentation.Fields.Deprecated;
                             else if (comLine.formalizedCommentKeyValueParam().formalizedCommentParam()
                                          .FormComsReplacedBy() != null)
-                                currentParameter = Documentation.Fields.ReplacedBy;
+                                currentParameter = FormalizedCommentDocumentation.Fields.ReplacedBy;
                             else if (comLine.formalizedCommentKeyValueParam().formalizedCommentParam()
                                          .FormComsRestriction() != null)
-                                currentParameter = Documentation.Fields.Restriction;
+                                currentParameter = FormalizedCommentDocumentation.Fields.Restriction;
                             else if (comLine.formalizedCommentKeyValueParam().formalizedCommentParam()
                                          .FormComsNeed() != null)
-                                currentParameter = Documentation.Fields.Needs;
+                                currentParameter = FormalizedCommentDocumentation.Fields.Needs;
                             else if (comLine.formalizedCommentKeyValueParam().formalizedCommentParam()
                                          .FormComsSee() != null)
-                                currentParameter = Documentation.Fields.See;
+                                currentParameter = FormalizedCommentDocumentation.Fields.See;
                             else if (comLine.formalizedCommentKeyValueParam().formalizedCommentParam()
                                          .FormComsToDo() != null)
-                                currentParameter = Documentation.Fields.ToDo;
+                                currentParameter = FormalizedCommentDocumentation.Fields.ToDo;
 
                             Add(currentParameter,
                                 comLine.formalizedCommentKeyValueParam().FormComsValue()?.Symbol?.Text);
                         }
                         else if (comLine.formalizedCommentKeyValueParam().UserDefinedWord() != null)
                         {
-                            if (currentParameter == Documentation.Fields.Parameters && comLine.formalizedCommentKeyValueParam().FormComsValue() != null)
+                            if (currentParameter == FormalizedCommentDocumentation.Fields.Parameters && comLine.formalizedCommentKeyValueParam().FormComsValue() != null)
                             {// parameter description line
-                                Add(Documentation.Fields.Parameters,
+                                Add(FormalizedCommentDocumentation.Fields.Parameters,
                                     comLine.formalizedCommentKeyValueParam().UserDefinedWord().Symbol.Text,
                                     comLine.formalizedCommentKeyValueParam().FormComsValue()?.Symbol?.Text);
                             }
+                            else
+                                throw new Exception("Wrong keyword given: " + comLine.formalizedCommentKeyValueParam().UserDefinedWord().Symbol.Text);
                         }
                     }
                     else if (comLine.FormComsValue() != null)
                     {
                         Add(currentParameter,
-                            comLine.FormComsValue().Symbol?.Text);
+                            comLine.FormComsValue().Symbol?.Text,
+                            comLine.MinusOperator() == null);
                     }
                 }
             }
         }
 
-        public void Add(Fields parameter, string value = null)
+        public void Add(Fields parameter, string value = null, bool isContinuation = false)
         {
             value = value == null ? "" : cleanValue(value);
             if (!value.IsNullOrEmpty())
             {
-                
-                if (!GivenParameters.Contains(parameter))
-                    GivenParameters.Add(parameter);
-
                 switch (parameter)
                 {
                 case Fields.Needs:
-                    Needs.Add(value);
+                    if (isContinuation)
+                        Needs[Needs.LastIndexOf(Needs.Last())] += " " + value;
+                    else
+                        Needs.Add(value);
                     break;
                 case Fields.ToDo:
-                    ToDo.Add(value);
+                    if (isContinuation)
+                        ToDo[ToDo.LastIndexOf(ToDo.Last())] += " " + value;
+                    else
+                        ToDo.Add(value);
                     break;
                 case Fields.Description:
-                    Description += value;
+                    Description += value + " ";
                     break;
                 case Fields.Deprecated:
-                    Deprecated += value;
+                    Deprecated += value + " ";
                     break;
                 case Fields.ReplacedBy:
-                    ReplacedBy += value;
+                    ReplacedBy += value + " ";
                     break;
                 case Fields.Restriction:
-                    Restriction += value;
+                    Restriction += value + " ";
                     break;
                 case Fields.See:
-                    See += value;
+                    See += value + " ";
                     break;
                 case Fields.Parameters:
-                    throw new Exception("Parameters documentation field only accepte key value pair");
+
+                    if (isContinuation)
+                        Parameters[_lastParameterRegistered] += (Parameters[_lastParameterRegistered].IsNullOrEmpty()? "" : " ") + value;
+                    else
+                        throw new Exception("Parameters formalizedCommentDocumentation field only accepte key value pair");
                     break;
                 default:
-                    throw new Exception("Bad documentation parameter given");
+                    throw new Exception("Bad formalizedCommentDocumentation parameter given");
                 }
             }
+            // For parameters that can be flag or have value
+            else if (parameter == Fields.Deprecated)
+                Deprecated += value;
+            
         }
 
         public void Add(Fields parameter, string key,  string value)
@@ -152,12 +165,12 @@ namespace TypeCobol.Compiler.CodeElements
             if (parameter == Fields.Parameters)
             {
                 if (key == null || value == null)
-                    throw new Exception("Parameters documentation field does not accept null key or value");
-                GivenParameters.Add(parameter);
+                    throw new Exception("Parameters formalizedCommentDocumentation field does not accept null key or value");
                 Parameters.Add(cleanValue(key), cleanValue(value));
+                _lastParameterRegistered = cleanValue(key);
             }
             else
-                throw new Exception("Only parameters documentation field accepte key value pair");
+                throw new Exception("Only parameters formalizedCommentDocumentation field accepte key value pair");
         }
 
         public void Add(Fields parameter, KeyValuePair<string, string> item)

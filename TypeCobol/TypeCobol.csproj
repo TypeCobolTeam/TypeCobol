@@ -129,7 +129,7 @@
     <Compile Include="Compiler\CodeElements\Entry\FileStructure.cs" />
     <Compile Include="Compiler\CodeElements\Entry\IOControlEntry.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\CallParameter.cs" />
-    <Compile Include="Compiler\CodeElements\Expressions\Documentation.cs" />
+    <Compile Include="Compiler\CodeElements\Expressions\FormalizedCommentDocumentation.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\Expression.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\QualifiedName.cs" />
     <Compile Include="Compiler\CodeElements\Expressions\StorageArea.cs" />

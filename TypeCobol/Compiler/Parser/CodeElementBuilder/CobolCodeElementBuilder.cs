@@ -132,7 +132,7 @@ namespace TypeCobol.Compiler.Parser
 
             // [TypeCobol]
             if (context.formalizedComment() != null)
-                program.Documentation = new Documentation(context.formalizedComment().formalizedCommentLine());
+                program.FormalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
             // [/TypeCobol]
 
             Context = context;
@@ -1039,7 +1039,7 @@ namespace TypeCobol.Compiler.Parser
         
         // [TypeCobol]
                 if (context.formalizedComment() != null)
-                    typedef.Documentation = new Documentation(context.formalizedComment().formalizedCommentLine());
+                    typedef.FormalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
         // [/TypeCobol]
         
                 entry = typedef;
