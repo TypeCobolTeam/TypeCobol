@@ -49,7 +49,7 @@
       *              StringArray::Var1(StringIdx)(1:50)
       *     OUTPUT
       *              MyPicVar(1:10)
-            CALL 'ff1c836eCompressString' USING
+            CALL 'f1d70c6cCompressString' USING
                                  Pnt IN StringArray (StringIdx)
                                  Lgt IN StringArray (StringIdx)
                                  PrcTyp IN StringArray (StringIdx)
@@ -115,5 +115,5 @@
       *    OUTPUT   FinalLength     PIC X(10).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. ff1c836eCompressString.
-       END PROGRAM ff1c836eCompressString.
+       PROGRAM-ID. f1d70c6cCompressString.
+       END PROGRAM f1d70c6cCompressString.

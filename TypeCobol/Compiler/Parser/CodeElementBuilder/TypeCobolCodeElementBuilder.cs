@@ -143,6 +143,7 @@ namespace TypeCobol.Compiler.Parser
                     parameter.DataType = DataType.CreateCustom(parameter.UserDefinedDataType.Name);
             } else if (context.POINTER() != null) {
                 parameter.Usage = CreateDataUsageProperty(DataUsage.Pointer, context.POINTER());
+                parameter.DataType = DataType.Pointer;
             }
 
             if (context.blankWhenZeroClause() != null)

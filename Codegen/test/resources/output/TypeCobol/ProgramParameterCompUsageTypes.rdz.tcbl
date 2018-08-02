@@ -24,7 +24,7 @@
       *    OUTPUT    FinalLength   PIC 9(09) COMP.
 
       *    call CompressString INPUT 0 0 0 0 0 0 OUTPUT FLength.
-           CALL 'a9d5681cCompressString' USING
+           CALL 'c09c42b4CompressString' USING
                                  0
                                  0
                                  0
@@ -47,7 +47,7 @@
       *    OUTPUT    FinalLength   PIC 9(09) COMP.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a9d5681cCompressString.
+       PROGRAM-ID. c09c42b4CompressString.
        DATA DIVISION.
        LINKAGE SECTION.
        01 StringPointer POINTER.
@@ -67,4 +67,4 @@
                    BY REFERENCE FinalLength
            .
            DISPLAY "TOTO".
-       END PROGRAM a9d5681cCompressString.
+       END PROGRAM c09c42b4CompressString.

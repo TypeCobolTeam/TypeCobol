@@ -51,6 +51,12 @@
 
       *DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
 
+      *DECLARE PROCEDURE MyProcPointerTest PRIVATE
+      *    INPUT    myPtn POINTER.
+
+      *DECLARE PROCEDURE MyProcPointerTest PRIVATE
+      *    INPUT    NumericInput PIC S9(9) COMP-5.
+
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
 
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE
@@ -150,7 +156,7 @@
       *                           address of myDate2
       *                 IN-OUT myDate3 myDate4
       *                            OUTPUT     flag     realformat
-           CALL 'e6e45a7dmyProc' USING
+           CALL 'e179ce65myProc' USING
                     by content   somedate
                                  'YYYYMMDD'
                                  myDate2
@@ -171,7 +177,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7dmyProc' USING
+           CALL 'e179ce65myProc' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -192,7 +198,7 @@
       *                        myDate4
       *                 OUTPUT flag
       *                        realformat
-           CALL 'e6e45a7dmyProc' USING
+           CALL 'e179ce65myProc' USING
                                  somedate
                     by content   'YYYYMMDD'
                     by reference myDate2
@@ -229,6 +235,20 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. eb292c28ProcedureWithANameOver.
        END PROGRAM eb292c28ProcedureWithANameOver.
+      *
+      *DECLARE PROCEDURE MyProcPointerTest PRIVATE
+      *    INPUT    myPtn POINTER.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d2644e9bMyProcPointerTest.
+       END PROGRAM d2644e9bMyProcPointerTest.
+      *
+      *DECLARE PROCEDURE MyProcPointerTest PRIVATE
+      *    INPUT    NumericInput PIC S9(9) COMP-5.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. a9e60f75MyProcPointerTest.
+       END PROGRAM a9e60f75MyProcPointerTest.
       *
       *DECLARE PROCEDURE ValidateDateFormat PRIVATE.
       *_________________________________________________________________
@@ -279,7 +299,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. e6e45a7dmyProc.
+       PROGRAM-ID. e179ce65myProc.
        DATA DIVISION.
        LINKAGE SECTION.
        01 mydate.
@@ -317,4 +337,4 @@
                    BY REFERENCE actual-format
            .
            CONTINUE.
-       END PROGRAM e6e45a7dmyProc.
+       END PROGRAM e179ce65myProc.

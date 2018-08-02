@@ -1048,6 +1048,10 @@ namespace TypeCobol.Compiler.CodeModel
             if (p2 == DataType.Omitted) {
                 return p1.IsOmittable;
             }
+
+            //If DataType are Cobol85 and equals
+            if (p1.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
+                return p2 == p1.DataType;
             
             var p1Types = p1.Name.Contains(".") ? this.GetType(p1) : this.GetType(p1.DataType, pgmName);
             var p2Types = this.GetType(p2);
