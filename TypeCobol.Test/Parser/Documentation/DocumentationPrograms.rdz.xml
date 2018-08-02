@@ -1,0 +1,95 @@
+﻿======================== Documentation ========================
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+  <Name>DocForPrograms</Name>
+  <Description>Main Program </Description>
+  <Visibility xsi:nil="true" />
+  <Namespace>DocForPrograms</Namespace>
+  <Restriction>restriction value </Restriction>
+  <See>Thank you for your attention </See>
+  <Needs>
+    <Need>This is my first need This is also my first need</Need>
+    <Need>This is my second need</Need>
+  </Needs>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+  <Name>NestedPgm</Name>
+  <Description>Nested Program </Description>
+  <Visibility xsi:nil="true" />
+  <Namespace>NestedPgm</Namespace>
+  <Needs>
+    <Need>This is my only need</Need>
+  </Needs>
+  <ToDos>
+    <ToDo>slap car roof</ToDo>
+  </ToDos>
+  <Parameters>
+    <Parameter>
+      <Name>param1</Name>
+      <PassingType>Unknow</PassingType>
+      <Info>This is my first param</Info>
+      <PictureInfo>
+        <PictureClause>X(8)</PictureClause>
+        <MaxOccurence>1</MaxOccurence>
+        <Usage xsi:nil="true" />
+      </PictureInfo>
+    </Parameter>
+    <Parameter>
+      <Name>param2</Name>
+      <PassingType>Output</PassingType>
+      <Info>this is an output param</Info>
+      <PictureInfo>
+        <PictureClause>S9(5)</PictureClause>
+        <MaxOccurence>1</MaxOccurence>
+        <Usage>NativeBinary</Usage>
+      </PictureInfo>
+    </Parameter>
+    <Parameter>
+      <Name>param3</Name>
+      <PassingType>InOut</PassingType>
+      <Info>this is an inout param</Info>
+      <PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+        <Usage>Pointer</Usage>
+      </PictureInfo>
+    </Parameter>
+    <Parameter>
+      <Name>param4</Name>
+      <PassingType>Unknow</PassingType>
+      <TypeName>BOOL</TypeName>
+    </Parameter>
+  </Parameters>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+  <Name>StackedPgm</Name>
+  <Description>Stacked Program </Description>
+  <Visibility xsi:nil="true" />
+  <Namespace>StackedPgm</Namespace>
+  <Parameters>
+    <Parameter>
+      <Name>param1</Name>
+      <PassingType>Unknow</PassingType>
+      <PictureInfo>
+        <PictureClause>X(8)</PictureClause>
+        <MaxOccurence>1</MaxOccurence>
+        <Usage xsi:nil="true" />
+      </PictureInfo>
+    </Parameter>
+    <Parameter>
+      <Name>param3</Name>
+      <PassingType>Unknow</PassingType>
+      <PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+        <Usage>Pointer</Usage>
+      </PictureInfo>
+    </Parameter>
+  </Parameters>
+</Documentation>
+---------------------
+

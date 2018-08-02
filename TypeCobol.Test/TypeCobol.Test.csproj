@@ -141,6 +141,9 @@
     <None Include="packages.config" />
     <None Include="Parser\Programs\TypeCobol\NodeBuilder-UnexpectedChild.rdz.tcbl" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Parser\Documentation\" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

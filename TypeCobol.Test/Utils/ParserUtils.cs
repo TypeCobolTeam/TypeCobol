@@ -11,8 +11,10 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
+using String = System.String;
 
 namespace TypeCobol.Test.Utils
 {
@@ -313,50 +315,65 @@ return str;
 }
 */
 
-public static void CheckWithResultFile(string result, string testName)
-{
-using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Parser\CodeElements\" + testName + ".txt")))
-{
-    CheckWithResultReader(testName, result, reader);
-}
-}
+        public static void CheckWithResultFile(string result, string testName)
+        {
+            using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Parser\CodeElements\" + testName + ".txt")))
+            {
+                CheckWithResultReader(testName, result, reader);
+            }
+        }
 
-public static void CheckWithResultReader(string testName, string result, StreamReader reader)
-{
-string expectedResult = reader.ReadToEnd();
-TestUtils.compareLines(testName, result, expectedResult);
-}
-}
+        public static void CheckWithResultReader(string testName, string result, StreamReader reader)
+        {
+            string expectedResult = reader.ReadToEnd();
+            TestUtils.compareLines(testName, result, expectedResult);
+        }
 
-public class TestErrorListener : BaseErrorListener
-{
-private StringBuilder errorLog;
 
-public TestErrorListener()
-{
-errorLog = new StringBuilder();
-ErrorCount = 0;
-}
+        public static List<IDocumented> GetDocumentedNodes(Node root)
+        {
+            List<IDocumented> documentedNodes = new List<IDocumented>();
 
-public int ErrorCount { get; private set; }
+            foreach (var child in root.Children)
+            {
+                var documentedChild = child as IDocumented;
+                if (documentedChild != null)
+                    documentedNodes.Add(documentedChild);
+                documentedNodes.AddRange(GetDocumentedNodes(child));
+            }
+            return documentedNodes;
+        }
+    }
 
-public string ErrorLog
-{
-get { return errorLog.ToString(); }
-}
+    public class TestErrorListener : BaseErrorListener
+    {
+        private StringBuilder errorLog;
 
-public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
-{
-ErrorCount++;
+        public TestErrorListener()
+        {
+            errorLog = new StringBuilder();
+            ErrorCount = 0;
+        }
 
-IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
-foreach (string ruleInvocation in stack.Reverse())
-{
-    errorLog.AppendLine(ruleInvocation);
-}
-errorLog.AppendLine("line " + line + ":" + charPositionInLine + " at " + offendingSymbol);
-errorLog.AppendLine("=> " + msg);
-errorLog.AppendLine();
-}
-}
+        public int ErrorCount { get; private set; }
+
+        public string ErrorLog
+        {
+            get { return errorLog.ToString(); }
+        }
+
+        public override void SyntaxError(IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+        {
+            ErrorCount++;
+
+            IList<String> stack = ((Antlr4.Runtime.Parser)recognizer).GetRuleInvocationStack();
+            foreach (string ruleInvocation in stack.Reverse())
+            {
+                errorLog.AppendLine(ruleInvocation);
+            }
+            errorLog.AppendLine("line " + line + ":" + charPositionInLine + " at " + offendingSymbol);
+            errorLog.AppendLine("=> " + msg);
+            errorLog.AppendLine();
+        }
+    }
 }

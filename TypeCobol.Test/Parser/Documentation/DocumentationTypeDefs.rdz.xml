@@ -1,0 +1,61 @@
+﻿======================== Documentation ========================
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+  <Name>DocForTypeDefs</Name>
+  <Visibility xsi:nil="true" />
+  <Namespace>DocForTypeDefs</Namespace>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Name>Type10</Name>
+  <Visibility>Private</Visibility>
+  <Namespace>DocForTypeDefs</Namespace>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Name>Type11</Name>
+  <Description>Description for Type11</Description>
+  <Visibility>Private</Visibility>
+  <Namespace>DocForTypeDefs</Namespace>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Name>Type12</Name>
+  <Description>Description for Type12</Description>
+  <Visibility>Private</Visibility>
+  <Namespace>DocForTypeDefs</Namespace>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Name>Type20</Name>
+  <Visibility>Private</Visibility>
+  <Namespace>DocForTypeDefs</Namespace>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Name>Type21</Name>
+  <Description>Description for Type21</Description>
+  <Visibility>Private</Visibility>
+  <Namespace>DocForTypeDefs</Namespace>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Name>Type22</Name>
+  <Description>Description for Type22</Description>
+  <Visibility>Private</Visibility>
+  <Namespace>DocForTypeDefs</Namespace>
+</Documentation>
+---------------------
+

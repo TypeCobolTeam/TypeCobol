@@ -1,0 +1,70 @@
+﻿======================== Documentation ========================
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+  <Name>DocForFunctions</Name>
+  <Visibility xsi:nil="true" />
+  <Namespace>DocForFunctions</Namespace>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForFunction">
+  <Name>MyProc1</Name>
+  <Description>MyProc1 description </Description>
+  <Visibility>Private</Visibility>
+  <Namespace>DocForFunctions</Namespace>
+  <Deprecated />
+  <ReplacedBy>ReplacedBy MyProc8 </ReplacedBy>
+  <Restriction>Do not support discount code </Restriction>
+  <See>you later </See>
+  <Needs>
+    <Need>first need</Need>
+    <Need>second need</Need>
+  </Needs>
+  <ToDos>
+    <ToDo>implement a call to MyProc8 in case of discount code</ToDo>
+  </ToDos>
+  <Parameters>
+    <Parameter>
+      <Name>myDate</Name>
+      <PassingType>Input</PassingType>
+      <Info>sell date</Info>
+      <TypeName>DATE</TypeName>
+    </Parameter>
+    <Parameter>
+      <Name>name</Name>
+      <PassingType>Input</PassingType>
+      <Info>product name</Info>
+      <PictureInfo>
+        <PictureClause>X(50)</PictureClause>
+        <MaxOccurence>1</MaxOccurence>
+        <Usage xsi:nil="true" />
+      </PictureInfo>
+    </Parameter>
+    <Parameter>
+      <Name>myBool</Name>
+      <PassingType>InOut</PassingType>
+      <TypeName>BOOL</TypeName>
+    </Parameter>
+    <Parameter>
+      <Name>price</Name>
+      <PassingType>Output</PassingType>
+      <PictureInfo>
+        <PictureClause>S9(5)V9(2)</PictureClause>
+        <MaxOccurence>1</MaxOccurence>
+        <Usage xsi:nil="true" />
+      </PictureInfo>
+    </Parameter>
+    <Parameter>
+      <Name>desc</Name>
+      <PassingType>Output</PassingType>
+      <PictureInfo>
+        <PictureClause>X(200)</PictureClause>
+        <MaxOccurence>1</MaxOccurence>
+        <Usage xsi:nil="true" />
+      </PictureInfo>
+    </Parameter>
+  </Parameters>
+</Documentation>
+---------------------
+

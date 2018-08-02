@@ -8,6 +8,7 @@ using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Test.Utils
@@ -102,6 +103,8 @@ namespace TypeCobol.Test.Utils
                 new NodeName(),
                 new TokenName(),
                 new AntlrName(),
+                new DocumentationName(),
+                new DocumentationPropName(),
 #if EUROINFO_RULES
                 new EIEmptyName(),
                 new EICodeElementName(),
@@ -235,10 +238,8 @@ namespace TypeCobol.Test.Utils
         }
     }
 
-
-
-
-
+    #region Comparators
+    
     internal interface Comparator
     {
         void Compare(CompilationUnit result, StreamReader expected);
@@ -372,12 +373,11 @@ namespace TypeCobol.Test.Utils
     {
         public Multipass(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        internal class IndexNames : Names
+        internal class IndexNames : AbstractNames
         {
             internal int index = 0;
-            public string CreateName(string name) { return name+'.'+index; }
-            public Type GetComparatorType() { return typeof(Multipass); }
-            public bool IsEI() { return false; }
+            public override string CreateName(string name) { return name+'.'+index + Rextension; }
+            public override Type GetComparatorType() { return typeof(Multipass); }
         }
     }
 
@@ -598,6 +598,163 @@ namespace TypeCobol.Test.Utils
 
     }
 
+    internal class DocumentationComparator : FilesComparator
+    {
+        public DocumentationComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        {
+            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var diagnostic in diagnostics)
+            {
+                sb.AppendLine(diagnostic.ToString());
+            }
+            List<IDocumented> documentedNodes = ParserUtils.GetDocumentedNodes(pcd.Root);
+
+            sb.AppendLine("======================== Documentation ========================");
+            foreach (var node in documentedNodes)
+            {
+                sb.Append(node.XMLDocumentation);
+                sb.AppendLine();
+                sb.AppendLine("---------------------");
+                sb.AppendLine();
+            }
+
+            string result = sb.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+        }
+    }
+
+    internal class DocumentationPropertiesComparator : FilesComparator
+    {
+        public DocumentationPropertiesComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
+
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        {
+            ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
+            IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var diagnostic in diagnostics)
+            {
+                sb.AppendLine(diagnostic.ToString());
+            }
+
+            List<IDocumented> documentedNodes = ParserUtils.GetDocumentedNodes(pcd.Root);
+
+            sb.AppendLine("======================== Nodes properties ========================");
+            foreach (var node in documentedNodes)
+            {
+                WriteDocumentedNodeProperties(node, sb);
+                sb.AppendLine();
+                sb.AppendLine("---------------------");
+                sb.AppendLine();
+            }
+
+            sb.AppendLine("======================== Code Element properties ========================");
+            foreach (var node in documentedNodes)
+            {
+                WriteDocumentedCodeElementProperties(node, sb);
+                sb.AppendLine();
+                sb.AppendLine("---------------------");
+                sb.AppendLine();
+            }
+
+
+            string result = sb.ToString();
+            if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+        }
+
+        private void WriteDocumentedNodeProperties(IDocumented node, StringBuilder sb)
+        {
+            DocumentationForFunction funcDoc = node.Documentation as DocumentationForFunction;
+            DocumentationForProgram pgmDoc = node.Documentation as DocumentationForProgram;
+
+            sb.AppendLine("Name : " + node.Documentation.Name);
+            sb.AppendLine("Description : " + node.Documentation.Description);
+            sb.AppendLine("Visibility : " + node.Documentation.Visibility);
+            sb.AppendLine("Namespace : " + node.Documentation.Namespace);
+            sb.AppendLine("NodeType : " + (node.Documentation.IsTypeDef ? "TypeDef" :
+                                               node.Documentation.IsFunction ? "Function" :
+                                               node.Documentation.IsProgram ? "Program" : ""));
+            if (funcDoc != null || pgmDoc != null)
+            {
+                sb.AppendLine("IsDeprecated : " + (funcDoc?.IsDeprecated ?? pgmDoc.IsDeprecated));
+                sb.AppendLine("Deprecated : " + (funcDoc?.Deprecated ?? pgmDoc?.Deprecated));
+                sb.AppendLine("ReplacedBy : " + (funcDoc?.ReplacedBy ?? pgmDoc?.ReplacedBy));
+                sb.AppendLine("Restriction : " + (funcDoc?.Restriction ?? pgmDoc?.Restriction));
+                sb.AppendLine("See : " + (funcDoc?.See ?? pgmDoc?.See));
+                sb.AppendLine("Needs : ");
+                foreach (var need in (funcDoc?.Needs ?? pgmDoc?.Needs) ?? Enumerable.Empty<string>())
+                    sb.AppendLine("    " + need);
+                sb.AppendLine("ToDo : ");
+                foreach (var toDo in funcDoc?.ToDo ?? pgmDoc?.ToDo ?? Enumerable.Empty<string>())
+                    sb.AppendLine("    " + toDo);
+                sb.AppendLine("Parameters : ");
+                bool isFirstParam = true;
+                foreach (var param in funcDoc?.Parameters ?? pgmDoc?.Parameters ?? Enumerable.Empty<DocumentationParameter>())
+                {
+                    if (isFirstParam)
+                        isFirstParam = false;
+                    else
+                        sb.AppendLine("    --------");
+                    sb.AppendLine("    " + "Name : " + param.Name);
+                    sb.AppendLine("    " + "PassingType : " + param.PassingType);
+                    sb.AppendLine("    " + "Info : " + param.Info);
+                    if (param.IsType)
+                        sb.AppendLine("    " + "TypeName : " + param.TypeName);
+                    if (param.PictureInfo != null)
+                    {
+                        sb.AppendLine("    " + "PictureInfo : ");
+                        sb.AppendLine("        " + "PictureClause : " + param.PictureInfo.PictureClause);
+                        sb.AppendLine("        " + "MaxOccurence : " + param.PictureInfo.MaxOccurence);
+                        sb.AppendLine("        " + "Usage : " + param.PictureInfo.Usage);
+
+                    }
+                }
+            }
+
+        }
+
+        private void WriteDocumentedCodeElementProperties(IDocumented node, StringBuilder sb)
+        {
+
+            sb.AppendLine("== " + node.Documentation.Name + " ==");
+            FormalizedCommentDocumentation formCom = node.Documentation.FormCom;
+
+            if (formCom != null)
+            {
+                sb.AppendLine("Description : " + formCom.Description);
+                sb.AppendLine("Deprecated : "  + (formCom.Deprecated == "" ? "*is present*" : formCom.Deprecated));
+                sb.AppendLine("ReplacedBy : "  + formCom.ReplacedBy);
+                sb.AppendLine("Restriction : " + formCom.Restriction);
+                sb.AppendLine("See : "         + formCom.See);
+                sb.AppendLine("Needs : ");
+                foreach (var need in formCom.Needs ?? Enumerable.Empty<string>())
+                    sb.AppendLine("    " + need);
+                sb.AppendLine("ToDo : ");
+                foreach (var toDo in formCom.ToDo ?? Enumerable.Empty<string>())
+                    sb.AppendLine("    " + toDo);
+                sb.AppendLine("Parameters : ");
+                foreach (var parameter in formCom.Parameters ?? new Dictionary<string, string>())
+                {
+                    sb.AppendLine("    " + parameter.Key + " : " + parameter.Value);
+
+                }
+            }
+            else
+                sb.AppendLine("No formalized comment found");
+        }
+    }
+
+    #endregion
+
+
     internal interface Names
     {
         string CreateName(string name);
@@ -612,6 +769,7 @@ namespace TypeCobol.Test.Utils
         public virtual bool IsEI() {
             return false;
         }
+        public string Rextension => ".txt";
     }
 
     internal abstract class AbstractEINames : AbstractNames
@@ -622,136 +780,132 @@ namespace TypeCobol.Test.Utils
     }
 
     #region DefaultNames
-    internal class EmptyName : Names
+    internal class EmptyName : AbstractNames
     {
-        public string CreateName(string name) { return name; }
-        public Type GetComparatorType() { return typeof(FilesComparator); }
-        public bool IsEI() { return false; }
+        private Names _namesImplementation;
+        public override string CreateName(string name) { return name + Rextension; }
+        public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class CodeElementName : Names
+    internal class CodeElementName : AbstractNames
     {
-        public string CreateName(string name) { return name + "CodeElements"; }
-        public Type GetComparatorType() { return typeof(FilesComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "CodeElements" + Rextension; }
+        public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class RPNName : Names
+    internal class RPNName : AbstractNames
     {
-        public string CreateName(string name) { return name + "RPN"; }
-        public Type GetComparatorType() { return typeof(ArithmeticComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "RPN" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ArithmeticComparator); }
     }
 
-    internal class NYName : Names
+    internal class NYName : AbstractNames
     {
-        public string CreateName(string name) { return name + "NY"; }
-        public Type GetComparatorType() { return typeof(NYComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "NY" + Rextension; }
+        public override Type GetComparatorType() { return typeof(NYComparator); }
     }
 
-    internal class PGMName : Names
+    internal class PGMName : AbstractNames
     {
-        public string CreateName(string name) { return name + "PGM"; }
-        public Type GetComparatorType() { return typeof(ProgramsComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "PGM" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
     internal class MixDiagIntoSourceName : AbstractNames
     {
-        public override string CreateName(string name) { return name + "Mix"; }
+        public override string CreateName(string name) { return name + "Mix" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator2); }
     }
 
-    internal class NodeName : Names
+    internal class NodeName : AbstractNames
     {
-        public string CreateName(string name) { return name + "-Nodes"; }
-        public Type GetComparatorType() { return typeof(NodeComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "-Nodes" + Rextension; }
+        public override Type GetComparatorType() { return typeof(NodeComparator); }
     }
 
-    internal class TokenName : Names
+    internal class TokenName : AbstractNames
     {
-        public string CreateName(string name) { return name + "-Tokens"; }
-        public Type GetComparatorType() { return typeof(TokenComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "-Tokens" + Rextension; }
+        public override Type GetComparatorType() { return typeof(TokenComparator); }
     }
 
-    internal class MemoryName : Names
+    internal class MemoryName : AbstractNames
     {
-        public string CreateName(string name) { return name + "MEM"; }
-        public Type GetComparatorType() { return typeof(MemoryComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "MEM" + Rextension; }
+        public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 
-    internal class AntlrName : Names
+    internal class AntlrName : AbstractNames
     {
-        public string CreateName(string name) { return name + "ANTLR"; }
-        public Type GetComparatorType() { return typeof(AntlrComparator); }
-        public bool IsEI() { return false; }
+        public override string CreateName(string name) { return name + "ANTLR" + Rextension; }
+        public override Type GetComparatorType() { return typeof(AntlrComparator); }
+    }
+
+    internal class DocumentationName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + Rextension; }
+        public override Type GetComparatorType() { return typeof(DocumentationComparator); }
+        public new string Rextension => ".xml";
+    }
+
+    internal class DocumentationPropName : AbstractNames
+    {
+        public override string CreateName(string name) { return name + "Doc" + Rextension; }
+        public override Type GetComparatorType() { return typeof(DocumentationPropertiesComparator); }
     }
     #endregion
 
     #region EINames
 #if EUROINFO_RULES
-    internal class EIEmptyName : Names
+    internal class EIEmptyName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "-EI"; }
-        public Type GetComparatorType() { return typeof(FilesComparator); }
-
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class EICodeElementName : Names
+    internal class EICodeElementName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "CodeElements-EI"; }
-        public Type GetComparatorType() { return typeof(FilesComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "CodeElements-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(FilesComparator); }
     }
 
-    internal class EIRPNName : Names
+    internal class EIRPNName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "RPN-EI"; }
-        public Type GetComparatorType() { return typeof(ArithmeticComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "RPN-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ArithmeticComparator); }
     }
 
-    internal class EINYName : Names
+    internal class EINYName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "NY-EI"; }
-        public Type GetComparatorType() { return typeof(NYComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "NY-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(NYComparator); }
     }
-    internal class EIPGMName : Names
+    internal class EIPGMName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "PGM-EI"; }
-        public Type GetComparatorType() { return typeof(ProgramsComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "PGM-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(ProgramsComparator); }
     }
     internal class EIMixDiagIntoSourceName : AbstractEINames
     {
-        public override string CreateName(string name) { return name + "Mix-EI"; }
+        public override string CreateName(string name) { return name + "Mix-EI" + Rextension; }
         public override Type GetComparatorType() { return typeof(ProgramsComparator2); }
     }
 
-    internal class EINodeName : Names
+    internal class EINodeName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "-Nodes-EI"; }
-        public Type GetComparatorType() { return typeof(NodeComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "-Nodes-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(NodeComparator); }
     }
 
-    internal class EITokenName : Names
+    internal class EITokenName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "-Tokens-EI"; }
-        public Type GetComparatorType() { return typeof(TokenComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "-Tokens-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(TokenComparator); }
     }
 
-    internal class EIMemoryName : Names
+    internal class EIMemoryName : AbstractEINames
     {
-        public string CreateName(string name) { return name + "MEM-EI"; }
-        public Type GetComparatorType() { return typeof(MemoryComparator); }
-        public bool IsEI() { return true; }
+        public override string CreateName(string name) { return name + "MEM-EI" + Rextension; }
+        public override Type GetComparatorType() { return typeof(MemoryComparator); }
     }
 #endif
     #endregion
@@ -775,10 +929,7 @@ namespace TypeCobol.Test.Utils
             SamplePath = samplePath;
             Resultnames = resultnames;
         }
-
-        private const string Rextension = ".txt";
-
-
+        
         /// <summary>
         /// Returns the sample filename with its extension
         /// </summary>
@@ -793,7 +944,7 @@ namespace TypeCobol.Test.Utils
             {
                 string ResultFilePath = Path.GetDirectoryName(SamplePath)?.Substring(_sampleRoot.Length);
                 string ResultFileName = Path.GetFileNameWithoutExtension(SamplePath);
-                return _resultRoot + Path.DirectorySeparatorChar + ResultFilePath  + Path.DirectorySeparatorChar + Resultnames.CreateName(ResultFileName) + Rextension;
+                return _resultRoot + Path.DirectorySeparatorChar + ResultFilePath  + Path.DirectorySeparatorChar + Resultnames.CreateName(ResultFileName);
             }
             
         }

@@ -1,0 +1,93 @@
+======================== Nodes properties ========================
+Name : DocForFunctions
+Description : 
+Visibility : 
+Namespace : DocForFunctions
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+Name : MyProc1
+Description : MyProc1 description 
+Visibility : Private
+Namespace : DocForFunctions
+NodeType : Function
+IsDeprecated : True
+Deprecated : 
+ReplacedBy : ReplacedBy MyProc8 
+Restriction : Do not support discount code 
+See : you later 
+Needs : 
+    first need
+    second need
+ToDo : 
+    implement a call to MyProc8 in case of discount code
+Parameters : 
+    Name : myDate
+    PassingType : Input
+    Info : sell date
+    TypeName : DATE
+    --------
+    Name : name
+    PassingType : Input
+    Info : product name
+    PictureInfo : 
+        PictureClause : X(50)
+        MaxOccurence : 1
+        Usage : 
+    --------
+    Name : myBool
+    PassingType : InOut
+    Info : 
+    TypeName : BOOL
+    --------
+    Name : price
+    PassingType : Output
+    Info : 
+    PictureInfo : 
+        PictureClause : S9(5)V9(2)
+        MaxOccurence : 1
+        Usage : 
+    --------
+    Name : desc
+    PassingType : Output
+    Info : 
+    PictureInfo : 
+        PictureClause : X(200)
+        MaxOccurence : 1
+        Usage : 
+
+---------------------
+
+======================== Code Element properties ========================
+== DocForFunctions ==
+No formalized comment found
+
+---------------------
+
+== MyProc1 ==
+Description : MyProc1 description 
+Deprecated : *is present*
+ReplacedBy : ReplacedBy MyProc8 
+Restriction : Do not support discount code 
+See : you later 
+Needs : 
+    first need
+    second need
+ToDo : 
+    implement a call to MyProc8 in case of discount code
+Parameters : 
+    myDate : sell date
+    name : product name
+    ID : will be ignored
+
+---------------------
+

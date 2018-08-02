@@ -1,0 +1,70 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DocForTypeDefs.
+
+       DATA DIVISION.
+       LOCAL-STORAGE SECTION.
+
+      * Inline Typedef without Formalized Comments
+       01 Type10 TYPEDEF STRICT pic X(8).
+
+      * Inline Typedef with good Formalized Comments
+      *<< Description for Type11 *>>
+       01 Type11 TYPEDEF STRICT pic X(8).
+
+      * Inline Typedef with too much informations inside Formalized Comments
+      *<< 
+          Description for Type12
+          - deprec
+          - params:
+            - param1: TYPEDEF do not have any param
+            - param2: This informations should be truncated
+          - replacedBy: Type42
+      *>>
+       01 Type12 TYPEDEF STRICT pic X(8).
+
+
+
+
+      * Group Typedef without Formalized Comments
+       01 Type20 TYPEDEF STRICT.
+        02 Member1 Pic x(8).
+        02 Member2.
+          03 Member21 PIC PPP999PPP.
+          03 Member22 Type Date.
+        02 Member3 Type Type10.
+        02 Member4 Type Bool.
+
+      * Group Typedef with good Formalized Comments
+      *<< Description for Type21 *>>
+       01 Type21 TYPEDEF STRICT.
+        02 Member1 Pic x(8).
+        02 Member2.
+          03 Member21 PIC PPP999PPP.
+          03 Member22 Type Date.
+        02 Member3 Type Type11.
+        02 Member4 Type Bool.
+
+      * Group Typedef with too much informations inside Formalized Comments
+      *<< 
+          Description for Type22 
+          - deprecated
+          - params:
+            - Member1: BirthDate
+            - Member2: Today Date and Era
+            - Member3: self implementation attempt
+            - Mamber42: this would be 
+                        truncated
+          - need: see here what is needed
+      *>>
+       01 Type22 TYPEDEF STRICT.
+        02 Member1 Pic 9(8).
+        02 Member2.
+          03 Member21 Type Date.
+          03 Member22 PIC PPP999PPP.
+        02 Member3 Type Type12.
+        02 Member4 Type Bool.
+
+
+       PROCEDURE DIVISION.
+
+       END PROGRAM DocForTypeDefs.

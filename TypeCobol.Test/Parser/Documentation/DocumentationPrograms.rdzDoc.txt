@@ -1,0 +1,140 @@
+======================== Nodes properties ========================
+Name : DocForPrograms
+Description : Main Program 
+Visibility : 
+Namespace : DocForPrograms
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : restriction value 
+See : Thank you for your attention 
+Needs : 
+    This is my first need This is also my first need
+    This is my second need
+ToDo : 
+Parameters : 
+
+---------------------
+
+Name : NestedPgm
+Description : Nested Program 
+Visibility : 
+Namespace : NestedPgm
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+    This is my only need
+ToDo : 
+    slap car roof
+Parameters : 
+    Name : param1
+    PassingType : Unknow
+    Info : This is my first param
+    PictureInfo : 
+        PictureClause : X(8)
+        MaxOccurence : 1
+        Usage : 
+    --------
+    Name : param2
+    PassingType : Output
+    Info : this is an output param
+    PictureInfo : 
+        PictureClause : S9(5)
+        MaxOccurence : 1
+        Usage : NativeBinary
+    --------
+    Name : param3
+    PassingType : InOut
+    Info : this is an inout param
+    PictureInfo : 
+        PictureClause : 
+        MaxOccurence : 1
+        Usage : Pointer
+    --------
+    Name : param4
+    PassingType : Unknow
+    Info : 
+    TypeName : BOOL
+
+---------------------
+
+Name : StackedPgm
+Description : Stacked Program 
+Visibility : 
+Namespace : StackedPgm
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+    Name : param1
+    PassingType : Unknow
+    Info : 
+    PictureInfo : 
+        PictureClause : X(8)
+        MaxOccurence : 1
+        Usage : 
+    --------
+    Name : param3
+    PassingType : Unknow
+    Info : 
+    PictureInfo : 
+        PictureClause : 
+        MaxOccurence : 1
+        Usage : Pointer
+
+---------------------
+
+======================== Code Element properties ========================
+== DocForPrograms ==
+Description : Main Program 
+Deprecated : 
+ReplacedBy : 
+Restriction : restriction value 
+See : Thank you for your attention 
+Needs : 
+    This is my first need This is also my first need
+    This is my second need
+ToDo : 
+Parameters : 
+
+---------------------
+
+== NestedPgm ==
+Description : Nested Program 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+    This is my only need
+ToDo : 
+    slap car roof
+Parameters : 
+    param1 : This is my first param
+    param2 : Output this is an output param
+    param3 : inout - this is an inout param
+
+---------------------
+
+== StackedPgm ==
+Description : Stacked Program 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+

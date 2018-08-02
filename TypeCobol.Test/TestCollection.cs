@@ -270,5 +270,28 @@ namespace TypeCobol.Test {
                 throw new Exception("SemanticCheck Step failled");
         }
 
+
+        /// <summary>
+        /// Check for Documentation generation
+        /// </summary>
+        [TestMethod]
+        //[Ignore]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void DocumentationGeneration()
+        {
+            int nbOfTests = 0;
+
+            string[] extensions = { ".tcbl" };
+            string[] compilerExtensions = extensions.Concat(new[] { ".cpy" }).ToArray();
+            var directory =
+                PlatformUtils.GetPathForProjectFile("Parser" + Path.DirectorySeparatorChar + "Documentation");
+
+            var folderTester = new FolderTester(directory, directory, directory, extensions, compilerExtensions);
+            folderTester.Test();
+            nbOfTests += folderTester.GetTestCount();
+            Console.Write("Number of tests: " + nbOfTests + "\n");
+            Assert.IsTrue(nbOfTests > 0, "No tests found");
+        }
     }
 }

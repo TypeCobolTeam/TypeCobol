@@ -1,0 +1,136 @@
+======================== Nodes properties ========================
+Name : DocForTypeDefs
+Description : 
+Visibility : 
+Namespace : DocForTypeDefs
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+Name : Type10
+Description : 
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+
+---------------------
+
+Name : Type11
+Description : Description for Type11
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+
+---------------------
+
+Name : Type12
+Description : Description for Type12
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+
+---------------------
+
+Name : Type20
+Description : 
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+
+---------------------
+
+Name : Type21
+Description : Description for Type21
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+
+---------------------
+
+Name : Type22
+Description : Description for Type22
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+
+---------------------
+
+======================== Code Element properties ========================
+== DocForTypeDefs ==
+No formalized comment found
+
+---------------------
+
+== Type10 ==
+No formalized comment found
+
+---------------------
+
+== Type11 ==
+Description : Description for Type11 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+== Type12 ==
+Description : Description for Type12 
+Deprecated : *is present*
+ReplacedBy : Type42 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+    param1 : TYPEDEF do not have any param
+    param2 : This informations should be truncated
+
+---------------------
+
+== Type20 ==
+No formalized comment found
+
+---------------------
+
+== Type21 ==
+Description : Description for Type21 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+== Type22 ==
+Description : Description for Type22 
+Deprecated : *is present*
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+    see here what is needed
+ToDo : 
+Parameters : 
+    Member1 : BirthDate
+    Member2 : Today Date and Era
+    Member3 : self implementation attempt
+    Mamber42 : this would be truncated
+
+---------------------
+

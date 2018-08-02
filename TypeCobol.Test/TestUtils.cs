@@ -24,16 +24,16 @@ namespace TypeCobol.Test
             result = Regex.Replace(result, "(?<!\r)\n", "\r\n");
             expectedResult = Regex.Replace(expectedResult, "(?<!\r)\n", "\r\n");
 
-            String[] expectedResultLines = expectedResult.Split('\r', '\n' );
-            String[] resultLines = result.Split('\r', '\n');
-
-            var linefaults = new List<int>();
-            for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++) {
-                if (expectedResultLines[c] != resultLines[c]) linefaults.Add(c/2+1);
-            }
-
             if (result != expectedResult)
             {
+                String[] expectedResultLines = expectedResult.Split('\r', '\n' );
+                String[] resultLines = result.Split('\r', '\n');
+
+                var linefaults = new List<int>();
+                for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++) {
+                    if (expectedResultLines[c] != resultLines[c]) linefaults.Add(c/2+1);
+                }
+
                 errors.Append("result != expectedResult  In test:" + testName)
                       .AppendLine(" at line"+(linefaults.Count>1?"s":"")+": "+string.Join(",", linefaults));
                 errors.Append("=== RESULT ==========\n" + result + "====================");
