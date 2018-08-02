@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Xml.Serialization;
 using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Compiler.Nodes {
@@ -72,8 +74,12 @@ namespace TypeCobol.Compiler.Nodes {
 
     // [TYPECOBOL]
 
-    public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller {
-	    public FunctionDeclaration(FunctionDeclarationHeader header): base(header) { Profile = new ParametersProfileNode(null); }
+    public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller, IDocumented
+    {
+        public FunctionDeclaration(FunctionDeclarationHeader header) : base(header)
+        {
+            Profile = new ParametersProfileNode(null);
+        }
 	    public override string ID { get { return Name; } }
 	    public string Label { get; internal set; }
 
@@ -84,6 +90,21 @@ namespace TypeCobol.Compiler.Nodes {
 	    public string Copy { get { return Library+"cpy"; } }
 	    //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
         public ParametersProfileNode Profile{ get; set; }
+
+        public string XMLDocumentation
+        {
+            get
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Documentation));
+                using (StringWriter textWriter = new StringWriter())
+                {
+                    serializer.Serialize(textWriter, Documentation);
+                    return textWriter.ToString();
+                }
+            }
+        }
+        public bool IsDocumented => Documentation != null;
+        public Documentation Documentation { get; set; }
 
 
         private string _hash;

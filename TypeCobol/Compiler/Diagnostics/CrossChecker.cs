@@ -62,6 +62,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(FunctionDeclaration functionDeclaration)
         {
             FunctionDeclarationChecker.OnNode(functionDeclaration);
+            functionDeclaration.Documentation = new DocumentationForFunction(functionDeclaration);
             return true;
         }
 
@@ -182,6 +183,7 @@ namespace TypeCobol.Compiler.Diagnostics
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
+            typeDefinition.Documentation = new DocumentationForType(typeDefinition);
             return true;
         }
 
@@ -231,6 +233,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement,
                     "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
             }
+            return true;
+        }
+
+        public override bool Visit(Program program)
+        {
+            program.Documentation = new DocumentationForProgram(program);
             return true;
         }
 

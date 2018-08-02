@@ -295,6 +295,7 @@
     <Compile Include="Compiler\LanguageLevel.cs" />
     <Compile Include="Compiler\Nodes\Attributes.cs" />
     <Compile Include="Compiler\Nodes\Data.cs" />
+    <Compile Include="Compiler\Nodes\Documentation.cs" />
     <Compile Include="Compiler\Nodes\Environment.cs" />
     <Compile Include="Compiler\Nodes\Exception.cs" />
     <Compile Include="Compiler\Nodes\Node.cs" />

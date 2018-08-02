@@ -1,5 +1,7 @@
 ﻿
+using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.Nodes {
@@ -353,9 +355,9 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
     // [COBOL 2002]
-    public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>
+    public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>, IDocumented
     {
-        public TypeDefinition(DataTypeDescriptionEntry entry): base(entry) { }
+        public TypeDefinition(DataTypeDescriptionEntry entry) : base(entry) { }
         public RestrictionLevel RestrictionLevel { get { return this.CodeElement().RestrictionLevel; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -384,6 +386,22 @@ namespace TypeCobol.Compiler.Nodes {
             }
             return false;
         }
+
+
+        public string XMLDocumentation
+        {
+            get
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Documentation));
+                using (StringWriter textWriter = new StringWriter())
+                {
+                    serializer.Serialize(textWriter, Documentation);
+                    return textWriter.ToString();
+                }
+            }
+        }
+        public bool IsDocumented => Documentation != null;
+        public Documentation Documentation { get; set; }
     }
     // [/COBOL 2002]
 
@@ -406,13 +424,19 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        public PassingTypes PassingType { get; set; }
         public AlphanumericValue Picture { get { return _CodeElement.Picture; } }
         public IntegerValue LevelNumber { get { return _CodeElement.LevelNumber; } }
         public SymbolDefinition DataName { get { return _CodeElement.DataName; } }
 
         public bool IsOmittable { get { return _CodeElement.IsOmittable; } }
 
-
+        public enum PassingTypes
+        {
+            Input,
+            Output,
+            InOut
+        }
     }
     // [/TYPECOBOL]
 

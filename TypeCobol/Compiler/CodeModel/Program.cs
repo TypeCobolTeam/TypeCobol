@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
@@ -26,7 +28,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public class Program : Node, CodeElementHolder<ProgramIdentification>, IProcCaller
+    public class Program : Node, CodeElementHolder<ProgramIdentification>, IProcCaller, IDocumented
     {
         public Program(CodeElement codeElement) : base(codeElement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -128,6 +130,20 @@ namespace TypeCobol.Compiler.CodeModel
         /// A nested program is a program that is contained in another program.
         /// </summary>
         public IList<NestedProgram> NestedPrograms { get; set; }
+
+        public string XMLDocumentation {
+            get
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Documentation));
+                using (StringWriter textWriter = new StringWriter())
+                {
+                    serializer.Serialize(textWriter, Documentation);
+                    return textWriter.ToString();
+                }
+            }
+        }
+        public bool IsDocumented => Documentation != null;
+        public Documentation Documentation { get; set; }
     }
 
     /// <summary>

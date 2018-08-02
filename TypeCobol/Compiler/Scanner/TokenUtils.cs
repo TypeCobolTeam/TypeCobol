@@ -110,7 +110,7 @@ namespace TypeCobol.Compiler.Scanner
                     tokenType = TokenType.FormComsReplacedBy;
                     break;
                 case "RESTRICTION":
-                case "RESTRIC":
+                case "RSTRIC":
                     tokenType = TokenType.FormComsRestriction;
                     break;
                 case "NEED":

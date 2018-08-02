@@ -567,6 +567,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
+                paramNode.PassingType = ParameterDescription.PassingTypes.Input;
                 funcProfile.InputParameters.Add(paramNode);
 
                 paramNode.SetParent(CurrentNode);
@@ -577,6 +578,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
+                paramNode.PassingType = ParameterDescription.PassingTypes.Output;
                 funcProfile.OutputParameters.Add(paramNode);
 
                 paramNode.SetParent(CurrentNode);
@@ -587,6 +589,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 var paramNode = new ParameterDescription(parameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
+                paramNode.PassingType = ParameterDescription.PassingTypes.InOut;
                 funcProfile.InoutParameters.Add(paramNode);
 
                 paramNode.SetParent(CurrentNode);
