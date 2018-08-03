@@ -28,6 +28,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private bool _IsInsideLinkageSectionContext;
         private bool _IsInsideLocalStorageSectionContext;
         private bool _IsInsideFileSectionContext;
+        private bool _IsInsideProcedure;
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -96,6 +97,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private void Enter(Node node, CodeElement context = null, SymbolTable table = null)
         {
             node.SymbolTable = table ?? SyntaxTree.CurrentNode.SymbolTable;
+            if (_IsInsideProcedure)
+                node.SetFlag(Node.Flag.InsideProcedure, true);      //Set flag to know that this node belongs a Procedure or Function
             SyntaxTree.Enter(node, context);
 
             if (node.CodeElement != null)
@@ -202,9 +205,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
         {
+            
             if (Program == null)
             {
-                Program = new SourceProgram(TableOfGlobals, programIdentification);
+                if (SyntaxTree.Root.MainProgram == null)
+                {
+                    SyntaxTree.Root.MainProgram = new SourceProgram(TableOfGlobals, programIdentification);
+                    Program = SyntaxTree.Root.MainProgram;
+                }
+                else
+                {
+                    Program = new StackedProgram(TableOfGlobals, programIdentification);                    
+                }
+                
                 programsStack = new Stack<Program>();
                 CurrentProgram = Program;
                 Enter(CurrentProgram, programIdentification, CurrentProgram.SymbolTable);
@@ -469,7 +482,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             _CurrentTypeDefinition = node;
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Declared] " + node.Name, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypeDeclared, node.Name, LogType.TypeCobolUsage);
         }
 
         public virtual void StartWorkingStorageSection(WorkingStorageSectionHeader header)
@@ -541,6 +554,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Label = uidfactory.FromOriginal(header?.FunctionName.Name),
                 Library = CurrentProgram.Identification.ProgramName.Name
             };
+            _IsInsideProcedure = true;
             //DO NOT change this without checking all references of Library. 
             // (SymbolTable - function, type finding could be impacted) 
 
@@ -594,7 +608,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionDeclared, declaration.FunctionName.ToString(), LogType.TypeCobolUsage);
         }
 
         public virtual void EndFunctionDeclaration(FunctionDeclarationEnd end)
@@ -602,6 +616,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new FunctionEnd(end), end);
             Exit();
             Exit();// exit DECLARE FUNCTION
+            _IsInsideProcedure = false;
         }
 
         public virtual void StartFunctionProcedureDivision(ProcedureDivisionHeader header)

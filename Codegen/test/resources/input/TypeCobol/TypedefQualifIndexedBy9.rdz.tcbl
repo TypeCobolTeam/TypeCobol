@@ -13,10 +13,20 @@
              10 Event TYPE Event occurs 10
                              depending on Counter
                              indexed by Idx.
-      
+
+       01 MyGroupVar.
+        05 LigCln-Taxes  OCCURS 10
+        INDEXED BY  Idx-nonQualified.
+
        01 MyEventList type EventList.
       
        procedure division.
+
+
+       PERFORM VARYING Idx-nonQualified FROM 1 BY 1
+           UNTIL Idx-nonQualified > MyEventList::Idx
+             display "test"
+           END-PERFORM.
       
        DECLARE PROCEDURE DisplayEventList PRIVATE
             INPUT EventList type EventList.
