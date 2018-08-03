@@ -369,7 +369,7 @@ namespace TypeCobol.LanguageServer
                         {
                             var typeChildren = GetTypeChildrens(node.SymbolTable, variable);
                             if (typeChildren != null)
-                                children.AddRange(typeChildren.Where(t => t.Name != null));
+                                children.AddRange(typeChildren.Where(t => t.Name != null || t.Children.Where(u => u.Name != null) != null));
                         }
 
                         var computedChildrenList = new List<Node>();
