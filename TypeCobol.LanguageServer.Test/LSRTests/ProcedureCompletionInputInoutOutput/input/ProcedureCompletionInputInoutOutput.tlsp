@@ -9,7 +9,7 @@
   "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\PETERDA\\\\Source\\\\Repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\",\"-y\",\"C:\\\\Users\\\\PETERDA\\\\Source\\\\Repos\\\\TypeCobol\\\\TypeCobol.LanguageServer.Test\\\\LSRTests\\\\DefaultIntrinsic.txt\",\"-md\",\"30\"]}}",
   "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA017229231465005300962.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZS0OSM.\\r\\n\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Personne .\\r\\n           05 homme type BOOL.\\r\\n           05 birthDate TYPE DATE.\\r\\n           05 AutresInfos.\\r\\n                10 Tel pic X(10).\\r\\n                10 Mail pic X(10).\\r\\n\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  Gender TYPE BOOL\\r\\n                     FirstName PIC X(10)\\r\\n              in-out brithDate TYPE DATE\\r\\n              output SecondGender TYPE BOOL\\r\\n                     Height PIC X(10).\\r\\n       procedure division.\\r\\n           display \\\"coucou\\\"\\r\\n           goback.\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  Gender TYPE BOOL\\r\\n                     FirstName PIC X(10)\\r\\n                     LastName PIC X(10)\\r\\n              output SecondGender TYPE BOOL\\r\\n                     Height PIC X(10).\\r\\n       procedure division.\\r\\n           display \\\"coucou\\\"\\r\\n           goback.\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  Gender TYPE BOOL\\r\\n                     FirstName PIC X(10)\\r\\n                     LastName PIC X(10)\\r\\n                     MiddleName PIC X(10)\\r\\n              in-out brithDate TYPE DATE\\r\\n              output SecondGender TYPE BOOL\\r\\n                     Height PIC X(10).\\r\\n       procedure division.\\r\\n           display \\\"coucou\\\"\\r\\n           goback.\\r\\n       end-declare.\\r\\n\\r\\n              declare procedure AProcedureTest private\\r\\n              input  Gender TYPE BOOL\\r\\n                     FirstName PIC X(10)\\r\\n                     LastName PIC X(10)\\r\\n                     MiddleName PIC X(10)\\r\\n                     ImaginaryName PIC X(10)\\r\\n              output SecondGender TYPE BOOL\\r\\n                     Height PIC X(10).\\r\\n       procedure division.\\r\\n           display \\\"coucou\\\"\\r\\n           goback.\\r\\n       end-declare.\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n       END PROGRAM DVZS0OSM.\"}}}",
   "messages": [
-    {
+     {
       "category": 0,
       "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didSave\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA017229231465005300962.cee\"},\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZS0OSM.\\r\\n\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 Personne .\\r\\n           05 gender type BOOL.\\r\\n           05 birthDate TYPE DATE.\\r\\n           05 AutresInfos.\\r\\n                10 FirstName pic X(10).\\r\\n                10 LastName pic X(10).\\r\\n\\r\\n       procedure division.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  Gender TYPE BOOL\\r\\n                     FirstName PIC X(10)\\r\\n              in-out birthDate TYPE DATE\\r\\n              output SecondGender TYPE BOOL\\r\\n                     Height PIC X(10).\\r\\n       procedure division.\\r\\n           display \\\"coucou\\\"\\r\\n           goback.\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  Gender TYPE BOOL\\r\\n                     FirstName PIC X(10)\\r\\n                     LastName PIC X(10)\\r\\n              output SecondGender TYPE BOOL\\r\\n                     Height PIC X(10).\\r\\n       procedure division.\\r\\n           display \\\"coucou\\\"\\r\\n           goback.\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n              input  Gender TYPE BOOL\\r\\n                     FirstName PIC X(10)\\r\\n                     LastName PIC X(10)\\r\\n                     MiddleName PIC X(10)\\r\\n              in-out birthDate TYPE DATE\\r\\n              output SecondGender TYPE BOOL\\r\\n                     Height PIC X(10).\\r\\n       procedure division.\\r\\n           display \\\"coucou\\\"\\r\\n           goback.\\r\\n       end-declare.\\r\\n\\r\\n       declare procedure AProcedureTest private\\r\\n           input  Gender TYPE BOOL\\r\\n                 FirstName PIC X(10)\\r\\n                 LastName PIC X(10)\\r\\n                 MiddleName PIC X(10)\\r\\n                 ImaginaryName PIC X(10)\\r\\n           output SecondGender TYPE BOOL\\r\\n                 Height PIC X(10).\\r\\n       procedure division.\\r\\n           display \\\"coucou\\\"\\r\\n           goback.\\r\\n       end-declare.\\r\\n\\r\\n\\r\\n\\r\\n       END PROGRAM DVZS0OSM.\"}}"
     },
@@ -235,7 +235,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"36\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"36\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
@@ -603,7 +603,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"62\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"62\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
@@ -643,7 +643,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"66\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"66\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
@@ -1071,7 +1071,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"96\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"96\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
@@ -1415,7 +1415,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"120\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"120\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
@@ -1771,7 +1771,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"134\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"134\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
@@ -2015,7 +2015,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"148\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"148\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
@@ -2327,7 +2327,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"164\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"164\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
@@ -2607,7 +2607,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"182\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne.\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos.\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName.\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName.\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"182\",\"result\":[{\"label\":\"Personne (Alphanumeric) (Personne)\",\"kind\":6,\"insertText\":\"Personne\"},{\"label\":\"AutresInfos (Alphanumeric) (Personne::AutresInfos)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos\"},{\"label\":\"FirstName (Alphanumeric) (Personne::AutresInfos::FirstName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::FirstName\"},{\"label\":\"LastName (Alphanumeric) (Personne::AutresInfos::LastName)\",\"kind\":6,\"insertText\":\"Personne::AutresInfos::LastName\"}]}"
     },
     {
       "category": 0,
