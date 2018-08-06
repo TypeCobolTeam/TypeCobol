@@ -411,7 +411,7 @@ namespace TypeCobol.Compiler.Parser
 
             _CurrentTypeDefinition = node;
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Declared] " + node.Name, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypeDeclared, node.Name, LogType.TypeCobolUsage);
         }
         // [/COBOL 2002]
 
@@ -660,7 +660,7 @@ namespace TypeCobol.Compiler.Parser
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Function-Declared] " + declaration.FunctionName, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionDeclared, declaration.FunctionName.ToString(), LogType.TypeCobolUsage);
         }
         public override void ExitFunctionDeclaration(ProgramClassParser.FunctionDeclarationContext context)
         {

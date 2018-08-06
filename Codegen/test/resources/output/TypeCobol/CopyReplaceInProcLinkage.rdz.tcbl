@@ -21,6 +21,7 @@
                          
        COPY MSVCOUT replacing ==:MSVCOUT:== by ==SVCOUT==.
       *---------------------------------------------------
+
        01 IsOk-value PIC X     VALUE LOW-VALUE.
            88 IsOk       VALUE 'T'.
            88 IsOk-false VALUE 'F'
@@ -29,6 +30,5 @@
        PROCEDURE DIVISION
              USING BY REFERENCE IsOk-value
            .
-
            .
        END PROGRAM da82b615toto.

@@ -12,8 +12,7 @@
 
        01 TechnicalContext TYPEDEF STRICT PUBLIC.
             05 TechName PIC X(8).
-      * #723 It's crappy to need CALLEE:: in this situation
-            05 Site TYPE CALLEE::SITE.
+            05 Site TYPE SITE.
 
        01 SITE TYPEDEF STRICT PUBLIC.
             05 SiteName PIC X(8).

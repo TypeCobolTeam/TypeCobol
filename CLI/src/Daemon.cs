@@ -93,9 +93,6 @@ namespace TypeCobol.Server {
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
                     config.ExecToStep = ExecutionStep.CrossCheck; //If there is no given output file, we can't run generation, fallback to CrossCheck
 
-                
-
-
                 //"startClient" will be true when "-K" is passed as an argument in command line.
                 if (startClient != StartClient.No && once) {
                     pipename= "TypeCobol.Server";
@@ -235,8 +232,7 @@ namespace TypeCobol.Server {
             errmsg += "Try " + PROGNAME + " --help for usage information.";
             Console.WriteLine(errmsg);
 
-            AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[ReturnCode] {0} : {1}", code.ToString(), message), EventType.Genration);
-            AnalyticsWrapper.Telemetry.EndSession(); //End Telemetry session and force data sending
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.ReturnCode, string.Format("{0} : {1}", code.ToString(), message), LogType.Genration);
             return (int)code;
         }
         static int exit(Dictionary<ReturnCode, string> errors)
@@ -245,11 +241,10 @@ namespace TypeCobol.Server {
             foreach (var error in errors)
             {
                 errmsg += "Code: " + (int)error.Key + " " + PROGNAME + ": " + error.Value + Environment.NewLine;
-                AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[ReturnCode] {0} : {1}", error.Key.ToString(), error.Value), EventType.Genration);
+                AnalyticsWrapper.Telemetry.TrackEvent(EventType.ReturnCode, string.Format("{0} : {1}", error.Key.ToString(), error.Value), LogType.Genration);
             }
             errmsg += "Try " + PROGNAME + " --help for usage information.";
             Console.WriteLine(errmsg);
-            AnalyticsWrapper.Telemetry.EndSession(); //End Telemetry session and force data sending
             return errors.Count > 1 ? (int)ReturnCode.MultipleErrors : (int)errors.Keys.First();
         }
         static int exit(ReturnCode code)

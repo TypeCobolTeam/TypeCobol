@@ -867,12 +867,12 @@ declarativesSections ::= declarativesSection
 	;
 
 declarativesSection ::= 
-	SectionHeader 
+	sectionHeader
 	UseStatement
-	{:  :}
-	| SectionHeader
+	{: my_parser.Builder.EndSection(); :}
+	| sectionHeader
 	UseStatement paragraphs
-	{:  :}	
+	{: my_parser.Builder.EndSection(); :}
 	;
 
 sections ::= section
