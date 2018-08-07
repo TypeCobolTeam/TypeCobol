@@ -256,14 +256,27 @@ namespace TypeCobol.Compiler.Diagnostics
                                 continue;
                             }
                         }
-                        else if (tokenType == TokenType.ADDRESS && expected.Usage == DataUsage.Pointer)
+                        else if (tokenType == TokenType.ADDRESS)
                         {
-                            if (!actualDataDefinition.IsFlagSet(Node.Flag.LinkageSectionNode) &&
-                                call.Arguments[c].SharingMode.Value == ParameterSharingMode.ByReference)
+                            if (expected.Usage == DataUsage.Pointer)
                             {
-                                DiagnosticUtils.AddError(node, "ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE", actualSpecialRegister.SpecialRegisterName);
+                                if (!actualDataDefinition.IsFlagSet(Node.Flag.LinkageSectionNode) &&
+                                    call.Arguments[c].SharingMode.Value == ParameterSharingMode.ByReference)
+                                {
+                                    DiagnosticUtils.AddError(node, "ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE", actualSpecialRegister.SpecialRegisterName);
+                                }
+                                continue;
                             }
-                            continue;
+
+                            if (expected.DataType != DataType.Pointer)
+                            {
+                                var m = string.Format(
+                                    "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
+                                    call.FunctionName, expected.Name, expected.DataType,
+                                    callArgName ?? string.Format("position {0}", c + 1), DataType.Pointer);
+                                DiagnosticUtils.AddError(node, m);
+                            }
+                            
                         }
                         else if (tokenType == TokenType.LINAGE_COUNTER)
                         {
