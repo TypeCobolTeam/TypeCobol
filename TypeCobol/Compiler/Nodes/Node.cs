@@ -628,7 +628,7 @@ namespace TypeCobol.Compiler.Nodes {
                 }
                 else
                 {
-                    continueVisit = VisitChildrens(astVisitor, true, children.ToArray());
+                    continueVisit = VisitChildrens(astVisitor, true, children);
                 }
                 
             }
@@ -637,7 +637,7 @@ namespace TypeCobol.Compiler.Nodes {
             return continueVisit;
         }
 
-        private static bool VisitChildrens(IASTVisitor astVisitor, bool continueVisit, Node[] childrenNodes)
+        private static bool VisitChildrens(IASTVisitor astVisitor, bool continueVisit, IEnumerable<Node> childrenNodes)
         {
             foreach (Node child in childrenNodes)
             {
