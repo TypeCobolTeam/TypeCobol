@@ -31,11 +31,11 @@ namespace TypeCobol.Codegen.Nodes
             }
         }
 
-        public override bool VisitNode(IASTVisitor astVisitor) {
-            return astVisitor.Visit(this);
+        public override bool VisitNode(IASTVisitor astVisitor){
+            return true;
         }
 
-        public bool IsLeaf { get { return false; } }
+        public bool IsLeaf => false;
     }
     
 }

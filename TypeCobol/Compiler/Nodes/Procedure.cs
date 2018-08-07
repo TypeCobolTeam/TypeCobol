@@ -13,7 +13,7 @@ namespace TypeCobol.Compiler.Nodes {
 	    public override string ID { get { return "procedure-division"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return true;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace TypeCobol.Compiler.Nodes {
         public override string ID { get { return "declaratives-header"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return true;
         }
     }
 
@@ -142,7 +142,7 @@ namespace TypeCobol.Compiler.Nodes {
         public override string Name { get { return this.CodeElement().SectionName.Name; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
-            return astVisitor.Visit(this);
+            return true;
         }
     }
 
@@ -157,7 +157,7 @@ namespace TypeCobol.Compiler.Nodes {
         } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
-            return astVisitor.Visit(this);
+            return true;
         }
     }
 

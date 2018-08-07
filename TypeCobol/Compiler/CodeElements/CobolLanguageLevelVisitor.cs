@@ -243,8 +243,9 @@ namespace TypeCobol.Compiler.CodeElements
 
 
         //Nodes
-        bool Visit([NotNull] Section section);
-        bool Visit([NotNull] Paragraph paragraph);
+        //not used anymore - see issue #1033
+        //bool Visit([NotNull] Section section);
+        //bool Visit([NotNull] Paragraph paragraph);
         bool Visit([NotNull] Perform perform);
         bool Visit([NotNull] PerformProcedure performProcedure);
         bool Visit([NotNull] SourceFile root);
@@ -320,8 +321,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] DataRenames dataRenames);
         bool Visit([NotNull] TypeDefinition typeDefinition);
         bool Visit([NotNull] ParameterDescription parameterDescription);
-
-        bool Visit([NotNull] EnvironmentDivision environmentDivision);
+        //not used anymore - see issue #1033
+        //bool Visit([NotNull] EnvironmentDivision environmentDivision);
         bool Visit([NotNull] ConfigurationSection configurationSection);
         bool Visit([NotNull] SourceComputer sourceComputer);
         bool Visit([NotNull] ObjectComputer objectComputer);
@@ -342,7 +343,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] OnOverflow onOverflow);
         bool Visit([NotNull] NoOverflow noOverflow);
         bool Visit([NotNull] ProcedureDivision procedureDivision);
-        bool Visit([NotNull] Declaratives declaratives);
+        //not used anymore - see issue #1033
+        //bool Visit([NotNull] Declaratives declaratives);
         bool Visit([NotNull] FunctionDeclaration functionDeclaration);
         bool Visit([NotNull] FunctionEnd functionEnd);
         bool Visit([NotNull] Sentence sentence);
@@ -959,13 +961,13 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public virtual bool Visit(Section section) {
-            return true;
-        }
+        //public virtual bool Visit(Section section) {
+        //    return true;
+        //}
 
-        public virtual bool Visit(Paragraph paragraph) {
-            return true;
-        }
+        //public virtual bool Visit(Paragraph paragraph) {
+        //    return true;
+        //}
 
         public virtual bool Visit(Perform perform) {
             return true;
@@ -1250,10 +1252,6 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public virtual bool Visit(EnvironmentDivision environmentDivision) {
-            return true;
-        }
-
         public virtual bool Visit(ConfigurationSection configurationSection) {
             return true;
         }
@@ -1326,13 +1324,11 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
-        public virtual bool Visit(ProcedureDivision procedureDivision) {
+        public virtual bool Visit(ProcedureDivision procedureDivision)
+        {
             return true;
         }
 
-        public virtual bool Visit(Declaratives declaratives) {
-            return true;
-        }
 
         public virtual bool Visit(FunctionDeclaration functionDeclaration) {
             return true;
