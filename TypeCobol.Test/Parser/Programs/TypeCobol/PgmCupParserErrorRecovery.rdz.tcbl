@@ -1,0 +1,6 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MyPgm.
+       PROCEDURE DIVISION.
+       DECLARE PROCEDURE InitFrom.
+
+      END PROGRAM MyPgm.

@@ -41,6 +41,25 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
+        /// String constructor
+        /// </summary>
+        /// <param name="value">Picture string value</param>
+        /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
+        public PictureType(String value, bool separateSign) : this(new PictureValidator(value, separateSign))
+        {            
+        }
+
+        /// <summary>
+        /// Validator constructor.
+        /// </summary>
+        /// <param name="validator"></param>
+        public PictureType(PictureValidator validator)
+            : base(Tags.Picture)
+        {
+            AssignFromValidator(validator);            
+        }
+
+        /// <summary>
         /// The Category  of picure type.
         /// </summary>
         public PictureCategory Category
@@ -59,7 +78,7 @@ namespace TypeCobol.Compiler.Types
         }
 
         /// <summary>
-        /// The Consume dToken of this Picture String
+        /// The Consumed Token of this Picture String
         /// </summary>
         TypeCobol.Compiler.Scanner.Token m_ConsumedToken;
 
@@ -78,28 +97,37 @@ namespace TypeCobol.Compiler.Types
                 m_ConsumedToken = value;
                 //Use the Automata Picture String Validator
                 PictureValidator validator = new PictureValidator(value.Text, IsSeparateSign);
-                if (validator.IsValid())
-                {
-                    this.IsSigned = validator.ValidationContext.HaveSign;
-                    this.Scale = validator.ValidationContext.Scale;
-                    this.Digits = validator.ValidationContext.Digits;
-                    this.RealDigits = validator.ValidationContext.RealDigits;
-                    this.IsSigned = validator.ValidationContext.HaveSign;
-                    this.Category = validator.ValidationContext.Category;
-                    this.IsExternalFloat = validator.ValidationContext.IsExternalFloatSequence();
-                    this.Sequence = validator.ValidationContext.Sequence.ToArray();
-                    if (validator.ValidationContext.IsDbcsSequence())
-                        Category = PictureCategory.Dbcs;
-                    if (this.IsExternalFloat)
-                        Category = PictureCategory.ExternalFloat;
-                }
-                else
-                {
-                    Category = PictureCategory.Error;
-                }
+                AssignFromValidator(validator);
             }
         }
 
+        /// <summary>
+        /// Assign this Picture Type from a Validator
+        /// </summary>
+        private void AssignFromValidator(PictureValidator validator)
+        {
+            System.Diagnostics.Debug.Assert(validator != null);
+            if (validator.IsValid())
+            {
+                this.IsSigned = validator.ValidationContext.HaveSign;
+                this.Scale = validator.ValidationContext.Scale;
+                this.Digits = validator.ValidationContext.Digits;
+                this.RealDigits = validator.ValidationContext.RealDigits;
+                this.IsSigned = validator.ValidationContext.HaveSign;
+                this.Category = validator.ValidationContext.Category;
+                this.IsExternalFloat = validator.ValidationContext.IsExternalFloatSequence();
+                this.Sequence = validator.ValidationContext.Sequence.ToArray();
+                this.Size = validator.ValidationContext.Size;
+                if (validator.ValidationContext.IsDbcsSequence())
+                    Category = PictureCategory.Dbcs;
+                if (this.IsExternalFloat)
+                    Category = PictureCategory.ExternalFloat;
+            }
+            else
+            {
+                Category = PictureCategory.Error;
+            }
+        }
         /// <summary>
         /// a Normalized Textual String representation of the Picture clause.
         /// </summary>

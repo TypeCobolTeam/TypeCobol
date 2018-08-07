@@ -4,13 +4,20 @@ Line 58[8,22] <27, Error, Syntax> - Syntax error : y is already a parameter.
 Line 60[12,26] <27, Error, Syntax> - Syntax error : x is already a parameter.
 Line 61[12,26] <27, Error, Syntax> - Syntax error : z is already a parameter.
 Line 64[8,27] <27, Error, Syntax> - Syntax error : result is already a parameter.
-Line 66[12,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
-Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol x
-Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
-Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol y
-Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
-Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol z
-Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result
+Line 66[12,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result
+Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol x 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::a::x
+Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result
+Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol y 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::y | FunDeclare::SumThreeWithClutterInLinkage::y
+Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result
+Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol z 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::z | FunDeclare::SumThreeWithClutterInLinkage::a::z
+Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result
 Line 88[8,10] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times
 Line 88[8,10] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times
 Line 103[8,28] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
@@ -63,4 +70,5 @@ PROGRAM: FunDeclare common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  CURRENCY:CURRENCY
   STRING:STRING

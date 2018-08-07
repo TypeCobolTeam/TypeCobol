@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
 namespace TypeCobol.Compiler.Nodes {
@@ -13,87 +14,163 @@ namespace TypeCobol.Compiler.Nodes {
 
 
 
-    public static class Attributes {
-	internal static object Get(Node node, string attribute) {
-		var table = node.SymbolTable;
-		object value = node;
-		try {
-			foreach(var attr in attribute.Split('.')) {
-				if (value == null) break;
-				value = attributes[attr].GetValue(value, table);
-			}
-			return value;
-		} catch (KeyNotFoundException) {
-			DEFAULT.Key = attribute;
-			return DEFAULT.GetValue(value, table);
-		}
-	}
+    public static class Attributes
+    {
+	    internal static object Get(Node node, string attribute) {
+		    var table = node.SymbolTable;
+		    object value = node;
+		    try {
+			    foreach(var attr in attribute.Split('.')) {
+				    if (value == null) break;
+				    value = attributes[attr].GetValue(value, table);
+			    }
+			    return value;
+		    } catch (KeyNotFoundException) {
+			    DEFAULT.Key = attribute;
+			    return DEFAULT.GetValue(value, table);
+		    }
+	    }
 
-	private static Dictionary<string,Attribute> attributes;
-	static Attributes() {
-		attributes = new Dictionary<string,Attribute>();
-		attributes["name"]  = new NameAttribute();
-		attributes["level"] = new LevelAttribute();
-        attributes["value"] = new ValueAttribute();
-        attributes["type"]  = new TypeAttribute();
-		attributes["sender"] = new SenderAttribute();
-		attributes["receiver"] = new ReceiverAttribute();
-		attributes["unsafe"] = new UnsafeAttribute();
-		attributes["function"] = new FunctionUserAttribute();
-		attributes["definitions"] = new DefinitionsAttribute();
+	    private static Dictionary<string,Attribute> attributes;
+	    static Attributes() {
+		    attributes = new Dictionary<string,Attribute>();
+		    attributes["name"]  = new NameAttribute();
+		    attributes["level"] = new LevelAttribute();
+            attributes["value"] = new ValueAttribute();
+            attributes["type"]  = new TypeAttribute();
+		    attributes["sender"] = new SenderAttribute();
+	        attributes["receiver"] = new ReceiverAttribute();
+            attributes["unsafe"] = new UnsafeAttribute();
+		    attributes["function"] = new FunctionUserAttribute();
+		    attributes["definitions"] = new DefinitionsAttribute();
+	        attributes["usage"] = new UsageAttribute();
+	        attributes["hash"] = new HashAttribute();
+	        attributes["displayableReceivers"] = new PointerDisplayableReceiversAttribute();
+	        attributes["receivers"] = new PointerReceiversAttribute();
+            attributes["receiverusage"] = new ReceiverUsageAttribute();
+	        attributes["incrementDirection"] = new incrementDirectionAttribute();
+	        attributes["needCompute"] = new NeedComputeAttribute();
+	        attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
             //not used?
-		attributes["typecobol"] = new TypeCobolAttribute();
-		attributes["visibility"] = new VisibilityAttribute();
-		attributes["copyname"] = new LibraryCopyAttribute();
-		attributes["programName8"] = new ProgramName8Attribute();
-        attributes["imports"] = new ProgramImportsAttribute();
-	}
-	private static ContainerAttribute DEFAULT = new ContainerAttribute();
-}
+            attributes["typecobol"] = new TypeCobolAttribute();
+		    attributes["visibility"] = new VisibilityAttribute();
+		    attributes["copyname"] = new LibraryCopyAttribute();
+		    attributes["programName8"] = new ProgramName8Attribute();
+            attributes["imports"] = new ProgramImportsAttribute();
+	    }
+	    private static ContainerAttribute DEFAULT = new ContainerAttribute();
+    }
 
-internal class ContainerAttribute: Attribute {
-	internal string Key { get; set; }
-	public object GetValue(object o, SymbolTable table) {
-		return null;
-	}
-}
+    internal class ContainerAttribute: Attribute
+    {
+	    internal string Key { get; set; }
+	    public object GetValue(object o, SymbolTable table) {
+		    return null;
+	    }
+    }
 
 
 
-public interface Attribute {
-	object GetValue(object o, SymbolTable table);
-}
+    public interface Attribute
+    {
+	    object GetValue(object o, SymbolTable table);
+    }
 
-internal class NameAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var node = o as Node;
-        if (node != null)
+    internal class NameAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
         {
-            var named = ((Node)o).CodeElement as NamedCodeElement;
-            return named?.Name;
-        }
-        else
-            return null;
-	}
-}
-internal class TypeAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-        bool result;
-        if(bool.TryParse(o.ToString(), out result)) {
-            return "BOOL";
-        }
-
-		var node = o as DataDescription;
-	    if (node != null) {
-                var data = node.CodeElement as DataDescriptionEntry;
-	        if (data != null) {
-                    return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType != null ? data.UserDefinedDataType.Name : null;
-                }
+            var node = o as Node;
+            if (node != null)
+            {
+                var named = ((Node)o).CodeElement as NamedCodeElement;
+                return named?.Name;
             }
-	    return null;
+            else
+                return null;
+        }
+    }
 
-	}
-}
+    internal class UsageAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = o as DataDescription;
+            if (node != null)
+            {
+                var usage = node.Usage;
+                return usage;
+            }
+            else
+                return null;
+        }
+    }
+
+    internal class ReceiverUsageAttribute : Attribute
+    {
+
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            var codeElement = node.CodeElement;
+            var setStatement = codeElement as SetStatementForIndexes;
+            List<List<DataDefinition>> variablesWrittenRaw = new List<List<DataDefinition>>();
+            List<DataDefinition> variablesWritten = new List<DataDefinition>();
+            if (setStatement != null && node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            {
+                foreach (var data in setStatement.StorageAreaWrites)
+                {
+                    variablesWrittenRaw.Add(
+                        node.SymbolTable.GetVariablesExplicitWithQualifiedName(data.MainSymbolReference.URI).Select(x => x.Value).ToList());
+                }
+
+                foreach (var varWritten in variablesWrittenRaw)
+                {
+                    if (varWritten.Count > 1)
+                        throw new Exception("Ambiguous Receiver Name");// Ambiguous variable handeling is done before, in the checkers
+                    else
+                        variablesWritten.Add(varWritten.First());
+                }
+
+            }
+            if (variablesWritten == null) return null;
+            if (variablesWritten.Count == 0) return null;
+            else return variablesWritten.First().Usage;
+        }
+    }
+    internal class HashAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = o as DataDescription;
+            if (node != null)
+            {
+                var hash = node.Hash;
+                return hash;
+            }
+            else
+                return null;
+        }
+    }
+    internal class TypeAttribute: Attribute
+    {
+	    public object GetValue(object o, SymbolTable table) {
+            bool result;
+            if(bool.TryParse(o.ToString(), out result)) {
+                return "BOOL";
+            }
+
+		    var node = o as DataDescription;
+	        if (node != null) {
+                    var data = node.CodeElement as DataDescriptionEntry;
+	            if (data != null) {
+                        return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType != null ? data.UserDefinedDataType.Name : null;
+                    }
+                }
+	        return null;
+
+	    }
+    }
 
     /// <summary>
     /// Class to evaluate the value of a DataDescription node if its associated DataDescriptionEntry
@@ -118,111 +195,211 @@ internal class TypeAttribute: Attribute {
         }
     }
 
-    internal class LevelAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var data = o as DataDefinition;
-		if (data == null) return null;
-		return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement)?.LevelNumber?.Value);
-	}
-}
+    internal class LevelAttribute: Attribute
+    {
+	    public object GetValue(object o, SymbolTable table)
+	    {
+		    var data = o as DataDefinition;
+		    if (data == null) return null;
+		    return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement)?.LevelNumber?.Value);
+	    }
+    }
 
 
-internal class TypeCobolAttribute: Attribute {
-	internal string Key { get; set; }
-	public object GetValue(object o, SymbolTable table) {
-		var map = o as IDictionary<StorageArea,object>;
-		var results = new Dictionary<StorageArea,object>();
-	    if (map != null)
-	        foreach (var kv in map)
-	            if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
-	                results.Add(kv.Key,kv.Value);
-	    return results;
-	}
-}
+    internal class TypeCobolAttribute: Attribute
+    {
+	    internal string Key { get; set; }
+	    public object GetValue(object o, SymbolTable table)
+	    {
+		    var map = o as IDictionary<StorageArea,object>;
+		    var results = new Dictionary<StorageArea,object>();
+	        if (map != null)
+	            foreach (var kv in map)
+	                if (kv.Key.SymbolReference is TypeCobolQualifiedSymbolReference)
+	                    results.Add(kv.Key,kv.Value);
+	        return results;
+	    }
+    }
 
-internal class SenderAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var ce = ((Node)o).CodeElement;
+    internal class SenderAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            var ce = node.CodeElement;
 
-		var set = ce as SetStatementForConditions;
-		if (set != null) return new URI(set.SendingValue.Value.ToString());
-
-            //The only skeletons rule that use "sender" attribute if for "set bool to false" so ignore all other codeElement that are not a SetStatementForConditions
+            // Used for bool arithmetics
+            var setCondition = ce as SetStatementForConditions;
+            if (setCondition != null)
+                return new URI(setCondition.SendingValue.Value.ToString());
+            else if (node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            {
+                // Used for pointers arithmetics
+                var setIndex = ce as SetStatementForIndexes;
+                if (setIndex != null)
+                {
+                    if (setIndex.SendingVariable.MainSymbolReference != null)
+                        // the sender is a qualified name
+                        return setIndex.SendingVariable.MainSymbolReference.ToString().Replace(" IN ", " OF ");
+                    else if (setIndex.SendingVariable.ArithmeticExpression != null)
+                        // the sender is an arithmetic expression
+                        return setIndex.SourceText.ToLower().Split(new[] {" by "}, StringSplitOptions.None)[1];
+                    return new URI(setIndex.SendingVariable.ToString());
+                }
+            }
             return null;
-	}
-}
-internal class ReceiverAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-	    var codeElement = ((Node)o).CodeElement;
-	    var variablesWritten = codeElement.StorageAreaWrites;
-	    if (variablesWritten == null) return null;
-        if (variablesWritten.Count == 0) return null;
-        if (variablesWritten.Count == 1) return variablesWritten[0].ToString();
-		throw new System.ArgumentOutOfRangeException("Too many receiving items ("+ variablesWritten.Count+")");
-	}
-}
+        }
+    }
 
-internal class UnsafeAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var statement = o as VariableWriter;
-		if (statement == null) return null;
-		return statement.IsUnsafe;
-	}
-}
+    internal class NeedComputeAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            if (node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            {
+                var setIndex = node.CodeElement as SetStatementForIndexes;
+                if (setIndex?.SendingVariable.ArithmeticExpression != null)
+                    return true;
+            }
+            return false;
+        }
+    }
+    internal class IsPointerIncrementationAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            return node.IsFlagSet(Node.Flag.NodeisIncrementedPointer);
+        }
+    }
 
-internal class FunctionUserAttribute: Attribute {
-	public object GetValue(object o, SymbolTable table) {
-		var statement = ((Node)o).CodeElement as FunctionCaller;
-		if (statement == null) return null;
-		var functions = new List<FunctionCallInfo>();
+    
+
+
+    internal class incrementDirectionAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            var ce = node.CodeElement;
+            var setIndex = ce as SetStatementForIndexes;
+            if (setIndex != null)
+                return setIndex.IncrementDirection.ToString();
+            return null;
+        }
+    }
+    
+    internal class ReceiverAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var codeElement = ((Node)o).CodeElement;
+            var variablesWritten = codeElement.StorageAreaWrites;
+            if (variablesWritten == null) return null;
+            if (variablesWritten.Count == 0) return null;
+            if (variablesWritten.Count == 1) return new URI(variablesWritten[0].ToString());
+            throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");
+        }
+    }
+    internal class PointerDisplayableReceiversAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            List<string> displayableWritten = new List<string>();
+            if (node.CodeElement is SetStatementForIndexes && node.IsFlagSet(Node.Flag.NodeContainsPointer))
+            {
+                foreach (var data in node.StorageAreaWritesDataDefinition)
+                {
+                    // Usage of Regex.Replace to replace only the first ooccurence of dataDef.Name to avoid probleme with groups like myPtrGroup::myPtr
+                    var regex = new Regex(Regex.Escape(data.Value.Item2.Name));
+                    displayableWritten.Add(
+                        regex.Replace(
+                            data.Key.ToString(), data.Value.Item2.Name + data.Value.Item2.Hash, 1)
+                            .Replace(" IN ", " OF "));
+                }
+
+            }
+            if (displayableWritten.Count == 0) return null;
+            return displayableWritten;
+            
+        }
+    }
+    internal class PointerReceiversAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var node = (Node)o;
+            if (node.CodeElement is SetStatementForIndexes)
+            {
+                return node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2);
+            }
+            return null;
+        }
+    }
+
+    internal class UnsafeAttribute: Attribute {
+	    public object GetValue(object o, SymbolTable table) {
+		    var statement = o as VariableWriter;
+		    if (statement == null) return null;
+		    return statement.IsUnsafe;
+	    }
+    }
+
+    internal class FunctionUserAttribute: Attribute {
+	    public object GetValue(object o, SymbolTable table) {
+		    var statement = ((Node)o).CodeElement as FunctionCaller;
+		    if (statement == null) return null;
+		    var functions = new List<FunctionCallInfo>();
 		
-		var found = table.GetFunction(new URI(statement.FunctionCall.FunctionName));
+		    var found = table.GetFunction(new URI(statement.FunctionCall.FunctionName));
 			
-		if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
-		var declaration = found[0];
-		functions.Add(Create(statement.FunctionCall, declaration));
+		    if (found.Count > 1) throw new System.ArgumentException("Resolve ambiguity for "+found.Count+" items");
+		    var declaration = found[0];
+		    functions.Add(Create(statement.FunctionCall, declaration));
 		
-		if (functions.Count == 0) return null;
-		if (functions.Count == 1) return functions[0];
-		return functions;
-	}
+		    if (functions.Count == 0) return null;
+		    if (functions.Count == 1) return functions[0];
+		    return functions;
+	    }
 
-	private static FunctionCallInfo Create(FunctionCall call, FunctionDeclaration declaration) {
-		var result = new FunctionCallInfo(new URI(call.FunctionName), declaration.Library, declaration.Copy);
-		if (declaration.Profile == null) return result;
-		int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
-		// declaration.Profile.ReturningParameter is not used because
-		// the same data is always used by (and hardcoded in) function call codegen: <function.Name>-RESULT
-		for(int i=0; i < count; i++) {
-			var pAsDefined = GetParameter(i, declaration);
-			var pAsUsed    = GetParameter(i, call);
-			result.InputParameters.Add(Create(pAsDefined, pAsUsed));
-		}
-		return result;
-	}
-	private static CallParameter Create(ParameterDescription pAsDefined, CallParameter pAsUsed) {
-		if (pAsUsed != null) return pAsUsed; //Code is strange here..
-		return new EmptyCallParameter();
-	}
-	private static ParameterDescription GetParameter(int index, FunctionDeclaration function) {
-		int offset = 0;
-		if (index - offset < function.Profile.InputParameters.Count) return function.Profile.InputParameters[index-offset];
-		offset += function.Profile.InputParameters.Count;
-		if (index - offset < function.Profile.InoutParameters.Count) return function.Profile.InoutParameters[index-offset];
-		offset += function.Profile.InoutParameters.Count;
-		if (index - offset < function.Profile.OutputParameters.Count) return function.Profile.OutputParameters[index-offset];
-		offset += function.Profile.OutputParameters.Count;
-		if (index - offset < 1) return function.Profile.ReturningParameter;
-		throw new System.ArgumentOutOfRangeException("Expected: "+index+" < "+function.Profile.InputParameters.Count
-		                                                                 +'+'+function.Profile.InoutParameters.Count
-		                                                                 +'+'+function.Profile.OutputParameters.Count
-		                                                                 +'+'+(function.Profile.ReturningParameter!=null?1:0));
-	}
-	private static CallParameter GetParameter(int index, FunctionCall function) {
-		if (function.Arguments != null && index < function.Arguments.Length) return new CallParameter(function.Arguments[index].StorageAreaOrValue);
-		return null;
-	}
-}
+	    private static FunctionCallInfo Create(FunctionCall call, FunctionDeclaration declaration) {
+		    var result = new FunctionCallInfo(new URI(call.FunctionName), declaration.Library, declaration.Copy);
+		    if (declaration.Profile == null) return result;
+		    int count = declaration.Profile.InputParameters.Count + declaration.Profile.InoutParameters.Count + declaration.Profile.OutputParameters.Count;
+		    // declaration.Profile.ReturningParameter is not used because
+		    // the same data is always used by (and hardcoded in) function call codegen: <function.Name>-RESULT
+		    for(int i=0; i < count; i++) {
+			    var pAsDefined = GetParameter(i, declaration);
+			    var pAsUsed    = GetParameter(i, call);
+			    result.InputParameters.Add(Create(pAsDefined, pAsUsed));
+		    }
+		    return result;
+	    }
+	    private static CallParameter Create(ParameterDescription pAsDefined, CallParameter pAsUsed) {
+		    if (pAsUsed != null) return pAsUsed; //Code is strange here..
+		    return new EmptyCallParameter();
+	    }
+	    private static ParameterDescription GetParameter(int index, FunctionDeclaration function) {
+		    int offset = 0;
+		    if (index - offset < function.Profile.InputParameters.Count) return function.Profile.InputParameters[index-offset];
+		    offset += function.Profile.InputParameters.Count;
+		    if (index - offset < function.Profile.InoutParameters.Count) return function.Profile.InoutParameters[index-offset];
+		    offset += function.Profile.InoutParameters.Count;
+		    if (index - offset < function.Profile.OutputParameters.Count) return function.Profile.OutputParameters[index-offset];
+		    offset += function.Profile.OutputParameters.Count;
+		    if (index - offset < 1) return function.Profile.ReturningParameter;
+		    throw new System.ArgumentOutOfRangeException("Expected: "+index+" < "+function.Profile.InputParameters.Count
+		                                                                     +'+'+function.Profile.InoutParameters.Count
+		                                                                     +'+'+function.Profile.OutputParameters.Count
+		                                                                     +'+'+(function.Profile.ReturningParameter!=null?1:0));
+	    }
+	    private static CallParameter GetParameter(int index, FunctionCall function) {
+		    if (function.Arguments != null && index < function.Arguments.Length) return new CallParameter(function.Arguments[index].StorageAreaOrValue);
+		    return null;
+	    }
+    }
 
     public class FunctionCallInfo
     {

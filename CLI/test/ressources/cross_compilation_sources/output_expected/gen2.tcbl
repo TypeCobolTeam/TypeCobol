@@ -1,0 +1,18 @@
+      *TypeCobol_Version:0.1(alpha)
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZFSCTX2.
+       data division.
+       working-storage section.
+       PROCEDURE DIVISION.
+       declare procedure  GetTechnicalContext2 public
+           output TechCtx    type BOOL
+                  RC         type DATE.
+       end-declare.
+       declare procedure GetIdentification PUBLIC
+           input TechCtx      type BOOL
+                  RC          type DATE.
+        end-declare.
+       declare procedure DisplayDebug public
+           output TechCtx type BOOL.
+       end-declare.
+       END PROGRAM DVZFSCTX2.

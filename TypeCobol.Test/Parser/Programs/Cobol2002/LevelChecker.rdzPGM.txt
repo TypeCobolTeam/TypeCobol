@@ -2,7 +2,7 @@
 Line 23[8,29] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 45 because of 'myType' maximum estimated children level
 Line 29[8,27] <30, Error, Semantics> - Semantic error: A 77 level variable cannot be typed with a type containing children
 Line 32[10,34] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'WrongVarHere' cannot be declared under a BOOL typed symbol
-Line 37[8,39] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'exists' cannot be declared under a BOOL typed symbol
+Line 44[8,39] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'exists' cannot be declared under a BOOL typed symbol
 
 --- Program ---
 PROGRAM: LevelChecker common:False initial:False recursive:False
@@ -17,6 +17,10 @@ PROGRAM: LevelChecker common:False initial:False recursive:False
   MYVar5:DATE
   BooleanVar:BOOL
   WrongVarHere:BOOL
+  len:Numeric
+  MyLevel1Test:Alphanumeric
+  buf:Alphanumeric
+  char:Alphanumeric
 --- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   myPic:myPic
@@ -29,4 +33,5 @@ PROGRAM: LevelChecker common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  CURRENCY:CURRENCY
   STRING:STRING

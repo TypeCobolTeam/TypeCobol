@@ -81,8 +81,6 @@ namespace TypeCobol
             if (!Inits[path]) Inits[path] = true;// no need to update with the same content as at compiler creation
             else if (e != null) Compiler.CompilationResultsForProgram.UpdateTextLines(e);
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Parser] Started", EventType.TypeCobolUsage);
-
             try { Compiler.CompileOnce(); }
 			catch(Exception ex) {
                 throw new ParsingException(MessageCode.SyntaxErrorInParser, ex.Message, path, ex, true, true);
@@ -151,13 +149,13 @@ namespace TypeCobol
 
 
 
-		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false) {
+		public static Parser Parse(string path, DocumentFormat format, bool autoRemarks = false, IList<string> copies = null) {
 			var parser = new Parser();
             var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.Generate };
 #if EUROINFO_RULES
             typeCobolOption.AutoRemarksEnable = autoRemarks;
 #endif
-            parser.Init(path, typeCobolOption, format);
+            parser.Init(path, typeCobolOption, format, copies);
 
             parser.Parse(path);
 			return parser;

@@ -2,6 +2,8 @@
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using Object = System.Object;
 using String = System.String;
 
@@ -61,15 +63,15 @@ namespace TypeCobol.Compiler.CodeElements
         /// <param name="usage"></param>
         /// <returns></returns>
 	    public static DataType Create(DataUsage usage)
-	    {
-	        if (usage == DataUsage.Binary || usage == DataUsage.NativeBinary || usage == DataUsage.FloatingPoint ||
-	            usage == DataUsage.LongFloatingPoint || usage == DataUsage.PackedDecimal)
-	        {
-	            return DataType.Numeric;
-	        }
-	        return DataType.Unknown;
-	    }
-		public static DataType Create(string picture, char[] currencies) {
+        {
+            if (usage == DataUsage.Binary || usage == DataUsage.NativeBinary || usage == DataUsage.FloatingPoint ||
+                usage == DataUsage.LongFloatingPoint || usage == DataUsage.PackedDecimal)
+            {
+                return DataType.Numeric;
+            }
+            return DataType.Unknown;
+        }
+        public static DataType Create(string picture, char[] currencies) {
 			var basic = new char[]{'.','Z','+','-','*','D'/*,'B'*/,'C'/*,'S'*/};
 			var all = new char[basic.Length + currencies.Length];
 			basic.CopyTo(all, 0);
@@ -148,14 +150,16 @@ namespace TypeCobol.Compiler.CodeElements
         // [TYPECOBOL]
         //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
         public static readonly DataType Boolean            = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
-        //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
-        public static readonly DataType Date               = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+	    //Date is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
+	    public static readonly DataType Date = new DataType("DATE", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
+	    //Currency is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior: its property are private 
+	    public static readonly DataType Currency = new DataType("CURRENCY", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
         //String built in type
         public static readonly DataType String = new DataType("STRING", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
 
         public static Nodes.TypeDefinition CreateBuiltIn(DataType type)
 		{
-            var builtInNode = type == DataType.Date ? CreateDate() : CreateBase(type);
+            var builtInNode = type == DataType.Date ? CreateDate() : (type == DataType.Currency ? CreateCurrency() : CreateBase(type));
             builtInNode.SetFlag(Node.Flag.NodeIsIntrinsic, true); //Mark BuiltIn Type as Instrinsic
 
 		    return builtInNode;
@@ -165,25 +169,47 @@ namespace TypeCobol.Compiler.CodeElements
 			entry.LevelNumber = new GeneratedIntegerValue(1);
 			entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(type.Name), SymbolType.DataName);
 			entry.DataType = type;
+
 			return new Nodes.TypeDefinition(entry);
 		}
 		private static Nodes.TypeDefinition CreateDate() {
 			var node = CreateBase(DataType.Date);
-			node.Add(CreateData(5, "YYYY", '9',4));
-			node.Add(CreateData(5, "MM",   '9',2));
-			node.Add(CreateData(5, "DD",   '9',2));
+			node.Add(CreateData(5, "YYYY", '9',4, node));
+			node.Add(CreateData(5, "MM",   '9',2, node));
+			node.Add(CreateData(5, "DD",   '9',2, node));
 			return node;
-		}
-		private static Nodes.DataDescription CreateData(int level, string name, char type, int length) {
+	    }
+	    private static Nodes.TypeDefinition CreateCurrency()
+	    {
+	        var entry = new DataTypeDescriptionEntry();
+	        entry.LevelNumber = new GeneratedIntegerValue(1);
+	        entry.DataName = new SymbolDefinition(new GeneratedAlphanumericValue("CURRENCY"), SymbolType.DataName);
+            entry.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", 'X', 3));
+	        entry.DataType = DataType.Currency;
+	        var tokenLine = TokensLine.CreateVirtualLineForInsertedToken(entry.Line, "01 CURRENCY TYPEDEF STRICT PUBLIC PIC X(03).");
+	        entry.ConsumedTokens.Add(new Token(TokenType.LevelNumber, 0, 1, tokenLine));
+	        entry.ConsumedTokens.Add(new Token(TokenType.UserDefinedWord, 3, 10, tokenLine));
+	        entry.ConsumedTokens.Add(new Token(TokenType.TYPEDEF, 12, 18, tokenLine));
+	        entry.ConsumedTokens.Add(new Token(TokenType.STRICT, 20, 25, tokenLine));
+	        entry.ConsumedTokens.Add(new Token(TokenType.PUBLIC, 27, 32, tokenLine));
+            entry.ConsumedTokens.Add(new Token(TokenType.PIC, 34, 36, tokenLine));
+	        entry.ConsumedTokens.Add(new Token(TokenType.PictureCharacterString, 38, 42, tokenLine));
+	        entry.ConsumedTokens.Add(new Token(TokenType.PeriodSeparator, 43, 43, tokenLine));
+            return new Nodes.TypeDefinition(entry);
+	    }
+        private static Nodes.DataDescription CreateData(int level, string name, char type, int length, TypeDefinition parentTypeDef) {
 			var data = new DataDescriptionEntry();
 			data.LevelNumber = new GeneratedIntegerValue(level);
 			data.DataName = new SymbolDefinition(new GeneratedAlphanumericValue(name), SymbolType.DataName);
 			data.Picture = new GeneratedAlphanumericValue(string.Format("{0}({1})", type, length));
 			data.DataType = DataType.Create(data.Picture.Value);
-			return new Nodes.DataDescription(data);
+            var node = new Nodes.DataDescription(data);
+
+            node.ParentTypeDefinition = parentTypeDef;
+			return node;
 		}
 
-		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.String};
+		public static readonly DataType[] BuiltInCustomTypes = { DataType.Boolean, DataType.Date, DataType.Currency, DataType.String};
         // [/TYPECOBOL]
     }
     public enum RestrictionLevel

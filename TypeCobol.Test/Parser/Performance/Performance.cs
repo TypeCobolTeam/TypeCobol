@@ -15,7 +15,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestProperty("Time", "fast")]
         public void AntlrPerformanceProfiler()
         {
-            Paths paths = new Paths(AntlrFolder, AntlrFolder, AntlrFolder + Path.DirectorySeparatorChar + "AntlrTest.pgm", new AntlrName());
+            Paths paths = new Paths(AntlrFolder, AntlrFolder, AntlrFolder + Path.DirectorySeparatorChar + "AntlrTest.rdz.pgm", new AntlrName());
             TestUnit unit = new TestUnit(new Multipass(paths));
             unit.Init(new[] { ".pgm", ".cpy" }, false, true);
             unit.Parse();

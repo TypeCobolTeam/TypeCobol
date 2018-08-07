@@ -97,14 +97,14 @@ Line 84[12,64] <27, Error, Syntax> - Syntax error : Symbol utd-var20.utd-var21 i
       *OK full path till Type1
            move Var1::td-var1 to Var1::td-var10::td-var11
       *KO full path till Type1 but type mismatch
-Line 93[12,68] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var13:Typedef2.
+Line 93[12,68] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1.td-var10.td-var13:Typedef2.
            move Var1::td-var10::td-var12 to Var1::td-var10::td-var13
 
       *OK full path till Type2
            move Var1::td-var10::td-var13::td-var20::td-var21
              to Var1::td-var10::td-var13::td-var20::td-var22
       *KO full path till Type2 but type mismatch
-Line 99[12,60] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var23:Typedef3.
+Line 99[12,60] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1.td-var10.td-var13.td-var20.td-var23:Typedef3.
            move Var1::td-var10::td-var13::td-var20::td-var22
              to Var1::td-var10::td-var13::td-var20::td-var23
       
@@ -114,7 +114,7 @@ Line 99[12,60] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeri
              to Var1::td-var10::td-var13::td-var20::td-var23::
                 td-var30::td-var32
       *KO full path till Type3 but type mismatch
-Line 108[12,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var33:Typedef4.
+Line 108[12,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1.td-var10.td-var13.td-var20.td-var23.td-var30.td-var33:Typedef4.
            move Var1::td-var10::td-var13::td-var20::td-var23::
                 td-var30::td-var32
              to Var1::td-var10::td-var13::td-var20::td-var23::
@@ -152,7 +152,7 @@ Line 108[12,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumer
       *OK full path till Type1
            move td-var1 of Var1 to td-var11 of td-var10 of Var1
       *KO full path till Type1 but type mismatch
-Line 145[12,44] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var13:Typedef2.
+Line 145[12,44] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1.td-var10.td-var13:Typedef2.
            move td-var12 of td-var10 of Var1 
              to td-var13 of td-var10 of Var1
 
@@ -160,7 +160,7 @@ Line 145[12,44] <30, Error, Semantics> - Semantic error: Cannot write Alphanumer
            move td-var21 of td-var20 of td-var13 of td-var10 of Var1
              to td-var22 of td-var20 of td-var13 of td-var10 of Var1
       *KO full path till Type2 but type mismatch
-Line 152[12,68] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var23:Typedef3.
+Line 152[12,68] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1.td-var10.td-var13.td-var20.td-var23:Typedef3.
            move td-var22 of td-var20 of td-var13 of td-var10 of Var1
              to td-var23 of td-var20 of td-var13 of td-var10 of Var1
 
@@ -170,7 +170,7 @@ Line 152[12,68] <30, Error, Semantics> - Semantic error: Cannot write Alphanumer
              to td-var32 of td-var30 of td-var23 of td-var20 
                 of td-var13 of td-var10 of Var1
       *KO full path till Type3 but type mismatch
-Line 161[12,47] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable td-var33:Typedef4.
+Line 161[12,47] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1.td-var10.td-var13.td-var20.td-var23.td-var30.td-var33:Typedef4.
            move td-var32 of td-var30 of td-var23 of td-var20 
                 of td-var13 of td-var10 of Var1
              to td-var33 of td-var30 of td-var23 of td-var20 

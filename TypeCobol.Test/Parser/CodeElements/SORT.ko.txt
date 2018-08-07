@@ -29,9 +29,9 @@ Line 26[25,26] <27, Error, Syntax> - Syntax error : missing DUPLICATES at 'IN' R
 Line 28[55,56] <27, Error, Syntax> - Syntax error : missing SEQUENCE at 'IS' RuleStack=codeElement>sortStatement>collatingSequence,  OffendingSymbol=[55,56:IS]<IS>
 Line 29[55,56] <27, Error, Syntax> - Syntax error : missing SEQUENCE at 'IS' RuleStack=codeElement>sortStatement>collatingSequence,  OffendingSymbol=[55,56:IS]<IS>
 Line 31[84,89] <27, Error, Syntax> - Syntax error : no viable alternative at input 'GIVING' RuleStack=codeElement>sortStatement,  OffendingSymbol=[84,89:GIVING]<GIVING>
-Line 31[68,72] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference>symbolReference4>alphanumericValue4,  OffendingSymbol=[68,72:USING]<USING>
+Line 31[68,72] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference,  OffendingSymbol=[68,72:USING]<USING>
 Line 32[84,89] <27, Error, Syntax> - Syntax error : no viable alternative at input 'GIVING' RuleStack=codeElement>sortStatement,  OffendingSymbol=[84,89:GIVING]<GIVING>
-Line 32[68,72] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference>symbolReference4>alphanumericValue4,  OffendingSymbol=[68,72:USING]<USING>
+Line 32[68,72] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>sortStatement>collatingSequence>alphabetNameReference,  OffendingSymbol=[68,72:USING]<USING>
 Line 34[51,60] <27, Error, Syntax> - Syntax error : no viable alternative at input 'DUPLICATES' RuleStack=codeElement>sortStatement,  OffendingSymbol=[51,60:DUPLICATES]<DUPLICATES>
 Line 35[46,49] <27, Error, Syntax> - Syntax error : no viable alternative at input 'WITH' RuleStack=codeElement>sortStatement,  OffendingSymbol=[46,49:WITH]<WITH>
 Line 37[66,75] <27, Error, Syntax> - Syntax error : extraneous input 'DUPLICATES' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, TypeCobol keyword} RuleStack=codeElement>sortStatement>givingFilenames,  OffendingSymbol=[66,75:DUPLICATES]<DUPLICATES>

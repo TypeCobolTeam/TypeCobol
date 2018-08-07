@@ -1,0 +1,21 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. VARTYPEXT.
+       DATA DIVISION.
+005300 FILE SECTION.                                                    IC2334.2
+005400 FD  PRINT-FILE.                                                  IC2334.2
+005500 01  PRINT-REC PICTURE X(120).                                    IC2334.2
+005600 01  DUMMY-RECORD PICTURE X(120).                                 IC2334.2
+005700 FD  TEST-FILE GLOBAL.                
+005800 01  TEST-REC PIC X(20).                                          IC2334.2
+       WORKING-STORAGE SECTION.
+      *Données immuables et stable pendant toute
+      *la durée de l'enclave
+
+       01  sqlcode  PIC ZZ9+ BLANK WHEN ZERO.
+         EXEC SQL DECLARE tablename TABLE
+         (
+           num  DECIMAL(45) NOT NULL,
+           str  VARCHAR(256) NOT NULL
+         ) END-EXEC.
+
+       END PROGRAM VARTYPEXT.

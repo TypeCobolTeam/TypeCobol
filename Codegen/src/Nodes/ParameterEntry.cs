@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler;
+﻿using System.Linq;
+using TypeCobol.Compiler;
 
 namespace TypeCobol.Codegen.Nodes {
 
@@ -17,11 +18,16 @@ namespace TypeCobol.Codegen.Nodes {
 /// </summary>
 internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry>, Generated {
 	public ParameterDescription Description { get; private set; }
-	public ParameterEntry(ParameterDescriptionEntry entry, SymbolTable table): base(entry) {
-		this.SymbolTable = table;
-	}
+    public ParameterEntry(ParameterDescriptionEntry entry, SymbolTable table) : base(entry)
+    {
+        this.SymbolTable = table;
+    }
+    public ParameterEntry(ParameterDescriptionEntry entry, SymbolTable table, ParameterDescription description) : this(entry, table)
+    {
+        this.Description = description;
+    }
 
-	private List<ITextLine> _cache = null;
+        private List<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
@@ -31,8 +37,10 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 				if (this.CodeElement().DataType == DataType.Boolean) {
 					_cache.Add(new TextLineSnapshot(-1, "01 "+name+"-value PIC X     VALUE LOW-VALUE.", null));
 					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"       VALUE 'T'.", null));
-					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F'.", null));
-				} else {
+					_cache.Add(new TextLineSnapshot(-1, "    88 "+name+"-false VALUE 'F' ", null));
+                    _cache.Add(new TextLineSnapshot(-1, "                      X'00' thru 'S'", null));
+                    _cache.Add(new TextLineSnapshot(-1, "                      'U' thru X'FF'.", null));
+                } else {
                     bool bHasPeriod = false;
                     bool bIgnoreUsage = false;
                         var str = new System.Text.StringBuilder();
@@ -41,9 +49,10 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
                     //Type exists from Cobol 2002
 				    string typedef = null;
 					if (this.CodeElement().DataType.CobolLanguageLevel >= TypeCobol.Compiler.CobolLanguageLevel.Cobol2002) {
-						var found = this.SymbolTable.GetType(this.CodeElement().DataType);
-						if (found.Count > 0) {
-							customtype = found[0];
+					    var type = this.Description?.TypeDefinition ?? this.SymbolTable.GetType(this.CodeElement().DataType).FirstOrDefault();
+					    if (type != null)
+					    {
+							customtype = type;
 						    typedef = TypedDataNode.ExtractAnyCobolScalarTypeDef(Layout, customtype, out bHasPeriod, true);
 						    if (typedef.Length != 0)
 						    {
@@ -54,8 +63,9 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 
                     if (picture != null)
                     {
+                        bool globalSeen = false;
                         //If we have a picture, try to extract the original pic string declaration.
-                        string picIt = TypedDataNode.ExtractPicTokensValues(Layout, this.CodeElement().ConsumedTokens, out bHasPeriod);
+                        string picIt = TypedDataNode.ExtractPicTokensValues(Layout, this.CodeElement().ConsumedTokens, out bHasPeriod, out globalSeen);
                         if (picIt.Length != 0)
                         {
                             str.Append(picIt);
@@ -74,15 +84,16 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 
 				    if (picture == null && this.CodeElement().Usage == null && this.CodeElement().DataType.CobolLanguageLevel == Compiler.CobolLanguageLevel.Cobol85)
                     {//JCM humm... Type without picture lookup enclosing scope.
-                        var found = this.SymbolTable.GetType(this.CodeElement().DataType);
-                        if (found.Count > 0)
+                        var type = this.Description?.TypeDefinition ?? this.SymbolTable.GetType(this.CodeElement().DataType).FirstOrDefault();
+                        if (type != null)
                         {
-                            customtype = found[0];
+                            customtype = type;
                             picture = customtype.CodeElement().Picture;
                             if (picture != null)
                             {
+                                bool globalSeen = false;
                                 //If we have a picture, try to extract the original pic string declaration.
-                                string picIt = TypedDataNode.ExtractPicTokensValues(Layout, customtype.CodeElement(), out bHasPeriod);
+                                string picIt = TypedDataNode.ExtractPicTokensValues(Layout, customtype.CodeElement(), out bHasPeriod, out globalSeen);
                                 if (picIt.Length != 0)
                                     str.Append(picIt);
                                 else
@@ -113,6 +124,13 @@ internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry
 						_cache.Add(new TextLineSnapshot(-1, str.ToString(), null));
 					}
 				}
+                    if (this.CodeElement().Usage?.Value == DataUsage.Pointer && this.IsFlagSet(Node.Flag.NodeisIncrementedPointer) )
+                    {
+                        _cache.Add(new TextLineSnapshot(-1, "01 redefines " + name + ".", null));
+                        string temp = "    02 " + (name.Length > 22 ? name.Substring(0, 22) : name) +
+                                      this.Description?.Hash + " pic S9(05) comp-5.";
+                        _cache.Add(new TextLineSnapshot(-1, temp, null));
+                    }
                 if (customtype != null)
                 {
                     List<string> rootProcedures;

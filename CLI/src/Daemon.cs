@@ -13,8 +13,11 @@ using TypeCobol.Compiler.Text;
 using SimpleMsgPack;
 using TypeCobol.Server.Serialization;
 using Analytics;
+using Castle.Core.Internal;
 using TypeCobol.CustomExceptions;
+using TypeCobol.Tools;
 using TypeCobol.Tools.Options_Config;
+
 
 namespace TypeCobol.Server {
 
@@ -22,7 +25,11 @@ namespace TypeCobol.Server {
         enum StartClient {
             No, HiddenWindow, NormalWindow
         }
-        static int Main(string[] argv) {
+
+        static int Main(string[] argv)
+        {
+
+
             bool help = false;
             bool version = false;
             bool once = false;
@@ -31,10 +38,12 @@ namespace TypeCobol.Server {
             config.CommandLine = string.Join(" ", argv);
             var pipename = "TypeCobol.Server";
 
+
             var p = TypeCobolOptionSet.GetCommonTypeCobolOptions(config);
 
             //Add custom options for CLI
             p.Add(string.Format("USAGE\n {0} [OPTIONS]... [PIPENAME]\n VERSION:\n {1} \n DESCRIPTION: \n Run the TypeCObol parser server", PROGNAME, PROGVERSION));
+            p.Add("p|pipename", "Pipename used if running as server. Default: \"TypeCobol.Server\"", v => pipename = v);
             p.Add("k|startServer:",
                 "Start the server if not already started, and executes commandline.\n" + "By default the server is started in window mode\n" + "'{hidden}' hide the window.",
                 v =>
@@ -57,37 +66,32 @@ namespace TypeCobol.Server {
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             config.CopyFolders.Add(folder + @"\DefaultCopies\");
 
-            try {
-                List<string> args;
-		        try {
+            try
+            {
+                var errors = TypeCobolOptionSet.InitializeCobolOptions(config, argv, p);
 
-		            args = p.Parse(argv);
+                if (!errors.IsNullOrEmpty())
+                    return exit(errors);
 
-                } catch (OptionException ex) {
-                    return exit(ReturnCode.FatalError, ex.Message);
-		        }
+                if (help)
+                {
+                    p.WriteOptionDescriptions(Console.Out);
+                    return 0;
+                }
 
-		        if (help) {
-		            p.WriteOptionDescriptions(Console.Out);
-		            return 0;
-		        }
-		        if (version) {
-		            Console.WriteLine(PROGVERSION);
-		            return 0;
-		        }
-                if(config.Telemetry)
+                if (version)
+                {
+                    Console.WriteLine(PROGVERSION);
+                    return 0;
+                }
+
+                if (config.Telemetry)
                 {
                     AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.CodeGeneration; //If telemetry arg is passed enable telemetry
                 }
 
                 if (config.OutputFiles.Count == 0 && config.ExecToStep >= ExecutionStep.Generate)
                     config.ExecToStep = ExecutionStep.CrossCheck; //If there is no given output file, we can't run generation, fallback to CrossCheck
-
-		        if (config.OutputFiles.Count > 0 && config.InputFiles.Count != config.OutputFiles.Count)
-		            return exit(ReturnCode.OutputFileError, "The number of output files must be equal to the number of input files.");
-
-		        if (args.Count > 0) pipename = args[0];
-
 
                 //"startClient" will be true when "-K" is passed as an argument in command line.
                 if (startClient != StartClient.No && once) {
@@ -96,7 +100,8 @@ namespace TypeCobol.Server {
                     {
                         try {
                             namedPipeClient.Connect(100);
-		                } catch (TimeoutException tEx) {
+		                } catch
+                             {
                             System.Diagnostics.Process process = new System.Diagnostics.Process();
                             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
 		                    if (startClient == StartClient.NormalWindow) {
@@ -221,42 +226,31 @@ namespace TypeCobol.Server {
 			return info.FileVersion;
 		}
 
-		static int exit(ReturnCode code, string message) {
-			string errmsg = "Code: "+ (int)code + " " + PROGNAME+": "+message+"\n";
-			errmsg += "Try "+PROGNAME+" --help for usage information.";
-			Console.WriteLine(errmsg);
+        static int exit(ReturnCode code, string message)
+        {
+            string errmsg = "Code: " + (int)code + " " + PROGNAME + ": " + message + Environment.NewLine;
+            errmsg += "Try " + PROGNAME + " --help for usage information.";
+            Console.WriteLine(errmsg);
 
-            AnalyticsWrapper.Telemetry.TrackEvent(string.Format("[ReturnCode] {0} : {1}", code.ToString(), message), EventType.Genration);
-            AnalyticsWrapper.Telemetry.EndSession(); //End Telemetry session and force data sending
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.ReturnCode, string.Format("{0} : {1}", code.ToString(), message), LogType.Genration);
             return (int)code;
-		}
-
+        }
+        static int exit(Dictionary<ReturnCode, string> errors)
+        {
+            string errmsg = Environment.NewLine;
+            foreach (var error in errors)
+            {
+                errmsg += "Code: " + (int)error.Key + " " + PROGNAME + ": " + error.Value + Environment.NewLine;
+                AnalyticsWrapper.Telemetry.TrackEvent(EventType.ReturnCode, string.Format("{0} : {1}", error.Key.ToString(), error.Value), LogType.Genration);
+            }
+            errmsg += "Try " + PROGNAME + " --help for usage information.";
+            Console.WriteLine(errmsg);
+            return errors.Count > 1 ? (int)ReturnCode.MultipleErrors : (int)errors.Keys.First();
+        }
+        static int exit(ReturnCode code)
+        {
+            return exit(code, TypeCobolConfiguration.ErrorMessages[code].IsNullOrEmpty() ? "" : TypeCobolConfiguration.ErrorMessages[code]);
+        }
     }
 
-    /// <summary>
-    /// Categories of ReturnCode:
-    /// * 0000 : Everything is ok
-    ///         Output files are generated
-    /// * 0001 to 0999 : Ok but there are warnings.
-    ///         Output files are generated
-    ///         Diagnostic file should contains warnings
-    /// * >= 1000 : Errors
-    ///         Output files are NOT generated
-    ///         Diagnostic file should contains errors and warnings
-    /// </summary>
-    public enum ReturnCode
-    {
-        Success = 0,
-        
-        //Warnings
-        Warning = 1,            //Warning(s) issued during parsing of input file
-
-
-        //Errors
-        ParsingDiagnostics = 1000,  //Syntax or semantic error in one or more input file
-        OutputFileError = 1001,     //CLI parameters error
-        MissingCopy = 1002,         //Use of option --hastonmissingcopy and at least one COPY is missing
-        GenerationError = 1003,     //Error during Code generation
-        FatalError = 1004,          //Not managed exception
-    }
 }

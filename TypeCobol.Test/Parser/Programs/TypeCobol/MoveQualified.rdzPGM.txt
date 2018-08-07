@@ -5,6 +5,8 @@ Line 14[34,37] <27, Error, Syntax> - Syntax error : extraneous input 'type' expe
 Line 16[28,31] <27, Error, Syntax> - Syntax error : extraneous input 'type' expecting user defined word RuleStack=codeElement>moveStatement>moveSimple>storageArea1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference>qualifiedDataNameOrQualifiedConditionName>qualifiedDataNameOrQualifiedConditionName1>tcQualifiedDataNameOrQualifiedConditionName1,  OffendingSymbol=[28,31:type]<TYPE>
 Line 18[28,28] <27, Error, Syntax> - Syntax error : extraneous input '9' expecting user defined word RuleStack=codeElement>moveStatement>moveSimple>storageArea1>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference>qualifiedDataNameOrQualifiedConditionName>qualifiedDataNameOrQualifiedConditionName1>tcQualifiedDataNameOrQualifiedConditionName1,  OffendingSymbol=[28,28:9]<IntegerLiteral>{9}
 Line 20[19,19] <27, Error, Syntax> - Syntax error : extraneous input '9' expecting user defined word RuleStack=codeElement>moveStatement>moveSimple>variable7>identifier>storageAreaReferenceOrConditionReference>dataItemReferenceOrConditionReference>qualifiedDataNameOrQualifiedConditionName>qualifiedDataNameOrQualifiedConditionName1>tcQualifiedDataNameOrQualifiedConditionName1,  OffendingSymbol=[19,19:9]<IntegerLiteral>{9}
+Line 24[8,35] <27, Error, Syntax> - Syntax error : MOVE: illegal <function call> after TO
+Line 25[8,42] <27, Error, Syntax> - Syntax error : MOVE: illegal <function call> after TO
 
 --- Program ---
 PROGRAM: MOVEQUA common:False initial:False recursive:False
@@ -17,4 +19,5 @@ PROGRAM: MOVEQUA common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  CURRENCY:CURRENCY
   STRING:STRING

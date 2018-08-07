@@ -13,6 +13,8 @@ using TypeCobol.Compiler.Source;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Scanner;
+using System.Text;
 
 namespace TypeCobol.Codegen
 {
@@ -34,7 +36,7 @@ namespace TypeCobol.Codegen
         /// <summary>
         /// The Destination.
         /// </summary>
-        public TextWriter Destination
+        public StringBuilder Destination
         {
             get;
             private set;
@@ -106,7 +108,7 @@ namespace TypeCobol.Codegen
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public Generator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion)
+        public Generator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
         {
             this.CompilationResults = document;
             this.TypeCobolVersion = typeCobolVersion;
@@ -114,7 +116,7 @@ namespace TypeCobol.Codegen
 
             //Add version to output file
             if (!string.IsNullOrEmpty(TypeCobolVersion))
-                Destination.WriteLine("      *TypeCobol_Version:" + TypeCobolVersion);
+                Destination.AppendLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
             Actions = new GeneratorActions(this, skeletons, document);
             //To Store Erased Nodes by the Erase Action.
@@ -224,23 +226,23 @@ namespace TypeCobol.Codegen
         /// </summary>
         /// <param name="compilationUnit"> Compilation Unit resulting from TypeCobol Parsing</param>
         /// <param name="columns">Columns layout</param>
-        public void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
+        public virtual void Generate(CompilationUnit compilationUnit, ColumnsLayout columns = ColumnsLayout.FreeTextFormat)
         {
             //Check if there is any error in diags
             if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
             {
-                AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Diagnostics Detected", EventType.Genration);
+                AnalyticsWrapper.Telemetry.TrackEvent(EventType.Generation, "Diagnostics Detected", LogType.Genration);
                 throw new GenerationException("Unable to generate because of error diagnostics", null, null, false, false);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Started", EventType.Genration);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Generation, "[Generation] Started", LogType.Genration);
            
             // STEP 0: Initialize the global values.
             RootNode = compilationUnit.ProgramClassDocumentSnapshot.Root;
             SymTable = compilationUnit.ProgramClassDocumentSnapshot.Root.SymbolTable;
             Layout = columns;
             //Create the Initial target document.
-            CreateTargetDocument();
+            CreateTargetDocument(false);
             // STEP 1: modify tree to adapt it to destination language            
             // 1.1 Run the Qualifier action on this node
             Qualifier qualifier = new Qualifier(this, RootNode);
@@ -250,24 +252,39 @@ namespace TypeCobol.Codegen
             // STEP 2: convert tree to destination language code
             TreeToCode();
       
-            AnalyticsWrapper.Telemetry.TrackEvent("[Generation] Ended", EventType.Genration);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Generation, "[Generation] Ended", LogType.Genration);
         }
 
         /// <summary>
-        /// Create the Target Document.
+        /// Create the Target Document.        
         /// </summary>
-        private void CreateTargetDocument()
+        /// <param name="bTrackFirtNonCblDirectiveLine">True if the First non Cobol Directive line must be tracked and return returned</param>
+        /// <returns>if bTrackFirtNonCblDirectiveLine is set to true this method return the first non cbl directive line it a 0 based line number.</returns>
+        protected virtual int CreateTargetDocument(bool bTrackFirtNonCblDirectiveLine)
         {
+            int iNonDirectiveLine = -1;
             TargetDocument = new Compiler.Source.SourceDocument(/*new StringSourceText()*/);
             //Insert all input lines
             StringWriter sw = new StringWriter();
+            int i = 0; //Line count
             foreach (TypeCobol.Compiler.Scanner.ITokensLine line in this.CompilationResults.TokensLines)
             {
+                if (bTrackFirtNonCblDirectiveLine && iNonDirectiveLine < 0)
+                {
+                    TypeCobol.Compiler.Parser.CodeElementsLine cel = (TypeCobol.Compiler.Parser.CodeElementsLine) line;
+                    if (!(cel.TokensWithCompilerDirectives.Count == 1 &&
+                        cel.TokensWithCompilerDirectives[0].TokenFamily == TokenFamily.CompilerDirective))
+                    {
+                        iNonDirectiveLine = i;
+                    }
+                    i++;
+                }
                 sw.WriteLine(line.Text);
             }
             //Load the Original source code
             TargetDocument.LoadSourceText(sw.ToString());
             //TargetDocument.Dump();
+            return iNonDirectiveLine;
         }
 
         /// <summary>

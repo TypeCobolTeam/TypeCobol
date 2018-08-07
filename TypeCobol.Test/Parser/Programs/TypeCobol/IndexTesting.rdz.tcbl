@@ -36,6 +36,11 @@
        01 Account1 type Account.
        01 Bad        TYPE BadType.
 
+       01 myPointerGroup.
+        05 myPointer pointer.
+
+       01 strVar Pic x(15) value "string sample".
+
       *OK : Index Name is over 22 characters 
       *- but not duplicated and not inside TypeDef
        01 ToLingIndx PIC X(6) OCCURS 5 
@@ -60,5 +65,12 @@
        SET MyVar::MyIdx TO 1.
       *KO use qualification with index over 22chars
        SET Tab3::MyIdx3azeazeazeazeazeazeazeaz       to 1.
+
+      *KO increment pointer and no pointer variables
+       SET myPointer,Account1,Bad UP BY 1.
+      *KO increment can only be performed by integer variables
+       SET myPointerGroup::myPointer UP BY strVar.
+
+       SET myPointer Down BY ((MyFinalIdxVar::Counter)**2).
 
        END PROGRAM IndexTesting.

@@ -153,7 +153,7 @@ namespace TypeCobol.Codegen.Nodes {
                 if (Statement.ProcedureCall.InputParameters != null)
                     foreach (var parameter in Statement.ProcedureCall.InputParameters)
                     {
-                        var name = ToString(parameter, Node.SymbolTable, ArgMode.Input, ref previousSharingMode, ref previousSpan);
+                        var name = ToString(parameter, Node, ArgMode.Input, ref previousSharingMode, ref previousSpan);
                         _cache.Add(new TextLineSnapshot(-1, indent + name, null));
                     }
 
@@ -164,7 +164,7 @@ namespace TypeCobol.Codegen.Nodes {
                 if (Statement.ProcedureCall.InoutParameters != null)
                     foreach (var parameter in Statement.ProcedureCall.InoutParameters)
                     {
-                        var name = ToString(parameter, Node.SymbolTable, ArgMode.InOut, ref previousSharingMode, ref previousSpan);
+                        var name = ToString(parameter, Node, ArgMode.InOut, ref previousSharingMode, ref previousSpan);
                         _cache.Add(new TextLineSnapshot(-1, indent + name, null));
                     }
 
@@ -175,7 +175,7 @@ namespace TypeCobol.Codegen.Nodes {
                 if (Statement.ProcedureCall.OutputParameters != null)
                     foreach (var parameter in Statement.ProcedureCall.OutputParameters)
                     {
-                        var name = ToString(parameter, Node.SymbolTable, ArgMode.Output, ref previousSharingMode, ref previousSpan);
+                        var name = ToString(parameter, Node, ArgMode.Output, ref previousSharingMode, ref previousSpan);
                         _cache.Add(new TextLineSnapshot(-1, indent + name, null));
                     }
 
@@ -203,12 +203,12 @@ namespace TypeCobol.Codegen.Nodes {
     /// Rule: TCCODEGEN_FUNCALL_PARAMS
     /// </summary>
     /// <param name="parameter">The Parameter</param>
-    /// <param name="table">The Symbol table</param>
+    /// <param name="node">The node</param>
     /// <param name="mode">Argument mode Input, InOut, Output, etc...</param>
     /// <param name="previousSharingMode">The previous Sharing Mode</param>
     /// <param name="previousSpan">The previous marging span</param>
     /// <returns>The String representation of the Sharing Mode paramaters</returns>
-	private string ToString(TypeCobol.Compiler.CodeElements.CallSiteParameter parameter, Compiler.CodeModel.SymbolTable table, ArgMode mode,
+	private string ToString(TypeCobol.Compiler.CodeElements.CallSiteParameter parameter, Node node, ArgMode mode,
         ref TypeCobol.Compiler.CodeElements.ParameterSharingMode previousSharingMode, ref int previousSpan) {
         Variable variable = parameter.StorageAreaOrValue;
         bool bTypeBool = false;
@@ -216,10 +216,10 @@ namespace TypeCobol.Codegen.Nodes {
         {//We must detect a boolean variable
             if (!variable.IsLiteral)
             {
-                var found = table.GetVariables(variable);
-                if (found.Count() >= 1)
+                var found = node.GetDataDefinitionFromStorageAreaDictionary(variable.StorageArea);
+                if (found != null)
                 {
-                    var data = found.First() as DataDescription;
+                    var data = found as DataDescription;
                     bTypeBool = (data != null && data.DataType == DataType.Boolean);
                 }
             }
@@ -261,8 +261,8 @@ namespace TypeCobol.Codegen.Nodes {
         if (variable != null) {
             if (variable.IsLiteral)
                 return share_mode + name;
-            var found = table.GetVariables(variable);
-            if (found.Count() < 1) {  //this can happens for special register : LENGTH OF, ADDRESS OF
+            var found = node.GetDataDefinitionFromStorageAreaDictionary(variable.StorageArea);
+            if (found==null) {  //this can happens for special register : LENGTH OF, ADDRESS OF
                 return share_mode + variable.ToCobol85();
             }
         }

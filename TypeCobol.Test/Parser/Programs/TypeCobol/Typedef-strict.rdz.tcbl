@@ -12,6 +12,10 @@
       *KO Type is duplicated and not used
        01 DuplicatedType TYPEDEF STRICT PIC X(10).
        01 DuplicatedType TYPEDEF STRICT PIC X(10).
+     
+      *KO SYNC Clause is not allowed on STRICT Type def
+       01 MySyncType TYPEDEF STRICT SYNC.
+          05 SyncVar PIC x(10).
       
        01 Vect2 TYPEDEF strict.
         11 Coord2d.
@@ -186,7 +190,7 @@
       *OK same type
            move Point3 to Point2
       
-      *OK same primitive type 'Alphanumeric'
+      *KO for now but same primitive type 'Alphanumeric'
            move 'literal' to varCanBeStrict
       *KO not the same type
            move varCanBeStrict to Point2

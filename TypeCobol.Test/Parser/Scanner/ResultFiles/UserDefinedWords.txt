@@ -42,5 +42,5 @@
 [54,56:123]<IntegerLiteral>{123}
 [57,58:-4]<IntegerLiteral>{-4}
 [59,59:X]<UserDefinedWord>
-Line -1[46,52] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
+Line 0[46,52] <17, Error, Tokens> - Invalid floating point numeric literal format : a decimal point must be included in the mantissa 1.23E+4
 

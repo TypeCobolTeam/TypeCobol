@@ -12,18 +12,12 @@ using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
-    #region CodeElementListener
+    #region CodeElementCheckers
 
-    class DataDescriptionChecker : CodeElementListener
+    class DataDescriptionChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(DataDescriptionEntry data, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            var data = e as DataDescriptionEntry;
-            if (data == null)
-            {
-                return; //not our job
-            }
-            var context = c as CodeElementsParser.DataDescriptionEntryContext;
             var external = GetContext(data, context?.externalClause());
             var global = GetContext(data, context?.globalClause());
             if (data.DataName == null)
@@ -75,16 +69,10 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class DataConditionChecker : CodeElementListener
+    class DataConditionChecker 
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(DataConditionEntry data, CodeElementsParser.DataConditionEntryContext context)
         {
-            var data = e as DataConditionEntry;
-            if (data == null)
-            {
-                return; //not our job
-            }
-            var context = c as CodeElementsParser.DataConditionEntryContext;
             if (data.LevelNumber?.Value != 88)
                 DiagnosticUtils.AddError(data, "Data conditions must be level 88", context?.levelNumber);
             if (data.DataName == null)
@@ -92,16 +80,10 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class DataRenamesChecker : CodeElementListener
+    class DataRenamesChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(DataRenamesEntry data, CodeElementsParser.DataRenamesEntryContext context)
         {
-            var data = e as DataRenamesEntry;
-            if (data == null)
-            {
-                return; //not our job
-            }
-            var context = c as CodeElementsParser.DataConditionEntryContext;
             if (data.LevelNumber?.Value != 66)
                 //(source page 379 of ISO Cobol 2014)
                 DiagnosticUtils.AddError(data, "RENAMES must be level 66", context?.levelNumber);
@@ -116,32 +98,25 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class AddStatementChecker : CodeElementListener
+    class AddStatementChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(AddStatement statement, CodeElementsParser.AddStatementContext context)
         {
-            var statement = e as AddGivingStatement;
-            if (statement == null)
+            var givingStatement = statement as AddGivingStatement;
+            if (givingStatement == null)
             {
                 return; //not our job
             }
-            var context = c as CodeElementsParser.AddStatementContext;
-            if (statement.Operand == null)
-                DiagnosticUtils.AddError(statement, "Required: <identifier> after TO", context?.addGiving());
+            if (givingStatement.Operand == null)
+                DiagnosticUtils.AddError(givingStatement, "Required: <identifier> after TO", context?.addGiving());
         }
     }
 
-    class CallStatementChecker : CodeElementListener
+    class CallStatementChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(CallStatement statement, CodeElementsParser.CallStatementContext c)
         {
-            var statement = e as CallStatement;
-            if (statement == null)
-            {
-                return; //not our job
-            }
-            var context = (c as CodeElementsParser.CallStatementContext)?.cobolCallStatement();
-
+            var context = c?.cobolCallStatement();
             if (context != null) //if null it's certainly a CallStatementContext
             {
                 foreach (var call in context.callUsingParameters()) CheckCallUsings(statement, call);
@@ -152,7 +127,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         }
 
-        private void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context)
+        private static void CheckCallUsings(CallStatement statement, CodeElementsParser.CallUsingParametersContext context)
         {
             foreach (var input in statement.InputParameters)
             {
@@ -196,17 +171,10 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class CancelStatementChecker : CodeElementListener
+    class CancelStatementChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext ctxt)
+        public static void OnCodeElement(CancelStatement statement, CodeElementsParser.CancelStatementContext context)
         {
-            var statement = e as CancelStatement;
-            if (statement == null)
-            {
-                return; //not our job
-            }
-            var context = ctxt as CodeElementsParser.CancelStatementContext;
-
             foreach (var item in statement.Programs)
             {
                 if (item == null) continue; //TODO#249
@@ -222,16 +190,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
     }
 
-    class InspectConvertingChecker : CodeElementListener
+    class InspectConvertingChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(InspectConvertingStatement statement, CodeElementsParser.InspectStatementContext context)
         {
-            var statement = e as InspectConvertingStatement;
-            if (statement == null)
-            {
-                return; //not our job
-            }
-            var context = c as CodeElementsParser.InspectStatementContext;
             var seen = new Dictionary<InspectStatement.StartCharacterPosition, bool>();
             foreach (var value in Enum.GetValues(typeof(InspectTallyingStatement.StartCharacterPosition)))
             {
@@ -253,67 +215,26 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class MergeUsingChecker : CodeElementListener
+    class MergeUsingChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(MergeStatement statement, CodeElementsParser.MergeStatementContext context)
         {
-            var statement = e as MergeStatement;
-            if (statement == null)
-            {
-                return; //not our job
-            }
-            var context = c as CodeElementsParser.MergeStatementContext;
             if (statement.InputFiles.Length == 1)
                 DiagnosticUtils.AddError(statement, "MERGE: USING needs 2 filenames or more", context?.usingFilenames());
         }
     }
 
-    class MoveSimpleChecker : CodeElementListener
+    class SearchStatementChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(SearchStatement statement, CodeElementsParser.SearchStatementContext context)
         {
-            var statement = e as MoveSimpleStatement;
-            if (statement == null)
-            {
-                return; //not our job
-            }
-            var moveStatementContext = c as CodeElementsParser.MoveStatementContext;
-            if (moveStatementContext != null)
-            {
-                var moveSimpleContext = moveStatementContext.moveSimple();
-                if (moveSimpleContext != null)
-                {
-                    if (statement.StorageAreaWrites != null)
-                    {
-                        for (int i = 0; i < statement.StorageAreaWrites.Count; i++)
-                        {
-                            var receiver = statement.StorageAreaWrites[i].StorageArea;
-                            if (receiver is FunctionCallResult)
-                                DiagnosticUtils.AddError(statement, "MOVE: illegal <function call> after TO",
-                                    moveSimpleContext.storageArea1()[i]);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    class SearchStatementChecker : CodeElementListener
-    {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
-        {
-            var statement = e as SearchStatement;
-            if (statement == null)
-            {
-                return; //not our job
-            }
             if (statement.TableToSearch == null) return; // syntax error
             if (statement.TableToSearch.StorageArea is DataOrConditionStorageArea &&
                 ((DataOrConditionStorageArea) statement.TableToSearch.StorageArea).Subscripts.Count > 0)
-                DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(c));
+                DiagnosticUtils.AddError(statement, "SEARCH: Illegal subscripted identifier", GetIdentifierContext(context));
             if (statement.TableToSearch.StorageArea?.ReferenceModifier != null)
                 DiagnosticUtils.AddError(statement, "SEARCH: Illegal reference-modified identifier",
-                    GetIdentifierContext(c));
+                    GetIdentifierContext(context));
         }
 
         private static RuleContext GetIdentifierContext(ParserRuleContext context)
@@ -325,16 +246,10 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SetStatementForAssignmentChecker : CodeElementListener
+    class SetStatementForAssignmentChecker 
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(SetStatementForAssignment set, CodeElementsParser.SetStatementForAssignmentContext context)
         {
-            var set = e as SetStatementForAssignment;
-            if (set == null)
-            {
-                return; //not our job
-            }
-            var context = c as CodeElementsParser.SetStatementForAssignmentContext;
             for (int i = 0; i < context?.dataOrIndexStorageArea().Length; i++)
             {
                 if (i >= set.ReceivingStorageAreas.Length)
@@ -349,34 +264,22 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class SetStatementForIndexesChecker : CodeElementListener
+    class SetStatementForIndexesChecker 
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(SetStatementForIndexes set, CodeElementsParser.SetStatementForIndexesContext context)
         {
-            var set = e as SetStatementForIndexes;
-            if (set == null)
-            {
-                return; //not our job
-            }
             if (set.SendingVariable == null)
             {
-                var context = c as CodeElementsParser.SetStatementForIndexesContext;
                 DiagnosticUtils.AddError(set, "Set xxx up/down by xxx: Sending field missing or type unknown",
-                    context?.integerVariable1());
+                    context?.variableOrExpression2());
             }
         }
     }
 
-    class StartStatementChecker : CodeElementListener
+    class StartStatementChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void OnCodeElement(StartStatement statement, CodeElementsParser.StartStatementContext context)
         {
-            var statement = e as StartStatement;
-            if (statement == null)
-            {
-                return; //not our job
-            }
-            var context = c as CodeElementsParser.StartStatementContext;
             if (context?.relationalOperator() != null)
                 if (statement.RelationalOperator.Value != RelationalOperator.EqualTo &&
                     statement.RelationalOperator.Value != RelationalOperator.GreaterThan &&

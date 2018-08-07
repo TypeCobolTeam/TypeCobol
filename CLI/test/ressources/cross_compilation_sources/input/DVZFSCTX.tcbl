@@ -1,0 +1,26 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZFSCTX.
+       data division.
+       working-storage section.
+       PROCEDURE DIVISION.
+       declare procedure  GetTechnicalContext public
+           output TechCtx    type BOOL
+                  RC         type DATE.
+       end-declare.
+       declare procedure GetIdentification PUBLIC
+           input TechCtx      type BOOL
+                  RC          type DATE.
+        end-declare.
+       declare procedure DisplayDebug public
+           output TechCtx type BOOL.
+       data division.
+       working-storage section.
+        01 tctx TYPE BOOL.
+        01 rtcCode TYPE DATE.
+       PROCEDURE DIVISION.
+        CALL DVZFSCTX2::GetTechnicalContext2 
+            OUTPUT tctx rtcCode.
+       end-declare.
+
+
+       END PROGRAM DVZFSCTX.

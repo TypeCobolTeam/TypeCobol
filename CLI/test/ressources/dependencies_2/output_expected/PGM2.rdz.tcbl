@@ -4,6 +4,15 @@
 
        DATA DIVISION.
        Working-STORAGE SECTION.
+       01 TC-Callee pic X(08) value 'CALLEE'.
+       01 TC-MyIntrin pic X(08) value 'MYINTRIN'.
+       01 TC-Call          PIC X VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+
+                               
 
       *01  somedate     TYPE Date.
        01 somedate.
@@ -33,12 +42,6 @@
            02 Site.
              03 SiteName PIC X(8).
                                               
-       01 TC-Callee pic X(08) value 'Callee'.
-       01 TC-MyIntrin pic X(08) value 'MyIntrin'.
-       01 TC-Call          PIC X(01) VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'.
-
        LINKAGE SECTION.
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.

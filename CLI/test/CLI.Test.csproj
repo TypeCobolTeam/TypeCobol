@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\TypeCobol.Grammar\Common.props" />
+  <Import Project="..\..\TypeCobol\Common.props" />
   <PropertyGroup>
     <ProjectGuid>{CFBF4D30-56F3-4794-9067-B651DC1CAB1E}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -107,12 +107,24 @@
     <None Include="ressources\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="ressources\generate_mixedFiles\input\FunDeclare.rdz.tcbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\generate_mixedFiles\output_expected\FunDeclareMixed.cbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\src\config\skeletons.xml">
       <Link>ressources\skeletons.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="ressources\generate_mixedFiles\output_expected\error.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\generate_mixedFiles\CLIArguments.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

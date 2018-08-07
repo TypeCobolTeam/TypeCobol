@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
@@ -26,22 +27,26 @@ namespace TypeCobol.Codegen {
         /// </summary>
         /// <param name="path"></param>
         /// <param name="skeletons"></param>
-        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null) {
-            ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks);
+        /// <param name="autoRemarks"></param>
+        /// <param name="copies"></param>        
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons = null, bool autoRemarks = false, string typeCobolVersion = null, IList<string> copies = null) {
+            ParseGenerateCompare(path, skeletons, DocumentFormat.RDZReferenceFormat, typeCobolVersion, autoRemarks, copies);
         }
-        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false) {
-            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks);
+        public static void ParseGenerateCompare(string path, List<Skeleton> skeletons, DocumentFormat format, string typeCobolVersion, bool autoRemarks = false, IList<string> copies = null) {
+            var document = Parser.Parse(Path.Combine(ROOT, INPUT, path), format, autoRemarks, copies);
             var columns = document.Results.ProgramClassDocumentSnapshot.TextSourceInfo.ColumnsLayout;
             var writer = new StringWriter();
             // write parsing errors
             WriteErrors(writer, document.Results.AllDiagnostics(), columns);
             // write generated code
-            var codegen = new Generators.DefaultGenerator(document.Results, writer, skeletons, typeCobolVersion);
+            var generatedCobolStringBuilder = new StringBuilder();
+            var codegen = new Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, skeletons, typeCobolVersion);
             try {
                 codegen.Generate(document.Results, columns);
                 if (codegen.Diagnostics != null)
                     WriteErrors(writer, codegen.Diagnostics, columns);
             } finally {
+                writer.Write(generatedCobolStringBuilder);
                 // flush
                 writer.Close();
             }

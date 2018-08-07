@@ -50,7 +50,10 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// True if the current program is contained in another program.
         /// </summary>
-        public bool IsNested { get; protected set; }
+        public virtual bool IsNested => false;
+
+        public virtual bool IsStacked => false;
+
 
 
         /// <summary>
@@ -68,10 +71,20 @@ namespace TypeCobol.Compiler.CodeModel
 
         // -- IDENTIFICATION DIVISION --
 
+
+        private ProgramIdentification _identificaton;
         /// <summary>
         /// Program name, Initial / 
         /// </summary>
-        public ProgramIdentification Identification { get { return this.CodeElement as ProgramIdentification; } }        
+        public ProgramIdentification Identification
+        {
+            get
+            {
+                if (_identificaton != null) return _identificaton;
+                _identificaton = (ProgramIdentification) this.CodeElement;
+                return _identificaton;
+            }
+        }
 
         // -- ENVIRONMENT DIVISION --
 
@@ -138,7 +151,6 @@ namespace TypeCobol.Compiler.CodeModel
 
 		public SourceProgram(SymbolTable EnclosingScope, CodeElement codeElement) : base(codeElement)
 		{
-			IsNested = false;
 			SymbolTable = new SymbolTable(new SymbolTable(EnclosingScope, SymbolTable.Scope.Declarations), SymbolTable.Scope.Program);
         }
 
@@ -193,7 +205,6 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
 	public class NestedProgram: Program {
 		public NestedProgram(Program containingProgram, CodeElement codeElement) : base(codeElement) {
-			IsNested = true;
 			ContainingProgram = containingProgram;
             SymbolTable globalTable = containingProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global); //Get Parent Global Table
             var globalNestedSymbolTable = new SymbolTable(globalTable, SymbolTable.Scope.Global); //Create a new Global symbol table for this nested program and his childrens programs
@@ -203,8 +214,23 @@ namespace TypeCobol.Compiler.CodeModel
             SymbolTable = new SymbolTable(SymbolTable, SymbolTable.Scope.Program);
 		}
 
+        public override bool IsNested => true;
+
         /// <summary>A nested program is a program that is contained in another program.</summary>
 		public Program ContainingProgram { get; private set; }
+        
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
+    public class StackedProgram: SourceProgram {
+        public StackedProgram(SymbolTable EnclosingScope, CodeElement codeElement) : base(EnclosingScope, codeElement)
+        {
+        }
+
+        public override bool IsStacked => true;
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

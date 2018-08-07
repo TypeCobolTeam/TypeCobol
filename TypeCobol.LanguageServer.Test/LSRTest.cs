@@ -202,6 +202,73 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void NestedProgramCompletion()
+        {
+            LSRTestHelper.Test("CompletionWithNestedProgram", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void MoveZeroSpaceCompletion()
+        {
+            LSRTestHelper.Test("MoveZeroSpaceCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void OfCompletion()
+        {
+            LSRTestHelper.Test("OfCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void GlobalWithNestedProgramCompletion()
+        {
+            LSRTestHelper.Test("GlobalWithNestedProgramCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void QualifiedNameCompletionWithFiller()
+        {
+            LSRTestHelper.Test("QualifiedNameCompletionWithFiller", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionCaseInsensitive()
+        {
+            LSRTestHelper.Test("ProcedureCompletionCaseInsensitive", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionInputInoutOutput()
+        {
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionPotentialChildrenWithNoName()
+        {
+            LSRTestHelper.Test("ProcedureCompletionPotentialChildrenWithNoName", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+#if EUROINFO_RULES
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void CompletionUsingCopy()
+        {
+            LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+        }
+#endif
+#endregion
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void GlobalStorageCompletion()
         {
             LSRTestHelper.Test("GlobalStorageCompletion", LsrTestingOptions.NoLsrTesting, true);

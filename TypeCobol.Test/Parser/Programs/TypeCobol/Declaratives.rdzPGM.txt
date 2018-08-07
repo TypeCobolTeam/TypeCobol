@@ -1,6 +1,8 @@
 ﻿--- Program ---
 PROGRAM: DeclarativesTest common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
+-- SECTIONS ----
+  DECLARATION
 -- PARAGRAPHS --
   AFFICHAGE-PARAGRAPHE
   X
@@ -10,4 +12,5 @@ PROGRAM: DeclarativesTest common:False initial:False recursive:False
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
+  CURRENCY:CURRENCY
   STRING:STRING

@@ -1,1 +1,0 @@
-﻿-1 -i wrongfile.tcbl -o wrongfile.tcbl -d fakepath\error.txt  -s ..\skeletons.xml -e rdz

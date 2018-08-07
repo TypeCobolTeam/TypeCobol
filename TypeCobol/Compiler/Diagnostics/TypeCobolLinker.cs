@@ -47,9 +47,19 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (symbolTable == null) return;
             var types = symbolTable.GetType(dataEntry.DataType);
-            if (types.Count != 1) return;
+            if (types.Count != 1)
+            {
+                //Check the existing children, if they use a type
+                foreach (var child in dataEntry.Children) 
+                {
+                    var childDataDesc = child as DataDescription;
+                    if (childDataDesc != null)
+                        TypeReferencer(childDataDesc, symbolTable);
+                }
+                return;
+            }
             var type = types.First();
-
+            dataEntry.TypeDefinition = type; //Set the TypeDefinition on DataDefinition Node so to avoid symbolTable access
 
             var circularRefInsideChildren = type.Children.Any(c =>
             {
@@ -57,14 +67,18 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (dataChild == null) return false;
                 var childrenType = symbolTable.GetType(dataChild.DataType).FirstOrDefault();
                 if (childrenType == null) return false;
-                return dataEntry.GetParentTypeDefinition == childrenType; //Circular reference detected will return true
+                return dataEntry.ParentTypeDefinition == childrenType; //Circular reference detected will return true
             });
-            if (type == dataEntry.GetParentTypeDefinition || circularRefInsideChildren) 
+            if (type == dataEntry.ParentTypeDefinition || circularRefInsideChildren) 
             {
                 DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", MessageCode.SemanticTCErrorInParser);
                 return; //Do not continue to prevent further work/crash with circular references
             }
 
+            if ((dataEntry.CodeElement as DataDescriptionEntry).IsGlobal)
+                symbolTable = symbolTable.GetTableFromScope(SymbolTable.Scope.Global);
+
+            
             if (symbolTable.TypesReferences.ContainsKey(type)) //If datatype already exists, add ref to the list
             {
                 if (!symbolTable.TypesReferences[type].Contains(dataEntry))

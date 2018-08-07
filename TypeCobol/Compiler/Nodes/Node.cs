@@ -160,9 +160,22 @@ namespace TypeCobol.Compiler.Nodes {
             /// </summary>
             NodeContainsBoolean = 0x01 << 20,
             /// <summary>
+            /// Mark that this node contains a pointer variable that has to be considered by CodeGen. 
+            /// </summary>
+            NodeContainsPointer = 0x01 << 21,
+            /// <summary>
+            /// Mark that this node declare a pointer that is used in an incrementation and need a redefine
+            /// </summary>
+            NodeisIncrementedPointer = 0x01 << 22,
+            /// <summary>
+            /// Mark that this node is declared inside a procedure or function
+            /// </summary>
+            InsideProcedure = 0x01 << 23
+            /// <summary>
             /// Flag node belongs to Global Storage Section (usefull for DataDefinition)
             /// </summary>
-            GlobalStorageSection = 0x01 << 21,
+            GlobalStorageSection = 0x01 << 24,
+
 
 
         };
@@ -203,6 +216,8 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        public void CopyFlags(uint flag) { Flags = flag; }
+
         /// <summary>
         /// Used by the Generator to specify a Layout the current Node
         /// </summary>
@@ -216,44 +231,54 @@ namespace TypeCobol.Compiler.Nodes {
             get { return string.Empty; }
         }
 
+        private QualifiedName _qualifiedName;
+
         public virtual QualifiedName QualifiedName {
             get {
                 if (string.IsNullOrEmpty(Name)) return null;
+                if (_qualifiedName != null) return _qualifiedName;
 
-                string qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name)) {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     parent = parent.Parent;
                 }
-                
-                return new URI(qn);
+                qn.Reverse();
+                _qualifiedName = new URI(qn);
+                return _qualifiedName;
             }
         }
 
+
+        private QualifiedName _visualQualifiedName;
         public virtual QualifiedName VisualQualifiedName
         {
             get
             {
                 if (string.IsNullOrEmpty(Name)) return null;
+                if (_visualQualifiedName != null) return _visualQualifiedName;
 
-                var qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name))
                     {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
                         break;
+                    if (parent is Program)
+                        break;
                     parent = parent.Parent;
                 }
-
-                return new URI(qn);
+                qn.Reverse();
+                _visualQualifiedName = new URI(qn);
+                return _visualQualifiedName;
             }
         }
 
@@ -262,25 +287,32 @@ namespace TypeCobol.Compiler.Nodes {
             get { return null; }
         }
 
+        private string _URI;
         /// <summary>Node unique identifier (scope: tree this Node belongs to)</summary>
         public string URI {
-            get {
+            get
+            {
+                if (_URI != null) return _URI;
                 if (ID == null) return null;
-                var puri = Parent == null ? null : Parent.URI;
+                var puri = Parent?.URI;
                 if (puri == null) return ID;
-                return puri + '.' + ID;
+                _URI =  puri + '.' + ID;
+                return _URI;
             }
         }
 
-       
 
 
+        private SourceFile _root;
         /// <summary>First Node with null Parent among the parents of this Node.</summary>
-        public Node Root {
-            get {
+        public SourceFile Root {
+            get
+            {
+                if (_root != null) return _root;
                 var current = this;
                 while (current.Parent != null) current = current.Parent;
-                return current;
+                _root = (SourceFile) current;
+                return _root;
             }
         }
 
@@ -303,22 +335,6 @@ namespace TypeCobol.Compiler.Nodes {
 
 
         public SymbolTable SymbolTable { get; set; }
-
-
-        private TypeDefinition _typeDefinition;
-
-        /// <summary>
-        /// Get the TypeDefinition node associated to this Node
-        /// </summary>
-        public TypeDefinition TypeDefinition
-        {
-            get { return _typeDefinition; }
-            set
-            {
-                if (_typeDefinition == null)
-                    _typeDefinition = value;
-            }
-        }
 
         public object this[string attribute] {
             get { return Attributes.Get(this, attribute); }
@@ -411,6 +427,8 @@ namespace TypeCobol.Compiler.Nodes {
             return results;
         }
 
+
+        private Program _programNode;
         /// <summary>
         /// Get the Program Node corresponding to a Child
         /// </summary>
@@ -418,10 +436,13 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns>The Program Node</returns>
         public Program GetProgramNode()
         {
+            if (_programNode != null) return _programNode;
             Node child = this;
             while (child != null && !(child is Program))
                 child = child.Parent;
-            return (Program)child;
+            _programNode = (Program)child;
+
+            return _programNode;
         }
         
         /// <summary>Search for all children of a specific Name</summary>
@@ -432,7 +453,7 @@ namespace TypeCobol.Compiler.Nodes {
             var results = new List<T>();
             foreach (var child in children) {
                 var typedChild = child as T;
-                if (typedChild != null && name.Equals(child.Name, StringComparison.InvariantCultureIgnoreCase)) results.Add(typedChild);
+                if (typedChild != null && name.Equals(child.Name, StringComparison.OrdinalIgnoreCase)) results.Add(typedChild);
                 if (deep) results.AddRange(child.GetChildren<T>(name, true));
             }
             return results;
@@ -446,6 +467,22 @@ namespace TypeCobol.Compiler.Nodes {
             if (index < 0) children.Add(child);
             else children.Insert(index, child);
             child.Parent = this;
+        }
+
+        /// <summary>
+        /// Adds children to this node
+        /// </summary>
+        /// <param name="toAdd">children to be added</param>
+        /// <param name="index">children position</param>
+        public virtual void AddRange(IEnumerable<Node> toAdd, int index = -1)
+        {            
+            if (index < 0)
+                children.AddRange(toAdd);
+            else children.InsertRange(index, toAdd);
+            foreach (Node child in toAdd)
+            {
+                child.Parent = this;
+            }
         }
 
         /// <summary>
@@ -641,6 +678,74 @@ namespace TypeCobol.Compiler.Nodes {
         public bool IsInsideCopy() {
             return CodeElement != null && CodeElement.IsInsideCopy();
         }
+        /// <summary>
+        /// Dictionary that contains pairs of StorageArea and Tuple "string,DataDefintion" for the Read Area
+        /// The tuple stores the complete qualified name of the corresponding node (as string) and the DataDefintion.
+        /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
+        /// </summary>
+        public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaReadsDataDefinition { get; internal set; }
+        /// <summary>
+        /// Dictionary that contains pairs of StorageArea and Tuple "string,DataDefintion" for the Write Area
+        /// The tuple stores the complete qualified name of the corresponding node (as string) and the DataDefintion.
+        /// Node properties are context dependent and the tuple ensures the retrieved DataDefintion is consistent with the context
+        /// </summary>
+        public IDictionary<StorageArea, Tuple<string,DataDefinition>> StorageAreaWritesDataDefinition { get; internal set; }
+
+        /// <summary>
+        /// Search both dictionaries for a given StorageArea
+        /// </summary>
+        /// <param name="searchedStorageArea">StorageArea to search for</param>
+        /// <param name="isReadDataDefiniton">[Optional] True if storage area needs to be searched in StorageAreaReadsDataDefinition,
+        /// false if storage area needs to be searched in StorageAreaWritesDataDefinition.
+        /// If parameter is not present, the search is done in both dictionaries</param>
+        /// <returns>Correpsonding DataDefinition</returns>
+        public DataDefinition GetDataDefinitionFromStorageAreaDictionary(StorageArea searchedStorageArea, bool? isReadDataDefiniton=null)
+        {
+            Tuple<string, DataDefinition> searchedElem = null;
+            if (isReadDataDefiniton == null)
+            {
+                StorageAreaReadsDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+                if (searchedElem == null)
+                {
+                    StorageAreaWritesDataDefinition?.TryGetValue(
+                        searchedStorageArea, out searchedElem);
+                }
+            }
+            if (isReadDataDefiniton.HasValue&&isReadDataDefiniton.Value)
+            {
+                StorageAreaReadsDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+            }
+
+            if (isReadDataDefiniton.HasValue && !isReadDataDefiniton.Value)
+            {
+                StorageAreaWritesDataDefinition?.TryGetValue(
+                    searchedStorageArea, out searchedElem);
+            }
+            return searchedElem?.Item2;
+        }
+        
+        public DataDefinition GetDataDefinitionForQualifiedName(QualifiedName qualifiedName, bool? isReadDictionary=null)
+        {
+            Tuple<string, DataDefinition> searchedElem = null;
+            if (isReadDictionary.HasValue)
+            {
+                searchedElem = isReadDictionary.Value
+                    ? StorageAreaReadsDataDefinition
+                        ?.FirstOrDefault(elem => elem.Key.SymbolReference.Name == qualifiedName.ToString()).Value
+                    : StorageAreaWritesDataDefinition
+                        ?.FirstOrDefault(elem => elem.Key.SymbolReference.Name == qualifiedName.ToString()).Value;
+            }
+            else
+            {
+                searchedElem = StorageAreaReadsDataDefinition?.FirstOrDefault(elem => elem.Key.SymbolReference.Name == qualifiedName.ToString()).Value ??
+                               StorageAreaWritesDataDefinition?.FirstOrDefault(elem => elem.Key.SymbolReference.Name == qualifiedName.ToString()).Value;
+
+            }
+
+            return searchedElem?.Item2;
+        }
     }
 
 // --- Temporary base classes for data definition noes ---
@@ -744,6 +849,8 @@ namespace TypeCobol.Compiler.Nodes {
                 return this.children.Where(c => c is Program && !((Program)c).IsNested).Select(c => c as Program);
             }
         }
+
+        public SourceProgram MainProgram { get; internal set; }
 
         public IEnumerable<Class> Classes
         {

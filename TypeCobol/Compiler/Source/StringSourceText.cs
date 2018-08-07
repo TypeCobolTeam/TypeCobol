@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace TypeCobol.Compiler.Source
 {
@@ -435,6 +436,15 @@ namespace TypeCobol.Compiler.Source
         public override void Write(TextWriter writer)
         {
             writer.Write(content, 0, Size);
+        }
+
+        /// <summary>
+        /// Write the content of this SourceText into a StringBuilder
+        /// </summary>
+        /// <param name="writer">The StringBuilder instance</param>
+        public override void Write(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append(content, 0, Size);
         }
 
         /// <summary>

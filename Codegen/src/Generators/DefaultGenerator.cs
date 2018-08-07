@@ -41,14 +41,32 @@ namespace TypeCobol.Codegen.Generators
         private const int MIN_SPLIT_COLUMN = 12;
 
         /// <summary>
+        /// The 0 based, Line Number where the TypeCobol version can be added.
+        /// </summary>
+        public int TypeCobolVersionLineNumber { get; private set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="Document"> The compilation document </param>
         /// <param name="destination">The Output stream for the generated code</param>
         /// <param name="skeletons">All skeletons pattern for code generation </param>
-        public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, TextWriter destination, List<Skeleton> skeletons, string typeCobolVersion)
-            : base(document, destination, skeletons, typeCobolVersion )
-        {            
+        public DefaultGenerator(TypeCobol.Compiler.CompilationDocument document, StringBuilder destination, List<Skeleton> skeletons, string typeCobolVersion)
+            : base(document, destination, skeletons, null)
+        {
+            TypeCobolVersion = typeCobolVersion;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bTrackFirtNonCblDirectiveLine"></param>
+        /// <returns></returns>
+        protected override int CreateTargetDocument(bool bTrackFirtNonCblDirectiveLine)
+        {
+            int i = base.CreateTargetDocument(true);
+            TypeCobolVersionLineNumber = Math.Max(0, i);
+            return i;
         }
 
         /// <summary>
@@ -63,7 +81,6 @@ namespace TypeCobol.Codegen.Generators
             // Step 3: Write target document
             //TCCODEGEN_NO_TRAILING_SPACES
             generatedDocument.Write(Destination);
-            Destination.Flush();
         }
 
         /// <summary>
@@ -77,7 +94,7 @@ namespace TypeCobol.Codegen.Generators
         /// <returns>The Generated Source Document</returns>
         /// </summary>
         private SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input) where A : ITextLine
-        {            
+        {
             SourceText targetSourceText = new GapSourceText();
             //Stack Used to save current generation buffer when switching in a function declaration generation.
             //Beacuse a function declartion has its own buffer.
@@ -91,27 +108,38 @@ namespace TypeCobol.Codegen.Generators
             StringSourceText previousBuffer = null;
             for (int i = 0; i < mapper.LineData.Length; i++)
             {
+                if (i == TypeCobolVersionLineNumber && this.TypeCobolVersion != null)
+                {
+                    targetSourceText.Insert("      *TypeCobol_Version:" + this.TypeCobolVersion, targetSourceText.Size, targetSourceText.Size);
+                    targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                }
+
                 //--------------------------------------------------------------------------------------------------------------
                 //1) A Non commented line with no Associated nodes is generated without any change.
                 if (!mapper.CommentedLines[i] && mapper.LineData[i].LineNodes == null)
                 {
-                    //If there was a previous buffer ==> Flush it
-                    if (previousBuffer != null)
+                    if (!mapper.LineData[i].Skip)
                     {
-                        if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
-                            AppendBufferContent(targetSourceText, previousBuffer);
-                        previousBuffer = null;
-                    }
-                    string text = Input[i].Text;
-                    if (mapper.LineData[i].Buffer != null)
-                    {//This line has been assigned a target Buffer
-                        mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                        mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
-                    }
-                    else
-                    {
-                        targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
-                        targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        //If there was a previous buffer ==> Flush it
+                        if (previousBuffer != null)
+                        {
+                            if (!mapper.IsGeneratedEmptyBuffer(previousBuffer))
+                                AppendBufferContent(targetSourceText, previousBuffer);
+                            previousBuffer = null;
+                        }
+                        string text = Input[i].Text;
+                        if (mapper.LineData[i].Buffer != null)
+                        {
+                            //This line has been assigned a target Buffer
+                            mapper.LineData[i].Buffer.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            mapper.LineData[i].Buffer.Insert(Environment.NewLine, targetSourceText.Size,
+                                targetSourceText.Size);
+                        }
+                        else
+                        {
+                            targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                            targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        }
                     }
                     continue;
                 }
@@ -193,46 +221,49 @@ namespace TypeCobol.Codegen.Generators
                             GenerateIntoBufferCheckLineExceed(from, to, curSourceText, code, i + 1);
                         }
                         else foreach (var line in NodeLines(node, generated_node))
-                        {
-                            StringWriter sw = new StringWriter();
-                            if (bFirst && !bIsFunctionDecl && curSourceText != null)
-                            {//The first element don't ident it just insert it a the right position
-                                sw.WriteLine(line.Text);
-                                bFirst = false;
-                            }
-                            else foreach (var l in Indent(line, null))
                             {
-                                sw.WriteLine(l.Text.TrimEnd());
-                            }
-                            sw.Flush();
-                            string text = sw.ToString();
-                            if (bIsFunctionDecl)
-                            {   //This the Function Header output.
-                                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                                int f = Math.Min(from.Pos, curSourceText.Size);
-                                int t = Math.Min(to.Pos, curSourceText.Size);
-                                if (f != t)
-                                {
-                                    //Create a the erase string to erase in the original source code
-                                    //The Function header.
-                                    //Erase in the original source code the Function header?
-                                    ReplaceByBlanks(curSourceText, f, t);                
-                                    //Output the pre-stored comment header
-                                    funData.FunctionDeclBuffer.Insert(funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
+                                bool bInsertSplit = false;
+                                StringWriter sw = new StringWriter();
+                                if (bFirst && !bIsFunctionDecl && curSourceText != null)
+                                {//The first element don't ident it just insert it a the right position
+                                 //issue #892 => Anyway Handle splitting 
+                                    sw.WriteLine(line.Text);
+                                    bFirst = false;
+                                    bInsertSplit = true;
                                 }
-                                //Insert the sequence
-                                funData.FunctionDeclBuffer.Insert(text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size);
-                            }
-                            else
-                            {
-                                if (curSourceText == null)
-                                    targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
+                                else foreach (var l in Indent(line, null))
+                                    {
+                                        sw.WriteLine(l.Text.TrimEnd());
+                                    }
+                                sw.Flush();
+                                string text = sw.ToString();
+                                if (bIsFunctionDecl)
+                                {   //This the Function Header output.
+                                    LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[node_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                    int f = Math.Min(from.Pos, curSourceText.Size);
+                                    int t = Math.Min(to.Pos, curSourceText.Size);
+                                    if (f != t)
+                                    {
+                                        //Create a the erase string to erase in the original source code
+                                        //The Function header.
+                                        //Erase in the original source code the Function header?
+                                        ReplaceByBlanks(curSourceText, f, t);
+                                        //Output the pre-stored comment header
+                                        InsertLineMaybeSplit(funData.FunctionDeclBuffer, funData.CommentedHeader.ToString(), funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size, bInsertSplit);
+                                    }
+                                    //Insert the sequence
+                                    InsertLineMaybeSplit(funData.FunctionDeclBuffer, text, funData.FunctionDeclBuffer.Size, funData.FunctionDeclBuffer.Size, bInsertSplit);
+                                }
                                 else
-                                    curSourceText.Insert(text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size));
+                                {
+                                    if (curSourceText == null)
+                                        InsertLineMaybeSplit(targetSourceText, text, targetSourceText.Size, targetSourceText.Size, bInsertSplit);
+                                    else
+                                        InsertLineMaybeSplit(curSourceText, text, Math.Min(from.Pos, curSourceText.Size), Math.Min(to.Pos, curSourceText.Size), bInsertSplit);
+                                }
+                                from = to;
+                                sw.Close();
                             }
-                            from = to;
-                            sw.Close();
-                        }
                         //Don't pad in case of replacement or insertion in a function declaration
                         if (!bIsGenerateAndReplace && !bIsFunctionDecl)
                         {
@@ -255,7 +286,7 @@ namespace TypeCobol.Codegen.Generators
                         }
                     }
                     //This node is now generated.
-                    generated_node[node_index] = true;                    
+                    generated_node[node_index] = true;
                     if (mapper.Nodes[node_index].node.IsFlagSet(Node.Flag.EndFunctionDeclarationNode))
                     {   //Leaving function declaration --> Pop saved buffers.
                         if (previousBuffer != null)
@@ -292,10 +323,59 @@ namespace TypeCobol.Codegen.Generators
             {
                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
                 AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
-            }            
+            }
             //5)//Generate Line Exceed Diagnostics
             GenerateExceedLineDiagnostics();
             return targetSourceText;
+        }
+
+        /// <summary>
+        /// Insert in the buffer a text line that can be split.
+        /// </summary>
+        /// <param name="text">The text</param>
+        /// <param name="from">from position in the buffer</param>
+        /// <param name="to">to position in the buffer</param>
+        /// <param name="bInsertSplit">true if splitting must handle, false otherwise</param>
+        private void InsertLineMaybeSplit(SourceText buffer, string text, int from, int to, bool bInsertSplit)
+        {
+            if (bInsertSplit && this.Layout == ColumnsLayout.CobolReferenceFormat)
+            {
+                int crPos = text.LastIndexOf('\r');
+                int lfPos = text.LastIndexOf('\n');
+                int crlf = 0;
+                crlf += crPos >= 0 ? 1 : 0;
+                crlf += lfPos >= 0 ? 1 : 0;
+                int lineStartOffset;
+                int lineEndOffset;
+                int lineLen = buffer.GetLineInfo(from, out lineStartOffset, out lineEndOffset);
+                if (((from - lineStartOffset) + (text.Length - crlf)) >= LEGAL_COBOL_LINE_LENGTH)
+                {
+                    string lefttext = buffer.GetTextAt(lineStartOffset, from);
+                    ICollection<ITextLine> lines = CobolTextLine.CreateCobolLines(this.Layout, -1, ' ', "",
+                        lefttext + (crlf > 0 ? text.Substring(0, text.Length - crlf) : text), LEGAL_COBOL_LINE_LENGTH, 65, false);
+                    StringWriter sw = new StringWriter();
+                    foreach (var line in lines)
+                    {
+                        sw.WriteLine(line.Text);
+                    }
+                    //We must insert "\r\n" if the target line is empty and the inserted test has one.
+                    if ((lineEndOffset == lineStartOffset) && crlf > 0)
+                    {
+                        sw.Write(Environment.NewLine);
+                    }
+                    sw.Flush();
+                    text = sw.ToString();
+                    buffer.Insert(text, lineStartOffset, to);
+                }
+                else
+                {
+                    buffer.Insert(text, from, to);
+                }
+            }
+            else
+            {
+                buffer.Insert(text, from, to);
+            }
         }
 
         /// <summary>
@@ -306,7 +386,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="originalPos"></param>
         /// <param name="resultColumn"></param>
         /// <returns></returns>
-        public bool IsPlitablePosition(int firstSplitablePos, int lineLength, int originalPos, out int resultColumn )
+        public bool IsPlitablePosition(int firstSplitablePos, int lineLength, int originalPos, out int resultColumn)
         {
             resultColumn = MIN_SPLIT_COLUMN - 1;
             if ((firstSplitablePos + lineLength - originalPos) < LEGAL_COBOL_LINE_LENGTH)
@@ -316,7 +396,7 @@ namespace TypeCobol.Codegen.Generators
             }
             else if (((MIN_SPLIT_COLUMN - 1) + lineLength - originalPos) < LEGAL_COBOL_LINE_LENGTH)
             {
-                resultColumn = MIN_SPLIT_COLUMN - 1;
+                resultColumn = firstSplitablePos;
                 return true;
             }
             return false;
@@ -387,11 +467,20 @@ namespace TypeCobol.Codegen.Generators
                                 {
                                     if (IsPlitablePosition(firstSplitablePos, rightPos, originalPos, out targeSplittColumn))
                                     {
-                                        string pad = new StringBuilder().Append(Environment.NewLine).Append(new string(' ', targeSplittColumn - lineStartPos)).ToString();
-                                        //So break here
-                                        srcBuffer.Insert(pad, start.Pos, start.Pos);
-                                        i = j;
-                                        break;
+                                        int delta = (lineStartPos + lineLength) - originalPos;
+
+                                        while ((targeSplittColumn - lineStartPos + delta) > LEGAL_COBOL_LINE_LENGTH)
+                                        {
+                                            targeSplittColumn--;
+                                        }
+                                        if ((targeSplittColumn - lineStartPos) >= (MIN_SPLIT_COLUMN - 1))
+                                        {
+                                            string pad = new StringBuilder().Append(Environment.NewLine).Append(new string(' ', Math.Abs(targeSplittColumn - lineStartPos))).ToString();
+                                            //So break here
+                                            srcBuffer.Insert(pad, start.Pos, start.Pos);
+                                            i = j;
+                                            break;
+                                        }
                                     }
                                     else
                                     {
@@ -444,16 +533,17 @@ namespace TypeCobol.Codegen.Generators
                 if (lineLen > LEGAL_COBOL_LINE_LENGTH)
                 {
                     int replace_len = lineLen - LEGAL_COBOL_LINE_LENGTH;
-                    buffer.Insert(new string(' ', replace_len), LEGAL_COBOL_LINE_LENGTH, lineLen);
+                    buffer.Insert(new string(' ', replace_len), lineStartOffset + LEGAL_COBOL_LINE_LENGTH, lineStartOffset + lineLen);
                 }
             }
-            buffer.Insert(code, start, end);        
+            buffer.Insert(code, start, end);
             int delta = -(end - start) + code.Length;
             int newLineLen = lineLen + delta;
             bool newHas73Chars = false;
             if (newLineLen > LEGAL_COBOL_LINE_LENGTH)
             {
-                for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++) {
+                for (int k = LEGAL_COBOL_LINE_LENGTH; k < newLineLen & !newHas73Chars; k++)
+                {
                     char ch = buffer[lineStartOffset + k];
                     newHas73Chars = !(ch == '\r' || ch == '\n' || Char.IsWhiteSpace(ch));
                 }
@@ -469,7 +559,7 @@ namespace TypeCobol.Codegen.Generators
                 }
                 else if (newLineLen > MAX_COBOL_LINE_LENGTH)
                 {//Here we know that the line the line exceed with only white characters. ==> Remove extra white characters
-                    buffer.Delete(LEGAL_COBOL_LINE_LENGTH, newLineLen);
+                    buffer.Delete(lineStartOffset + LEGAL_COBOL_LINE_LENGTH, lineStartOffset + newLineLen);
                 }
             }
 
@@ -641,7 +731,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="to">The ending position in the buffer</param>
         /// <returns>The replacement characters</returns>
         protected char[] GetDeleteString(StringSourceText sourceText, int from, int to)
-        {            
+        {
             char[] result = new char[to - from];
             for (int i = 0; i < result.Length; i++)
             {
@@ -696,11 +786,11 @@ namespace TypeCobol.Codegen.Generators
                 }
                 else
                     if (Layout == ColumnsLayout.FreeTextFormat)
-                    {
-                        results.Add(SetComment(new TextLineSnapshot(-1, cobol.SourceText ?? "", null), isComment));
-                    }
-                    else
-                        throw new System.NotImplementedException("Unsuported columns layout: " + Layout);
+                {
+                    results.Add(SetComment(new TextLineSnapshot(-1, cobol.SourceText ?? "", null), isComment));
+                }
+                else
+                    throw new System.NotImplementedException("Unsuported columns layout: " + Layout);
             }
             else
             {
@@ -709,13 +799,12 @@ namespace TypeCobol.Codegen.Generators
                     var lines = CobolTextLine.Create(line.Text, Layout, line.LineIndex);
                     foreach (var l in lines) results.Add(SetComment(l, isComment));
                 }
+                else if (Layout == ColumnsLayout.FreeTextFormat)
+                {
+                    results.Add(SetComment(line, isComment));
+                }
                 else
-                    if (Layout == ColumnsLayout.FreeTextFormat)
-                    {
-                        results.Add(SetComment(line, isComment));
-                    }
-                    else
-                        throw new System.NotImplementedException("Unsuported columns layout: " + Layout);
+                    throw new System.NotImplementedException("Unsuported columns layout: " + Layout);
             }
             if (results.Count < 1)
                 throw new System.NotImplementedException("Unsuported ITextLine type: " + line.GetType());
@@ -734,9 +823,9 @@ namespace TypeCobol.Codegen.Generators
                 return Comment(line);
             else
                 if (isComment == false)
-                    return Uncomment(line);
-                else // null
-                    return line;
+                return Uncomment(line);
+            else // null
+                return line;
         }
 
         /// <summary>
@@ -750,7 +839,7 @@ namespace TypeCobol.Codegen.Generators
             if (cobol != null)
             {
                 StringBuilder text = new StringBuilder(cobol.Text);
-                if(text.Length > 6) 
+                if (text.Length > 6)
                     text[6] = '*';
                 var lines = CobolTextLine.Create("*" + cobol.SourceText, cobol.ColumnsLayout, cobol.LineIndex);
                 foreach (var l in lines) return l;// there's only one in the collection
@@ -775,7 +864,7 @@ namespace TypeCobol.Codegen.Generators
                 StringBuilder text = new StringBuilder(cobol.Text);
                 text[6] = ' ';
                 var lines = CobolTextLine.Create(text.ToString(), cobol.ColumnsLayout, cobol.LineIndex);
-                foreach (var l in lines) 
+                foreach (var l in lines)
                     return l;// there's only one in the collection
                 throw new System.NotImplementedException("I should have at least one item!");
             }

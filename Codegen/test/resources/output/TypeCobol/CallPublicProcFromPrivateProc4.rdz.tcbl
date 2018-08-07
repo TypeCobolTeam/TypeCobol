@@ -116,14 +116,16 @@
        PROGRAM-ID. bfc74757testos.
        data division.
        working-storage section.
-       01 var1 pic X.
-       01 TC-Call          PIC X(01) VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'.
-       01 TC-PGM1 pic X(08) value 'PGM1'.
-
        01 TC-PGM2 pic X(08) value 'PGM2'.
 
+       01 TC-PGM1 pic X(08) value 'PGM1'.
+
+       01 TC-Call          PIC X     VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+       01 var1 pic X.
        LINKAGE SECTION.
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.

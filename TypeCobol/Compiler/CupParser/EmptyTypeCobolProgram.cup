@@ -1,0 +1,1259 @@
+// JavaCup specification for a simple expression evaluator (w/ actions)
+
+namespace TypeCobol.Compiler.CupParser;
+
+using TUVienna.CS_CUP.Runtime;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements;
+
+/* Terminals (tokens returned by the scanner). */
+terminal TypeCobol.Compiler.CodeElements.ProgramIdentification ProgramIdentification;
+terminal TypeCobol.Compiler.CodeElements.ProgramEnd ProgramEnd;
+terminal TypeCobol.Compiler.CodeElements.ClassIdentification ClassIdentification;
+terminal TypeCobol.Compiler.CodeElements.ClassEnd ClassEnd;
+terminal TypeCobol.Compiler.CodeElements.FactoryIdentification FactoryIdentification;
+terminal TypeCobol.Compiler.CodeElements.FactoryEnd FactoryEnd;
+terminal TypeCobol.Compiler.CodeElements.ObjectIdentification ObjectIdentification;
+terminal TypeCobol.Compiler.CodeElements.ObjectEnd ObjectEnd;
+terminal TypeCobol.Compiler.CodeElements.MethodIdentification MethodIdentification;
+terminal TypeCobol.Compiler.CodeElements.MethodEnd MethodEnd;
+terminal TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader EnvironmentDivisionHeader;
+terminal TypeCobol.Compiler.CodeElements.DataDivisionHeader DataDivisionHeader;
+terminal TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader ProcedureDivisionHeader;
+terminal TypeCobol.Compiler.CodeElements.DeclarativesHeader DeclarativesHeader;
+terminal TypeCobol.Compiler.CodeElements.DeclarativesEnd DeclarativesEnd;
+terminal TypeCobol.Compiler.CodeElements.SectionHeader SectionHeader;
+terminal TypeCobol.Compiler.CodeElements.ConfigurationSectionHeader ConfigurationSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.InputOutputSectionHeader InputOutputSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.FileSectionHeader FileSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader WorkingStorageSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader LocalStorageSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.LinkageSectionHeader LinkageSectionHeader;
+terminal TypeCobol.Compiler.CodeElements.ParagraphHeader ParagraphHeader;
+terminal TypeCobol.Compiler.CodeElements.FileControlParagraphHeader FileControlParagraphHeader;
+terminal TypeCobol.Compiler.CodeElements.IOControlParagraphHeader IOControlParagraphHeader;
+terminal TypeCobol.Compiler.CodeElements.SentenceEnd SentenceEnd;
+terminal TypeCobol.Compiler.CodeElements.FileDescriptionEntry FileDescriptionEntry;
+terminal TypeCobol.Compiler.CodeElements.DataDescriptionEntry DataDescriptionEntry;
+terminal TypeCobol.Compiler.CodeElements.DataRedefinesEntry DataRedefinesEntry;
+terminal TypeCobol.Compiler.CodeElements.DataRenamesEntry DataRenamesEntry;
+terminal TypeCobol.Compiler.CodeElements.DataConditionEntry DataConditionEntry;
+terminal TypeCobol.Compiler.CodeElements.FileControlEntry FileControlEntry;
+terminal TypeCobol.Compiler.CodeElements.IOControlEntry IOControlEntry;
+terminal TypeCobol.Compiler.CodeElements.SourceComputerParagraph SourceComputerParagraph;
+terminal TypeCobol.Compiler.CodeElements.ObjectComputerParagraph ObjectComputerParagraph;
+terminal TypeCobol.Compiler.CodeElements.SpecialNamesParagraph SpecialNamesParagraph;
+terminal TypeCobol.Compiler.CodeElements.RepositoryParagraph RepositoryParagraph;
+terminal TypeCobol.Compiler.CodeElements.AcceptStatement AcceptStatement;
+terminal TypeCobol.Compiler.CodeElements.AddStatement AddStatement;
+terminal TypeCobol.Compiler.CodeElements.AlterStatement AlterStatement;
+terminal TypeCobol.Compiler.CodeElements.CallStatement CallStatement;
+terminal TypeCobol.Compiler.CodeElements.CancelStatement CancelStatement;
+terminal TypeCobol.Compiler.CodeElements.CloseStatement CloseStatement;
+terminal TypeCobol.Compiler.CodeElements.ComputeStatement ComputeStatement;
+terminal TypeCobol.Compiler.CodeElements.ContinueStatement ContinueStatement;
+terminal TypeCobol.Compiler.CodeElements.DeleteStatement DeleteStatement;
+terminal TypeCobol.Compiler.CodeElements.DisplayStatement DisplayStatement;
+terminal TypeCobol.Compiler.CodeElements.DivideStatement DivideStatement;
+terminal TypeCobol.Compiler.CodeElements.EntryStatement EntryStatement;
+terminal TypeCobol.Compiler.CodeElements.EvaluateStatement EvaluateStatement;
+terminal TypeCobol.Compiler.CodeElements.ExecStatement ExecStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitMethodStatement ExitMethodStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitProgramStatement ExitProgramStatement;
+terminal TypeCobol.Compiler.CodeElements.ExitStatement ExitStatement;
+terminal TypeCobol.Compiler.CodeElements.GobackStatement GobackStatement;
+terminal TypeCobol.Compiler.CodeElements.GotoStatement GotoStatement;
+terminal TypeCobol.Compiler.CodeElements.IfStatement IfStatement;
+terminal TypeCobol.Compiler.CodeElements.InitializeStatement InitializeStatement;
+terminal TypeCobol.Compiler.CodeElements.InspectStatement InspectStatement;
+terminal TypeCobol.Compiler.CodeElements.InvokeStatement InvokeStatement;
+terminal TypeCobol.Compiler.CodeElements.MergeStatement MergeStatement;
+terminal TypeCobol.Compiler.CodeElements.MoveStatement MoveStatement;
+terminal TypeCobol.Compiler.CodeElements.MultiplyStatement MultiplyStatement;
+terminal TypeCobol.Compiler.CodeElements.NextSentenceStatement NextSentenceStatement;
+terminal TypeCobol.Compiler.CodeElements.OpenStatement OpenStatement;
+terminal TypeCobol.Compiler.CodeElements.PerformProcedureStatement PerformProcedureStatement;
+terminal TypeCobol.Compiler.CodeElements.PerformStatement PerformStatement;
+terminal TypeCobol.Compiler.CodeElements.ReadStatement ReadStatement;
+terminal TypeCobol.Compiler.CodeElements.ReleaseStatement ReleaseStatement;
+terminal TypeCobol.Compiler.CodeElements.ReturnStatement ReturnStatement;
+terminal TypeCobol.Compiler.CodeElements.RewriteStatement RewriteStatement;
+terminal TypeCobol.Compiler.CodeElements.SearchStatement SearchStatement;
+terminal TypeCobol.Compiler.CodeElements.SetStatement SetStatement;
+terminal TypeCobol.Compiler.CodeElements.SortStatement SortStatement;
+terminal TypeCobol.Compiler.CodeElements.StartStatement StartStatement;
+terminal TypeCobol.Compiler.CodeElements.StopStatement StopStatement;
+terminal TypeCobol.Compiler.CodeElements.StringStatement StringStatement;
+terminal TypeCobol.Compiler.CodeElements.SubtractStatement SubtractStatement;
+terminal TypeCobol.Compiler.CodeElements.UnstringStatement UnstringStatement;
+terminal TypeCobol.Compiler.CodeElements.UseStatement UseStatement;
+terminal TypeCobol.Compiler.CodeElements.WriteStatement WriteStatement;
+terminal TypeCobol.Compiler.CodeElements.XmlGenerateStatement XmlGenerateStatement;
+terminal TypeCobol.Compiler.CodeElements.XmlParseStatement XmlParseStatement;
+terminal TypeCobol.Compiler.CodeElements.AtEndCondition AtEndCondition;
+terminal TypeCobol.Compiler.CodeElements.NotAtEndCondition NotAtEndCondition;
+terminal TypeCobol.Compiler.CodeElements.AtEndOfPageCondition AtEndOfPageCondition;
+terminal TypeCobol.Compiler.CodeElements.NotAtEndOfPageCondition NotAtEndOfPageCondition;
+terminal TypeCobol.Compiler.CodeElements.OnExceptionCondition OnExceptionCondition;
+terminal TypeCobol.Compiler.CodeElements.NotOnExceptionCondition NotOnExceptionCondition;
+terminal TypeCobol.Compiler.CodeElements.OnOverflowCondition OnOverflowCondition;
+terminal TypeCobol.Compiler.CodeElements.NotOnOverflowCondition NotOnOverflowCondition;
+terminal TypeCobol.Compiler.CodeElements.InvalidKeyCondition InvalidKeyCondition;
+terminal TypeCobol.Compiler.CodeElements.NotInvalidKeyCondition NotInvalidKeyCondition;
+terminal TypeCobol.Compiler.CodeElements.OnSizeErrorCondition OnSizeErrorCondition;
+terminal TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition NotOnSizeErrorCondition;
+terminal TypeCobol.Compiler.CodeElements.ElseCondition ElseCondition;
+terminal TypeCobol.Compiler.CodeElements.WhenCondition WhenCondition;
+terminal TypeCobol.Compiler.CodeElements.WhenOtherCondition WhenOtherCondition;
+terminal TypeCobol.Compiler.CodeElements.WhenSearchCondition WhenSearchCondition;
+terminal TypeCobol.Compiler.CodeElements.AddStatementEnd AddStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.CallStatementEnd CallStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.ComputeStatementEnd ComputeStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.DeleteStatementEnd DeleteStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.DivideStatementEnd DivideStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.EvaluateStatementEnd EvaluateStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.IfStatementEnd IfStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.InvokeStatementEnd InvokeStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.MultiplyStatementEnd MultiplyStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.PerformStatementEnd PerformStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.ReadStatementEnd ReadStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.ReturnStatementEnd ReturnStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.RewriteStatementEnd RewriteStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.SearchStatementEnd SearchStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.StartStatementEnd StartStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.StringStatementEnd StringStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.SubtractStatementEnd SubtractStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.UnstringStatementEnd UnstringStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.WriteStatementEnd WriteStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.XmlStatementEnd XmlStatementEnd;
+terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
+terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
+terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd FunctionDeclarationEnd;
+terminal TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement ProcedureStyleCall;
+terminal TypeCobol.Compiler.CodeElements.Program Program;
+
+/* Non terminals */
+non terminal cobolCompilationUnit, cobolProgram, cobolClass, cobolProgramBase, nestedProgram;
+non terminal classEndOpt;
+non terminal factoryIdentificationOpt;
+non terminal factoryIdentification;
+non terminal factoryEndOpt;
+non terminal factoryDataDivisionOpt;
+non terminal factoryDataDivision;
+non terminal factoryObjectprocedureDivisionOpt;
+non terminal factoryObjectprocedureDivision;
+non terminal objectIdentificationOpt;
+non terminal objectIdentification;
+non terminal objectEndOpt;
+non terminal methodDefitionsOpt;
+non terminal methodDefitions;
+non terminal methodDefition;
+non terminal methodEnvironmentDivisionOpt;
+non terminal methodEnvironmentDivision;
+
+non terminal programAttributes;
+non terminal LibraryCopyOpt;
+non terminal ProgramEndOpt;
+non terminal nestedProgramOpt;
+
+non terminal environmentDivisionOpt, environmentDivision;
+non terminal configurationSectionOpt, configurationSection;
+non terminal inputOutputSectionOpt, inputOutputSection;
+non terminal configurationParagraphs;
+non terminal configurationParagraph;
+non terminal fileControlParagraphOpt, fileControlParagraph;
+non terminal fileControlEntriesOpt, fileControlEntries;
+non terminal ioControlParagraphOpt, ioControlParagraph, ioControlSentencesOpt;
+non terminal ioControlEntries;
+
+non terminal dataDefinitionEntry;
+non terminal dataDefinitionEntries, dataDefinitionEntriesOpt;
+non terminal execSqlStatement;
+non terminal storageEntry;
+non terminal storageEntries;
+non terminal fileDescriptionEntry;
+non terminal fileDescriptionEntriesOpt;
+non terminal fileDescriptionEntries;
+non terminal fileSection;
+non terminal workingStorageSection;
+non terminal localStorageSection;
+non terminal linkageSection;
+non terminal dataDivisionOpt, dataDivision;
+
+non terminal procedureDivision, procedureDivisionOpt;
+non terminal statement, singleStatement, compoundStatement;
+non terminal statements;
+non terminal sentence;
+non terminal sentences, sentencesOpt;
+non terminal paragraph;
+non terminal paragraphs;
+non terminal section;
+non terminal sections, declarativesSections;
+non terminal declarativesSection;
+non terminal declaratives, declarativesOpt;
+non terminal functionDeclaration;
+non terminal functionProcedureDivision, functionProcedureDivisionOpt;
+non terminal functionOrSectionDeclaration;
+non terminal functionOrSectionDeclarations;
+
+non terminal onAtEnd, noAtEnd;
+non terminal endConditions;
+non terminal onException, noException;
+non terminal exceptionConditions;
+non terminal onInvalidKey, noInvalidKey;
+non terminal keyConditions;
+non terminal onOverflow, noOverflow;
+non terminal overflowConditions;
+non terminal onSizeError, noSizeError;
+non terminal sizeErrorConditions;
+
+non terminal addStatementConditional;
+non terminal callStatementConditions;
+non terminal callStatementConditional;
+non terminal computeStatementConditional;
+non terminal deleteStatementConditional;
+non terminal divideStatementConditional;
+non terminal whenConditionClause;
+non terminal whenConditionClauses;
+non terminal whenSearchConditionClauses;
+non terminal whenOtherClause;
+non terminal whenSearchConditionClause;
+non terminal whenEvaluateCondition;
+non terminal whenEvaluateConditions;
+non terminal evaluateStatementWithBody;
+non terminal ifStatementWithBody;
+non terminal invokeStatementConditional;
+non terminal multiplyStatementConditional;
+non terminal performStatementWithBody;
+non terminal readStatementConditional;
+non terminal rwStatementCondition;
+non terminal rwStatementConditions;
+non terminal returnStatementConditional;
+non terminal rewriteStatementConditional;
+non terminal startStatementConditional;
+non terminal stringStatementConditional;
+non terminal subtractStatementConditional;
+non terminal unstringStatementConditional;
+non terminal searchStatementWithBody;
+non terminal writeStatementConditional;
+non terminal xmlGenerateStatementConditional;
+non terminal xmlParseStatementConditional;
+
+/* The grammar */
+cobolCompilationUnit ::= cobolProgram:cp
+	| cobolClass:cc
+	{:  :}
+	;
+
+/*
+// --- TypeCobol PROGRAM ---
+*/
+
+cobolProgram ::=
+	cobolProgramBase:cpb
+    nestedProgramOpt:nsp
+	ProgramEndOpt:pe
+	{: :}
+	;
+
+cobolProgramBase ::=
+	programAttributes:pas
+	environmentDivisionOpt:ed
+	dataDivisionOpt:dv
+	procedureDivisionOpt:pdiv
+	{: :}
+	;
+
+cobolClass ::= 
+	ClassIdentification:ci
+	EnvironmentDivisionHeader:edh
+	factoryIdentificationOpt:fi
+	objectIdentificationOpt:oi
+	classEndOpt:ce
+	{: :}
+	;
+
+classEndOpt ::= /*Empty*/
+		{: :}
+	|	ClassEnd:ce
+		{: :}
+		;
+
+factoryIdentificationOpt ::= /*empty*/
+		{: :}
+	| factoryIdentification:fi
+		{: :}
+	;
+
+factoryIdentification ::= FactoryIdentification:fi factoryDataDivisionOpt:fdd factoryObjectprocedureDivisionOpt:pdd factoryEndOpt:fe
+		{: :}
+	;
+
+factoryEndOpt ::= /*empty*/
+	{: :}
+	| FactoryEnd:fe
+	{: :}
+	;
+		
+factoryDataDivisionOpt ::= /*empty*/
+		{: :}
+	|	factoryDataDivision:fdd
+		{: :}
+	;	
+
+factoryDataDivision ::= DataDivisionHeader:ddh workingStorageSection:ws factoryObjectprocedureDivisionOpt:pdd
+		{: :}
+	;	
+
+factoryObjectprocedureDivisionOpt ::= /*empty*/
+		{: :}
+	|	factoryObjectprocedureDivision:pdd
+		{: :}
+	;	
+
+factoryObjectprocedureDivision ::= ProcedureDivisionHeader:pdh methodDefitionsOpt:mdefs
+		{: :}
+	;	
+
+objectIdentificationOpt ::= /*empty*/
+		{: :}
+	|	objectIdentification:oi
+		{: :}
+	;	
+
+objectIdentification ::= ObjectIdentification:oi workingStorageSection:ws factoryObjectprocedureDivisionOpt:pdd objectEndOpt:oe
+		{: :}
+	;	
+
+objectEndOpt ::= /* empty */
+		{: :}
+	| ObjectEnd:oe
+		{: :}
+	;
+
+methodDefitionsOpt ::= /* empty */
+		{: :}
+	|	methodDefitions:mdefs
+		{: :}
+	;	
+
+methodDefitions ::= methodDefition:md
+		{: :}
+	| methodDefitions:mdefs methodDefition:md
+		{: :}
+	;
+
+methodDefition ::= MethodIdentification:mi methodEnvironmentDivisionOpt:med dataDivisionOpt:dv procedureDivisionOpt:pdiv MethodEnd:me
+	{: :}
+	;
+
+methodEnvironmentDivisionOpt ::= /*empty*/
+	{:  :}
+	| methodEnvironmentDivision:ed
+	{:  :}
+	;
+
+methodEnvironmentDivision ::=
+	EnvironmentDivisionHeader:edh  
+	inputOutputSectionOpt:ioc
+	{:  :}
+	;
+
+// TCRFUN_LIBRARY_COPY
+programAttributes ::= ProgramIdentification:pid LibraryCopyOpt:lc
+	{:  :}
+	;
+
+LibraryCopyOpt ::= /*empty */
+	{:  :}
+	| LibraryCopy:lc
+	{:  :}
+	;
+
+ProgramEndOpt ::= /* empty */
+	| ProgramEnd:pe
+	{:  :}
+	;
+
+nestedProgram ::= 	
+	cobolProgramBase:cpb
+    nestedProgramOpt:nsp
+	ProgramEnd:pe
+	{: :}
+	;
+
+nestedProgramOpt ::= /* Empty */
+	{:  :}
+	| nestedProgramOpt:nsp nestedProgram:np
+	{:  :}
+	;
+
+/*
+// --- ENVIRONMENT DIVISION ---
+*/
+
+environmentDivisionOpt ::= /*empty*/
+	{:  :}
+	| environmentDivision:ed
+	{:  :}
+	;
+
+environmentDivision ::=
+	EnvironmentDivisionHeader:edh  
+	configurationSectionOpt:cs
+	inputOutputSectionOpt:ioc
+	{:  :}
+	;
+
+configurationSectionOpt ::= /*empty*/
+	{:  :}
+	| configurationSection:cs
+	{:  :}
+	;
+
+configurationSection ::= ConfigurationSectionHeader:csh
+	{:  :}
+	| ConfigurationSectionHeader:csh configurationParagraphs:cps
+	{:  :}
+	;
+
+configurationParagraphs ::= configurationParagraph:cp
+		{:  :}
+	| configurationParagraphs:cps configurationParagraph:cp
+		{:  :}
+	;
+
+configurationParagraph ::= SourceComputerParagraph:scp
+	{:  :}
+	| ObjectComputerParagraph:ocp
+	{:  :}
+	| SpecialNamesParagraph:snp
+	{:  :}
+	| RepositoryParagraph:rp
+	{:  :}
+	;
+
+inputOutputSectionOpt ::= /*empty*/
+	{:  :}
+	| inputOutputSection:ios
+	{:  :}
+	;
+
+inputOutputSection ::= 
+	InputOutputSectionHeader:iosh
+	fileControlParagraphOpt:fcp
+	ioControlParagraphOpt:iocp
+	{:  :}
+	;
+
+fileControlParagraphOpt ::= /*empty*/
+	{:  :}
+	| fileControlParagraph:fcp
+	{:  :}
+	;
+
+fileControlParagraph ::=
+	FileControlParagraphHeader:fcph
+	fileControlEntriesOpt:fces
+	{: :}
+	;
+
+fileControlEntriesOpt ::= /*empty*/
+		{:  :}
+	| fileControlEntries:fces
+		{:  :}
+	;
+
+fileControlEntries ::= FileControlEntry:fce
+		{:  :}
+	| fileControlEntries:fces FileControlEntry:fce
+		{:  :}
+	;
+
+ioControlParagraphOpt ::= /*empty*/
+		{:  :}
+	| ioControlParagraph:iocp
+		{:  :}
+	;
+
+ioControlParagraph ::= 
+	IOControlParagraphHeader:iocph
+	ioControlSentencesOpt:iocs
+	{:  :}
+	;
+
+ioControlSentencesOpt ::= /* empty */	
+		{:  :}
+	| ioControlEntries:ioces SentenceEnd:se
+		{:	:}
+	;
+
+ioControlEntries ::= IOControlEntry:ioce
+		{:  :}
+	| ioControlEntries:ioces IOControlEntry:ioce
+		{:  :}
+	;
+
+
+/*
+// --- DATA DIVISION ---
+*/
+dataDivisionOpt ::= /*empty*/
+	{:  :}
+	| dataDivision:dv
+	{:  :}
+	;
+
+dataDivision ::=
+	DataDivisionHeader:ddh
+	fileSection:fs
+	workingStorageSection :wss
+	localStorageSection:lss
+	linkageSection:ls
+	{: :}
+	;
+
+fileSection ::= /*empty*/
+	{:  :}
+	| FileSectionHeader:feh fileDescriptionEntries:des
+	{:  :}
+	;
+
+fileDescriptionEntriesOpt ::= /*empty*/
+	{:  :}
+	| fileDescriptionEntries:fdes
+	{:  :}
+	;
+
+fileDescriptionEntries ::=
+	fileDescriptionEntry:fde
+	{:  :}
+	| fileDescriptionEntries:fdes fileDescriptionEntry:fde
+	{:  :}
+	;
+
+fileDescriptionEntry ::= FileDescriptionEntry:fde dataDefinitionEntries:dfes
+	{:  :}
+	;
+
+workingStorageSection ::= /*empty*/
+	{:  :}
+	| WorkingStorageSectionHeader:wssh storageEntries:ses
+	{:  :}
+	;
+
+storageEntries ::= /*empty*/
+	{:  :}
+	| storageEntries:ses storageEntry:se
+	{:  :}
+	;
+
+storageEntry ::= dataDefinitionEntry:dde
+	{:  :}
+	| execSqlStatement:ess
+	{:  :}
+	;
+
+execSqlStatement ::= ExecStatement:es
+	{:  :}
+	| ExecStatement:es SentenceEnd:se
+	{:  :}
+	;
+
+localStorageSection ::= /*empty*/
+	{:  :}
+	| LocalStorageSectionHeader:lsh storageEntries:ses
+	{:  :}
+	;
+
+dataDefinitionEntriesOpt ::= /*empty*/
+	{:  :}
+	| dataDefinitionEntries:ddes
+	{:  :}
+	;
+
+dataDefinitionEntries ::= dataDefinitionEntry:dde
+	{:  :}
+	| dataDefinitionEntries:ddes dataDefinitionEntry:dde
+	{:  :}
+	;
+
+dataDefinitionEntry ::=
+	  DataDescriptionEntry:dde
+	{:  :}
+	| DataRedefinesEntry:dre
+	{:  :}
+	| DataRenamesEntry:dre
+	{:  :}
+	| DataConditionEntry:dce
+	{:  :}
+	;
+
+linkageSection ::= /*empty*/
+	{:  :}
+	| LinkageSectionHeader:lsh dataDefinitionEntriesOpt:ddes
+	{:  :}
+	;
+
+procedureDivisionOpt ::= /*empty*/
+	{:  :}
+	| procedureDivision:pdiv
+	{:  :}
+	;
+
+// TCRFUN_DECLARATION_AS_NESTED_PROGRAM
+procedureDivision ::=
+	ProcedureDivisionHeader:pdh 
+	declarativesOpt:decls
+	functionOrSectionDeclarations:elems
+	{: :}
+	;
+
+functionOrSectionDeclarations ::= /*empty*/
+	{:  :}
+	| functionOrSectionDeclarations:elems functionOrSectionDeclaration:elem
+	{:  :}
+	;
+
+functionOrSectionDeclaration ::= functionDeclaration:fd
+	{:  :}
+	| section:s
+	{:  :}
+	;
+
+// - custom header
+// TCRFUN_DECLARATION_NO_IDENTIFICATION_DIVISION
+// TCRFUN_DECLARATION_NO_ENVIRONMENT_DIVISION
+// TCRFUN_MANDATORY_END_DECLARE
+functionDeclaration ::=
+	FunctionDeclarationHeader:fdh
+	dataDivisionOpt:dv
+	functionProcedureDivisionOpt:fpd
+	FunctionDeclarationEnd:fe
+	{: :}
+	;
+
+functionProcedureDivisionOpt ::= /*empty*/
+	{:  :}
+	| functionProcedureDivision:fpd
+	{:  :}
+	;
+
+functionProcedureDivision ::=
+	ProcedureDivisionHeader:pdh 
+	{:  :}
+| 	ProcedureDivisionHeader:pdh sections:alls
+	{:  :}
+
+	;
+
+
+declarativesOpt ::= /*empty*/
+	{:  :}
+	| declaratives:decls
+	{:  :}
+	;
+
+declaratives ::=
+	DeclarativesHeader:dh
+	declarativesSections:decls
+	DeclarativesEnd:de
+	{:  :}
+	;
+
+
+declarativesSections ::= declarativesSection:ds
+	{:  :}
+	| declarativesSections:decls declarativesSection:ds
+	{:  :}
+	;
+
+declarativesSection ::= 
+	SectionHeader:sh UseStatement:us
+	{:  :}
+	| SectionHeader:sh UseStatement:us paragraphs:p
+	{:  :}	
+	;
+
+sections ::= section:s
+	{:  :}
+	| sections:alls section:s
+	{:  :}
+	;
+
+section ::= SectionHeader:sh 
+	{:  :}
+	| SectionHeader:sh paragraphs:ps
+	{:  :}
+	| ParagraphHeader:ph 
+	{:  :}
+	| ParagraphHeader:ph paragraphs:ps
+	{:  :}
+	| sentences:alls
+	{:  :}
+	;
+
+paragraphs ::= paragraph:p
+	{:  :}
+	| paragraphs:ps paragraph:p
+	{:  :}
+	;
+
+paragraph ::= ParagraphHeader:ph sentencesOpt:alls
+	{:  :}
+	| sentences:alls
+	{:  :}
+	;
+
+sentencesOpt ::= /*empty*/
+	{:  :}
+	| sentences:alls
+	{:  :}
+	;
+
+sentences ::= sentence:s
+	{:  :}
+	| sentences:alls sentence:s
+	{:  :}
+	;
+
+sentence ::= SentenceEnd:send
+	{:  :}
+    | statements:stmts SentenceEnd:send
+	{:  :}
+	//JCM RESOLVE THIS TODO
+	| ExecStatement:stmt
+	{:  :}
+	;
+
+statements ::= statement:stmt
+	{:  :}
+	| statements:stmts statement:stmt
+	{:  :}
+	;
+
+statement ::= singleStatement:stmt
+	{:  :}
+	| compoundStatement:stmt
+	{:  :}
+	;
+
+singleStatement ::=
+	ContinueStatement:stmt
+	{:  :}
+	| EntryStatement:stmt
+	{:  :}
+// -- arithmetic --
+// -- see computeStatementConditional --
+// -- data movement --
+	| AcceptStatement:stmt // (DATE, DAY, DAY-OF-WEEK, TIME)
+	{:  :} 
+	| InitializeStatement:stmt
+	{:  :}
+	| InspectStatement:stmt
+	{:  :}
+	| MoveStatement:stmt
+	{:  :}
+	| SetStatement:stmt
+	{:  :}
+// -- ending --
+	| StopStatement:stmt
+	{:  :}
+	| ExitMethodStatement:stmt
+	{:  :}
+	| ExitProgramStatement:stmt
+	{:  :}
+	| GobackStatement:stmt
+	{:  :}
+// -- input-output --
+	| CloseStatement:stmt
+	{:  :}
+	| DisplayStatement:stmt
+	{:  :}
+	| OpenStatement:stmt
+	{:  :}
+// -- ordering --
+	| MergeStatement:stmt
+	{:  :}
+	| ReleaseStatement:stmt
+	{:  :}
+	| SortStatement:stmt
+	{:  :}
+// -- procedure-branching --
+	| AlterStatement:stmt
+	{:  :}
+	| ExitStatement:stmt
+	{:  :}
+	| GotoStatement:stmt
+	{:  :}
+	| PerformProcedureStatement:stmt
+	{:  :}
+// -- program or method linkage --// TYPECOBOL
+	| ProcedureStyleCall:stmt
+	{:  :}
+	| ProcedureStyleCall:stmt CallStatementEnd:end
+	{:  :}
+	| CancelStatement:stmt
+	{:  :}
+// -- DB2 & CICS integration --
+	| ExecStatement:stmt
+	{:  :}
+	;
+	
+// Statements with optional body  
+compoundStatement ::= addStatementConditional:stmt
+		{:  :}
+	|	callStatementConditional:stmt
+		{:  :}
+	|	computeStatementConditional:stmt
+		{:  :}
+	|	deleteStatementConditional:stmt
+		{:  :}
+	|	evaluateStatementWithBody:stmt
+		{:  :}
+	|	ifStatementWithBody:stmt
+		{:  :}
+	|	invokeStatementConditional:stmt
+		{:  :}
+	|	divideStatementConditional:stmt
+		{:  :}
+	|	multiplyStatementConditional:stmt
+		{:  :}
+	|	performStatementWithBody:stmt
+		{:  :}
+	|	readStatementConditional:stmt
+		{:  :}
+	|	returnStatementConditional:stmt
+		{:  :}
+	|	rewriteStatementConditional:stmt
+		{:  :}
+	|	searchStatementWithBody:stmt
+		{:  :}
+	|	startStatementConditional:stmt
+		{:  :}
+	|	stringStatementConditional:stmt
+		{:  :}
+	|	subtractStatementConditional:stmt
+		{:  :}
+	|	unstringStatementConditional:stmt
+		{:  :}
+	|	writeStatementConditional:stmt
+		{:  :}
+	|	xmlGenerateStatementConditional:stmt
+		{:  :}
+	|	xmlParseStatementConditional:stmt
+		{:  :}
+	;
+
+addStatementConditional ::=
+		AddStatement:stmt
+		{:  :}
+	|	AddStatement:stmt AddStatementEnd:end
+		{:  :}
+	|	AddStatement:stmt sizeErrorConditions:conds
+		{:  :}
+	|	AddStatement:stmt sizeErrorConditions:conds AddStatementEnd:end
+		{:  :}
+	;
+
+callStatementConditional ::=
+		CallStatement:stmt
+		{:  :}
+	|	CallStatement:stmt CallStatementEnd:end
+		{:  :}
+	|	CallStatement:stmt callStatementConditions:conds
+		{:  :}
+	|	CallStatement:stmt callStatementConditions:conds CallStatementEnd:end
+		{:  :}
+	;
+
+callStatementConditions ::=
+	  onException:on
+	{:  :}
+	| noException:not_on
+	{:  :}
+	| onOverflow:on
+	{:  :}
+	;
+
+computeStatementConditional ::=
+		ComputeStatement:stmt
+		{:  :}
+	|	ComputeStatement:stmt ComputeStatementEnd:end
+		{:  :}
+	|	ComputeStatement:stmt sizeErrorConditions:conds
+		{:  :}
+	|	ComputeStatement:stmt sizeErrorConditions:conds ComputeStatementEnd:end
+		{:  :}
+	;
+
+deleteStatementConditional ::=
+		DeleteStatement:stmt
+		{:  :}
+	|	DeleteStatement:stmt DeleteStatementEnd:end
+		{:  :}
+	|	DeleteStatement:stmt keyConditions:conds
+		{:  :}
+	|	DeleteStatement:stmt keyConditions:conds DeleteStatementEnd:end
+		{:  :}
+	;
+
+divideStatementConditional ::=
+		DivideStatement:stmt
+		{:  :}
+	|	DivideStatement:stmt DivideStatementEnd:end
+		{:  :}
+	|	DivideStatement:stmt sizeErrorConditions:conds
+		{:  :}
+	|	DivideStatement:stmt sizeErrorConditions:conds DivideStatementEnd:end
+		{:  :}
+	;
+
+evaluateStatementWithBody ::=
+		EvaluateStatement:est
+		{:  :}
+	|	EvaluateStatement:est EvaluateStatementEnd:ese
+		{:  :}
+	|	EvaluateStatement:est whenConditionClauses:wccs
+		{:  :}
+	|	EvaluateStatement:est whenConditionClauses:wccs EvaluateStatementEnd:ese
+		{:  :}
+	|	EvaluateStatement:est whenOtherClause:woc
+		{:  :}
+	|	EvaluateStatement:est whenOtherClause:woc EvaluateStatementEnd:ese
+		{:  :}
+	|	EvaluateStatement:est whenConditionClauses:wccs whenOtherClause:woc
+		{:  :}
+	|	EvaluateStatement:est whenConditionClauses:wccs whenOtherClause:woc EvaluateStatementEnd:ese
+		{:  :}
+	;
+
+whenConditionClauses ::= 
+		whenConditionClause:wcc
+		{:  :}
+	|	whenConditionClauses:wccs whenConditionClause:wcc
+		{:  :}
+	;
+
+whenConditionClause ::= whenEvaluateConditions:wecs statements:stmts
+	{:  :}
+	;
+
+whenEvaluateCondition ::= WhenSearchCondition:wec
+	{:  :}
+	| WhenCondition:wec
+	{:  :}
+	;
+
+whenEvaluateConditions ::= whenEvaluateCondition:wec
+	{: :}
+	| whenEvaluateConditions:wecs whenEvaluateCondition:wec
+	{:  :}
+	;
+
+whenOtherClause ::= WhenOtherCondition:woc statements:stmts
+	{:  :}
+	;
+
+ifStatementWithBody ::=
+	IfStatement:ifs statements:thenStmts
+	{:  :}
+	| IfStatement:ifs statements:thenStmts IfStatementEnd:end
+	{:  :}
+
+	| IfStatement:ifs NextSentenceStatement:thenNext
+	{:  :}
+	| IfStatement:ifs NextSentenceStatement:thenNext IfStatementEnd:end
+	{:  :}
+
+	| IfStatement:ifs statements:thenStmts ElseCondition:ec statements:elseStmts
+	{:  :}
+	| IfStatement:ifs statements:thenStmts ElseCondition:ec NextSentenceStatement:elseNext
+	{:  :}
+
+	| IfStatement:ifs statements:thenStmts ElseCondition:ec statements:elseStmts IfStatementEnd:end
+	{:  :}
+	| IfStatement:ifs statements:thenStmts ElseCondition:ec NextSentenceStatement:elseNext IfStatementEnd:end
+	{:  :}
+
+	| IfStatement:ifs NextSentenceStatement:thenNext ElseCondition:ec statements:elseStmts
+	{:  :}
+	| IfStatement:ifs NextSentenceStatement:thenNext ElseCondition:ec NextSentenceStatement:elseNext
+	{: :}
+
+	| IfStatement:ifs NextSentenceStatement:thenNext ElseCondition:ec statements:elseStmts IfStatementEnd:end
+	{:  :}
+	| IfStatement:ifs NextSentenceStatement:thenNext ElseCondition:ec NextSentenceStatement:elseNext IfStatementEnd:end
+	{:  :}
+	;
+
+invokeStatementConditional ::=
+		InvokeStatement:stmt
+		{:  :}
+	|	InvokeStatement:stmt InvokeStatementEnd:end
+		{:  :}
+	|	InvokeStatement:stmt exceptionConditions:conds
+		{:  :}
+	|	InvokeStatement:stmt exceptionConditions:conds InvokeStatementEnd:end
+		{:  :}
+	;
+
+multiplyStatementConditional ::=
+		MultiplyStatement:stmt
+		{:  :}
+	|	MultiplyStatement:stmt MultiplyStatementEnd:end
+		{:  :}
+	|	MultiplyStatement:stmt sizeErrorConditions:conds
+		{:  :}
+	|	MultiplyStatement:stmt sizeErrorConditions:conds MultiplyStatementEnd:end
+		{:  :}
+	;
+
+performStatementWithBody ::=			
+		PerformStatement:stmt
+		{:  :}
+	|	PerformStatement:stmt PerformStatementEnd:end
+		{:  :}
+	|	PerformStatement:stmt statements:stmts
+		{:  :}
+	|	PerformStatement:stmt statements:stmts PerformStatementEnd:end
+		{:  :}
+	;
+
+readStatementConditional ::=
+		ReadStatement:stmt
+		{:  :}
+	|	ReadStatement:stmt ReadStatementEnd:end
+		{:  :}
+	|	ReadStatement:stmt rwStatementConditions:conds
+		{:  :}
+	|	ReadStatement:stmt rwStatementConditions:conds ReadStatementEnd:end
+		{:  :}
+	;
+
+rwStatementCondition ::=
+	  onAtEnd:at
+	{:  :}
+	| noAtEnd:not_at
+	{:  :}
+	| onInvalidKey:on
+	{:  :}
+	| noInvalidKey:not_on
+	{:  :}
+	;
+
+rwStatementConditions ::=
+		rwStatementCondition:rwsc
+		{:  :}
+	|	rwStatementConditions:rwscs rwStatementCondition:rwsc
+		{:  :}
+	;
+
+returnStatementConditional ::=
+		ReturnStatement:stmt
+		{:  :}
+	|	ReturnStatement:stmt ReturnStatementEnd:end
+		{:  :}
+	|	ReturnStatement:stmt endConditions:conds
+		{:  :}
+	|	ReturnStatement:stmt endConditions:conds ReturnStatementEnd:end
+		{:  :}
+	;
+
+rewriteStatementConditional ::=
+		RewriteStatement:stmt
+		{:  :}
+	|	RewriteStatement:stmt RewriteStatementEnd:end
+		{:  :}
+	|	RewriteStatement:stmt keyConditions:conds
+		{:  :}
+	|	RewriteStatement:stmt keyConditions:conds RewriteStatementEnd:end
+		{:  :}
+	;
+
+searchStatementWithBody ::=
+		SearchStatement:stmt whenSearchConditionClauses:wsccs
+		{:  :}
+	|	SearchStatement:stmt whenSearchConditionClauses:wsccs SearchStatementEnd:send
+		{:  :}
+	|	SearchStatement:stmt onAtEnd:cend whenSearchConditionClauses:wsccs
+		{:  :}
+	|	SearchStatement:stmt onAtEnd:cend whenSearchConditionClauses:wsccs SearchStatementEnd:send
+		{:  :}
+	;
+
+whenSearchConditionClause ::= 
+		WhenSearchCondition:wsc statements:stmts
+		{:  :}
+	|	WhenSearchCondition:wsc NextSentenceStatement:next
+		{:  :}
+	;
+
+whenSearchConditionClauses ::= whenSearchConditionClause:wscc
+		{:  :}
+	|	whenSearchConditionClauses:wsccs whenSearchConditionClause:wscc
+		{:  :}
+	;
+
+startStatementConditional ::=
+		StartStatement:stmt
+		{:  :}
+	|	StartStatement:stmt StartStatementEnd:end
+		{:  :}
+	|	StartStatement:stmt keyConditions:conds
+		{:  :}
+	|	StartStatement:stmt keyConditions:conds StartStatementEnd:end
+		{:  :}
+	;
+
+stringStatementConditional ::=
+		StringStatement:stmt
+		{:  :}
+	|	StringStatement:stmt StringStatementEnd:end
+		{:  :}
+	|	StringStatement:stmt overflowConditions:conds
+		{:  :}
+	|	StringStatement:stmt overflowConditions:conds StringStatementEnd:end
+		{:  :}
+	;
+
+subtractStatementConditional ::=
+		SubtractStatement:stmt
+		{:  :}
+	|	SubtractStatement:stmt SubtractStatementEnd:end
+		{:  :}
+	|	SubtractStatement:stmt sizeErrorConditions:conds
+		{:  :}
+	|	SubtractStatement:stmt sizeErrorConditions:conds SubtractStatementEnd:end
+		{:  :}
+	;
+
+unstringStatementConditional ::=
+		UnstringStatement:stmt
+		{:  :}
+	|	UnstringStatement:stmt UnstringStatementEnd:end
+		{:  :}
+	|	UnstringStatement:stmt overflowConditions:conds
+		{:  :}
+	|	UnstringStatement:stmt overflowConditions:conds UnstringStatementEnd:end
+		{:  :}
+	;
+
+writeStatementConditional ::=
+		WriteStatement:stmt
+		{:  :}
+	|	WriteStatement:stmt WriteStatementEnd:end
+		{:  :}
+	|	WriteStatement:stmt rwStatementConditions:conds
+		{:  :}
+	|	WriteStatement:stmt rwStatementConditions:conds WriteStatementEnd:end
+		{:  :}
+	;
+
+xmlGenerateStatementConditional ::=
+		XmlGenerateStatement:stmt
+		{:  :}
+	|	XmlGenerateStatement:stmt XmlStatementEnd:end
+		{:  :}
+	|	XmlGenerateStatement:stmt exceptionConditions:conds
+		{:  :}
+	|	XmlGenerateStatement:stmt exceptionConditions:conds XmlStatementEnd:end
+		{:  :}
+	;
+
+xmlParseStatementConditional ::=
+		XmlParseStatement:stmt
+		{:  :}
+	|	XmlParseStatement:stmt XmlStatementEnd:end
+		{:  :}
+	|	XmlParseStatement:stmt exceptionConditions:conds
+		{:  :}
+	|	XmlParseStatement:stmt exceptionConditions:conds XmlStatementEnd:end
+		{:  :}
+	;
+
+// Conditional execution of statements
+
+onAtEnd ::= AtEndCondition:cond statements:stmts
+	{:  :}
+	;
+noAtEnd ::= NotAtEndCondition:cond statements:stmts
+	{:  :}
+	;
+endConditions ::= onAtEnd:at
+	{:  :}
+	| noAtEnd:no_at
+	{:  :}
+	| endConditions:econds onAtEnd:at
+	{:  :}
+	| endConditions:econds noAtEnd:no_at
+	{:  :}
+	;
+
+onException ::= OnExceptionCondition:cond statements:stmts
+	{:  :}
+	;
+noException ::= NotOnExceptionCondition:cond statements:stmts
+	{:  :}
+	;
+exceptionConditions ::= onException:on
+	{:  :}
+	| noException:not_on
+	{:  :}
+	| exceptionConditions:econds onException:on
+	{:  :}
+	| exceptionConditions:econds noException:not_on
+	{:  :}
+	;
+
+
+onInvalidKey ::= InvalidKeyCondition:cond statements:stmts
+	{:  :}
+	;
+noInvalidKey ::= NotInvalidKeyCondition:cond statements:stmts
+	{:  :}
+	;
+keyConditions ::= onInvalidKey:invalid
+	{:  :}
+	| noInvalidKey:not_invalid
+	{:  :}
+	| keyConditions:kconds onInvalidKey:valid
+	{:  :}
+	| keyConditions:kconds noInvalidKey:not_invalid
+	{:  :}
+	;
+
+onOverflow ::= OnOverflowCondition:cond statements:stmts
+	{:  :}
+	;
+noOverflow ::= NotOnOverflowCondition:cond statements:stmts
+	{:  :}
+	;
+overflowConditions ::= onOverflow:on
+	{:  :}
+	| noOverflow:not_on
+	{:  :}
+	| overflowConditions:oconds onOverflow:on
+	{:  :}
+	| overflowConditions:oconds noOverflow:not_on
+	{:  :}
+	;
+
+onSizeError ::= OnSizeErrorCondition:cond statements:stmts
+	{:  :}
+	;
+noSizeError ::= NotOnSizeErrorCondition:cond statements:stmts
+	{:  :}
+	;
+sizeErrorConditions ::= 
+	  onSizeError:on
+	{:  :}
+	| noSizeError:not_on
+	{:  :}
+	| sizeErrorConditions:seconds onSizeError:on
+	{:  :}
+	| sizeErrorConditions:seconds noSizeError:not_on
+	{:  :}
+	;

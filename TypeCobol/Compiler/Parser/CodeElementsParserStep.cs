@@ -143,8 +143,6 @@ namespace TypeCobol.Compiler.Parser
             // Prepare to analyze the parse tree
             ParseTreeWalker walker = new ParseTreeWalker();
             CodeElementBuilder codeElementBuilder = new CodeElementBuilder();
-            codeElementBuilder.Dispatcher = new CodeElementDispatcher();
-            codeElementBuilder.Dispatcher.CreateListeners();
 
             // --- INCREMENTAL PARSING ---
 
@@ -181,12 +179,12 @@ namespace TypeCobol.Compiler.Parser
             CodeElementsParser.CobolCodeElementsContext codeElementsParseTree = null;
             try
             {
-                perfStatsForParserInvocation.OnStartAntlrParsing();
+                perfStatsForParserInvocation.OnStartParsing();
                 if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.BeginParsingSection();
                 codeElementsParseTree = cobolParser.cobolCodeElements();
                 if (AntlrPerformanceProfiler != null)
                     AntlrPerformanceProfiler.EndParsingSection(codeElementsParseTree.ChildCount);
-                perfStatsForParserInvocation.OnStopAntlrParsing(
+                perfStatsForParserInvocation.OnStopParsing(
                     AntlrPerformanceProfiler != null
                         ? (int) AntlrPerformanceProfiler.CurrentFileInfo.DecisionTimeMs
                         : 0,

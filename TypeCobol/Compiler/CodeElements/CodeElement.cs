@@ -124,6 +124,7 @@ namespace TypeCobol.Compiler.CodeElements
             ce.ConsumedTokens = this.ConsumedTokens;
             ce.Diagnostics = this.Diagnostics;
             ce.SymbolInformationForTokens = this.SymbolInformationForTokens;
+            ce.StorageAreaReads = this.StorageAreaReads;
         }
         
 		/// <summary>

@@ -1,0 +1,307 @@
+{
+  "name": "ProcedureCompletionPotentialChildrenWithNoName.tlsp",
+  "session": "C:\\Users\\PETERDA\\AppData\\Roaming\\TypeCobol.LanguageServerRobot\\Repository\\Session2018_07_27_09_34_17_511\\TestSuite_2018_07_27_09_34_17_511.slsp",
+  "user": "PETERDA",
+  "date": "2018/07/27 09:34:17 527",
+  "uri": "file:///C:/Users/PETERDA/Desktop/ProcedureCompletionPotentialChildrenWithNoName.tlsp",
+  "initialize": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"method\":\"initialize\",\"params\":{\"processId\":-1,\"rootPath\":\"C:\\\\Users\\\\PETERDA\\\\Source\\\\Repos\\\\TypeCobol\\\\bin\\\\EI_Debug\",\"rootUri\":\"file:/C:/Users/PETERDA/Source/Repos/TypeCobol/bin/EI_Debug/\",\"capabilities\":{\"workspace\":{\"applyEdit\":true,\"didChangeConfiguration\":{\"dynamicRegistration\":true},\"didChangeWatchedFiles\":{\"dynamicRegistration\":false},\"symbol\":{\"dynamicRegistration\":true},\"executeCommand\":{\"dynamicRegistration\":true}},\"textDocument\":{\"synchronization\":{\"willSave\":true,\"willSaveWaitUntil\":true,\"dynamicRegistration\":true},\"completion\":{\"completionItem\":{\"snippetSupport\":true},\"dynamicRegistration\":true},\"hover\":{\"dynamicRegistration\":true},\"signatureHelp\":{\"dynamicRegistration\":true},\"references\":{\"dynamicRegistration\":true},\"documentHighlight\":{\"dynamicRegistration\":true},\"documentSymbol\":{\"dynamicRegistration\":true},\"formatting\":{\"dynamicRegistration\":true},\"rangeFormatting\":{\"dynamicRegistration\":true},\"onTypeFormatting\":{\"dynamicRegistration\":true},\"definition\":{\"dynamicRegistration\":true},\"codeAction\":{\"dynamicRegistration\":true},\"codeLens\":{\"dynamicRegistration\":true},\"documentLink\":{\"dynamicRegistration\":true},\"rename\":{\"dynamicRegistration\":true}}},\"trace\":\"off\"}}",
+  "initialize_result": "{\"jsonrpc\":\"2.0\",\"id\":\"0\",\"result\":{\"capabilities\":{\"textDocumentSync\":2,\"hoverProvider\":true,\"completionProvider\":{\"resolveProvider\":false,\"triggerCharacters\":[\"::\"]},\"signatureHelpProvider\":{\"triggerCharacters\":[]},\"definitionProvider\":true,\"referencesProvider\":false,\"documentHighlightProvider\":false,\"documentSymbolProvider\":false,\"workspaceSymbolProvider\":false,\"codeActionProvider\":false,\"documentFormattingProvider\":false,\"documentRangeFormattingProvider\":false,\"renameProvider\":false}}}",
+  "did_change_configuation": "{\"jsonrpc\":\"2.0\",\"method\":\"workspace/didChangeConfiguration\",\"params\":{\"settings\":[\"C:\\\\Users\\\\PETERDA\\\\Source\\\\Repos\\\\TypeCobol\\\\bin\\\\EI_Debug\\\\TypeCobol.CLI.exe\",\"-1\",\"-e\",\"rdz\",\"-c\",\"C:\\\\TypeCobol\\\\Copys\",\"-y\",\"C:\\\\Users\\\\PETERDA\\\\Source\\\\Repos\\\\TypeCobol\\\\TypeCobol.LanguageServer.Test\\\\LSRTests\\\\DefaultIntrinsic.txt\",\"-md\",\"30\"]}}",
+  "didOpen": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"languageId\":\"__lsp4j_TypeCobol\",\"version\":0,\"text\":\"       IDENTIFICATION DIVISION.\\r\\n       PROGRAM-ID. DVZS0OSM.\\r\\n\\r\\n       data division.\\r\\n       working-storage section.\\r\\n       01 0debugInfo TYPEDEF STRICT PRIVATE.\\r\\n           05 .\\r\\n                06 .\\r\\n                    07 TestVar1 VALUE \\\"test\\\".\\r\\n                    07 TestVar15 VALUE \\\"test\\\".\\r\\n           05 .\\r\\n                06 .\\r\\n                    07 .\\r\\n                        08 TestVar2 VALUE \\\"test\\\".\\r\\n           05 .\\r\\n                06 TestVar3 VALUE \\\"test\\\".\\r\\n       01 0mydebug TYPE 0debugInfo.\\r\\n\\r\\n       01 0debugInfo1 TYPEDEF STRICT PRIVATE.\\r\\n           05 TestVar2.\\r\\n                88 TestVar3 VALUE \\\"test3\\\".\\r\\n       01 0mydebug1 TYPE 0debugInfo1.\\r\\n\\r\\n       PROCEDURE DIVISION.\\r\\n\\r\\n\\r\\n\\r\\n       END PROGRAM DVZS0OSM.\"}}}",
+  "messages": [
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":0},\"end\":{\"line\":25,\"character\":0}},\"rangeLength\":0,\"text\":\"       \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":7},\"end\":{\"line\":25,\"character\":7}},\"rangeLength\":0,\"text\":\"i\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":8},\"end\":{\"line\":25,\"character\":8}},\"rangeLength\":0,\"text\":\"f\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":9},\"end\":{\"line\":25,\"character\":9}},\"rangeLength\":0,\"text\":\" \"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":10},\"end\":{\"line\":25,\"character\":10}},\"rangeLength\":0,\"text\":\"(\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... '\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'ENDPROGRAMDVZS0OSM.' expecting {AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":11}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":[{\"label\":\"0mydebug (0debugInfo) (0mydebug)\",\"kind\":6,\"insertText\":\"0mydebug\"},{\"label\":\"0mydebug1 (0debugInfo1) (0mydebug1)\",\"kind\":6,\"insertText\":\"0mydebug1\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":11},\"end\":{\"line\":25,\"character\":11}},\"rangeLength\":0,\"text\":\"0mydebug1\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":20},\"end\":{\"line\":25,\"character\":20}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... '\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'ENDPROGRAMDVZS0OSM.' expecting {AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":22}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":[{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":22},\"end\":{\"line\":25,\"character\":22}},\"rangeLength\":0,\"text\":\"TestVar2\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":30},\"end\":{\"line\":25,\"character\":30}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":31},\"end\":{\"line\":25,\"character\":31}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... '\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'ENDPROGRAMDVZS0OSM.' expecting {AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"5\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":32}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":[{\"label\":\"TestVar3 (BOOL) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":32},\"end\":{\"line\":25,\"character\":32}},\"rangeLength\":0,\"text\":\"TestVar3\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":40},\"end\":{\"line\":25,\"character\":40}},\"rangeLength\":0,\"text\":\")\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":40},\"end\":{\"line\":25,\"character\":41}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":32},\"end\":{\"line\":25,\"character\":40}},\"rangeLength\":8,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":31},\"end\":{\"line\":25,\"character\":32}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":30},\"end\":{\"line\":25,\"character\":31}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":22},\"end\":{\"line\":25,\"character\":30}},\"rangeLength\":8,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":22}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":20},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":1,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":11},\"end\":{\"line\":25,\"character\":20}},\"rangeLength\":9,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... '\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'ENDPROGRAMDVZS0OSM.' expecting {AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"7\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":11}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"8\",\"result\":[{\"label\":\"0mydebug (0debugInfo) (0mydebug)\",\"kind\":6,\"insertText\":\"0mydebug\"},{\"label\":\"0mydebug1 (0debugInfo1) (0mydebug1)\",\"kind\":6,\"insertText\":\"0mydebug1\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":11},\"end\":{\"line\":25,\"character\":11}},\"rangeLength\":0,\"text\":\"0mydebug\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":19},\"end\":{\"line\":25,\"character\":19}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":20},\"end\":{\"line\":25,\"character\":20}},\"rangeLength\":0,\"text\":\":\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... '\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'ENDPROGRAMDVZS0OSM.' expecting {AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"9\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":21}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"10\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\"TestVar1\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":29}},\"rangeLength\":8,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... '\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'ENDPROGRAMDVZS0OSM.' expecting {AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"11\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":21}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"12\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\"TestVar15\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":30}},\"rangeLength\":9,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... '\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'ENDPROGRAMDVZS0OSM.' expecting {AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"13\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":21}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"14\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\"TestVar2\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":29}},\"rangeLength\":8,\"text\":\"\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"method\":\"typecobol/refreshNodesRequest\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}"
+    },
+    {
+      "category": 1,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":10}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '( ... '\"},{\"range\":{\"start\":{\"line\":28,\"character\":8},\"end\":{\"line\":28,\"character\":28}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : extraneous input 'ENDPROGRAMDVZS0OSM.' expecting {AcceptStatement, AddStatement, AlterStatement, CallStatement, CancelStatement, CloseStatement, ComputeStatement, ContinueStatement, DeleteStatement, DisplayStatement, DivideStatement, EntryStatement, EvaluateStatement, ExecStatement, ExitMethodStatement, ExitProgramStatement, ExitStatement, GobackStatement, GotoStatement, IfStatement, InitializeStatement, InspectStatement, InvokeStatement, MergeStatement, MoveStatement, MultiplyStatement, NextSentenceStatement, OpenStatement, PerformProcedureStatement, PerformStatement, ReadStatement, ReleaseStatement, ReturnStatement, RewriteStatement, SearchStatement, SetStatement, SortStatement, StartStatement, StopStatement, StringStatement, SubtractStatement, UnstringStatement, WriteStatement, XmlGenerateStatement, XmlParseStatement, ProcedureStyleCall}\"}]}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"15\",\"result\":true}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"method\":\"textDocument/completion\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"position\":{\"line\":25,\"character\":21}}}"
+    },
+    {
+      "category": 2,
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"16\",\"result\":[{\"label\":\"TestVar1 (Alphanumeric) (TestVar1)\",\"kind\":6,\"insertText\":\"TestVar1\"},{\"label\":\"TestVar15 (Alphanumeric) (TestVar15)\",\"kind\":6,\"insertText\":\"TestVar15\"},{\"label\":\"TestVar2 (Alphanumeric) (TestVar2)\",\"kind\":6,\"insertText\":\"TestVar2\"},{\"label\":\"TestVar3 (Alphanumeric) (TestVar3)\",\"kind\":6,\"insertText\":\"TestVar3\"}]}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":21},\"end\":{\"line\":25,\"character\":21}},\"rangeLength\":0,\"text\":\"TestVar3\"}]}}"
+    },
+    {
+      "category": 0,
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didChange\",\"params\":{\"textDocument\":{\"version\":0,\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"},\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\",\"contentChanges\":[{\"range\":{\"start\":{\"line\":25,\"character\":29},\"end\":{\"line\":25,\"character\":29}},\"rangeLength\":0,\"text\":\")\"}]}}"
+    }
+  ],
+  "didClose": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didClose\",\"params\":{\"textDocument\":{\"uri\":\"file:/C:/Users/PETERDA/AppData/Local/Temp/1/tcbl/DVZPDA016428743229221512910.cee\"}}}",
+  "IsValid": true
+}

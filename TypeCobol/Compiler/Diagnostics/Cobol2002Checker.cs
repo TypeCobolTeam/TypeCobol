@@ -12,18 +12,10 @@ using Analytics;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
-    class TypeDefinitionEntryChecker : CodeElementListener
+    class TypeDefinitionEntryChecker
     {
-        public void OnCodeElement(CodeElement e, ParserRuleContext c)
+        public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            var context = c as CodeElementsParser.DataDescriptionEntryContext;
-            CheckRedefines(e as DataRedefinesEntry, context);
-            CheckTypedef(e as DataTypeDescriptionEntry, context);
-        }
-
-        private void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
-        {
-            if (redefines == null) return;
             if (context.cobol2002TypedefClause() != null)
             {
                 string message = "REDEFINES clause cannot be specified with TYPEDEF clause";
@@ -31,11 +23,8 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-        private void CheckTypedef(DataTypeDescriptionEntry typedef,
-            CodeElementsParser.DataDescriptionEntryContext context)
+        public static void CheckTypedef(DataTypeDescriptionEntry typedef, CodeElementsParser.DataDescriptionEntryContext context)
         {
-            if (typedef == null) return;
-
             if (typedef.LevelNumber?.Value != 1)
             {
                 string message = "TYPEDEF clause can only be specified for level 01 entries";
@@ -60,7 +49,10 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (typedef.RestrictionLevel == RestrictionLevel.STRICT) //Manage as a STRICT TYPEDEF
             {
-
+                if (typedef.IsSynchronized != null && typedef.IsSynchronized.Value == true)
+                {
+                    DiagnosticUtils.AddError(typedef, "SYNC clause cannot be used with a STRICT type definition", context.cobol2002TypedefClause());
+                }
             }
 
             if (typedef.RestrictionLevel == RestrictionLevel.STRONG) //Manage as a STRONG TYPEDEF
@@ -87,7 +79,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void CheckTypeDefinition(TypeDefinition typeDefinition)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent("[Type-Used] " + typeDefinition.Name, EventType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypedUsed, typeDefinition.Name, LogType.TypeCobolUsage);
 
             if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
             {
@@ -123,35 +115,26 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-    class RedefinesChecker : NodeListener
+    class RedefinesChecker
     {
-        public void OnNode(Node node, ParserRuleContext context, CodeModel.Program program)
+        public static void OnNode(DataRedefines redefinesNode)
         {
-            var redefinesNode = node as DataRedefines;
             if (redefinesNode == null)
                 return; //not my job
 
             if (redefinesNode.IsPartOfATypeDef)
             {
-                DiagnosticUtils.AddError(node, "Illegal REDEFINES as part of a TYPEDEF",
+                DiagnosticUtils.AddError(redefinesNode, "Illegal REDEFINES as part of a TYPEDEF",
                     MessageCode.SemanticTCErrorInParser);
             }
 
-        }
-
-        public static void OnNode(Node node)
-        {
-            var redefinesNode = node as DataRedefines;
-            if (redefinesNode == null)
-                return; //not my job
-
             var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
-            var redefinedVariable = node.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
+            var redefinedVariable = redefinesNode.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
 
             if (redefinedVariable == null)
             {
                 string message = "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced";
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(redefinesNode, message, MessageCode.SemanticTCErrorInParser);
                 return;
             }
 
@@ -159,7 +142,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 string message = string.Format("Illegal REDEFINES: '{0}' is {1}", redefinesSymbolReference,
                     redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(redefinesNode, message, MessageCode.SemanticTCErrorInParser);
             }
         }
     }
@@ -173,32 +156,44 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 return; //not my job
             }
-            Check(renames.CodeElement().RenamesFromDataName, renames);
-            Check(renames.CodeElement().RenamesToDataName, renames);
+            if (renames?.CodeElement()?.RenamesFromDataName != null)
+                Check(renames.CodeElement().RenamesFromDataName, renames);
+            if(renames?.CodeElement()?.RenamesToDataName != null)
+                Check(renames.CodeElement().RenamesToDataName, renames);
         }
 
         private static void Check(SymbolReference renames, Node node)
         {
-            var found = node.SymbolTable.GetVariables(renames);
-            if (found.Count() > 1)
+            var founds = node.SymbolTable.GetVariables(renames);
+            if (founds.Count() > 1)
             {
                 string message = "Illegal RENAMES: Ambiguous reference to symbol \'" + renames + "\'";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                return;
             }
-            if (!found.Any())
+            if (!founds.Any())
             {
                 string message = "Illegal RENAMES: Symbol \'" + renames + "\' is not referenced";
                 DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                return;
             }
-            foreach (var v in found)
+
+            var found = founds.First();
+            var foundCodeElement = found.CodeElement as DataDefinitionEntry;
+           
+            if (found.IsStronglyTyped || found.IsStrictlyTyped)
             {
-                if (v.IsStronglyTyped || v.IsStrictlyTyped)
-                {
-                    string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames,
-                        v.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
-                    DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
-                }
+                string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames,
+                    found.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
             }
+
+            if (foundCodeElement?.LevelNumber != null && foundCodeElement.LevelNumber.Value == 01)
+            {
+                string message = string.Format("Illegal RENAMES: '{0}' is level 01", renames);
+                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+            }
+            
         }
     }
 
@@ -285,11 +280,22 @@ namespace TypeCobol.Compiler.Diagnostics
                 var calculatedLevel = startingLevel;
                 if (child.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) //If variable is typed
                 {
-                    var foundedTypes = node.SymbolTable.GetType(child.DataType);
-                    if (foundedTypes.Count != 1)
-                        continue; //If none or multiple corresponding type, it's useless to check
+                    /*----- This section should be removed when issue #1009 is fixed ----- */
+                    /*----- We'll only need child.TypeDefinition --------------------------*/
+                    TypeDefinition foundType;
+                    if (child.TypeDefinition == null)
+                    {
+                        var foundedTypes = node.SymbolTable.GetType(child.DataType);
+                        if (foundedTypes.Count != 1)
+                            continue; //If none or multiple corresponding type, it's useless to check
 
-                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundedTypes.First());
+                        foundType = foundedTypes.First();
+                    }
+                    else
+                        foundType = child.TypeDefinition;
+                    /* -----------------------------------------------------------------  */
+
+                    calculatedLevel = SimulatedTypeDefLevel(++calculatedLevel, foundType);
                 }
                 else if (child.Children.Count > 0) //If variable is not typed, check if there is children
                 {
@@ -320,6 +326,13 @@ namespace TypeCobol.Compiler.Diagnostics
             foundedType = null;
             if (type.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
                 return; //nothing to do, Type exists from Cobol 2002
+            var dataDefinition = node as DataDefinition;
+            if (dataDefinition?.TypeDefinition != null)
+            {
+                foundedType = dataDefinition.TypeDefinition;
+                return;
+            }
+
             var found = node.SymbolTable.GetType(type);
             if (found.Count < 1)
             {
@@ -333,8 +346,10 @@ namespace TypeCobol.Compiler.Diagnostics
             }
             else
             {
+                //In case TypeDefinition is not already set, or it's not a DataDefinition Node
                 foundedType = found[0];
-                node.TypeDefinition = foundedType;
+                if (dataDefinition != null)
+                    dataDefinition.TypeDefinition = foundedType;
             }
 
         }

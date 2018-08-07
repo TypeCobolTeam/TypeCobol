@@ -1260,8 +1260,15 @@ namespace TypeCobol.Compiler.Scanner
                     currentIndex = fstCurrentIndex;
                     int endIndex = fstCurrentIndex - 1;
                     Token token = new Token(TokenType.IntegerLiteral, startIndex, endIndex, tokensLine);
-                    token.LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
-
+                    try
+                    {
+                        token.LiteralValue = new IntegerLiteralTokenValue(null, line.Substring(startIndex, fstCurrentIndex - startIndex));
+                    }
+                    catch (Exception)
+                    {
+                        token.LiteralValue = new IntegerLiteralTokenValue(null, long.MaxValue);
+                        this.tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, "Number is too big : " + line.Substring(startIndex, fstCurrentIndex - startIndex));
+                    }
 
                     if (BeSmartWithLevelNumber) { 
                         // Distinguish the special case of a LevelNumber
