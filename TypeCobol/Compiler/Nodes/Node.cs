@@ -166,7 +166,12 @@ namespace TypeCobol.Compiler.Nodes {
             /// <summary>
             /// Mark that this node declare a pointer that is used in an incrementation and need a redefine
             /// </summary>
-            NodeisIncrementedPointer = 0x01 << 22
+            NodeisIncrementedPointer = 0x01 << 22,
+            /// <summary>
+            /// Mark that this node is declared inside a procedure or function
+            /// </summary>
+            InsideProcedure = 0x01 << 23
+
 
 
         };
@@ -206,6 +211,8 @@ namespace TypeCobol.Compiler.Nodes {
                 }
             }
         }
+
+        public void CopyFlags(uint flag) { Flags = flag; }
 
         /// <summary>
         /// Used by the Generator to specify a Layout the current Node

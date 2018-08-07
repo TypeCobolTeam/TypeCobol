@@ -86,13 +86,23 @@ namespace TypeCobol.LanguageServer
                 var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
 
-                completionItem.insertText = typeIsPublic
-                    ? node is FunctionDeclaration
-                        ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
-                        : string.Format("{0}::{1}.", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
-                    : node is FunctionDeclaration
-                        ? type.Name 
-                        : type.Name + ".";
+                if (!(node is FunctionDeclaration))
+                    if (typeIsPublic)
+                    {
+                        completionItem.insertText =
+                            //Check if last element is of type PeriodSperator (ie : a dot), so the completion does not make a duplicate
+                            (node.CodeElement.ConsumedTokens.Last().TokenType == TokenType.PeriodSeparator)
+                                ? $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}" 
+                                : $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}.";
+                    }
+                    else
+                    {
+                        completionItem.insertText =
+                            //Check if last element is of type PeriodSperator (ie : a dot), so the completion does not make a duplicate
+                            (node.CodeElement.ConsumedTokens.Last().TokenType == TokenType.PeriodSeparator)
+                                ? completionItem.insertText = type.Name
+                                : completionItem.insertText = type.Name + ".";
+                    }
 
                 completionItem.kind = typeIsIntrinsic ? CompletionItemKind.IntrinsicType : CompletionItemKind.Class;
                 completionItems.Add(completionItem);

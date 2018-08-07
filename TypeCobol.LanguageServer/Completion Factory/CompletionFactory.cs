@@ -233,8 +233,6 @@ namespace TypeCobol.LanguageServer
                         completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
                 if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InoutParameters.Count - 1))
                         completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
-                if (lastSignificantToken.TokenType == TokenType.OUTPUT && alreadyGivenParametersCount == (procedureSignatureContext.Profile.OutputParameters.Count - 1))
-                    completionItems.ForEach(ci => ci.insertText += ".");
             }
             else
             {
@@ -245,8 +243,6 @@ namespace TypeCobol.LanguageServer
                         completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
                 if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procParams.Count() - 1))
                     completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
-                if (lastSignificantToken.TokenType == TokenType.OUTPUT && alreadyGivenParametersCount == (procParams.Count() - 1))
-                    completionItems.ForEach(ci => ci.insertText += ".");
             }
 
             return completionItems;
@@ -373,7 +369,7 @@ namespace TypeCobol.LanguageServer
                         {
                             var typeChildren = GetTypeChildrens(node.SymbolTable, variable);
                             if (typeChildren != null)
-                                children.AddRange(typeChildren.Where(t => t.Name != null));
+                                children.AddRange(typeChildren.Where(t => t.Name != null || t.Children.Where(u => u.Name != null) != null));
                         }
 
                         var computedChildrenList = new List<Node>();
