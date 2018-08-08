@@ -108,27 +108,15 @@
       <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
     </Antlr4>
     <None Include="AntlrGrammar\CobolExpressions.g4" />
-    <None Include="AntlrGrammar\CobolProgramClass.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </None>
     <None Include="AntlrGrammar\CobolWords.g4" />
     <Antlr4 Include="AntlrGrammar\CodeElements.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
-    <None Include="AntlrGrammar\ProgramClass.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </None>
     <Antlr4 Include="AntlrGrammar\TypeCobolCodeElements.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
-    <None Include="AntlrGrammar\TypeCobolProgram.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </None>
     <None Include="App.config" />
     <EmbeddedResource Include="Compiler\Diagnostics\Resources\DiagnosticMessages.csv" />
     <None Include="Compiler\CupParser\EmptyTypeCobolProgram.cup" />
