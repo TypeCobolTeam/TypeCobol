@@ -71,9 +71,9 @@ namespace TypeCobol.Test.Parser.Performance
                 TextChangedEvent textChangedEvent = new TextChangedEvent();
                 textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, 9211, newLine));
                 compiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
-
+                
                 // Execute a second (incremental) compilation
-                compiler.CompileOnce();     
+                compiler.CompileOnce();
                 //Accumulate results
                 stats.AverageTextUpdateTime                 += compiler.CompilationResultsForProgram.PerfStatsForText.LastRefreshTime;
                 stats.AverageScannerTime                    += compiler.CompilationResultsForProgram.PerfStatsForScanner.LastRefreshTime;
@@ -89,7 +89,12 @@ namespace TypeCobol.Test.Parser.Performance
             stats.AverageCodeElementParserTime          = (int) stats.AverageCodeElementParserTime / incrementalIterationNumber;
             stats.AverateTemporarySemanticsParserTime   = (int) stats.AverateTemporarySemanticsParserTime / incrementalIterationNumber;
             stats.AverageCrossCheckerParserTime         = (int) stats.AverageCrossCheckerParserTime / incrementalIterationNumber;
-
+            stats.AverageTotalProcessingTime = stats.AverageCodeElementParserTime +
+                                               stats.AverageCrossCheckerParserTime +
+                                               stats.AveragePreprocessorTime +
+                                               stats.AverageScannerTime +
+                                               stats.AverageTextUpdateTime +
+                                               stats.AverateTemporarySemanticsParserTime;
         }
 
         [TestMethod]
@@ -107,7 +112,6 @@ namespace TypeCobol.Test.Parser.Performance
 
             string filename = Path.GetFileName(textName);
             string path = Path.Combine(rootFolder, filename);
-            Stopwatch watch = new Stopwatch();
 
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
             int iterationNumber = 20;
@@ -125,7 +129,6 @@ namespace TypeCobol.Test.Parser.Performance
 
             for (int i = 0; i < iterationNumber; i++)
             {
-                watch.Start();
                 var document = new TypeCobol.Parser();
                 var options = new TypeCobolOptions
                 {
@@ -136,8 +139,6 @@ namespace TypeCobol.Test.Parser.Performance
                 };
                 document.Init(path, options, format, copiesFolder);
                 document.Parse(path);
-                watch.Stop();
-                stats.AverageTotalProcessingTime += watch.ElapsedMilliseconds;
                 stats.AverageTextUpdateTime += document.Results.PerfStatsForText.FirstCompilationTime;
                 stats.AverageScannerTime += document.Results.PerfStatsForScanner.FirstCompilationTime;
                 stats.AveragePreprocessorTime += document.Results.PerfStatsForPreprocessor.FirstCompilationTime;
@@ -155,7 +156,12 @@ namespace TypeCobol.Test.Parser.Performance
             stats.AverateTemporarySemanticsParserTime = (int)stats.AverateTemporarySemanticsParserTime / iterationNumber;
             stats.AverageCrossCheckerParserTime = (int)stats.AverageCrossCheckerParserTime / iterationNumber;
 
-            stats.AverageTotalProcessingTime = stats.AverageTotalProcessingTime / iterationNumber;
+            stats.AverageTotalProcessingTime = stats.AverageCodeElementParserTime +
+                                               stats.AverageCrossCheckerParserTime +
+                                               stats.AveragePreprocessorTime +
+                                               stats.AverageScannerTime +
+                                               stats.AverageTextUpdateTime +
+                                               stats.AverateTemporarySemanticsParserTime;
             stats.Line = documentWarmup.Results.CobolTextLines.Count;
             stats.TotalCodeElements = documentWarmup.Results.CodeElementsDocumentSnapshot.CodeElements.Count();
 
