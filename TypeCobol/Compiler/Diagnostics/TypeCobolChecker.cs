@@ -806,13 +806,10 @@ namespace TypeCobol.Compiler.Diagnostics
             if (statement != null)
             {
                 // Check receivers (incremented) 
-                IEnumerable<DataDefinition> receivers = new List<DataDefinition>();
-                //check if dico not null
-                if (node.StorageAreaWritesDataDefinition != null)
-                {
-                    receivers = node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2);
-                }
-                
+
+                var receivers = node?.StorageAreaWritesDataDefinition?.Values.Select(tuple => tuple.Item2);
+                if (receivers == null)
+                    return;
                 bool containsPointers = false;
                 bool allArePointers = true;
                 foreach (var receiver in receivers)

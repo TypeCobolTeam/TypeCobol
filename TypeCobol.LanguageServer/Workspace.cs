@@ -395,6 +395,10 @@ namespace TypeCobol.LanguageServer
             if (TypeCobolConfiguration.Telemetry)
                 AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
 
+            if (TypeCobolConfiguration.UseAntlrProgramParsing)
+                UseAntlrProgramParsing = true;
+
+
             if (TypeCobolConfiguration.ExecToStep >= ExecutionStep.Generate)
                 TypeCobolConfiguration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
 
