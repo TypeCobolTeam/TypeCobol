@@ -204,6 +204,7 @@ tokens
     WORKING_STORAGE,
     WRITE,
     XML,
+	GLOBAL_STORAGE,
     // Keywords - Special registers
     ADDRESS,
     DEBUG_CONTENTS,
@@ -562,7 +563,6 @@ tokens
     PRIVATE,
     IN_OUT,
 	STRICT,
-	GLOBAL_STORAGE,
 	QuestionMark
 }
 

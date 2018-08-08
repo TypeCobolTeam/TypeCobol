@@ -1,5 +1,5 @@
 ﻿--- Diagnostics ---
-Line 2[27,27] <27, Error, Syntax> - Syntax error : extraneous input 'y' expecting {separator, numeric literal, symbol, statement starting keyword, keyword, TypeCobol keyword} RuleStack=codeElement>moveStatement>moveCorresponding>dataItemReference,  OffendingSymbol=[27,27:y]<UserDefinedWord>
+Line 2[27,27] <27, Error, Syntax> - Syntax error : extraneous input 'y' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=codeElement>moveStatement>moveCorresponding>dataItemReference,  OffendingSymbol=[27,27:y]<UserDefinedWord>
 Line 4[20,20] <27, Error, Syntax> - Syntax error : mismatched input '1' expecting user defined word RuleStack=codeElement>moveStatement>moveCorresponding>dataItemReference>qualifiedDataName,  OffendingSymbol=[20,20:1]<IntegerLiteral>{1}
 --- Code Elements ---
 [[MoveStatement]] [1,4:MOVE]<MOVE> --> [27,27:y]<UserDefinedWord>
