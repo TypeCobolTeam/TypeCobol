@@ -1,0 +1,34 @@
+﻿       id division.
+       program-id. PgmA.
+       namespace banking::currentaccount.
+       data division.
+       working-storage section.
+       01 MyType typedef strict public pic X .  
+       procedure division.
+       declare foo public.
+       end-declare.
+       end program PgmA.
+
+
+       id division.
+       program-id. PgmB.
+       data division.
+       working-storage section.
+
+      *KO because there is no program prefix
+       01 var1 type MyType. 
+      *OK, because PgmA is in the same namespace
+       01 var2 type PgmA::MyType.
+      *OK, full namespace
+       01 var3 type banking::currentaccount::PgmA::MyType
+
+       procedure division.
+      *KO because there is no program prefix
+           call foo
+      *OK, because PgmA is in the same namespace
+           call PgmA::foo
+      *OK, full namespace
+           call banking::currentaccount::PgmA::foo
+
+       end program PgmB.
+       

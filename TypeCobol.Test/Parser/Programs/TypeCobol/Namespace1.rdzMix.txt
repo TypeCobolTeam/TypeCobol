@@ -1,0 +1,66 @@
+﻿Line 7[8,37] <27, Warning, Semantic> - Semantic Warning : using reference the current namespace
+Line 7[8,37] <27, Warning, Semantic> - Semantic Warning : using reference the current namespace
+Line 7[8,37] <27, Warning, Semantic> - Semantic Warning : multiple using reference the same namespace
+       id division.
+       program-id. PgmA.
+      *OK
+       namespace banking::currentaccount.
+      *Warning, same namespace as the current program
+       using banking::currentaccount.
+      *Warning, same namespace as the current program
+      *Also same namespace as another using clause 
+       using banking::currentaccount.
+       data division.
+       working-storage section.
+       01 MyType typedef strict public pic X .  
+
+
+
+Line 16[8,37] <27, Error, Syntax> - Syntax error : Nested program "PgmA1" cannot declare namespace
+       id division.
+       program-id. PgmA1.
+      *KO no namespace allowed on nested program
+       namespace banking::currentaccount::bill.
+      *OK
+       using banking::currentaccount.
+       end program PgmA1.
+
+       end program PgmA.
+
+
+
+Line 28[8,37] <27, Error, Syntax> - Syntax error : Stacked program "PgmB" cannot declare namespace
+Line 28[8,37] <27, Warning, Semantic> - Semantic Warning : using reference the current namespace
+Line 28[8,37] <27, Warning, Semantic> - Semantic Warning : using reference the current namespace
+Line 28[8,37] <27, Warning, Semantic> - Semantic Warning : multiple using reference the same namespace
+       id division.
+       program-id. PgmB.
+      *KO no namespace allowed on stacked program
+       namespace banking::currentaccount::bill.
+
+      *KO namespace doesn't exists
+       using banking::currentaccount::bill.
+      *Warning, same namespace as the current program
+       using banking::currentaccount.
+      *Warning, same namespace as the current program
+      *Also same namespace as another using clause 
+       using banking::currentaccount.
+       
+Line 41[8,47] <27, Error, Syntax> - Syntax error : Nested program "PgmB1" cannot declare namespace
+       id division.
+       program-id. PgmB1.
+      *KO no namespace allowed on nested program
+       namespace banking::currentaccount::bill.
+       end program PgmB1.
+
+       end program PgmB.
+       
+      
+
+Line 51[8,47] <27, Error, Syntax> - Syntax error : Stacked program "PgmC" cannot declare namespace
+       id division.
+       program-id. PgmC.
+      *KO no namespace allowed on stacked program
+       namespace banking::currentaccount::bill.
+       
+       end program PgmC.
