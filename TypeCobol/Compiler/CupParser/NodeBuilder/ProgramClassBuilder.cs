@@ -75,11 +75,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 {
                     var createdType = DataType.CreateBuiltIn(type);
                     TableOfIntrisic.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
-                    //Add children to dictionary in Intrinsic symbol table
-                    if (createdType.Children.Count != 0)
-                    {
-                        TableOfIntrisic.AddTypeDataDefinition(createdType);
-                    }
+                    //Add type and children to DataTypeEntries dictionary in Intrinsic symbol table
+                    TableOfIntrisic.AddTypeDataDefinition(createdType);
                 }
             }
         }
@@ -477,6 +474,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             SetCurrentNodeToTopLevelItem(typedef.LevelNumber);
             var node = new TypeDefinition(typedef);
             Enter(node);
+            // TCTYPE_GLOBAL_TYPEDEF - if node.CodeElement().IsGlobal
             var table = node.SymbolTable.GetTableFromScope(node.CodeElement().IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
             table.AddType(node);
 

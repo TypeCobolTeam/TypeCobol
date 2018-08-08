@@ -149,8 +149,8 @@ namespace TypeCobol.Compiler.CodeModel
             new Dictionary<string, List<DataDefinition>>(StringComparer.OrdinalIgnoreCase);
 
         //Dictionary for Type data entries
-        public IDictionary<QualifiedName, List<DataDefinition>> DataTypeEntries =
-            new Dictionary<QualifiedName, List<DataDefinition>>();
+        public IDictionary<string, List<DataDefinition>> DataTypeEntries =
+            new Dictionary<string, List<DataDefinition>>();
 
         internal void AddVariable([NotNull] DataDefinition symbol)
         {
@@ -414,16 +414,11 @@ namespace TypeCobol.Compiler.CodeModel
             TypeDefinition typeDefContext = null)
         {
             List<KeyValuePair<string, DataDefinition>> foundedVariables = new List<KeyValuePair<string, DataDefinition>>();
-             var candidates = GetCustomTypesSubordinatesNamed(name);
-                //Get variable name declared into typedef declaration
+            //Get variable name declared into typedef declaration
+            var candidates = GetCustomTypesSubordinatesNamed(name.Head);
+            //Get all variables that corresponds to the given head of QualifiedName    
             candidates.AddRange(GetVariables(name.Head));
-                //Get all variables that corresponds to the given head of QualifiedName
-
-            if (!candidates.Distinct().Any())
-            {
-                //if there are no candidates, the rest of the checks are not made so we return directly to gain speed
-                return foundedVariables;
-            }
+            
             var found = new List<DataDefinition>();
             int foundCount = 0;
             var completeQualifiedNames = new List<List<string>>();
@@ -613,7 +608,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
         /// <param name="name">Name of items we search for</param>
         /// <returns>Direct or indirect subordinates of a custom type</returns>
-        private List<DataDefinition> GetCustomTypesSubordinatesNamed(QualifiedName name)
+        private List<DataDefinition> GetCustomTypesSubordinatesNamed(string name)
         {
             var foundDataDef = new List<DataDefinition>();
 
@@ -641,10 +636,11 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="name">QualifiedName</param>
         /// <param name="table">SymbolTable that can have the searched DataDefinition</param>
         /// <returns>List of found DataDefinitions that correspond to the passed name</returns>
-        private static IEnumerable<DataDefinition> GetCustomTypesFromSymbolTable(QualifiedName name, SymbolTable table)
+        private static IEnumerable<DataDefinition> GetCustomTypesFromSymbolTable(string name, SymbolTable table)
         {
-            //match only last part of the qualified name - the most specific one regardless of the case
-            return table.DataTypeEntries.Where(elem => elem.Key.ToArray().Last().Equals(name.ToArray().Last(),StringComparison.OrdinalIgnoreCase)).SelectMany(def => def.Value);
+            List<DataDefinition> dataDef = new List<DataDefinition>();
+            table.DataTypeEntries.TryGetValue(name.ToLowerInvariant(), out dataDef);
+            return dataDef??new List<DataDefinition>();
         }
 
         /// <summary>
@@ -653,7 +649,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="symbolTable">Top SymbolTable</param>
         /// <param name="name">name to search for</param>
         /// <returns>List of found DataDefinition</returns>
-        private static IEnumerable<DataDefinition> SeekSymbolTable(SymbolTable symbolTable, QualifiedName name)
+        private static IEnumerable<DataDefinition> SeekSymbolTable(SymbolTable symbolTable, string name)
         {
             var currSymbolTable = symbolTable;
             var datadefinitions = new List<DataDefinition>();
@@ -1185,24 +1181,12 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="symbol"></param>
         private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node
         {
-            string key = symbol.QualifiedName.Head;
-            List<T> found;
-            bool present = table.TryGetValue(key, out found);
-            if (!present)
-            {
-                found = new List<T>();
-                table.Add(key, found);
-            }
-            found.Add(symbol);
-        }
-
-        private void Add<T>([NotNull] IDictionary<QualifiedName, List<T>> table, [NotNull] T symbol) where T : Node
-        {
-            QualifiedName key = symbol.QualifiedName;
-            if (key == null)
+            //QualifiedName of symbol can be null - if we have a filler in the type definition
+            if (symbol.QualifiedName == null)
             {
                 return;
             }
+            string key = symbol.QualifiedName.Head.ToLowerInvariant();
             List<T> found;
             bool present = table.TryGetValue(key, out found);
             if (!present)
@@ -1213,7 +1197,7 @@ namespace TypeCobol.Compiler.CodeModel
             found.Add(symbol);
         }
 
-
+        
         /// <summary>
         /// Cobol has compile time binding for variables, sometimes called static scope.
         /// Within that, Cobol supports several layers of scope: Global and Program scope.

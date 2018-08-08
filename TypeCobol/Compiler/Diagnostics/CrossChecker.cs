@@ -120,7 +120,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     return
                         true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
                 }
-
+                //AsQueryable() - query that returns a sequence of values do not
+                //consume the target data until the query object is enumerated - also known as deferred execution 
                 var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null).AsQueryable();
                 var toVariableChildren = toVariable.Children.Where(c => c?.Name != null).AsQueryable();
 
