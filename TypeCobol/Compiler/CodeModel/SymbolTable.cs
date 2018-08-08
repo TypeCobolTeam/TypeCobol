@@ -323,33 +323,12 @@ namespace TypeCobol.Compiler.CodeModel
 
             bool redefinedVariableFound = false;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="predicate">Predicate to search variable(s)</param>
-        /// <param name="maximalScope">The maximal symboltable scope to search in</param>
-        /// <returns></returns>
-        public IEnumerable<DataDefinition> GetVariables(Expression<Func<DataDefinition, bool>> predicate, Scope maximalScope)
-        {
-            var foundedVariables = new List<DataDefinition>();
             while (!redefinedVariableFound && index >= 0)
             {
                 CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as DataDescriptionEntry ??
                                                               (CommonDataDescriptionAndDataRedefines)
                                                               (childrens[index].CodeElement as DataRedefinesEntry);
 
-            Scope currentScope = this.CurrentScope;
-            while (currentScope >= maximalScope)
-            {
-                if (currentScope == Scope.Namespace || currentScope == Scope.Intrinsic)
-                    throw new NotSupportedException(); //There is no variable stored in those scopes
-                var scopedTable = this.GetTableFromScope(currentScope);
-                if (scopedTable == null) { currentScope--; continue;}
-                var dataToSeek = scopedTable.DataEntries.Values.SelectMany(t => t);
-                var results = dataToSeek.AsQueryable().Where(predicate);
-                foundedVariables.AddRange(results);
-
-                currentScope--;
                 if (child != null && (child is DataDescriptionEntry || child is DataRedefinesEntry))
                 {
                     if (child.DataName != null &&
@@ -368,7 +347,7 @@ namespace TypeCobol.Compiler.CodeModel
             }
             return null;
         }
-        
+
 
         private IDictionary<string, List<DataDefinition>> GetDataDefinitionTable(SymbolTable symbolTable)
         {

@@ -170,7 +170,7 @@ namespace TypeCobol.Compiler.Nodes {
             /// <summary>
             /// Mark that this node is declared inside a procedure or function
             /// </summary>
-            InsideProcedure = 0x01 << 23
+            InsideProcedure = 0x01 << 23,
             /// <summary>
             /// Flag node belongs to Global Storage Section (usefull for DataDefinition)
             /// </summary>

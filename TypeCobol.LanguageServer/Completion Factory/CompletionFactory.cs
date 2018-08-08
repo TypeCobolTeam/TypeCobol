@@ -547,10 +547,9 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
                 {
-                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.Global);
+                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.GlobalStorage);
                 }
 
-                potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.GlobalStorage);
                 potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
             }
             else //Get all 

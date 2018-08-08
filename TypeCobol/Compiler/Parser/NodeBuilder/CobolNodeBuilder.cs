@@ -32,6 +32,7 @@ namespace TypeCobol.Compiler.Parser
         private bool _IsInsideLinkageSectionContext;
         private bool _IsInsideLocalStorageSectionContext;
         private bool _IsInsideFileSectionContext;
+        private bool _IsInsideGlobalStorageSection;
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -342,12 +343,14 @@ namespace TypeCobol.Compiler.Parser
             var terminal = context.GlobalStorageSectionHeader();
             var header = (GlobalStorageSectionHeader) terminal?.Symbol;
             Enter(new GlobalStorageSection(header), context, SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage));
+            _IsInsideGlobalStorageSection = true;
         }
 
         public override void ExitGlobalStorageSection(ProgramClassParser.GlobalStorageSectionContext context)
         {
             ExitLastLevel1Definition();
             Exit(); // Exit GlobalStorageSection
+            _IsInsideGlobalStorageSection = false;
         }
 
 

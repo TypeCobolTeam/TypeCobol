@@ -42,7 +42,8 @@ Line 18[8,49] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GL
         END-DECLARE.
 
        MOVE G-Date TO G-Date.
-Line 40[8,38] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar
+Line 40[8,38] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 
+Symbols found: GlobalStorageTest::DuplicatedVar | GlobalStorageTest::DuplicatedVar
        MOVE DuplicatedVar TO G-TechCtx.
 
        IDENTIFICATION DIVISION.
