@@ -475,9 +475,18 @@ namespace TypeCobol.Compiler.CupCommon
 
         /// <summary>
         /// Reset the Tokenizer
+        /// </summary>
+
+        public override void Reset()
+        {
+            Reset(true);
+        }
+
+        /// <summary>
+        /// Reset the Tokenizer
         /// <param name="bBaseAlso">true if the base class must be reset also.</param>
         /// </summary>
-        public new void Reset(bool bBaseAlso = true)
+        public void Reset(bool bBaseAlso = true)
         {
             if (bBaseAlso)
                 base.Reset();
