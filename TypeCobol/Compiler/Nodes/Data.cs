@@ -409,14 +409,6 @@ namespace TypeCobol.Compiler.Nodes {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
 
-        public new DataType DataType {
-            get
-            {
-                return _CodeElement.DataType;
-            }
-        }
-
-        public AlphanumericValue Picture { get { return _CodeElement.Picture; } }
         public IntegerValue LevelNumber { get { return _CodeElement.LevelNumber; } }
         public SymbolDefinition DataName { get { return _CodeElement.DataName; } }
 

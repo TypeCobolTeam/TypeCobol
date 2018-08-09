@@ -2,6 +2,7 @@
 
 using System.Linq;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen.Nodes {
 
@@ -70,7 +71,7 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 				_cache.Add(new TextLineSnapshot(-1, "    .", null));
 
                 var originalProcedure = this.Children?.FirstOrDefault()?.Parent?.Parent?.CodeElement as FunctionDeclarationHeader;
-                if (originalProcedure != null && originalProcedure.Visibility == AccessModifier.Private)
+                if (originalProcedure != null && originalProcedure.Visibility == AccessModifier.Private && this.GetChildren<Declaratives>().Count == 0)
                 {
                     var declarativesNode = this.Children.First().Parent.GetProgramNode().GetChildren<Compiler.Nodes.ProcedureDivision>().First().GetChildren<Compiler.Nodes.Declaratives>();
                     if (declarativesNode != null && declarativesNode.Count == 1)
