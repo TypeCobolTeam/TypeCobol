@@ -136,6 +136,7 @@
        PROCEDURE DIVISION
            .
       DDECLARATIVES.
+      DDECLARATION SECTION.
       DAFFICHAGE-PARAGRAPHE.
       D       display DEBUG-NAME
       D    .

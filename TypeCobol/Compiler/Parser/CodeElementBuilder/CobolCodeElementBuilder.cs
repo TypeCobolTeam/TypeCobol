@@ -235,29 +235,29 @@ namespace TypeCobol.Compiler.Parser
 		internal AuthoringProperties CreateAuthoringProperties(CodeElementsParser.AuthoringPropertiesContext context) {
 			var authoringProperties = new AuthoringProperties();
 			if (context.authorParagraph().Length > 0) {
-				var alphanumericValueContexts = context.authorParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.authorParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.Author = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			if (context.dateCompiledParagraph().Length > 0) {
-				var alphanumericValueContexts = context.dateCompiledParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.dateCompiledParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.DateCompiled = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			if (context.dateWrittenParagraph().Length > 0) {
-				var alphanumericValueContexts = context.dateWrittenParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.dateWrittenParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.DateWritten = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			if (context.installationParagraph().Length > 0) {
-				var alphanumericValueContexts = context.installationParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.installationParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.Installation = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			if (context.securityParagraph().Length > 0) {
-				var alphanumericValueContexts = context.securityParagraph().SelectMany(p => p.alphanumericValue6()).ToArray();
+				var alphanumericValueContexts = context.securityParagraph().SelectMany(p => p.CommentEntry()).ToArray();
 				authoringProperties.Security = CreateAlphanumericValues(alphanumericValueContexts);
 			}
 			return authoringProperties;
 		}
 
-		private AlphanumericValue[] CreateAlphanumericValues(CodeElementsParser.AlphanumericValue6Context[] contexts) {
+		private AlphanumericValue[] CreateAlphanumericValues(ITerminalNode[] contexts) {
 			AlphanumericValue[] alphanumericValues = new AlphanumericValue[contexts.Length];
 			for (int i = 0; i < contexts.Length; i++) {
 				alphanumericValues[i] = CobolWordsBuilder.CreateAlphanumericValue(contexts[i]);
@@ -510,9 +510,9 @@ namespace TypeCobol.Compiler.Parser
 				{
 					var currencySign = CobolWordsBuilder.CreateAlphanumericValue(currencySignContext.alphanumericValue1());
 					CharacterValue characterValue = null;
-					if (currencySignContext.characterValue1() != null)
+					if (currencySignContext.alphanumericLiteralToken() != null)
 					{
-						characterValue = CobolWordsBuilder.CreateCharacterValue(currencySignContext.characterValue1());
+						characterValue = CobolWordsBuilder.CreateCharacterValue(currencySignContext.alphanumericLiteralToken());
 					}
 					paragraph.CurrencySymbols.Add(currencySign, characterValue);
 				}
@@ -564,10 +564,11 @@ namespace TypeCobol.Compiler.Parser
 
 		private CharacterInCollatingSequence CreateCharacterInCollatingSequence(CodeElementsParser.CharacterInCollatingSequenceContext context) {
 			var chars = new CharacterInCollatingSequence();
-			if (context.characterValue2() != null) {
-				chars.CharacterValue = CobolWordsBuilder.CreateCharacterValue(context.characterValue2());
-			} else
-			if (context.ordinalPositionInCollatingSequence() != null) {
+			if (context.alphanumericLiteralToken() != null) {
+				chars.CharacterValue = CobolWordsBuilder.CreateCharacterValue(context.alphanumericLiteralToken());
+			} else if (context.figurativeConstant() != null) {
+				chars.CharacterValue = CobolWordsBuilder.CreateFigurativeConstat(context.figurativeConstant());
+			} else if (context.ordinalPositionInCollatingSequence() != null) {
 				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().IntegerLiteral());
 			}
 			return chars;

@@ -62,6 +62,11 @@ namespace TypeCobol.Compiler.AntlrUtils
                 input = "<unknown input>";
             }
             string msg = "no viable alternative at input " + EscapeWSAndQuote(input);
+
+            //TEMPORARY FIX until #554 is done 
+            if (input == "occurs")
+                msg = EscapeWSAndQuote(input) + " is not supported yet";
+
             return msg;
         }
 

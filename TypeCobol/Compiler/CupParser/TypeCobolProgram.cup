@@ -227,6 +227,7 @@ terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd FunctionDeclarationEnd;
 terminal TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement ProcedureStyleCall;
+terminal TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader GlobalStorageSectionHeader;
 terminal TypeCobol.Compiler.CodeElements.Program Program;
 
 /* Non terminals */
@@ -274,6 +275,7 @@ non terminal fileDescriptionEntry;
 non terminal fileDescriptionEntriesOpt;
 non terminal fileDescriptionEntries;
 non terminal fileSection;
+non terminal globalStorageSection;
 non terminal workingStorageSection;
 non terminal localStorageSection;
 non terminal linkageSection;
@@ -676,11 +678,13 @@ dataDivision ::=
 	DataDivisionHeader:ddh
 	{: my_parser.Builder.StartDataDivision(ddh); :}
 	fileSection
+	globalStorageSection
 	workingStorageSection
 	localStorageSection
 	linkageSection
 	{: my_parser.Builder.EndDataDivision(); :}
 //|	error FileSectionHeader
+//| error GlobalStorageSection
 //|	error WorkingStorageSectionHeader
 //|	error LocalStorageSectionHeader
 //|	error LinkageSectionHeader
@@ -722,6 +726,14 @@ workingStorageSection ::= /*empty*/
 	{: my_parser.Builder.StartWorkingStorageSection(wssh); :}
 	  storageEntries
 	{: my_parser.Builder.EndWorkingStorageSection(); :}
+	;
+
+	globalStorageSection ::= /*empty*/
+	{:  :}
+	| GlobalStorageSectionHeader:gssh 
+	{: my_parser.Builder.StartGlobalStorageSection(gssh); :}
+	  storageEntries
+	{: my_parser.Builder.EndGlobalStorageSection(); :}
 	;
 
 storageEntries ::= /*empty*/
@@ -867,12 +879,12 @@ declarativesSections ::= declarativesSection
 	;
 
 declarativesSection ::= 
-	SectionHeader 
+	sectionHeader
 	UseStatement
-	{:  :}
-	| SectionHeader
+	{: my_parser.Builder.EndSection(); :}
+	| sectionHeader
 	UseStatement paragraphs
-	{:  :}	
+	{: my_parser.Builder.EndSection(); :}
 	;
 
 sections ::= section

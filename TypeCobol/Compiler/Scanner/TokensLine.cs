@@ -123,7 +123,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         internal void AddDiagnostic(MessageCode messageCode, Token token, params object[] messageArgs)
         {
-            Diagnostic diag = new TokenDiagnostic(messageCode, token, this.LineIndex, messageArgs);
+            Diagnostic diag = new TokenDiagnostic(messageCode, token, token.Line, messageArgs);
             if(diag.Info.Severity == Severity.Error)
             {
                 token.HasError = true;

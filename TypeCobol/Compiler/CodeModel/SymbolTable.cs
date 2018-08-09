@@ -271,7 +271,7 @@ namespace TypeCobol.Compiler.CodeModel
                 currentTable = currentTable.EnclosingScope;
 
             }
-
+            
             return foundedVariables;
         }
 
@@ -286,13 +286,7 @@ namespace TypeCobol.Compiler.CodeModel
 
             if (variable.DataType != null && variable.DataType != DataType.Boolean && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
             {
-                var types = GetTypes(t => t.DataType == variable.DataType, new List<Scope>
-                {
-                    Scope.Declarations,
-                    Scope.Global,
-                    Scope.Intrinsic,
-                    Scope.Namespace
-                });
+                var types = GetTypes(t => t.DataType == variable.DataType, Scope.Intrinsic);
 
                 foreach (var type in types)
                 {
@@ -353,7 +347,7 @@ namespace TypeCobol.Compiler.CodeModel
             }
             return null;
         }
-        
+
 
         private IDictionary<string, List<DataDefinition>> GetDataDefinitionTable(SymbolTable symbolTable)
         {
@@ -867,31 +861,36 @@ namespace TypeCobol.Compiler.CodeModel
             return found;
         }
 
-        public IEnumerable<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, List<Scope> scopes)
+        public IEnumerable<TypeDefinition> GetTypes(Expression<Func<TypeDefinition, bool>> predicate, Scope maximalScope)
         {
             var foundedTypes = new List<TypeDefinition>();
-            
-            foreach (var scope in scopes)
+
+            Scope currentScope = this.CurrentScope;
+            while (currentScope >= maximalScope)
             {
-                var dataToSeek = this.GetTableFromScope(scope).Types.Values.SelectMany(t => t);
-                if (scope == Scope.Namespace)
+                var scopedTable = this.GetTableFromScope(currentScope);
+                if (scopedTable == null) { currentScope--; continue; }
+                var dataToSeek = scopedTable.Types.Values.SelectMany(t => t);
+                if (currentScope == Scope.Namespace)
                 {
                     //For namespace scope, we need to browse every program
-                    dataToSeek = this.GetTableFromScope(scope)
+                    dataToSeek = scopedTable
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
                                     .Types.Values.SelectMany(t => t));
 
-                    dataToSeek = dataToSeek.Concat(this.GetTableFromScope(scope)
+                    dataToSeek = dataToSeek.Concat(scopedTable
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Global)
                                     .Types.Values.SelectMany(t => t)));
                 }
 
                 var results = dataToSeek.AsQueryable().Where(predicate);
 
-                if (scope == Scope.Intrinsic || scope == Scope.Namespace)
+                if (currentScope == Scope.Intrinsic || currentScope == Scope.Namespace)
                     results = results.Where(tp => (tp.CodeElement as DataTypeDescriptionEntry) != null && (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public);
 
                 foundedTypes.AddRange(results);
+
+                currentScope--;
             }
 
             return foundedTypes.Distinct();
@@ -976,27 +975,31 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
 
-        public IEnumerable<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, List<Scope> scopes)
+        public IEnumerable<FunctionDeclaration> GetFunctions(Expression<Func<FunctionDeclaration, bool>> predicate, Scope maximalScope)
         {
             var foundedFunctions = new List<FunctionDeclaration>();
 
-            foreach (var scope in scopes)
+            Scope currentScope = this.CurrentScope;
+            while (currentScope >= maximalScope)
             {
-                var dataToSeek = this.GetTableFromScope(scope).Functions.Values.SelectMany(t => t);
-                if (scope == Scope.Namespace)
+                var scopedTable = this.GetTableFromScope(currentScope);
+                var dataToSeek = scopedTable.Functions.Values.SelectMany(t => t);
+                if (currentScope == Scope.Namespace)
                 {
                     //For namespace scope, we need to browse every program
-                    dataToSeek = this.GetTableFromScope(scope)
+                    dataToSeek = scopedTable
                                     .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
                                     .Functions.Values.SelectMany(t => t));
                 }
 
                 var results = dataToSeek.AsQueryable().Where(predicate);
 
-                if (scope == Scope.Intrinsic || scope == Scope.Namespace)
+                if (currentScope == Scope.Intrinsic || currentScope == Scope.Namespace)
                     results = results.Where(tp => (tp.CodeElement as FunctionDeclarationHeader) != null && (tp.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public);
 
                 foundedFunctions.AddRange(results);
+
+                currentScope--;
             }
 
             return foundedFunctions.Distinct();
@@ -1200,7 +1203,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// Cobol has compile time binding for variables, sometimes called static scope.
         /// Within that, Cobol supports several layers of scope: Global and Program scope.
         ///
-        /// TypeCobol has Intrisic scope used for standard library types and variables.
+        /// TypeCobol has Intrinsic scope used for standard library types and variables.
         /// TypeCobol has Function scope used for types and variables declared inside a function.
         /// </summary>
         public enum Scope
@@ -1214,6 +1217,16 @@ namespace TypeCobol.Compiler.CodeModel
             /// Namespace scope is a specific to TypeCobol. It registers all the different parsed programs. 
             /// </summary>
             Namespace,
+
+            /// <summary>
+            /// GlobalStorage scope is TypeCobol specific. It will store all the DataEntry data are decalred inside a GLOBAL-STORAGE SECTION
+            /// These variables will be accessible by all the nested programs. All the procedures will also have access to these variables. 
+            /// Issue #805
+            /// SymbolTable Enclosing Scopes allows to respect the rules : 
+            ///     - GLOBALSS_RANGE 
+            ///     - GLOBALSS_NOT_FOR_STACKED 
+            /// </summary>
+            GlobalStorage,
 
             /// <summary>
             /// Variables and TYPEDEF declared in DATA DIVISION as GLOBAL are visible

@@ -4,6 +4,14 @@
 
        DATA DIVISION.
        Working-STORAGE SECTION.
+       01 TC-IRLLBIRL pic X(08) value 'IRLLBIRL'.
+       01 TC-Call          PIC X VALUE 'T'.
+           88 TC-FirstCall  VALUE 'T'.
+           88 TC-NthCall    VALUE 'F'
+                            X'00' thru 'S'
+                            'U' thru X'FF'.
+
+                               
        01 MyPicVar PIC X(10).
       *01 IRLTest TYPE IRLLBIRL::Irl.
        01 IRLTest.
@@ -18,10 +26,72 @@
            06 Dec.
              07 I PIC X(02).
                                      
+      *01 SpanArrayVar TYPE IRLLBIRL::SpannArray.
+       01 SpanArrayVar.
+           02 span.
+                                                 
+       01 AlphaNum PIC X(01).
+       LINKAGE SECTION.
+      *Common to all librairies used by the program.
+       01 TC-Library-PntTab.
+          05 TC-Library-PntNbr          PIC S9(04) COMP.
+          05 TC-Library-Item OCCURS 1000
+                               DEPENDING ON TC-Library-PntNbr
+                               INDEXED   BY TC-Library-Idx.
+              10 TC-Library-Item-Idt      PIC X(08).
+              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+
+      *IRLLBIRL::ToSpan
+       01 TC-IRLLBIRL-abf66ff1-Item.
+          05 TC-IRLLBIRL-abf66ff1-Idt PIC X(08).
+          05 TC-IRLLBIRL-abf66ff1 PROCEDURE-POINTER.
+
 
        PROCEDURE DIVISION.
+      *
+           PERFORM TC-INITIALIZATIONS
+
+                          
       *MOVE MyPicVar TO IRLTest::IrlQty::Dec::I.
        MOVE MyPicVar TO I OF Dec OF IrlQty OF IRLTest.
       *MOVE MyGroup::IRLQty::Dec::I TO MyPicVar.
        MOVE I OF Dec OF IRLQty OF MyGroup TO MyPicVar.
+      *CALL IRLLBIRL::ToSpan INPUT AlphaNum OUTPUT SpanArrayVar::span.
+       IF ADDRESS OF TC-IRLLBIRL-abf66ff1-Item = NULL
+               PERFORM TC-LOAD-POINTERS-IRLLBIRL
+           ELSE
+               IF TC-IRLLBIRL-abf66ff1-Idt not = 'abf66ff1'
+                   PERFORM TC-LOAD-POINTERS-IRLLBIRL
+               END-IF
+           END-IF
+           CALL TC-IRLLBIRL-abf66ff1 USING
+                                 AlphaNum
+                    by reference span IN SpanArrayVar
+           end-call
+                                                                     .
+      *=================================================================
+       TC-INITIALIZATIONS.
+      *=================================================================
+            IF TC-FirstCall
+                 SET TC-NthCall TO TRUE
+                 SET ADDRESS OF TC-IRLLBIRL-abf66ff1-Item  TO NULL
+            END-IF
+            .
+      *=================================================================
+        TC-LOAD-POINTERS-IRLLBIRL.
+      *=================================================================
+            CALL 'ZCALLPGM' USING TC-IRLLBIRL
+            ADDRESS OF TC-Library-PntTab
+            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
+            UNTIL TC-Library-Idx > TC-Library-PntNbr
+                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
+                WHEN 'abf66ff1'
+                     SET ADDRESS OF
+                     TC-IRLLBIRL-abf66ff1-Item
+                     TO ADDRESS OF
+                     TC-Library-Item(TC-Library-Idx)
+                END-EVALUATE
+            END-PERFORM
+            .
+
        END PROGRAM PGM.

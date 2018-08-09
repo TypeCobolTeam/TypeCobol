@@ -10,7 +10,7 @@ Line 60[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis
 --- Program ---
 PROGRAM: DVZF0OS3 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   MyBoolean:BOOL
   var1Small:SmallInt
@@ -18,7 +18,7 @@ PROGRAM: DVZF0OS3 common:False initial:False recursive:False
   floatVar:Float
   var1:toto
   var2:DVZF0OS3bis.toto
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   SmallInt:SmallInt
   Integer:Integer
@@ -26,7 +26,7 @@ PROGRAM: DVZF0OS3 common:False initial:False recursive:False
   Real:Real
   Float:Float
   SmallChar:SmallChar
---- Intrinsic:Namespace:Global
+--- Intrinsic:Namespace:GlobalStorage:Global
 -- DATA --------
   var3:toto
 -- TYPES -------

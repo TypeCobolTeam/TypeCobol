@@ -310,6 +310,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] DataDivision dataDivision);
         bool Visit([NotNull] FileSection fileSection);
         bool Visit([NotNull] FileDescriptionEntryNode fileDescriptionEntryNode);
+        bool Visit([NotNull] GlobalStorageSection globalStorageSection);
         bool Visit([NotNull] WorkingStorageSection workingStorageSection);
         bool Visit([NotNull] LocalStorageSection localStorageSection);
         bool Visit([NotNull] LinkageSection linkageSection);
@@ -1211,6 +1212,10 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit(FileDescriptionEntryNode fileDescriptionEntryNode) {
+            return true;
+        }
+
+        public virtual bool Visit(GlobalStorageSection globalStorageSection) {
             return true;
         }
 

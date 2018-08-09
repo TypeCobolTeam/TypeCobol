@@ -166,7 +166,16 @@ namespace TypeCobol.Compiler.Nodes {
             /// <summary>
             /// Mark that this node declare a pointer that is used in an incrementation and need a redefine
             /// </summary>
-            NodeisIncrementedPointer = 0x01 << 22
+            NodeisIncrementedPointer = 0x01 << 22,
+            /// <summary>
+            /// Mark that this node is declared inside a procedure or function
+            /// </summary>
+            InsideProcedure = 0x01 << 23,
+            /// <summary>
+            /// Flag node belongs to Global Storage Section (usefull for DataDefinition)
+            /// </summary>
+            GlobalStorageSection = 0x01 << 24,
+
 
 
         };
@@ -207,6 +216,8 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        public void CopyFlags(uint flag) { Flags = flag; }
+
         /// <summary>
         /// Used by the Generator to specify a Layout the current Node
         /// </summary>
@@ -227,15 +238,16 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_qualifiedName != null) return _qualifiedName;
 
-                string qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name)) {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     parent = parent.Parent;
                 }
+                qn.Reverse();
                 _qualifiedName = new URI(qn);
                 return _qualifiedName;
             }
@@ -250,13 +262,13 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_visualQualifiedName != null) return _visualQualifiedName;
 
-                var qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name))
                     {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
                         break;
@@ -264,7 +276,7 @@ namespace TypeCobol.Compiler.Nodes {
                         break;
                     parent = parent.Parent;
                 }
-
+                qn.Reverse();
                 _visualQualifiedName = new URI(qn);
                 return _visualQualifiedName;
             }

@@ -14,7 +14,7 @@ Line 39[12,58] <27, Error, Syntax> - Syntax error : Symbol bankAccountIntRef is 
 --- Program ---
 PROGRAM: B110PGM1 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   NOM-PGM:Alphanumeric
   date1:Numeric
@@ -22,7 +22,7 @@ PROGRAM: B110PGM1 common:False initial:False recursive:False
   maDateFormatInconnu:Numeric
   DVZE00:Alphanumeric
   DVZS00:Alphanumeric
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   InternalReference:InternalReference
 --- Intrinsic

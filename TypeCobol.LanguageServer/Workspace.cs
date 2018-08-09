@@ -351,7 +351,7 @@ namespace TypeCobol.LanguageServer
 
 
                 if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrSemanticTesting) return;
-                fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(fileCompiler.CompilerOptions.UseAntlrProgramParsing); //Produce the temporary snapshot before full cross check
+                fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
                 fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
             }
         }
@@ -394,6 +394,10 @@ namespace TypeCobol.LanguageServer
 
             if (TypeCobolConfiguration.Telemetry)
                 AnalyticsWrapper.Telemetry.TelemetryVerboseLevel = TelemetryVerboseLevel.Completion; //If telemetry arg is passed enable telemetry
+
+            if (TypeCobolConfiguration.UseAntlrProgramParsing)
+                UseAntlrProgramParsing = true;
+
 
             if (TypeCobolConfiguration.ExecToStep >= ExecutionStep.Generate)
                 TypeCobolConfiguration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
