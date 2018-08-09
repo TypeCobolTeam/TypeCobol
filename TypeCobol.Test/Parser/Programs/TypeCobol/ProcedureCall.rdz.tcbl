@@ -255,6 +255,8 @@
       *OK
        call proc1 input  MyToto
                   output MyToto.
+      *KO, Program not found error
+        CALL AbsentPgm::MyProc INPUT MyToto.
 
       * KO contains an unknown Type
        DECLARE PROCEDURE MyProc3 PRIVATE
