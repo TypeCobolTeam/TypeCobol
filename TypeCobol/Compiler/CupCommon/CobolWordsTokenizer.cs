@@ -486,7 +486,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// Reset the Tokenizer
         /// <param name="bBaseAlso">true if the base class must be reset also.</param>
         /// </summary>
-        public void Reset(bool bBaseAlso = true)
+        public void Reset(bool bBaseAlso)
         {
             if (bBaseAlso)
                 base.Reset();
