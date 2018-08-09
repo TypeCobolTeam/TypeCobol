@@ -49,6 +49,7 @@ namespace TypeCobol.Compiler.Diagnostics
             TypedDeclarationChecker.OnNode(node);
             RenamesChecker.OnNode(node);
             ReadOnlyPropertiesChecker.OnNode(node);
+            GlobalStorageSectionChecker.OnNode(node);
 
             return true;
         }

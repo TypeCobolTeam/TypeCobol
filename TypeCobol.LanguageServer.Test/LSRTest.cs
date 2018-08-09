@@ -265,6 +265,13 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
         }
 #endif
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void GlobalStorageCompletion()
+        {
+            LSRTestHelper.Test("GlobalStorageCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
 #endregion
     }
 }

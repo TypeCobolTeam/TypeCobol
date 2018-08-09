@@ -8,14 +8,14 @@ Line 43[6,47] <27, Error, Syntax> - Syntax error : Symbol MNGGDate is not refere
 --- Program ---
 PROGRAM: EnclosingPgm common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   MyNotGlobalVar:Alphanumeric
   MyNotGlobalGroup:Alphanumeric
   MNGG1:Alphanumeric
   MNGG2:Alphanumeric
   MNGGDate:DATE
---- Intrinsic:Namespace:Global
+--- Intrinsic:Namespace:GlobalStorage:Global
 -- DATA --------
   MyGlobalVar:Alphanumeric
   MyGlobalGroup:Alphanumeric

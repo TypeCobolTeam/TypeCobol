@@ -36,13 +36,13 @@ Line 108[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not ref
 --- Program ---
 PROGRAM: MainProgram common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   dataMain1:Alphanumeric
 -- FUNCTIONS ---
   checkMain
         in: paramMain1:Alphanumeric
---- Intrinsic:Namespace:Global
+--- Intrinsic:Namespace:GlobalStorage:Global
 -- DATA --------
   dataMain2:Alphanumeric
 --- Intrinsic
