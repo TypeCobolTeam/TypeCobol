@@ -1,0 +1,44 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOZFCPT.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+            WITH DEBUGGING MODE
+            .
+       SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
+
+      *=================================================================
+       PROCEDURE DIVISION.
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D      USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D    display "in main program".
+      DEND DECLARATIVES.
+
+
+
+
+
+       declare procedure Dump.
+       procedure division.
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D      USE FOR DEBUGGING ON ALL PROCEDURES.
+      DTOTODump.
+      D    display "in Dump procedure".
+      DEND DECLARATIVES.
+           goback
+           .
+       end-declare.
+
+       declare procedure Dump2.
+       procedure division.
+           goback
+           .
+
+       end-declare.
+
+      *_________________________________________________________________
+       END PROGRAM TCOZFCPT.
