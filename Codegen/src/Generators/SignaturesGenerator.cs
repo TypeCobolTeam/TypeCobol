@@ -66,6 +66,10 @@ namespace TypeCobol.Codegen.Generators
             get { return false; }
         }
 
+        /// <summary>
+        /// CodeGen visitor can modify Node's children
+        /// </summary>
+        public override bool CanModifyChildrenNode => true;
 
         public override bool BeginNode(Node node)
         {
