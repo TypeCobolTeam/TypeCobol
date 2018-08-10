@@ -880,10 +880,13 @@ declarativesSections ::= declarativesSection
 
 declarativesSection ::= 
 	sectionHeader
-	UseStatement
-	{: my_parser.Builder.EndSection(); :}
+	UseStatement :us
+	{: my_parser.Builder.EnterUseStatement(us);
+	  my_parser.Builder.EndSection(); :}
 	| sectionHeader
-	UseStatement paragraphs
+	UseStatement :us
+	{: my_parser.Builder.EnterUseStatement(us); :} 
+	paragraphs
 	{: my_parser.Builder.EndSection(); :}
 	;
 

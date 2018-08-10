@@ -147,7 +147,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] WriteStatement writeStatement);
         bool Visit([NotNull] XmlGenerateStatement xmlGenerateStatement);
         bool Visit([NotNull] XmlParseStatement xmlParseStatement);
-
+        bool Visit([NotNull] Use useStatement);
 
         //Expressions
         bool Visit([NotNull] ReceivingStorageArea receivingStorageArea);
@@ -1394,6 +1394,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit([NotNull] IndexDefinition indexDefinition)
+        {
+            return true;
+        }
+
+        public bool Visit([NotNull] Use useStatement)
         {
             return true;
         }

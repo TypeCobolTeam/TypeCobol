@@ -9,6 +9,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using Analytics;
+using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -560,6 +561,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void EndDeclaratives(DeclarativesEnd end)
         {
             AttachEndIfExists(end);
+            Exit();
+        }
+
+        public virtual void EnterUseStatement(UseStatement useStatement)
+        {
+            Enter(new Use(useStatement), useStatement);
             Exit();
         }
 
