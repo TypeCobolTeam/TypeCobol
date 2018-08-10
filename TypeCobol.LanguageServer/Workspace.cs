@@ -351,7 +351,7 @@ namespace TypeCobol.LanguageServer
 
 
                 if (LsrTestOptions != LsrTestingOptions.NoLsrTesting && !IsLsrSemanticTesting) return;
-                fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(fileCompiler.CompilerOptions.UseAntlrProgramParsing); //Produce the temporary snapshot before full cross check
+                fileCompiler.CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //Produce the temporary snapshot before full cross check
                 fileCompiler.CompilationResultsForProgram.RefreshProgramClassDocumentSnapshot(); //Do a Node phase
             }
         }

@@ -11,7 +11,7 @@ Line 106[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A 
 --- Program ---
 PROGRAM: COLON common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   T1-A:Alphanumeric
   T1-B1:Alphanumeric
@@ -51,7 +51,7 @@ PROGRAM: COLON common:False initial:False recursive:False
   TEST-3
   TEST-4
   TEST-5
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   MyArray:MyArray
 --- Intrinsic

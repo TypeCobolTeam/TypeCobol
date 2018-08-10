@@ -1,0 +1,97 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. GlobalStorageTest.
+
+       DATA DIVISION.
+
+       GLOBAL-STORAGE SECTION.
+Line 7[8,41] <27, Error, Syntax> - Syntax error : The variable 'etdzefezf' can only be of level 01 or 77
+Line 7[8,41] <27, Error, Syntax> - Syntax error : Level 88 data must be declared inside a data from level 01 to 49.
+       88 etdzefezf         VALUE 'TRUE'.
+Line 8[12,19] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88
+       123 zefzefze         TYPE Bool.
+       01 G-Date            TYPE Date.
+       01 G-TechCtx         TYPE Bool.
+       01 DuplicatedVar     TYPE Bool.
+
+       01 MyGroup.
+      *Global clause is not authorized inside Global Storage
+Line 15[12,54] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.
+           05 ForbiddenGlobalVar     PIC x(10) GLOBAL.
+           88 zedzed                VALUE 'TEST'.
+      *External clause is not authorized inside Global Storage
+Line 18[8,49] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.
+       01 ForbiddenExternalVar   PIC 10 EXTERNAL.
+
+
+       WORKING-STORAGE SECTION.
+       01 DuplicatedVar     TYPE Bool.
+       01 MyGroup PIC X(10).
+           88 TestLevel VALUE "Test".
+
+       PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE MyProc PRIVATE
+           INPUT    myDate      TYPE DATE.
+       Data division.
+       WORKING-STORAGE Section.
+       01 TestCtx TYPE Bool.
+       PROCEDURE DIVISION.
+      *G-Date and G-TechCtx are accesible from GlobalStorage
+           MOVE G-Date TO myDate.
+           MOVE G-TechCtx TO TestCtx.
+        END-DECLARE.
+
+       MOVE G-Date TO G-Date.
+Line 40[8,38] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 
+Symbols found: GlobalStorageTest::DuplicatedVar | GlobalStorageTest::DuplicatedVar
+       MOVE DuplicatedVar TO G-TechCtx.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedProc.
+
+       DATA DIVISION.
+      *Global Storage Section cannot 
+      * be define inside nested program
+Line 48[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
+       GLOBAL-STORAGE SECTION.
+       WORKING-STORAGE SECTION.
+       01 MyDate TYPE Date.
+
+       PROCEDURE DIVISION.
+      *G-Date is accessible in nested from Global Storage
+       MOVE G-Date TO MyDate.
+       DECLARE PROCEDURE MyProc PRIVATE
+            INPUT    myDate      TYPE DATE.
+       Data division.
+       WORKING-STORAGE Section.
+       01 TestCtx TYPE Bool.
+       PROCEDURE DIVISION.
+      *G-Date and G-TechCtx are accessible 
+      * in nested procedure from Global Storage
+       MOVE G-Date TO myDate.
+       MOVE G-TechCtx TO TestCtx.
+       END-DECLARE.
+
+       END PROGRAM NestedProc.
+
+       END PROGRAM GlobalStorageTest.
+
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. StackedProg.
+
+       DATA DIVISION.
+      *Global Storage Section cannot 
+      * be define inside stacked program
+Line 78[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
+       GLOBAL-STORAGE SECTION.
+
+       WORKING-STORAGE SECTION.
+       01 MyDate TYPE Date.
+
+       PROCEDURE DIVISION.
+      *G-Date is not accessible in StackedProgram
+Line 85[8,28] <27, Error, Syntax> - Syntax error : Symbol G-Date is not referenced
+       MOVE G-Date TO MyDate.
+
+       END PROGRAM StackedProg.

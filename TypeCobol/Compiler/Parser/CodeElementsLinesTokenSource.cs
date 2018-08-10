@@ -210,6 +210,9 @@ namespace TypeCobol.Compiler.Parser
                     case CodeElementType.FileSectionHeader:
                         codeElement = new FileSectionHeader();
                         break;
+                    case CodeElementType.GlobalStorageSectionHeader:
+                        codeElement = new GlobalStorageSectionHeader();
+                        break;
                     case CodeElementType.WorkingStorageSectionHeader:
                         codeElement = new WorkingStorageSectionHeader();
                         break;

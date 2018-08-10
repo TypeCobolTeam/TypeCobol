@@ -210,6 +210,7 @@ terminal TypeCobol.Compiler.Scanner.Token WHEN;
 terminal TypeCobol.Compiler.Scanner.Token WORKING_STORAGE;
 terminal TypeCobol.Compiler.Scanner.Token WRITE;
 terminal TypeCobol.Compiler.Scanner.Token XML;
+terminal TypeCobol.Compiler.Scanner.Token GLOBAL_STORAGE;
 // Keywords - Special registers
 terminal TypeCobol.Compiler.Scanner.Token ADDRESS;
 terminal TypeCobol.Compiler.Scanner.Token DEBUG_CONTENTS;

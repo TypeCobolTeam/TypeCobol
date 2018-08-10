@@ -709,6 +709,7 @@ namespace TypeCobol.Compiler.CupCommon
                 case TokenType.WORKING_STORAGE:
                 case TokenType.WRITE:
                 case TokenType.XML:
+                case TokenType.GLOBAL_STORAGE:
                 // Keywords - Special registers
                 case TokenType.ADDRESS:
                 case TokenType.DEBUG_CONTENTS:

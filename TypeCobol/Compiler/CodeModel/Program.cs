@@ -51,9 +51,8 @@ namespace TypeCobol.Compiler.CodeModel
         /// True if the current program is contained in another program.
         /// </summary>
         public virtual bool IsNested => false;
-
         public virtual bool IsStacked => false;
-
+        public virtual bool IsMainProgram => true;
 
         // -- IDENTIFICATION DIVISION --
 
@@ -201,6 +200,7 @@ namespace TypeCobol.Compiler.CodeModel
 		}
 
         public override bool IsNested => true;
+        public override bool IsMainProgram => false;
 
         /// <summary>A nested program is a program that is contained in another program.</summary>
 		public Program ContainingProgram { get; private set; }
@@ -217,6 +217,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         public override bool IsStacked => true;
+        public override bool IsMainProgram => false;
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
