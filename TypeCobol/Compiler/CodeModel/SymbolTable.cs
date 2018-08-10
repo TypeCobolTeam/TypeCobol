@@ -150,7 +150,7 @@ namespace TypeCobol.Compiler.CodeModel
 
         //Dictionary for Type data entries
         public IDictionary<string, List<DataDefinition>> DataTypeEntries =
-            new Dictionary<string, List<DataDefinition>>();
+            new Dictionary<string, List<DataDefinition>>(StringComparer.OrdinalIgnoreCase);
 
         internal void AddVariable([NotNull] DataDefinition symbol)
         {
@@ -639,7 +639,7 @@ namespace TypeCobol.Compiler.CodeModel
         private static IEnumerable<DataDefinition> GetCustomTypesFromSymbolTable(string name, SymbolTable table)
         {
             List<DataDefinition> dataDef = new List<DataDefinition>();
-            table.DataTypeEntries.TryGetValue(name.ToLowerInvariant(), out dataDef);
+            table.DataTypeEntries.TryGetValue(name, out dataDef);
             return dataDef??new List<DataDefinition>();
         }
 
@@ -809,15 +809,32 @@ namespace TypeCobol.Compiler.CodeModel
                 Add(DataTypeEntries, data);
             }
 
-            //If type has children, add only the children
+            //If type has children, add the children
             foreach (var elem in data.Children)
             {
                 var childDataDefinition = elem as DataDefinition;
+                
                 if (childDataDefinition == null)
                 {
                     continue;
                 }
-                Add(DataTypeEntries, childDataDefinition);
+                //add child data definition
+                AddTypeChildDataDefinition(childDataDefinition);
+            }
+        }
+
+        public void AddTypeChildDataDefinition(DataDefinition data)
+        {
+            Add(DataTypeEntries, data);
+            foreach (var dataChild in data.Children)
+            {
+                var childDataDefinition = dataChild as DataDefinition;
+                if (childDataDefinition == null)
+                {
+                    continue;
+                }
+                //Continue to add further children
+                AddTypeChildDataDefinition(childDataDefinition);
             }
         }
 
@@ -1186,7 +1203,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 return;
             }
-            string key = symbol.QualifiedName.Head.ToLowerInvariant();
+            string key = symbol.QualifiedName.Head;
             List<T> found;
             bool present = table.TryGetValue(key, out found);
             if (!present)

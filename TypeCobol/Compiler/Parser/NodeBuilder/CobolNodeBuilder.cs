@@ -81,10 +81,7 @@ namespace TypeCobol.Compiler.Parser
                     var createdType = DataType.CreateBuiltIn(type);
                     TableOfIntrisic.AddType(createdType); //Add default TypeCobol types BOOLEAN and DATE
                     //Add children to dictionary in Intrinsic symbol table
-                    if (createdType.Children.Count != 0)
-                    {
-                        TableOfIntrisic.AddTypeDataDefinition(createdType);
-                    }
+                    TableOfIntrisic.AddTypeDataDefinition(createdType);
                 }
             }
         }
