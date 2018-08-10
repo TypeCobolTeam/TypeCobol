@@ -40,4 +40,15 @@
       * Arithmetic expression using variables
        SET pointer0::pntr Down BY (pointer0::counter + increment).
 
+      * Procedure
+       declare procedure PointerProcedure PRIVATE
+         input ptr pointer.
+  
+         data division.
+         working-storage section.
+         procedure division.
+             set ptr up by 1
+             goback
+             .
+         end-declare.
        END PROGRAM Pointers.

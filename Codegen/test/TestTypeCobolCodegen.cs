@@ -576,6 +576,15 @@ namespace TypeCobol.Codegen {
 	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifIndexedBy11") + ".rdz.tcbl", skeletons);
 	    }
 
+	    [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void TypedefQualifIndexedBy12()
+	    {
+	        var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifIndexedBy12") + ".rdz.tcbl", skeletons);
+	    }
+
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]
@@ -743,7 +752,15 @@ namespace TypeCobol.Codegen {
 	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithProcedures") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
 	    }
 
-	    
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void DeclarativesWithInstructionsWithinTest()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithInstructionsWithin") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
 
 #if EUROINFO_RULES
         [TestMethod]

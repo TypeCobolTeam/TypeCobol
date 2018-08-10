@@ -160,6 +160,16 @@ namespace CLI.Test
             CLITestHelper.ReadConsole("arguments_errors_3", ReturnCode.MultipleErrors);
         }
 
+        /// <summary>
+        /// The following test concernes cross compilaton of multiple source file.
+        /// These test is linked to issue #1020. Compose of 2 main programs depending on each other to be generated. 
+        /// </summary>
+        [TestMethod]
+        public void CrossCompilationSources()
+        {
+            CLITestHelper.Test("cross_compilation_sources", ReturnCode.Success);
+        }
+
     }
 
     public class CLITestHelper {

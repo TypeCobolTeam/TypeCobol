@@ -70,7 +70,17 @@ namespace TypeCobol.Compiler.File
         /// </summary>
         protected override Stream OpenInputStream()
         {
-            return new FileStream(FullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            try
+            {
+                return new FileStream(FullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+            catch (Exception)
+            {
+                //In case the Read openning failled try with ReadWrite
+                //If it fails again, let the new exception be thrown. 
+                return new FileStream(FullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite); 
+            }
+            
         }
 
         /// <summary>
