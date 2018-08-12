@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DiffPlex;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 
 namespace TypeCobol.Test
 {
@@ -20,24 +23,28 @@ namespace TypeCobol.Test
         public static void compareLines(string testName, string result, string expectedResult)
         {
             StringBuilder errors = new StringBuilder();
+            var linefaults = new List<int?>();
 
-            result = Regex.Replace(result, "(?<!\r)\n", "\r\n");
-            expectedResult = Regex.Replace(expectedResult, "(?<!\r)\n", "\r\n");
+            var d = new Differ();
+            var inlineBuilder = new InlineDiffBuilder(d);
+            var result1 = inlineBuilder.BuildDiffModel(result, expectedResult);
 
-            String[] expectedResultLines = expectedResult.Split('\r', '\n' );
-            String[] resultLines = result.Split('\r', '\n');
-
-            var linefaults = new List<int>();
-            for (int c = 0; c < resultLines.Length && c < expectedResultLines.Length; c++) {
-                if (expectedResultLines[c] != resultLines[c]) linefaults.Add(c/2+1);
+            foreach (var line in result1.Lines)
+            {
+                if (line.Type == ChangeType.Deleted)
+                    errors.Append(line.Text + "\n");
+                else if (line.Type == ChangeType.Inserted)
+                    linefaults.Add(line.Position);
             }
 
-            if (result != expectedResult)
+            if (errors.Length > 0)
             {
-                errors.Append("result != expectedResult  In test:" + testName)
-                      .AppendLine(" at line"+(linefaults.Count>1?"s":"")+": "+string.Join(",", linefaults));
-                errors.Append("=== RESULT ==========\n" + result + "====================");
-                throw new Exception(errors.ToString());
+                StringBuilder errorMessage = new StringBuilder();
+                errorMessage.Append("result != expectedResult  In test:" + testName)
+                          .AppendLine(" at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
+
+                errorMessage.Append(errors);
+                throw new Exception(errorMessage.ToString());
             }
         }
     }
