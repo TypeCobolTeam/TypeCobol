@@ -9,9 +9,15 @@ tcCodeElement:
 	  functionDeclarationHeader
 	| functionDeclarationEnd
 	| libraryCopy
+	| globalStorageSectionHeader
 	;
 
 
+// See Issue #805 GLOBAL-STORAGE SECTION
+// This is the rule for Global-Storage Section Header CodeElement. 
+// Rule - GLOBALSS
+globalStorageSectionHeader: 
+	GLOBAL_STORAGE SECTION PeriodSeparator;
 
 qualifiedParagraphNameReference: cobolQualifiedParagraphNameReference | tcQualifiedParagraphNameReference;
 cobolQualifiedParagraphNameReference: // was qualifiedParagraphNameReference
