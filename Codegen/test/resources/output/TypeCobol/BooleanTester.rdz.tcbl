@@ -47,11 +47,6 @@
       *    INPUT    NumericInput PIC S9(9) COMP-5.
 
 
-      *CALL MyProc INPUT ADDRESS OF MyBool.
-       CALL 'a278a8a5MyProc' USING
-                                 address of MyBool-value
-           end-call
-                                          .
       *CALL MyProc INPUT LENGTH OF MyBool.
        CALL 'a278a8a5MyProc' USING
                                  length of MyBool-value

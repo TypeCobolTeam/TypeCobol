@@ -1,0 +1,19 @@
+﻿--- Diagnostics ---
+Line 17[8,38] <27, Error, Syntax> - Syntax error : Function 'toto' expected parameter 'titi' of type Alphanumeric and received 'ADDRESS(var2)' of type Pointer 
+
+--- Program ---
+PROGRAM: CallAdrsOf common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Global:Declarations:Program
+-- DATA --------
+  myDate:DATE
+  var2:Alphanumeric
+-- FUNCTIONS ---
+  toto
+        in: titi:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

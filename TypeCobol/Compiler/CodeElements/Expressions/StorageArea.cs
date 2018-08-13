@@ -472,6 +472,7 @@ namespace TypeCobol.Compiler.CodeElements
 
                 DataType type = null;
                 var parameter = p.StorageAreaOrValue;
+		        var specialRegister = parameter.StorageArea as StorageAreaPropertySpecialRegister;
 		        if (parameter != null)
 		        {
                     if (parameter.IsLiteral)
@@ -482,6 +483,13 @@ namespace TypeCobol.Compiler.CodeElements
                         if (parameter.AlphanumericValue != null)
                             type = DataType.Alphanumeric;
                         else type = DataType.Unknown;
+                    }
+                    else if (specialRegister != null)
+                    {
+                        if (specialRegister.SpecialRegisterName.TokenType == TokenType.ADDRESS)
+                            return DataType.Pointer;
+                        if (specialRegister.SpecialRegisterName.TokenType == TokenType.LENGTH)
+                            return DataType.Numeric;
                     }
 		            else
 		            {
