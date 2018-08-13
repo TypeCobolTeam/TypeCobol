@@ -123,7 +123,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="NewTestsToFix\**" />
-    <Content Include="Parser\Programs\TypeCobol\NodeBuilder-UnexpectedChild.rdz-Nodes.txt" />
     <Content Include="ThirdParty\**" />
     <Content Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -139,7 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Parser\Programs\TypeCobol\NodeBuilder-UnexpectedChild.rdz.tcbl" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -64,7 +64,7 @@ PROGRAM: FunDeclare common:False initial:False recursive:False
   MyNOT
         in: x:BOOL
     return: y:BOOL
---- Intrinsic:Namespace:Global
+--- Intrinsic:Namespace:GlobalStorage:Global
 -- DATA --------
   g:Alphanumeric
 --- Intrinsic

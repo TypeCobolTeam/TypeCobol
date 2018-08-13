@@ -204,7 +204,7 @@ namespace TypeCobol.Compiler
         /// For instance : it's used to load all the symbols from every dependencies before running the cross check phase to resolve symbols.
         /// <param name="useAntlrProgramParsing">Shall ANTLR be used to parse TypeCobol Program, otherwise it will be CUP</param>
         /// </summary>
-        public void ProduceTemporarySemanticDocument(bool useAntlrProgramParsing)
+        public void ProduceTemporarySemanticDocument()
         {
             lock (lockObjectForTemporarySemanticDocument)
             {
@@ -222,10 +222,7 @@ namespace TypeCobol.Compiler
                     Dictionary<CodeElement, Node> nodeCodeElementLinkers = new Dictionary<CodeElement, Node>();
 
                     //TODO cast to ImmutableList<CodeElementsLine> sometimes fails here
-                    if (useAntlrProgramParsing)
-                        ProgramClassParserStep.ParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
-                    else
-                        ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
+                    ProgramClassParserStep.CupParseProgramOrClass(TextSourceInfo, ((ImmutableList<CodeElementsLine>)codeElementsDocument.Lines), CompilerOptions, CustomSymbols, perfStatsForParserInvocation, out root, out newDiagnostics, out nodeCodeElementLinkers);
 
                     // Capture the produced results
                     TemporaryProgramClassDocumentSnapshot = new TemporarySemanticDocument(codeElementsDocument, new DocumentVersion<ICodeElementsLine>(this), codeElementsDocument.Lines,  root, newDiagnostics, nodeCodeElementLinkers);

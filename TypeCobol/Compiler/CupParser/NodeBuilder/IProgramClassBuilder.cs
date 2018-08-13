@@ -223,6 +223,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void EndWorkingStorageSection();
 
         /// <summary>
+        /// Start a GlobalStorageSection
+        /// </summary>
+        /// <param name="header">GlobalStorageSectionHeader code element</param>
+        void StartGlobalStorageSection([NotNull] GlobalStorageSectionHeader header);
+
+        /// <summary>
+        /// End a GlobalStorageSection
+        /// </summary>
+        void EndGlobalStorageSection();
+
+        /// <summary>
         /// Start a LocalStorageSection
         /// </summary>
         /// <param name="header">LocalStorageSection Header code element</param>
@@ -340,6 +351,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// End an Exec Statement
         /// </summary>
         void EndExecStatement();
+
+        void EnterUseStatement(UseStatement useStatement);
 
         /// <summary>
         /// Continue Statement seen

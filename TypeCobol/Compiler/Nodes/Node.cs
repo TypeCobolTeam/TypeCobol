@@ -171,7 +171,16 @@ namespace TypeCobol.Compiler.Nodes {
             /// <summary>
             /// Mark that this node declare a pointer that is used in an incrementation and need a redefine
             /// </summary>
-            NodeisIncrementedPointer = 0x01 << 22
+            NodeisIncrementedPointer = 0x01 << 22,
+            /// <summary>
+            /// Mark that this node is declared inside a procedure or function
+            /// </summary>
+            InsideProcedure = 0x01 << 23,
+            /// <summary>
+            /// Flag node belongs to Global Storage Section (usefull for DataDefinition)
+            /// </summary>
+            GlobalStorageSection = 0x01 << 24,
+
 
 
         };
@@ -212,6 +221,8 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        public void CopyFlags(uint flag) { Flags = flag; }
+
         /// <summary>
         /// Used by the Generator to specify a Layout the current Node
         /// </summary>
@@ -232,15 +243,16 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_qualifiedName != null) return _qualifiedName;
 
-                string qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name)) {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     parent = parent.Parent;
                 }
+                qn.Reverse();
                 _qualifiedName = new URI(qn);
                 return _qualifiedName;
             }
@@ -255,13 +267,13 @@ namespace TypeCobol.Compiler.Nodes {
                 if (string.IsNullOrEmpty(Name)) return null;
                 if (_visualQualifiedName != null) return _visualQualifiedName;
 
-                var qn = Name;
+                List<string> qn = new List<string>() {Name};
                 var parent = this.Parent;
                 while (parent != null)
                 {
                     if (!string.IsNullOrEmpty(parent.Name))
                     {
-                        qn = parent.Name + "." + qn;
+                        qn.Add(parent.Name);
                     }
                     if (parent is FunctionDeclaration) //If it's a procedure, we can exit we don't need the program name
                         break;
@@ -269,7 +281,7 @@ namespace TypeCobol.Compiler.Nodes {
                         break;
                     parent = parent.Parent;
                 }
-
+                qn.Reverse();
                 _visualQualifiedName = new URI(qn);
                 return _visualQualifiedName;
             }
@@ -617,26 +629,43 @@ namespace TypeCobol.Compiler.Nodes {
         public bool AcceptASTVisitor(IASTVisitor astVisitor) {
             bool continueVisit = astVisitor.BeginNode(this) && VisitNode(astVisitor);
 
-            if (continueVisit && CodeElement != null)
+            if (continueVisit)
             {
-                CodeElement.AcceptASTVisitor(astVisitor);
+                CodeElement?.AcceptASTVisitor(astVisitor);
             }
 
             if (continueVisit) {
                 //To Handle concurrent modifications during traverse.
                 //Get the array of Children that must be traverse.
-                Node[] childrenNodes = children.ToArray();
-                foreach (Node child in childrenNodes)
+                if (astVisitor.CanModifyChildrenNode)
                 {
-                    if (!continueVisit && astVisitor.IsStopVisitingChildren)
-                    {
-                        break;
-                    }
-                    continueVisit = child.AcceptASTVisitor(astVisitor);                    
+                    //Make copy of  children array if the visitor can modify the children
+                    Node[] childrenNodes = children.ToArray();
+                    continueVisit = VisitChildrens(astVisitor, true, childrenNodes);
                 }
+                else
+                {
+                    continueVisit = VisitChildrens(astVisitor, true, children);
+                }
+                
             }
 
             astVisitor.EndNode(this);
+            return continueVisit;
+        }
+
+        private static bool VisitChildrens(IASTVisitor astVisitor, bool continueVisit, IEnumerable<Node> childrenNodes)
+        {
+            foreach (Node child in childrenNodes)
+            {
+                if (!continueVisit && astVisitor.IsStopVisitingChildren)
+                {
+                    break;
+                }
+
+                continueVisit = child.AcceptASTVisitor(astVisitor);
+            }
+
             return continueVisit;
         }
 

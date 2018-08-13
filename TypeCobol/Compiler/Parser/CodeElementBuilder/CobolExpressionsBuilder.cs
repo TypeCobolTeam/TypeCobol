@@ -623,12 +623,14 @@ namespace TypeCobol.Compiler.Parser
 						ConditionalExpression rightOperand = CreateConditionalExpression(context.conditionalExpression()[0]);
 						return new LogicalOperation(null, logicalOperator, rightOperand);
 					}
-					else
+					else if (context.conditionalExpression().Length > 1)
 					{
 						ConditionalExpression leftOperand = CreateConditionalExpression(context.conditionalExpression()[0]);
 						ConditionalExpression rightOperand = CreateConditionalExpression(context.conditionalExpression()[1]);
 						return new LogicalOperation(leftOperand, logicalOperator, rightOperand);
 					}
+                    else 
+                        return null;
 				}
 			}
 		}

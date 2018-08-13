@@ -297,6 +297,16 @@
         }
     }
 
+    public class Use : Node, CodeElementHolder<UseStatement>, Statement
+    {
+        public Use(UseStatement statement) : base(statement) { }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+    }
+
     public class Subtract: Node, CodeElementHolder<SubtractStatement>, Statement, VariableWriter {
 	    public Subtract(SubtractStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }

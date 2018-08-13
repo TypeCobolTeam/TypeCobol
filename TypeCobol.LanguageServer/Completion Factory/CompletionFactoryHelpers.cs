@@ -76,23 +76,34 @@ namespace TypeCobol.LanguageServer
                 bool typeIsPublic = false;
                 bool typeIsIntrinsic = type.IsFlagSet(Node.Flag.NodeIsIntrinsic);
                 if (enablePublicFlag)
+                {
+                    var declarationTable = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
                     typeIsPublic = ((DataTypeDescriptionEntry) type.CodeElement)?.Visibility == AccessModifier.Public
-                                   &&
-                                   !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
-                                         .Types.Values.Any(t => t.Contains(type))
-                                     //Ignore public if type is in the current program
-                                     || typeIsIntrinsic); //Ignore public if type is in intrinsic
+                                   && !(type.GetProgramNode() == node.GetProgramNode()  //Ignore public if type is in the current program
+                                    || typeIsIntrinsic); //Ignore public if type is in intrinsic
+                }
+                    
 
                 var typeDisplayName = typeIsPublic ? type.VisualQualifiedName.ToString() : type.Name;
                 var completionItem = new CompletionItem(typeDisplayName);
 
-                completionItem.insertText = typeIsPublic
-                    ? node is FunctionDeclaration
-                        ? string.Format("{0}::{1}", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
-                        : string.Format("{0}::{1}.", type.VisualQualifiedName.Tail, type.VisualQualifiedName.Head)
-                    : node is FunctionDeclaration
-                        ? type.Name 
-                        : type.Name + ".";
+                if (!(node is FunctionDeclaration))
+                    if (typeIsPublic)
+                    {
+                        completionItem.insertText =
+                            //Check if last element is of type PeriodSperator (ie : a dot), so the completion does not make a duplicate
+                            (node.CodeElement.ConsumedTokens.Last().TokenType == TokenType.PeriodSeparator)
+                                ? $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}" 
+                                : $"{type.VisualQualifiedName.Tail}::{type.VisualQualifiedName.Head}.";
+                    }
+                    else
+                    {
+                        completionItem.insertText =
+                            //Check if last element is of type PeriodSperator (ie : a dot), so the completion does not make a duplicate
+                            (node.CodeElement.ConsumedTokens.Last().TokenType == TokenType.PeriodSeparator)
+                                ? completionItem.insertText = type.Name
+                                : completionItem.insertText = type.Name + ".";
+                    }
 
                 completionItem.kind = typeIsIntrinsic ? CompletionItemKind.IntrinsicType : CompletionItemKind.Class;
                 completionItems.Add(completionItem);
@@ -139,8 +150,20 @@ namespace TypeCobol.LanguageServer
                 var completionItem =
                     new CompletionItem(string.Format("{0} {1} {2} {3}", procDisplayName, inputParams, inoutParams, outputParams));
                 completionItem.insertText = procIsPublic
-                    ? string.Format("{0}::{1}", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
-                    : proc.Name;
+                    ? inputParams != null
+                            ? string.Format("{0}::{1} INPUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                            : inoutParams != null
+                                ? string.Format("{0}::{1} IN-OUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                                : outputParams != null
+                                    ? string.Format("{0}::{1} OUTPUT", proc.VisualQualifiedName.Tail, proc.VisualQualifiedName.Head)
+                                    : proc.Name
+                    : inputParams != null
+                        ? proc.Name + " INPUT"
+                        : inoutParams != null
+                            ? proc.Name + " IN-OUT"
+                            : outputParams != null
+                                ? proc.Name + " OUTPUT"
+                                : proc.Name;
                 completionItem.kind = proc.Profile != null && proc.Profile.IsFunction ? CompletionItemKind.Function : CompletionItemKind.Method;
                 //Add specific data for eclipse completion & signatureHelper context
                 completionItem.data = new object[3];
@@ -170,9 +193,7 @@ namespace TypeCobol.LanguageServer
         public static CompletionItem CreateCompletionItemForVariable(DataDefinition variable, bool useQualifiedName = true)
         {
 
-            var qualifiedName = variable.VisualQualifiedName.ToString()
-                .Split(variable.VisualQualifiedName.Separator)
-                .Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
+            var qualifiedName = variable.VisualQualifiedName.Skip(variable.VisualQualifiedName.Count > 1 ? 1 : 0); //Skip Program Name
 
             var finalQualifiedName = qualifiedName.ToList();
 

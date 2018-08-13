@@ -8,7 +8,7 @@ Symbols found: VariableSeeking::MyVar1::MySimpleType::bla | VariableSeeking::MyV
 --- Program ---
 PROGRAM: VariableSeeking common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   Account1:Account
   Account2:Account
@@ -17,7 +17,7 @@ PROGRAM: VariableSeeking common:False initial:False recursive:False
   MyVar2:MySimpleType
   MySuperVar1:MySuperType
   MySuperVar2:MySuperType
---- Intrinsic:Namespace:Global:Declarations
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations
 -- TYPES -------
   Account:Account
   Account2:Account2

@@ -22,7 +22,7 @@ Line 21[8,22] <27, Error, Syntax> - Syntax error : Group item myVar contained th
 --- Program ---
 PROGRAM: LevelNumber common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   myVar:Alphanumeric
   myVar:Alphanumeric

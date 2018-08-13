@@ -121,14 +121,20 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
     public class URI : AbstractQualifiedName
     {
-        public string Value { get { return string.Join(_separator.ToString(), parts); } }
-        private List<string> parts;
+        public string Value { get { return this.ToString(); } }
+        private IEnumerable<string> parts;
+
+        public URI(IEnumerable<string> UriParts, char separator = '.')
+        {
+            parts = UriParts;
+            _separator = separator;
+        }
 
         public URI(string uri, char separator = '.')
         {
             if (uri == null) throw new System.ArgumentNullException("URI must not be null.");
             _separator = separator;
-            parts = uri.Split(this.Separator).ToList();
+            parts = uri.Split(this.Separator);
         }
 
         private char _separator;
@@ -147,8 +153,8 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
         {
             get
             {
-                if (parts.Count > 1)
-                    return new URI(string.Join(_separator.ToString(), parts.Take(parts.Count - 1)));
+                if (parts.Count() > 1)
+                    return new URI(parts.Take(parts.Count() - 1));
                 else
                     return null;
             }
@@ -162,6 +168,6 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
         public override bool IsExplicit { get { return false; } }
 
-        public override int Count { get { return parts.Count; } }
+        public override int Count { get { return parts.Count(); } }
     }
 }

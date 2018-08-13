@@ -244,7 +244,7 @@ namespace TypeCobol.Compiler
 
                 if (!(exec2Step > ExecutionStep.SyntaxCheck)) return;
 
-                CompilationResultsForProgram.ProduceTemporarySemanticDocument(useAntlrProgramParsing); //SemanticCheck
+                CompilationResultsForProgram.ProduceTemporarySemanticDocument(); //SemanticCheck
                 ExecutionStepEventHandler?.Invoke(this, new ExecutionStepEventArgs() { ExecutionStep = ExecutionStep.SemanticCheck });
 
                 if (!(exec2Step > ExecutionStep.SemanticCheck)) return;

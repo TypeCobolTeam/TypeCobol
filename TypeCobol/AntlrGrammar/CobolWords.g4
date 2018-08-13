@@ -204,6 +204,7 @@ tokens
     WORKING_STORAGE,
     WRITE,
     XML,
+	GLOBAL_STORAGE,
     // Keywords - Special registers
     ADDRESS,
     DEBUG_CONTENTS,
@@ -785,10 +786,6 @@ integerValue2: LevelNumber;
 
 numericValue: numericLiteralToken | numericFigurativeConstant;
 
-characterValue1: alphanumericLiteralToken;
-
-characterValue2: alphanumericLiteralToken | figurativeConstant;
-
 characterValue3: alphanumericOrNationalLiteralToken;
 
 characterValue4: alphanumericOrNationalLiteralToken | figurativeConstant;
@@ -800,12 +797,6 @@ alphanumericValue2: alphanumericOrNationalLiteralToken;
 alphanumericValue3: alphanumericOrNationalLiteralToken | figurativeConstant;
 
 alphanumericValue5: UserDefinedWord | alphanumericLiteralToken;
-
-alphanumericValue6: CommentEntry;
-
-alphanumericValue7: PictureCharacterString;
-
-alphanumericValue8: ExecStatementText;
 
 enumeratedValue1: UserDefinedWord;
 
@@ -851,10 +842,6 @@ symbolReference5: alphanumericValue5;
 
 // [TYPECOBOL] extension : rule modified to supportTYPE DATE (instead of TC-DATE or something)
 symbolReference12: UserDefinedWord | DATE;
-
-ambiguousSymbolReference1: alphanumericValue1;
-
-ambiguousSymbolReference4: UserDefinedWord;
 
 symbolDefinitionOrReference1: alphanumericValue1;
 
@@ -960,7 +947,7 @@ programNameReference3: UserDefinedWord;
 programEntryDefinition: symbolDefinition1;
 
 // [Type ambiguity] at this parsing stage
-programNameReferenceOrProgramEntryReference: ambiguousSymbolReference1;
+programNameReferenceOrProgramEntryReference: alphanumericValue1;
 
 // p252: Section-name
 // A user-defined word that identifies a section. A referenced
@@ -982,7 +969,7 @@ paragraphNameDefinition: SectionParagraphName;
 paragraphNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-paragraphNameReferenceOrSectionNameReference: ambiguousSymbolReference4;
+paragraphNameReferenceOrSectionNameReference: UserDefinedWord;
 
 // p103 : class-name
 // A user-defined word that identifies the class. class-name can optionally
@@ -1146,25 +1133,25 @@ dataNameDefinition: UserDefinedWord;
 dataNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrFileNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrFileNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrIndexNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrIndexNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrIndexNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrFileNameReference: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference: ambiguousSymbolReference4;
+dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrClassNameReference: UserDefinedWord;
 
 // p115 : condition-1, condition-2
 // Condition-names follow the rules for user-defined names. At least one
@@ -1181,7 +1168,7 @@ dataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOr
 conditionNameDefinition: UserDefinedWord;
 
 // [Type ambiguity] at this parsing stage
-conditionNameReferenceOrConditionForUPSISwitchNameReference: ambiguousSymbolReference4;
+conditionNameReferenceOrConditionForUPSISwitchNameReference: UserDefinedWord;
 
 // p194: index-name-1
 // Each index-name specifies an index to be created by the compiler for use

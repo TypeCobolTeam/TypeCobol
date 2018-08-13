@@ -169,7 +169,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 // Document cleared
-                if (contentChange.range == null)
+                if (contentChange.range == null || contentChange.rangeLength == -1)
                 {
                     //JCM: I have noticed that if the entire text has changed, is better to reload the entire file
                     //To avoid crashes.
@@ -187,7 +187,7 @@ namespace TypeCobol.LanguageServer
                     }
                 }
                 // Document updated
-                else
+                else if (fileCompiler.CompilationResultsForProgram.CobolTextLines.Count != 0)
                 {
                     // Get original lines text before change
                     string originalFirstLineText =
@@ -597,22 +597,16 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
                                     f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    new List<SymbolTable.Scope>()
-                                    {
-                                        SymbolTable.Scope.Declarations,
-                                        SymbolTable.Scope.Global
-                                    }));
+                                        SymbolTable.Scope.GlobalStorage
+                                    ));
                                 break;
                             }
                             case TokenType.TYPE:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
                                     t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    new List<SymbolTable.Scope>()
-                                    {
-                                        SymbolTable.Scope.Declarations,
-                                        SymbolTable.Scope.Global
-                                    }));
+                                        SymbolTable.Scope.GlobalStorage
+                                    ));
                                 break;
                             }
                             case TokenType.INPUT:
@@ -624,7 +618,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
                                     v => v.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    SymbolTable.Scope.Global));
+                                    SymbolTable.Scope.GlobalStorage));
                                 break;
                             }
                         }
@@ -684,12 +678,9 @@ namespace TypeCobol.LanguageServer
                 node.SymbolTable.GetFunctions(
                     p =>
                         p.Name.Equals(procedureName) ||
-                        p.QualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
-                    {
-                        SymbolTable.Scope.Declarations,
-                        SymbolTable.Scope.Intrinsic,
-                        SymbolTable.Scope.Namespace
-                    });
+                        p.QualifiedName.ToString().Equals(procedureName), 
+                        SymbolTable.Scope.Intrinsic
+                    );
             var signatureHelp = new SignatureHelp();
 
             if (calledProcedures == null)
@@ -867,37 +858,40 @@ namespace TypeCobol.LanguageServer
             List<CodeElement> ignoredCodeElements = new List<CodeElement>();
             int lineIndex = position.line;
             // Find the token located below the mouse pointer
-            while (codeElements.Count == 0)
+            if (fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines.Count != 0)
             {
-                var codeElementsLine =
-                    fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
-
-                if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
-                {
-                    //Ignore all the EndOfFile token 
-                    var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
-
-                    foreach (var tempCodeElement in tempCodeElements.Reverse())
+                while (codeElements.Count == 0)
                     {
-                        if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/
-                        ((t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)))
-                            ignoredCodeElements.Add(tempCodeElement);
-                        else
-                            codeElements.Add(tempCodeElement);
+                        var codeElementsLine =
+                            fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
+                        
+                        if (codeElementsLine != null && codeElementsLine.CodeElements != null && !(codeElementsLine.CodeElements[0] is SentenceEnd))
+                        {
+                            //Ignore all the EndOfFile token 
+                            var tempCodeElements = codeElementsLine.CodeElements.Where(c => c.ConsumedTokens.Any(t => t.TokenType != TokenType.EndOfFile));
+                            
+                            foreach (var tempCodeElement in tempCodeElements.Reverse())
+                            {
+                                if (!tempCodeElement.ConsumedTokens.Any(t => /*CompletionElligibleTokens.IsCompletionElligibleToken(t) &&*/
+                                ((t.Line == position.line + 1 && t.StopIndex + 1 <= position.character) || t.Line < position.line + 1)))
+                                    ignoredCodeElements.Add(tempCodeElement);
+                                else
+                                    codeElements.Add(tempCodeElement);
+                            }
+
+                            if (tempCodeElements.Any(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.PeriodSeparator && !(t is Compiler.AntlrUtils.MissingToken))))
+                                break;
+                        }
+
+                        lineIndex--; //decrease lineIndex to get the previous line of TypeCobol Tree.
                     }
+                    
+                    codeElements.AddRange(ignoredCodeElements);
+                    //Add the previously ignored Code Elements, may be they are usefull to help completion.
 
-                    if (tempCodeElements.Any(c => c.ConsumedTokens.Any(t => t.TokenType == TokenType.PeriodSeparator && !(t is Compiler.AntlrUtils.MissingToken))))
-                        break;
-                }
-
-                lineIndex--; //decrease lineIndex to get the previous line of TypeCobol Tree.
+                    if (!codeElements.Any(c => c.ConsumedTokens.Any(t => t.Line <= position.line + 1)))
+                        return null; //If nothing is found near the cursor we can't do anything
             }
-
-            codeElements.AddRange(ignoredCodeElements);
-            //Add the previously ignored Code Elements, may be they are usefull to help completion.
-
-            if (!codeElements.Any(c => c.ConsumedTokens.Any(t => t.Line <= position.line + 1)))
-                return null; //If nothing is found near the cursor we can't do anything
 
             //Create a list of CodeElementWrapper in order to loose the ConsumedTokens ref. 
             return codeElements.Select(c => new CodeElementWrapper(c));
