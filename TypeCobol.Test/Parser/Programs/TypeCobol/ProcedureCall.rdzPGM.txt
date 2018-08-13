@@ -61,8 +61,8 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
   MyProc
         in: myDate:?
   GetPtrFn
-        in: ptrFn:?
-        in: ptrPr:?
+        in: ptrFn:FunctionPointer
+        in: ptrPr:ProcedurePointer
   DuplicatedParams
         in: format:DATE
         in: format:Alphanumeric

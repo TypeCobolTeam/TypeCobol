@@ -81,7 +81,7 @@
 
       *CALL GetPtrFn
       *      INPUT funcPointer procPointer.
-       CALL 'd03c3701GetPtrFn' USING
+       CALL 'b50a1ec4GetPtrFn' USING
                                  funcPointer
                                  procPointer
            end-call
@@ -218,7 +218,7 @@
       *           ptrPr procedure-pointer.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. d03c3701GetPtrFn.
+       PROGRAM-ID. b50a1ec4GetPtrFn.
        DATA DIVISION.
        LINKAGE SECTION.
        01 ptrFn function-pointer.
@@ -228,7 +228,7 @@
                    BY REFERENCE ptrPr
            .
            CONTINUE.
-       END PROGRAM d03c3701GetPtrFn.
+       END PROGRAM b50a1ec4GetPtrFn.
       *
       *DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
       *_________________________________________________________________

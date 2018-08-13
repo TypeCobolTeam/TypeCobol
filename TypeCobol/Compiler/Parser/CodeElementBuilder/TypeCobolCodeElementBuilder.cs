@@ -301,10 +301,12 @@ namespace TypeCobol.Compiler.Parser
                 if (context.FUNCTION_POINTER() != null)
                 {
                     parameter.Usage = CreateDataUsageProperty(DataUsage.FunctionPointer, context.FUNCTION_POINTER());
+                    parameter.DataType = DataType.FunctionPointer;
                 }
                 else if (context.PROCEDURE_POINTER() != null)
                 {
                     parameter.Usage = CreateDataUsageProperty(DataUsage.ProcedurePointer, context.PROCEDURE_POINTER());
+                    parameter.DataType = DataType.ProcedurePointer;
                 }
                 else if (context.tcfuncParameterUsageClause() != null)
                 {

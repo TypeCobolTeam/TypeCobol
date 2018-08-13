@@ -148,6 +148,10 @@ namespace TypeCobol.Compiler.CodeElements
 		public static readonly DataType FloatingPoint      = new DataType("FloatingPoint");
 		public static readonly DataType Occurs             = new DataType("Array");
 	    public static readonly DataType Pointer            = new DataType("Pointer");
+	    public static readonly DataType ProcedurePointer   = new DataType("ProcedurePointer");
+	    public static readonly DataType FunctionPointer    = new DataType("FunctionPointer");
+	    public static readonly DataType ObjectReference    = new DataType("ObjectReference");
+	    public static readonly DataType Index              = new DataType("Index");
         // [TYPECOBOL]
         //Boolean is marked CobolLanguageLevel.TypeCobol instead of Cobol2002 because it has a special behavior (with move and set) 
         public static readonly DataType Boolean            = new DataType("BOOL", RestrictionLevel.STRONG, CobolLanguageLevel.TypeCobol);
