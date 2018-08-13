@@ -1,0 +1,75 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOZFCPT.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+            WITH DEBUGGING MODE
+            .
+       SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
+
+      *=================================================================
+       PROCEDURE DIVISION.
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D      USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D    display "in main program".
+      DEND DECLARATIVES.
+
+
+
+
+
+      *declare procedure Dump.
+
+      *declare procedure Dump2.
+
+
+      *_________________________________________________________________
+       END PROGRAM TCOZFCPT.
+      *
+      *declare procedure Dump.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. c1f451c9Dump.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+            WITH DEBUGGING MODE
+            .
+       SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
+       PROCEDURE DIVISION
+           .
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D      USE FOR DEBUGGING ON ALL PROCEDURES.
+      DTOTODump.
+      D    display "in Dump procedure".
+      DEND DECLARATIVES.
+           goback
+           .
+       END PROGRAM c1f451c9Dump.
+      *
+      *declare procedure Dump2.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. e4c075b4Dump2.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370
+            WITH DEBUGGING MODE
+            .
+       SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
+       PROCEDURE DIVISION
+           .
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D      USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D    display "in main program".
+      DEND DECLARATIVES.
+           goback
+           .
+       END PROGRAM e4c075b4Dump2.

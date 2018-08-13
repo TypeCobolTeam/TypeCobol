@@ -4,7 +4,7 @@ Line 17[8,38] <27, Error, Syntax> - Syntax error : Function 'toto' expected para
 --- Program ---
 PROGRAM: CallAdrsOf common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   myDate:DATE
   var2:Alphanumeric

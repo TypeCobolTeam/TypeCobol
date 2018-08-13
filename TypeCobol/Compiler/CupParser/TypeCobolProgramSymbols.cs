@@ -80,6 +80,7 @@ public class TypeCobolProgramSymbols {
   public const int FileControlEntry = 34;
   public const int IOControlEntry = 35;
   public const int ProcedureStyleCall = 125;
+  public const int GlobalStorageSectionHeader = 126;
   public const int DeclarativesHeader = 16;
   public const int EvaluateStatement = 52;
   public const int WriteStatement = 83;
@@ -123,7 +124,7 @@ public class TypeCobolProgramSymbols {
   public const int ExitMethodStatement = 54;
   public const int RewriteStatementEnd = 114;
   public const int ComputeStatement = 46;
-  public const int Program = 126;
+  public const int Program = 127;
   public const int SearchStatement = 74;
   public const int DivideStatement = 50;
   public const int NotOnSizeErrorCondition = 97;

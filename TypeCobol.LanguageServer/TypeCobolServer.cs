@@ -597,22 +597,16 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
                                     f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    new List<SymbolTable.Scope>()
-                                    {
-                                        SymbolTable.Scope.Declarations,
-                                        SymbolTable.Scope.Global
-                                    }));
+                                        SymbolTable.Scope.GlobalStorage
+                                    ));
                                 break;
                             }
                             case TokenType.TYPE:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
                                     t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    new List<SymbolTable.Scope>()
-                                    {
-                                        SymbolTable.Scope.Declarations,
-                                        SymbolTable.Scope.Global
-                                    }));
+                                        SymbolTable.Scope.GlobalStorage
+                                    ));
                                 break;
                             }
                             case TokenType.INPUT:
@@ -624,7 +618,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
                                     v => v.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    SymbolTable.Scope.Global));
+                                    SymbolTable.Scope.GlobalStorage));
                                 break;
                             }
                         }
@@ -684,12 +678,9 @@ namespace TypeCobol.LanguageServer
                 node.SymbolTable.GetFunctions(
                     p =>
                         p.Name.Equals(procedureName) ||
-                        p.QualifiedName.ToString().Equals(procedureName), new List<SymbolTable.Scope>
-                    {
-                        SymbolTable.Scope.Declarations,
-                        SymbolTable.Scope.Intrinsic,
-                        SymbolTable.Scope.Namespace
-                    });
+                        p.QualifiedName.ToString().Equals(procedureName), 
+                        SymbolTable.Scope.Intrinsic
+                    );
             var signatureHelp = new SignatureHelp();
 
             if (calledProcedures == null)
