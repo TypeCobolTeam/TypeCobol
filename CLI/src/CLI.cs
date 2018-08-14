@@ -55,7 +55,7 @@ namespace TypeCobol.Server
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
+                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
 
                 if (typeCobolException.NeedMail)
                     AnalyticsWrapper.Telemetry.SendMail(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
@@ -81,7 +81,8 @@ namespace TypeCobol.Server
             }
             catch (Exception e)//Catch any other exception
             {
-                AnalyticsWrapper.Telemetry.TrackException(e);
+                var typeCobolException = new ParsingException(MessageCode.GenerationFailled, null, config.InputFiles.FirstOrDefault(), e);
+                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
                 AnalyticsWrapper.Telemetry.SendMail(e, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, e.Message + e.StackTrace, string.Empty);
@@ -310,7 +311,7 @@ namespace TypeCobol.Server
                         {
                             if (diag.CatchedException != null)
                             {
-                                AnalyticsWrapper.Telemetry.TrackException(diag.CatchedException);
+                                AnalyticsWrapper.Telemetry.TrackException(diag.CatchedException, config.InputFiles[fileIndex]);
                                 AnalyticsWrapper.Telemetry.SendMail(diag.CatchedException, config.InputFiles,
                                     config.CopyFolders, config.CommandLine);
                             }
@@ -345,7 +346,7 @@ namespace TypeCobol.Server
 
                     if (diagnostics.Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
                     {
-                        throw new PresenceOfDiagnostics("Diagnostics Detected"); //Make ParsingException trace back to RunOnce()
+                        throw new PresenceOfDiagnostics("Diagnostics Detected", config.InputFiles[fileIndex]); //Make ParsingException trace back to RunOnce()
                     }
 
                     if (diagnostics.Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Warning)) {
@@ -381,7 +382,7 @@ namespace TypeCobol.Server
                             {
                                 errorWriter.AddErrors(config.InputFiles[fileIndex],
                                     generator.Diagnostics); //Write diags into error file
-                                throw new PresenceOfDiagnostics("Diagnostics Detected");
+                                throw new PresenceOfDiagnostics("Diagnostics Detected", config.InputFiles[fileIndex]);
                                 //Make ParsingException trace back to RunOnce()
                             }
 

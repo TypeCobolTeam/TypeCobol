@@ -532,7 +532,7 @@ namespace TypeCobol.LanguageServer
             {
                 LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
+                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
 
                 if (typeCobolException.NeedMail)
                     AnalyticsWrapper.Telemetry.SendMail(typeCobolException, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, TypeCobolConfiguration.CommandLine);
@@ -541,7 +541,7 @@ namespace TypeCobol.LanguageServer
             {
                 LoadingIssueEvent(null, new LoadingIssueEvent() { Message = "An error occured while trying to load Intrinsics or Dependencies files." }); //Send notification to client
 
-                AnalyticsWrapper.Telemetry.TrackException(e);
+                AnalyticsWrapper.Telemetry.TrackException(e, null);
                 AnalyticsWrapper.Telemetry.SendMail(e, TypeCobolConfiguration.InputFiles, TypeCobolConfiguration.CopyFolders, TypeCobolConfiguration.CommandLine);
             }
 
