@@ -1,7 +1,7 @@
 ﻿--- Program ---
 PROGRAM: Tables common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   mysize:Numeric
   X:Alphanumeric
@@ -12,7 +12,7 @@ PROGRAM: Tables common:False initial:False recursive:False
   E:Alphanumeric
   T-variable:Array
   T-nobounds:Array
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

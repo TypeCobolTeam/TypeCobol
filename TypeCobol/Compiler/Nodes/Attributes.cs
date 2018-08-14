@@ -448,7 +448,7 @@ internal class DefinitionsAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);
-		definitions.functions = GetFunctions(table);
+		definitions.functions = GetFunctions((Node)o, table);
 		return definitions;
 	}
 	private Definitions.NList GetTypes(SymbolTable table) {
@@ -458,11 +458,15 @@ internal class DefinitionsAttribute: Attribute {
 		list.AddRange(GetTypes(table.EnclosingScope));
 		return list;
 	}
-	private Definitions.NList GetFunctions(SymbolTable table) {
+	private Definitions.NList GetFunctions(Node node, SymbolTable table) {
 		var list = new Definitions.NList();
 		if (table == null) return list;
-		foreach(var items in table.Functions) list.AddRange(items.Value);
-		list.AddRange(GetFunctions(table.EnclosingScope));
+	    foreach (var items in table.Functions.SelectMany(x => x.Value))
+	    {
+	        if (items.GetProgramNode() == node.GetProgramNode())
+	            list.Add(items);
+	    }
+		list.AddRange(GetFunctions(node, table.EnclosingScope));
 		return list;
 	}
 }

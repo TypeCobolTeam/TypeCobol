@@ -12,15 +12,15 @@ Line 42[13,39] <27, Error, Syntax> - Syntax error : Symbol dataMain1 is not refe
 --- Program ---
 PROGRAM: MainProgram common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   dataMain1:Alphanumeric
---- Intrinsic:Namespace:Global
+--- PublicSharedProtected:Namespace:Global
 -- DATA --------
   dataMain2:Alphanumeric
   dataNested2:Alphanumeric          <- There is one Global SymbolTable per Program
   dataNested22:Alphanumeric         <- There is one Global SymbolTable per Program
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

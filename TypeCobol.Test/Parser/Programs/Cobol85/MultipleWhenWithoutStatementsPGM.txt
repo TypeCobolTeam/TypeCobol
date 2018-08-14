@@ -10,7 +10,7 @@ Line 15[17,29] <27, Error, Syntax> - Syntax error : Symbol ABEND is not referenc
 --- Program ---
 PROGRAM: MYPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

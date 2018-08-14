@@ -8,7 +8,7 @@ Symbols found: VariableSeeking::MyVar1::MySimpleType::bla | VariableSeeking::MyV
 --- Program ---
 PROGRAM: VariableSeeking common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   Account1:Account
   Account2:Account
@@ -17,7 +17,7 @@ PROGRAM: VariableSeeking common:False initial:False recursive:False
   MyVar2:MySimpleType
   MySuperVar1:MySuperType
   MySuperVar2:MySuperType
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   Account:Account
   Account2:Account2
@@ -27,7 +27,7 @@ PROGRAM: VariableSeeking common:False initial:False recursive:False
   MyType:MyType
   MySimpleType:MySimpleType
   MySuperType:MySuperType
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

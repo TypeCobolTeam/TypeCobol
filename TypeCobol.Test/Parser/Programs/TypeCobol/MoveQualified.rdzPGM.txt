@@ -11,11 +11,11 @@ Line 25[8,42] <27, Error, Syntax> - Syntax error : MOVE: illegal <function call>
 --- Program ---
 PROGRAM: MOVEQUA common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   var1:Alphanumeric
   var2:Alphanumeric
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

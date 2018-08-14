@@ -182,7 +182,7 @@ namespace TypeCobol.LanguageServer
                     k => k.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase));
             if (matchingPgm != null)
             {
-                arrangedCustomSymbol = new SymbolTable(_customSymbols, SymbolTable.Scope.Namespace);
+                arrangedCustomSymbol = new SymbolTable(_customSymbols, SymbolTable.Scope.PublicSharedProtected);
                 var prog = _customSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
                 arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() {prog.ToList()});
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);

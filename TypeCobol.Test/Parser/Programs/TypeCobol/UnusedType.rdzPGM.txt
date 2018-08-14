@@ -9,12 +9,12 @@ Line 22[12,29] <27, Error, Syntax> - Syntax error : Symbol var1 is not reference
 --- Program ---
 PROGRAM: MyPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   Type3:Type3
   Type2:Type2
   Type1:Type1
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

@@ -9,7 +9,7 @@ Line 160[8,35] <27, Error, Syntax> - Syntax error : A function "conflict" with t
 --- Program ---
 PROGRAM: DateFunctions common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   DateJulian:DateJulian
   DateDB2:DateDB2
@@ -83,7 +83,7 @@ PROGRAM: DateFunctions common:False initial:False recursive:False
   conflict2
         in: x:Numeric
     return: y:Numeric
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

@@ -7,7 +7,7 @@ Line 4[1,11] <27, Error, Syntax> - Syntax error : Symbol b is not referenced
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

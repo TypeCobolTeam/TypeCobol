@@ -261,10 +261,10 @@ namespace TypeCobol.Server
                         var previousPrograms = baseTable.GetPrograms();
                         foreach (var previousProgram in previousPrograms)
                         {
-                            previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace).AddProgram(program);
+                            previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected).AddProgram(program);
                         }
 
-                        baseTable.AddProgram(program); //Add program to Namespace symbol table
+                        baseTable.AddProgram(program); //Add program to PublicSharedProtected symbol table
                     }
                 }
 

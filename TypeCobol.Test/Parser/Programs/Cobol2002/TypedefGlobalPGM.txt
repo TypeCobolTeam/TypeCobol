@@ -5,15 +5,15 @@ Line 39[1,31] <30, Error, Semantics> - Semantic error: TYPE 'NewPrivateType' is 
 --- Program ---
 PROGRAM: TypeGlobal common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   NewPrivateType:NewPrivateType
---- Intrinsic:Namespace:GlobalStorage:Global
+--- PublicSharedProtected:Namespace:GlobalStorage:Global
 -- DATA --------
   WS-NewType:NewType
 -- TYPES -------
   NewType:NewType
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

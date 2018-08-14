@@ -4,7 +4,7 @@ Line 10[14,33] <27, Error, Syntax> - Syntax error : Symbol nullInd is not refere
 --- Program ---
 PROGRAM: EvalWhen common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

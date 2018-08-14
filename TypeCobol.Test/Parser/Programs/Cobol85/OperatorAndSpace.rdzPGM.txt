@@ -1,7 +1,7 @@
 ﻿--- Program ---
 PROGRAM: DVZXMNT0 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   WS-LINE-BREAK:Alphanumeric
   A:Alphanumeric
@@ -11,7 +11,7 @@ PROGRAM: DVZXMNT0 common:False initial:False recursive:False
   float:Numeric
   VarGroup:Numeric
   VarGroup-Bis:Alphanumeric
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

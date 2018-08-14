@@ -43,7 +43,7 @@ namespace TypeCobol.LanguageServer
                                                                            da.DataType ==
                                                                            Compiler.CodeElements.DataType.Numeric &&
                                                                            da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                                                           SymbolTable.Scope.GlobalStorage);
+                                                                           SymbolTable.Scope.PrivateGlobalStorage);
                 }
             }
 
@@ -89,13 +89,13 @@ namespace TypeCobol.LanguageServer
                                 f.VisualQualifiedName.ToString()
                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
                                 || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                SymbolTable.Scope.Intrinsic
+                                SymbolTable.Scope.PublicSharedProtected
 );
                     variables = node.SymbolTable.GetVariables(da => da.Picture != null &&
                                                                     da.DataType ==
                                                                     Compiler.CodeElements.DataType.Alphanumeric &&
                                                                     da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase), 
-                                                                    SymbolTable.Scope.GlobalStorage );
+                                                                    SymbolTable.Scope.PrivateGlobalStorage );
                 }
             }
 
@@ -136,7 +136,7 @@ namespace TypeCobol.LanguageServer
                         p =>
                             p.Name.Equals(procedureName, StringComparison.InvariantCultureIgnoreCase) ||
                             p.VisualQualifiedName.ToString().Equals(procedureName, StringComparison.InvariantCultureIgnoreCase),
-                            SymbolTable.Scope.Intrinsic
+                            SymbolTable.Scope.PublicSharedProtected
                         );
             }
             else
@@ -206,7 +206,7 @@ namespace TypeCobol.LanguageServer
                 var parameterToFill = procParams.ToArray()[alreadyGivenParametersCount];
                 //Get local/global variable that could correspond to the parameter
 
-                potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, SymbolTable.Scope.GlobalStorage);
+                potentialVariablesForCompletion = node.SymbolTable.GetVariablesByType(parameterToFill.DataType, potentialVariablesForCompletion, SymbolTable.Scope.PrivateGlobalStorage);
 
             }
 
@@ -276,7 +276,7 @@ namespace TypeCobol.LanguageServer
                          (!t.IsFlagSet(Node.Flag.NodeIsIntrinsic) &&
                           t.VisualQualifiedName.ToString()
                               .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)),
-                          SymbolTable.Scope.Intrinsic
+                          SymbolTable.Scope.PublicSharedProtected
                     );
             
 
@@ -381,7 +381,7 @@ namespace TypeCobol.LanguageServer
                                 t.Children != null &&
                                 t.Children.Any(
                                     tc => tc.Name != null && tc.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)),
-                                SymbolTable.Scope.Namespace
+                                SymbolTable.Scope.PublicSharedProtected
                             );
 
                     foreach (var nodeType in potentialTypes.SelectMany(t => t.Children).Where(c => c != null && c.Name != null && c.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)))
@@ -421,8 +421,8 @@ namespace TypeCobol.LanguageServer
                                                 f.VisualQualifiedName.ToString()
                                                     .StartsWith(userFilterText,
                                                         StringComparison.InvariantCultureIgnoreCase),
-                                            SymbolTable.Scope.Declarations);
-
+                                            SymbolTable.Scope.PublicSharedProtected);
+                                    //TODO CHeck visibility
                                 completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, functionDeclarationSignatureDictionary, false));
 
                             }
@@ -440,7 +440,7 @@ namespace TypeCobol.LanguageServer
                                             t =>
                                                 t.Name.StartsWith(userFilterText,
                                                     StringComparison.InvariantCultureIgnoreCase),
-                                                SymbolTable.Scope.GlobalStorage
+                                                SymbolTable.Scope.PublicSharedProtected
                                             );
                                 completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForType(types, node, false));
                             }
@@ -462,7 +462,7 @@ namespace TypeCobol.LanguageServer
             if (node == null)
                 return completionItems;
 
-            var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.GlobalStorage);
+            var variables = node.SymbolTable.GetVariables(predicate, SymbolTable.Scope.PrivateGlobalStorage);
             completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariables(variables));
 
             return completionItems;
@@ -547,14 +547,14 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
                 {
-                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.GlobalStorage);
+                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.PublicSharedProtected);
                 }
 
                 potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
             }
             else //Get all 
             {
-                potentialVariables = node.SymbolTable.GetVariables(variablePredicate,SymbolTable.Scope.GlobalStorage);
+                potentialVariables = node.SymbolTable.GetVariables(variablePredicate,SymbolTable.Scope.PrivateGlobalStorage);
             }
 
             foreach (var potentialVariable in potentialVariables) //Those variables could be inside a typedef or a level, we need to check to rebuild the qualified name correctly.
@@ -639,7 +639,8 @@ namespace TypeCobol.LanguageServer
                                                 && v.CodeElement is DataDefinitionEntry
                                                 && (((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 1 || ((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 77)
                                                 && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                                SymbolTable.Scope.GlobalStorage);
+                    //TODO check if global can be used in linkage section
+                                                SymbolTable.Scope.Global);
             }
             else 
             {
@@ -650,7 +651,7 @@ namespace TypeCobol.LanguageServer
                          && (((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 1 ||
                              ((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 77)
                          && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                        SymbolTable.Scope.GlobalStorage);
+                        SymbolTable.Scope.PrivateGlobalStorage);
             }
 
             return CompletionFactoryHelpers.CreateCompletionItemsForVariables(potentialVariable);
@@ -695,7 +696,7 @@ namespace TypeCobol.LanguageServer
                      ||
                      t.VisualQualifiedName.ToString()
                          .Equals(dataDefNode.DataType.Name, StringComparison.InvariantCultureIgnoreCase),
-                    SymbolTable.Scope.Intrinsic).FirstOrDefault();
+                    SymbolTable.Scope.PublicSharedProtected).FirstOrDefault();
 
             return type?.Children;
         }

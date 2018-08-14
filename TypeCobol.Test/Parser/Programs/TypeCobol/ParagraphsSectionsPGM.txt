@@ -58,7 +58,7 @@ PROGRAM: ParagraphsSections common:False initial:False recursive:False
   TEST-PERFORM
 -- FUNCTIONS ---
   fun
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

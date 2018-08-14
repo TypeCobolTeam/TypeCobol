@@ -12,7 +12,7 @@ Line 117[8,45] <30, Error, Semantics> - Semantic error: TYPE 'PGM1.AddressStrong
 --- Program ---
 PROGRAM: PGM1 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   Point:Alphanumeric
   Point:VECT2
@@ -36,7 +36,7 @@ PROGRAM: PGM1 common:False initial:False recursive:False
   address1:AddressWeak
   address2:AddressStrict
   address3:AddressStrong
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   Vect2:Vect2
   Person:Person
@@ -47,7 +47,7 @@ PROGRAM: PGM1 common:False initial:False recursive:False
   AddressWeak:AddressWeak
   AddressStrict:AddressStrict
   AddressStrong:AddressStrong
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

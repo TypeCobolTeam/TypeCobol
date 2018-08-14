@@ -63,10 +63,10 @@ PROGRAM: FunDeclare common:False initial:False recursive:False
   MyNOT
         in: x:BOOL
     return: y:BOOL
---- Intrinsic:Namespace:GlobalStorage:Global
+--- PublicSharedProtected:Namespace:GlobalStorage:Global
 -- DATA --------
   g:Alphanumeric
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

@@ -8,7 +8,7 @@ PROGRAM: DeclarativesTest common:False initial:False recursive:False
   X
 -- FUNCTIONS ---
   MyProc
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

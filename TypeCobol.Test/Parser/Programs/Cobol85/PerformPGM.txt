@@ -6,7 +6,7 @@ Line 18[3,15] <27, Error, Syntax> - Syntax error : Symbol condition2 is not refe
 --- Program ---
 PROGRAM: perform-program common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

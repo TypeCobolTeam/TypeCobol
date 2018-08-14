@@ -14,7 +14,7 @@ Line 39[12,58] <27, Error, Syntax> - Syntax error : Symbol bankAccountIntRef is 
 --- Program ---
 PROGRAM: B110PGM1 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   NOM-PGM:Alphanumeric
   date1:Numeric
@@ -22,10 +22,10 @@ PROGRAM: B110PGM1 common:False initial:False recursive:False
   maDateFormatInconnu:Numeric
   DVZE00:Alphanumeric
   DVZS00:Alphanumeric
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   InternalReference:InternalReference
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
       BOOL:BOOL
       DATE:DATE

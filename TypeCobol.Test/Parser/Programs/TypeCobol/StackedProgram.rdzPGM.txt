@@ -4,15 +4,15 @@ Line 36[8,29] <30, Error, Semantics> - Semantic error: TYPE 'NewType' is not ref
 --- Program ---
 PROGRAM: TYPEPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   typeOfDays:typeOfDays
   typeOfDaysPrivate:typeOfDaysPrivate
   typeOfDaysNoModifier:typeOfDaysNoModifier
---- Intrinsic:Namespace:GlobalStorage:Global
+--- PublicSharedProtected:Namespace:GlobalStorage:Global
 -- TYPES -------
   NewType:NewType
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
@@ -21,13 +21,13 @@ PROGRAM: TYPEPGM common:False initial:False recursive:False
 --- Program ---
 PROGRAM: Stacked common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- PublicSharedProtected:Namespace:Global:Declarations:Program
 -- DATA --------
   var1:TYPEPGM.typeOfDays
   var1:TYPEpgm.typeOFDAYS
   var1:typepgm.typeofdays
   var1:NewType
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

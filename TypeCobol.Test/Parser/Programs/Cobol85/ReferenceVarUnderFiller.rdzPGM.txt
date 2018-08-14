@@ -1,7 +1,7 @@
 ﻿--- Program ---
 PROGRAM: MyPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   var1:Alphanumeric
   moirsArray:Alphanumeric
@@ -10,7 +10,7 @@ PROGRAM: MyPGM common:False initial:False recursive:False
   AAAA:Numeric
   MM:Numeric
   JJ:Numeric
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

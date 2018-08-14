@@ -597,7 +597,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
                                     f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                        SymbolTable.Scope.GlobalStorage
+                                        SymbolTable.Scope.PublicSharedProtected
                                     ));
                                 break;
                             }
@@ -605,7 +605,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
                                     t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                        SymbolTable.Scope.GlobalStorage
+                                        SymbolTable.Scope.PublicSharedProtected
                                     ));
                                 break;
                             }
@@ -618,7 +618,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetVariables(
                                     v => v.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                    SymbolTable.Scope.GlobalStorage));
+                                    SymbolTable.Scope.PrivateGlobalStorage));
                                 break;
                             }
                         }
@@ -679,7 +679,7 @@ namespace TypeCobol.LanguageServer
                     p =>
                         p.Name.Equals(procedureName) ||
                         p.QualifiedName.ToString().Equals(procedureName), 
-                        SymbolTable.Scope.Intrinsic
+                        SymbolTable.Scope.PublicSharedProtected
                     );
             var signatureHelp = new SignatureHelp();
 

@@ -7,7 +7,7 @@ Line 33[3,37] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric
 --- Program ---
 PROGRAM: TEST-DATE common:False initial:False recursive:False
  author: WIZTIGERS. written: APRIL 2016 compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   olddate:Alphanumeric
   today:DATE
@@ -16,7 +16,7 @@ PROGRAM: TEST-DATE common:False initial:False recursive:False
   date1:DATE
 -- PARAGRAPHS --
   TEST-DATE
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

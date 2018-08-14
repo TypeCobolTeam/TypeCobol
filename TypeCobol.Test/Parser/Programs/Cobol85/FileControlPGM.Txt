@@ -1,14 +1,14 @@
 ﻿--- Program ---
 PROGRAM: FileControl common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   FIC-APPEL:Alphanumeric
   MyData:Alphanumeric
   MyData-val1:BOOL
   MyData-val2:BOOL
   MyData-val3:BOOL
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

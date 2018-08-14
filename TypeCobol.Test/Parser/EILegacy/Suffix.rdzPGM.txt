@@ -1,7 +1,7 @@
 ﻿--- Program ---
 PROGRAM: MYPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   PRTD20L:Alphanumeric
   PRTD20-RECH:Alphanumeric
@@ -39,7 +39,7 @@ PROGRAM: MYPGM common:False initial:False recursive:False
   CONVEAS-TESTVEA:Alphanumeric
   CONVEAS-TESTVEAS-TEST:Alphanumeric
   CONVEAS-TESTVEATEST:Alphanumeric
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

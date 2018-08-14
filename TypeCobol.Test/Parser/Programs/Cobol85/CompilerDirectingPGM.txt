@@ -52,7 +52,7 @@ PROGRAM: compiler-directing common:False initial:False recursive:False
   BASIS07
   BASIS08
   BASIS09
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

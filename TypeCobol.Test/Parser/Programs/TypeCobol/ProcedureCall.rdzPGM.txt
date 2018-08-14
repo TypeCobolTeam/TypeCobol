@@ -40,7 +40,7 @@ Line 260[8,42] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not refe
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   somedate:DATE
   someformat:Alphanumeric
@@ -54,7 +54,7 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
   MyToto:Toto
 -- PARAGRAPHS --
   TRAITEMENT
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   Toto:Toto
 -- FUNCTIONS ---
@@ -124,7 +124,7 @@ PROGRAM: ProcedureCall common:False initial:False recursive:False
      inout: var1:DATE
   MyProc3
         in: mydate:Date2
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE

@@ -13,7 +13,7 @@ Line 17[20,24] <27, Error, Syntax> - Syntax error : Data must be declared betwee
 --- Program ---
 PROGRAM: LevelNumber common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   myVar:Alphanumeric
   myVar:Alphanumeric
@@ -29,7 +29,7 @@ PROGRAM: LevelNumber common:False initial:False recursive:False
   myVar:Alphanumeric
   myVar:Alphanumeric
   myVar:Alphanumeric
---- Intrinsic
+--- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
