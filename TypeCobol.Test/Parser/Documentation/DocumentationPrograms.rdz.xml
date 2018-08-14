@@ -5,12 +5,12 @@
   <Description>Main Program </Description>
   <Visibility xsi:nil="true" />
   <Namespace>DocForPrograms</Namespace>
-  <Restriction>restriction value </Restriction>
-  <See>Thank you for your attention </See>
   <Needs>
     <Need>This is my first need This is also my first need</Need>
     <Need>This is my second need</Need>
   </Needs>
+  <Restriction>restriction value </Restriction>
+  <See>Thank you for your attention </See>
 </Documentation>
 ---------------------
 
@@ -31,35 +31,39 @@
       <Name>param1</Name>
       <PassingType>Unknow</PassingType>
       <Info>This is my first param</Info>
-      <PictureInfo>
-        <PictureClause>X(8)</PictureClause>
-        <MaxOccurence>1</MaxOccurence>
+      <DocDataType>
         <Usage xsi:nil="true" />
-      </PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+        <Picture>X(8)</Picture>
+      </DocDataType>
     </Parameter>
     <Parameter>
       <Name>param2</Name>
       <PassingType>Output</PassingType>
       <Info>this is an output param</Info>
-      <PictureInfo>
-        <PictureClause>S9(5)</PictureClause>
-        <MaxOccurence>1</MaxOccurence>
+      <DocDataType>
         <Usage>NativeBinary</Usage>
-      </PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+        <Picture>S9(5)</Picture>
+      </DocDataType>
     </Parameter>
     <Parameter>
       <Name>param3</Name>
       <PassingType>InOut</PassingType>
       <Info>this is an inout param</Info>
-      <PictureInfo>
-        <MaxOccurence>1</MaxOccurence>
+      <DocDataType>
         <Usage>Pointer</Usage>
-      </PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+      </DocDataType>
     </Parameter>
     <Parameter>
       <Name>param4</Name>
       <PassingType>Unknow</PassingType>
-      <TypeName>BOOL</TypeName>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <TypeName>BOOL</TypeName>
+      </DocDataType>
     </Parameter>
   </Parameters>
 </Documentation>
@@ -75,19 +79,19 @@
     <Parameter>
       <Name>param1</Name>
       <PassingType>Unknow</PassingType>
-      <PictureInfo>
-        <PictureClause>X(8)</PictureClause>
-        <MaxOccurence>1</MaxOccurence>
+      <DocDataType>
         <Usage xsi:nil="true" />
-      </PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+        <Picture>X(8)</Picture>
+      </DocDataType>
     </Parameter>
     <Parameter>
       <Name>param3</Name>
       <PassingType>Unknow</PassingType>
-      <PictureInfo>
-        <MaxOccurence>1</MaxOccurence>
+      <DocDataType>
         <Usage>Pointer</Usage>
-      </PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+      </DocDataType>
     </Parameter>
   </Parameters>
 </Documentation>

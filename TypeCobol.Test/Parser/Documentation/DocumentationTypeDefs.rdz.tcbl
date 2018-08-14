@@ -27,22 +27,28 @@
 
       * Group Typedef without Formalized Comments
        01 Type20 TYPEDEF STRICT.
-        02 Member1 Pic x(8).
+        02 Member1 Pic x(8) BLANK WHEN ZERO.
         02 Member2.
           03 Member21 PIC PPP999PPP.
           03 Member22 Type Date.
+          03 Member23 Pic x(10) JUSTIFIED RIGHT.
         02 Member3 Type Type10.
-        02 Member4 Type Bool.
+        02 Member4 Type Bool VALUE FALSE.
+        02 Member5 PIC S9(4) VALUE 2018.
+          88 TestMember5 VALUE 1999 THRU 2050.
 
       * Group Typedef with good Formalized Comments
       *<< Description for Type21 *>>
        01 Type21 TYPEDEF STRICT.
-        02 Member1 Pic x(8).
+        02 Member1 Pic x(8) BLANK WHEN ZERO.
         02 Member2.
           03 Member21 PIC PPP999PPP.
           03 Member22 Type Date.
+          03 Member23 Pic x(10) JUSTIFIED RIGHT.
         02 Member3 Type Type11.
-        02 Member4 Type Bool.
+        02 Member4 Type Bool VALUE FALSE.
+        02 Member5 PIC S9(4) VALUE 2018.
+          88 TestMember5 VALUE 1999 THRU 2050.
 
       * Group Typedef with too much informations inside Formalized Comments
       *<< 
@@ -57,12 +63,15 @@
           - need: see here what is needed
       *>>
        01 Type22 TYPEDEF STRICT.
-        02 Member1 Pic 9(8).
+        02 Member1 Pic x(8) BLANK WHEN ZERO.
         02 Member2.
-          03 Member21 Type Date.
-          03 Member22 PIC PPP999PPP.
+          03 Member21 PIC PPP999PPP.
+          03 Member22 Type Date.
+          03 Member23 Pic x(10) JUSTIFIED RIGHT.
         02 Member3 Type Type12.
-        02 Member4 Type Bool.
+        02 Member4 Type Bool VALUE FALSE.
+        02 Member5 PIC S9(4) VALUE 2018.
+          88 TestMember5 VALUE 1999 THRU 2050.
 
 
        PROCEDURE DIVISION.

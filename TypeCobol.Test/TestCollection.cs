@@ -278,7 +278,7 @@ namespace TypeCobol.Test {
         //[Ignore]
         [TestCategory("Parsing")]
         [TestProperty("Time", "fast")]
-        public void DocumentationGeneration()
+        public void CheckDocumentation()
         {
             int nbOfTests = 0;
 

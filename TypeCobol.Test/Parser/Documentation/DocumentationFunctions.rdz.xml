@@ -13,10 +13,6 @@
   <Description>MyProc1 description </Description>
   <Visibility>Private</Visibility>
   <Namespace>DocForFunctions</Namespace>
-  <Deprecated />
-  <ReplacedBy>ReplacedBy MyProc8 </ReplacedBy>
-  <Restriction>Do not support discount code </Restriction>
-  <See>you later </See>
   <Needs>
     <Need>first need</Need>
     <Need>second need</Need>
@@ -29,42 +25,54 @@
       <Name>myDate</Name>
       <PassingType>Input</PassingType>
       <Info>sell date</Info>
-      <TypeName>DATE</TypeName>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <TypeName>DATE</TypeName>
+      </DocDataType>
     </Parameter>
     <Parameter>
       <Name>name</Name>
       <PassingType>Input</PassingType>
       <Info>product name</Info>
-      <PictureInfo>
-        <PictureClause>X(50)</PictureClause>
-        <MaxOccurence>1</MaxOccurence>
+      <DocDataType>
         <Usage xsi:nil="true" />
-      </PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+        <Picture>X(50)</Picture>
+      </DocDataType>
     </Parameter>
     <Parameter>
       <Name>myBool</Name>
       <PassingType>InOut</PassingType>
-      <TypeName>BOOL</TypeName>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <TypeName>BOOL</TypeName>
+      </DocDataType>
     </Parameter>
     <Parameter>
       <Name>price</Name>
       <PassingType>Output</PassingType>
-      <PictureInfo>
-        <PictureClause>S9(5)V9(2)</PictureClause>
-        <MaxOccurence>1</MaxOccurence>
+      <DocDataType>
         <Usage xsi:nil="true" />
-      </PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+        <Picture>S9(5)V9(2)</Picture>
+      </DocDataType>
     </Parameter>
     <Parameter>
       <Name>desc</Name>
       <PassingType>Output</PassingType>
-      <PictureInfo>
-        <PictureClause>X(200)</PictureClause>
-        <MaxOccurence>1</MaxOccurence>
+      <DocDataType>
         <Usage xsi:nil="true" />
-      </PictureInfo>
+        <MaxOccurence>1</MaxOccurence>
+        <Picture>X(200)</Picture>
+      </DocDataType>
     </Parameter>
   </Parameters>
+  <Deprecated />
+  <ReplacedBy>ReplacedBy MyProc8 </ReplacedBy>
+  <Restriction>Do not support discount code </Restriction>
+  <See>you later </See>
 </Documentation>
 ---------------------
 

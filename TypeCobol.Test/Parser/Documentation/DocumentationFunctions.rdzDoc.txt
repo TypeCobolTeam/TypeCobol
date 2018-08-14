@@ -32,38 +32,54 @@ ToDo :
     implement a call to MyProc8 in case of discount code
 Parameters : 
     Name : myDate
-    PassingType : Input
     Info : sell date
-    TypeName : DATE
+    PassingType : Input
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : DATE
+        Picture : 
     --------
     Name : name
-    PassingType : Input
     Info : product name
-    PictureInfo : 
-        PictureClause : X(50)
-        MaxOccurence : 1
+    PassingType : Input
+    DataType : 
         Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : X(50)
     --------
     Name : myBool
-    PassingType : InOut
     Info : 
-    TypeName : BOOL
+    PassingType : InOut
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : BOOL
+        Picture : 
     --------
     Name : price
-    PassingType : Output
     Info : 
-    PictureInfo : 
-        PictureClause : S9(5)V9(2)
-        MaxOccurence : 1
+    PassingType : Output
+    DataType : 
         Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : S9(5)V9(2)
     --------
     Name : desc
-    PassingType : Output
     Info : 
-    PictureInfo : 
-        PictureClause : X(200)
-        MaxOccurence : 1
+    PassingType : Output
+    DataType : 
         Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : X(200)
 
 ---------------------
 

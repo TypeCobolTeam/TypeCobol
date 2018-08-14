@@ -672,9 +672,6 @@ namespace TypeCobol.Test.Utils
 
         private void WriteDocumentedNodeProperties(IDocumented node, StringBuilder sb)
         {
-            DocumentationForFunction funcDoc = node.Documentation as DocumentationForFunction;
-            DocumentationForProgram pgmDoc = node.Documentation as DocumentationForProgram;
-
             sb.AppendLine("Name : " + node.Documentation.Name);
             sb.AppendLine("Description : " + node.Documentation.Description);
             sb.AppendLine("Visibility : " + node.Documentation.Visibility);
@@ -682,43 +679,87 @@ namespace TypeCobol.Test.Utils
             sb.AppendLine("NodeType : " + (node.Documentation.IsTypeDef ? "TypeDef" :
                                                node.Documentation.IsFunction ? "Function" :
                                                node.Documentation.IsProgram ? "Program" : ""));
-            if (funcDoc != null || pgmDoc != null)
-            {
-                sb.AppendLine("IsDeprecated : " + (funcDoc?.IsDeprecated ?? pgmDoc.IsDeprecated));
-                sb.AppendLine("Deprecated : " + (funcDoc?.Deprecated ?? pgmDoc?.Deprecated));
-                sb.AppendLine("ReplacedBy : " + (funcDoc?.ReplacedBy ?? pgmDoc?.ReplacedBy));
-                sb.AppendLine("Restriction : " + (funcDoc?.Restriction ?? pgmDoc?.Restriction));
-                sb.AppendLine("See : " + (funcDoc?.See ?? pgmDoc?.See));
-                sb.AppendLine("Needs : ");
-                foreach (var need in (funcDoc?.Needs ?? pgmDoc?.Needs) ?? Enumerable.Empty<string>())
-                    sb.AppendLine("    " + need);
-                sb.AppendLine("ToDo : ");
-                foreach (var toDo in funcDoc?.ToDo ?? pgmDoc?.ToDo ?? Enumerable.Empty<string>())
-                    sb.AppendLine("    " + toDo);
-                sb.AppendLine("Parameters : ");
-                bool isFirstParam = true;
-                foreach (var param in funcDoc?.Parameters ?? pgmDoc?.Parameters ?? Enumerable.Empty<DocumentationParameter>())
-                {
-                    if (isFirstParam)
-                        isFirstParam = false;
-                    else
-                        sb.AppendLine("    --------");
-                    sb.AppendLine("    " + "Name : " + param.Name);
-                    sb.AppendLine("    " + "PassingType : " + param.PassingType);
-                    sb.AppendLine("    " + "Info : " + param.Info);
-                    if (param.IsType)
-                        sb.AppendLine("    " + "TypeName : " + param.TypeName);
-                    if (param.PictureInfo != null)
-                    {
-                        sb.AppendLine("    " + "PictureInfo : ");
-                        sb.AppendLine("        " + "PictureClause : " + param.PictureInfo.PictureClause);
-                        sb.AppendLine("        " + "MaxOccurence : " + param.PictureInfo.MaxOccurence);
-                        sb.AppendLine("        " + "Usage : " + param.PictureInfo.Usage);
 
+            DocumentationForType typeDoc = node.Documentation as DocumentationForType;
+            if (typeDoc != null)
+            {
+                sb.AppendLine("IsBlankWheneZero : " + typeDoc.IsBlankWheneZero);
+                sb.AppendLine("Justified : " + typeDoc.Justified);
+                sb.AppendLine("DocDataType : " + typeDoc.DocDataType);
+                WriteDocDataType(sb, typeDoc.DocDataType);
+                // Childrens is not initialised with an ampty list to prevent the documentation export flooding
+                if (typeDoc.Childrens != null)
+                {
+                    foreach (var child in typeDoc.Childrens)
+                    {
+                        WriteTypeDefChildrens(sb, child);
                     }
                 }
             }
+            else
+            {
+                DocumentationForFunction funcDoc = node.Documentation as DocumentationForFunction;
+                if (funcDoc != null)
+                {
+                    sb.AppendLine("IsDeprecated : " + funcDoc.IsDeprecated);
+                    sb.AppendLine("Deprecated : " + funcDoc.Deprecated);
+                    sb.AppendLine("ReplacedBy : " + funcDoc.ReplacedBy);
+                    sb.AppendLine("Restriction : " + funcDoc.Restriction);
+                    sb.AppendLine("See : " + funcDoc.See);
 
+                    sb.AppendLine("Needs : ");
+                    foreach (var need in funcDoc.Needs ?? Enumerable.Empty<string>())
+                        sb.AppendLine("    " + need);
+                    sb.AppendLine("ToDo : ");
+                    foreach (var toDo in funcDoc.ToDo ?? Enumerable.Empty<string>())
+                        sb.AppendLine("    " + toDo);
+                    sb.AppendLine("Parameters : ");
+                    bool isFirstParam = true;
+                    foreach (var param in funcDoc.Parameters ?? Enumerable.Empty<DocumentationParameter>())
+                    {
+                        if (isFirstParam)
+                            isFirstParam = false;
+                        else
+                            sb.AppendLine("    --------");
+                        sb.AppendLine("    " + "Name : " + param.Name);
+                        sb.AppendLine("    " + "Info : " + param.Info);
+                        sb.AppendLine("    " + "PassingType : " + param.PassingType);
+                        WriteDocDataType(sb, param.DocDataType, 1);
+                    }
+                }
+                else
+                {
+                    DocumentationForProgram pgmDoc = node.Documentation as DocumentationForProgram;
+                    if (pgmDoc != null)
+                    {
+                        sb.AppendLine("IsDeprecated : " + pgmDoc.IsDeprecated);
+                        sb.AppendLine("Deprecated : " + pgmDoc.Deprecated);
+                        sb.AppendLine("ReplacedBy : " + pgmDoc.ReplacedBy);
+                        sb.AppendLine("Restriction : " + pgmDoc.Restriction);
+                        sb.AppendLine("See : " + pgmDoc.See);
+
+                        sb.AppendLine("Needs : ");
+                        foreach (var need in pgmDoc.Needs ?? Enumerable.Empty<string>())
+                            sb.AppendLine("    " + need);
+                        sb.AppendLine("ToDo : ");
+                        foreach (var toDo in pgmDoc.ToDo ?? Enumerable.Empty<string>())
+                            sb.AppendLine("    " + toDo);
+                        sb.AppendLine("Parameters : ");
+                        bool isFirstParam = true;
+                        foreach (var param in pgmDoc.Parameters ?? Enumerable.Empty<DocumentationParameter>())
+                        {
+                            if (isFirstParam)
+                                isFirstParam = false;
+                            else
+                                sb.AppendLine("    --------");
+                            sb.AppendLine("    " + "Name : " + param.Name);
+                            sb.AppendLine("    " + "Info : " + param.Info);
+                            sb.AppendLine("    " + "PassingType : " + param.PassingType);
+                            WriteDocDataType(sb, param.DocDataType, 1);
+                        }
+                    }
+                }
+            }
         }
 
         private void WriteDocumentedCodeElementProperties(IDocumented node, StringBuilder sb)
@@ -749,6 +790,48 @@ namespace TypeCobol.Test.Utils
             }
             else
                 sb.AppendLine("No formalized comment found");
+        }
+
+        private void WriteDocDataType(StringBuilder sb, DocumentationDataType docDataType, int level = 0)
+        {
+            sb.AppendLine(new string(' ', level * 4) + "DataType : ");
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "Usage : " + docDataType.Usage);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "MaxOccurence : " + docDataType.MaxOccurence);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "DefaultValue : " + docDataType.DefaultValue);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "TypeName : " + docDataType.TypeName);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "Picture : " + docDataType.Picture);
+        }
+
+        private void WriteTypeDefChildrens(StringBuilder sb, DocumentationTypeChildren child, int level = 0)
+        {
+            sb.AppendLine(new string(' ', level * 4) + "TypeDefChild : ");
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "Name : " + child.Name);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "IsBlankWheneZero : " + child.IsBlankWheneZero);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "Justified : " + child.Justified);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "IsLevel77 : " + child.IsLevel77);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "IsLevel88 : " + child.IsLevel88);
+
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "ConditionValues : ");
+            for (int i = 0; i < (child.ConditionValues?.Length ?? 0); i++)
+            {
+                sb.AppendLine(new string(' ', (level + 2) * 4) + $"Condition{i} : {child.ConditionValues[i]}");
+            }
+
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "ConditionValuesRanges : ");
+            for (int i = 0; i < (child.ConditionValuesRanges?.Length ?? 0) ; i++)
+            {
+                sb.AppendLine(new string(' ', (level + 2) * 4) + $"ConditionRanges{i} : {child.ConditionValuesRanges[i].MinValue} -> {child.ConditionValuesRanges[i].MaxValue}");
+            }
+
+            WriteDocDataType(sb, child.DocDataType, level + 1);
+
+            if (child.Childrens != null)
+            {
+                foreach (var subChild in child.Childrens)
+                {
+                    WriteTypeDefChildrens(sb, subChild, level + 1);
+                }
+            }
         }
     }
 

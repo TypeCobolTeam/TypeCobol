@@ -33,33 +33,44 @@ ToDo :
     slap car roof
 Parameters : 
     Name : param1
-    PassingType : Unknow
     Info : This is my first param
-    PictureInfo : 
-        PictureClause : X(8)
-        MaxOccurence : 1
+    PassingType : Unknow
+    DataType : 
         Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : X(8)
     --------
     Name : param2
-    PassingType : Output
     Info : this is an output param
-    PictureInfo : 
-        PictureClause : S9(5)
-        MaxOccurence : 1
+    PassingType : Output
+    DataType : 
         Usage : NativeBinary
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : S9(5)
     --------
     Name : param3
-    PassingType : InOut
     Info : this is an inout param
-    PictureInfo : 
-        PictureClause : 
-        MaxOccurence : 1
+    PassingType : InOut
+    DataType : 
         Usage : Pointer
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : 
     --------
     Name : param4
-    PassingType : Unknow
     Info : 
-    TypeName : BOOL
+    PassingType : Unknow
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : BOOL
+        Picture : 
 
 ---------------------
 
@@ -77,20 +88,24 @@ Needs :
 ToDo : 
 Parameters : 
     Name : param1
-    PassingType : Unknow
     Info : 
-    PictureInfo : 
-        PictureClause : X(8)
-        MaxOccurence : 1
+    PassingType : Unknow
+    DataType : 
         Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : X(8)
     --------
     Name : param3
-    PassingType : Unknow
     Info : 
-    PictureInfo : 
-        PictureClause : 
-        MaxOccurence : 1
+    PassingType : Unknow
+    DataType : 
         Usage : Pointer
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : 
 
 ---------------------
 
