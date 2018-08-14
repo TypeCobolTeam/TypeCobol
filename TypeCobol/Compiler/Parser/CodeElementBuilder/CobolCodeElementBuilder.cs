@@ -1043,7 +1043,26 @@ namespace TypeCobol.Compiler.Parser
                 //TCTYPE_DEFAULT_ACCESS_MODIFIER  rule is respected here. 
                 //By default a TYPE is private even if PRIVATE keyword is not given. 
                 //If PUBLIC keyword is set, the TYPE as to be set PUBLIC.  
-                typedef.Visibility = context.cobol2002TypedefClause().PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
+                if (context.cobol2002TypedefClause().tcVisibility().PUBLIC() != null)
+                {
+                    typedef.Visibility = AccessModifier.Public;
+                }
+                else if (context.cobol2002TypedefClause().tcVisibility().PRIVATE() != null)
+                {
+                    typedef.Visibility = AccessModifier.Private;
+                }
+                else if (context.cobol2002TypedefClause().tcVisibility().PROTECTED() != null)
+                {
+                    typedef.Visibility = AccessModifier.Protected;
+                }
+                else if (context.cobol2002TypedefClause().tcVisibility().SHARED() != null)
+                {
+                    typedef.Visibility = AccessModifier.Shared;
+                }
+                else
+                {
+                    typedef.Visibility = AccessModifier.CobolDefault;
+                }              
 
                 var restrictionLevel = typedef.Strong.Value ? RestrictionLevel.STRONG 
                                         : typedef.Strict.Value ? RestrictionLevel.STRICT 

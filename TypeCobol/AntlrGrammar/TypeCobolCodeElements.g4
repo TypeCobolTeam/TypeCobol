@@ -93,7 +93,7 @@ userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparato
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
 functionDeclarationHeader:
-	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
+	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (tcVisibility)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  parameterDescription+;
@@ -168,8 +168,10 @@ callOutputParameter: (sharedStorageArea1 | OMITTED); // TCRFUN_CALL_INOUT_AND_OU
 typeNameReference: (UserDefinedWord | DATE | CURRENCY);
 
 // When this clause is matched, dataNameDefinition above is also a dataTypeNameDefinition
-cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? (PRIVATE | PUBLIC)?;
+cobol2002TypedefClause: TYPEDEF (STRICT | STRONG)? (tcVisibility)?;
 cobol2002TypeClause:    TYPE (nameSpaceReference QualifiedNameSeparator)? typeNameReference;
+
+tcVisibility: PRIVATE | PROTECTED | SHARED | PUBLIC;
 
 //Similar to valueClause but add the possibility to set value as a boolean (TRUE/FALSE)
 valueClauseWithBoolean:

@@ -41,7 +41,28 @@ namespace TypeCobol.Compiler.Parser
             //TCRFUN_DEFAULT_ACCESS_MODIFIER  rule is respected here. 
             //By default a function or procedure is private even if PRIVATE keyword is not given. 
             //If PUBLIC keyword is set, the function/procedure as to be set PUBLIC. 
-            var visibility = context.PUBLIC() != null ? AccessModifier.Public : AccessModifier.Private;
+            AccessModifier visibility;
+
+            if (context.tcVisibility().PUBLIC() != null)
+            {
+                visibility = AccessModifier.Public;
+            }
+            else if (context.tcVisibility().PRIVATE() != null)
+            {
+                visibility = AccessModifier.Private;
+            }
+            else if (context.tcVisibility().PROTECTED() != null)
+            {
+                visibility = AccessModifier.Protected;
+            }
+            else if (context.tcVisibility().SHARED() != null)
+            {
+                visibility = AccessModifier.Shared;
+            }
+            else
+            {
+                visibility = AccessModifier.CobolDefault;
+            }      
 
             SymbolDefinition name = null;
             if (context.functionNameDefinition() != null)

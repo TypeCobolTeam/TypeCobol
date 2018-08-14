@@ -561,6 +561,8 @@ tokens
     UNSAFE,
     PUBLIC,
     PRIVATE,
+	PROTECTED,
+	SHARED,
     IN_OUT,
 	STRICT,
 	QuestionMark

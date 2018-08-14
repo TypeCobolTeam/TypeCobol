@@ -60,8 +60,11 @@ namespace TypeCobol.Compiler.CodeElements {
     }
 
     public enum AccessModifier {
-	    Public,
-	    Private,
+        CobolDefault,
+        Private,
+        Protected,
+        Shared,
+        Public
     }
 
     public enum FunctionType: int {
