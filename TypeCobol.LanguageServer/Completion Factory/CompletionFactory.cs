@@ -84,7 +84,7 @@ namespace TypeCobol.LanguageServer
                 {
                     var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
                     procedures =
-                        node.SymbolTable.GetFunctions(
+                        node.SymbolTable.GetFunctions(node,
                             f =>
                                 f.VisualQualifiedName.ToString()
                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
@@ -132,7 +132,7 @@ namespace TypeCobol.LanguageServer
             {
                 //Try to get procedure by its name
                 calledProcedures =
-                    node.SymbolTable.GetFunctions(
+                    node.SymbolTable.GetFunctions(node, 
                         p =>
                             p.Name.Equals(procedureName, StringComparison.InvariantCultureIgnoreCase) ||
                             p.VisualQualifiedName.ToString().Equals(procedureName, StringComparison.InvariantCultureIgnoreCase),
@@ -414,7 +414,7 @@ namespace TypeCobol.LanguageServer
                             {
                                 var procedures =
                                     programs.First()
-                                        .SymbolTable.GetFunctions(
+                                        .SymbolTable.GetFunctions(node,
                                             f =>
                                                 f.Name.StartsWith(userFilterText,
                                                     StringComparison.InvariantCultureIgnoreCase) ||

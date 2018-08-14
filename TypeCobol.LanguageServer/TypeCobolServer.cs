@@ -595,7 +595,7 @@ namespace TypeCobol.LanguageServer
                             }
                             case TokenType.CALL:
                             {
-                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(matchingNode,
                                     f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
                                         SymbolTable.Scope.PublicSharedProtected
                                     ));
@@ -675,7 +675,7 @@ namespace TypeCobol.LanguageServer
 
             //Try to get procedure by its name
             var calledProcedures =
-                node.SymbolTable.GetFunctions(
+                node.SymbolTable.GetFunctions(node, 
                     p =>
                         p.Name.Equals(procedureName) ||
                         p.QualifiedName.ToString().Equals(procedureName), 

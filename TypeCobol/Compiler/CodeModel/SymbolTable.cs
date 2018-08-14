@@ -963,7 +963,7 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
 
-        public IEnumerable<FunctionDeclaration> GetFunctions(Node node,Expression<Func<FunctionDeclaration, bool>> predicate, Scope maximalScope)
+        public IEnumerable<FunctionDeclaration> GetFunctions(Node node, Expression<Func<FunctionDeclaration, bool>> predicate, Scope maximalScope)
         {
             var foundedFunctions = new List<FunctionDeclaration>();
 
