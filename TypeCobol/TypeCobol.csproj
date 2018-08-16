@@ -77,21 +77,6 @@
     <Compile Include="$(TC_AntlrGeneratedFiles)\CobolCompilerDirectivesVisitor.cs">
       <Link>Compiler\Preprocessor\Generated\CobolCompilerDirectivesVisitor.cs</Link>
     </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassBaseListener.cs">
-      <Link>Compiler\Parser\Generated\ProgramClassBaseListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassBaseVisitor.cs">
-      <Link>Compiler\Parser\Generated\ProgramClassBaseVisitor.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassListener.cs">
-      <Link>Compiler\Parser\Generated\ProgramClassListener.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassParser.cs">
-      <Link>Compiler\Parser\Generated\ProgramClassParser.cs</Link>
-    </Compile>
-    <Compile Include="$(TC_AntlrGeneratedFiles)\ProgramClassVisitor.cs">
-      <Link>Compiler\Parser\Generated\ProgramClassVisitor.cs</Link>
-    </Compile>
     <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsBaseListener.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsBaseListener.cs</Link>
     </Compile>
@@ -316,8 +301,6 @@
     <Compile Include="Compiler\Parser\CodeElementsTracingParser.cs" />
     <Compile Include="Compiler\Parser\DiagnosticUtils.cs" />
     <Compile Include="Compiler\Parser\ICodeElementsLine.cs" />
-    <Compile Include="Compiler\Parser\NodeBuilder\CobolNodeBuilder.cs" />
-    <Compile Include="Compiler\Parser\ProgramCallTracingParser.cs" />
     <Compile Include="Compiler\Parser\ProgramClassDocument.cs" />
     <Compile Include="Compiler\Parser\ProgramClassParserStep.cs" />
     <Compile Include="Compiler\Parser\TemporarySemanticDocument.cs" />
@@ -422,24 +405,12 @@
       <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
     </Antlr4>
     <None Include="AntlrGrammar\CobolExpressions.g4" />
-    <Antlr4 Include="AntlrGrammar\CobolProgramClass.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
     <None Include="AntlrGrammar\CobolWords.g4" />
     <Antlr4 Include="AntlrGrammar\CodeElements.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>
-    <Antlr4 Include="AntlrGrammar\ProgramClass.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
     <Antlr4 Include="AntlrGrammar\TypeCobolCodeElements.g4">
-      <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Include="AntlrGrammar\TypeCobolProgram.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Parser.Generated</CustomToolNamespace>
     </Antlr4>

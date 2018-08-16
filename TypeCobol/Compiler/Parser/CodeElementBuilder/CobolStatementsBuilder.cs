@@ -388,7 +388,7 @@ namespace TypeCobol.Compiler.Parser
 		internal CodeElement CreateExecStatement(CodeElementsParser.ExecStatementContext context) {
 			var statement = new ExecStatement();
 			statement.ExecTranslatorName = CobolWordsBuilder.CreateExecTranslatorName(context.execTranslatorName());
-			statement.CodeLines = BuildObjectArrayFromParserRules(context.alphanumericValue8(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
+			statement.CodeLines = BuildObjectArrayFromParserRules(context.ExecStatementText(), ctx => CobolWordsBuilder.CreateAlphanumericValue(ctx));
 			return statement;
 		}
 

@@ -1,0 +1,87 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. GlobalStorageTest.
+
+       DATA DIVISION.
+
+       GLOBAL-STORAGE SECTION.
+       88 etdzefezf         VALUE 'TRUE'.
+       123 zefzefze         TYPE Bool.
+       01 G-Date            TYPE Date.
+       01 G-TechCtx         TYPE Bool.
+       01 DuplicatedVar     TYPE Bool.
+
+       01 MyGroup.
+      *Global clause is not authorized inside Global Storage
+           05 ForbiddenGlobalVar     PIC x(10) GLOBAL.
+           88 zedzed                VALUE 'TEST'.
+      *External clause is not authorized inside Global Storage
+       01 ForbiddenExternalVar   PIC 10 EXTERNAL.
+
+
+       WORKING-STORAGE SECTION.
+       01 DuplicatedVar     TYPE Bool.
+       01 MyGroup PIC X(10).
+           88 TestLevel VALUE "Test".
+
+       PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE MyProc PRIVATE
+           INPUT    myDate      TYPE DATE.
+       Data division.
+       WORKING-STORAGE Section.
+       01 TestCtx TYPE Bool.
+       PROCEDURE DIVISION.
+      *G-Date and G-TechCtx are accesible from GlobalStorage
+           MOVE G-Date TO myDate.
+           MOVE G-TechCtx TO TestCtx.
+        END-DECLARE.
+
+       MOVE G-Date TO G-Date.
+       MOVE DuplicatedVar TO G-TechCtx.
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedProc.
+
+       DATA DIVISION.
+      *Global Storage Section cannot 
+      * be define inside nested program
+       GLOBAL-STORAGE SECTION.
+       WORKING-STORAGE SECTION.
+       01 MyDate TYPE Date.
+
+       PROCEDURE DIVISION.
+      *G-Date is accessible in nested from Global Storage
+       MOVE G-Date TO MyDate.
+       DECLARE PROCEDURE MyProc PRIVATE
+            INPUT    myDate      TYPE DATE.
+       Data division.
+       WORKING-STORAGE Section.
+       01 TestCtx TYPE Bool.
+       PROCEDURE DIVISION.
+      *G-Date and G-TechCtx are accessible 
+      * in nested procedure from Global Storage
+       MOVE G-Date TO myDate.
+       MOVE G-TechCtx TO TestCtx.
+       END-DECLARE.
+
+       END PROGRAM NestedProc.
+
+       END PROGRAM GlobalStorageTest.
+
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. StackedProg.
+
+       DATA DIVISION.
+      *Global Storage Section cannot 
+      * be define inside stacked program
+       GLOBAL-STORAGE SECTION.
+
+       WORKING-STORAGE SECTION.
+       01 MyDate TYPE Date.
+
+       PROCEDURE DIVISION.
+      *G-Date is not accessible in StackedProgram
+       MOVE G-Date TO MyDate.
+
+       END PROGRAM StackedProg.

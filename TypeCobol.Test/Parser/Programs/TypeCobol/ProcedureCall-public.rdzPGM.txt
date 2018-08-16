@@ -48,7 +48,7 @@ Line 229[12,47] <27, Error, Syntax> - Syntax error : Symbol undefinedProcedure i
 --- Program ---
 PROGRAM: CallToPublicProcedure common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   myDate:DATE
   fakeDate:Alphanumeric
@@ -88,7 +88,7 @@ PROGRAM: CallToPublicProcedure common:False initial:False recursive:False
   mygroup:Alphanumeric
 -- PARAGRAPHS --
   TRAITEMENT
---- Intrinsic:Namespace:Global
+--- Intrinsic:Namespace:GlobalStorage:Global
 -- TYPES -------
   ReturnCode:ReturnCode
 --- Intrinsic

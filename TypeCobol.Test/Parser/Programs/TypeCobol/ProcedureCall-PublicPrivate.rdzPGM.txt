@@ -6,7 +6,7 @@ Line 76[12,50] <27, Error, Syntax> - Syntax error : Function not found 'Pgm2.Pgm
 --- Program ---
 PROGRAM: PGM1 common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- Intrinsic:Namespace:Global:Declarations:Program
+--- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
 -- DATA --------
   somedate:DATE
   someformat:Alphanumeric

@@ -132,6 +132,7 @@ terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader FunctionDeclarationHeader;
 terminal TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd FunctionDeclarationEnd;
 terminal TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement ProcedureStyleCall;
+terminal TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader GlobalStorageSectionHeader;
 terminal TypeCobol.Compiler.CodeElements.Program Program;
 
 /* Non terminals */
@@ -177,6 +178,7 @@ non terminal fileDescriptionEntry;
 non terminal fileDescriptionEntriesOpt;
 non terminal fileDescriptionEntries;
 non terminal fileSection;
+non terminal globalStorageSection;
 non terminal workingStorageSection;
 non terminal localStorageSection;
 non terminal linkageSection;
@@ -509,6 +511,7 @@ dataDivisionOpt ::= /*empty*/
 dataDivision ::=
 	DataDivisionHeader:ddh
 	fileSection:fs
+	globalStorageSection:gss
 	workingStorageSection :wss
 	localStorageSection:lss
 	linkageSection:ls
@@ -535,6 +538,12 @@ fileDescriptionEntries ::=
 	;
 
 fileDescriptionEntry ::= FileDescriptionEntry:fde dataDefinitionEntries:dfes
+	{:  :}
+	;
+
+globalStorageSection ::= /*empty*/
+	{:  :}
+	| GlobalStorageSectionHeader:gssh storageEntries:ses
 	{:  :}
 	;
 

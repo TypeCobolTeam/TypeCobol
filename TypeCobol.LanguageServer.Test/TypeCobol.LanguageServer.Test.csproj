@@ -201,6 +201,12 @@
     <None Include="LSRTests\OfCompletion\output_expected\OfCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\GlobalStorageCompletion\input\GlobalStorageCompletion.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\GlobalStorageCompletion\output_expected\GlobalStorageCompletion.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\PerformCompletion\input\PerformCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -210,6 +216,10 @@
     <None Include="LSRTests\ProcedureCompletionCaseInsensitive\input\ProcedureCompletionCaseInsensitive.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\ProcedureCompletionInputInoutOutput-NoContext\input\ProcedureCompletionInputInoutOutput-NoContext.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ProcedureCompletionInputInoutOutput-NoContext\output_expected\ProcedureCompletionInputInoutOutput-NoContext.tlsp" />
     <None Include="LSRTests\ProcedureCompletionPotentialChildrenWithNoName\input\ProcedureCompletionPotentialChildrenWithNoName.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

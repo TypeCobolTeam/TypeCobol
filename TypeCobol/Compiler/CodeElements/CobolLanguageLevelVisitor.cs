@@ -81,6 +81,11 @@ namespace TypeCobol.Compiler.CodeElements
             get;
         }
 
+        /// <summary>
+        /// Can this visitor modify Node children?
+        /// </summary>
+        bool CanModifyChildrenNode { get; }
+
         bool BeginNode([NotNull] Node node);
         void EndNode([NotNull] Node node);
 
@@ -142,7 +147,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] WriteStatement writeStatement);
         bool Visit([NotNull] XmlGenerateStatement xmlGenerateStatement);
         bool Visit([NotNull] XmlParseStatement xmlParseStatement);
-
+        bool Visit([NotNull] Use useStatement);
 
         //Expressions
         bool Visit([NotNull] ReceivingStorageArea receivingStorageArea);
@@ -310,6 +315,7 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] DataDivision dataDivision);
         bool Visit([NotNull] FileSection fileSection);
         bool Visit([NotNull] FileDescriptionEntryNode fileDescriptionEntryNode);
+        bool Visit([NotNull] GlobalStorageSection globalStorageSection);
         bool Visit([NotNull] WorkingStorageSection workingStorageSection);
         bool Visit([NotNull] LocalStorageSection localStorageSection);
         bool Visit([NotNull] LinkageSection linkageSection);
@@ -374,6 +380,11 @@ namespace TypeCobol.Compiler.CodeElements
                 return true;
             }
         }
+
+        /// <summary>
+        /// By default the visitor cannot modify Node's children
+        /// </summary>
+        public virtual bool CanModifyChildrenNode => false;
 
         public virtual bool BeginNode(Node node) {
             return true;
@@ -1210,6 +1221,10 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
 
+        public virtual bool Visit(GlobalStorageSection globalStorageSection) {
+            return true;
+        }
+
         public virtual bool Visit(WorkingStorageSection workingStorageSection) {
             return true;
         }
@@ -1379,6 +1394,11 @@ namespace TypeCobol.Compiler.CodeElements
         }
 
         public virtual bool Visit([NotNull] IndexDefinition indexDefinition)
+        {
+            return true;
+        }
+
+        public bool Visit([NotNull] Use useStatement)
         {
             return true;
         }

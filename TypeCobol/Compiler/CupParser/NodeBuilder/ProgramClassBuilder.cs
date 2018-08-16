@@ -9,6 +9,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using Analytics;
+using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.CupParser.NodeBuilder
 {
@@ -29,6 +30,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private bool _IsInsideLocalStorageSectionContext;
         private bool _IsInsideFileSectionContext;
         private bool _IsInsideProcedure;
+        private bool _IsInsideGlobalStorageSection;
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -45,6 +47,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private readonly SymbolTable TableOfIntrisic = new SymbolTable(null, SymbolTable.Scope.Intrinsic);
         private SymbolTable TableOfGlobals;
         private SymbolTable TableOfNamespaces;
+        private SymbolTable TableOfGlobalStorage;
 
         public SymbolTable CustomSymbols
         {
@@ -176,14 +179,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             if (node.IsPartOfATypeDef) return;
             var table = node.SymbolTable;
-            if (node.CodeElement().IsGlobal)
+            if (node.CodeElement().IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
                 table = table.GetTableFromScope(SymbolTable.Scope.Global);
             else
             {
                 var parent = node.Parent as DataDescription;
                 while (parent != null)
                 {
-                    if (parent.CodeElement().IsGlobal)
+                    if (parent.CodeElement().IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
                         table = table.GetTableFromScope(SymbolTable.Scope.Global);
                     parent = parent.Parent as DataDescription;
                 }
@@ -197,7 +200,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (TableOfNamespaces == null)
                 TableOfNamespaces = new SymbolTable(TableOfIntrisic, SymbolTable.Scope.Namespace);
 
-            TableOfGlobals = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.Global);
+            TableOfGlobalStorage = new SymbolTable(TableOfNamespaces, SymbolTable.Scope.GlobalStorage);
+            TableOfGlobals = new SymbolTable(TableOfGlobalStorage, SymbolTable.Scope.Global);
             Program = null;
 
             SyntaxTree.Root.SymbolTable = TableOfNamespaces; //Set SymbolTable of SourceFile Node, Limited to NameSpace and Intrinsic scopes
@@ -366,6 +370,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             _IsInsideFileSectionContext = false;
         }
 
+        public virtual void StartGlobalStorageSection(GlobalStorageSectionHeader header)
+        {
+            Enter(new GlobalStorageSection(header), header, SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage));
+            _IsInsideGlobalStorageSection = true;
+        }
+
+        public virtual void EndGlobalStorageSection()
+        {
+            ExitLastLevel1Definition();
+            Exit(); // Exit GlobalStorageSection
+            _IsInsideGlobalStorageSection = false;
+        }
+
         public virtual void StartFileDescriptionEntry(FileDescriptionEntry entry)
         {
             ExitLastLevel1Definition();
@@ -433,6 +450,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     node.SetFlag(Node.Flag.LocalStorageSectionNode, true); //Set flag to know that this node belongs to Local Storage Section
                 if (_IsInsideFileSectionContext)
                     node.SetFlag(Node.Flag.FileSectionNode, true);         //Set flag to know that this node belongs to File Section
+                if (_IsInsideGlobalStorageSection)
+                    node.SetFlag(Node.Flag.GlobalStorageSection, true);         //Set flag to know that this node belongs to Global Storage Section
 
                 AddToSymbolTable(node);
             }
@@ -542,6 +561,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void EndDeclaratives(DeclarativesEnd end)
         {
             AttachEndIfExists(end);
+            Exit();
+        }
+
+        public virtual void EnterUseStatement(UseStatement useStatement)
+        {
+            Enter(new Use(useStatement), useStatement);
             Exit();
         }
 

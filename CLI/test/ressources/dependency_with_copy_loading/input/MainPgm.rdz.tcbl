@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MYPGM.                   
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       DATA DIVISION.
+       WORKING-STORAGE section.
+
+
+       PROCEDURE DIVISION.
+
+           .
+       END PROGRAM MYPGM.

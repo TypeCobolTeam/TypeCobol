@@ -77,6 +77,16 @@ namespace TypeCobol.Compiler.Nodes {
         {
             return astVisitor.Visit(this);
         }
+   } 
+
+    public class GlobalStorageSection : DataSection, CodeElementHolder<GlobalStorageSectionHeader>, Parent<DataDefinition>
+    {
+        public GlobalStorageSection(GlobalStorageSectionHeader header) : base(header) { }
+        public override string ID { get { return "global-storage"; } }
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return base.VisitNode(astVisitor) && astVisitor.Visit(this);
+        }
     }
 
 
@@ -425,7 +435,6 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         public PassingTypes PassingType { get; set; }
-        public AlphanumericValue Picture { get { return _CodeElement.Picture; } }
         public IntegerValue LevelNumber { get { return _CodeElement.LevelNumber; } }
         public SymbolDefinition DataName { get { return _CodeElement.DataName; } }
 

@@ -59,6 +59,11 @@ namespace TypeCobol.Codegen.Actions
             }
 
             /// <summary>
+            /// CodeGen visitor can modify Node's children
+            /// </summary>
+            public override bool CanModifyChildrenNode => true;
+
+            /// <summary>
             /// Visitor
             /// </summary>
             /// <param name="typeCobolQualifiedSymbolReference"></param>

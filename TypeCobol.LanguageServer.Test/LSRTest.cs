@@ -249,6 +249,12 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("ProcedureCompletionInputInoutOutput", LsrTestingOptions.NoLsrTesting, true);
         }
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionInputInoutOutput_NoContext()
+        {
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput-NoContext", LsrTestingOptions.NoLsrTesting, true);
+        }
 
         [TestMethod]
         [TestCategory("Completion")]
@@ -265,6 +271,13 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
         }
 #endif
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void GlobalStorageCompletion()
+        {
+            LSRTestHelper.Test("GlobalStorageCompletion", LsrTestingOptions.NoLsrTesting, true);
+        }
 #endregion
     }
 }
