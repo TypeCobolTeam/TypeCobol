@@ -13,6 +13,7 @@ using System.Text;
 using TypeCobol.Codegen;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Tools.Options_Config;
+using TypeCobol.Compiler.CodeModel;
 
 namespace TypeCobol.Server
 {
@@ -54,7 +55,7 @@ namespace TypeCobol.Server
             }
             catch(TypeCobolException typeCobolException)//Catch managed exceptions
             {
-                AnalyticsWrapper.Telemetry.TrackException(typeCobolException);
+                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
 
                 if (typeCobolException.NeedMail)
                     AnalyticsWrapper.Telemetry.SendMail(typeCobolException, config.InputFiles, config.CopyFolders, config.CommandLine);
@@ -80,7 +81,8 @@ namespace TypeCobol.Server
             }
             catch (Exception e)//Catch any other exception
             {
-                AnalyticsWrapper.Telemetry.TrackException(e);
+                var typeCobolException = new ParsingException(MessageCode.GenerationFailled, null, config.InputFiles.FirstOrDefault(), e);
+                AnalyticsWrapper.Telemetry.TrackException(typeCobolException, typeCobolException.Path);
                 AnalyticsWrapper.Telemetry.SendMail(e, config.InputFiles, config.CopyFolders, config.CommandLine);
 
                 Server.AddError(errorWriter, MessageCode.SyntaxErrorInParser, e.Message + e.StackTrace, string.Empty);
@@ -106,9 +108,11 @@ namespace TypeCobol.Server
 
         private static ReturnCode runOnce2(TypeCobolConfiguration config, AbstractErrorWriter errorWriter)
         {
-            var parser = new Parser();
-            bool diagDetected = false;
+            SymbolTable baseTable = null;
 
+            #region Dependencies parsing
+            var depParser = new Parser();
+            bool diagDetected = false;
             if (config.ExecToStep > ExecutionStep.Preprocessor)
             {
                 #region Event Diags Handler
@@ -128,40 +132,53 @@ namespace TypeCobol.Server
                 };
                 #endregion
 
-                parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
-                parser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, parser.CustomSymbols, config.InputFiles, DependencyErrorEvent); //Load dependencies
+                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format, DiagnosticsErrorEvent); //Load intrinsic
+                depParser.CustomSymbols = Tools.APIHelpers.Helpers.LoadDependencies(config.Dependencies, config.Format, depParser.CustomSymbols, config.InputFiles, DependencyErrorEvent); //Load dependencies
 
                 if (diagDetected)
                     throw new CopyLoadingException("Diagnostics detected while parsing Intrinsic file", null, null, logged: false, needMail: false);
             }
 
-         
+            baseTable = depParser.CustomSymbols;
+            #endregion
 
-            ReturnCode returnCode = ReturnCode.Success;
-            for (int c = 0; c < config.InputFiles.Count; c++)
+            var typeCobolOptions = new TypeCobolOptions
             {
-                string path = config.InputFiles[c];
-                try
-                {
-                    var typeCobolOptions = new TypeCobolOptions
-                                            {
-                                                HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
-                                                ExecToStep = config.ExecToStep,
-                                                UseAntlrProgramParsing = config.UseAntlrProgramParsing
-                                            };
+                HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
+                ExecToStep = config.ExecToStep,
+                UseAntlrProgramParsing = config.UseAntlrProgramParsing
+            };
 
 #if EUROINFO_RULES
-                    typeCobolOptions.AutoRemarksEnable = config.AutoRemarks;
+            typeCobolOptions.AutoRemarksEnable = config.AutoRemarks;
 #endif
 
-                    parser.Init(path, typeCobolOptions, config.Format, config.CopyFolders); //Init parser create CompilationProject & Compiler before parsing the given file
+            ReturnCode returnCode = ReturnCode.Success;
+            List<Parser> parsers = new List<Parser>();
+            Compiler.Report.AbstractReport cmrReport = null;
+            bool copyAreMissing = false;
+            List<Diagnostic> diagnostics = new List<Diagnostic>();
+
+            foreach (var inputFilePath in config.InputFiles)
+            {
+                var parser = new Parser();
+                parser.CustomSymbols = baseTable;
+                parsers.Add(parser);
+
+                if (config.ExecToStep > ExecutionStep.SemanticCheck) //If inferior to semantic, use the execstep given by the user.
+                    typeCobolOptions.ExecToStep = ExecutionStep.SemanticCheck;
+
+                try
+                {
+                    parser.Init(inputFilePath, typeCobolOptions, config.Format, config.CopyFolders); //Init parser create CompilationProject & Compiler before parsing the given file
                 }
                 catch (Exception ex)
                 {
-                    throw new ParsingException(MessageCode.ParserInit, ex.Message, path, ex); //Make ParsingException trace back to RunOnce()
+                    throw new ParsingException(MessageCode.ParserInit, ex.Message, inputFilePath, ex); //Make ParsingException trace back to RunOnce()
                 }
 
-                Compiler.Report.AbstractReport cmrReport = null;
+                #region Copy Report Init
+
                 if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath))
                 {
                     //Register Copy Move Initialize Reporter
@@ -182,17 +199,26 @@ namespace TypeCobol.Server
                             });
                     }
                 }
+                #endregion
 
-                parser.Parse(path);
+                //Parse input file
+                parser.Parse(inputFilePath);
+
+
+                diagnostics.AddRange(parser.Results.AllDiagnostics()); //Get all diags
+                errorWriter.AddErrors(inputFilePath,
+                    diagnostics.Take(config.MaximumDiagnostics == 0
+                        ? diagnostics.Count
+                        : config.MaximumDiagnostics)); //Write diags into error file
                 
-                bool copyAreMissing = false;
+
                 if (!string.IsNullOrEmpty(config.HaltOnMissingCopyFilePath))
                 {
                     if (parser.MissingCopys.Count > 0)
                     {
-                        //Write in the specified file all the absent copys detected
-                        File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
+                        //Collect the missing copies
                         copyAreMissing = true;
+                        File.WriteAllLines(config.HaltOnMissingCopyFilePath, parser.MissingCopys);
                     }
                     else
                     {
@@ -200,6 +226,7 @@ namespace TypeCobol.Server
                         File.Delete(config.HaltOnMissingCopyFilePath);
                     }
                 }
+
                 if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExtractedCopiesFilePath))
                 {
                     if (parser.Results.CopyTextNamesVariations.Count > 0)
@@ -212,64 +239,34 @@ namespace TypeCobol.Server
                         //Create an output document of all the copy encountered by the parser
                         File.WriteAllLines(config.ExtractedCopiesFilePath, copiesName);
                     }
-
                     else
                         File.Delete(config.ExtractedCopiesFilePath);
                 }
 
-                var allDiags = parser.Results.AllDiagnostics();
-                errorWriter.AddErrors(path, allDiags.Take(config.MaximumDiagnostics == 0 ? allDiags.Count : config.MaximumDiagnostics)); //Write diags into error file
+                if (copyAreMissing)
+                    throw new MissingCopyException("Some copy are missing", inputFilePath, null, logged: false, needMail: false);
 
-                if (allDiags.Count > 0)
+                if (parser.Results.CodeElementsDocumentSnapshot == null &&config.ExecToStep > ExecutionStep.Preprocessor)
                 {
-                    foreach (var diag in allDiags)
+                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + inputFilePath + "\" has syntactic error(s) preventing codegen (CodeElements).", inputFilePath); //Make ParsingException trace back to RunOnce()
+                }
+                else if (parser.Results.TemporaryProgramClassDocumentSnapshot == null &&config.ExecToStep > ExecutionStep.SyntaxCheck)
+                {
+                    throw new ParsingException(MessageCode.SyntaxErrorInParser ,"File \"" + inputFilePath + "\" has semantic error(s) preventing codegen (ProgramClass).", inputFilePath); //Make ParsingException trace back to RunOnce()
+                }
+
+                if (config.ExecToStep >= ExecutionStep.SemanticCheck)
+                {
+                    foreach (var program in parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs)
                     {
-                        if(diag.CatchedException != null)
+                        var previousPrograms = baseTable.GetPrograms();
+                        foreach (var previousProgram in previousPrograms)
                         {
-                            AnalyticsWrapper.Telemetry.TrackException(diag.CatchedException);
-                            AnalyticsWrapper.Telemetry.SendMail(diag.CatchedException, config.InputFiles, config.CopyFolders, config.CommandLine);
+                            previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Namespace).AddProgram(program);
                         }
-                    }
-                    //Exception is thrown just below
-                    }
 
-                if (allDiags.Count == 0)
-                {
-                    if (config.ExecToStep >= ExecutionStep.CrossCheck &&
-                        !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
-                    {//Emit any COPY MOVE/INITIALIZE Report.
-                        try
-                        {
-                            cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
-                            string msg = string.Format(
-                                    "Succeed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs.", config.ReportCopyMoveInitializeFilePath);
-                            Console.WriteLine(msg);
-                        }
-                        catch (Exception e)
-                        {
-                            string msg = string.Format(
-                                    "Failed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs! : {1}",
-                                    config.ReportCopyMoveInitializeFilePath, e.Message);
-                            Console.Error.WriteLine(msg);
-                            throw new GenerationException(msg, config.ReportCopyMoveInitializeFilePath, e);                            
-                        }
+                        baseTable.AddProgram(program); //Add program to Namespace symbol table
                     }
-                }
-
-                //Copy missing is more important than diagnostics
-                if (copyAreMissing) {
-                    throw new MissingCopyException("Some copy are missing", path, null, logged: false, needMail: false);
-                } else if (parser.Results.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error)) {
-                    throw new PresenceOfDiagnostics("Diagnostics Detected"); //Make ParsingException trace back to RunOnce()
-                }
-
-                if (parser.Results.CodeElementsDocumentSnapshot == null && config.ExecToStep > ExecutionStep.Preprocessor)
-                {
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has syntactic error(s) preventing codegen (CodeElements).", path); //Make ParsingException trace back to RunOnce()
-                }
-                else if (parser.Results.ProgramClassDocumentSnapshot == null && config.ExecToStep > ExecutionStep.SyntaxCheck)
-                {
-                    throw new ParsingException(MessageCode.SyntaxErrorInParser, "File \"" + path + "\" has semantic error(s) preventing codegen (ProgramClass).", path); //Make ParsingException trace back to RunOnce()
                 }
 
                 if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExpandingCopyFilePath))
@@ -287,88 +284,158 @@ namespace TypeCobol.Server
                     }
                     catch(Exception e)
                     {
-                        throw new GenerationException(e.Message, path, e);
+                        throw new GenerationException(e.Message, inputFilePath, e);
                     }
                 }
-                if (config.ExecToStep >= ExecutionStep.Generate) {
-                    try
+            }
+
+
+            //Then do the CrossCheck when all the programs are loaded in SymbolTable
+            if (config.ExecToStep > ExecutionStep.SemanticCheck)
+            {
+                int fileIndex = 0;
+                foreach (var parser in parsers)
+                {
+                    parser.Results.RefreshProgramClassDocumentSnapshot(); //Do Cross Check phase for each file
+                    diagnostics.Clear();
+                    diagnostics.AddRange(parser.Results.AllDiagnostics()); //Get all diags
+                    errorWriter.Errors.Clear(); //Clear errorWriter because of the potential previous diags
+                    errorWriter.AddErrors(config.InputFiles[fileIndex],
+                        diagnostics.Take(config.MaximumDiagnostics == 0
+                            ? diagnostics.Count
+                            : config.MaximumDiagnostics)); //Write diags into error file
+
+                    if (diagnostics.Count > 0)
                     {
-                        //Load skeletons if necessary
-                        List<Skeleton> skeletons = null;
-                        if (!(string.IsNullOrEmpty(config.skeletonPath)))
+                        foreach (var diag in diagnostics)
                         {
-                            skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
-                        }
-
-                        var sb = new StringBuilder();
-                        //Get Generator from specified config.OutputFormat
-                        var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(),
-                            parser.Results,
-                            sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion);
-
-                        if (generator == null)
-                        {
-                            throw new GenerationException("Unknown OutputFormat=" + config.OutputFormat + "_", path);
-                        }
-
-                        //Generate and check diagnostics
-                        generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
-                        if (generator.Diagnostics != null)
-                        {
-                            errorWriter.AddErrors(path, generator.Diagnostics); //Write diags into error file
-                            throw new PresenceOfDiagnostics("Diagnostics Detected");
-                            //Make ParsingException trace back to RunOnce()
-                        }
-
-                        var outputDirectory= new FileInfo(config.OutputFiles[c]).Directory;
-                        var lockFilePath = outputDirectory.FullName + Path.DirectorySeparatorChar + "~.lock";
-                        if (File.Exists(lockFilePath))
-                        {
-                            errorWriter.AddErrors(path, new Diagnostic(MessageCode.GenerationFailled, 0, 0, 0));
-                            
-                        }
-                        else
-                        {
-                            var lockWriter = new StreamWriter(lockFilePath);
-                            lockWriter.Flush();
-                            lockWriter.Close();
-
-                            using (var streamWriter = new StreamWriter(config.OutputFiles[c]))
+                            if (diag.CatchedException != null)
                             {
-                                try
-                                {
-                                    streamWriter.Write(sb); //Write generated Cobol inside file
-                                    streamWriter.Flush();
-                                }
-                                catch (Exception)
-                                {
-                                    throw;
-                                }
-                                finally
-                                {
-                                    File.Delete(lockFilePath); //Remove lock to allow watchers to read the file
-                                    streamWriter.Close();     
-                                }
+                                AnalyticsWrapper.Telemetry.TrackException(diag.CatchedException, config.InputFiles[fileIndex]);
+                                AnalyticsWrapper.Telemetry.SendMail(diag.CatchedException, config.InputFiles,
+                                    config.CopyFolders, config.CommandLine);
+                            }
+                        }
+
+                    }
+
+                    if (diagnostics.Count == 0)
+                    {
+                        if (config.ExecToStep >= ExecutionStep.CrossCheck &&
+                            !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
+                        {
+                            //Emit any COPY MOVE/INITIALIZE Report.
+                            try
+                            {
+                                cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
+                                string msg = string.Format(
+                                    "Succeed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs.",
+                                    config.ReportCopyMoveInitializeFilePath);
+                                Console.WriteLine(msg);
+                            }
+                            catch (Exception e)
+                            {
+                                string msg = string.Format(
+                                    "Failed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs! : {1}",
+                                    config.ReportCopyMoveInitializeFilePath, e.Message);
+                                Console.Error.WriteLine(msg);
+                                throw new GenerationException(msg, config.ReportCopyMoveInitializeFilePath, e);
                             }
                         }
                     }
-                    catch (PresenceOfDiagnostics)
-                    {
-                        throw; //Throw the same exception to let runOnce() knows there is a problem
-                    }
-                    catch (GenerationException)
-                    {
-                        throw; //Throw the same exception to let runOnce() knows there is a problem
-                    }
-                    catch (Exception e)
-                    {
-                        //Otherwise create a new GenerationException
-                        throw new GenerationException(e.Message, path, e);
-                    }
-                }
 
-                if (parser.Results.AllDiagnostics().Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Warning)) {
-                    returnCode = ReturnCode.Warning;
+                    if (diagnostics.Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Error))
+                    {
+                        throw new PresenceOfDiagnostics("Diagnostics Detected", config.InputFiles[fileIndex]); //Make ParsingException trace back to RunOnce()
+                    }
+
+                    if (diagnostics.Any(d => d.Info.Severity == Compiler.Diagnostics.Severity.Warning)) {
+                        returnCode = ReturnCode.Warning;
+                    }
+
+                    if (config.ExecToStep >= ExecutionStep.Generate)
+                    {
+                        try
+                        {
+                            //Load skeletons if necessary
+                            List<Skeleton> skeletons = null;
+                            if (!(string.IsNullOrEmpty(config.skeletonPath)))
+                            {
+                                skeletons = TypeCobol.Codegen.Config.Config.Parse(config.skeletonPath);
+                            }
+
+                            var sb = new StringBuilder();
+                            //Get Generator from specified config.OutputFormat
+                            var generator = GeneratorFactoryManager.Instance.Create(config.OutputFormat.ToString(),
+                                parser.Results,
+                                sb, skeletons, AnalyticsWrapper.Telemetry.TypeCobolVersion);
+
+                            if (generator == null)
+                            {
+                                throw new GenerationException("Unknown OutputFormat=" + config.OutputFormat + "_",
+                                    config.InputFiles[fileIndex]);
+                            }
+
+                            //Generate and check diagnostics
+                            generator.Generate(parser.Results, ColumnsLayout.CobolReferenceFormat);
+                            if (generator.Diagnostics != null)
+                            {
+                                errorWriter.AddErrors(config.InputFiles[fileIndex],
+                                    generator.Diagnostics); //Write diags into error file
+                                throw new PresenceOfDiagnostics("Diagnostics Detected", config.InputFiles[fileIndex]);
+                                //Make ParsingException trace back to RunOnce()
+                            }
+
+                            var outputDirectory = new FileInfo(config.OutputFiles[fileIndex]).Directory;
+                            var lockFilePath = outputDirectory.FullName + Path.DirectorySeparatorChar + "~.lock";
+                            if (File.Exists(lockFilePath))
+                            {
+                                errorWriter.AddErrors(config.InputFiles[fileIndex],
+                                    new Diagnostic(MessageCode.GenerationFailled, 0, 0, 0));
+
+                            }
+                            else
+                            {
+                                var lockWriter = new StreamWriter(lockFilePath);
+                                lockWriter.Flush();
+                                lockWriter.Close();
+
+                                using (var streamWriter = new StreamWriter(config.OutputFiles[fileIndex]))
+                                {
+                                    try
+                                    {
+                                        streamWriter.Write(sb); //Write generated Cobol inside file
+                                        streamWriter.Flush();
+                                    }
+                                    catch (Exception)
+                                    {
+                                        throw;
+                                    }
+                                    finally
+                                    {
+                                        File.Delete(lockFilePath); //Remove lock to allow watchers to read the file
+                                        streamWriter.Close();
+                                    }
+                                }
+                            }
+                        }
+                        catch (PresenceOfDiagnostics)
+                        {
+                            throw; //Throw the same exception to let runOnce() knows there is a problem
+                        }
+                        catch (GenerationException)
+                        {
+                            throw; //Throw the same exception to let runOnce() knows there is a problem
+                        }
+                        catch (Exception e)
+                        {
+                            //Otherwise create a new GenerationException
+                            throw new GenerationException(e.Message, config.InputFiles[fileIndex], e);
+                        }
+
+                        fileIndex++;
+                    }
+
                 }
             }
 

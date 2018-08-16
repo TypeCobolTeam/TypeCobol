@@ -161,11 +161,12 @@ namespace TypeCobol.Compiler.CodeElements
 		FunctionDeclarationHeader,
 		FunctionDeclarationEnd,
 		ProcedureStyleCall,
-
+        GlobalStorageSectionHeader,
         // [/TYPECOBOL]
 
 
         Program,
         ParametersProfile,
+    
     }
 }

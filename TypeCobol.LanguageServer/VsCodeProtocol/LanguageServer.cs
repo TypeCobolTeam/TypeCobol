@@ -48,7 +48,7 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
 
         public void NotifyException(Exception e)
         {
-            AnalyticsWrapper.Telemetry.TrackException(e);
+            AnalyticsWrapper.Telemetry.TrackException(e, null);
             this.RemoteWindow.ShowErrorMessage(e.Message + "\n" + e.StackTrace);
         }
 

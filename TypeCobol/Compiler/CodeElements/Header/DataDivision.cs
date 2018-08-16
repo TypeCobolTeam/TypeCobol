@@ -20,12 +20,22 @@ public class FileSectionHeader: DataSectionHeader {
 }
 
 /// <summary>
+/// The GLOBAL-STORAGE SECTION describes data records that are shared between procedure, data shared between a program and its nested programs
+/// The GLOBAL-STORAGE SECTION has to be declared between FILE SECTION and WORKING-STORAGE SECTION
+/// See issue #805 on GitHub
+/// </summary>
+public class GlobalStorageSectionHeader : DataSectionHeader {
+    public GlobalStorageSectionHeader() : base(CodeElementType.GlobalStorageSectionHeader) { }
+}
+
+/// <summary>
 /// The WORKING-STORAGE SECTION describes data records that are not part of data files but are developed and processed by a program or method. 
 /// The WORKING-STORAGE SECTION also describes data items whose values are assigned in the source program or method and do not change during execution of the object program.
 /// </summary>
 public class WorkingStorageSectionHeader: DataSectionHeader {
 	public WorkingStorageSectionHeader() : base(CodeElementType.WorkingStorageSectionHeader) { }
 }
+
 
 /// <summary>
 /// The LOCAL-STORAGE SECTION defines storage that is allocated and freed on a per-invocation basis.

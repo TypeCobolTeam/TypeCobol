@@ -1,0 +1,1 @@
+﻿-1 -i input\DVZFSCTX.tcbl -i input\DVZFSCTX2.tcbl -o output\gen1.tcbl -o output\gen2.tcbl -d output\error.txt -s ..\skeletons.xml -e rdz --autoremarks -f PublicSignatures

@@ -41,7 +41,7 @@ namespace TypeCobol.Codegen.Nodes {
 
 
                         //declare procedure parameters into linkage
-                        DeclareProceduresParametersIntoLinkage(originalNode, linkageSection, originalNode.CodeElement().Profile);
+                        DeclareProceduresParametersIntoLinkage(originalNode, linkageSection, originalNode.Profile);
                     }
                     
 
@@ -218,44 +218,50 @@ namespace TypeCobol.Codegen.Nodes {
             }
         }
 
-        private void DeclareProceduresParametersIntoLinkage(Compiler.Nodes.FunctionDeclaration node, Compiler.Nodes.LinkageSection linkage, ParametersProfile profile) {
+        private void DeclareProceduresParametersIntoLinkage(Compiler.Nodes.FunctionDeclaration node, Compiler.Nodes.LinkageSection linkage, ParametersProfileNode profile) {
             var data = linkage.Children();
 
             // TCRFUN_CODEGEN_PARAMETERS_ORDER
             var generated = new List<string>();
             foreach (var parameter in profile.InputParameters) {
                 if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                    linkage.Add(CreateParameterEntry(parameter, node));
                     generated.Add(parameter.Name);
                 }
             }
             foreach (var parameter in profile.InoutParameters) {
                 if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                    linkage.Add(CreateParameterEntry(parameter, node));
                     generated.Add(parameter.Name);
                 }
             }
             foreach (var parameter in profile.OutputParameters) {
                 if (!generated.Contains(parameter.Name) && !Contains(data, parameter.Name)) {
-                    linkage.Add(CreateParameterEntry(parameter, node.SymbolTable));
+                    linkage.Add(CreateParameterEntry(parameter, node));
                     generated.Add(parameter.Name);
                 }
             }
             if (profile.ReturningParameter != null) {
                 if (!generated.Contains(profile.ReturningParameter.Name) &&
                     !Contains(data, profile.ReturningParameter.Name)) {
-                    linkage.Add(CreateParameterEntry(profile.ReturningParameter, node.SymbolTable));
+                    linkage.Add(CreateParameterEntry(profile.ReturningParameter, node));
                     generated.Add(profile.ReturningParameter.Name);
                 }
             }
             
         }
 
-        private ParameterEntry CreateParameterEntry(ParameterDescriptionEntry parameter, Compiler.CodeModel.SymbolTable table) {
-            var generated = new ParameterEntry(parameter, table);
-            if (parameter.DataConditions != null) {
-                foreach (var child in parameter.DataConditions) generated.Add(new DataCondition(child));
+        private ParameterEntry CreateParameterEntry(ParameterDescription parameter, FunctionDeclaration node)
+        {
+            var paramEntry = parameter.CodeElement as ParameterDescriptionEntry;
+            var generated = new ParameterEntry(paramEntry, node.SymbolTable, parameter);
+            if (paramEntry.DataConditions != null) {
+                foreach (var child in paramEntry.DataConditions) generated.Add(new DataCondition(child));
             }
+
+            var parameterNode = node.Profile.Parameters.FirstOrDefault(x => x.Name == paramEntry.Name);
+            if (parameterNode != null)
+                generated.CopyFlags(parameterNode.Flags);
             return generated;
         }
 

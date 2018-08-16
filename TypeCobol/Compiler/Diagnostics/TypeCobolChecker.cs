@@ -19,7 +19,7 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     class ReadOnlyPropertiesChecker
     {
-        private static string[] READONLY_DATATYPES = { "DATE", };
+        private static string[] READONLY_DATATYPES = {"DATE",};
 
         public static void OnNode([NotNull] Node node)
         {
@@ -28,6 +28,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 return; //not our job
             }
+
             var element = node.CodeElement as VariableWriter;
             if (element?.VariablesWritten != null)
                 foreach (var pair in element.VariablesWritten)
@@ -38,6 +39,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         continue; // ambiguity or not referenced; not my job
                     }
+
                     checkReadOnly(node, receiving);
                 }
         }
@@ -63,7 +65,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 !functionCaller.FunctionCall.NeedDeclaration)
                 return;
 
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionCalled, functionCaller.FunctionCall.FunctionName, LogType.TypeCobolUsage);
+            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionCalled, functionCaller.FunctionCall.FunctionName,
+                LogType.TypeCobolUsage);
 
             if (functionCaller.FunctionDeclaration == null)
             {
@@ -85,6 +88,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         Check(node, functionCaller.FunctionCall, functionCaller.FunctionDeclaration);
                         return; //Everything seems to be ok, lets continue on the next one
                     }
+
                     //Another checker should check if function declaration is not duplicated
                     if (functionDeclarations.Count > 0)
                     {
@@ -101,11 +105,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
                     if (functionDeclarations.Count == 0 && otherDeclarations.Count == 0)
                     {
-                        message = string.Format("Function not found '{0}' {1}", functionCaller.FunctionCall.FunctionName,
+                        message = string.Format("Function not found '{0}' {1}",
+                            functionCaller.FunctionCall.FunctionName,
                             parameterList.GetSignature());
                         DiagnosticUtils.AddError(node, message);
                         return; //Do not continue the function/procedure does not exists
                     }
+
                     if (otherDeclarations.Count > 1)
                     {
                         message = string.Format("No suitable function signature found for '{0}' {1}",
@@ -178,10 +184,6 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-
-
-
-
         private static void Check(Node node, [NotNull] FunctionCall call,
             [NotNull] FunctionDeclaration definition)
         {
@@ -191,7 +193,8 @@ namespace TypeCobol.Compiler.Diagnostics
             var callArgsCount = call.Arguments != null ? call.Arguments.Length : 0;
             if (callArgsCount > parameters.Count)
             {
-                var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName, parameters.Count);
+                var m = string.Format("Function '{0}' only takes {1} parameter(s)", call.FunctionName,
+                    parameters.Count);
                 DiagnosticUtils.AddError(node, m);
             }
 
@@ -199,7 +202,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 || callerProfile.InoutParameters.Count != definition.Profile.InoutParameters.Count
                 || callerProfile.OutputParameters.Count != definition.Profile.OutputParameters.Count)
             {
-                var m = string.Format("No suitable function signature found for '{0}' {1}", call.FunctionName, callerProfile.GetSignature());
+                var m = string.Format("No suitable function signature found for '{0}' {1}", call.FunctionName,
+                    callerProfile.GetSignature());
                 DiagnosticUtils.AddError(node, m);
             }
 
@@ -232,6 +236,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         continue;
                     }
+
                     var actualDataDefinition = found;
 
                     var actualSpecialRegister = actual.StorageArea as StorageAreaPropertySpecialRegister;
@@ -243,16 +248,20 @@ namespace TypeCobol.Compiler.Diagnostics
                             if (call is ProcedureCall)
                             {
                                 ProcedureCall procedureCall = call as ProcedureCall;
-                                if (procedureCall.OutputParameters.Contains(call.Arguments[c]) )
+                                if (procedureCall.OutputParameters.Contains(call.Arguments[c]))
                                 {
-                                    DiagnosticUtils.AddError(node, "LENGTH cannot be used as an output", actualSpecialRegister.SpecialRegisterName);
+                                    DiagnosticUtils.AddError(node, "LENGTH cannot be used as an output",
+                                        actualSpecialRegister.SpecialRegisterName);
                                     continue;
                                 }
                             }
-                            // accepted format is "PIC [S]9(5..9) comp-5"
-                            if ((expected.PrimitiveDataType != null && expected.PrimitiveDataType.Name != "Numeric") || expected.Length < 5 || expected.Length > 9 || expected.Usage != DataUsage.NativeBinary)
+
+                               // accepted format is "PIC [S]9(5..9) comp-5"
+                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.Length < 5 ||
+                                expected.Length > 9 || expected.Usage != DataUsage.NativeBinary)
                             {
-                                DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5", actualSpecialRegister.SpecialRegisterName);
+                                DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5",
+                                    actualSpecialRegister.SpecialRegisterName);
                                 continue;
                             }
                         }
@@ -261,8 +270,11 @@ namespace TypeCobol.Compiler.Diagnostics
                             if (!actualDataDefinition.IsFlagSet(Node.Flag.LinkageSectionNode) &&
                                 call.Arguments[c].SharingMode.Value == ParameterSharingMode.ByReference)
                             {
-                                DiagnosticUtils.AddError(node, "ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE", actualSpecialRegister.SpecialRegisterName);
+                                DiagnosticUtils.AddError(node,
+                                    "ADDRESS OF can only be used with a LINKAGE variable, or with a sharing mode BY CONTENT/BY VALUE",
+                                    actualSpecialRegister.SpecialRegisterName);
                             }
+
                             continue;
                         }
                         else if (tokenType == TokenType.LINAGE_COUNTER)
@@ -291,13 +303,17 @@ namespace TypeCobol.Compiler.Diagnostics
                     NumericVariable actualOccursDependingOn = actualDataDefinition.OccursDependingOn;
                     bool actualIsTableOccurence = actualDataDefinition.IsTableOccurence;
 
-                    if (actualDataDefinition.IsTableOccurence) {
+                    if (actualDataDefinition.IsTableOccurence)
+                    {
                         var subscriptedStorageArea = actual.StorageArea as DataOrConditionStorageArea;
-                        if (subscriptedStorageArea != null && subscriptedStorageArea.Subscripts.Count > 0) { //if there are subscripts
+                        if (subscriptedStorageArea != null && subscriptedStorageArea.Subscripts.Count > 0)
+                        {
+                            //if there are subscripts
 
 
                             //Do not allow ALL
-                            if (subscriptedStorageArea.Subscripts.Any(s => s.ALL != null)) {
+                            if (subscriptedStorageArea.Subscripts.Any(s => s.ALL != null))
+                            {
                                 DiagnosticUtils.AddError(node, "You cannot use ALL for procedure argument");
                                 return;
                             }
@@ -352,7 +368,8 @@ namespace TypeCobol.Compiler.Diagnostics
                             string.Format(
                                 "Function '{0}' expected parameter '{1}' with picture {2} and received '{3}' with picture {4}",
                                 call.FunctionName, expected.Name, expected.Picture.Value,
-                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.Picture.Value);
+                                callArgName ?? string.Format("position {0}", c + 1),
+                                actualDataDefinition.Picture.Value);
                         DiagnosticUtils.AddError(node, m);
                     }
               
@@ -405,15 +422,20 @@ namespace TypeCobol.Compiler.Diagnostics
 
 
                     //Array
-                    if (actualIsTableOccurence != expected.IsTableOccurence) {
+                    if (actualIsTableOccurence != expected.IsTableOccurence)
+                    {
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' to {2} an array and received '{3}' which {4} an array",
-                               call.FunctionName, expected.Name, expected.IsTableOccurence ? "be" : "be NOT", actualDataDefinition.Name,
+                                call.FunctionName, expected.Name, expected.IsTableOccurence ? "be" : "be NOT",
+                                actualDataDefinition.Name,
                                 actualIsTableOccurence ? "is" : "is NOT ");
                         DiagnosticUtils.AddError(node, m);
-                    } else if (actualIsTableOccurence && expected.IsTableOccurence) {
-                        if (actualMinOccurencesCount != expected.MinOccurencesCount) {
+                    }
+                    else if (actualIsTableOccurence && expected.IsTableOccurence)
+                    {
+                        if (actualMinOccurencesCount != expected.MinOccurencesCount)
+                        {
                             var m =
                                 string.Format(
                                     "Function '{0}' expected parameter '{1}' to have at least {2} occurences and received '{3}' with a minimum of {4} occurences",
@@ -422,7 +444,8 @@ namespace TypeCobol.Compiler.Diagnostics
                             DiagnosticUtils.AddError(node, m);
                         }
 
-                        if (actualMaxOccurencesCount != expected.MaxOccurencesCount) {
+                        if (actualMaxOccurencesCount != expected.MaxOccurencesCount)
+                        {
                             var m =
                                 string.Format(
                                     "Function '{0}' expected parameter '{1}' to have at most {2} occurences and received '{3}' with a maximum of {4} occurences",
@@ -447,8 +470,14 @@ namespace TypeCobol.Compiler.Diagnostics
                         var m =
                            string.Format(
                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
-                               call.FunctionName, expected.Name, expected.HasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences",
-                               callArgName ?? string.Format("position {0}", c + 1), actualHasUnboundedNumberOfOccurences ? "has unbounded number of occurences" : "hasn't unbounded number of occurences");
+                                call.FunctionName, expected.Name,
+                                expected.HasUnboundedNumberOfOccurences
+                                    ? "has unbounded number of occurences"
+                                    : "hasn't unbounded number of occurences",
+                                callArgName ?? string.Format("position {0}", c + 1),
+                                actualHasUnboundedNumberOfOccurences
+                                    ? "has unbounded number of occurences"
+                                    : "hasn't unbounded number of occurences");
                         DiagnosticUtils.AddError(node, m);
                     }
 
@@ -516,7 +545,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class FunctionDeclarationTypeChecker
     {
-        public static void OnCodeElement(FunctionDeclarationHeader function, CodeElementsParser.FunctionDeclarationHeaderContext context)
+        public static void OnCodeElement(FunctionDeclarationHeader function,
+            CodeElementsParser.FunctionDeclarationHeaderContext context)
         {
 
             if (function.ActualType == FunctionType.Undefined)
@@ -556,7 +586,8 @@ namespace TypeCobol.Compiler.Diagnostics
             if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
             {
                 
-                DiagnosticUtils.AddError(filesection, "Illegal FILE SECTION in function \"" + header.Name + "\" declaration");
+                DiagnosticUtils.AddError(filesection,
+                    "Illegal FILE SECTION in function \"" + header.Name + "\" declaration");
             }
 
             CheckNoGlobalOrExternal(functionDeclaration.Get<DataDivision>("data-division"));
@@ -621,6 +652,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node,
                     "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.");
             }
+
             if (parameter.DataConditions != null)
             {
                 foreach (var condition in parameter.DataConditions)
@@ -630,7 +662,8 @@ namespace TypeCobol.Compiler.Diagnostics
                             "Condition parameter \"" + condition.Name + "\" must be level 88.");
                     if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
                         DiagnosticUtils.AddError(node,
-                            "The Level 88 symbol '" + parameter.Name + "' cannot be declared under a BOOL typed symbol");
+                            "The Level 88 symbol '" + parameter.Name +
+                            "' cannot be declared under a BOOL typed symbol");
                 }
             }
 
@@ -661,18 +694,21 @@ namespace TypeCobol.Compiler.Diagnostics
                     AddErrorAlreadyParameter(description, description.QualifiedName);
                     continue;
                 }
+
                 used = GetParameter(profile.InputParameters, description.Name);
                 if (used != null)
                 {
                     AddErrorAlreadyParameter(description, description.QualifiedName);
                     continue;
                 }
+
                 used = GetParameter(profile.OutputParameters, description.Name);
                 if (used != null)
                 {
                     AddErrorAlreadyParameter(description, description.QualifiedName);
                     continue;
                 }
+
                 used = GetParameter(profile.InoutParameters, description.Name);
                 if (used != null)
                 {
@@ -699,7 +735,8 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (name == null) return null;
             foreach (var p in parameters)
-                if (Validate(p, name) != null) return p;
+                if (Validate(p, name) != null)
+                    return p;
             return null;
         }
 
@@ -722,6 +759,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 CheckNotInTable(table, perform.Procedure, node);
                 CheckNotInTable(table, perform.ThroughProcedure, node);
             }
+
             foreach (var child in node.Children) CheckNoPerform(table, child);
         }
 
@@ -771,20 +809,25 @@ namespace TypeCobol.Compiler.Diagnostics
 	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
                             DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
-                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Move paragraph " + child.Name + " lower in the source.");
+                                "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Move paragraph " +
+                                child.Name + " lower in the source.");
                     }
+
 	                firstParagraphChecked = true;
 
 	                continue; //A paragraph is always accepted as a child of ProcedureDivision
 	            }
+
                 //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
                 if (!(child is FunctionDeclaration || child is Declaratives))
                 {
-                        DiagnosticUtils.AddError(child.CodeElement == null ? 
-                            (child is Sentence 
+                        DiagnosticUtils.AddError(child.CodeElement == null
+                                ? (child is Sentence
                             ? (child.Children.FirstOrDefault(c => c.CodeElement != null) ?? procedureDivision)
-                            : procedureDivision) : child,
-                            "Inside a library only function declaration or declaratives are allowed " + child.Name + " / " + child.ID);
+                                    : procedureDivision)
+                                : child,
+                            "Inside a library only function declaration or declaratives are allowed " + child.Name +
+                            " / " + child.ID);
                     }
             }
 
@@ -816,16 +859,19 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (receiver.Usage == DataUsage.Pointer)
                     {
                         containsPointers = true;
-                        var levelNumber = ((DataDefinitionEntry)receiver.CodeElement).LevelNumber;
+                        var levelNumber = ((DataDefinitionEntry) receiver.CodeElement).LevelNumber;
                         if (levelNumber != null && levelNumber.Value > 49)
                         {
-                            DiagnosticUtils.AddError(node, "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
+                            DiagnosticUtils.AddError(node,
+                                "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
                             break;
                         }
+
                         receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true);
                     }
                     else
                         allArePointers = false; 
+
                         // Do note break here because it can be all indexes wich is correct or a pointer as last receiver wich is not
                 }
 
@@ -833,21 +879,83 @@ namespace TypeCobol.Compiler.Diagnostics
                     node.SetFlag(Node.Flag.NodeContainsPointer, true);
                 // If the receivers contains at least one Pointer, they must all be pointer
                 else if (containsPointers)
-                    DiagnosticUtils.AddError(node, "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
+                    DiagnosticUtils.AddError(node,
+                        "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
                 
                 // Check sender (increment)
                 int outputResult; // not used
                 if (!int.TryParse(statement.SendingVariable.ToString(), out outputResult))
-                {// Not an integer
-                    var variable = node.GetDataDefinitionForQualifiedName(new URI(statement.SendingVariable.ToString()));
+                {
+                    // Not an integer
+                    var variable =
+                        node.GetDataDefinitionForQualifiedName(new URI(statement.SendingVariable.ToString()));
                     if (variable == null || variable.DataType.Name != "Numeric")
-                    {// Not an Variable or a notNumeric variable
+                    {
+                        // Not an Variable or a notNumeric variable
                         if (statement.SendingVariable.ArithmeticExpression == null)
                             // Not an arithmetic expressions
-                            DiagnosticUtils.AddError(node, "Increment only support integer values, numeric variables and arithmetic expressions");
+                            DiagnosticUtils.AddError(node,
+                                "Increment only support integer values, numeric variables and arithmetic expressions");
                     }
                 }
             }
         }
     }
+
+
+    public class GlobalStorageSectionChecker
+    {
+        public static void OnNode([NotNull] Node node)
+        {
+            var globalStorageSection = node as GlobalStorageSection;
+            if (globalStorageSection == null) return;
+
+            //Check if GlobalStorageSection is declared in main program Rule - GLOBALSS_ONLY_IN_MAIN 
+            if (!globalStorageSection.GetProgramNode().IsMainProgram)
+                DiagnosticUtils.AddError(node,
+                    "GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.");
+
+            //Check every GlobalStorageSection DataDefinition (children)
+            foreach (var child in globalStorageSection.Children)
+            {
+                CheckGlobalStorageChildren(child);
+            }
+        }
+
+        private static void CheckGlobalStorageChildren(Node node)
+        {
+            var dataDefinition = node as DataDefinition;
+            if (dataDefinition == null) return;
+
+            //Check variable LevelNumber Rule - GLOBALSS_LIMIT48 
+            var data = dataDefinition.CodeElement as DataDefinitionEntry;
+            if (data?.LevelNumber != null && data.LevelNumber.Value == 77)
+                DiagnosticUtils.AddError(node,
+                    "Level 77 is forbidden in global-storage section.");
+
+            //Check variable no Global / External keyword 
+            // Rules : - GLOBALSS_NO_GLOBAL_KEYWORD - GLOBALSS_NO_EXTERNAL 
+            var dataDescription = dataDefinition.CodeElement as DataDescriptionEntry;
+            if (dataDescription != null)
+            {
+                if (dataDescription.IsGlobal) // GLOBALSS_NO_GLOBAL_KEYWORD 
+                    DiagnosticUtils.AddError(dataDescription, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.");
+                if (dataDescription.IsExternal) //GLOBALSS_NO_EXTERNAL
+                    DiagnosticUtils.AddError(dataDescription, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.");
+                    }
+
+            if (node.Children.Count > 0)
+            {
+                foreach (var child in node.Children)
+                {
+                    CheckGlobalStorageChildren(child);
+                }
+            }
+        }
+
+
+    }
+
 }
+        
+

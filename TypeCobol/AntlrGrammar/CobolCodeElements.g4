@@ -505,19 +505,19 @@ authoringProperties:
 	 securityParagraph     )*;
 
 authorParagraph:
-    AUTHOR PeriodSeparator? alphanumericValue6*;
+    AUTHOR PeriodSeparator? CommentEntry*;
 
 installationParagraph:
-    INSTALLATION PeriodSeparator? alphanumericValue6*;
+    INSTALLATION PeriodSeparator? CommentEntry*;
 
 dateWrittenParagraph:
-    DATE_WRITTEN PeriodSeparator? alphanumericValue6*;
+    DATE_WRITTEN PeriodSeparator? CommentEntry*;
 
 dateCompiledParagraph:
-    DATE_COMPILED PeriodSeparator? alphanumericValue6*;
+    DATE_COMPILED PeriodSeparator? CommentEntry*;
 
 securityParagraph:
-     SECURITY PeriodSeparator? alphanumericValue6*;
+     SECURITY PeriodSeparator? CommentEntry*;
 
 // p105 : The comment-entry in any of the optional paragraphs can be any combination of
 // characters from the character set of the computer. The comment-entry is written in
@@ -856,7 +856,7 @@ charactersEqualSet:
 // constant must not be specified.
 
 characterInCollatingSequence: 
-	characterValue2 | ordinalPositionInCollatingSequence;
+	alphanumericLiteralToken | figurativeConstant | ordinalPositionInCollatingSequence;
 
 // p117 : The SYMBOLIC CHARACTERS clause is applicable only to single-byte character
 // sets. Each character represented is an alphanumeric character.
@@ -976,7 +976,7 @@ userDefinedCharacterClass:
 // p119: The SPECIAL-NAMES paragraph can contain multiple CURRENCY SIGN clauses.
 
 currencySignClause:
-    CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL characterValue1)?;
+    CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL alphanumericLiteralToken)?;
 
 // p120: The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
 // and the comma in PICTURE character-strings and in numeric literals.
@@ -2716,7 +2716,7 @@ tableSortingKeys:
 // elementary data item.
 
 pictureClause:
-    (PICTURE |PIC) IS? pictureCharacterString=alphanumericValue7;
+    (PICTURE |PIC) IS? pictureCharacterString=PictureCharacterString;
 
 // p199: character-string can contain a maximum of 50 characters.
 // Symbols used in the PICTURE clause
@@ -8235,7 +8235,7 @@ notOnSizeErrorCondition:
 
 execStatement:
                  (EXEC | EXECUTE) execTranslatorName 
-                 alphanumericValue8* 
+                 ExecStatementText* 
                  execStatementEnd;
 
 execStatementEnd: END_EXEC;

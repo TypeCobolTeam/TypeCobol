@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Test.Utils;
 using System.Text;
+using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Test {
 
@@ -26,6 +27,7 @@ namespace TypeCobol.Test {
 	        CheckTests(root, @"GrammarTest", @"CheckGrammarResults.txt", regex);
 
 	    }
+
 
 	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string expectedResultFile = null) {
 	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, skelPath, 10000, false, expectedResultFile);

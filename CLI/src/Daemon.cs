@@ -139,7 +139,7 @@ namespace TypeCobol.Server {
                 }
 			}
             catch (Exception e) {
-                AnalyticsWrapper.Telemetry.TrackException(e);
+                AnalyticsWrapper.Telemetry.TrackException(e, null);
                 return exit(ReturnCode.FatalError, e.Message);
 			}
 
