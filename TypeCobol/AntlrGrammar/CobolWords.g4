@@ -568,6 +568,7 @@ tokens
 	CopyImportDirective,
 	ReplaceDirective,
 	ContinuationTokenGroup,
+	// Formalised Comments
 	FormalizedCommentsStart,
 	FormalizedCommentsStop,
 	FormComsDescription,
@@ -578,7 +579,8 @@ tokens
 	FormComsNeed,
 	FormComsSee,
 	FormComsToDo,
-	FormComsValue
+	FormComsValue,
+	AtSign
 }
 
 

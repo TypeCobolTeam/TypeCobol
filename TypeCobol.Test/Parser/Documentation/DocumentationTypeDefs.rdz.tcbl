@@ -14,11 +14,11 @@
       * Inline Typedef with too much informations inside Formalized Comments
       *<< 
           Description for Type12
-          - deprec
-          - params:
+          @ deprec
+          @ params:
             - param1: TYPEDEF do not have any param
             - param2: This informations should be truncated
-          - replacedBy: Type42
+          @ replacedBy: Type42
       *>>
        01 Type12 TYPEDEF STRICT pic X(8).
 
@@ -53,14 +53,14 @@
       * Group Typedef with too much informations inside Formalized Comments
       *<< 
           Description for Type22 
-          - deprecated
-          - params:
+          @ deprecated
+          @ params:
             - Member1: BirthDate
             - Member2: Today Date and Era
             - Member3: self implementation attempt
             - Mamber42: this would be 
                         truncated
-          - need: see here what is needed
+          @ need: see here what is needed
       *>>
        01 Type22 TYPEDEF STRICT.
         02 Member1 Pic x(8) BLANK WHEN ZERO.

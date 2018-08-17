@@ -1,10 +1,10 @@
 ﻿      *<< Main Program
-        - rEsTrIcTiOn : restriction value
-        - need:
+        @ rEsTrIcTiOn : restriction value
+        @ need:
           - This is my first need
             This is also my first need
           - This is my second need
-        - see : Thank you for your attention
+        @ see : Thank you for your attention
       *>>
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DocForPrograms.
@@ -17,7 +17,7 @@
 
          *<< 
             Nested Program
-            - params : 
+            @ params : 
               - param1:
                 This
                   is
@@ -26,8 +26,8 @@
                         param
               - param2: Output this is an output param
               - param3: inout - this is an inout param
-            - need: This is my only need
-            - todo : slap car roof
+            @ need: This is my only need
+            @ todo : slap car roof
          *>>
          IDENTIFICATION DIVISION.
            PROGRAM-ID. NestedPgm IS COMMON.

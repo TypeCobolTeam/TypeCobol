@@ -62,6 +62,7 @@
     <Parameter>
       <Name>desc</Name>
       <PassingType>Output</PassingType>
+      <Info>this is not a description</Info>
       <DocDataType>
         <Usage xsi:nil="true" />
         <MaxOccurence>1</MaxOccurence>

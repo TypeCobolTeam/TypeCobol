@@ -215,12 +215,14 @@ formalizedCommentParam:
     | FormComsSee 
     | FormComsToDo; 
  
-formalizedCommentKeyValueParam: 
-    MinusOperator (formalizedCommentParam | UserDefinedWord)  FormComsValue?; 
-     
-// a line can be the description without key, the key value couple, the key as a flag or a value line wrapping 
+formalizedCommentOuterLevel:
+	AtSign formalizedCommentParam FormComsValue?;
+
+formalizedCommentInnerLevel:
+	MinusOperator (((formalizedCommentParam | UserDefinedWord) FormComsValue ) | listItemValue=FormComsValue);
+
 formalizedCommentLine: 
-    (MinusOperator? FormComsValue) | formalizedCommentKeyValueParam; 
+    formalizedCommentOuterLevel | formalizedCommentInnerLevel | FormComsValue; 
  
 formalizedComment: 
     FormalizedCommentsStart formalizedCommentLine* FormalizedCommentsStop; 

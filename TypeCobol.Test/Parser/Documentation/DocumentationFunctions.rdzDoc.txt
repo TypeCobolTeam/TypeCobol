@@ -72,7 +72,7 @@ Parameters :
         Picture : S9(5)V9(2)
     --------
     Name : desc
-    Info : 
+    Info : this is not a description
     PassingType : Output
     DataType : 
         Usage : 
@@ -104,6 +104,8 @@ Parameters :
     myDate : sell date
     name : product name
     ID : will be ignored
+    desc : this is not a description
+    IDS : this will be truncated
 
 ---------------------
 

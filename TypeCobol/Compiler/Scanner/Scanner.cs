@@ -631,6 +631,9 @@ namespace TypeCobol.Compiler.Scanner
                     case '-':
                         currentIndex++;
                         return new Token(TokenType.MinusOperator, startIndex, currentIndex - 1, tokensLine);
+                    case '@':
+                        currentIndex++;
+                        return new Token(TokenType.AtSign, startIndex, currentIndex - 1, tokensLine); 
                     case ':':
                         // The colon char can appears inside the formalized comments as a separator between keys and value
                         // Consume the rest of the line and create a FloatingComment token as value for the formalized comment
@@ -657,19 +660,32 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         return new Token(TokenType.GreaterThanOperator, startIndex, currentIndex - 1, tokensLine);
                     default:
+                        // A word was found, it can be 
+                        // - a keyword as a key
+                        // - a UseDefineword as a key (only for Params)
+                        // - a string as a value
+                        // - a string as a list items
+                        // - a string continuation
                         // register the keys or the description if no '-' was given
+
                         if (tokensLine.SourceTokens.Count > 1 &&
-                            tokensLine.SourceTokens[1].TokenType == TokenType.MinusOperator)
+                            (tokensLine.SourceTokens[1].TokenType == TokenType.MinusOperator ||
+                             tokensLine.SourceTokens[1].TokenType == TokenType.AtSign))
                         {
+                            // scan the first word
                             Token token = ScanCharacterString(startIndex);
                             int i = token.StopIndex + 1;
-                            for (;tokensLine.Text.Length > i && tokensLine.Text[i] == ' '; i++) { }
 
-                             if ((tokensLine.Text.Length > i && tokensLine.Text[i] == ':') || tokensLine.Text.Length <= i)
-                                // It is a keyword or a parameter name
+                            // mive the index i to the next no space charactere
+                            for (; tokensLine.Text.Length > i && tokensLine.Text[i] == ' '; i++) { }
+
+                            if ((tokensLine.Text.Length > i && tokensLine.Text[i] == ':') ||
+                                (tokensLine.SourceTokens[1].TokenType == TokenType.AtSign && tokensLine.Text.Length <= i))
+                                // if the first word is succeded by a ':' then it is a keyword or a UseDefineword as a key
+                                // or it is the end of line and it is just a keyword (only deprecated in Outer level)
                                 return token;
                         }
-                        // It's a description without key or a list Item
+                        // It's a string as a value/list items or a string continuation
                         return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>");
                 }
             }
