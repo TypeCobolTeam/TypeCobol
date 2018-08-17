@@ -177,6 +177,14 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(Evaluate evaluate)
+        {
+            if(evaluate.GetChildren<WhenOther>().Count == 0)
+                DiagnosticUtils.AddError(evaluate.CodeElement,
+                    "\"when other\" is missing", MessageCode.Warning);
+            return true; 
+        }
+
         public override bool Visit(TypeDefinition typeDefinition)
         {
             //Cobol 2002 rule

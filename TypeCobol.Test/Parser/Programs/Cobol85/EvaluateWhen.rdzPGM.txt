@@ -1,4 +1,5 @@
 ﻿--- Diagnostics ---
+Line 9[12,24] <37, Warning, General> - Warning: "when other" is missing
 Line 10[14,33] <27, Error, Syntax> - Syntax error : Symbol nullInd is not referenced
 
 --- Program ---
