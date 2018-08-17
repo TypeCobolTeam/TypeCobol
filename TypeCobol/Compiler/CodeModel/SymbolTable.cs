@@ -865,32 +865,32 @@ namespace TypeCobol.Compiler.CodeModel
         {
             var foundedTypes = new List<TypeDefinition>();
 
-            Scope currentScope = this.CurrentScope;
-            while (currentScope >= maximalScope)
+            SymbolTable currentTable = this;
+            while (currentTable != null && currentTable.CurrentScope >= maximalScope)
             {
-                var scopedTable = this.GetTableFromScope(currentScope);
-                if (scopedTable == null) { currentScope--; continue; }
-                var dataToSeek = scopedTable.Types.Values.SelectMany(t => t);
-                if (currentScope == Scope.Namespace)
+                var dataToSeek = currentTable.Types.Values.SelectMany(t => t);
+                if (currentTable.CurrentScope == Scope.Namespace)
                 {
                     //For namespace scope, we need to browse every program
-                    dataToSeek = scopedTable
-                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
-                                    .Types.Values.SelectMany(t => t));
+                    dataToSeek = currentTable
+                        .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
+                            .Types.Values.SelectMany(t => t));
 
-                    dataToSeek = dataToSeek.Concat(scopedTable
-                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Global)
-                                    .Types.Values.SelectMany(t => t)));
+                    dataToSeek = dataToSeek.Concat(currentTable
+                        .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Global)
+                            .Types.Values.SelectMany(t => t)));
                 }
 
                 var results = dataToSeek.AsQueryable().Where(predicate);
 
-                if (currentScope == Scope.Intrinsic || currentScope == Scope.Namespace)
-                    results = results.Where(tp => (tp.CodeElement as DataTypeDescriptionEntry) != null && (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public);
+                if (currentTable.CurrentScope == Scope.Intrinsic || currentTable.CurrentScope == Scope.Namespace)
+                    results = results.Where(tp =>
+                        (tp.CodeElement as DataTypeDescriptionEntry) != null &&
+                        (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public);
 
                 foundedTypes.AddRange(results);
 
-                currentScope--;
+                currentTable = currentTable.EnclosingScope;
             }
 
             return foundedTypes.Distinct();
@@ -979,27 +979,29 @@ namespace TypeCobol.Compiler.CodeModel
         {
             var foundedFunctions = new List<FunctionDeclaration>();
 
-            Scope currentScope = this.CurrentScope;
-            while (currentScope >= maximalScope)
+            SymbolTable currentTable = this;
+            while (currentTable != null && currentTable.CurrentScope >= maximalScope)
             {
-                var scopedTable = this.GetTableFromScope(currentScope);
-                var dataToSeek = scopedTable.Functions.Values.SelectMany(t => t);
-                if (currentScope == Scope.Namespace)
+                var dataToSeek = currentTable.Functions.Values.SelectMany(t => t);
+                if (currentTable.CurrentScope == Scope.Namespace)
                 {
                     //For namespace scope, we need to browse every program
-                    dataToSeek = scopedTable
-                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
-                                    .Functions.Values.SelectMany(t => t));
+                    dataToSeek = currentTable
+                        .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.Declarations)
+                            .Functions.Values.SelectMany(t => t));
                 }
 
                 var results = dataToSeek.AsQueryable().Where(predicate);
 
-                if (currentScope == Scope.Intrinsic || currentScope == Scope.Namespace)
-                    results = results.Where(tp => (tp.CodeElement as FunctionDeclarationHeader) != null && (tp.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public);
+                if (currentTable.CurrentScope == Scope.Intrinsic || currentTable.CurrentScope == Scope.Namespace)
+                    results = results.Where(tp =>
+                        (tp.CodeElement as FunctionDeclarationHeader) != null &&
+                        (tp.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public);
 
                 foundedFunctions.AddRange(results);
 
-                currentScope--;
+
+                currentTable = currentTable.EnclosingScope;
             }
 
             return foundedFunctions.Distinct();

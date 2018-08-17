@@ -1,0 +1,13 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Dep.
+
+       DATA DIVISION.
+       working-storage section.
+
+       01 YCONVEA. COPY YCONVEA. 
+       01 MyPubType TYPEDEF STRICT PUBLIC. 
+
+       PROCEDURE DIVISION.
+       
+        .
+       END PROGRAM Dep.
