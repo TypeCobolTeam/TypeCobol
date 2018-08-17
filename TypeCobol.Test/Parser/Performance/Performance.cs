@@ -100,6 +100,7 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Parsing")]
         [TestProperty("Time", "long")]
+        [Ignore]
         public void FullParsingAndGenerationTest()
         {
             string[] copiesFolder = new string[] { };
