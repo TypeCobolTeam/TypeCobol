@@ -159,7 +159,6 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 return;
             }
-            //If symbol is a part of a type add to DataTypeEntries
             if (!symbol.IsPartOfATypeDef)
             {
                 Add(DataEntries, symbol);
@@ -175,18 +174,9 @@ namespace TypeCobol.Compiler.CodeModel
         {
             //Types are declared in the Declarations SymbolTable
             var table = GetTableFromScope(Scope.Declarations);
-
-            if (table == null)
-            {
-                return;
-            }
+            
             //Add symbol to the dictionary
             Add(table.DataTypeEntries, data);
-            //Add indexes as they need special treatment
-            foreach (var child in data.GetChildren<IndexDefinition>())
-            {
-                Add(table.DataTypeEntries, child);
-            }
         }
 
         public IEnumerable<DataDefinition> GetVariables(SymbolReference symbolReference)
@@ -795,40 +785,27 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Types, type);
         }
 
-        public void AddTypeDataDefinition(TypeDefinition data)
+        public void AddTypeDataDefinition(Node data)
         {
             //Add type if it doesn't have children
             if (data.Children.Count == 0)
             {
-                Add(DataTypeEntries, data);
+                Add(DataTypeEntries, data as DataDefinition);
             }
 
             //If type has children, add the children
-            foreach (var elem in data.Children)
-            {
-                var childDataDefinition = elem as DataDefinition;
-                
-                if (childDataDefinition == null)
-                {
-                    continue;
-                }
-                //add child data definition
-                AddTypeChildDataDefinition(childDataDefinition);
-            }
-        }
-
-        public void AddTypeChildDataDefinition(DataDefinition data)
-        {
-            Add(DataTypeEntries, data);
             foreach (var dataChild in data.Children)
             {
                 var childDataDefinition = dataChild as DataDefinition;
+
                 if (childDataDefinition == null)
                 {
                     continue;
                 }
-                //Continue to add further children
-                AddTypeChildDataDefinition(childDataDefinition);
+
+                Add(DataTypeEntries, childDataDefinition);
+                //add child data definition
+                AddTypeDataDefinition(childDataDefinition);
             }
         }
 

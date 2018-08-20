@@ -433,8 +433,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                         Enter(indexNode, null, table);
                         if (_CurrentTypeDefinition != null)
                             indexNode.ParentTypeDefinition = _CurrentTypeDefinition;
-                        else //If index is inside a Typedef do not add to symboltable
-                            table.AddVariable(indexNode);
+                        table.AddVariable(indexNode);
                         Exit();
                     }
                 }
