@@ -867,6 +867,20 @@ namespace TypeCobol.Compiler.Diagnostics
                             break;
                         }
 
+                        if (receiver.Name.Length > 22)
+                        {
+                            DiagnosticUtils.AddError(node,
+                                "Pointer name '" + receiver.Name + "' is over 22 characters.");
+                            break;
+                        }
+
+                        if (receiver.IsInsideCopy())
+                        {
+                            DiagnosticUtils.AddError(node,
+                                "Pointer '" + receiver.Name + "' belongs to a copy.");
+                            break;
+                        }
+
                         receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true);
                     }
                     else
