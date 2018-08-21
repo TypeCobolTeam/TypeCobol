@@ -64,12 +64,6 @@
        SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
        PROCEDURE DIVISION
            .
-      DDECLARATIVES.
-      DDECLARATION SECTION.
-      D      USE FOR DEBUGGING ON ALL PROCEDURES.
-      DAFFICHAGE-PARAGRAPHE.
-      D    display "in main program".
-      DEND DECLARATIVES.
            goback
            .
        END PROGRAM e4c075b4Dump2.
