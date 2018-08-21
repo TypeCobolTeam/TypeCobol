@@ -12,7 +12,8 @@ namespace TypeCobol.Test {
 		public void CheckNistTest() {
 			string samples = @"ThirdParty" + Path.DirectorySeparatorChar + "Nist";
 			string root = PlatformUtils.GetPathForProjectFile(samples);
-            GrammarTest.CheckTests(root, @"NistTest", @"CheckNistResults.txt");
+            GrammarTest.CheckTests(root, @"NistTest", @"CheckNistResults.txt", ignoreWarningDiag: true);
+
         }
 	}
 }
