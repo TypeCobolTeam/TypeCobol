@@ -787,13 +787,6 @@ namespace TypeCobol.Compiler.CodeModel
 
         public void AddTypeDataDefinition(Node data)
         {
-            //Add type if it doesn't have children
-            if (data.Children.Count == 0)
-            {
-                Add(DataTypeEntries, data as DataDefinition);
-            }
-
-            //If type has children, add the children
             foreach (var dataChild in data.Children)
             {
                 var childDataDefinition = dataChild as DataDefinition;
