@@ -185,6 +185,16 @@ namespace TypeCobol.Compiler.Diagnostics
             return true; 
         }
 
+        public override bool Visit(If ifNode)
+        {
+            if(ifNode?.Children != null && !(ifNode.Children.Last() is End))
+            {
+                DiagnosticUtils.AddError(ifNode.CodeElement,
+                    "\"end-if\" is missing", MessageCode.Warning);
+            }
+            return true;
+        }
+
         public override bool Visit(TypeDefinition typeDefinition)
         {
             //Cobol 2002 rule
