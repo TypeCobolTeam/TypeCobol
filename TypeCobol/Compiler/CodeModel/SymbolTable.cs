@@ -2,6 +2,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
@@ -165,13 +166,19 @@ namespace TypeCobol.Compiler.CodeModel
             }
             else
             {
-                //Add DataDefinition for symbol in the DataTypeEntries dictionary
-                AddTypeVariableFromDataDefinition(symbol);
+                AddVariableUnderTypeDefinition(symbol);
             }
         }
 
-        void AddTypeVariableFromDataDefinition([NotNull] DataDefinition data)
+        /// <summary>
+        /// Add DataDefinition under a TypeDefinition in the DataTypeEntries dictionary
+        /// </summary>
+        /// <param name="data"></param>
+        void AddVariableUnderTypeDefinition([NotNull] DataDefinition data)
         {
+            //TypeDefinition must NOT be added to DataTypeEntries, only its children
+            Debug.Assert(!(data is TypeDefinition)); 
+
             //Types are declared in the Declarations SymbolTable
             var table = GetTableFromScope(Scope.Declarations);
             
@@ -589,7 +596,9 @@ namespace TypeCobol.Compiler.CodeModel
             }
         }
 
-        /// <summary>Get all items with a specific name that are subordinates of a custom type</summary>
+        /// <summary>
+        /// Get all items with a specific name that are subordinates of a type
+        /// </summary>
         /// <param name="name">Name of items we search for</param>
         /// <returns>Direct or indirect subordinates of a custom type</returns>
         private List<DataDefinition> GetCustomTypesSubordinatesNamed(string name)
@@ -603,44 +612,53 @@ namespace TypeCobol.Compiler.CodeModel
                 //Get Custom Types from program 
                 foreach (var pgm in programs.Value) { //we shouldn't have more than one program with the same name
                     //but just in case it changes 
-                    foundDataDef.AddRange(SeekSymbolTable(pgm.SymbolTable, name));
+                    foundDataDef.AddRange(GetVariablesUnderTypeDefFromTableAndEnclosing(pgm.SymbolTable, name));
                 }
             }
 
             
             //Get Custom Types from Intrinsic table 
             var intrinsicTable = this.GetTableFromScope(Scope.Intrinsic);
-            foundDataDef.AddRange(GetCustomTypesFromSymbolTable(name, intrinsicTable));
+            var variablesUnderTypeDefinition = GetVariablesUnderTypeDefinition(name, intrinsicTable);
+            if (variablesUnderTypeDefinition != null) {
+                foundDataDef.AddRange(variablesUnderTypeDefinition);
+            }
             return foundDataDef;
-        }
-        
-        /// <summary>
-        /// Search the qualified name in the DataTypeEntries dictionary
-        /// </summary>
-        /// <param name="name">QualifiedName</param>
-        /// <param name="table">SymbolTable that can have the searched DataDefinition</param>
-        /// <returns>List of found DataDefinitions that correspond to the passed name</returns>
-        private static IEnumerable<DataDefinition> GetCustomTypesFromSymbolTable(string name, SymbolTable table)
-        {
-            List<DataDefinition> dataDef = new List<DataDefinition>();
-            table.DataTypeEntries.TryGetValue(name, out dataDef);
-            return dataDef??new List<DataDefinition>();
         }
 
         /// <summary>
-        /// Search in all enclosing SymbolTable the passed qualified name
+        /// Search for variables with the specified name under a TypeDefinition in the specified SymbolTable.
+        /// Search only in DataTypeEntries.
         /// </summary>
-        /// <param name="symbolTable">Top SymbolTable</param>
-        /// <param name="name">name to search for</param>
+        /// <param name="name">name of the variable to search for</param>
+        /// <param name="table">SymbolTable that can have the searched DataDefinition</param>
+        /// <returns>List of found DataDefinitions that correspond to the passed name</returns>
+        [CanBeNull]
+        private static IEnumerable<DataDefinition> GetVariablesUnderTypeDefinition(string name, SymbolTable table) {
+            List<DataDefinition> dataDef;
+            table.DataTypeEntries.TryGetValue(name, out dataDef);
+            return dataDef;
+        }
+
+        /// <summary>
+        /// Search for variables with the specified name under a TypeDefinition in all enclosing SymbolTable.
+        /// Search only in DataTypeEntries.
+        /// 
+        /// Intrinsic SymbolTable is not searched.
+        /// </summary>
+        /// <param name="symbolTable">Current SymbolTable</param>
+        /// <param name="name">name of the variable to search for</param>
         /// <returns>List of found DataDefinition</returns>
-        private static IEnumerable<DataDefinition> SeekSymbolTable(SymbolTable symbolTable, string name)
+        private static IEnumerable<DataDefinition> GetVariablesUnderTypeDefFromTableAndEnclosing(SymbolTable symbolTable, string name)
         {
             var currSymbolTable = symbolTable;
             var datadefinitions = new List<DataDefinition>();
             //Don't search into Intrinsic table because it's shared between all programs
-            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Intrinsic)
-            {
-                datadefinitions.AddRange(GetCustomTypesFromSymbolTable(name, currSymbolTable));
+            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Intrinsic) {
+                var result = GetVariablesUnderTypeDefinition(name, currSymbolTable);
+                if (result != null) {
+                    datadefinitions.AddRange(result);
+                }
                 currSymbolTable = currSymbolTable.EnclosingScope;
             }
 
@@ -785,20 +803,31 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Types, type);
         }
 
-        public void AddTypeDataDefinition(Node data)
+        /// <summary>
+        /// Copy all children of this DataDefinition to dictionary DataTypeEntries
+        /// 
+        /// Note:
+        /// When this method is called with a TypeDefinition, don't add the 
+        /// TypeDefinition node to DataTypeEntries.
+        /// 
+        /// DataTypeEntries only contains potential variables.
+        /// Children of TypeDefinition can be variable if a variable is declared with that type.
+        /// But a TypeDefinition can never be a variable itself.
+        /// </summary>
+        /// <param name="data"></param>
+        public void AddDataDefinitionsUnderType([NotNull] DataDefinition data)
         {
+            //data outside a typedef must NOT be copied into DataTypeEntries
+            Debug.Assert(data.IsPartOfATypeDef);
+
             foreach (var dataChild in data.Children)
             {
-                var childDataDefinition = dataChild as DataDefinition;
-
-                if (childDataDefinition == null)
-                {
-                    continue;
-                }
+                var childDataDefinition = (DataDefinition) dataChild;
 
                 Add(DataTypeEntries, childDataDefinition);
+
                 //add child data definition
-                AddTypeDataDefinition(childDataDefinition);
+                AddDataDefinitionsUnderType(childDataDefinition);
             }
         }
 
@@ -1377,7 +1406,7 @@ namespace TypeCobol.Compiler.CodeModel
             foreach (var type in Types.SelectMany(elem=>elem.Value))
             {
                 this.AddType(type);
-                AddTypeDataDefinition(type);
+                AddDataDefinitionsUnderType(type);
             }
         }
 
