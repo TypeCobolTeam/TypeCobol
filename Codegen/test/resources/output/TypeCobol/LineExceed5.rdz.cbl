@@ -170,6 +170,8 @@
                      TC-PGM1-f1c0385c-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .
@@ -241,6 +243,8 @@
                      TC-PGM1-f1c0385c-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .

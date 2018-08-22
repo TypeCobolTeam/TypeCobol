@@ -165,6 +165,8 @@
                      TC-PersonSe-cd991005-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .

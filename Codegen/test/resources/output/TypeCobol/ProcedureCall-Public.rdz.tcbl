@@ -223,6 +223,8 @@
                      TC-Callee-ca0ab46c-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .
@@ -239,6 +241,8 @@
                      TC-PersonSe-d2b57642-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .
