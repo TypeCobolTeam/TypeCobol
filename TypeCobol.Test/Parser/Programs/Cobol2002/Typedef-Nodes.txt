@@ -19,7 +19,7 @@ Line 90[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol
 Line 114[5,35] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP'
 Line 115[5,34] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP'
 Line 132[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed
-Line 142[5,47] <27, Error, Syntax> - Syntax error : Item useTypeGrp2Strong is a TYPE that does not allow Group Item definition.
+Line 142[5,47] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE"
 Line 145[6,66] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
 Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
 Line 160[1,68] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
