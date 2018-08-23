@@ -1,4 +1,5 @@
 ﻿--- Diagnostics ---
+Line 21[8,29] <27, Error, Syntax> - Syntax error : Item MyVar2 is a TYPE that does not allow Group Item definition.
 Line 23[8,29] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 45 because of 'myType' maximum estimated children level
 Line 29[8,27] <30, Error, Semantics> - Semantic error: A 77 level variable cannot be typed with a type containing children
 Line 32[10,34] <27, Error, Syntax> - Syntax error : The Level 88 symbol 'WrongVarHere' cannot be declared under a BOOL typed symbol

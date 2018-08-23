@@ -5,6 +5,7 @@
 
        GLOBAL-STORAGE SECTION.
 Line 7[8,41] <27, Error, Syntax> - Syntax error : The variable 'etdzefezf' can only be of level 01 or 77
+Line 7[8,41] <27, Error, Syntax> - Syntax error : The variable 'etdzefezf' with level 88 and 66 cannot be group item.
        88 etdzefezf         VALUE 'TRUE'.
 Line 8[12,19] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88
        123 zefzefze         TYPE Bool.

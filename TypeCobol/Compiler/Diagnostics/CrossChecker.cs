@@ -9,6 +9,7 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
@@ -207,9 +208,102 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        /// <summary>
+        /// Determines if the given usage is an ElementaryItem usage
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <returns>true if the usage is ElementaryItem</returns>
+        public static bool IsOnlyElementaryItemUsage(DataUsage usage)
+        {
+            switch (usage)
+            {
+                case DataUsage.None:
+                    return false;
+                /// <summary>
+                /// p230: BINARY
+                /// p231: COMPUTATIONAL or COMP (binary)
+                /// p231: COMPUTATIONAL-4 or COMP-4 (binary)
+                /// </summary>
+                case DataUsage.Binary:
+                    return false;
+                /// <summary>
+                /// p231: COMPUTATIONAL-5 or COMP-5 (native binary)
+                /// </summary>
+                case DataUsage.NativeBinary:
+                    return false;
+                /// <summary>
+                /// p231: PACKED-DECIMAL
+                /// p231: COMPUTATIONAL-3 or COMP-3 (internal decimal)
+                /// </summary>
+                case DataUsage.PackedDecimal:
+                    return false;
+                /// <summary>
+                //// p231: COMPUTATIONAL-1 or COMP-1 (floating-point)
+                /// </summary>
+                case DataUsage.FloatingPoint:
+                    return false;
+                /// <summary>
+                /// p231: COMPUTATIONAL-2 or COMP-2 (long floating-point)
+                /// </summary>
+                case DataUsage.LongFloatingPoint:
+                    return false;
+                /// <summary>
+                /// p232: DISPLAY phrase 
+                /// </summary>
+                case DataUsage.Display:
+                    return false;
+                /// <summary>
+                /// p233: DISPLAY-1 phrase
+                /// </summary>
+                case DataUsage.DBCS:
+                    return false;
+                /// <summary>
+                /// p233: FUNCTION-POINTER phrase 
+                /// </summary>
+                case DataUsage.FunctionPointer:
+                    return false;
+                /// <summary>
+                /// p233: INDEX phrase 
+                /// Index data item
+                /// An index data item is a data item that can hold the value of an index.
+                /// You define an index data item by specifying the USAGE IS INDEX clause in a data
+                /// description entry. The name of an index data item is a data-name. An index data
+                /// item can be used anywhere a data-name or identifier can be used, unless stated
+                /// otherwise in the rules of a particular statement. You can use the SET statement to
+                /// save the value of an index (referenced by index-name) in an index data item.
+                /// </summary>
+                case DataUsage.Index:
+                    return false;
+                /// <summary>
+                /// p234: NATIONAL phrase
+                /// </summary>
+                case DataUsage.National:
+                    return false;
+                /// <summary>
+                /// p234: OBJECT REFERENCE phrase 
+                /// </summary>
+                case DataUsage.ObjectReference:
+                    return false;
+                /// <summary>
+                /// p235: POINTER phrase
+                /// </summary>
+                case DataUsage.Pointer:
+                    return false;
+                /// <summary>
+                /// p236: PROCEDURE-POINTER phrase 
+                /// </summary>
+                case DataUsage.ProcedurePointer:
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
         public override bool Visit(DataDefinition dataDefinition)
         {
-            if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
+            CommonDataDescriptionAndDataRedefines commonDataDataDefinitionCodeElement =
+                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
+            if (commonDataDataDefinitionCodeElement!=null)
             {
                 CheckPicture(dataDefinition);
             }
@@ -217,22 +311,86 @@ namespace TypeCobol.Compiler.Diagnostics
             //Check if DataDefinition is level 88 and declared under BOOL variable
             if (!(dataDefinition.CodeElement is DataDefinitionEntry)) return true;
 
-            var levelNumber = ((DataDefinitionEntry) dataDefinition.CodeElement).LevelNumber;
+            var levelNumber = ((DataDefinitionEntry)dataDefinition.CodeElement).LevelNumber;
             var dataDefinitionParent = (dataDefinition.Parent as DataDefinition);
-            if (levelNumber != null && dataDefinitionParent != null &&
-                dataDefinitionParent.DataType == DataType.Boolean && levelNumber.Value == 88)
+            if (levelNumber != null)
             {
-                DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                    "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
+                if (dataDefinitionParent != null)
+                {
+                    if (dataDefinitionParent.DataType == DataType.Boolean && levelNumber.Value == 88)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
+                    }
+                }
+                else
+                {
+                    if (!(levelNumber.Value == 01 || levelNumber.Value == 77))
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77");
+                    }
+                    
+                }
+                //Level 88 and 66 cannot have Children.
+                if ((levelNumber.Value == 88 || levelNumber.Value == 66))
+                {
+                    if (dataDefinition.ChildrenCount != 0)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.");
+                    }
+
+                    if (dataDefinition.Usage != null)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.");
+                    }
+                }
+
             }
-            if (levelNumber != null && !(levelNumber.Value == 01 || levelNumber.Value == 77) &&
-                dataDefinitionParent == null)
+
+            if (!HasOtherChildrenThanAllowed(dataDefinition))
             {
-                DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                    "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77");
+                return true;
+            }
+
+            if (dataDefinition.Picture != null)
+            {//only children with level 77 or 88 can be children of a PICTURE Elementary Item
+                DiagnosticUtils.AddError(dataDefinition,
+                    "Group item " + dataDefinition.Name +
+                    " contained the \"PICTURE\" clause.");
+            }
+            //Type definitions are considered UserDefinedDataType; 
+            //Types inside a TypeDef are not checked as they may occur as children
+            // IsPartOfATypeDef - need to check as the following situation is allowed,
+            //but is flaged as an error if condition is not checked:
+            // 01 Point TYPEDEF strict.
+            //    02 Location TYPE Vector.
+            //    02 Movment TYPE Vector.  <- error on this member if IsPartOfATypeDef is not checked
+            //       04 Speed TYPE Vector.
+            //       04 Acceleration TYPE Vector.
+            if (commonDataDataDefinitionCodeElement?.UserDefinedDataType != null && dataDefinition.IsPartOfATypeDef == false)
+            {
+                //can be type!;
+                DiagnosticUtils.AddError(dataDefinition,
+                    "Item " + dataDefinition.Name +
+                    " is a TYPE that does not allow Group Item definition.");
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
+        /// </summary>
+        /// <param name="dataDefinition">Item to check</param>
+        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry childrens</returns>
+        private static bool HasOtherChildrenThanAllowed(DataDefinition dataDefinition)
+        {
+            return dataDefinition.Children.Any(elem=>elem.CodeElement != null && 
+                                                     elem.CodeElement.Type != CodeElementType.DataConditionEntry && 
+                                                     elem.CodeElement.Type != CodeElementType.DataRenamesEntry);
         }
 
         public override bool Visit(IndexDefinition indexDefinition)
@@ -470,7 +628,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, completeQualifiedName);
         }
     }
-
+    
     class SectionOrParagraphUsageChecker
     {
         public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
