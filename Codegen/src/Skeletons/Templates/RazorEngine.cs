@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using RazorEngine;
 using RazorEngine.Templating; // For extension methods.
 
@@ -47,9 +49,40 @@ namespace TypeCobol.Codegen.Skeletons.Templates {
 		public string Replace(string template, Dictionary<string,object> variables = null, string delimiter = null) {
 			if ("@".Equals(delimiter)) throw new System.ArgumentException("Illegal delimiter: @");
 			if (delimiter == null) delimiter = DEFAULT_DELIMITER;
+            
+            // get all indexes of the formalized comment start "*<<"
+            List<int> formComStartIOndexes = new List<int>();
+            for (int index = 0; ; index += 2)
+            {
+                index = template.IndexOf("<<", index, StringComparison.Ordinal);
+                if (index != -1)
+                    formComStartIOndexes.Add(index);
+                else
+                    break;
+            }
+
+            // get all indexes of the formalized comment stop "*>>"
+            List<int> formComStopIOndexes = new List<int>();
+            for (int index = 0; ; index += 2)
+            {
+                index = template.IndexOf(">>", index, StringComparison.Ordinal);
+                if (index != -1)
+                    formComStopIOndexes.Add(index);
+                else
+                    break;
+            }
+
+            // escape the '@' inside the formalized comments
+            StringBuilder replacementSB = new StringBuilder(template);
+            for (int i = 0; i < (formComStartIOndexes.Count < formComStopIOndexes.Count ? formComStartIOndexes.Count : formComStopIOndexes.Count) ; i++)
+            {
+                replacementSB.Replace("@", "@@", formComStartIOndexes[i], formComStopIOndexes[i]);
+            }
+            template = replacementSB.ToString();
+
             //Replace all variable prefix (delimier) by @Model
             //The @Model will contain all the data of the current page (that all substitution environment variables).
-			template = template.Replace(delimiter, "@Model.");
+            template = template.Replace(delimiter, "@Model.");
             //Dynamically create @Model
 			object model = variables == null ? new { } : CreateAnonymousObjectFromDictionary(variables);
 			// TODO: make key unique
