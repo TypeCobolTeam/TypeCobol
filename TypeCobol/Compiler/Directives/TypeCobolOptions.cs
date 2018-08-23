@@ -28,7 +28,19 @@ namespace TypeCobol.Compiler.Directives
         /// Shall we use Antlr for Parsing the Program.
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
+        /// <summary>
+        /// Shall we use EUROINFO_LEGACY_REPLACING_SYNTAX snippets for Parsing the Program.
+        /// </summary>
+        public bool UseEuroInformationLegacyReplacingSyntax {
+            get { return _useEuroInformationLegacyReplacingSyntax; }
+            set { _useEuroInformationLegacyReplacingSyntax = value; }
+        }
 
+#if EUROINFO_RULES
+        private bool _useEuroInformationLegacyReplacingSyntax = true;
+#else
+        private bool _useEuroInformationLegacyReplacingSyntax;
+#endif
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file
         /// </summary>

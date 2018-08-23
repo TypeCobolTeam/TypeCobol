@@ -14,12 +14,13 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     public class ImportedTokensDocument
     {
-        public ImportedTokensDocument(CopyDirective copyDirective, ProcessedTokensDocument importedDocumentSource, PerfStatsForImportedDocument perfStats)
+        public ImportedTokensDocument(CopyDirective copyDirective, ProcessedTokensDocument importedDocumentSource, PerfStatsForImportedDocument perfStats, TypeCobolOptions compilerOptions)
         {
             CopyDirective = copyDirective;
             SourceDocument = importedDocumentSource;
             HasReplacingDirective = copyDirective.ReplaceOperations.Count > 0;
             PerfStatsForImportedDocument = perfStats;
+            CompilerOptions = compilerOptions;
         }
 
         /// <summary>
@@ -37,20 +38,22 @@ namespace TypeCobol.Compiler.Preprocessor
         /// </summary>
         public bool HasReplacingDirective { get; private set; }
 
+        private TypeCobolOptions CompilerOptions;
+
         /// <summary>
         /// Iterator over the tokens contained in this imported document after
         /// - REPLACING directive processing if necessary
         /// </summary>
         public ITokensLinesIterator GetProcessedTokensIterator()
         {
-            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines);
+            ITokensLinesIterator sourceIterator = ProcessedTokensDocument.GetProcessedTokensIterator(SourceDocument.TextSourceInfo, SourceDocument.Lines, this.CompilerOptions);
             if (HasReplacingDirective
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
-                || CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar
+#if EUROINFO_RULES
+                || (this.CompilerOptions.UseEuroInformationLegacyReplacingSyntax && (this. CopyDirective.RemoveFirst01Level || CopyDirective.InsertSuffixChar))
 #endif
                 )
             {
-                ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(sourceIterator, CopyDirective);
+                ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(sourceIterator, CopyDirective, CompilerOptions);
                 return replaceIterator;
             }
             else

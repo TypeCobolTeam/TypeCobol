@@ -423,7 +423,7 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public IList<ReplaceOperation> ReplaceOperations { get; set; }
 
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+#if EUROINFO_RULES
 
         /// <summary>
         /// If true, remove the first 01 level data item found in the COPY text 

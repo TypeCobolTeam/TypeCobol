@@ -146,7 +146,8 @@ namespace TypeCobol.Server
             {
                 HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
                 ExecToStep = config.ExecToStep,
-                UseAntlrProgramParsing = config.UseAntlrProgramParsing
+                UseAntlrProgramParsing = config.UseAntlrProgramParsing,
+                UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax
             };
 
 #if EUROINFO_RULES
@@ -232,7 +233,15 @@ namespace TypeCobol.Server
                     if (parser.Results.CopyTextNamesVariations.Count > 0)
                     {
 #if EUROINFO_RULES
-                        var copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextName).Distinct(); //Get copies without suffix
+                        IEnumerable<string> copiesName;
+                        if (config.UseEuroInformationLegacyReplacingSyntax)
+                        {
+                            copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextName).Distinct(); //Get copies without suffix
+                        }
+                        else
+                        {
+                            copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct(); //Get copies with suffix
+                        }
 #else
                         var copiesName = parser.Results.CopyTextNamesVariations.Select(cp => cp.TextNameWithSuffix).Distinct(); //Get copies with suffix
 #endif
