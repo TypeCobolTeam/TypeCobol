@@ -1,0 +1,22 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+
+
+      *KO because var1 contains a child
+       01 var1 type Date.
+         05 var2 pic X.
+
+       01 var1.
+      *KO because var2 contains a child
+         05 var2 type Date.
+           10 var3   pic X.
+
+      *KO because var1 contains a child
+       01 var1 type Date.
+         05 var2.
+           10 var3   pic X.
+
+       END PROGRAM DVZF0OSM.

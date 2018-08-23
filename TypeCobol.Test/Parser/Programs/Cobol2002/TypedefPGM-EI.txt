@@ -32,6 +32,7 @@ Line 114[5,35] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for
 Line 115[5,34] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP'
 Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[21,27:TYPEDEF]<TYPEDEF>
 Line 132[5,62] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed
+Line 142[5,47] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE"
 Line 145[6,66] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
 Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[30,36:typedef]<TYPEDEF>
 Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[17,23:TYPEDEF]<TYPEDEF>
