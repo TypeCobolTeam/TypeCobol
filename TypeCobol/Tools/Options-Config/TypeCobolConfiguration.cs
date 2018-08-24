@@ -168,7 +168,7 @@ namespace TypeCobol.Tools.Options_Config
                 { "exc|extractusedcopy=", "Generate a file with all COPIES detected by the parser", v => typeCobolConfig.ExtractedCopiesFilePath = v },
                 { "antlrp|antlrprogparse", "Use ANTLR to parse a program", v => typeCobolConfig.UseAntlrProgramParsing = true},
                 { "cmr|copymovereport=", "{PATH} to Report all Move and Initialize statements that target a COPY.", v => typeCobolConfig.ReportCopyMoveInitializeFilePath = v },
-                { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false }
+                { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false }
             };
             return commonOptions;
         }
