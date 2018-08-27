@@ -8,18 +8,18 @@
        01 Type10 TYPEDEF STRICT pic X(8).
 
       * Inline Typedef with good Formalized Comments
-      *<< Description for Type11 *>>
+      *<<< Description for Type11 *>>>
        01 Type11 TYPEDEF STRICT pic X(8).
 
       * Inline Typedef with too much informations inside Formalized Comments
-      *<< 
+      *<<< 
           Description for Type12
           @ deprec
           @ params:
             - param1: TYPEDEF do not have any param
             - param2: This informations should be truncated
           @ replacedBy: Type42
-      *>>
+      *>>>
        01 Type12 TYPEDEF STRICT pic X(8).
 
 
@@ -38,7 +38,7 @@
           88 TestMember5 VALUE 1999 THRU 2050.
 
       * Group Typedef with good Formalized Comments
-      *<< Description for Type21 *>>
+      *<<< Description for Type21 *>>>
        01 Type21 TYPEDEF STRICT.
         02 Member1 Pic x(8) BLANK WHEN ZERO.
         02 Member2.
@@ -51,7 +51,7 @@
           88 TestMember5 VALUE 1999 THRU 2050.
 
       * Group Typedef with too much informations inside Formalized Comments
-      *<< 
+      *<<< 
           Description for Type22 
           @ deprecated
           @ params:
@@ -61,7 +61,7 @@
             - Mamber42: this would be 
                         truncated
           @ need: see here what is needed
-      *>>
+      *>>>
        01 Type22 TYPEDEF STRICT.
         02 Member1 Pic x(8) BLANK WHEN ZERO.
         02 Member2.

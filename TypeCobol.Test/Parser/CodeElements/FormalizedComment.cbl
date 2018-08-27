@@ -1,5 +1,5 @@
 ﻿*OK Usual usage case
-*<< 
+*<<< 
     @ Description : My program description
     @ parameters:
         - firstParam : firstParam description
@@ -13,22 +13,22 @@
     @ todo :
         - Add BOOL support 
         - singleWord
-*>>
+*>>>
 IDENTIFICATION DIVISION.
 PROGRAM-ID. MyFonction.
 
 *Ko Can not add a formalized Comment to a Data Divition Code Element
-*<< Comment *>>
+*<<< Comment *>>>
 DATA DIVISION.
 LOCAL-STORAGE SECTION.
 
 *OK
-*<< MyType *>>
+*<<< MyType *>>>
 01 myType TYPEDEF STRICT PUBLIC pic X(01).
 
 
 *OK
-*<< My program description
+*<<< My program description
     @ Params:
         - firstParam : firstParam description
         - SecondParam : SecondParam description
@@ -36,6 +36,6 @@ LOCAL-STORAGE SECTION.
     @ replBy : MyFonction2
     @ RsTrIc : first line and
         second line for the same item
-*>>
+*>>>
 DECLARE FUNCTION currentDate PRIVATE RETURNING result TYPE Date.
 PROCEDURE DIVISION.

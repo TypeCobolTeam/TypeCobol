@@ -97,8 +97,8 @@ namespace TypeCobol.Compiler.Scanner
                 (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
                 int comIndex = textLine.Text.IndexOf('*');
-                if (!(comIndex != -1 && textLine.Text.Length >= comIndex + 3 &&
-                    (textLine.Text.Substring(comIndex, 3) == "*<<" || textLine.Text.Substring(comIndex, 3) == "*>>")))
+                if (!(comIndex != -1 && textLine.Text.Length >= comIndex + 4 &&
+                    (textLine.Text.Substring(comIndex, 4) == "*<<<" || textLine.Text.Substring(comIndex, 4) == "*>>>")))
                 {
                     Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
                     tokensLine.AddToken(commentToken);
@@ -638,24 +638,24 @@ namespace TypeCobol.Compiler.Scanner
                         // The colon char can appears inside the formalized comments as a separator between keys and value
                         // Consume the rest of the line and create a FloatingComment token as value for the formalized comment
                         currentIndex = lastIndex + 1;
-                        return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>");
+                        return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>>");
                     case '*':
-                        if (line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
+                        if (line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>' && line[currentIndex + 3] == '>')
                         {
                             // We are in the case of a Formalize Comment stop with the '*' on column other than 7
                             // consume the * char and the two < chars
-                            currentIndex += 3;
+                            currentIndex += 4;
                             return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 2, tokensLine);
                         }
                         currentIndex ++;
                         return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
                     case '>':
-                        if (line[currentIndex + 1] == '>' && line[currentIndex - 1] == '*')
+                        if (line[currentIndex - 1] == '*' && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
                         {
                             // We are in the case of a Formalize Comment stop with the '*' on column 7
-                            // consume the two > chars
-                            currentIndex += 2;
-                            return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 1, tokensLine);
+                            // consume the three > chars
+                            currentIndex += 3;
+                            return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 2, tokensLine);
                         }
                         currentIndex++;
                         return new Token(TokenType.GreaterThanOperator, startIndex, currentIndex - 1, tokensLine);
@@ -686,7 +686,7 @@ namespace TypeCobol.Compiler.Scanner
                                 return token;
                         }
                         // It's a string as a value/list items or a string continuation
-                        return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>");
+                        return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>>");
                 }
             }
 
@@ -773,12 +773,12 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex += 8;
                         return new Token(TokenType.ASTERISK_CONTROL, startIndex, startIndex + 7, tokensLine);
                     }
-                    else if (line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
+                    else if (line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<' && line[currentIndex + 3] == '<')
                     {
                         // We are in the case of a Formalize Comment start
                         // consume the * char and the two < chars
-                        currentIndex += 3;
-                        return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 2, tokensLine);
+                        currentIndex += 4;
+                        return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 3, tokensLine);
                     }
                     else
                     {
@@ -881,12 +881,12 @@ namespace TypeCobol.Compiler.Scanner
                         // scan the = char and a space
                         return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.LessThanOrEqualOperator);
                     }
-                    else if (line[currentIndex + 1] == '<' && line[currentIndex - 1] == '*')
+                    else if (line[currentIndex - 1] == '*' && line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
                     {
                         // We are in the case of a Formalize Comment start
-                        // consume the two < chars
-                        currentIndex += 2;
-                        return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 1, tokensLine);
+                        // consume the three < chars
+                        currentIndex += 3;
+                        return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 2, tokensLine);
                     }
                     else
                     {

@@ -1,11 +1,11 @@
-﻿      *<< Main Program
+﻿      *<<< Main Program
         @ rEsTrIcTiOn : restriction value
         @ need:
           - This is my first need
             This is also my first need
           - This is my second need
         @ see : Thank you for your attention
-      *>>
+      *>>>
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DocForPrograms.
 
@@ -15,7 +15,7 @@
        PROCEDURE DIVISION.
        GOBACK.
 
-         *<< 
+         *<<<
             Nested Program
             @ params : 
               - param1:
@@ -28,7 +28,7 @@
               - param3: inout - this is an inout param
             @ need: This is my only need
             @ todo : slap car roof
-         *>>
+         *>>>
          IDENTIFICATION DIVISION.
            PROGRAM-ID. NestedPgm IS COMMON.
            DATA DIVISION.
@@ -49,8 +49,8 @@
        END PROGRAM DocForPrograms.
 
 
-      *<< Stacked Program
-      *>>
+      *<<< Stacked Program
+      *>>>
        IDENTIFICATION DIVISION.
          PROGRAM-ID. StackedPgm.
          DATA DIVISION.

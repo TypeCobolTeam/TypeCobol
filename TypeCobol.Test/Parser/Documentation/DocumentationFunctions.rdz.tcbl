@@ -4,7 +4,7 @@
        PROCEDURE DIVISION.
 
       * Full formalised Comment
-      *<<
+      *<<<
         @ description: MyProc1 description
         @ parameters:
           - myDate : sell date
@@ -21,7 +21,7 @@
         @ see: you later
         @ todo: implement a call to MyProc8 in case of 
                 discount code
-      *>>
+      *>>>
        DECLARE PROCEDURE MyProc1 PRIVATE
            INPUT    myDate      TYPE Date
                     name        Pic X(50)
