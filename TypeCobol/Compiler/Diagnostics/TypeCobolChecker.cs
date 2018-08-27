@@ -864,7 +864,18 @@ namespace TypeCobol.Compiler.Diagnostics
                         {
                             DiagnosticUtils.AddError(node,
                                 "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
-                            break;
+                        }
+
+                        if (receiver.Name.Length > 22)
+                        {
+                            DiagnosticUtils.AddError(node,
+                                "Pointer name '" + receiver.Name + "' is over 22 characters.");
+                        }
+
+                        if (receiver.IsInsideCopy())
+                        {
+                            DiagnosticUtils.AddError(node,
+                                "Pointer '" + receiver.Name + "' belongs to a copy.");
                         }
 
                         receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true);
@@ -931,10 +942,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var data = dataDefinition.CodeElement as DataDefinitionEntry;
             if (data?.LevelNumber != null && data.LevelNumber.Value == 77)
                 DiagnosticUtils.AddError(node,
-                    "Data must be declared between level 01 to 49, or equals to 66 or 88.");
-            if (!(dataDefinition.Parent is DataDefinition) && data?.LevelNumber != null &&
-                data.LevelNumber.Value == 88)
-                DiagnosticUtils.AddError(node, "Level 88 data must be declared inside a data from level 01 to 49.");
+                    "Level 77 is forbidden in global-storage section.");
 
             //Check variable no Global / External keyword 
             // Rules : - GLOBALSS_NO_GLOBAL_KEYWORD - GLOBALSS_NO_EXTERNAL 

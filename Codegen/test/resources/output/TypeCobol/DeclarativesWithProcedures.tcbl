@@ -137,6 +137,7 @@
            .
       DDECLARATIVES.
       DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
       DAFFICHAGE-PARAGRAPHE.
       D       display DEBUG-NAME
       D    .

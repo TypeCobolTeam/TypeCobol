@@ -491,6 +491,8 @@
         clause += "              TO ADDRESS OF\n";
         clause += "              TC-Library-Item(TC-Library-Idx)\n";
         }
+        clause += "         WHEN OTHER\n";
+        clause += "              CONTINUE\n";
         clause += "         END-EVALUATE\n";
         clause += "     END-PERFORM\n";
         clause += "     .\n";

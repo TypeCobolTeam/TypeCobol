@@ -66,6 +66,7 @@
            .
       DDECLARATIVES.
       DDECLARATION SECTION.
+      D      USE FOR DEBUGGING ON ALL PROCEDURES.
       DAFFICHAGE-PARAGRAPHE.
       D    display "in main program".
       DEND DECLARATIVES.

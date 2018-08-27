@@ -56,11 +56,13 @@ namespace Analytics
 
     internal class TelemetryExceptionEvent : TelemetryEventBase
     {
-        public TelemetryExceptionEvent(TelemetryEventBase baseEvent, Exception exception) : base(baseEvent.SessionId, baseEvent.UserId, baseEvent.TypeCobolVersion)
+        public TelemetryExceptionEvent(TelemetryEventBase baseEvent, Exception exception, string sourceCode) : base(baseEvent.SessionId, baseEvent.UserId, baseEvent.TypeCobolVersion)
         {
             Exception = exception;
             EventType = EventType.Exception;
+            SourceCode = sourceCode;
         }
         public Exception Exception { get; set; }
+        public string SourceCode { get; set; }
     }
 }

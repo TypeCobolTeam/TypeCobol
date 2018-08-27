@@ -74,7 +74,7 @@ namespace TypeCobol.Tools.APIHelpers
         }
 
         public static SymbolTable LoadDependencies([NotNull] List<string> paths, DocumentFormat format, SymbolTable intrinsicTable,
-            [NotNull] List<string> inputFiles, EventHandler<DiagnosticsErrorEvent> diagEvent)
+            [NotNull] List<string> inputFiles, List<string> copyFolders, EventHandler<DiagnosticsErrorEvent> diagEvent)
         {
 
             var parser = new Parser(intrinsicTable);
@@ -141,7 +141,7 @@ namespace TypeCobol.Tools.APIHelpers
                 try
                 {
                     parser.CustomSymbols = table; //Update SymbolTable
-                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format);
+                    parser.Init(path, new TypeCobolOptions { ExecToStep = ExecutionStep.SemanticCheck }, format, copyFolders);
                     parser.Parse(path); //Parse the dependency file
 
                     diagnostics.AddRange(parser.Results.AllDiagnostics());

@@ -149,12 +149,17 @@ namespace Analytics
         /// Track a new exception into analytics collector
         /// </summary>
         /// <param name="exception">Exception raised to store</param>
-        public void TrackException(Exception exception)
+        public void TrackException(Exception exception, string sourcePath)
         { 
             try
             {
                 if (TelemetryVerboseLevel == TelemetryVerboseLevel.Disable) return;
-                ElasticTelemetry.Elastic.IndexEvent( new TelemetryExceptionEvent(_EventBase, exception));
+
+                string sourceCode = string.Empty;
+                if (!string.IsNullOrEmpty(sourcePath) && File.Exists(sourcePath))
+                    sourceCode = string.Join("\n", File.ReadAllLines(sourcePath));
+
+                ElasticTelemetry.Elastic.IndexEvent( new TelemetryExceptionEvent(_EventBase, exception, sourceCode));
             }
             catch (Exception e) { logger.Fatal(e); }
         }

@@ -29,13 +29,13 @@ namespace TypeCobol.Test {
 	    }
 
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string expectedResultFile = null) {
-	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, skelPath, 10000, false, expectedResultFile);
+	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex = "*.cbl", string skelPath = "", string expectedResultFile = null, bool ignoreWarningDiag = false) {
+	        CheckTests(rootFolder, resultFolder, timedResultFile, regex, new string[] {}, new string[] {}, skelPath, 10000, false, expectedResultFile, ignoreWarningDiag);
 	    }
 
 	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex,
-	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false, string expectedResultFile = null) {
-            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, skelPath, stopAfterAsManyErrors, autoRemarks, expectedResultFile);
+	        string[] include, string[] exclude, string skelPath = "", int stopAfterAsManyErrors = 10000, bool autoRemarks = false, string expectedResultFile = null, bool ignoreWarningDiag = false) {
+            CheckTests(rootFolder, resultFolder, timedResultFile, regex, include, exclude, new string[] { }, skelPath, stopAfterAsManyErrors, autoRemarks, expectedResultFile, ignoreWarningDiag);
         }
 
 	    private static void AppendTextToFiles(string tetxToAppend, params string[] files)
@@ -50,7 +50,7 @@ namespace TypeCobol.Test {
 	            
 	    }
 
-	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile) { 
+	    public static void CheckTests(string rootFolder, string resultFolder, string timedResultFile, string regex, string[] include, string[] exclude, string[] copiesFolder, string skelPath, int stopAfterAsManyErrors, bool autoRemarks, string expectedResultFile, bool ignoreWarningDiag) { 
 			string[] files = Directory.GetFiles(rootFolder, regex, SearchOption.AllDirectories);
 			bool codegen = true;
 			var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
@@ -113,10 +113,16 @@ namespace TypeCobol.Test {
                 Console.WriteLine(filename);
                 bool okay = true;
 
-			    var diagnostics = document.Results.AllDiagnostics();
-			    if (diagnostics.Count > 0) {
+                var diagnostics = document.Results.AllDiagnostics();
+
+                if (ignoreWarningDiag)
+                {
+                    diagnostics = diagnostics.Where(d => d.Info.Severity != Severity.Warning).ToList();
+                }
+			     
+			    if (diagnostics.Any()) {
 			        okay = false;
-			        parseErrors += diagnostics.Count;
+			        parseErrors += diagnostics.Count();
 			    }
 			    displayAndWriteErrorsToGrammarResult(diagnostics, timedResultFile, resultFile);
 
@@ -148,13 +154,18 @@ namespace TypeCobol.Test {
                     formatted = String.Format("{0:00}m{1:00}s{2:000}ms", elapsed.Minutes, elapsed.Seconds, elapsed.Milliseconds);
                     AppendTextToFiles(" generated in " + formatted + "\n", timedResultFile);
 
+                    var parsingDiags = generator.Diagnostics;
+
+                    if (ignoreWarningDiag && parsingDiags != null)
+                    {
+                        parsingDiags = parsingDiags.Where(d => d.Info.Severity != Severity.Warning).ToList();
+                    }
                     
-
                     //Error during generation, no need to check the content of generated Cobol
-			        if (generator.Diagnostics != null && generator.Diagnostics.Count > 0) {
+			        if (parsingDiags != null && parsingDiags.Any()) {
 
-			            codegenErrors += generator.Diagnostics.Count;
-                        displayAndWriteErrorsToGrammarResult(generator.Diagnostics, timedResultFile, resultFile);
+			            codegenErrors += parsingDiags.Count();
+                        displayAndWriteErrorsToGrammarResult(parsingDiags, timedResultFile, resultFile);
                         nbFilesInError++;
                         if (nbFilesInError >= stopAfterAsManyErrors) break;
 
@@ -169,7 +180,8 @@ namespace TypeCobol.Test {
                         var linesKO = new List<int>();
                         for (int i = 0; i < Math.Min(expected.Count, actual.Count); i++)
                         {
-                            if (!expected[i].Equals(actual[i])) linesKO.Add(i);
+                            if (!expected[i].Equals(actual[i]))
+                                linesKO.Add(i);
                         }
                         var errors = new System.Text.StringBuilder();
                         string fmt = Lines2FormatString(Math.Max(expected.Count, actual.Count));

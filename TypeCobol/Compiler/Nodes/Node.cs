@@ -47,6 +47,11 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
+        /// Children count.
+        /// </summary>
+        public int ChildrenCount => children?.Count ?? 0;
+
+        /// <summary>
         /// Get the Index position of the given child.
         /// </summary>
         /// <param name="child">The child to get the index position</param>
@@ -624,26 +629,43 @@ namespace TypeCobol.Compiler.Nodes {
         public bool AcceptASTVisitor(IASTVisitor astVisitor) {
             bool continueVisit = astVisitor.BeginNode(this) && VisitNode(astVisitor);
 
-            if (continueVisit && CodeElement != null)
+            if (continueVisit)
             {
-                CodeElement.AcceptASTVisitor(astVisitor);
+                CodeElement?.AcceptASTVisitor(astVisitor);
             }
 
             if (continueVisit) {
                 //To Handle concurrent modifications during traverse.
                 //Get the array of Children that must be traverse.
-                Node[] childrenNodes = children.ToArray();
-                foreach (Node child in childrenNodes)
+                if (astVisitor.CanModifyChildrenNode)
                 {
-                    if (!continueVisit && astVisitor.IsStopVisitingChildren)
-                    {
-                        break;
-                    }
-                    continueVisit = child.AcceptASTVisitor(astVisitor);                    
+                    //Make copy of  children array if the visitor can modify the children
+                    Node[] childrenNodes = children.ToArray();
+                    continueVisit = VisitChildrens(astVisitor, true, childrenNodes);
                 }
+                else
+                {
+                    continueVisit = VisitChildrens(astVisitor, true, children);
+                }
+                
             }
 
             astVisitor.EndNode(this);
+            return continueVisit;
+        }
+
+        private static bool VisitChildrens(IASTVisitor astVisitor, bool continueVisit, IEnumerable<Node> childrenNodes)
+        {
+            foreach (Node child in childrenNodes)
+            {
+                if (!continueVisit && astVisitor.IsStopVisitingChildren)
+                {
+                    break;
+                }
+
+                continueVisit = child.AcceptASTVisitor(astVisitor);
+            }
+
             return continueVisit;
         }
 

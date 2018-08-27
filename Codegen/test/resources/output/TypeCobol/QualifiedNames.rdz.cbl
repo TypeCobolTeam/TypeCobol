@@ -15,7 +15,7 @@
        
       *01 Point TYPEDEF strict.
       *    02 Location TYPE Vector.
-      *    02 Movment  TYPE Vector.
+      *    02 Movment.
       *      04 Speed        TYPE Vector.
       *      04 Acceleration TYPE Vector.
        
@@ -28,10 +28,16 @@
                 88 toto value 1.
              07 z PIC 9.
            06 Movment.
-             07 x PIC 9.
-             07 y PIC 9.
-                88 toto value 1.
-             07 z PIC 9.
+             07 Speed.
+               08 x PIC 9.
+               08 y PIC 9.
+                  88 toto value 1.
+               08 z PIC 9.
+             07 Acceleration.
+               08 x PIC 9.
+               08 y PIC 9.
+                  88 toto value 1.
+               08 z PIC 9.
                            
       *    05 q TYPE POINT.
            05 q.
@@ -41,10 +47,16 @@
                 88 toto value 1.
              07 z PIC 9.
            06 Movment.
-             07 x PIC 9.
-             07 y PIC 9.
-                88 toto value 1.
-             07 z PIC 9.
+             07 Speed.
+               08 x PIC 9.
+               08 y PIC 9.
+                  88 toto value 1.
+               08 z PIC 9.
+             07 Acceleration.
+               08 x PIC 9.
+               08 y PIC 9.
+                  88 toto value 1.
+               08 z PIC 9.
                            
        
        PROCEDURE DIVISION.

@@ -212,6 +212,8 @@ namespace TypeCobol.Codegen.Nodes {
                     procedureDivision.Add(new GeneratedNode2("              TO ADDRESS OF", true));
                     procedureDivision.Add(new GeneratedNode2("              TC-Library-Item(TC-Library-Idx)", true));
                 }
+                procedureDivision.Add(new GeneratedNode2("         WHEN OTHER", true));
+                procedureDivision.Add(new GeneratedNode2("              CONTINUE", true));
                 procedureDivision.Add(new GeneratedNode2("         END-EVALUATE", true));
                 procedureDivision.Add(new GeneratedNode2("     END-PERFORM", true));
                 procedureDivision.Add(new GeneratedNode2("     .", true));

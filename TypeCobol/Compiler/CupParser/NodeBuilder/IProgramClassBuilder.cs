@@ -352,6 +352,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         void EndExecStatement();
 
+        void EnterUseStatement(UseStatement useStatement);
+
         /// <summary>
         /// Continue Statement seen
         /// </summary>

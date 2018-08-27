@@ -163,11 +163,20 @@ namespace TypeCobol.LanguageServer
                     previousTokenType = givenToken.TokenType;
                 }
 
-            IEnumerable<ParameterDescription> procParams = null;
-            List<int> countParamsPerProc = new List<int>();
+            
             IEnumerable<DataDefinition> potentialVariablesForCompletion = null;
+            int maxInput = -1;
+
+            int maxInOut = -1;
+            bool allProcsHaveInOutParams = true;
+            bool noProcsHaveInOutParams = true;
+            
+            bool allProcsHaveOutputParams = true;
+
             foreach (var procedure in calledProcedures)
             {
+                IEnumerable<ParameterDescription> procParams;
+
                 //Switch to select the correct parameters profile
                 #region Selective parameters Switch
                 switch (lastSignificantToken.TokenType)
@@ -176,7 +185,6 @@ namespace TypeCobol.LanguageServer
                         {
                             procParams = procedure.Profile.InputParameters;
                             //Get number of input parameters left per procedure
-                            countParamsPerProc.Add(procParams.Count());
                             break;
                         }
                     case TokenType.OUTPUT:
@@ -188,15 +196,30 @@ namespace TypeCobol.LanguageServer
                         {
                             procParams = procedure.Profile.InoutParameters;
                             //Get number of inout parameters left per procedure
-                            countParamsPerProc.Add(procParams.Count());
                             break;
                         }
                     default:
                         procParams = new List<ParameterDescription>();
                         break;
                 }
-
                 #endregion
+
+                if (procedure.Profile.InputParameters.Count > maxInput) {
+                    maxInput = procedure.Profile.InputParameters.Count;
+                }
+                if (procedure.Profile.InoutParameters.Count > maxInOut) {
+                    maxInOut = procedure.Profile.InoutParameters.Count;
+                }
+
+                if (procedure.Profile.InoutParameters.Count == 0) {
+                    allProcsHaveInOutParams = false;
+                } else {
+                    noProcsHaveInOutParams = false;
+                }
+                if (procedure.Profile.OutputParameters.Count == 0) {
+                    allProcsHaveOutputParams = false;
+                }
+                
                 
                 //If the user already written all or more parameters than required let's check for an other proc signature
                 if (alreadyGivenParametersCount >= procParams.Count())
@@ -218,29 +241,73 @@ namespace TypeCobol.LanguageServer
 
             //If signature of procedure is available
             if (procedureSignatureContext != null)
-            { 
+            {
+                //Add IN-OUT or OUTPUT after INPUT ?
                 if (lastSignificantToken.TokenType == TokenType.INPUT
                     && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InputParameters.Count - 1))
-                    if (procedureSignatureContext.Profile.InoutParameters.Count != 0)
-                        completionItems.ForEach(ci => ci.insertText += " IN-OUT ");
+                {
+                    if (procedureSignatureContext.Profile.InoutParameters.Count != 0) {
+                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems);
+
+                    }
                     else if (procedureSignatureContext.Profile.OutputParameters.Count != 0)
-                        completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
-                if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InoutParameters.Count - 1))
-                        completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
+                    {
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                    }
+                }
+
+                //Add OUTPUT after IN-OUT ?
+                else if (lastSignificantToken.TokenType == TokenType.IN_OUT 
+                         && alreadyGivenParametersCount == (procedureSignatureContext.Profile.InoutParameters.Count - 1)
+                         && procedureSignatureContext.Profile.OutputParameters.Count != 0) {
+                    AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                }
             }
             else
             {
-                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == (procParams.Count() - 1))
-                    if (calledProcedures.Any(cp => cp.Profile.InputParameters.Count-1 == alreadyGivenParametersCount && cp.Profile.InoutParameters.Count != 0))
-                        completionItems.ForEach(ci => ci.insertText += " IN-OUT ");
-                    else 
-                        completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
-                if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (procParams.Count() - 1))
-                    completionItems.ForEach(ci => ci.insertText += " OUTPUT ");
+                //Add IN-OUT or OUTPUT after INPUT ?
+                //If we reach the last INPUT parameter
+                if (lastSignificantToken.TokenType == TokenType.INPUT && alreadyGivenParametersCount == maxInput -1) {
+
+
+                    //If all procs have IN-OUT params
+                    if (allProcsHaveInOutParams) {
+                        AddIn_OutSuffixToCompletionItems(lastSignificantToken, completionItems);
+                    }
+                    //If no procedures have IN-OUT params and all have OUTPUT params
+                    else if (noProcsHaveInOutParams && allProcsHaveOutputParams)
+                    {
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                    }
+                    //Otherwise we cannot choose between IN-OUT, OUTPUT and nothing, so we choose nothing and let the user add the good keyword manually.
+                    //#908 will change this behavior by asking for the signature context
+                }
+
+                //Add OUTPUT after IN-OUT ?
+                else if (lastSignificantToken.TokenType == TokenType.IN_OUT && alreadyGivenParametersCount == (maxInOut - 1))
+                {
+                    //If all procedures have OUTPUT parameter
+                    if (allProcsHaveOutputParams)
+                    {
+                        AddOutputSuffixToCompletionItems(lastSignificantToken, completionItems);
+                    }
+                }
             }
 
             return completionItems;
         }
+
+        private static void AddIn_OutSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems) {
+            //Use -1, because it seems LSP start counting at 1
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column-1) + "IN-OUT ";
+            completionItems.ForEach(ci => ci.insertText += suffix);
+        }
+        private static void AddOutputSuffixToCompletionItems(Token lastSignificantToken, List<CompletionItem> completionItems) {
+            //Use -1, because it seems LSP start counting at 1
+            var suffix = "\n" + new string(' ', lastSignificantToken.Column-1) + "OUTPUT ";
+            completionItems.ForEach(ci => ci.insertText += suffix);
+        }
+    
 
         #endregion
 
