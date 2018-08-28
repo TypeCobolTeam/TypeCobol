@@ -158,8 +158,14 @@ namespace TypeCobol.Test {
 
 			    Console.WriteLine("Entering directory \"" + dirname + "\" [" + string.Join(", ", extensions) + "]:");
 				var folderTester = new FolderTester(root, root, directory, extensions, compilerExtensions);
-				try { folderTester.Test(); }
-				catch (Exception ex) { errors.Add(ex); }
+                try
+                {
+                    folderTester.Test();
+                }
+                catch (Exception ex)
+                {
+                    errors.Add(ex);
+                }
 				nbOfTests += folderTester.GetTestCount();
 				Console.WriteLine();
 			}

@@ -63,7 +63,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             TypeCobolProgramParser newParser = new TypeCobolProgramParser(newTokenizer);
             newParser.Builder = builder;
             newParser.ErrorReporter = errorReporter;
-            newParser.IsTrial = trial;            
+            newParser.IsTrial = trial;
             return newParser;
         }
 
@@ -84,7 +84,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 if (s.value != null)
                 {
-                    lastValid = s;                    
+                    lastValid = s;
                 }
             }
             return lastValid;
@@ -160,8 +160,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
     public class CupParserDiagnostic : Diagnostic
     {
         public CupParserDiagnostic(string message, Symbol offendingSymbol, string ruleStack, MessageCode code = MessageCode.SyntaxErrorInParser, Exception exception = null) :
-            base(code, (offendingSymbol == null || offendingSymbol.value == null) ? -1 : (offendingSymbol.value as CodeElement).Column, 
-                offendingSymbol == null ? -1 : ((offendingSymbol.value as CodeElement).StopIndex < 0 ? -1 : ((offendingSymbol.value as CodeElement).StopIndex + 1)), 
+            base(code, (offendingSymbol == null || offendingSymbol.value == null) ? -1 : (offendingSymbol.value as CodeElement).Column,
+                offendingSymbol == null ? -1 : ((offendingSymbol.value as CodeElement).StopIndex < 0 ? -1 : ((offendingSymbol.value as CodeElement).StopIndex + 1)),
                 offendingSymbol == null ? -1 : (offendingSymbol.value as CodeElement).Line, message, exception)
         {
             OffendingSymbol = offendingSymbol;

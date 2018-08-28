@@ -150,7 +150,7 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Resets the iterator position : before the first token of the document
         /// </summary>
-        public void Reset()
+        public virtual void Reset()
         {
             currentPosition.LineIndex = 0;
             if (tokensLines.Count > 0)
