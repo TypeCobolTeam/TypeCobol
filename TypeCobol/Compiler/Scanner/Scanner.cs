@@ -91,18 +91,18 @@ namespace TypeCobol.Compiler.Scanner
 
 #endif
 
+
             // Comment line => return only one token with type CommentLine
             // Debug line => treated as a comment line if debugging mode was not activated
             if (textLine.Type == CobolTextLineType.Comment ||
                 (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
-                int comIndex = textLine.Text.IndexOf('*');
-                if (!(comIndex != -1 && textLine.Text.Length >= comIndex + 4 &&
-                    (textLine.Text.Substring(comIndex, 4) == "*<<<" || textLine.Text.Substring(comIndex, 4) == "*>>>")))
+
+                if (!textLine.Text.Trim().StartsWith("*<<") && !textLine.Text.Trim().StartsWith("*>>"))
                 {
                     Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
                     tokensLine.AddToken(commentToken);
-                     return;
+                    return;
                 }
             }
 
@@ -620,6 +620,23 @@ namespace TypeCobol.Compiler.Scanner
                 return ScanPictureCharacterStringOrISOrSYMBOL(startIndex);
             }
 
+
+            if (currentState.InsideMultilineComments)
+            {
+                // We are inside a Multiline Comments
+                // if there is no Multiline Comments end marckup "*>>" then create a new Comment Token
+                if ((line.Length > startIndex + 2 && line.Substring(startIndex).StartsWith("*>>")) ||
+                    (line.Length > startIndex + 1 && line.Substring(startIndex).StartsWith(">>") && line[currentIndex - 1] == '*'))
+                {
+                    currentIndex = lastIndex + 1;
+                    return new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
+                }
+                else
+                {
+                    return ScanUntilDelimiter(startIndex, TokenType.CommentLine, "*>>");
+                }
+            }
+
             // --- switch dedicated to formalized Comments as they are not compatible with TypeCobol grammar ---
             if (currentState.InsideFormalizedComment)
             {
@@ -643,9 +660,9 @@ namespace TypeCobol.Compiler.Scanner
                         if (line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>' && line[currentIndex + 3] == '>')
                         {
                             // We are in the case of a Formalize Comment stop with the '*' on column other than 7
-                            // consume the * char and the two < chars
+                            // consume the * char and the three < chars
                             currentIndex += 4;
-                            return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 2, tokensLine);
+                            return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 3, tokensLine);
                         }
                         currentIndex ++;
                         return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
@@ -773,12 +790,21 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex += 8;
                         return new Token(TokenType.ASTERISK_CONTROL, startIndex, startIndex + 7, tokensLine);
                     }
-                    else if (line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<' && line[currentIndex + 3] == '<')
+                    else if (line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
                     {
-                        // We are in the case of a Formalize Comment start
-                        // consume the * char and the two < chars
-                        currentIndex += 4;
-                        return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 3, tokensLine);
+                        if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '<')
+                        {
+                            // We are in the case of a Formalize Comment start
+                            // consume the * char and the three < chars
+                            currentIndex += 4;
+                            return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 3, tokensLine);
+                        }
+                        else
+                        {
+                            // We are in the case of a Multilines Comment start
+                            currentIndex += 3;
+                            return new Token(TokenType.CommentLine, startIndex, startIndex + 2, tokensLine);
+                        }
                     }
                     else
                     {
@@ -881,12 +907,21 @@ namespace TypeCobol.Compiler.Scanner
                         // scan the = char and a space
                         return ScanOneCharWithPossibleSpaceAfter(startIndex, TokenType.LessThanOrEqualOperator);
                     }
-                    else if (line[currentIndex - 1] == '*' && line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
+                    else if (line[currentIndex - 1] == '*' && line[currentIndex + 1] == '<')
                     {
-                        // We are in the case of a Formalize Comment start
-                        // consume the three < chars
-                        currentIndex += 3;
-                        return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 2, tokensLine);
+                        if (line.Length > currentIndex + 2 && line[currentIndex + 2] == '<')
+                        {
+                            // We are in the case of a Formalize Comment start
+                            // consume the three < chars
+                            currentIndex += 3;
+                            return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 2, tokensLine);
+                        }
+                        else
+                        {
+                            // We are in the case of a Multilines comments start
+                            currentIndex += 2;
+                            return new Token(TokenType.CommentLine, startIndex, startIndex + 1, tokensLine);
+                        }
                     }
                     else
                     {
@@ -2058,13 +2093,13 @@ namespace TypeCobol.Compiler.Scanner
 
         private Token ScanUntilDelimiter(int startIndex, TokenType tokenType, string delimiter)
         {
-            int end = line.IndexOf(delimiter, StringComparison.Ordinal)-1;
+            int end = line.IndexOf(delimiter, StringComparison.Ordinal) - 1;
             if (end == -2)
                 end = lastIndex;
             currentIndex = end + 1;
             return new Token(tokenType, startIndex, end, tokensLine);
         }
-
+        
         /// <summary>
         /// Look for pattern ':' (cobol word chars)+ ':'
         /// </summary>

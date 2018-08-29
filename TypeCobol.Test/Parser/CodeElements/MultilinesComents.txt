@@ -1,0 +1,37 @@
+--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [29,29+:.]<PeriodSeparator>
+- ProgramName = Functions
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [8,9:01]<LevelNumber>{1} --> [32,32+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [9,10:02]<LevelNumber>{2} --> [23,23+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [9,10:02]<LevelNumber>{2} --> [26,26+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [9,10:02]<LevelNumber>{2} --> [29,29+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [9,10:02]<LevelNumber>{2} --> [20,20+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [10,11:05]<LevelNumber>{5} --> [25,25+:.]<PeriodSeparator>
+
+[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+
+Functions.FUN(x:Numeric, y:Numeric):():():():Private:Function/Function
+[[ProcedureDivisionHeader]] [12,20:PROCEDURE]<PROCEDURE> --> [30,30+:.]<PeriodSeparator>
+
+[[ContinueStatement]] [14,21:CONTINUE]<CONTINUE> --> [14,21:CONTINUE]<CONTINUE>
+
+[[SentenceEnd]] [22,22+:.]<PeriodSeparator> --> [22,22+:.]<PeriodSeparator>
+
+[[FunctionDeclarationEnd]] [10,20:END-DECLARE]<END_DECLARE> --> [21,21+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [29,29+:.]<PeriodSeparator>
+- ProgramName = Functions
+

@@ -50,6 +50,12 @@ namespace TypeCobol.Compiler.Scanner
         public bool InsideFormalizedComment { get; private set; }
 
         /// <summary>
+        /// True if we are between two MultilineComments markups
+        /// </summary>
+        public bool InsideMultilineComments { get; private set; }
+        
+
+        /// <summary>
         /// True as soon as the keyword DECIMAL-POINT has been encountered
         /// </summary>
         public bool DecimalPointIsComma { get; private set; }
@@ -101,18 +107,19 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
-            this(insideDataDivision, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+            this(insideDataDivision, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool insideFormalizedComment, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool insideFormalizedComment, bool insideMultilineComments, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
             InsidePseudoText = insidePseudoText;
             InsideFormalizedComment = insideFormalizedComment;
+            InsideMultilineComments = insideMultilineComments;
             InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
@@ -124,7 +131,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, InsideFormalizedComment, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, InsideFormalizedComment, InsideMultilineComments, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -144,12 +151,23 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public void AdvanceToNextStateAndAdjustTokenProperties(Token newToken)
         {
-            // Ignore whitespace separators and comments to update scan state
-            if (newToken.TokenFamily == TokenFamily.Whitespace ||
-                newToken.TokenFamily == TokenFamily.Comments)
+
+            // Ignore whitespace separators
+            if (newToken.TokenFamily == TokenFamily.Whitespace)
             {
                 return;
             }
+
+            //  Adjust the InsideMultilineComments state in case of comment Token
+            if (newToken.TokenFamily == TokenFamily.Comments)
+            {
+                // InsideMultilineComments = (was InsideMultilineComments) && !(newToken start with *>>) || newToken start with *<<
+                InsideMultilineComments = (InsideMultilineComments && !(newToken.SourceText.StartsWith(">>") || newToken.SourceText.StartsWith("*>>")))
+                                          || (newToken.SourceText.StartsWith("<<") || newToken.SourceText.StartsWith("*<<"));
+
+                return;
+            }
+
             // Ignore pseudo-text tokens to update scan state
             if (InsidePseudoText && newToken.TokenType != TokenType.PseudoTextDelimiter && newToken.TokenType != TokenType.COPY)
             {
