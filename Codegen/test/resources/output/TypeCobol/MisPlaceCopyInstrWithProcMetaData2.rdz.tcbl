@@ -68,6 +68,8 @@
                      TC-DVZF0OS2-bdb3e928-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .
@@ -78,7 +80,7 @@
        PROGRAM-ID. DVZF0OS2.
        data division.
        working-storage section.
-       01 var1 pic X.
+       01 var1 .
        COPY Codegen-SecondCopy.
        01  TC-DVZF0OS2-FctList-Loaded PIC X(02).
            88 TC-DVZF0OS2-FctList-IsLoaded      VALUE 'OK'.

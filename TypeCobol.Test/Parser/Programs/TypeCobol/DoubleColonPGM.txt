@@ -7,6 +7,10 @@ Line 102[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 
 Line 103[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-A.T2-B.T2-C.T2-D3 is not referenced
 Line 105[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-D2.T2-C.T2-B.T2-A is not referenced
 Line 106[5,45] <27, Error, Syntax> - Syntax error : Symbol T2-C2.T2-C.T2-B.T2-A is not referenced
+Line 115[5,61] <37, Warning, General> - Warning: "end-if" is missing
+Line 116[5,61] <37, Warning, General> - Warning: "end-if" is missing
+Line 120[5,61] <37, Warning, General> - Warning: "end-if" is missing
+Line 121[5,61] <37, Warning, General> - Warning: "end-if" is missing
 
 --- Program ---
 PROGRAM: COLON common:False initial:False recursive:False

@@ -156,7 +156,6 @@ namespace TypeCobol.Compiler.CupParser
                         LastSymbol = symbol;
                         yield return symbol;
                     }
-
                 }
             }
             if (CodeElementsLines != null)

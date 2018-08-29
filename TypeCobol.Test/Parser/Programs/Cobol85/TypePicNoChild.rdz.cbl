@@ -1,0 +1,106 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+
+      *OK
+       01 var1.
+         05 var2.
+           10 var3   pic X.
+         05 var4     pic 9.
+
+      *KO because var1 contains a child
+       01 var1 pic X.
+         05 var2 pic X.
+
+      *Should be KO because var1 contains child with incompatible 
+      *picture.
+      *But outside the scope of #729 
+      *so for now it's unchecked then it's OK
+       01 var1 comp.
+         05 var2 pic XX.
+         05 var3 pic 9.
+         05 var4 pic X(2).
+
+      *OK
+       01 toto comp-2.
+           05 titi.
+      *OK
+       01 toto comp-2.
+           05 titi comp-2.
+      *OK
+       01 toto comp-2.
+           05 titi pic 9.
+
+      *OK
+       01 var1 comp.
+         05 var3 pic 9.
+
+      *Should be KO, but outside the scope of this issue
+       01 var1 pointer.
+         05 var2 pic X.
+
+      *Should be KO, but outside the scope of this issue
+       01 var1 usage is pointer.
+         05 var2 pic X.
+
+
+
+
+       01 var1.
+      *KO because var2 contains a child
+         05 var2 pic X.
+           10 var3   pic X.
+
+
+       01 var1.
+      *Should be KO because var2 contains a child with pic X
+      *But outside the scope of #729 
+      *so for now it's unchecked then it's OK
+         05 var2 comp.
+           10 var3   pic X.
+
+       01 var1.
+      *Should be KO, but outside the scope of this issue
+         05 var2 usage is pointer.
+           10 var3 pic X.
+           10 var4 pic 9.
+           10 var5 pic X(2).
+
+
+
+      *KO because var1 contains a child
+       01 var1 pic X.
+         05 var2.
+           10 var3   pic X.
+
+      *Should be KO because var1 contains a child with a pic X
+      *But outside the scope of #729 
+      *so for now it's unchecked then it's OK
+       01 var1 comp.
+         05 var2.
+           10 var3   pic X.
+
+      *Should be KO, but outside the scope of this issue
+       01 var1 usage is pointer.
+         05 var2.
+           10 var3   pic X.
+
+
+
+
+       01 var1 pic X(100).
+      *KO because var1 contains a child
+       01 var2 redefines var1 pic X(100).
+          05 var3   pic X.
+
+       01 var1.
+          05 var2 pic X(10).
+      *KO because var3 contains children (only 1 error expected)
+          05 var3 redefines var2 pic X(10).
+            10 var4   pic X.
+            10 var5   pic X(09).
+
+
+       END PROGRAM DVZF0OSM.
