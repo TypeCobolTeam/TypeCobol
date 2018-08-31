@@ -6,18 +6,18 @@
 
 
       *KO because var1 contains a child
-Line 9[8,25] <27, Error, Syntax> - Syntax error : Group item  var1 cannot have a "TYPE"
+Line 9[11,14] <27, Error, Syntax> - Syntax error : Group item  var1 cannot have a "TYPE"
        01 var1 type Date.
          05 var2 pic X.
 
        01 var1.
       *KO because var2 contains a child
-Line 14[10,27] <27, Error, Syntax> - Syntax error : Group item  var2 cannot have a "TYPE"
+Line 14[13,16] <27, Error, Syntax> - Syntax error : Group item  var2 cannot have a "TYPE"
          05 var2 type Date.
            10 var3   pic X.
 
       *KO because var1 contains a child
-Line 18[8,25] <27, Error, Syntax> - Syntax error : Group item  var1 cannot have a "TYPE"
+Line 18[11,14] <27, Error, Syntax> - Syntax error : Group item  var1 cannot have a "TYPE"
        01 var1 type Date.
          05 var2.
            10 var3   pic X.

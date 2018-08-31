@@ -1,8 +1,8 @@
 ﻿--- Diagnostics ---
-Line 1[1,11] <27, Error, Syntax> - Syntax error : Symbol c is not referenced
-Line 1[1,11] <27, Error, Syntax> - Syntax error : Symbol d is not referenced
-Line 4[1,11] <27, Error, Syntax> - Syntax error : Symbol a is not referenced
-Line 4[1,11] <27, Error, Syntax> - Syntax error : Symbol b is not referenced
+Line 1[6,6] <27, Error, Syntax> - Syntax error : Symbol c is not referenced OffendingSymbol=[6,6:c]<UserDefinedWord> in COPY CPYProc
+Line 1[11,11] <27, Error, Syntax> - Syntax error : Symbol d is not referenced OffendingSymbol=[11,11:d]<UserDefinedWord> in COPY CPYProc
+Line 4[6,6] <27, Error, Syntax> - Syntax error : Symbol a is not referenced OffendingSymbol=[6,6:a]<UserDefinedWord>
+Line 4[11,11] <27, Error, Syntax> - Syntax error : Symbol b is not referenced OffendingSymbol=[11,11:b]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False

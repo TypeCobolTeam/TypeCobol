@@ -23,6 +23,11 @@ namespace TypeCobol.Compiler.Parser
             var parserDiag = new ParserDiagnostic(message, token, rulestack, code);
             e.Diagnostics.Add(parserDiag);
         }
+	    internal static void AddError(CodeElement e, string message, DataDefinitionEntry data, string rulestack = null, MessageCode code = MessageCode.SyntaxErrorInParser) {
+            if (e.Diagnostics == null) e.Diagnostics = new List<Diagnostic>();
+            var parserDiag = new ParserDiagnostic(message, data.DataName.NameLiteral.Token, rulestack, code);
+            e.Diagnostics.Add(parserDiag);
+        }
 
 
         #region Node Diagnostic Generator
@@ -48,6 +53,27 @@ namespace TypeCobol.Compiler.Parser
             var diagnostic = new ParserDiagnostic(message, token, rulestack, code);
             node.AddDiagnostic(diagnostic);
         }
+
+	    internal static void AddError(Node node, string message, SymbolReference symbol, MessageCode code = MessageCode.SyntaxErrorInParser)
+	    {
+	        var diagnostic = new ParserDiagnostic(message, symbol.NameLiteral.Token, null, code);
+	        node.AddDiagnostic(diagnostic);
+	    }
+
+	    internal static void AddError(Node node, string message, DataDefinitionEntry data, MessageCode code = MessageCode.SyntaxErrorInParser)
+	    {
+	        ParserDiagnostic diagnostic;
+
+	        if (data?.DataName != null)
+	        {
+	            diagnostic = new ParserDiagnostic(message, data?.DataName != null ? data.DataName.NameLiteral.Token : data.ConsumedTokens[0], null, code);
+                node.AddDiagnostic(diagnostic);
+            }
+	        else
+	        {
+	            AddError(node, message, code);
+            }
+	    }
 
         #endregion
     }
