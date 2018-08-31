@@ -402,8 +402,7 @@ namespace TypeCobol.Compiler.Nodes {
             if(_Diagnostics == null)
                 _Diagnostics = new List<Diagnostic>();
 
-            if (!_Diagnostics.Contains(diagnostic)) //Check if diagnostic already exists (See Equals override in Diagnostic class)
-                _Diagnostics.Add(diagnostic);
+            _Diagnostics.Add(diagnostic);
         }
 
         /// <summary>
