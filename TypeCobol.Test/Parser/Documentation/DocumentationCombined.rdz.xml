@@ -1,0 +1,156 @@
+﻿======================== Documentation ========================
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+  <Name>DocCombined</Name>
+  <Description>My program description </Description>
+  <Visibility xsi:nil="true" />
+  <Namespace>DocCombined</Namespace>
+  <Needs>
+    <Need>some needs</Need>
+    <Need>description</Need>
+  </Needs>
+  <ToDos>
+    <ToDo>Add BOOL support</ToDo>
+    <ToDo>implement a call counter</ToDo>
+  </ToDos>
+  <Deprecated />
+  <ReplacedBy>MyFonction2 </ReplacedBy>
+  <Restriction>Do not Use BOOL var </Restriction>
+  <See>Thank you for your attention </See>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Name>myType</Name>
+  <Description>inline typedef</Description>
+  <Visibility>Public</Visibility>
+  <Namespace>DocCombined</Namespace>
+  <IsBlankWheneZero>false</IsBlankWheneZero>
+  <Justified>false</Justified>
+  <DocDataType>
+    <Usage xsi:nil="true" />
+    <MaxOccurence>1</MaxOccurence>
+    <Picture>X(01)</Picture>
+  </DocDataType>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Name>Vect2D</Name>
+  <Description>Vect2D</Description>
+  <Visibility>Private</Visibility>
+  <Namespace>DocCombined</Namespace>
+  <Childrens>
+    <Children>
+      <Childrens>
+        <Children>
+          <Name>X</Name>
+          <IsBlankWheneZero>false</IsBlankWheneZero>
+          <Justified>false</Justified>
+          <IsLevel77>false</IsLevel77>
+          <IsLevel88>false</IsLevel88>
+          <DocDataType>
+            <Usage xsi:nil="true" />
+            <MaxOccurence>1</MaxOccurence>
+            <Picture>9(4)</Picture>
+          </DocDataType>
+        </Children>
+        <Children>
+          <Name>Y</Name>
+          <IsBlankWheneZero>false</IsBlankWheneZero>
+          <Justified>false</Justified>
+          <IsLevel77>false</IsLevel77>
+          <IsLevel88>false</IsLevel88>
+          <DocDataType>
+            <Usage xsi:nil="true" />
+            <MaxOccurence>1</MaxOccurence>
+            <Picture>9(4)</Picture>
+          </DocDataType>
+        </Children>
+      </Childrens>
+      <Name>Coord2d</Name>
+      <IsBlankWheneZero>false</IsBlankWheneZero>
+      <Justified>false</Justified>
+      <IsLevel77>false</IsLevel77>
+      <IsLevel88>false</IsLevel88>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+      </DocDataType>
+    </Children>
+  </Childrens>
+  <IsBlankWheneZero>false</IsBlankWheneZero>
+  <Justified>false</Justified>
+  <DocDataType>
+    <Usage xsi:nil="true" />
+    <MaxOccurence>1</MaxOccurence>
+  </DocDataType>
+</Documentation>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForFunction">
+  <Name>MyProc</Name>
+  <Description>MyProc info </Description>
+  <Visibility>Private</Visibility>
+  <Namespace>DocCombined</Namespace>
+  <ToDos>
+    <ToDo>todo1</ToDo>
+    <ToDo>todo 2</ToDo>
+  </ToDos>
+  <Parameters>
+    <Parameter>
+      <Name>myDate</Name>
+      <PassingType>Input</PassingType>
+      <Info>just a date</Info>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <TypeName>DATE</TypeName>
+      </DocDataType>
+    </Parameter>
+    <Parameter>
+      <Name>bla</Name>
+      <PassingType>Input</PassingType>
+      <Info>bla &lt; 2</Info>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <Picture>S9(1)V9(12)</Picture>
+      </DocDataType>
+    </Parameter>
+    <Parameter>
+      <Name>myBool</Name>
+      <PassingType>InOut</PassingType>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <TypeName>BOOL</TypeName>
+      </DocDataType>
+    </Parameter>
+    <Parameter>
+      <Name>toto</Name>
+      <PassingType>Output</PassingType>
+      <Info>toto</Info>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <TypeName>BOOL</TypeName>
+      </DocDataType>
+    </Parameter>
+    <Parameter>
+      <Name>bli</Name>
+      <PassingType>Output</PassingType>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <Picture>PPP999PPP</Picture>
+      </DocDataType>
+    </Parameter>
+  </Parameters>
+  <Deprecated>It is deprecated </Deprecated>
+</Documentation>
+---------------------
+

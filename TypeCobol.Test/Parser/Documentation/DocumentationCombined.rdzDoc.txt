@@ -1,0 +1,223 @@
+======================== Nodes properties ========================
+Name : DocCombined
+Description : My program description 
+Visibility : 
+Namespace : DocCombined
+NodeType : Program
+IsDeprecated : True
+Deprecated : 
+ReplacedBy : MyFonction2 
+Restriction : Do not Use BOOL var 
+See : Thank you for your attention 
+Needs : 
+    some needs
+    description
+ToDo : 
+    Add BOOL support
+    implement a call counter
+Parameters : 
+
+---------------------
+
+Name : myType
+Description : inline typedef
+Visibility : Public
+Namespace : DocCombined
+NodeType : TypeDef
+IsBlankWheneZero : False
+Justified : False
+DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
+DataType : 
+    Usage : 
+    MaxOccurence : 1
+    DefaultValue : 
+    TypeName : 
+    Picture : X(01)
+
+---------------------
+
+Name : Vect2D
+Description : Vect2D
+Visibility : Private
+Namespace : DocCombined
+NodeType : TypeDef
+IsBlankWheneZero : False
+Justified : False
+DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
+DataType : 
+    Usage : 
+    MaxOccurence : 1
+    DefaultValue : 
+    TypeName : 
+    Picture : 
+TypeDefChild : 
+    Name : Coord2d
+    IsBlankWheneZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : 
+    TypeDefChild : 
+        Name : X
+        IsBlankWheneZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : 
+            Picture : 9(4)
+    TypeDefChild : 
+        Name : Y
+        IsBlankWheneZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : 
+            Picture : 9(4)
+
+---------------------
+
+Name : MyProc
+Description : MyProc info 
+Visibility : Private
+Namespace : DocCombined
+NodeType : Function
+IsDeprecated : True
+Deprecated : It is deprecated 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+    todo1
+    todo 2
+Parameters : 
+    Name : myDate
+    Info : just a date
+    PassingType : Input
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : DATE
+        Picture : 
+    --------
+    Name : bla
+    Info : bla < 2
+    PassingType : Input
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : S9(1)V9(12)
+    --------
+    Name : myBool
+    Info : 
+    PassingType : InOut
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : BOOL
+        Picture : 
+    --------
+    Name : toto
+    Info : toto
+    PassingType : Output
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : BOOL
+        Picture : 
+    --------
+    Name : bli
+    Info : 
+    PassingType : Output
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : PPP999PPP
+
+---------------------
+
+======================== Code Element properties ========================
+== DocCombined ==
+Description : My program description 
+Deprecated : *is present*
+ReplacedBy : MyFonction2 
+Restriction : Do not Use BOOL var 
+See : Thank you for your attention 
+Needs : 
+    some needs
+    description
+ToDo : 
+    Add BOOL support
+    implement a call counter
+Parameters : 
+
+---------------------
+
+== myType ==
+Description : inline typedef 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+== Vect2D ==
+Description : Vect2D 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+== MyProc ==
+Description : MyProc info 
+Deprecated : It is deprecated 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+    todo1
+    todo 2
+Parameters : 
+    myDate : just a date
+    bla : bla < 2
+    toto : toto
+    blu : will be ignored
+
+---------------------
+
