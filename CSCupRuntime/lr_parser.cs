@@ -170,7 +170,7 @@ using System.Collections;
   /** The number of Symbols after an error we much match to consider it 
    *  recovered from. 
    */
-  protected int error_sync_size() {return _error_sync_size; }
+  protected virtual int error_sync_size() {return _error_sync_size; }
 
   /*-----------------------------------------------------------*/
   /*--- (Access to) Instance Variables ------------------------*/
