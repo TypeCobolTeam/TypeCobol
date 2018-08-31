@@ -1115,6 +1115,9 @@ namespace TypeCobol.Codegen.Generators
             //Create All SourceTextBuffer Content associated to Nodes
             CreateNodeSourceTextBufferContents();
 
+            // Comment specific parts (Formalized Comments)
+            CommentSpecificParts(node);
+
             //Now Complete Function Declaration Lines relocation.
             CompleteFunctionDeclarationLinesRelocation();
 
@@ -1267,6 +1270,65 @@ namespace TypeCobol.Codegen.Generators
                     return true;
             }
             return false;
+        }
+
+        public Tuple<Token, Token> GetFormalizedCommentEnclosingTokensIfAny(Node node)
+        {
+            Token formalizedCommentStartToken =
+                node.CodeElement?.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.FormalizedCommentsStart);
+            Token formalizedCommentStopToken =
+                node.CodeElement?.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.FormalizedCommentsStop);
+            if (formalizedCommentStartToken != null && formalizedCommentStopToken != null)
+                return new Tuple<Token, Token>(formalizedCommentStartToken, formalizedCommentStopToken);
+            return null;
+        }
+
+        public void CommentSpecificParts(Node node)
+        {
+            if (node is Compiler.CodeModel.Program)
+            {
+                // Formalised Comments
+                var formalizedCommentsToken = GetFormalizedCommentEnclosingTokensIfAny(node);
+                if (formalizedCommentsToken != null)
+                {// The node have a formalized Comment
+                    NodeData nodeData = Nodes.FirstOrDefault(n => n.node == node);
+                    if (nodeData != null)
+                    {
+                        // Split the Buffer to get an array of string representing the lines
+                        string content = new string(nodeData.Buffer.ToArray());
+                        string[] lines = content.Split(
+                            new[] { "\r\n", "\r", "\n" },
+                            StringSplitOptions.None
+                        );
+
+                        int linestart = formalizedCommentsToken.Item1.Line;
+                        int linestop = formalizedCommentsToken.Item2.Line;
+
+                        int tempoCommentedLines = 0;
+                        int tempoTestedLines = 0;
+                        // for each lines, if it is inside the formalized comment then comment them (replace the 6th character by a '*') 
+                        for (int i = 0; i < lines.Length - 1; i++)
+                        {
+                            tempoTestedLines++;
+                            if (nodeData.Positions.Item4[i] >= linestart && nodeData.Positions.Item4[i] <= linestop &&
+                                lines[i].Length >= 7)
+                            {
+                                tempoCommentedLines++;
+                                lines[i] = lines[i].Substring(0, 6) + '*' + lines[i].Substring(7, lines[i].Length - 7);
+                            }
+                        }
+
+                        // Replace the buffer content by the new one commented
+                        string newContent = string.Join(Environment.NewLine, lines);
+                        nodeData.Buffer.Insert(newContent, 0, newContent.Length);
+                    }
+                }
+            }
+
+            foreach (var child in node.Children)
+            {
+                CommentSpecificParts(child);
+            }
         }
 
         /// <summary>
