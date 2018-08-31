@@ -615,7 +615,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     var data = child.CodeElement as DataDescriptionEntry;
                     if (data == null) continue;
                     if (data.IsGlobal) // TCRFUN_DECLARATION_NO_GLOBAL
-                        DiagnosticUtils.AddError(child, "Illegal GLOBAL clause in function data item.");
+                        DiagnosticUtils.AddError(child, "Illegal GLOBAL clause in function data item.", data);
                 }
             }
         }
@@ -638,7 +638,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 //Group on parameter.Name //where group contains more than one item //reexpand to get all duplicated parameters 
             {
                 DiagnosticUtils.AddError(node,
-                    string.Format("Parameter with name '{0}' declared multiple times", duplicatedParameter.Name));
+                    string.Format("Parameter with name '{0}' declared multiple times", duplicatedParameter.Name), duplicatedParameter);
             }
 
 
@@ -650,7 +650,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (parameter.LevelNumber?.Value != 1)
             {
                 DiagnosticUtils.AddError(node,
-                    "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.");
+                    "Condition parameter \"" + parameter.Name + "\" must be subordinate to another parameter.", parameter);
             }
 
             if (parameter.DataConditions != null)
@@ -659,11 +659,11 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (condition.LevelNumber?.Value != 88)
                         DiagnosticUtils.AddError(node,
-                            "Condition parameter \"" + condition.Name + "\" must be level 88.");
+                            "Condition parameter \"" + condition.Name + "\" must be level 88.", condition);
                     if (condition.LevelNumber?.Value == 88 && parameter.DataType == DataType.Boolean)
                         DiagnosticUtils.AddError(node,
                             "The Level 88 symbol '" + parameter.Name +
-                            "' cannot be declared under a BOOL typed symbol");
+                            "' cannot be declared under a BOOL typed symbol", condition);
                 }
             }
 
@@ -768,11 +768,11 @@ namespace TypeCobol.Compiler.Diagnostics
             if (symbol == null) return;
             string message = "TCRFUN_NO_PERFORM_OF_ENCLOSING_PROGRAM";
             var found = table.GetSection(symbol.Name);
-            if (found.Count > 0) DiagnosticUtils.AddError(node, message);
+            if (found.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
             else
             {
                 var paragraphFounds = table.GetParagraph(symbol.Name);
-                if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message);
+                if (paragraphFounds.Count > 0) DiagnosticUtils.AddError(node, message, symbol);
             }
         }
     }
@@ -863,13 +863,13 @@ namespace TypeCobol.Compiler.Diagnostics
                         if (levelNumber != null && levelNumber.Value > 49)
                         {
                             DiagnosticUtils.AddError(node,
-                                "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
+                                "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.", (DataDefinitionEntry)receiver.CodeElement); 
                         }
 
                         if (receiver.Name.Length > 22)
                         {
                             DiagnosticUtils.AddError(node,
-                                "Pointer name '" + receiver.Name + "' is over 22 characters.");
+                                "Pointer name '" + receiver.Name + "' is over 22 characters.", (DataDefinitionEntry)receiver.CodeElement);
                         }
 
                         if (receiver.IsInsideCopy())
@@ -942,7 +942,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var data = dataDefinition.CodeElement as DataDefinitionEntry;
             if (data?.LevelNumber != null && data.LevelNumber.Value == 77)
                 DiagnosticUtils.AddError(node,
-                    "Level 77 is forbidden in global-storage section.");
+                    "Level 77 is forbidden in global-storage section.", data);
 
             //Check variable no Global / External keyword 
             // Rules : - GLOBALSS_NO_GLOBAL_KEYWORD - GLOBALSS_NO_EXTERNAL 
@@ -950,9 +950,9 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDescription != null)
             {
                 if (dataDescription.IsGlobal) // GLOBALSS_NO_GLOBAL_KEYWORD 
-                    DiagnosticUtils.AddError(dataDescription, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.");
+                    DiagnosticUtils.AddError(dataDescription, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
                 if (dataDescription.IsExternal) //GLOBALSS_NO_EXTERNAL
-                    DiagnosticUtils.AddError(dataDescription, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.");
+                    DiagnosticUtils.AddError(dataDescription, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
             }
 
             if (node.Children.Count > 0)
