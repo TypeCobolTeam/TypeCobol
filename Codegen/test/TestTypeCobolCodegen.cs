@@ -779,6 +779,15 @@ namespace TypeCobol.Codegen {
 	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FormalizedComments") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
 	    }
 
+	    [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void MultilinesCommentsTest()
+	    {
+	        var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MultilinesComments") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
+	    }
+
 
 #if EUROINFO_RULES
         [TestMethod]
