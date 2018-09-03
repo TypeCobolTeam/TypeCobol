@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public override string ToString() {
 		    if (NumericExpression != null) return NumericExpression.ToString();
-		    if (ALL != null) return "ALL";
+		    if (ALL != null) return ALL.Token.SourceText;
 		    return base.ToString();
 	    }
 
