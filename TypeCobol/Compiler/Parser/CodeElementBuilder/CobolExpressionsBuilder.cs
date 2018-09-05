@@ -1035,21 +1035,6 @@ namespace TypeCobol.Compiler.Parser
             return variable;
         }
 
-		internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable2Context context)
-		{
-			var variable = new NumericVariable(
-					new DataOrConditionStorageArea(
-						CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
-
-            // Collect storage area read/writes at the code element level
-            if (variable.StorageArea != null)
-            {
-                this.storageAreaReads.Add(variable.StorageArea);
-            }
-
-            return variable;
-        }
-
 		internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable3Context context)
 		{
 		    if (context == null)

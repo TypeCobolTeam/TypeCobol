@@ -985,8 +985,6 @@ integerVariableOrIndex1: identifierOrIndexName | IntegerLiteral;
 integerVariableOrIndex2: qualifiedDataNameOrIndexName | IntegerLiteral;
 
 numericVariable1: identifier;
-		
-numericVariable2: dataNameReference;
 
 numericVariable3: identifier | numericValue;
 
