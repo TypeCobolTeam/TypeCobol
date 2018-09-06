@@ -779,11 +779,18 @@ namespace TypeCobol.Compiler.Parser
 				conditionOperand = new ConditionOperand(
 					CreateArithmeticExpression(context.arithmeticExpression()));
 			}
-			else if (context.variableOrIndex() != null)
+			else if (context.alphanumericValue2() != null)
 			{
-				conditionOperand = new ConditionOperand(
-					CreateVariableOrIndex(context.variableOrIndex()));
-			}
+			    Variable variable = new Variable(CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+			    // No storage area read/writes to collect
+                conditionOperand = new ConditionOperand(variable);
+            }
+			else if (context.repeatedCharacterValue2() != null)
+			{
+			    Variable variable = new Variable(CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue2()));
+			    // No storage area read/writes to collect
+                conditionOperand = new ConditionOperand(variable);
+            } 
 			else if (context.nullPointerValue() != null)
 			{
 				conditionOperand = new ConditionOperand(

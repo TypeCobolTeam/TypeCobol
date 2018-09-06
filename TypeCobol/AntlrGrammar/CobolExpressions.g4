@@ -528,7 +528,7 @@ arithmeticExpression:
 	|  numericVariable3;
 
 
-// --- Conditional Expressions ---
+	// --- Conditional Expressions ---
 
 // p256: Conditional expressions
 // A conditional expression causes the object program to select alternative paths of
@@ -944,7 +944,18 @@ simpleRelation:
 
 conditionOperand: 
 	arithmeticExpression |
-	variableOrIndex  | 
+
+
+    //It should be variableOrIndex but 2 sub-rules (identifierOrIndexName and numericValue) cannot be matched because they already are in arithmeticExpression
+	//This also have a significant performance impact with Antlr
+	//variableOrIndex //variableOrIndex: identifierOrIndexName | numericValue | alphanumericValue2 | repeatedCharacterValue2;
+	
+	//So replace variableOrIndex with alphanumericValue2 | repeatedCharacterValue2
+	alphanumericValue2 | repeatedCharacterValue2 |
+
+	//alphanumericValue2: alphanumericOrNationalLiteralToken
+					//repeatedCharacterValue2: figurativeConstant | allFigurativeConstant;
+
 	nullPointerValue | 
 	selfObjectIdentifier; 
 
