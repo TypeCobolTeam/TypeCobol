@@ -92,7 +92,6 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   MyVariable:Alphanumeric
   useStrongType1:strongType1
   TYPE-GRP-STRONG-REN:?
---- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   Feature:Feature
   Vect2:Vect2

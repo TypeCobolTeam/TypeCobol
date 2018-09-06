@@ -89,8 +89,8 @@ namespace TypeCobol.LanguageServer
                                 f.VisualQualifiedName.ToString()
                                     .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)
                                 || f.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
-                                SymbolTable.Scope.PublicSharedProtected
-);
+                                SymbolTable.Scope.Public
+                    );
                     variables = node.SymbolTable.GetVariables(da => da.Picture != null &&
                                                                     da.DataType ==
                                                                     Compiler.CodeElements.DataType.Alphanumeric &&
@@ -136,7 +136,7 @@ namespace TypeCobol.LanguageServer
                         p =>
                             p.Name.Equals(procedureName, StringComparison.InvariantCultureIgnoreCase) ||
                             p.VisualQualifiedName.ToString().Equals(procedureName, StringComparison.InvariantCultureIgnoreCase),
-                            SymbolTable.Scope.PublicSharedProtected
+                            SymbolTable.Scope.Public
                         );
             }
             else
@@ -276,7 +276,7 @@ namespace TypeCobol.LanguageServer
                          (!t.IsFlagSet(Node.Flag.NodeIsIntrinsic) &&
                           t.VisualQualifiedName.ToString()
                               .StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase)),
-                          SymbolTable.Scope.PublicSharedProtected
+                          SymbolTable.Scope.Public
                     );
             
 
@@ -381,7 +381,7 @@ namespace TypeCobol.LanguageServer
                                 t.Children != null &&
                                 t.Children.Any(
                                     tc => tc.Name != null && tc.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)),
-                                SymbolTable.Scope.PublicSharedProtected
+                                SymbolTable.Scope.Public
                             );
 
                     foreach (var nodeType in potentialTypes.SelectMany(t => t.Children).Where(c => c != null && c.Name != null && c.Name.Equals(userTokenToSeek.Text, StringComparison.InvariantCultureIgnoreCase)))
@@ -421,7 +421,7 @@ namespace TypeCobol.LanguageServer
                                                 f.VisualQualifiedName.ToString()
                                                     .StartsWith(userFilterText,
                                                         StringComparison.InvariantCultureIgnoreCase),
-                                            SymbolTable.Scope.PublicSharedProtected);
+                                            SymbolTable.Scope.Public);
                                     //TODO CHeck visibility
                                 completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, functionDeclarationSignatureDictionary, false));
 
@@ -440,7 +440,7 @@ namespace TypeCobol.LanguageServer
                                             t =>
                                                 t.Name.StartsWith(userFilterText,
                                                     StringComparison.InvariantCultureIgnoreCase),
-                                                SymbolTable.Scope.PublicSharedProtected
+                                                SymbolTable.Scope.Public
                                             );
                                 completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForType(types, node, false));
                             }
@@ -547,7 +547,7 @@ namespace TypeCobol.LanguageServer
 
                 foreach (var seekedDataType in seekedDataTypes.Distinct())
                 {
-                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.PublicSharedProtected);
+                    potentialVariables = node.SymbolTable.GetVariablesByType(seekedDataType, potentialVariables, SymbolTable.Scope.Public);
                 }
 
                 potentialVariables = potentialVariables.AsQueryable().Where(variablePredicate);
@@ -696,7 +696,7 @@ namespace TypeCobol.LanguageServer
                      ||
                      t.VisualQualifiedName.ToString()
                          .Equals(dataDefNode.DataType.Name, StringComparison.InvariantCultureIgnoreCase),
-                    SymbolTable.Scope.PublicSharedProtected).FirstOrDefault();
+                    SymbolTable.Scope.Public).FirstOrDefault();
 
             return type?.Children;
         }

@@ -1,11 +1,13 @@
 ﻿--- Diagnostics ---
-Line 22[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
-Line 23[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
-Line 41[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
-Line 42[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
-Line 43[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
-Line 59[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3::toto to strictly typed variable var2:DVZF0OS3bis::toto.
-Line 60[12,28] <30, Error, Semantics> - Semantic error: Cannot write DVZF0OS3bis::toto to strictly typed variable var1:DVZF0OS3::toto.
+Line 19[8,38] <30, Error, Semantics> - Semantic error: TYPE 'DVZF0OS3bis.toto' is not referenced
+Line 23[12,28] <30, Error, Semantics> - Semantic error: Cannot write  to strictly typed variable var1:toto.
+Line 41[12,28] <30, Error, Semantics> - Semantic error: Cannot write toto to strictly typed variable var2:titi.
+Line 42[12,28] <30, Error, Semantics> - Semantic error: Cannot write titi to strictly typed variable var1:toto.
+Line 43[12,28] <30, Error, Semantics> - Semantic error: Cannot write toto to strictly typed variable var2:titi.
+Line 59[12,28] <30, Error, Semantics> - Semantic error: Cannot write toto to strictly typed variable var2:titi.
+Line 60[12,28] <30, Error, Semantics> - Semantic error: Cannot write titi to strictly typed variable var1:toto.
+Line 61[12,28] <30, Error, Semantics> - Semantic error: Cannot write titi to strictly typed variable var3:toto.
+Line 62[12,28] <30, Error, Semantics> - Semantic error: Cannot write toto to strictly typed variable var2:titi.
 
 --- Program ---
 PROGRAM: DVZF0OS3 common:False initial:False recursive:False
@@ -18,39 +20,46 @@ PROGRAM: DVZF0OS3 common:False initial:False recursive:False
   floatVar:Float
   var1:toto
   var2:DVZF0OS3bis.toto
+--- PublicSharedProtected:PrivateGlobalStorage:Global
+-- DATA --------
+  var3:toto
 --- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
+  toto:toto
+  titi:titi
+--- PublicSharedProtected
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
   SmallInt:SmallInt
   Integer:Integer
   BigInt:BigInt
   Real:Real
   Float:Float
   SmallChar:SmallChar
---- PublicSharedProtected:Namespace:GlobalStorage:Global
--- DATA --------
-  var3:toto
--- TYPES -------
-  toto:toto
---- PublicSharedProtected
--- TYPES -------
-  BOOL:BOOL
-  DATE:DATE
-  CURRENCY:CURRENCY
-  STRING:STRING
 --- Program ---
 PROGRAM: DVZF0OS3bis common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
---- PublicSharedProtected:Namespace:Global:Declarations:Program
+--- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   var1:DVZF0OS3.toto
-  var2:DVZF0OS3bis.toto
+  var2:DVZF0OS3bis.titi
   var3:toto
---- PublicSharedProtected:Namespace:Global:Declarations
+--- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   toto:toto
+  titi:titi
 --- PublicSharedProtected
 -- TYPES -------
   BOOL:BOOL
   DATE:DATE
   CURRENCY:CURRENCY
   STRING:STRING
+  SmallInt:SmallInt
+  Integer:Integer
+  BigInt:BigInt
+  Real:Real
+  Float:Float
+  SmallChar:SmallChar

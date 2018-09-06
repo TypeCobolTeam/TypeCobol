@@ -595,18 +595,20 @@ namespace TypeCobol.LanguageServer
                             }
                             case TokenType.CALL:
                             {
-                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetFunctions(matchingNode,
-                                    f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                        SymbolTable.Scope.PublicSharedProtected
+                                potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.PrivateGlobalStorage).GetFunctions(matchingNode,
+                                    (f => f.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase) 
+                                          && (f.CodeElement().Visibility > AccessModifier.Private || f.Root == matchingNode.Root)),
+                                        SymbolTable.Scope.Public
                                     ));
                                 break;
                             }
                             case TokenType.TYPE:
                             {
                                 potentialDefinitionNodes.AddRange(matchingNode.SymbolTable.GetTypes(
-                                    t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase),
-                                        SymbolTable.Scope.PublicSharedProtected
-                                    ));
+                                    (t => t.Name.Equals(matchingToken.Text, StringComparison.InvariantCultureIgnoreCase)
+                                          && (t.CodeElement().Visibility > AccessModifier.Private || t.Root == matchingNode.Root)),
+                                    SymbolTable.Scope.Public
+                                ));
                                 break;
                             }
                             case TokenType.INPUT:
@@ -678,8 +680,8 @@ namespace TypeCobol.LanguageServer
                 node.SymbolTable.GetFunctions(node, 
                     p =>
                         p.Name.Equals(procedureName) ||
-                        p.QualifiedName.ToString().Equals(procedureName), 
-                        SymbolTable.Scope.PublicSharedProtected
+                        p.QualifiedName.ToString().Equals(procedureName),
+                        SymbolTable.Scope.Public
                     );
             var signatureHelp = new SignatureHelp();
 

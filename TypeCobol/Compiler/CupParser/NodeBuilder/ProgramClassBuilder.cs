@@ -40,10 +40,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             set { programsStack.Push(value); }
         }
 
+        public ProgramClassBuilder()
+        {
+            TableOfPublic = new SymbolTable(null, SymbolTable.Scope.Public);
+            TableOfShared = new SymbolTable(TableOfPublic, SymbolTable.Scope.Shared);
+            TableOfProtected = new SymbolTable(TableOfShared, SymbolTable.Scope.Protected);
+        }
+
         /// <summary>Class object resulting of the visit the parse tree</summary>
         public CodeModel.Class Class { get; private set; }
-        
-        private SymbolTable TableOfPublicSharedProtected = new SymbolTable(null, SymbolTable.Scope.PublicSharedProtected);
+
+        private SymbolTable TableOfPublic;
+        private SymbolTable TableOfShared;
+        private SymbolTable TableOfProtected;
         private SymbolTable TableOfPrivateGlobalStorage;
         private SymbolTable TableOfGlobals;
 
@@ -54,20 +63,20 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 if (value != null)
                 {
-                    SymbolTable publicSharedProtectedTable = value.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected);
+                    SymbolTable publicTable = value.GetTableFromScope(SymbolTable.Scope.Public);
 
-                    publicSharedProtectedTable.DataEntries.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
-                    publicSharedProtectedTable.Types.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
-                    publicSharedProtectedTable.Functions.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
+                    //TODO Maybe useless line 60 + 64
+                    //publicTable.DataEntries.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
+                    publicTable.Types.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
+                    publicTable.Functions.Values.ToList().ForEach(d => d.ForEach(da => da.SetFlag(Node.Flag.NodeIsIntrinsic, true)));
 
-                    TableOfPublicSharedProtected.CopyAllDataEntries(publicSharedProtectedTable.DataEntries.Values);
-                    TableOfPublicSharedProtected.CopyAllTypes(publicSharedProtectedTable.Types);
-                    TableOfPublicSharedProtected.CopyAllFunctions(publicSharedProtectedTable.Functions, AccessModifier.Public);
-                    TableOfPublicSharedProtected.CopyAllPrograms(publicSharedProtectedTable.Programs.Values);
+                    //TableOfPublicSharedProtected.CopyAllDataEntries(publicTable.DataEntries.Values);
+                    TableOfPublic.CopyAllTypes(publicTable.Types);
+                    TableOfPublic.CopyAllFunctions(publicTable.Functions, AccessModifier.Public);
+                    TableOfPublic.CopyAllPrograms(publicTable.Programs.Values);
                 }
-                // TODO#249: use a COPY for these
                 foreach (var type in DataType.BuiltInCustomTypes)
-                    TableOfPublicSharedProtected.AddType(DataType.CreateBuiltIn(type)); //Add default TypeCobol types BOOLEAN and DATE
+                    TableOfPublic.AddType(DataType.CreateBuiltIn(type)); //Add default TypeCobol types BOOLEAN and DATE
             }
         }
 
@@ -188,11 +197,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartCobolCompilationUnit()
         {
-            TableOfPrivateGlobalStorage = new SymbolTable(TableOfPublicSharedProtected, SymbolTable.Scope.PrivateGlobalStorage);
+            TableOfPrivateGlobalStorage = new SymbolTable(TableOfProtected, SymbolTable.Scope.PrivateGlobalStorage);
             TableOfGlobals = new SymbolTable(TableOfPrivateGlobalStorage, SymbolTable.Scope.Global);
             Program = null;
 
-            SyntaxTree.Root.SymbolTable = TableOfPublicSharedProtected; //Set SymbolTable of SourceFile Node, Limited to NameSpace and Intrinsic scopes
+            SyntaxTree.Root.SymbolTable = TableOfProtected; //Set SymbolTable of SourceFile Node, Limited to NameSpace and Intrinsic scopes
         }
 
         public virtual void StartCobolProgram(ProgramIdentification programIdentification, LibraryCopyCodeElement libraryCopy)
@@ -207,7 +216,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 }
                 else
                 {
-                    Program = new StackedProgram(TableOfGlobals, programIdentification);                    
+                    Program = new StackedProgram(TableOfGlobals, programIdentification); 
+                    TableOfPrivateGlobalStorage.AddProgram(Program);
                 }
                 
                 programsStack = new Stack<Program>();
@@ -218,7 +228,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             {
                 var enclosing = CurrentProgram;
                 CurrentProgram = new NestedProgram(enclosing, programIdentification);
+                enclosing.SymbolTable.AddProgram(CurrentProgram);
                 Enter(CurrentProgram, programIdentification, CurrentProgram.SymbolTable);
+                
             }
 
             if (libraryCopy != null)
@@ -228,7 +240,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Exit();
             }
 
-            TableOfPublicSharedProtected.AddProgram(CurrentProgram); //Add Program to Namespace table. 
+            
         }
 
         public virtual void EndCobolProgram(TypeCobol.Compiler.CodeElements.ProgramEnd end)
@@ -502,9 +514,13 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                         table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.PrivateGlobalStorage);
                         break;
                     case AccessModifier.Protected:
+                        table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Protected);
+                        break;
                     case AccessModifier.Shared:
+                        table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Shared);
+                        break;
                     case AccessModifier.Public:
-                        table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected);
+                        table = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Public);
                         break;
                 }
             }
@@ -601,15 +617,19 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.PrivateGlobalStorage);
                     break;
                 case AccessModifier.Protected:
+                    declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Protected);
+                    break;
                 case AccessModifier.Shared:
+                    declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Shared);
+                    break;
                 case AccessModifier.Public:
-                    declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected);
+                    declarationSymbolTable = SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.Public);
                     break;
             }
             System.Diagnostics.Debug.Assert(declarationSymbolTable != null);
 
             declarationSymbolTable.AddFunction(node);
-            Enter(node, header, new SymbolTable(declarationSymbolTable, SymbolTable.Scope.CobolDefault));
+            Enter(node, header, new SymbolTable(TableOfPrivateGlobalStorage, SymbolTable.Scope.CobolDefault));
 
             var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
             var funcProfile = ((FunctionDeclaration)CurrentNode).Profile; //Get functionprofile to set parameters

@@ -109,7 +109,7 @@ namespace TypeCobol.Compiler.CodeElements.Expressions
 
         public bool Matches(string uri)
         {
-            return this.ToString().EndsWith(uri);
+            return this.ToString().EndsWith(uri, StringComparison.OrdinalIgnoreCase);
         }
         public bool Matches(QualifiedName name)
         {

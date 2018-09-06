@@ -38,7 +38,7 @@ namespace TypeCobol.Compiler.CodeModel
                         result.Add(typeReference.Key, typeReference.Value);
                 }
 
-                if (scope.CurrentScope == Scope.PublicSharedProtected && scope.Programs.Any())
+                if (scope.CurrentScope <= Scope.Protected && scope.Programs.Any())
                     //Some TypeReferences are stored only in program's symbolTable, need to seek into them. 
                 {
                     foreach (var program in scope.Programs.SelectMany(t => t.Value))
@@ -76,8 +76,8 @@ namespace TypeCobol.Compiler.CodeModel
             CurrentScope = current;
             EnclosingScope = enclosing;
             TypesReferences = new Dictionary<TypeDefinition, List<DataDefinition>>();
-            if (EnclosingScope == null && CurrentScope != Scope.PublicSharedProtected)
-                throw new InvalidOperationException("Only Table of PublicSharedProtected symbols don't have any enclosing scope.");
+            if (EnclosingScope == null && CurrentScope != Scope.Public)
+                throw new InvalidOperationException("Only Table of Public symbols don't have any enclosing scope.");
         }
 
         private List<T> GetFromTableAndEnclosing<T>(string head,
@@ -91,6 +91,21 @@ namespace TypeCobol.Compiler.CodeModel
                 values.AddRange(EnclosingScope.GetFromTableAndEnclosing(head, getTableFunction));
             }
             return values;
+        }
+
+        private void GetFromScopeTableAndEnclosing<T>(string head, IDictionary<Scope, List<T>> found,
+            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, SymbolTable symbolTable = null) where T : Node
+        {
+            symbolTable = symbolTable ?? this;
+            var table = getTableFunction.Invoke(symbolTable);
+
+            var values = GetFromTable(head, table);
+            if (values.Count > 0)
+            {
+                found[this.CurrentScope] = values;
+            }
+
+            EnclosingScope?.GetFromScopeTableAndEnclosing(head, found, getTableFunction);
         }
 
         private List<T> GetFromTable<T>(string head, IDictionary<string, List<T>> table) where T : Node
@@ -226,7 +241,7 @@ namespace TypeCobol.Compiler.CodeModel
             SymbolTable currentTable = this;
             while (currentTable != null && currentTable.CurrentScope >= maximalScope)
             {
-                if (currentTable.CurrentScope == Scope.PublicSharedProtected)
+                if (currentTable.CurrentScope <= Scope.Protected)
                     throw new NotSupportedException(); //There is no variable stored in those scopes
              
                 var dataToSeek = currentTable.DataEntries.Values.SelectMany(t => t);
@@ -251,10 +266,6 @@ namespace TypeCobol.Compiler.CodeModel
             SymbolTable currentTable = this;
             while (currentTable != null && currentTable.CurrentScope >= maximalScope)
             {
-                if (currentTable.CurrentScope == Scope.PublicSharedProtected)
-                    throw new NotSupportedException();
-
-
                 if (dataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
                 {
                     var references = currentTable.TypesReferences.Where(t => t.Key.DataType == dataType).SelectMany(t => t.Value);
@@ -286,7 +297,7 @@ namespace TypeCobol.Compiler.CodeModel
 
             if (variable.DataType != null && variable.DataType != DataType.Boolean && variable.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
             {
-                var types = GetTypes(t => t.DataType == variable.DataType, Scope.PublicSharedProtected);
+                var types = GetTypes(t => t.DataType == variable.DataType, Scope.Public);
 
                 foreach (var type in types)
                 {
@@ -619,20 +630,32 @@ namespace TypeCobol.Compiler.CodeModel
         {
             var subs = new List<DataDefinition>();
 
-            //Get programs from Namespace table
-            var programList = this.GetProgramsTable(GetTableFromScope(Scope.PublicSharedProtected));
-            foreach (var programs in programList) {
-
-                //Get Custom Types from program 
-                foreach (var pgm in programs.Value) { //we shouldn't have more than one program with the same name
-                                                      //but just in case it changes 
-                    seekSymbolTable(pgm.SymbolTable, name, subs);
-                }
+            foreach (var program in GetProgramsFromScope(Scope.Protected)) {
+                
+                    seekSymbolTable(program.SymbolTable, name, subs);
             }
-
-
-            
             return subs;
+        }
+
+        /// <summary>
+        /// Get all programs from a scope and enclosing
+        /// </summary>
+        /// <param name="beginScope"></param>
+        /// <returns></returns>
+        public IEnumerable<Program> GetProgramsFromScope(Scope beginScope)
+        {
+            SymbolTable symbolTable = GetTableFromScope(beginScope);
+            while (symbolTable != null)
+            {
+                foreach (List<Program> programs in symbolTable.Programs.Values)
+                {
+                    foreach (var program in programs)
+                    {
+                        yield return program;
+                    }
+                }
+                symbolTable = symbolTable.EnclosingScope;
+            }
         }
 
         private void seekSymbolTable(SymbolTable symbolTable, string name, List<DataDefinition> datadefinitions)
@@ -813,12 +836,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             return GetType(symbol.DataType);
         }
-
-        public List<TypeDefinition> GetType(SymbolReference symbolReference)
-        {
-            return GetType(symbolReference.URI);
-        }
-
+        
       
 
         public List<TypeDefinition> GetType(DataType dataType, string pgmName = null)
@@ -829,11 +847,11 @@ namespace TypeCobol.Compiler.CodeModel
                 return types; //If Types found return it
 
             if (!string.IsNullOrEmpty(pgmName)) //If Program is specified seek type into given program
-                types = GetType(uri, pgmName); //Try to find the types in specific program
+                types = GetTypeFromOtherPrograms(uri, pgmName); //Try to find the types in specific program
 
             return types;
         }
-
+        
         /// <summary>
         /// Get type for the current program, then check in other program by using QualifiedName Tail propertie
         /// </summary>
@@ -847,7 +865,11 @@ namespace TypeCobol.Compiler.CodeModel
             if (string.IsNullOrEmpty(name.Tail) || found.Any(f => string.Compare(f.QualifiedName.Tail, name.Tail, StringComparison.OrdinalIgnoreCase) == 0))
                 return Get(found, name);
 
-            found = GetType(name, name.Tail, found); //Pass name.Tail as a program name 
+            var typeFromOtherPrograms = GetTypeFromOtherPrograms(name, name.Tail); //Pass name.Tail as a program name 
+            if (typeFromOtherPrograms != null)
+            {
+                found.AddRange(typeFromOtherPrograms);
+            }
 
             return found;
         }
@@ -861,22 +883,20 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 var scopedTable = this.GetTableFromScope(currentScope);
                 if (scopedTable == null) { currentScope--; continue; }
-                var dataToSeek = scopedTable.Types.Values.SelectMany(t => t);
-                if (currentScope == Scope.PublicSharedProtected)
+                var dataToSeek = scopedTable.Types.Values.SelectMany(t => t).AsQueryable().Where(predicate).ToList();
+                if (currentScope <= Scope.Protected)
                 {
-                    //For namespace scope, we need to browse every program
-                    dataToSeek = scopedTable
-                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.PublicSharedProtected)
-                                    .Types.Values.SelectMany(t => t));
-                    //TODO check visibility here
+                    //Browse for every program at this scope and get all accessible types.
+                    var programs = scopedTable.Programs.Select(p => p.Value.First());
+                    foreach (var program in programs)
+                    {
+                        var types = program.SymbolTable.GetTypesFromScopeByPredicate(currentScope, predicate);
+                        dataToSeek.AddRange(types);
+                    }
                 }
 
-                var results = dataToSeek.AsQueryable().Where(predicate);
 
-                if (currentScope == Scope.PublicSharedProtected)
-                    results = results.Where(tp => (tp.CodeElement as DataTypeDescriptionEntry) != null && (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public);
-
-                foundedTypes.AddRange(results);
+                foundedTypes.AddRange(dataToSeek);
 
                 currentScope--;
             }
@@ -884,6 +904,31 @@ namespace TypeCobol.Compiler.CodeModel
             return foundedTypes.Distinct();
         }
 
+        public IEnumerable<TypeDefinition> GetTypesFromScopeByPredicate(Scope beginScope, Expression<Func<TypeDefinition, bool>> predicate = null)
+        {
+            SymbolTable symbolTable = GetTableFromScope(beginScope);
+            while (symbolTable != null)
+            {
+                foreach (var types in symbolTable.Types.Values)
+                {
+                    if(predicate != null )
+                    {
+                        foreach (var type in types.AsQueryable().Where(predicate))
+                        {
+                            yield return type;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var type in types)
+                        {
+                            yield return type;
+                        }
+                    }
+                }
+                symbolTable = symbolTable.EnclosingScope;
+            }
+        }
 
 
         /// <summary>
@@ -892,24 +937,13 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="name">Qualified name of the wated type</param>
         /// <param name="pgmName">Name of the program tha tmay contains the type</param>
         /// <returns></returns>
-        public List<TypeDefinition> GetType(QualifiedName name, string pgmName, List<TypeDefinition> found = null)
+        public List<TypeDefinition> GetTypeFromOtherPrograms(QualifiedName name, string pgmName)
         {
-            found = found ?? new List<TypeDefinition>();
-            var program = GetProgramHelper(pgmName); //Get the program corresponding to the given namespace
-            if (program != null)
-            {
-                //Get all TYPEDEF PUBLIC from this program
-                var programTypes = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.PublicSharedProtected).Types);
 
-                found = GetFromTable(name.Head, programTypes); //Check if there is a type that correspond to the given name (head)
+            var program = GetProgramHelper(pgmName, Scope.Protected); //Get the program corresponding to the given namespace
+            //Get all TYPEDEF PUBLIC SHARED PROTECTED from this program
+            return program?.Item2.SymbolTable.GetTableFromScope(program.Item1).Types[name.Head];
 
-                //Get all GLOBAL TYPEDEF PUBLIC from this program
-                var globalTypedef = GetPublicTypes(program.SymbolTable.GetTableFromScope(Scope.Global).Types);
-
-                found.AddRange(GetFromTable(name.Head, globalTypedef)); //Check if there is a type that correspond to the given name (head)
-            }
-
-            return found;
         }
 
         /// <summary>
@@ -917,7 +951,7 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         /// <param name="programTypes"></param>
         /// <returns></returns>
-        private static Dictionary<string, List<TypeDefinition>> GetPublicTypes(IDictionary<string, List<TypeDefinition>> programTypes) {
+        private static Dictionary<string, List<TypeDefinition>> GetTypes(IDictionary<string, List<TypeDefinition>> programTypes) {
             return programTypes
                 .Where(p =>
                     p.Value.All(f => ((DataTypeDescriptionEntry) f.CodeElement).Visibility == AccessModifier.Public)) 
@@ -970,47 +1004,19 @@ namespace TypeCobol.Compiler.CodeModel
             Scope currentScope = this.CurrentScope;
             while (currentScope >= maximalScope)
             {
-                List<FunctionDeclaration> filteredFunctionDeclaration = new List<FunctionDeclaration>();
                 var scopedTable = this.GetTableFromScope(currentScope);
-                var dataToSeek = scopedTable.Functions.Values.SelectMany(t => t);
+                var dataToSeek = scopedTable.Functions.Values.SelectMany(t => t).AsQueryable().Where(predicate).ToList();
               
-                if (currentScope == Scope.PublicSharedProtected)
+                if (currentScope <= Scope.Protected)
                 {
-                    var nameSpace = node.GetProgramNode().Namespace;
-                    //For namespace scope, we need to browse every program
-                    dataToSeek = scopedTable
-                                    .Programs.SelectMany(p => p.Value.First().SymbolTable.GetTableFromScope(Scope.PublicSharedProtected)
-                                    .Functions.Values.SelectMany(t => t));
-                    //TODO check visibility
-                    foreach (var function in dataToSeek)
+                    //Browse for every program at this scope and get all accessible functions.
+                    var programs = scopedTable.Programs.Select(p => p.Value.First());
+                    foreach (var program in programs)
                     {
-                        var funcProgNode = function.GetProgramNode();
-                        var functionNamespace = funcProgNode.Namespace;
-                        //var functionSHared = funcProgNode.Shared;
-
-                        if (function.CodeElement().Visibility == AccessModifier.Protected)
-                        {
-                            if(nameSpace.Name.StartsWith(functionNamespace.Name))
-                                filteredFunctionDeclaration.Add(function);
-                        }
-
-                        if (function.CodeElement().Visibility == AccessModifier.Shared)
-                        {
-
-                        }
+                        dataToSeek.AddRange(program.SymbolTable.GetFunctionsFromScopeByPredicate(currentScope, predicate));
                     }
                 }
-                else
-                {
-                    filteredFunctionDeclaration = dataToSeek.ToList();
-                }
-
-                var results = filteredFunctionDeclaration.AsQueryable().Where(predicate);
-
-                if (currentScope == Scope.PublicSharedProtected)
-                    results = results.Where(tp => (tp.CodeElement as FunctionDeclarationHeader) != null && (tp.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public);
-
-                foundedFunctions.AddRange(results);
+                foundedFunctions.AddRange(dataToSeek);
 
                 currentScope--;
             }
@@ -1018,11 +1024,35 @@ namespace TypeCobol.Compiler.CodeModel
             return foundedFunctions.Distinct();
         }
 
-        
+        public IEnumerable<FunctionDeclaration> GetFunctionsFromScopeByPredicate(Scope beginScope, Expression<Func<FunctionDeclaration, bool>> predicate = null)
+        {
+            SymbolTable symbolTable = GetTableFromScope(beginScope);
+            while (symbolTable != null)
+            {
+                foreach (var functions in symbolTable.Functions.Values)
+                {
+                    if (predicate != null)
+                    {
+                        foreach (var function in functions.AsQueryable().Where(predicate))
+                        {
+                            yield return function;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var function in functions)
+                        {
+                            yield return function;
+                        }
+                    }
+                }
+                symbolTable = symbolTable.EnclosingScope;
+            }
+        }
 
         public List<FunctionDeclaration> GetFunction(QualifiedName name, ParameterList profile = null, string nameSpace = null)
         {
-            var found = GetFunction(name.Head, nameSpace);
+            var found = GetFunction(name, nameSpace);
             found = Get(found, name);
             if (profile != null)
             {
@@ -1035,6 +1065,32 @@ namespace TypeCobol.Compiler.CodeModel
                 found = filtered;
             }
             return found;
+        }
+
+        /// <summary>
+        /// Get function into a specific program by giving program name
+        /// </summary>
+        /// <param name="name">Qualified name of the wanted function</param>
+        /// <param name="pgmName">Name of the program that may contains the function</param>
+        /// <returns></returns>
+        public List<FunctionDeclaration> GetFunctionFromOtherPrograms(QualifiedName name, string pgmName)
+        {
+            var program = GetProgramHelper(pgmName, Scope.Protected); //Get the program corresponding to the given namespace
+            //Get all TYPEDEF PUBLIC SHARED PROTECTED from this program
+            return program?.Item2.SymbolTable.GetTableFromScope(program.Item1).Functions[name.Head];
+        }
+
+        public void FilterInvalidNameSpace<T>(QualifiedName qualifiedName, List<T> found) where T : Node
+        {
+            // TODO test
+            //Check that namespace of found typeDefinitions match the qualifiedName
+            for (var index = found.Count - 1; index >= 0; index--)
+            {
+                if (!found[index].QualifiedName.Matches(qualifiedName))
+                {
+                    found.RemoveAt(index);
+                }
+            }
         }
 
         private bool Matches(ParametersProfileNode p1, ParameterList p2, string pgmName)
@@ -1080,27 +1136,21 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         [NotNull]
-        private List<FunctionDeclaration> GetFunction(string head, string nameSpace)
+        private List<FunctionDeclaration> GetFunction(QualifiedName name, string nameSpace)
         {
-            var result = GetFromTableAndEnclosing(head, GetFunctionTable);
+            var found = GetFromTableAndEnclosing(name.Head, GetFunctionTable);
 
-            if (string.IsNullOrEmpty(nameSpace) || result.Any(f => string.Compare(f.QualifiedName.Tail, nameSpace, StringComparison.OrdinalIgnoreCase) == 0))
-                return result;
+            // TODO Check test
+            if (string.IsNullOrEmpty(name.Tail) || found.Any(f => string.Compare(f.QualifiedName.Tail, name.Tail, StringComparison.OrdinalIgnoreCase) == 0))
+                return Get(found, name);
 
-            var program = GetProgramHelper(nameSpace); //Get the program corresponding to the given namespace
-            if(program != null)
+            var functionFromOtherPrograms = GetFunctionFromOtherPrograms(name, name.Tail); //Pass name.Tail as a program name 
+            if (functionFromOtherPrograms != null)
             {
-                var programFunctions = program.SymbolTable.GetTableFromScope(Scope.PublicSharedProtected).Functions; //Get all function from this program
-                // TODO get more visibility
-                programFunctions = programFunctions
-                                    .Where(p =>
-                                            p.Value.All(f => ((FunctionDeclarationHeader) f.CodeElement).Visibility == AccessModifier.Public))
-                                            .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort functions to get only the one with public AccessModifier
-
-                result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
+                found.AddRange(functionFromOtherPrograms);
             }
 
-            return result;
+            return found;
         }
 
 
@@ -1127,46 +1177,13 @@ namespace TypeCobol.Compiler.CodeModel
             Add(Programs, program);
         }
 
-        /// <summary>
-        /// Add Multiple programs to SymbolTable
-        /// </summary>
-        /// <param name="programs"></param>
-        public void AddPrograms(List<Program> programs)
-        {
-            foreach (var program in programs)
-            {
-                AddProgram(program);
-            }
-        }
-
-        public List<Program> GetProgram(StorageArea storageArea, ParameterList profile = null)
-        {
-            return GetProgram(storageArea.SymbolReference, profile);
-        }
-
-        public List<Program> GetProgram(VariableBase variable, ParameterList profile = null)
-        {
-            return GetProgram(new URI(variable.ToString()), profile);
-        }
-
-        public List<Program> GetProgram(SymbolReference symbolReference, ParameterList profile = null)
-        {
-            var uri = new URI(symbolReference.Name);
-            return GetProgram(uri, profile);
-        }
-
-        public List<Program> GetProgram(QualifiedName name, ParameterList profile = null)
-        {
-            var found = GetProgram(name.Head);
-            found = Get(found, name);
-
-            return found;
-        }
-
         [NotNull]
-        private List<Program> GetProgram(string name)
+        private Dictionary<Scope, List<Program>> GetProgram(string name, Scope? scope = null)
         {
-            return GetFromTableAndEnclosing(name, GetProgramsTable);
+            var symbolTable = (scope.HasValue) ? GetTableFromScope(scope.Value) : this;
+            var foundPrograms = new Dictionary<Scope, List<Program>>();
+            symbolTable.GetFromScopeTableAndEnclosing(name, foundPrograms, GetProgramsTable);
+            return foundPrograms;
         }
 
         private IDictionary<string, List<Program>> GetProgramsTable(SymbolTable symbolTable)
@@ -1176,15 +1193,30 @@ namespace TypeCobol.Compiler.CodeModel
 
         public IEnumerable<Program> GetPrograms(string filter)
         {
-            return this.GetTableFromScope(Scope.PublicSharedProtected)
-                .Programs.Values.SelectMany(t => t)
-                .Where(fd => fd.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
+            var symbolTable = GetTableFromScope(Scope.Protected);
+            var foundPrograms = new List<Program>();
+
+            while (symbolTable != null)
+            {
+                foundPrograms.AddRange(symbolTable.Programs.Values.SelectMany(t => t)
+                    .Where(fd => fd.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase)));
+                symbolTable = symbolTable.EnclosingScope;
+            }
+            return foundPrograms;
         }
 
         public List<Program> GetPrograms()
         {
-            return this.GetTableFromScope(Scope.PublicSharedProtected)
-                .Programs.Values.SelectMany(t => t).ToList();
+            var symbolTable = GetTableFromScope(Scope.Protected);
+            var foundPrograms = new List<Program>();
+
+            while (symbolTable != null)
+            {
+                foundPrograms.AddRange(symbolTable.Programs.Values.SelectMany(t => t));
+                symbolTable = symbolTable.EnclosingScope;
+            }
+
+            return foundPrograms;
         }
 
 
@@ -1225,7 +1257,9 @@ namespace TypeCobol.Compiler.CodeModel
             ///<summary>
             /// include Program scope, Types, Procedures
             /// </summary>
-            PublicSharedProtected,
+            Public,
+            Shared,
+            Protected,
 
             /// <summary>
             /// GlobalStorage scope is TypeCobol specific. It will store all the DataEntry data are decalred inside a GLOBAL-STORAGE SECTION
@@ -1242,14 +1276,18 @@ namespace TypeCobol.Compiler.CodeModel
             
         }
 
-        private Program GetProgramHelper(string nameSpace)
+        private Tuple<Scope, Program> GetProgramHelper(string nameSpace, Scope? scope = null)
         {
-            var programs = GetProgram(nameSpace);
-  
-            if (programs.Count > 1)
-                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", programs.FirstOrDefault()?.Name));
+            var programs = GetProgram(nameSpace, scope);
 
-            return programs.FirstOrDefault();
+            if (programs.Count == 0)
+                return null;
+
+            if (programs.Count > 1 || programs.First().Value.Count > 1)
+                throw new Exception(string.Format("Program with identifier {0} is defined multiple times.", nameSpace));
+
+            System.Diagnostics.Debug.Assert(!programs.First().Value.IsNullOrEmpty());
+            return new Tuple<Scope, Program>(programs.First().Key, programs.First().Value.First());
         }
 
 

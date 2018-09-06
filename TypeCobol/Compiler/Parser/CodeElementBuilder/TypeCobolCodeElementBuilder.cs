@@ -43,19 +43,19 @@ namespace TypeCobol.Compiler.Parser
             //If PUBLIC keyword is set, the function/procedure as to be set PUBLIC. 
             AccessModifier visibility;
 
-            if (context.tcVisibility().PUBLIC() != null)
+            if (context.tcVisibility()?.PUBLIC() != null)
             {
                 visibility = AccessModifier.Public;
             }
-            else if (context.tcVisibility().PRIVATE() != null)
+            else if (context.tcVisibility()?.PRIVATE() != null)
             {
                 visibility = AccessModifier.Private;
             }
-            else if (context.tcVisibility().PROTECTED() != null)
+            else if (context.tcVisibility()?.PROTECTED() != null)
             {
                 visibility = AccessModifier.Protected;
             }
-            else if (context.tcVisibility().SHARED() != null)
+            else if (context.tcVisibility()?.SHARED() != null)
             {
                 visibility = AccessModifier.Shared;
             }

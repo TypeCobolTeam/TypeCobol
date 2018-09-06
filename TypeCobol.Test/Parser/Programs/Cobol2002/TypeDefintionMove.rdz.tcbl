@@ -14,9 +14,9 @@
        01 realVar TYPE Real.
        01 floatVar TYPE Float. 
      
-       01 toto typedef strict public global pic X.
+       01 toto typedef strict private pic X.
        01 var1 type toto.
-       01 var2 type DVZF0OS3bis::toto.
+       01 var2 type DVZF0OS3bis::titi.
        01 var3 type toto global.
        procedure division.
            move var1 to var2
@@ -36,7 +36,7 @@
        working-storage section.
       
        01 var1 type toto.
-       01 var2 type DVZF0OS3bis::toto.
+       01 var2 type DVZF0OS3bis::titi.
        procedure division.
            move var1 to var2
            move var2 to var1
@@ -51,9 +51,9 @@
        PROGRAM-ID. DVZF0OS3bis.
        data DIVISION.
        working-storage section.
-       01 toto typedef strict public pic X.
+       01 titi typedef strict private pic X.
        01 var1 type DVZF0OS3::toto.
-       01 var2 type DVZF0OS3bis::toto.
+       01 var2 type DVZF0OS3bis::titi.
        01 var3 type toto.
        procedure division.
            move var1 to var2

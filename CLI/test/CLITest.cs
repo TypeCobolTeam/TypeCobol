@@ -236,8 +236,7 @@ namespace CLI.Test
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.UseShellExecute = false;
             process.Start();
-            while (!process.HasExited)
-                continue;
+            process.WaitForExit();
 
             Console.WriteLine("workingDirectory="+ workingDirectory);
             Console.WriteLine("Return Code=" + process.ExitCode);

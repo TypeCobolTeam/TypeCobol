@@ -9,7 +9,6 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
 --- PublicSharedProtected:PrivateGlobalStorage:Global:CobolDefault
 -- DATA --------
   MyVar:MyType
---- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   MyType:MyType
 --- PublicSharedProtected

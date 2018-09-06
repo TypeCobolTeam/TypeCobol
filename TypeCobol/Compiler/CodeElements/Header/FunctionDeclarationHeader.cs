@@ -59,6 +59,7 @@ namespace TypeCobol.Compiler.CodeElements {
 	    }
     }
 
+    //TODO inverse this enum to match Scope enum
     public enum AccessModifier {
         CobolDefault,
         Private,

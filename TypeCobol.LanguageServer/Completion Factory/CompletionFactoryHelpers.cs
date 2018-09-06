@@ -139,11 +139,8 @@ namespace TypeCobol.LanguageServer
                 }
                 bool procIsPublic = false;
                 if (enablePublicFlag)
-                    procIsPublic = ((FunctionDeclarationHeader) proc.CodeElement).Visibility == AccessModifier.Public
-                                   &&
-                                   !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected)
-                                         .Functions.Values.Any(t => t.Contains(proc))
-                                     //Ignore public if proc is in the current program
+                    procIsPublic = (((FunctionDeclarationHeader) proc.CodeElement).Visibility >= AccessModifier.Protected
+                                   && (node.Root != proc.Root)
                                      || proc.IsFlagSet(Node.Flag.NodeIsIntrinsic)); //Ignore public if proc is in intrinsic;
                 var procDisplayName = procIsPublic ? proc.VisualQualifiedName.ToString() : proc.Name;
                 var completionItem =

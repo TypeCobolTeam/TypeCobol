@@ -52,6 +52,7 @@
            05 td-var30.
               10 td-var31     pic X.
               10 td-var32     pic X.
+Line 55[15,53] <30, Error, Semantics> - Semantic error: Ambiguous reference to TYPE 'SubPgm1.Typedef4'
               10 td-var33     type SubPgm1::Typedef4.
 
        01 Var1 type Typedef1 global.
@@ -106,13 +107,13 @@ Line 91[12,60] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeri
              to Var1::td-var10::td-var13::td-var20::td-var23::
                 td-var30::td-var32
       *KO full path till Type3 but type mismatch
-Line 100[12,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1.td-var10.td-var13.td-var20.td-var23.td-var30.td-var33:Typedef4.
            move Var1::td-var10::td-var13::td-var20::td-var23::
                 td-var30::td-var32
              to Var1::td-var10::td-var13::td-var20::td-var23::
                 td-var30::td-var33
 
       *OK full path till Type4
+Line 106[12,40] <27, Error, Syntax> - Syntax error : Symbol Var1.td-var10.td-var13.td-var20.td-var23.td-var30.td-var33.td-var4 is not referenced
            move Var1::td-var10::td-var13::td-var20::td-var23::
                 td-var30::td-var33::td-var4 
              to Var1::td-var10::td-var11
@@ -162,7 +163,6 @@ Line 144[12,68] <30, Error, Semantics> - Semantic error: Cannot write Alphanumer
              to td-var32 of td-var30 of td-var23 of td-var20 
                 of td-var13 of td-var10 of Var1
       *KO full path till Type3 but type mismatch
-Line 153[12,47] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strictly typed variable Var1.td-var10.td-var13.td-var20.td-var23.td-var30.td-var33:Typedef4.
            move td-var32 of td-var30 of td-var23 of td-var20 
                 of td-var13 of td-var10 of Var1
              to td-var33 of td-var30 of td-var23 of td-var20 
@@ -170,6 +170,7 @@ Line 153[12,47] <30, Error, Semantics> - Semantic error: Cannot write Alphanumer
 
 
       *OK full path till Type4
+Line 160[12,44] <27, Error, Syntax> - Syntax error : Symbol Var1.td-var10.td-var13.td-var20.td-var23.td-var30.td-var33.td-var4 is not referenced
            move td-var4 of td-var33 of td-var30 of td-var23 
                 of td-var20 of td-var13 of td-var10 of Var1
              to td-var11 of td-var10 of Var1

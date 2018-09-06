@@ -21,7 +21,6 @@ PROGRAM: LevelChecker common:False initial:False recursive:False
   MyLevel1Test:Alphanumeric
   buf:Alphanumeric
   char:Alphanumeric
---- PublicSharedProtected:PrivateGlobalStorage
 -- TYPES -------
   myPic:myPic
   myType:myType

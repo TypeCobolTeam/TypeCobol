@@ -256,16 +256,17 @@ namespace TypeCobol.Server
 
                 if (config.ExecToStep >= ExecutionStep.SemanticCheck)
                 {
-                    foreach (var program in parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs)
+                    var mainProgram = parser.Results.TemporaryProgramClassDocumentSnapshot.Root.MainProgram;
+                    
+                    var previousPrograms = baseTable.GetPrograms();
+                    //TODO add shared and protected
+                    foreach (var previousProgram in previousPrograms)
                     {
-                        var previousPrograms = baseTable.GetPrograms();
-                        foreach (var previousProgram in previousPrograms)
-                        {
-                            previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected).AddProgram(program);
-                        }
-
-                        baseTable.AddProgram(program); //Add program to PublicSharedProtected symbol table
+                        previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Public).AddProgram(mainProgram);
                     }
+
+                    baseTable.AddProgram(mainProgram); //Add program to PublicSharedProtected symbol table
+                    
                 }
 
                 if (config.ExecToStep >= ExecutionStep.Preprocessor && !string.IsNullOrEmpty(config.ExpandingCopyFilePath))

@@ -23,7 +23,7 @@ namespace TypeCobol.Tools.APIHelpers
         {
             var parser = new Parser();
             var diagnostics = new List<Diagnostic>();
-            var table = new SymbolTable(null, SymbolTable.Scope.PublicSharedProtected);
+            var table = new SymbolTable(null, SymbolTable.Scope.Public);
             var instrincicFiles = new List<string>();
 
             foreach (string path in paths) instrincicFiles.AddRange(FileSystem.GetFiles(path, parser.Extensions, false));
@@ -49,7 +49,7 @@ namespace TypeCobol.Tools.APIHelpers
 
                     foreach (var program in parser.Results.ProgramClassDocumentSnapshot.Root.Programs)
                     {
-                        var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected);
+                        var symbols = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.Public);
 
                         if (symbols.Types.Count == 0 && symbols.Functions.Count == 0)
                         {
@@ -79,7 +79,8 @@ namespace TypeCobol.Tools.APIHelpers
 
             var parser = new Parser(intrinsicTable);
             var diagnostics = new List<Diagnostic>();
-            var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.PublicSharedProtected); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
+            var table = new SymbolTable(intrinsicTable, SymbolTable.Scope.Public); //Generate a table of NameSPace containing the dependencies programs based on the previously created intrinsic table. 
+
 
             var dependencies = new List<string>();
             string[] extensions = { ".tcbl", ".cbl", ".cpy" };
@@ -156,28 +157,27 @@ namespace TypeCobol.Tools.APIHelpers
                         throw new DepedenciesLoadingException("Your dependency file is not included into a program", path, null, logged: true, needMail: false);
                     }
 
-                    foreach (var program in parser.Results.TemporaryProgramClassDocumentSnapshot.Root.Programs)
+                    var mainProgram = parser.Results.TemporaryProgramClassDocumentSnapshot.Root.MainProgram;
+                    var declarationTable = mainProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Public);
+
+                    //TODO check visibility
+                    var previousPrograms = table.GetPrograms();
+                    foreach (var previousProgram in previousPrograms)
                     {
-                        var declarationTable = program.SymbolTable.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected);
-                        //TODO check visibility
-
-                        var previousPrograms = table.GetPrograms();
-                        foreach (var previousProgram in previousPrograms)
-                        {
-                            previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.PublicSharedProtected).AddProgram(program);
-                        }
-
-
-                        //If there is no public types or functions, then call diagEvent
-                        if (diagEvent != null
-                            && !declarationTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement().Visibility == AccessModifier.Public))       //No Public Types in Declaration table
-                            && !declarationTable.Functions.Values.Any(fds => fds.Any(fd => fd.CodeElement().Visibility == AccessModifier.Public)))  //No Public Functions in Declaration table
-                        {
-                            diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(string.Format("No public types or procedures/functions found in {0}", program.Name), 1, 1, 1, null, MessageCode.Warning) });
-                            continue;
-                        }
-                        table.AddProgram(program); //Add program to Namespace symbol table
+                        previousProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Public).AddProgram(mainProgram);
                     }
+
+
+                    //If there is no public types or functions, then call diagEvent
+                    if (diagEvent != null
+                        && !declarationTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement().Visibility == AccessModifier.Public))       //No Public Types in Declaration table
+                        && !declarationTable.Functions.Values.Any(fds => fds.Any(fd => fd.CodeElement().Visibility == AccessModifier.Public)))  //No Public Functions in Declaration table
+                    {
+                        diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(string.Format("No public types or procedures/functions found in {0}", mainProgram.Name), 1, 1, 1, null, MessageCode.Warning) });
+                        continue;
+                    }
+                    table.AddProgram(mainProgram); //Add program to Namespace symbol table
+                    
                 }
                 catch (DepedenciesLoadingException depLoadingEx)
                 {

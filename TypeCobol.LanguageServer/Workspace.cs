@@ -182,14 +182,14 @@ namespace TypeCobol.LanguageServer
                     k => k.Equals(inputFileName, StringComparison.InvariantCultureIgnoreCase));
             if (matchingPgm != null)
             {
-                arrangedCustomSymbol = new SymbolTable(_customSymbols, SymbolTable.Scope.PublicSharedProtected);
+                arrangedCustomSymbol = new SymbolTable(_customSymbols, SymbolTable.Scope.Public);
                 var prog = _customSymbols.Programs.Values.SelectMany(p => p).Where(p => p.Name != matchingPgm);
                 arrangedCustomSymbol.CopyAllPrograms(new List<List<Program>>() {prog.ToList()});
                 arrangedCustomSymbol.Programs.Remove(matchingPgm);
             }
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider,
-                CompilationProject, CompilationProject.CompilationOptions, arrangedCustomSymbol ?? _customSymbols,
-                false, CompilationProject);
+                CompilationProject, CompilationProject.CompilationOptions, customSymbols: arrangedCustomSymbol ?? _customSymbols,
+                isCopyFile: false, compilationProject: CompilationProject);
 #else
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, false, CompilationProject);
 #endif
