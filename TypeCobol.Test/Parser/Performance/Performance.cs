@@ -118,12 +118,9 @@ namespace TypeCobol.Test.Parser.Performance
             int iterationNumber = 20;
             //Warmup before measurement
             var documentWarmup = new TypeCobol.Parser();
-            var optionsWarmup = new TypeCobolOptions
+            var optionsWarmup = new TypeCobolOptions(true)
             {
                 ExecToStep = ExecutionStep.CrossCheck,
-#if EUROINFO_RULES
-                AutoRemarksEnable = true
-#endif
             };
             documentWarmup.Init(path, optionsWarmup, format, copiesFolder);
             documentWarmup.Parse(path);
@@ -131,12 +128,9 @@ namespace TypeCobol.Test.Parser.Performance
             for (int i = 0; i < iterationNumber; i++)
             {
                 var document = new TypeCobol.Parser();
-                var options = new TypeCobolOptions
+                var options = new TypeCobolOptions(true)
                 {
                     ExecToStep = ExecutionStep.CrossCheck,
-#if EUROINFO_RULES
-                    AutoRemarksEnable = true
-#endif
                 };
                 document.Init(path, options, format, copiesFolder);
                 document.Parse(path);

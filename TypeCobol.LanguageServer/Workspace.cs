@@ -129,6 +129,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
 
+        /// <summary>
+        /// True to use Euro-Information replacement rules
+        /// </summary>
+        public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
+
         #endregion
 
 
@@ -149,6 +154,10 @@ namespace TypeCobol.LanguageServer
                 new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
             this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
                 this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
+
+            this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax =
+                this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
+                UseEuroInformationLegacyReplacingSyntax;
 
             _DepWatcher = new DependenciesFileWatcher(this);
         }
@@ -398,18 +407,13 @@ namespace TypeCobol.LanguageServer
             if (TypeCobolConfiguration.UseAntlrProgramParsing)
                 UseAntlrProgramParsing = true;
 
+            if (TypeCobolConfiguration.UseEuroInformationLegacyReplacingSyntax)
+                UseEuroInformationLegacyReplacingSyntax = true;
 
             if (TypeCobolConfiguration.ExecToStep >= ExecutionStep.Generate)
                 TypeCobolConfiguration.ExecToStep = ExecutionStep.CrossCheck; //Language Server does not support Cobol Generation for now
 
-            var typeCobolOptions = new TypeCobolOptions
-            {
-                HaltOnMissingCopy = TypeCobolConfiguration.HaltOnMissingCopyFilePath != null,
-                ExecToStep = TypeCobolConfiguration.ExecToStep,
-#if EUROINFO_RULES
-                AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks
-#endif
-            };
+            var typeCobolOptions = new TypeCobolOptions(TypeCobolConfiguration);
 
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
 

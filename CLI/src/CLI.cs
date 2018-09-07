@@ -142,17 +142,7 @@ namespace TypeCobol.Server
             baseTable = depParser.CustomSymbols;
             #endregion
 
-            var typeCobolOptions = new TypeCobolOptions
-            {
-                HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null,
-                ExecToStep = config.ExecToStep,
-                UseAntlrProgramParsing = config.UseAntlrProgramParsing,
-                UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax
-            };
-
-#if EUROINFO_RULES
-            typeCobolOptions.AutoRemarksEnable = config.AutoRemarks;
-#endif
+            var typeCobolOptions = new TypeCobolOptions(config);
 
             ReturnCode returnCode = ReturnCode.Success;
             List<Parser> parsers = new List<Parser>();

@@ -52,11 +52,7 @@ namespace TypeCobol.Test.Report
                 string output = Path.Combine(ROOT_OUTPUT, reportFileName);
                 DocumentFormat format = DocumentFormat.RDZReferenceFormat;
                 var parser = new TypeCobol.Parser();
-                var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
-#if EUROINFO_RULES
-                bool autoRemarks = false;
-                typeCobolOption.AutoRemarksEnable = autoRemarks;
-#endif
+                var typeCobolOption = new TypeCobolOptions(false) { ExecToStep = ExecutionStep.CrossCheck };
                 String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
                 parser.Parse(input);

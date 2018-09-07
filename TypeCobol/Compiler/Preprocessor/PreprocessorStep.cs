@@ -607,7 +607,7 @@ namespace TypeCobol.Compiler.Preprocessor
 
                             // Store it on the current line after applying the REPLACING directive
                             ImportedTokensDocument importedDocument = new ImportedTokensDocument(copyDirective,
-                                importedDocumentSource, perfStats);
+                                importedDocumentSource, perfStats, compilerOptions);
                             tokensLineWithCopyDirective.ImportedDocuments[copyDirective] = importedDocument;
                         }
                         catch (Exception e)

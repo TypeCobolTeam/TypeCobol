@@ -270,6 +270,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ReplacingSyntaxOff()
+        {
+            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+        }
 #endif
 
         [TestMethod]

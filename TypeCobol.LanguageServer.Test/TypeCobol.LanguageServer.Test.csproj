@@ -256,6 +256,18 @@
     <None Include="LSRTests\RemoveDataDivisionCtrlZWithDiag\output_expected\RemoveDataDivisionCtrlZWithDiag.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\ReplacingSyntaxOff\input\CopyFolder\YCONVEA.CPY">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ReplacingSyntaxOff\input\CopyFolder\YCONVEAL.CPY">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ReplacingSyntaxOff\input\replacingSyntaxOff.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\ReplacingSyntaxOff\output_expected\replacingSyntaxOff.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\SetToAddressOfCompletion\input\SetToAddressOfCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
