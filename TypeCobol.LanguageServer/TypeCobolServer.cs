@@ -562,7 +562,8 @@ namespace TypeCobol.LanguageServer
                             .Keys.FirstOrDefault(c => c.ConsumedTokens.Any(
                                 t => t.Line == parameters.position.line + 1 &&
                                      parameters.position.character >= t.StartIndex &&
-                                     parameters.position.character <= t.StopIndex + 1));
+                                     parameters.position.character <= t.StopIndex + 1) &&
+                                     !c.IsInsideCopy());
                     if (matchingCodeElement == null)
                         return defaultDefinition;
 
