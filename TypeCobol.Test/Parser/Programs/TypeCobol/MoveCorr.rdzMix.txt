@@ -39,22 +39,22 @@
 
            MOVE CORR var2 TO var2.
 
-Line 42[12,45] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.groupB-2.varB:BOOL.
            MOVE CORR groupA-1::groupA-2::varA
+Line 43[42,45] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.groupB-2.varB:BOOL.
                   To groupB-1::groupB-2::varB
-Line 44[12,45] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.groupB-2.varB:BOOL.
            MOVE CORR groupA-1::varA
+Line 45[42,45] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.groupB-2.varB:BOOL.
                   To groupB-1::groupB-2::varB
-Line 46[12,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.varB:BOOL.
            MOVE CORR groupA-1::groupA-2::varA
+Line 47[32,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.varB:BOOL.
                   To groupB-1::varB
-Line 48[12,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.varB:BOOL.
            MOVE CORR groupA-1::varA
+Line 49[32,35] <30, Error, Semantics> - Semantic error: Cannot write DATE to strongly typed variable groupB-1.varB:BOOL.
                   To groupB-1::varB
 
-Line 51[12,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable is not referenced
-Line 51[12,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable2 is not referenced
+Line 51[22,38] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable is not referenced
            MOVE CORR undefinedVariable
+Line 52[22,39] <27, Error, Syntax> - Syntax error : Symbol undefinedVariable2 is not referenced
                   To undefinedVariable2
 
            MOVE CORR MyGroup1 TO MyGroup2.

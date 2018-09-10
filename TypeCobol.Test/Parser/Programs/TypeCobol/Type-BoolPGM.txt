@@ -1,6 +1,6 @@
 ﻿--- Diagnostics ---
-Line 15[1,27] <27, Error, Syntax> - Syntax error : Symbol check-value is not referenced
-Line 18[1,14] <27, Error, Syntax> - Syntax error : Symbol check-false is not referenced
+Line 15[6,16] <27, Error, Syntax> - Syntax error : Symbol check-value is not referenced OffendingSymbol=[6,16:check-value]<UserDefinedWord>
+Line 18[4,14] <27, Error, Syntax> - Syntax error : Symbol check-false is not referenced OffendingSymbol=[4,14:check-false]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: TEST-BOOL common:False initial:False recursive:False

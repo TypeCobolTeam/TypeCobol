@@ -36,13 +36,13 @@
            set td-var20Ind to 1
 
       *KO, because OF or IN are not authorized with index
-Line 39[12,40] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Var3a.td-var30Ind
+Line 39[16,26] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Var3a.td-var30Ind
            set td-var30Ind of Var3a to 1
-Line 40[12,40] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Var3a.td-var30Ind
+Line 40[16,26] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Var3a.td-var30Ind
            set td-var30Ind IN Var3a to 1
 
       *KO, Typedef3 is used 3 times
-Line 43[12,31] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol td-var30Ind 
+Line 43[16,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol td-var30Ind 
 Symbols found: MainProgram::Var1::Typedef1::td-var10::td-var13::Typedef2::td-var20::td-var23::Typedef3::td-var30::td-var30Ind | MainProgram::Var3a::Typedef3::td-var30::td-var30Ind | MainProgram::Var3b::Typedef3::td-var30::td-var30Ind
            set td-var30Ind to 1
 

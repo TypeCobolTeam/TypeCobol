@@ -11,7 +11,7 @@
          05 var4     pic 9.
 
       *KO because var1 contains a child
-Line 14[8,21] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a "PICTURE"
+Line 14[11,14] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a "PICTURE"
        01 var1 pic X.
          05 var2 pic X.
 
@@ -51,7 +51,7 @@ Line 14[8,21] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a
 
        01 var1.
       *KO because var2 contains a child
-Line 53[10,23] <27, Error, Syntax> - Syntax error : Group item var2 cannot have a "PICTURE"
+Line 53[13,16] <27, Error, Syntax> - Syntax error : Group item var2 cannot have a "PICTURE"
          05 var2 pic X.
            10 var3   pic X.
 
@@ -73,7 +73,7 @@ Line 53[10,23] <27, Error, Syntax> - Syntax error : Group item var2 cannot have 
 
 
       *KO because var1 contains a child
-Line 74[8,21] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a "PICTURE"
+Line 74[11,14] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a "PICTURE"
        01 var1 pic X.
          05 var2.
            10 var3   pic X.
@@ -95,14 +95,14 @@ Line 74[8,21] <27, Error, Syntax> - Syntax error : Group item var1 cannot have a
 
        01 var1 pic X(100).
       *KO because var1 contains a child
-Line 95[8,41] <27, Error, Syntax> - Syntax error : Group item var2 cannot have a "PICTURE"
+Line 95[11,14] <27, Error, Syntax> - Syntax error : Group item var2 cannot have a "PICTURE"
        01 var2 redefines var1 pic X(100).
           05 var3   pic X.
 
        01 var1.
           05 var2 pic X(10).
       *KO because var3 contains children (only 1 error expected)
-Line 101[11,43] <27, Error, Syntax> - Syntax error : Group item var3 cannot have a "PICTURE"
+Line 101[14,17] <27, Error, Syntax> - Syntax error : Group item var3 cannot have a "PICTURE"
           05 var3 redefines var2 pic X(10).
             10 var4   pic X.
             10 var5   pic X(09).
