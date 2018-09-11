@@ -32,9 +32,14 @@ namespace TypeCobol.Compiler.Directives
         /// <summary>
         /// Shall we use EUROINFO_LEGACY_REPLACING_SYNTAX snippets for Parsing the Program.
         /// </summary>
-        public bool UseEuroInformationLegacyReplacingSyntax { get; set; } = true;
+        public bool UseEuroInformationLegacyReplacingSyntax
+        {
+            get { return _useEuroInformationLegacyReplacingSyntax; }
+            set { _useEuroInformationLegacyReplacingSyntax = value; }
+        }
 
 #if EUROINFO_RULES
+        private bool _useEuroInformationLegacyReplacingSyntax = true;
 #else
         private bool _useEuroInformationLegacyReplacingSyntax;
 #endif
