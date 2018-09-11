@@ -93,6 +93,9 @@
     <None Include="ressources\Decode\input\Empty.tcmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="ressources\Decode\input\EncodedTypeCobol2.tcmc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\Decode\input\WithLeftAndRightColumns.tcmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -123,6 +126,12 @@
     <None Include="ressources\Decode\output_expected\Empty.c2tc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="ressources\Decode\output_expected\Result.tcbl" >
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ressources\Decode\output_expected\Result2.tcbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ressources\Decode\output_expected\WithLeftAndRightColumns.c2tc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -139,9 +148,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Decode\output_expected\Part1Invalid.c2tc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="ressources\Decode\output_expected\Result.tcbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="ressources\Encode\input\DVZZJCM55499349689522088865.cbl">
