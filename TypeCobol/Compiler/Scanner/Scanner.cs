@@ -624,12 +624,16 @@ namespace TypeCobol.Compiler.Scanner
             if (currentState.InsideMultilineComments)
             {
                 // We are inside a Multiline Comments
-                // if there is no Multiline Comments end marckup "*>>" then create a new Comment Token
-                if ((line.Length > startIndex + 2 && line.Substring(startIndex).StartsWith("*>>")) ||
-                    (line.Length > startIndex + 1 && line.Substring(startIndex).StartsWith(">>") && line[currentIndex - 1] == '*'))
+                // if there is no Multiline Comments end marckup "*>>" then create a new Comment Token until the "*>>"
+                if (line.Length > currentIndex + 2 && line[currentIndex] == '*' && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
                 {
-                    currentIndex = lastIndex + 1;
-                    return new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
+                    currentIndex += 3;
+                    return new Token(TokenType.MultilinesCommentsStop, startIndex, startIndex + 2, tokensLine);
+                }
+                else if (line[currentIndex] == '>' && line[currentIndex - 1] == '*' && line.Length > currentIndex + 1 && line[currentIndex + 1] == '>')
+                {
+                    currentIndex += 2;
+                    return new Token(TokenType.MultilinesCommentsStop, startIndex, startIndex + 1, tokensLine);
                 }
                 else
                 {
@@ -790,7 +794,8 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex += 8;
                         return new Token(TokenType.ASTERISK_CONTROL, startIndex, startIndex + 7, tokensLine);
                     }
-                    else if (line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
+                    // Multilines Comments or Formalized Comments
+                    else if (line.Length > currentIndex + 2 && line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
                     {
                         if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '<')
                         {
@@ -802,8 +807,9 @@ namespace TypeCobol.Compiler.Scanner
                         else
                         {
                             // We are in the case of a Multilines Comment start
+                            // consume the * char and the two < chars
                             currentIndex += 3;
-                            return new Token(TokenType.CommentLine, startIndex, startIndex + 2, tokensLine);
+                            return new Token(TokenType.MultilinesCommentsStart, startIndex, startIndex + 2, tokensLine);
                         }
                     }
                     else
@@ -920,7 +926,7 @@ namespace TypeCobol.Compiler.Scanner
                         {
                             // We are in the case of a Multilines comments start
                             currentIndex += 2;
-                            return new Token(TokenType.CommentLine, startIndex, startIndex + 1, tokensLine);
+                            return new Token(TokenType.MultilinesCommentsStart, startIndex, startIndex + 1, tokensLine);
                         }
                     }
                     else

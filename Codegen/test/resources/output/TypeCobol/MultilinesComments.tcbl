@@ -55,6 +55,15 @@
       *   Multiline Comment 14 here
       *>>
       *              y PIC 9(03).
+         DECLARE function FUN
+      *<< 
+      *   Multiline Comment 13 here
+      *>>
+               INPUT x Type myType
+      *<< 
+      *   Multiline Comment 14 here
+      *>>
+                     y PIC 9(03).
       *<< 
       *   Multiline Comment 17 here
       *>>
@@ -69,16 +78,6 @@
       *<< 
       *   Multiline Comment 20 here
       *>>
-      *
-      *  DECLARE function FUN
-      *<<
-      *   Multiline Comment 13 here
-      *>>
-      *        INPUT x Type myType
-      *<<
-      *   Multiline Comment 14 here
-      *>>
-      *              y PIC 9(03).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
        PROGRAM-ID. f15932a6FUN.

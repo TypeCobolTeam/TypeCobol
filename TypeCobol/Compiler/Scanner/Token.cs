@@ -144,6 +144,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 case TokenFamily.Whitespace:
                 case TokenFamily.Comments:
+                case TokenFamily.MultilinesCommentsFamily:
                     Channel = CHANNEL_WhitespaceAndComments;
                     break;
                 case TokenFamily.CompilerDirective:

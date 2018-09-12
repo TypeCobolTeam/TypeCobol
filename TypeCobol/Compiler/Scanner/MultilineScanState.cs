@@ -153,21 +153,12 @@ namespace TypeCobol.Compiler.Scanner
         {
 
             // Ignore whitespace separators
-            if (newToken.TokenFamily == TokenFamily.Whitespace)
-            {
+            if (newToken.TokenFamily == TokenFamily.Whitespace ||
+                newToken.TokenFamily == TokenFamily.Comments)
+            { 
                 return;
             }
-
-            //  Adjust the InsideMultilineComments state in case of comment Token
-            if (newToken.TokenFamily == TokenFamily.Comments)
-            {
-                // InsideMultilineComments = (was InsideMultilineComments) && !(newToken start with *>>) || newToken start with *<<
-                InsideMultilineComments = (InsideMultilineComments && !(newToken.SourceText.StartsWith(">>") || newToken.SourceText.StartsWith("*>>")))
-                                          || (newToken.SourceText.StartsWith("<<") || newToken.SourceText.StartsWith("*<<"));
-
-                return;
-            }
-
+            
             // Ignore pseudo-text tokens to update scan state
             if (InsidePseudoText && newToken.TokenType != TokenType.PseudoTextDelimiter && newToken.TokenType != TokenType.COPY)
             {
@@ -198,6 +189,16 @@ namespace TypeCobol.Compiler.Scanner
                         // Register the end of PROCEDURE DIVISION
                         else if (LastSignificantToken.TokenType == TokenType.ID ||
                                  LastSignificantToken.TokenType == TokenType.IDENTIFICATION)
+                        {
+                            InsideProcedureDivision = false;
+                        }
+                        // Register the start of DECLARE
+                        else if (LastSignificantToken.TokenType == TokenType.DECLARE)
+                        {
+                            InsideProcedureDivision = true;
+                        }
+                        // Register the end of DECLARE
+                        else if (LastSignificantToken.TokenType == TokenType.END_DECLARE)
                         {
                             InsideProcedureDivision = false;
                         }
@@ -237,8 +238,21 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.FormalizedCommentsStop:
                     // Register the end of the formalized Comments
                     InsideFormalizedComment = false;
+                    return;
+                case TokenType.MultilinesCommentsStart:
+                    // Register the begin of the formalized Comments
+                    InsideMultilineComments = true;
                     break;
+                case TokenType.MultilinesCommentsStop:
+                    // Register the end of the formalized Comments
+                    InsideMultilineComments = false;
+                    return;
 
+            }
+
+            if (InsideFormalizedComment || InsideMultilineComments)
+            {
+                return;
             }
             // Register the end of a SYMBOLIC CHARACTERS? clause
             if (InsideSymbolicCharacterDefinitions &&
@@ -437,7 +451,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool AtBeginningOfSentence
         {
-            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FormalizedCommentsStop ||
+            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC ||
                     // Special cases : compiler directives sometimes without a final PeriodSeparator
                     // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
                     //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.

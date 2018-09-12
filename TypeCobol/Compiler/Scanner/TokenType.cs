@@ -56,7 +56,9 @@ namespace TypeCobol.Compiler.Scanner
         // 510 -> 510 : Internal token groups - used by the preprocessor only
         InternalTokenGroup = 510,
         // 511 -> 522 : Formalized Comments Tokens
-        FormalizedCommentsFamily = 511
+        FormalizedCommentsFamily = 511,
+        // 523 -> 524 : Formalized Comments Tokens
+        MultilinesCommentsFamily = 523
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -589,6 +591,8 @@ namespace TypeCobol.Compiler.Scanner
         FormComsToDo = 520,
         FormComsValue = 521,
         AtSign = 522,
+        MultilinesCommentsStart = 523,
+        MultilinesCommentsStop = 524,
 
 
 

@@ -1272,58 +1272,81 @@ namespace TypeCobol.Codegen.Generators
             return false;
         }
 
-        public Tuple<Token, Token> GetFormalizedCommentEnclosingTokensIfAny(Node node)
+        /// <summary>
+        /// Return a Tuple of the two tokens specified by the TokenTypes in parameters if any
+        /// </summary>
+        public IEnumerable<Tuple<Token, Token>> GetEnclosingTokensIfAny(Node node, TokenType startTokenType, TokenType stopTokenType)
         {
-            Token formalizedCommentStartToken =
-                node.CodeElement?.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.FormalizedCommentsStart);
-            Token formalizedCommentStopToken =
-                node.CodeElement?.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.FormalizedCommentsStop);
-            if (formalizedCommentStartToken != null && formalizedCommentStopToken != null)
-                return new Tuple<Token, Token>(formalizedCommentStartToken, formalizedCommentStopToken);
-            return null;
+            var startToken =
+                node.CodeElement?.ConsumedTokens.Where(t => t.TokenType == startTokenType).ToArray();
+            var stopToken =
+                node.CodeElement?.ConsumedTokens.Where(t => t.TokenType == stopTokenType).ToArray();
+            if (startToken != null && startToken.Any() &&
+                stopToken != null && stopToken.Any())
+            {
+                // Iterate on the smallest count of token in case of count inequality
+                for (int i = 0; i < (startToken.Count() < stopToken.Count() ? startToken.Count() : stopToken.Count()); i++)
+                {
+                    yield return new Tuple<Token, Token>(startToken[i], stopToken[i]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Comment a node buffer between two specified tokens
+        /// </summary>
+        public void CommentBetweenTokens(Node node, TokenType startTokenType, TokenType stopTokenType)
+        {
+            // get the NodeData to have the Buffer
+            NodeData nodeData = Nodes.FirstOrDefault(n => n.node == node);
+            if (nodeData != null)
+            {
+                // get the array delimiter consumed Tokens
+                var delimiterTokens = GetEnclosingTokensIfAny(node, startTokenType, stopTokenType);
+                if (delimiterTokens != null && delimiterTokens.Any())
+                {
+
+                    // Split the Buffer to get an array of string representing the lines
+                    string content = new string(nodeData.Buffer.ToArray());
+                    string[] lines = content.Split(
+                        new[] { "\r\n", "\r", "\n" },
+                        StringSplitOptions.None
+                    );
+
+                    foreach (var delimiterToken in delimiterTokens)
+                    {
+                        // Get the delimiters lines by the Tokens
+                        int linestart = delimiterToken.Item1.Line;
+                        int linestop = delimiterToken.Item2.Line;
+
+
+                        // for each lines, if it is inside the formalized comment then comment them (replace the 6th character by a '*') 
+                        for (int i = 0; i < lines.Length - 1; i++)
+                        {
+                            if (nodeData.Positions.Item4[i] >= linestart && nodeData.Positions.Item4[i] <= linestop &&
+                                lines[i].Length >= 7)
+                            {
+                                lines[i] = lines[i].Substring(0, 6) + '*' + lines[i].Substring(7, lines[i].Length - 7);
+                            }
+                        }
+                    }
+                    // Replace the buffer content by the new one commented
+                    string newContent = string.Join(Environment.NewLine, lines);
+                    nodeData.Buffer.Insert(newContent, 0, newContent.Length);
+                }
+            }
         }
 
         public void CommentSpecificParts(Node node)
         {
+            // Formalised Comments
             if (node is Compiler.CodeModel.Program)
             {
-                // Formalised Comments
-                var formalizedCommentsToken = GetFormalizedCommentEnclosingTokensIfAny(node);
-                if (formalizedCommentsToken != null)
-                {// The node have a formalized Comment
-                    NodeData nodeData = Nodes.FirstOrDefault(n => n.node == node);
-                    if (nodeData != null)
-                    {
-                        // Split the Buffer to get an array of string representing the lines
-                        string content = new string(nodeData.Buffer.ToArray());
-                        string[] lines = content.Split(
-                            new[] { "\r\n", "\r", "\n" },
-                            StringSplitOptions.None
-                        );
-
-                        int linestart = formalizedCommentsToken.Item1.Line;
-                        int linestop = formalizedCommentsToken.Item2.Line;
-
-                        int tempoCommentedLines = 0;
-                        int tempoTestedLines = 0;
-                        // for each lines, if it is inside the formalized comment then comment them (replace the 6th character by a '*') 
-                        for (int i = 0; i < lines.Length - 1; i++)
-                        {
-                            tempoTestedLines++;
-                            if (nodeData.Positions.Item4[i] >= linestart && nodeData.Positions.Item4[i] <= linestop &&
-                                lines[i].Length >= 7)
-                            {
-                                tempoCommentedLines++;
-                                lines[i] = lines[i].Substring(0, 6) + '*' + lines[i].Substring(7, lines[i].Length - 7);
-                            }
-                        }
-
-                        // Replace the buffer content by the new one commented
-                        string newContent = string.Join(Environment.NewLine, lines);
-                        nodeData.Buffer.Insert(newContent, 0, newContent.Length);
-                    }
-                }
+                CommentBetweenTokens(node, TokenType.FormalizedCommentsStart, TokenType.FormalizedCommentsStop);
             }
+
+            // Multilines Comments
+            CommentBetweenTokens(node, TokenType.MultilinesCommentsStart, TokenType.MultilinesCommentsStop);
 
             foreach (var child in node.Children)
             {
