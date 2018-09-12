@@ -771,7 +771,7 @@ userDefinedCollatingSequence:
 // it may contain SEVERAL characters
 
 charactersInCollatingSequence:
-	alphanumericValue1 | ordinalPositionInCollatingSequence;
+	alphanumericLiteralToken | ordinalPositionInCollatingSequence;
 
 // In the two rules below, if characterInCollatingSequence is an alphanumeric literal, 
 // it can contain ONLY ONE characters
@@ -976,7 +976,7 @@ userDefinedCharacterClass:
 // p119: The SPECIAL-NAMES paragraph can contain multiple CURRENCY SIGN clauses.
 
 currencySignClause:
-    CURRENCY SIGN? IS? alphanumericValue1 (WITH? PICTURE SYMBOL alphanumericLiteralToken)?;
+    CURRENCY SIGN? IS? sign=alphanumericLiteralToken (WITH? PICTURE SYMBOL pictureSymbol=alphanumericLiteralToken)?;
 
 // p120: The DECIMAL-POINT IS COMMA clause exchanges the functions of the period
 // and the comma in PICTURE character-strings and in numeric literals.

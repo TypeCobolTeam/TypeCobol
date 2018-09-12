@@ -790,8 +790,6 @@ characterValue3: alphanumericOrNationalLiteralToken;
 
 characterValue4: alphanumericOrNationalLiteralToken | figurativeConstant;
 
-alphanumericValue1: alphanumericLiteralToken;
-
 alphanumericValue2: alphanumericOrNationalLiteralToken;
 
 alphanumericValue3: alphanumericOrNationalLiteralToken | figurativeConstant;
@@ -828,13 +826,13 @@ value2: numericValue | alphanumericValue2 | repeatedCharacterValue2 | nullPointe
 // - Commonly used symbol definition or reference syntax -
 // (not strictly necessary to describe the grammar, but useful to optimize the CodeElements builder code)
 
-symbolDefinition1: alphanumericValue1;
+symbolDefinition1: alphanumericLiteralToken;
 
 symbolDefinition2: alphanumericValue2;
 
 symbolDefinition5: alphanumericValue5;
 
-symbolReference1: alphanumericValue1;
+symbolReference1: alphanumericLiteralToken;
 
 symbolReference2: alphanumericValue2;
 
@@ -843,7 +841,7 @@ symbolReference5: alphanumericValue5;
 // [TYPECOBOL] extension : rule modified to supportTYPE DATE (instead of TC-DATE or something)
 symbolReference12: UserDefinedWord | DATE;
 
-symbolDefinitionOrReference1: alphanumericValue1;
+symbolDefinitionOrReference1: alphanumericLiteralToken;
 
 symbolDefinitionOrReference4: UserDefinedWord;
 
@@ -947,7 +945,7 @@ programNameReference3: UserDefinedWord;
 programEntryDefinition: symbolDefinition1;
 
 // [Type ambiguity] at this parsing stage
-programNameReferenceOrProgramEntryReference: alphanumericValue1;
+programNameReferenceOrProgramEntryReference: alphanumericLiteralToken;
 
 // p252: Section-name
 // A user-defined word that identifies a section. A referenced
