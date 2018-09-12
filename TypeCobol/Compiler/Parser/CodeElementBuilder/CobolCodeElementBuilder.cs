@@ -496,11 +496,12 @@ namespace TypeCobol.Compiler.Parser
 				}
 				foreach (var currencySignContext in context.currencySignClause())
 				{
-					var currencySign = CobolWordsBuilder.CreateAlphanumericValue(currencySignContext.alphanumericValue1());
+
+                    var currencySign = CobolWordsBuilder.CreateAlphanumericValue(currencySignContext.sign);
 					CharacterValue characterValue = null;
-					if (currencySignContext.alphanumericLiteralToken() != null)
+					if (currencySignContext.pictureSymbol != null)
 					{
-						characterValue = CobolWordsBuilder.CreateCharacterValue(currencySignContext.alphanumericLiteralToken());
+						characterValue = CobolWordsBuilder.CreateCharacterValue(currencySignContext.pictureSymbol);
 					}
 					paragraph.CurrencySymbols.Add(currencySign, characterValue);
 				}
@@ -541,8 +542,8 @@ namespace TypeCobol.Compiler.Parser
 
 		private CharactersInCollatingSequence CreateCharactersInCollatingSequence(CodeElementsParser.CharactersInCollatingSequenceContext context) {
 			var chars = new CharactersInCollatingSequence();
-			if (context.alphanumericValue1() != null) {
-				chars.CharactersInAlphanmericValue = CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue1());
+			if (context.alphanumericLiteralToken() != null) {
+				chars.CharactersInAlphanmericValue = CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericLiteralToken());
 			} else
 			if (context.ordinalPositionInCollatingSequence() != null) {
 				chars.OrdinalPositionInCollatingSequence = CobolWordsBuilder.CreateIntegerValue(context.ordinalPositionInCollatingSequence().IntegerLiteral());

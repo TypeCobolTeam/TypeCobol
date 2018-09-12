@@ -593,7 +593,6 @@ non terminal TypeCobol.Compiler.Scanner.Token characterValue1;
 non terminal TypeCobol.Compiler.Scanner.Token characterValue2;
 non terminal TypeCobol.Compiler.Scanner.Token characterValue3;
 non terminal TypeCobol.Compiler.Scanner.Token characterValue4;
-non terminal TypeCobol.Compiler.Scanner.Token alphanumericValue1;
 non terminal TypeCobol.Compiler.Scanner.Token alphanumericValue2;
 non terminal TypeCobol.Compiler.Scanner.Token alphanumericValue3;
 non terminal TypeCobol.Compiler.Scanner.Token alphanumericValue5;

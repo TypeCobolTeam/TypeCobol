@@ -35,12 +35,10 @@
 
                           
       *    call DVZF0OS2::Foo
+           
            IF ADDRESS OF TC-DVZF0OS2-bdb3e928-Item = NULL
+             OR TC-DVZF0OS2-bdb3e928-Idt not = 'bdb3e928'
                PERFORM TC-LOAD-POINTERS-DVZF0OS2
-           ELSE
-               IF TC-DVZF0OS2-bdb3e928-Idt not = 'bdb3e928'
-                   PERFORM TC-LOAD-POINTERS-DVZF0OS2
-               END-IF
            END-IF
            CALL TC-DVZF0OS2-bdb3e928
            end-call

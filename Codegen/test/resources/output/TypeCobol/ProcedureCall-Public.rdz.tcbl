@@ -85,12 +85,10 @@
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
+           
            IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
+             OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
-           ELSE
-               IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
-                   PERFORM TC-LOAD-POINTERS-Callee
-               END-IF
            END-IF
            CALL TC-Callee-ebb060ea USING
                                  somedate
@@ -103,12 +101,10 @@
       *    CALL CALLEE::MyPublicProcedure
       *             INPUT      somedate someformat
       *             OUTPUT     flag     realformat
+           
            IF ADDRESS OF TC-Callee-ebb060ea-Item = NULL
+             OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
-           ELSE
-               IF TC-Callee-ebb060ea-Idt not = 'ebb060ea'
-                   PERFORM TC-LOAD-POINTERS-Callee
-               END-IF
            END-IF
            CALL TC-Callee-ebb060ea USING
                                  somedate
@@ -138,12 +134,10 @@
       *
       *    call PersonService::GetPersonById input  person1Id
       *                                      output MyPerson
+           
            IF ADDRESS OF TC-PersonSe-d2b57642-Item = NULL
+             OR TC-PersonSe-d2b57642-Idt not = 'd2b57642'
                PERFORM TC-LOAD-POINTERS-PersonSe
-           ELSE
-               IF TC-PersonSe-d2b57642-Idt not = 'd2b57642'
-                   PERFORM TC-LOAD-POINTERS-PersonSe
-               END-IF
            END-IF
            CALL TC-PersonSe-d2b57642 USING
                                  person1Id
@@ -183,12 +177,10 @@
                                           
       *OK 
       *    call Callee::check input somedate
+           
            IF ADDRESS OF TC-Callee-ca0ab46c-Item = NULL
+             OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
-           ELSE
-               IF TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
-                   PERFORM TC-LOAD-POINTERS-Callee
-               END-IF
            END-IF
            CALL TC-Callee-ca0ab46c USING
                                  somedate
