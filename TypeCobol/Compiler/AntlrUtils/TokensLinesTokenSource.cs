@@ -66,7 +66,6 @@ namespace TypeCobol.Compiler.AntlrUtils
         {
             Token nextToken = tokensIterator.NextToken();
             nextToken.SetAntlrSource(this);
-            Debug.WriteLine(nextToken.Text + " : " + Enum.GetName(typeof(TokenType), nextToken.TokenType));
             return nextToken;
         }
 
