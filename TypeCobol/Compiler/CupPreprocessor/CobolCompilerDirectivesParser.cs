@@ -10,9 +10,9 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.CupCommon;
 using System.Collections.Generic;
-using System.Collections;
 using System;
 using TUVienna.CS_CUP.Runtime;
+using CSCupRuntime;
 
 /** C# CUP v0.1 generated parser.
   */
@@ -637,10 +637,9 @@ new short[173][] {
   public override TUVienna.CS_CUP.Runtime.Symbol do_action(
     int                        act_num,
     TUVienna.CS_CUP.Runtime.lr_parser parser,
-    System.Collections.Stack            xstack1,
+    StackList<Symbol>            CUP_parser_stack,
     int                        top)
   {
-  mStack CUP_parser_stack= new mStack(xstack1);
     /* call code in generated class */
     return action_obj.CUP_CobolCompilerDirectivesParser_do_action(act_num, parser, stack, top);
   }
@@ -681,11 +680,11 @@ new short[173][] {
   // get the current state of the parser.
   public int getParserState() 
   {
-	return ((Symbol)stack.Peek()).parse_state;	
+	return stack.Peek().parse_state;	
   }
 
   //get the parser stack.
-  public Stack getParserStack() 
+  public StackList<Symbol> getParserStack() 
   {
 	return stack;	
   }
@@ -759,11 +758,11 @@ public class CUP_CobolCompilerDirectivesParser_actions {
   public   TUVienna.CS_CUP.Runtime.Symbol CUP_CobolCompilerDirectivesParser_do_action(
     int                        CUP_CobolCompilerDirectivesParser_act_num,
     TUVienna.CS_CUP.Runtime.lr_parser CUP_CobolCompilerDirectivesParser_parser,
-    System.Collections.Stack            xstack1,
+    StackList<Symbol>            xstack1,
     int                        CUP_CobolCompilerDirectivesParser_top)
     {
       /* Symbol object for return from actions */
-      mStack CUP_CobolCompilerDirectivesParser_stack =new mStack(xstack1);
+      StackList<Symbol> CUP_CobolCompilerDirectivesParser_stack =  xstack1;
       TUVienna.CS_CUP.Runtime.Symbol CUP_CobolCompilerDirectivesParser_result;
 
       /* select the action based on the action number */
@@ -774,13 +773,13 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$33
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
               // propagate RESULT from NT$34
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token a = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token a = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 		
 		my_parser.Builder.EnterTitleCompilerStatement(t, a);
 	
@@ -792,7 +791,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 228: // NT$34 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).ConsumeNextTokenOnTheSameLineAndStop(TokenType.PeriodSeparator);  
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(209/*NT$34*/, RESULT);
             }
@@ -811,7 +810,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 226: // skipCompilerStatement ::= skipTokens 
             {
               object RESULT = null;
-		Token t = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 		
 		my_parser.Builder.EnterSkipCompilerStatement(t);
 	
@@ -824,9 +823,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               Token RESULT = null;
               // propagate RESULT from NT$32
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (Token) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (Token) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(169/*skipTokens*/, RESULT);
             }
@@ -847,9 +846,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               Token RESULT = null;
               // propagate RESULT from NT$31
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (Token) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (Token) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(169/*skipTokens*/, RESULT);
             }
@@ -870,9 +869,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               Token RESULT = null;
               // propagate RESULT from NT$30
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (Token) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (Token) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(169/*skipTokens*/, RESULT);
             }
@@ -893,14 +892,14 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$28
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
               // propagate RESULT from NT$29
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-4)).value;
-		TypeCobol.Compiler.Scanner.Token l = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-4)).value;
+		TypeCobol.Compiler.Scanner.Token l = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterServiceReloadCompilerStatement(s, l, w); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(168/*serviceReloadCompilerStatement*/, RESULT);
             }
@@ -910,8 +909,8 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 218: // NT$29 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token l = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token l = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(204/*NT$29*/, RESULT);
             }
@@ -921,7 +920,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 217: // NT$28 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  my_parser.Builder.StartServiceReloadCompilerStatement(); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(203/*NT$28*/, RESULT);
             }
@@ -932,10 +931,10 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$27
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token l = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token l = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterServiceLabelCompilerStatement(s, l); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(167/*serviceLabelCompilerStatement*/, RESULT);
             }
@@ -945,7 +944,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 215: // NT$27 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  
 		my_parser.Builder.StartServiceLabelCompilerStatement();
 		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
@@ -958,9 +957,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 214: // pseudoTextReplaces ::= pseudoTextReplaces pseudoText BY pseudoText 
             {
               PairTokenListList RESULT = null;
-		PairTokenListList replaces = (PairTokenListList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
-		TokenList from = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TokenList by = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		PairTokenListList replaces = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
+		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TokenList by = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 replaces.Add(new Tuple<List<Token>, List<Token>>(from,by)); RESULT = replaces; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(166/*pseudoTextReplaces*/, RESULT);
             }
@@ -970,8 +969,8 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 213: // pseudoTextReplaces ::= pseudoText BY pseudoText 
             {
               PairTokenListList RESULT = null;
-		TokenList from = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TokenList by = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TokenList by = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(from,by)}; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(166/*pseudoTextReplaces*/, RESULT);
             }
@@ -982,13 +981,13 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$25
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
               // propagate RESULT from NT$26
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		Token r = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-4)).value;
-		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-4)).value;
+		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		 my_parser.Builder.EnterReplaceCompilerStatement(r, o, null); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(165/*replaceCompilerStatement*/, RESULT);
             }
@@ -998,8 +997,8 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 211: // NT$26 ::= 
             {
               object RESULT = null;
-		Token r = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(201/*NT$26*/, RESULT);
             }
@@ -1009,7 +1008,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 210: // NT$25 ::= 
             {
               object RESULT = null;
-		Token r = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  my_parser.Builder.StartReplaceCompilerStatement(CompilerDirectiveType.REPLACE_OFF); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(200/*NT$25*/, RESULT);
             }
@@ -1020,10 +1019,10 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$24
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		Token r = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
-		PairTokenListList replaces = (PairTokenListList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
+		PairTokenListList replaces = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		 my_parser.Builder.EnterReplaceCompilerStatement(r, null, replaces); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(165/*replaceCompilerStatement*/, RESULT);
             }
@@ -1033,8 +1032,8 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 208: // NT$24 ::= 
             {
               object RESULT = null;
-		Token r = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		PairTokenListList replaces = (PairTokenListList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		Token r = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		PairTokenListList replaces = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  		
 		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode();
 	
@@ -1047,9 +1046,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               Token RESULT = null;
               // propagate RESULT from NT$23
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (Token) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token r = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (Token) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token r = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 
 		RESULT = r;
 	
@@ -1071,9 +1070,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$22
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		Token rt = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		Token rt = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
 		 my_parser.Builder.EnterReadyOrResetTraceCompilerStatement(rt); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(163/*readyOrResetTraceCompilerStatement*/, RESULT);
             }
@@ -1083,7 +1082,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 204: // NT$22 ::= 
             {
               object RESULT = null;
-		Token rt = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		Token rt = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(197/*NT$22*/, RESULT);
             }
@@ -1094,9 +1093,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               Token RESULT = null;
               // propagate RESULT from NT$21
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (Token) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (Token) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(162/*readyOrReset*/, RESULT);
             }
@@ -1116,9 +1115,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               Token RESULT = null;
               // propagate RESULT from NT$20
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (Token) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (Token) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(162/*readyOrReset*/, RESULT);
             }
@@ -1137,7 +1136,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 199: // sequenceNumber ::= IntegerLiteral 
             {
               Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token il = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token il = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = il; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(161/*sequenceNumber*/, RESULT);
             }
@@ -1148,13 +1147,13 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$18
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
               // propagate RESULT from NT$19
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token tins = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		Token sn = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token tins = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		Token sn = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterInsertCompilerStatement(tins,sn); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(160/*insertCompilerStatement*/, RESULT);
             }
@@ -1164,7 +1163,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 197: // NT$19 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token tins = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token tins = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(194/*NT$19*/, RESULT);
             }
@@ -1186,12 +1185,12 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$16
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-6)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-6)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-6)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-6)).value;
               // propagate RESULT from NT$17
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		Token t = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-7)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-7)).value;
 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(159/*execSqlIncludeStatement*/, RESULT);
             }
@@ -1201,7 +1200,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 194: // NT$17 ::= 
             {
               object RESULT = null;
-		Token t = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-5)).value;
+		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-5)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(192/*NT$17*/, RESULT);
             }
@@ -1211,7 +1210,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 193: // NT$16 ::= 
             {
               object RESULT = null;
-		Token t = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  my_parser.Builder.EnterExecSqlIncludeStatement(t); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(191/*NT$16*/, RESULT);
             }
@@ -1239,7 +1238,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 190: // execToken ::= EXECUTE 
             {
               Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(158/*execToken*/, RESULT);
             }
@@ -1249,7 +1248,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 189: // execToken ::= EXEC 
             {
               Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(158/*execToken*/, RESULT);
             }
@@ -1259,7 +1258,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 188: // routineName ::= UserDefinedWord 
             {
               Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = w; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(157/*routineName*/, RESULT);
             }
@@ -1278,7 +1277,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 186: // languageName ::= UserDefinedWord 
             {
               Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token w = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = w; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(156/*languageName*/, RESULT);
             }
@@ -1289,14 +1288,14 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$14
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-5)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-5)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-5)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-5)).value;
               // propagate RESULT from NT$15
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token e = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-4)).value;
-		Token ln = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
-		Token rn = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token e = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-4)).value;
+		Token ln = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
+		Token rn = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
 		 my_parser.Builder.EnterEnterCompilerStatement(e, ln, rn); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(155/*enterCompilerStatement*/, RESULT);
             }
@@ -1306,9 +1305,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 184: // NT$15 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token e = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		Token ln = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		Token rn = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token e = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		Token ln = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		Token rn = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(190/*NT$15*/, RESULT);
             }
@@ -1328,9 +1327,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$13
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token e = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token e = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 		
 		my_parser.Builder.EnterEjectCompilerStatement(e);
 	
@@ -1355,10 +1354,10 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$12
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (TokenList) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TokenList snf = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token il = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (TokenList) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TokenList snf = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token il = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 snf.Add(il); RESULT = snf; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(153/*deleteSequenceNumberField*/, RESULT);
             }
@@ -1368,7 +1367,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 179: // NT$12 ::= 
             {
               object RESULT = null;
-		TokenList snf = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TokenList snf = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningModeIfNextNotToken(TokenType.IntegerLiteral); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(187/*NT$12*/, RESULT);
             }
@@ -1379,9 +1378,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$11
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (TokenList) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token il = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (TokenList) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token il = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = new TokenList() {il}; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(153/*deleteSequenceNumberField*/, RESULT);
             }
@@ -1401,10 +1400,10 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$10
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TokenList fields = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TokenList fields = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterDeleteCompilerStatement(t); my_parser.Builder.EnterSequenceNumberField(fields); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(152/*deleteCompilerStatement*/, RESULT);
             }
@@ -1424,9 +1423,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               TokenList RESULT = null;
               // propagate RESULT from NT$9
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
-                RESULT = (TokenList) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
-		TokenList tokens = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
+                RESULT = (TokenList) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
+		TokenList tokens = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
 		 RESULT = tokens; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(150/*pseudoText*/, RESULT);
             }
@@ -1445,7 +1444,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 172: // copyReplacingOperand ::= CUP_LiteralOrUserDefinedWordOReservedWordExceptCopy 
             {
               TokenList RESULT = null;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = new TokenList(){t}; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(149/*copyReplacingOperand*/, RESULT);
             }
@@ -1455,7 +1454,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 171: // copyReplacingOperand ::= pseudoText 
             {
               TokenList RESULT = null;
-		TokenList tokens = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TokenList tokens = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = tokens; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(149/*copyReplacingOperand*/, RESULT);
             }
@@ -1465,9 +1464,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 170: // copyReplacingOperands ::= copyReplacingOperands copyReplacingOperand replacing_by copyReplacingOperand 
             {
               PairTokenListList RESULT = null;
-		PairTokenListList operands = (PairTokenListList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
-		TokenList from = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TokenList by = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		PairTokenListList operands = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
+		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TokenList by = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 operands.Add(new Tuple<List<Token>, List<Token>>(from,by)); RESULT = operands; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(148/*copyReplacingOperands*/, RESULT);
             }
@@ -1477,8 +1476,8 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 169: // copyReplacingOperands ::= copyReplacingOperand replacing_by copyReplacingOperand 
             {
               PairTokenListList RESULT = null;
-		TokenList from = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TokenList by = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TokenList from = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TokenList by = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = new PairTokenListList() {new Tuple<List<Token>, List<Token>>(from,by)}; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(148/*copyReplacingOperands*/, RESULT);
             }
@@ -1507,9 +1506,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               PairTokenListList RESULT = null;
               // propagate RESULT from NT$8
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value != null )
-                RESULT = (PairTokenListList) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		PairTokenListList operands = (PairTokenListList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value != null )
+                RESULT = (PairTokenListList) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		PairTokenListList operands = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = operands; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(147/*replacingCopyReplacingOperandOpts*/, RESULT);
             }
@@ -1537,9 +1536,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 163: // copyCompilerStatementBody ::= qualifiedTextName SUPPRESS replacingCopyReplacingOperandOpts 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CupCommon.QualifiedTextName name = (TypeCobol.Compiler.CupCommon.QualifiedTextName)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		PairTokenListList operands = (PairTokenListList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.CupCommon.QualifiedTextName name = (TypeCobol.Compiler.CupCommon.QualifiedTextName)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token s = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		PairTokenListList operands = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterCopyCompilerStatementBody(name, s, operands); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(146/*copyCompilerStatementBody*/, RESULT);
             }
@@ -1549,8 +1548,8 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 162: // copyCompilerStatementBody ::= qualifiedTextName replacingCopyReplacingOperandOpts 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CupCommon.QualifiedTextName name = (TypeCobol.Compiler.CupCommon.QualifiedTextName)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		PairTokenListList operands = (PairTokenListList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.CupCommon.QualifiedTextName name = (TypeCobol.Compiler.CupCommon.QualifiedTextName)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		PairTokenListList operands = (PairTokenListList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterCopyCompilerStatementBody(name, null, operands); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(146/*copyCompilerStatementBody*/, RESULT);
             }
@@ -1561,12 +1560,12 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$6
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
               // propagate RESULT from NT$7
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-4)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-4)).value;
 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(145/*copyCompilerStatement*/, RESULT);
             }
@@ -1576,7 +1575,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 160: // NT$7 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(182/*NT$7*/, RESULT);
             }
@@ -1586,7 +1585,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 159: // NT$6 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token c = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  my_parser.Builder.EnterCopyCompilerStatement(c); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(181/*NT$6*/, RESULT);
             }
@@ -1597,9 +1596,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$5
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		Token t = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
 		 my_parser.Builder.EnterControlCblCompilerStatement(t); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(144/*controlCblCompilerStatement*/, RESULT);
             }
@@ -1609,7 +1608,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 157: // NT$5 ::= 
             {
               object RESULT = null;
-		Token t = (Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		Token t = (Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  ((CobolWordsTokenizer)my_parser.getScanner()).EnterControlCblCompilerStatementMode();  
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(180/*NT$5*/, RESULT);
             }
@@ -1638,9 +1637,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               Token RESULT = null;
               // propagate RESULT from NT$4
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (Token) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (Token) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 
 	RESULT = t; 
 
@@ -1664,9 +1663,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               Token RESULT = null;
               // propagate RESULT from NT$3
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (Token) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (Token) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 
 	RESULT = t; 
 
@@ -1689,7 +1688,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 150: // controlCblOptions ::= controlCblOptions controlCblOption 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterControlCblOption(o); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(141/*controlCblOptions*/, RESULT);
             }
@@ -1699,7 +1698,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 149: // controlCblOptions ::= controlCblOption 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token o = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterControlCblOption(o); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(141/*controlCblOptions*/, RESULT);
             }
@@ -1710,8 +1709,8 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$2
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(137/*compilerOption*/, RESULT);
             }
@@ -1739,8 +1738,8 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 145: // anyTokens ::= anyTokens CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
-		TokenList tokens = (TokenList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TokenList tokens = (TokenList)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 tokens.Add(t); RESULT = tokens; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(139/*anyTokens*/, RESULT);
             }
@@ -1750,7 +1749,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 144: // anyTokens ::= CUP_ANY_TOKEN 
             {
               TokenList RESULT = null;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = new TokenList(); RESULT.Add(t); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(139/*anyTokens*/, RESULT);
             }
@@ -1851,13 +1850,13 @@ public class CUP_CobolCompilerDirectivesParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$0
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-3)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-3)).value;
               // propagate RESULT from NT$1
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+              if ( (CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value != null )
+                RESULT = (object) ( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 my_parser.Builder.EnterBasisCompilerStatement(n); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(134/*basisCompilerStatement*/, RESULT);
             }
@@ -1867,7 +1866,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 132: // NT$1 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
  		
 		((CobolWordsTokenizer)my_parser.getScanner()).EnterStopScanningMode(); 
     
@@ -2889,7 +2888,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 19: // controlCblOption ::= enumeratedValue1 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = v; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(129/*controlCblOption*/, RESULT);
             }
@@ -2899,9 +2898,9 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 18: // qualifiedTextName ::= textName in_of libraryName 
             {
               TypeCobol.Compiler.CupCommon.QualifiedTextName RESULT = null;
-		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-2)).value;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
-		TypeCobol.Compiler.Scanner.Token ln = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-2)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		TypeCobol.Compiler.Scanner.Token ln = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = new QualifiedTextName(n, t, ln); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(125/*qualifiedTextName*/, RESULT);
             }
@@ -2911,7 +2910,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 17: // qualifiedTextName ::= textName 
             {
               TypeCobol.Compiler.CupCommon.QualifiedTextName RESULT = null;
-		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = new QualifiedTextName(n); 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(125/*qualifiedTextName*/, RESULT);
             }
@@ -2921,7 +2920,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 16: // in_of ::= OF 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(105/*in_of*/, RESULT);
             }
@@ -2931,7 +2930,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 15: // in_of ::= IN 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token t = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = t; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(105/*in_of*/, RESULT);
             }
@@ -2941,7 +2940,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 14: // libraryName ::= externalName5 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = n; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(124/*libraryName*/, RESULT);
             }
@@ -2951,7 +2950,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 13: // textName ::= externalName5 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token n = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = n; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(123/*textName*/, RESULT);
             }
@@ -2961,7 +2960,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 12: // externalName5 ::= alphanumericValue5 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = v; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(49/*externalName5*/, RESULT);
             }
@@ -2971,7 +2970,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 11: // alphanumericValue5 ::= alphanumericLiteralToken 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = v; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(24/*alphanumericValue5*/, RESULT);
             }
@@ -2981,7 +2980,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 10: // alphanumericValue5 ::= UserDefinedWord 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = v; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(24/*alphanumericValue5*/, RESULT);
             }
@@ -2991,7 +2990,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 9: // alphanumericValue2 ::= alphanumericOrNationalLiteralToken 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = v; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(22/*alphanumericValue2*/, RESULT);
             }
@@ -3001,7 +3000,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 8: // alphanumericOrNationalLiteralToken ::= HexadecimalNationalLiteral 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = lit; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(5/*alphanumericOrNationalLiteralToken*/, RESULT);
             }
@@ -3011,7 +3010,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 7: // alphanumericOrNationalLiteralToken ::= NationalLiteral 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = lit; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(5/*alphanumericOrNationalLiteralToken*/, RESULT);
             }
@@ -3021,7 +3020,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 6: // alphanumericOrNationalLiteralToken ::= DBCSLiteral 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = lit; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(5/*alphanumericOrNationalLiteralToken*/, RESULT);
             }
@@ -3031,7 +3030,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 5: // alphanumericOrNationalLiteralToken ::= alphanumericLiteralToken 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = lit; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(5/*alphanumericOrNationalLiteralToken*/, RESULT);
             }
@@ -3041,7 +3040,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 4: // alphanumericLiteralToken ::= NullTerminatedAlphanumericLiteral 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = lit; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(4/*alphanumericLiteralToken*/, RESULT);
             }
@@ -3051,7 +3050,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 3: // alphanumericLiteralToken ::= HexadecimalAlphanumericLiteral 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = lit; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(4/*alphanumericLiteralToken*/, RESULT);
             }
@@ -3061,7 +3060,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 2: // alphanumericLiteralToken ::= AlphanumericLiteral 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token lit = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = lit; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(4/*alphanumericLiteralToken*/, RESULT);
             }
@@ -3071,7 +3070,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 1: // enumeratedValue1 ::= UserDefinedWord 
             {
               TypeCobol.Compiler.Scanner.Token RESULT = null;
-		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-0)).value;
+		TypeCobol.Compiler.Scanner.Token v = (TypeCobol.Compiler.Scanner.Token)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top)).value;
 		 RESULT = v; 
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(28/*enumeratedValue1*/, RESULT);
             }
@@ -3081,7 +3080,7 @@ public class CUP_CobolCompilerDirectivesParser_actions {
           case 0: // $START ::= starts EOF 
             {
               object RESULT = null;
-		object start_val = (object)((TUVienna.CS_CUP.Runtime.Symbol) CUP_CobolCompilerDirectivesParser_stack.elementAt(CUP_CobolCompilerDirectivesParser_top-1)).value;
+		object start_val = (object)( CUP_CobolCompilerDirectivesParser_stack.ElementAtFromBottom(CUP_CobolCompilerDirectivesParser_top-1)).value;
 		RESULT = start_val;
               CUP_CobolCompilerDirectivesParser_result = new TUVienna.CS_CUP.Runtime.Symbol(0/*$START*/, RESULT);
             }

@@ -46,6 +46,7 @@
     <Compile Include="lr_parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />
+    <Compile Include="StackList.cs" />
     <Compile Include="Symbol.cs" />
     <Compile Include="virtual_parse_stack.cs" />
   </ItemGroup>
