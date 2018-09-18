@@ -1,8 +1,8 @@
 ﻿--- Diagnostics ---
-Line 24[3,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable today:DATE.
+Line 24[30,34] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable today:DATE. OffendingSymbol=[30,34:today]<UserDefinedWord>
 Line 30[3,42] <27, Error, Syntax> - Syntax error : DATE properties are read-only
 Line 31[3,42] <27, Error, Syntax> - Syntax error : DATE properties are read-only
-Line 33[3,37] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable today(1:5):DATE.
+Line 33[28,32] <30, Error, Semantics> - Semantic error: Cannot write Alphanumeric to strongly typed variable today(1:5):DATE. OffendingSymbol=[28,32:today]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: TEST-DATE common:False initial:False recursive:False
