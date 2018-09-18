@@ -144,6 +144,10 @@ namespace TypeCobol.Server
 
             var typeCobolOptions = new TypeCobolOptions(config);
 
+#if EUROINFO_RULES
+            typeCobolOptions.AutoRemarksEnable = config.AutoRemarks;
+#endif
+
             ReturnCode returnCode = ReturnCode.Success;
             List<Parser> parsers = new List<Parser>();
             Compiler.Report.AbstractReport cmrReport = null;

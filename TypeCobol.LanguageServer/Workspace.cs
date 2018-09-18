@@ -415,6 +415,10 @@ namespace TypeCobol.LanguageServer
 
             var typeCobolOptions = new TypeCobolOptions(TypeCobolConfiguration);
 
+#if EUROINFO_RULES
+            typeCobolOptions.AutoRemarksEnable = TypeCobolConfiguration.AutoRemarks;
+#endif
+
             CompilationProject = new CompilationProject(_workspaceName, _rootDirectoryFullName, _extensions, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.EndOfLineDelimiter, TypeCobolConfiguration.Format.FixedLineLength, TypeCobolConfiguration.Format.ColumnsLayout, typeCobolOptions);
 
             if (TypeCobolConfiguration.CopyFolders != null && TypeCobolConfiguration.CopyFolders.Count > 0)

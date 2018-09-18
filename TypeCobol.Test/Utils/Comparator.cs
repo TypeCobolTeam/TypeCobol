@@ -28,7 +28,10 @@ namespace TypeCobol.Test.Utils
         {
             DirectoryInfo localDirectory = new DirectoryInfo(Path.GetDirectoryName( Comparator?.paths?.SamplePath));
             DocumentFormat format = Comparator?.GetSampleFormat();
-            TypeCobolOptions options = new TypeCobolOptions(autoRemarks);
+            TypeCobolOptions options = new TypeCobolOptions();
+#if EUROINFO_RULES
+            options.AutoRemarksEnable = autoRemarks;
+#endif
             if (extensions == null) extensions = new[] { ".cbl", ".cpy" };
             //comparator.paths.sextension = extensions[0].Substring(1);
             CompilationProject project = new CompilationProject("TEST",

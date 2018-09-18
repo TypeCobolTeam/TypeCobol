@@ -83,9 +83,12 @@ namespace TypeCobol.Test {
 				Stopwatch watch = new Stopwatch();
 				watch.Start();
                 var document = new TypeCobol.Parser();
-			    var options = new TypeCobolOptions(autoRemarks)
+			    var options = new TypeCobolOptions
 			    {
-			        ExecToStep = ExecutionStep.CrossCheck
+			        ExecToStep = ExecutionStep.CrossCheck,
+#if EUROINFO_RULES
+			        AutoRemarksEnable = autoRemarks
+#endif
                 };
 
                 document.Init(path, options, format, copiesFolder);

@@ -45,21 +45,12 @@ namespace TypeCobol.Compiler.Directives
 #endif
 
         public TypeCobolOptions(TypeCobolConfiguration config)
-        :this (config.AutoRemarks)
         {
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
         }
-
-        public TypeCobolOptions(bool autoRemarks)
-        {
-#if EUROINFO_RULES
-            AutoRemarksEnable = autoRemarks;
-#endif
-        }
-
 
         public TypeCobolOptions()
         {
