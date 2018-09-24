@@ -342,7 +342,7 @@ namespace CLI.Test
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!targetFileContent.SequenceEqual(actualFileContent))
                 {
-                    bool autoReplace = true;
+                    bool autoReplace = false;
 
                     //Replacement logic only works for LSR tests
                     if (autoReplace && testSourcePath != null && testSourcePath.Contains("LSRTests"))
@@ -373,7 +373,9 @@ namespace CLI.Test
                         }
 
                         Console.WriteLine("File not equals: " + commonTargetFiles[i]);
-                        Console.WriteLine("Input file automatically modified");
+                        Console.WriteLine("Input file has been modified\n");
+                        Console.WriteLine("Please rerun unit test\n");
+                        dirIdentical = false;
                     }
                     else
                     {

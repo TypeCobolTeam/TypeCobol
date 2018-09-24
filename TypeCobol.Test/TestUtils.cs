@@ -48,9 +48,10 @@ namespace TypeCobol.Test
                 if (autoReplace && expectedResultPath != null)
                 {
                     replaceLines(result, expectedResultPath);
-                    System.Diagnostics.Trace.WriteLine("result != expectedResult  In test:" + testName);
-                    System.Diagnostics.Trace.WriteLine("at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
-                    System.Diagnostics.Trace.WriteLine("Output file has been modified\n");
+                    errors.AppendLine("result != expectedResult  In test:" + testName);
+                    errors.AppendLine("at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
+                    errors.AppendLine("Output file has been modified\n");
+                    errors.AppendLine("Please rerun unit test\n");
                 }
                 else
                 {
@@ -58,8 +59,8 @@ namespace TypeCobol.Test
                         .AppendLine(" at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
                     errors.AppendLine("See TestUtils.cs compareLines method to autoreplace ExpectedResult");
                     errors.Append("=== RESULT ==========\n" + result + "====================");
-                    throw new Exception(errors.ToString());
                 }
+                throw new Exception(errors.ToString());
 
             }
         }
