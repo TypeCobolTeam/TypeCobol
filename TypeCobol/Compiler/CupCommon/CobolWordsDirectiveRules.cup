@@ -1,0 +1,111 @@
+﻿enumeratedValue1 ::= UserDefinedWord : v
+	{: RESULT = v; :}
+	;
+
+// - 2. Alphanumeric literals -
+
+// p33: A literal is a character-string whose value is specified either by the characters of
+// which it is composed or by the use of a figurative constant.
+// p34: The formats of alphanumeric literals are:
+// - Format 1: “Basic alphanumeric literals ?
+// - Format 2: “Alphanumeric literals with DBCS characters ? on page 35
+// - Format 3: “Hexadecimal notation for alphanumeric literals ? on page 36
+// - Format 4: “Null-terminated alphanumeric literals ? on page 37
+
+alphanumericLiteralToken ::= AlphanumericLiteral : lit
+	{: RESULT = lit; :}
+	| HexadecimalAlphanumericLiteral : lit 
+	{: RESULT = lit; :}
+	| NullTerminatedAlphanumericLiteral : lit
+	{: RESULT = lit; :}
+	;
+
+alphanumericOrNationalLiteralToken ::= alphanumericLiteralToken : lit
+	{: RESULT = lit; :}
+	| DBCSLiteral : lit
+	{: RESULT = lit; :}
+	| NationalLiteral : lit
+	{: RESULT = lit; :}
+	| HexadecimalNationalLiteral : lit
+	{: RESULT = lit; :}
+;
+
+alphanumericValue2 ::= alphanumericOrNationalLiteralToken : v
+	{: RESULT = v; :}
+	;
+
+alphanumericValue5 ::= UserDefinedWord : v
+	{: RESULT = v; :}
+	| alphanumericLiteralToken : v
+	{: RESULT = v; :}
+	;
+
+externalName5 ::= alphanumericValue5 : v
+	{: RESULT = v; :}
+	;
+
+// * text-name , library-name
+// text-name identifies the copy text. library-name identifies where the copy text
+// exists.
+// - Can be from 1-30 characters in length
+// - Can contain the following characters: Latin uppercase letters A-Z, Latin
+//   lowercase letters a-z, digits 0-9, and hyphen
+// - The first or last character must not be a hyphen
+// - Cannot contain an underscore
+// Neither text-name nor library-name need to be unique within a program.
+// They can be identical to other user-defined words in the program.
+// text-name need not be qualified. If text-name is not qualified, a library-name
+// of SYSLIB is assumed.
+// When compiling from JCL or TSO, only the first eight characters are used
+// as the identifying name. When compiling with the cob2 command and
+// processing COPY text residing in the z/OS UNIX file system, all characters
+// are significant.
+// * literal-1 , literal-2
+// Must be alphanumeric literals. literal-1 identifies the copy text. literal-2
+// identifies where the copy text exists.
+// When compiling from JCL or TSO:
+// - Literals can be from 1-30 characters in length.
+// - Literals can contain characters: A-Z, a-z, 0-9, hyphen, @, #, or $.
+// - The first or last character must not be a hyphen.
+// - Literals cannot contain an underscore.
+// - Only the first eight characters are used as the identifying name.
+// When compiling with the cob2 command and processing COPY text
+// residing in the z/OS UNIX file system, the literal can be from 1 to 160
+// characters in length.
+// The uniqueness of text-name and library-name is determined after the formation and
+// conversion rules for a system-dependent name have been applied.
+// For information about the mapping of characters in the text-name, library-name, and
+// literals, see Compiler-directing statements in the Enterprise COBOL Programming
+// Guide.
+
+textName ::= externalName5 : n
+	{: RESULT = n; :}
+	;
+
+libraryName ::= externalName5 : n
+	{: RESULT = n; :}
+	;
+
+in_of ::= IN:t
+{: RESULT = t; :}
+| OF:t
+{: RESULT = t; :}
+;
+
+qualifiedTextName ::= textName:n
+	{: RESULT = new QualifiedTextName(n); :}
+| textName:n in_of:t libraryName:ln
+	{: RESULT = new QualifiedTextName(n, t, ln); :}
+;
+
+	// p528: *CONTROL (*CBL) statement
+// With the *CONTROL (or *CBL) statement, you can selectively display or suppress
+// the listing of source code, object code, and storage maps throughout the source
+// text. 
+// These are not reserved words, but the only possible values are the following
+// SOURCE | NOSOURCE | LIST | NOLIST | MAP | NOMAP
+
+controlCblOption ::= enumeratedValue1 : v
+	{: RESULT = v; :}
+	;
+

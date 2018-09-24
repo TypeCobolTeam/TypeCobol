@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using CSCup;
+
 namespace TUVienna.CS_CUP
 {
 	using System;
@@ -123,14 +127,30 @@ namespace TUVienna.CS_CUP
 		/** Count of warnings issued so far */
 		public static int warning_count = 0;
 
-		/*-----------------------------------------------------------*/
-		/*--- Static Methods ----------------------------------------*/
-		/*-----------------------------------------------------------*/
+        /// <summary>
+        /// The Use Stack
+        /// https://github.com/TypeCobolTeam/TypeCobol/issues/1000
+        /// </summary>
+	    public static Stack<LexerContext> UseStack = new Stack<LexerContext>();
 
-		/** Initialize the scanner.  This sets up the keywords and char_symbols
+        /// <summary>
+        /// The Main file
+        /// https://github.com/TypeCobolTeam/TypeCobol/issues/1000
+        /// </summary>
+	    public static string MainFile;
+        /// <summary>
+        /// The Current File
+        /// </summary>
+        public static string CurrentFile;
+
+        /*-----------------------------------------------------------*/
+        /*--- Static Methods ----------------------------------------*/
+        /*-----------------------------------------------------------*/
+
+        /** Initialize the scanner.  This sets up the keywords and char_symbols
 		  * tables and reads the first two characters of lookahead.  
 		  */
-		public static void init() 
+        public static void init() 
 		{
 			/* Set up the keyword table */
 			keywords.Add("namespace",    sym.PACKAGE);
@@ -159,44 +179,103 @@ namespace TUVienna.CS_CUP
 			char_symbols.Add((int)'|', sym.BAR);
 			char_symbols.Add((int)'[', sym.LBRACK);
 			char_symbols.Add((int)']', sym.RBRACK);
-
-			/* read two characters of lookahead */
-			next_char = System.Console.In.Read();
-			if (next_char == EOF_CHAR) 
-			{
-				next_char2 = EOF_CHAR;
-				next_char3 = EOF_CHAR;
-				next_char4 = EOF_CHAR;
-			} 
-			else 
-			{
-				next_char2 = System.Console.In.Read();
-				if (next_char2 == EOF_CHAR) 
-				{
-					next_char3 = EOF_CHAR;
-					next_char4 = EOF_CHAR;
-				} 
-				else 
-				{
-					next_char3 = System.Console.In.Read();
-					if (next_char3 == EOF_CHAR) 
-					{
-						next_char4 = EOF_CHAR;
-					} 
-					else 
-					{
-						next_char4 = System.Console.In.Read();
-					}
-				}
-			}
+            /* read lookahead characters */
+		    InitLookaheads();
 		}
 
-		/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+        /// <summary>
+        /// Read 4 characters of lookahead.
+        /// https://github.com/TypeCobolTeam/TypeCobol/issues/1000
+        /// </summary>
+	    public static void InitLookaheads()
+	    {
+            /* read two characters of lookahead */
+            next_char = System.Console.In.Read();
+            if (next_char == EOF_CHAR)
+            {
+                next_char2 = EOF_CHAR;
+                next_char3 = EOF_CHAR;
+                next_char4 = EOF_CHAR;
+            }
+            else
+            {
+                next_char2 = System.Console.In.Read();
+                if (next_char2 == EOF_CHAR)
+                {
+                    next_char3 = EOF_CHAR;
+                    next_char4 = EOF_CHAR;
+                }
+                else
+                {
+                    next_char3 = System.Console.In.Read();
+                    if (next_char3 == EOF_CHAR)
+                    {
+                        next_char4 = EOF_CHAR;
+                    }
+                    else
+                    {
+                        next_char4 = System.Console.In.Read();
+                    }
+                }
+            }
+        }
 
-		/** Advance the scanner one character in the input stream.  This moves
+        /// <summary>
+        /// Switch the current lexer context to a new one.
+        /// https://github.com/TypeCobolTeam/TypeCobol/issues/1000
+        /// </summary>
+        /// <param name="filePath">The new file path</param>
+        /// <param name="sr">The new stream reader</param>
+	    public static void SwitchLexerContext(string filePath, System.IO.StreamReader sr)
+	    {
+	        LexerContext ctx = new LexerContext();
+	        ctx.FilePath = filePath;
+            ctx.In = System.Console.In;
+	        ctx.CurrentFile = CurrentFile;
+	        ctx.CurrentLine = current_line;
+	        ctx.CurrentPosition = current_position;
+	        ctx.AbsolutePosition = absolute_position;
+            ctx.NextChar = next_char;
+            ctx.NextChar2 = next_char2;
+            ctx.NextChar3 = next_char3;
+            ctx.NextChar4 = next_char4;
+            UseStack.Push(ctx);
+	        System.Console.SetIn(sr);
+	        current_line = 1;
+	        current_position = 1;
+	        absolute_position = 1;
+	        CurrentFile = filePath;
+            InitLookaheads();
+	    }
+
+        /// <summary>
+        /// Restore a previously saved Lexer context.
+        /// https://github.com/TypeCobolTeam/TypeCobol/issues/1000
+        /// </summary>
+	    public static void RestoreLexerContext()
+	    {
+	        if (UseStack.Count > 0)
+	        {
+	            LexerContext ctx = UseStack.Pop();
+                System.Console.In.Close();
+                System.Console.SetIn(ctx.In);
+	            CurrentFile = ctx.CurrentFile;
+	            current_line = ctx.CurrentLine;
+	            current_position = ctx.CurrentPosition;
+	            absolute_position = ctx.AbsolutePosition;
+                next_char = ctx.NextChar;
+	            next_char2 = ctx.NextChar2;
+	            next_char3 = ctx.NextChar3;
+	            next_char4 = ctx.NextChar4;
+	        }
+	    }
+
+        /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+
+        /** Advance the scanner one character in the input stream.  This moves
 		 * next_char2 to next_char and then reads a new next_char2.  
 		 */
-		protected static void advance() 
+        protected static void advance() 
 		{
 			int old_char;
 
@@ -238,6 +317,14 @@ namespace TUVienna.CS_CUP
 				current_line++;
 				current_position = 1;
 			}
+		    if (next_char == EOF_CHAR)
+		    {   //Pop any saved context
+                //https://github.com/TypeCobolTeam/TypeCobol/issues/1000
+                if (UseStack.Count > 0)
+		        {
+		            RestoreLexerContext();
+		        }
+		    }
 		}
 
 		/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -249,7 +336,7 @@ namespace TUVienna.CS_CUP
 		 */
 		public static void emit_error(string message)
 		{
-			System.Console.Error.WriteLine("Error at " + current_line + "(" + current_position +
+			System.Console.Error.WriteLine((CurrentFile !=  null ? ("File " + CurrentFile + ":") : "") +"Error at " + current_line + "(" + current_position +
 				"): " + message);
 			error_count++;
 		}
@@ -478,7 +565,7 @@ namespace TUVienna.CS_CUP
 		{
 			int sym_num;
 
-			for (;;)
+            for (;;)
 			{
 				/* look for white space */
 				if (next_char == ' ' || next_char == '\t' || next_char == '\n' ||
@@ -557,8 +644,19 @@ namespace TUVienna.CS_CUP
 				/* look for an id or keyword */
 				if (id_start_char(next_char)) return do_id();
 
-				/* look for EOF */
-				if (next_char == EOF_CHAR) return new Symbol(sym.EOF);
+                if (next_char == '#' && current_position == 1 && (next_char2 == 'u') && (next_char3 == 's') &&
+                        (next_char4 == 'e'))
+                {  //https://github.com/TypeCobolTeam/TypeCobol/issues/1000
+                   //#use directive must appears as the first character in the line.
+                   //Read the whole line after the #use directive and trim it as being the file path to be included.
+                    string useLine = System.Console.In.ReadLine();
+                    current_line += 1;
+                    lexer.InitLookaheads();
+                    return LexerContext.HandleUseDirective(useLine?.Trim());
+                }
+
+                /* look for EOF */
+                if (next_char == EOF_CHAR) return new Symbol(sym.EOF);
 
 				/* if we get here, we have an unrecognized character */
 				emit_warn("Unrecognized character '" + 

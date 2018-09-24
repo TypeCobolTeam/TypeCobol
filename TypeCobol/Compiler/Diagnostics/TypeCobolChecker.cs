@@ -864,7 +864,18 @@ namespace TypeCobol.Compiler.Diagnostics
                         {
                             DiagnosticUtils.AddError(node,
                                 "Only pointer declared in level 01 to 49 can be use in instructions SET UP BY and SET DOWN BY.");
-                            break;
+                        }
+
+                        if (receiver.Name.Length > 22)
+                        {
+                            DiagnosticUtils.AddError(node,
+                                "Pointer name '" + receiver.Name + "' is over 22 characters.");
+                        }
+
+                        if (receiver.IsInsideCopy())
+                        {
+                            DiagnosticUtils.AddError(node,
+                                "Pointer '" + receiver.Name + "' belongs to a copy.");
                         }
 
                         receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true);

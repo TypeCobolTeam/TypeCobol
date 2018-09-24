@@ -1,5 +1,7 @@
 ﻿--- Diagnostics ---
+Line 9[6,16] <37, Warning, General> - Warning: "when other" is missing
 Line 9[6,16] <27, Error, Syntax> - Syntax error : Symbol AA is not referenced
+Line 15[6,16] <37, Warning, General> - Warning: "when other" is missing
 Line 15[6,16] <27, Error, Syntax> - Syntax error : Symbol BB is not referenced
 
 --- Program ---

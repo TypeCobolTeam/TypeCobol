@@ -15,7 +15,7 @@
        
        01 Point TYPEDEF strict.
            02 Location TYPE Vector.
-           02 Movment  TYPE Vector.
+           02 Movment.
              04 Speed        TYPE Vector.
              04 Acceleration TYPE Vector.
        
