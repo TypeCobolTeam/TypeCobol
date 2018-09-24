@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Server;
@@ -286,6 +287,13 @@ namespace CLI.Test
 
     public static class UnitTestHelper
     {
+        /// <summary>
+        /// Compare results of LSR tests
+        /// Or replace automatically the input content of the test if autoReplace is true
+        /// </summary>
+        /// <param name="targetDir"></param>
+        /// <param name="actualDir"></param>
+        /// <returns></returns>
         public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir)
         {
             if (!targetDir.Exists)
@@ -334,21 +342,58 @@ namespace CLI.Test
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!targetFileContent.SequenceEqual(actualFileContent))
                 {
-                    Console.WriteLine("File not equals: " + commonTargetFiles[i]);
-                    Console.WriteLine("___Actual file content___:\n");
-                    foreach (var actual in actualFileContent)
+                    bool autoReplace = false;
+                    if (autoReplace)
                     {
-                        Console.WriteLine(actual);
-                    }
-                    Console.WriteLine("\n________________\n");
-                    Console.WriteLine("___Expected file content___:\n");
-                    foreach (var expected in targetFileContent)
-                    {
-                        Console.WriteLine(expected);
-                    }
-                    Console.WriteLine("________________");
+                        //string path = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Name;
+                        //string RELATIVE_PROJECT_PATH = "TypeCobol.LanguageServer.Test\\LSRTests";
+                        string path = commonTargetFiles[i].FullName.Replace("bin\\EI_Debug\\LSRTests",
+                            "TypeCobol.LanguageServer.Test\\LSRTests");
+                        path = path.Replace("output_expected", "input");
+                        path = path.Replace(".rlsp", ".tlsp");
 
-                    dirIdentical = false;
+                        var inputFileContent = File.ReadAllLines(path);
+                        Regex rxStartUseActual = new Regex(@"^\s+{");
+                        Regex rxStopUseActual = new Regex(@"^\s+],$");
+                        using (StreamWriter writer = new StreamWriter(new FileStream(path, FileMode.Truncate)))
+                        {
+                            for (var index = 0; index < inputFileContent.Length; index++)
+                            {
+                                if (rxStartUseActual.IsMatch(inputFileContent[index]) && inputFileContent[index+1].Contains("\"category\""))
+                                {
+                                    ReplaceResultLines(actualFileContent, writer);
+                                    while (!rxStopUseActual.IsMatch(inputFileContent[index]))
+                                    {
+                                        index++;
+                                    }
+                                }
+
+                                writer.WriteLine(inputFileContent[index]);
+                            }
+                        }
+
+                        Console.WriteLine("File not equals: " + commonTargetFiles[i]);
+                        Console.WriteLine("Input file automatically modified");
+                    }
+                    else
+                    {
+                        Console.WriteLine("File not equals: " + commonTargetFiles[i]);
+                        Console.WriteLine("See \"CLITest.cs\" CompareDirectory method to autoreplace input file");
+                        Console.WriteLine("___Actual file content___:\n");
+                        foreach (var actual in actualFileContent)
+                        {
+                            Console.WriteLine(actual);
+                        }
+                        Console.WriteLine("\n________________\n");
+                        Console.WriteLine("___Expected file content___:\n");
+                        foreach (var expected in targetFileContent)
+                        {
+                            Console.WriteLine(expected);
+                        }
+                        Console.WriteLine("________________");
+
+                        dirIdentical = false;
+                    }
                 }
             }
 
@@ -378,6 +423,43 @@ namespace CLI.Test
             }
 
             return dirIdentical;
+        }
+
+        /// <summary>
+        /// Replaces messages in LSR test inputs by ActualResult messages
+        /// </summary>
+        /// <param name="replacingText"></param>
+        /// <param name="writer"></param>
+        /// <returns></returns>
+        private static int ReplaceResultLines(string[] replacingText, StreamWriter writer)
+        {
+            Regex rxStartUseActual = new Regex(@"^\s+{");
+            Regex rxStopUseActual = new Regex(@"^\s+]$");
+
+            int writenLines = 0;
+
+            bool write = false;
+
+            for (int i = 0; i < replacingText.Length; i++)
+            {
+                if (rxStartUseActual.IsMatch(replacingText[i]) && replacingText[i + 1].Contains("\"category\""))
+                {
+                    write = true;
+                }
+
+                if (rxStopUseActual.IsMatch(replacingText[i]))
+                {
+                    write = false;
+                }
+
+                if (write)
+                {
+                    writer.WriteLine(replacingText[i]);
+                    writenLines++;
+                }
+                
+            }
+            return writenLines;
         }
     }
 }
