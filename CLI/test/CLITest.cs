@@ -294,7 +294,7 @@ namespace CLI.Test
         /// <param name="targetDir"></param>
         /// <param name="actualDir"></param>
         /// <returns></returns>
-        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir)
+        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir, string testSourcePath = null)
         {
             if (!targetDir.Exists)
             {
@@ -342,13 +342,13 @@ namespace CLI.Test
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!targetFileContent.SequenceEqual(actualFileContent))
                 {
-                    bool autoReplace = false;
-                    if (autoReplace)
+                    bool autoReplace = true;
+
+                    //Replacement logic only works for LSR tests
+                    if (autoReplace && testSourcePath != null && testSourcePath.Contains("LSRTests"))
                     {
-                        //string path = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Name;
-                        //string RELATIVE_PROJECT_PATH = "TypeCobol.LanguageServer.Test\\LSRTests";
                         string path = commonTargetFiles[i].FullName.Replace("bin\\EI_Debug\\LSRTests",
-                            "TypeCobol.LanguageServer.Test\\LSRTests");
+                            testSourcePath);
                         path = path.Replace("output_expected", "input");
                         path = path.Replace(".rlsp", ".tlsp");
 
