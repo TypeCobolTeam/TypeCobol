@@ -242,7 +242,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (!(levelNumberValue == 01 || levelNumberValue == 77))
                     {
                         DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                            "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77");
+                            "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77", dataDefinitionEntry);
                     }
                 }
 
@@ -252,13 +252,13 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (dataDefinition.ChildrenCount != 0)
                     {
                         DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.");
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.", dataDefinitionEntry);
                     }
 
                     if (dataDefinition.Usage != null)
                     {
                         DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.");
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.", dataDefinitionEntry);
                     }
                 }
             }
@@ -269,19 +269,19 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (dataDefinition.Picture != null)
                 {
                     DiagnosticUtils.AddError(dataDefinition,
-                        "Group item " + dataDefinition.Name + " cannot have a \"PICTURE\"");
+                        "Group item " + dataDefinition.Name + " cannot have a \"PICTURE\"", dataDefinitionEntry);
                 }
 
                 if (commonDataDataDefinitionCodeElement?.UserDefinedDataType != null)
                 {
                     DiagnosticUtils.AddError(dataDefinition,
-                        "Group item  " + dataDefinition.Name + " cannot have a \"TYPE\"");
+                        "Group item  " + dataDefinition.Name + " cannot have a \"TYPE\"", dataDefinitionEntry);
                 }
 
                 if (commonDataDataDefinitionCodeElement?.IsBlankWhenZero?.Value == true)
                 {
                     DiagnosticUtils.AddError(dataDefinition,
-                        "Group itm " + dataDefinition.Name + " cannot have \"Blank when zero\" clause");
+                        "Group itm " + dataDefinition.Name + " cannot have \"Blank when zero\" clause", dataDefinitionEntry);
                 }
 
                 return true;
@@ -343,7 +343,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     catch (Exception)
                     {
                         var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(node, m);
+                        DiagnosticUtils.AddError(node, m, codeElement);
                     }
                 }
             }
@@ -376,7 +376,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (!found.Any())
                 if (node.SymbolTable.GetFunction(area).Count < 1)
-                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced");
+                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference);
             if (found.Count() > 1)
             {
                 bool isFirst = true;
@@ -390,7 +390,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     errorMessage += (isFirst ? "" : " | ") + symbol.Key.Replace(".", "::");
                     isFirst = false;
                 }
-                DiagnosticUtils.AddError(node, errorMessage);
+                DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference);
             }
 
             if (found.Count() == 1)
@@ -436,12 +436,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
                         DiagnosticUtils.AddError(index.Parent,
-                            "Index name '" + index.Name + "' is over 22 characters.");
+                            "Index name '" + index.Name + "' is over 22 characters.", area.SymbolReference);
                     if (
                             index.Parent.CodeElement.IsInsideCopy())
                         //If index comes from a copy, do not support qualification
                         DiagnosticUtils.AddError(node,
-                            "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
+                            "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol", area.SymbolReference);
                 }
 
                 if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
@@ -478,7 +478,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                     if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
                         DiagnosticUtils.AddError(node,
-                            "Index can not be use with OF or IN qualifiers " + area);
+                            "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
                 }
                 else if (dataDefinition.DataType == DataType.Boolean && dataDefinition.CodeElement is DataDefinitionEntry &&
                          ((DataDefinitionEntry) dataDefinition?.CodeElement)?.LevelNumber?.Value != 88)
@@ -502,7 +502,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
                     DiagnosticUtils.AddError(node,
                         "Cannot write into " + storageArea + ", " + variabletoCheck +
-                        " is declared out of LINKAGE SECTION.");
+                        " is declared out of LINKAGE SECTION.", area.SymbolReference);
             }
 
             if (specialRegister != null
@@ -570,12 +570,12 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (sname == null)
                 {
-                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced");
+                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol);
                 }
                 else
                 {
                     if (sfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to section " + symbol.Name);
+                        DiagnosticUtils.AddError(node, "Ambiguous reference to section " + symbol.Name, symbol);
                     return sname;
                 }
             }
@@ -584,12 +584,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (sname == null)
                 {
                     if (pfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to paragraph " + symbol.Name);
+                        DiagnosticUtils.AddError(node, "Ambiguous reference to paragraph " + symbol.Name, symbol);
                     return pname;
                 }
                 else
                 {
-                    DiagnosticUtils.AddError(node, "Ambiguous reference to procedure " + symbol.Name);
+                    DiagnosticUtils.AddError(node, "Ambiguous reference to procedure " + symbol.Name, symbol);
                 }
             }
             return null;
@@ -696,7 +696,7 @@ namespace TypeCobol.Compiler.Diagnostics
                                 ? "strongly"
                                 : "strictly", wname, receivingName);
 
-                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                        DiagnosticUtils.AddError(node, message, wname.SymbolReference, code: MessageCode.SemanticTCErrorInParser);
                     }
                 }
                 else
@@ -704,7 +704,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (isUnsafe)
                     {
                         var message = "Useless UNSAFE with non strongly typed receiver.";
-                        DiagnosticUtils.AddError(node, message, MessageCode.SyntaxWarningInParser);
+                        DiagnosticUtils.AddError(node, message, code: MessageCode.SyntaxWarningInParser);
                     }
                 }
             }

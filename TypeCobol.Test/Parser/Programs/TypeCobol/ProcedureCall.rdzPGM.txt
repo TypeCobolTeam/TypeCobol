@@ -1,8 +1,11 @@
 ﻿--- Diagnostics ---
-Line 15[8,40] <27, Error, Syntax> - Syntax error : Given value is not correct : (00ABC100) expected numerical value only
+Line 15[12,15] <27, Error, Syntax> - Syntax error : Given value is not correct : (00ABC100) expected numerical value only OffendingSymbol=[12,15:varD]<UserDefinedWord>
 Line 27[37,39] <27, Error, Syntax> - Syntax error : mismatched input 'PIC' expecting {user defined word, CURRENCY, DATE} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause,  OffendingSymbol=[37,39:PIC]<PIC>
-Line 35[8,59] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times
-Line 35[8,59] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times
+Line 36[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
+Line 37[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
+Line 38[21,24] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times OffendingSymbol=[21,24:var1]<UserDefinedWord>
+Line 39[21,24] <27, Error, Syntax> - Syntax error : Parameter with name 'var1' declared multiple times OffendingSymbol=[21,24:var1]<UserDefinedWord>
+Line 41[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
 Line 111[8,55] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
 Line 115[8,55] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
 Line 119[8,70] <27, Error, Syntax> - Syntax error : A function "proc2" with the same profile already exists in namespace "ProcedureCall".
@@ -25,7 +28,7 @@ Line 179[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateForma
 Line 179[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'okay' of type BOOL and received 'realformat' of type Numeric 
 Line 179[12,46] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' expected parameter 'actual-format' of type Numeric and received 'flag' of type BOOL 
 Line 194[18,21] <27, Error, Syntax> - Syntax error : no viable alternative at input 'var1' RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter,  OffendingSymbol=[18,21:var1]<UserDefinedWord>
-Line 201[12,46] <27, Error, Syntax> - Syntax error : Symbol INOUT is not referenced
+Line 203[21,25] <27, Error, Syntax> - Syntax error : Symbol INOUT is not referenced OffendingSymbol=[21,25:INOUT]<UserDefinedWord>
 Line 231[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 
 Line 231[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
 Line 231[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8

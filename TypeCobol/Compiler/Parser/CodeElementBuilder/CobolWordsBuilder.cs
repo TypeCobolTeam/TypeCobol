@@ -254,7 +254,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinition CreateSymbolDefinition(CodeElementsParser.SymbolDefinition1Context context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericLiteralToken());
             var symbolDefinition = new SymbolDefinition(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinition);
             return symbolDefinition;
@@ -288,7 +288,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolReference CreateSymbolReference(CodeElementsParser.SymbolReference1Context context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericLiteralToken());
             var symbolReference = new SymbolReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolReference);
             return symbolReference;
@@ -342,7 +342,7 @@ namespace TypeCobol.Compiler.Parser
             return symbolReference;
         }
 
-        internal AmbiguousSymbolReference CreateAmbiguousSymbolReference(CodeElementsParser.AlphanumericValue1Context context, SymbolType[] candidateTypes)
+        internal AmbiguousSymbolReference CreateAmbiguousSymbolReference(CodeElementsParser.AlphanumericLiteralTokenContext context, SymbolType[] candidateTypes)
         {
             AlphanumericValue nameLiteral = CreateAlphanumericValue(context);
             var ambiguousSymbolReference = new AmbiguousSymbolReference(nameLiteral, candidateTypes);
@@ -360,7 +360,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal SymbolDefinitionOrReference CreateSymbolDefinitionOrReference(CodeElementsParser.SymbolDefinitionOrReference1Context context, SymbolType symbolType)
         {
-            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericValue1());
+            AlphanumericValue nameLiteral = CreateAlphanumericValue(context.alphanumericLiteralToken());
             var symbolDefinitionOrReference = new SymbolDefinitionOrReference(nameLiteral, symbolType);
             AddToSymbolInformations(nameLiteral, symbolDefinitionOrReference);
             return symbolDefinitionOrReference;
@@ -448,7 +448,7 @@ namespace TypeCobol.Compiler.Parser
 
         internal AmbiguousSymbolReference CreateProgramNameReferenceOrProgramEntryReference(CodeElementsParser.ProgramNameReferenceOrProgramEntryReferenceContext context)
         {
-            return CreateAmbiguousSymbolReference(context.alphanumericValue1(), new SymbolType[] { SymbolType.ProgramName, SymbolType.ProgramEntry });
+            return CreateAmbiguousSymbolReference(context.alphanumericLiteralToken(), new SymbolType[] { SymbolType.ProgramName, SymbolType.ProgramEntry });
         }
 
         internal SymbolDefinition CreateSectionNameDefinition(CodeElementsParser.SectionNameDefinitionContext context)

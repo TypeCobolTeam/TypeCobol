@@ -171,6 +171,15 @@
     <None Include="LSRTests\GlobalWithNestedProgramCompletion\output_expected\GlobalWithNestedProgramCompletion.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\GoToDefinition\input\CopyFolder\YFOO.CPY">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\GoToDefinition\input\GoToDefinition.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\GoToDefinition\output_expected\GoToDefinition.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\IfCompletion\input\IfCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
