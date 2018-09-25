@@ -9,20 +9,20 @@ Line 9[29,34] <27, Error, Syntax> - Syntax error : extraneous input 'GIVING' exp
 Line 11[29,33] <27, Error, Syntax> - Syntax error : MERGE: USING needs 2 filenames or more RuleStack=codeElement>mergeStatement>usingFilenames,  OffendingSymbol=[29,33:USING]<USING>
 Line 12[29,33] <27, Error, Syntax> - Syntax error : MERGE: USING needs 2 filenames or more RuleStack=codeElement>mergeStatement>usingFilenames,  OffendingSymbol=[29,33:USING]<USING>
 Line 14[29,34] <27, Error, Syntax> - Syntax error : extraneous input 'GIVING' expecting {ASCENDING, COLLATING, DESCENDING, ON, SEQUENCE, USING} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[29,34:GIVING]<GIVING>
-Line 14[81,81] <27, Error, Syntax> - Syntax error : no viable alternative at input '.' RuleStack=codeElement>mergeStatement,  OffendingSymbol=[81,81+:.]<PeriodSeparator>
+Line 14[81,81] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {GIVING, OUTPUT} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[81,81+:.]<PeriodSeparator>
 Line 15[29,34] <27, Error, Syntax> - Syntax error : extraneous input 'GIVING' expecting {ASCENDING, COLLATING, DESCENDING, ON, SEQUENCE, USING} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[29,34:GIVING]<GIVING>
-Line 15[81,81] <27, Error, Syntax> - Syntax error : no viable alternative at input '.' RuleStack=codeElement>mergeStatement,  OffendingSymbol=[81,81+:.]<PeriodSeparator>
-Line 17[64,64] <27, Error, Syntax> - Syntax error : no viable alternative at input '.' RuleStack=codeElement>mergeStatement,  OffendingSymbol=[64,64+:.]<PeriodSeparator>
-Line 18[54,54] <27, Error, Syntax> - Syntax error : no viable alternative at input '.' RuleStack=codeElement>mergeStatement,  OffendingSymbol=[54,54+:.]<PeriodSeparator>
+Line 15[81,81] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {GIVING, OUTPUT} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[81,81+:.]<PeriodSeparator>
+Line 17[64,64] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {GIVING, OUTPUT} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[64,64+:.]<PeriodSeparator>
+Line 18[54,54] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting {GIVING, OUTPUT} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[54,54+:.]<PeriodSeparator>
 Line 20[82,87] <27, Error, Syntax> - Syntax error : extraneous input 'OUTPUT' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=,  OffendingSymbol=[82,87:OUTPUT]<OUTPUT>
 Line 20[99,111] <27, Error, Syntax> - Syntax error : mismatched input 'procedurename' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[99,111:procedurename]<UserDefinedWord>
 Line 21[82,87] <27, Error, Syntax> - Syntax error : extraneous input 'OUTPUT' expecting {separator, numeric literal, symbol, statement starting keyword, keyword} RuleStack=,  OffendingSymbol=[82,87:OUTPUT]<OUTPUT>
 Line 21[99,100] <27, Error, Syntax> - Syntax error : mismatched input 'IS' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[99,100:IS]<IS>
 Line 23[46,51] <27, Error, Syntax> - Syntax error : extraneous input 'OUTPUT' expecting {ASCENDING, COLLATING, DESCENDING, ON, SEQUENCE, USING} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[46,51:OUTPUT]<OUTPUT>
-Line 23[20,24] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>mergeStatement>onAscendingDescendingKey,  OffendingSymbol=[20,24:USING]<USING>
+Line 23[20,24] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {user defined word, KEY} RuleStack=codeElement>mergeStatement>onAscendingDescendingKey,  OffendingSymbol=[20,24:USING]<USING>
 Line 23[63,76] <27, Error, Syntax> - Syntax error : mismatched input 'procedurename1' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[63,76:procedurename1]<UserDefinedWord>
 Line 24[46,51] <27, Error, Syntax> - Syntax error : extraneous input 'OUTPUT' expecting {ASCENDING, COLLATING, DESCENDING, ON, SEQUENCE, USING} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[46,51:OUTPUT]<OUTPUT>
-Line 24[20,24] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>mergeStatement>onAscendingDescendingKey,  OffendingSymbol=[20,24:USING]<USING>
+Line 24[20,24] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {user defined word, KEY} RuleStack=codeElement>mergeStatement>onAscendingDescendingKey,  OffendingSymbol=[20,24:USING]<USING>
 Line 24[63,76] <27, Error, Syntax> - Syntax error : mismatched input 'procedurename1' expecting DIVISION RuleStack=codeElement>procedureDivisionHeader,  OffendingSymbol=[63,76:procedurename1]<UserDefinedWord>
 Line 26[21,24] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting {ASCENDING, COLLATING, DESCENDING, ON, SEQUENCE, USING} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[21,24:WITH]<WITH>
 Line 26[56,57] <27, Error, Syntax> - Syntax error : missing SEQUENCE at 'IS' RuleStack=codeElement>mergeStatement>collatingSequence,  OffendingSymbol=[56,57:IS]<IS>
@@ -30,7 +30,7 @@ Line 27[21,24] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expe
 Line 27[56,57] <27, Error, Syntax> - Syntax error : missing SEQUENCE at 'IS' RuleStack=codeElement>mergeStatement>collatingSequence,  OffendingSymbol=[56,57:IS]<IS>
 Line 29[86,85] <27, Error, Syntax> - Syntax error : MERGE: USING needs 2 filenames or more RuleStack=codeElement>mergeStatement>usingFilenames,  OffendingSymbol=[86,85:<missing USING>]<USING>
 Line 29[27,36] <27, Error, Syntax> - Syntax error : extraneous input 'DUPLICATES' expecting {ASCENDING, COLLATING, DESCENDING, ON, SEQUENCE, USING} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[27,36:DUPLICATES]<DUPLICATES>
-Line 29[69,73] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting user defined word RuleStack=codeElement>mergeStatement>collatingSequence>alphabetNameReference,  OffendingSymbol=[69,73:USING]<USING>
+Line 29[69,73] <27, Error, Syntax> - Syntax error : extraneous input 'USING' expecting {user defined word, IS} RuleStack=codeElement>mergeStatement>collatingSequence,  OffendingSymbol=[69,73:USING]<USING>
 Line 29[85,93] <27, Error, Syntax> - Syntax error : missing USING at 'filename2' RuleStack=codeElement>mergeStatement>usingFilenames,  OffendingSymbol=[85,93:filename2]<UserDefinedWord>
 Line 30[86,85] <27, Error, Syntax> - Syntax error : MERGE: USING needs 2 filenames or more RuleStack=codeElement>mergeStatement>usingFilenames,  OffendingSymbol=[86,85:<missing USING>]<USING>
 Line 30[22,25] <27, Error, Syntax> - Syntax error : extraneous input 'WITH' expecting {ASCENDING, COLLATING, DESCENDING, ON, SEQUENCE, USING} RuleStack=codeElement>mergeStatement,  OffendingSymbol=[22,25:WITH]<WITH>
