@@ -18,9 +18,9 @@
       *OK you can declare 2 variables with the same name
           05 MyAmbiguousCounter  pic 999 comp-5.
       *KO reference to MyAmbiguousCounter is ... Ambiguous
-Line 21[11,64] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyAmbiguousCounter 
-Symbols found: StringStatement::MyAmbiguousGroup::MyAmbiguousCounter | StringStatement::MyAmbiguousGroup::MyAmbiguousCounter
           05 MyAmbiguousTab     occurs 99 
+Line 22[46,63] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyAmbiguousCounter 
+Symbols found: StringStatement::MyAmbiguousGroup::MyAmbiguousCounter | StringStatement::MyAmbiguousGroup::MyAmbiguousCounter
                                 depending on MyAmbiguousCounter.
 
        01 MyGroup3.
@@ -48,14 +48,14 @@ Line 27[48,50] <27, Error, Syntax> - Syntax error : no viable alternative at inp
                          depending on MyCounter5 IN MySubSubGroup51.
 
       *KO
-Line 48[11,61] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyGroup5.MyCounter5 
-Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounter5 | StringStatement::MyGroup5::MySubGroup5::MyCounter5
 000000    05 MyTab5     occurs 99 
+Line 49[38,47] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyGroup5.MyCounter5 
+Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounter5 | StringStatement::MyGroup5::MySubGroup5::MyCounter5
                         depending on MyCounter5 of MyGroup5. 
       *KO
-Line 51[11,62] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyGroup5.MySubGroup5.MyCounter5 
-Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounter5 | StringStatement::MyGroup5::MySubGroup5::MyCounter5
 000000    05 MyTab5     occurs 99 depending on 
+Line 52[25,34] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol MyGroup5.MySubGroup5.MyCounter5 
+Symbols found: StringStatement::MyGroup5::MySubGroup5::MySubSubGroup51::MyCounter5 | StringStatement::MyGroup5::MySubGroup5::MyCounter5
                         MyCounter5 of MySubGroup5 of MyGroup5.
       *Ok
 000000    05 MyTab5     occurs 99 depending on 

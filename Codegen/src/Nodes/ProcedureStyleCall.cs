@@ -92,34 +92,25 @@ namespace TypeCobol.Codegen.Nodes {
                 {
                     if (this.Node.IsNotByExternalPointer || IsNotByExternalPointer)
                     {
-                        int genIndent = 0;
+                        int genIndent = 1;
+                        IsNotByExternalPointer = true;
+                        var ptrCheckGuardTextLine = new TextLineSnapshot(-1, string.Empty, null);
+                        _cache.Add(ptrCheckGuardTextLine);
+
                         IsNotByExternalPointer = true;
                         string ptrCheckGuard = string.Format("{0}IF ADDRESS OF TC-{1}-{2}-Item = NULL", new string(' ', genIndent * 4), func_lib_name, hash);
-                        var ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
-                        _cache.Add(ptrCheckGuardTextLine);
-                        genIndent += 2;
-
-                        ptrCheckGuard = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), func_lib_name);
                         ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
                         _cache.Add(ptrCheckGuardTextLine);
-                        genIndent--;
 
-                        ptrCheckGuard = string.Format("{0}ELSE", new string(' ', genIndent * 4));
+                        IsNotByExternalPointer = true;
+                        ptrCheckGuard = string.Format("{0}  OR TC-{1}-{2}-Idt not = '{3}'", new string(' ', genIndent * 4), func_lib_name, hash, hash);
                         ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
                         _cache.Add(ptrCheckGuardTextLine);
                         genIndent++;
 
-                        string guard = string.Format("{0}IF TC-{1}-{2}-Idt not = '{3}'", new string(' ', genIndent * 4), func_lib_name, hash, hash);
-                        var guardTextLine = new TextLineSnapshot(-1, guard, null);
-                        _cache.Add(guardTextLine);
-                        genIndent++;
-
-                        string loadPointer = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), func_lib_name);
-                        _cache.Add(new TextLineSnapshot(-1, loadPointer, null));
-                        genIndent--;
-
-                        string endIf = string.Format("{0}END-IF", new string(' ', genIndent * 4));
-                        _cache.Add(new TextLineSnapshot(-1, endIf, null));
+                            ptrCheckGuard = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), func_lib_name);
+                        ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
+                        _cache.Add(ptrCheckGuardTextLine);
                         genIndent--;
 
                         ptrCheckGuard = string.Format("{0}END-IF", new string(' ', genIndent * 4));

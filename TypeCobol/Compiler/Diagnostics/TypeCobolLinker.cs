@@ -99,7 +99,8 @@ namespace TypeCobol.Compiler.Diagnostics
             });
             if (type == dataEntry.ParentTypeDefinition || circularRefInsideChildren) 
             {
-                DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", 
+                    (DataDefinitionEntry) dataEntry.CodeElement, code: MessageCode.SemanticTCErrorInParser);
                 return; //Do not continue to prevent further work/crash with circular references
             }
 

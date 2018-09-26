@@ -109,7 +109,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 string message = "Illegal VALUE clause for subordinate \'" + node.Name + "\' of STRONG TYPEDEF \'" +
                                  typedef.Head + "\'";
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, codeElement, code:MessageCode.SemanticTCErrorInParser);
             }
             foreach (var sub in node.Children) CheckForValueClause(sub, typedef);
         }
@@ -134,7 +134,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (redefinedVariable == null)
             {
                 string message = "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced";
-                DiagnosticUtils.AddError(redefinesNode, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(redefinesNode, message, redefinesSymbolReference, code: MessageCode.SemanticTCErrorInParser);
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 string message = string.Format("Illegal REDEFINES: '{0}' is {1}", redefinesSymbolReference,
                     redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
-                DiagnosticUtils.AddError(redefinesNode, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(redefinesNode, message, redefinesSymbolReference, code:MessageCode.SemanticTCErrorInParser);
             }
         }
     }
@@ -168,13 +168,13 @@ namespace TypeCobol.Compiler.Diagnostics
             if (founds.Count() > 1)
             {
                 string message = "Illegal RENAMES: Ambiguous reference to symbol \'" + renames + "\'";
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, renames, code: MessageCode.SemanticTCErrorInParser);
                 return;
             }
             if (!founds.Any())
             {
                 string message = "Illegal RENAMES: Symbol \'" + renames + "\' is not referenced";
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, renames, code: MessageCode.SemanticTCErrorInParser);
                 return;
             }
 
@@ -185,13 +185,13 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 string message = string.Format("Illegal RENAMES: '{0}' is {1}", renames,
                     found.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, renames, code: MessageCode.SemanticTCErrorInParser);
             }
 
             if (foundCodeElement?.LevelNumber != null && foundCodeElement.LevelNumber.Value == 01)
             {
                 string message = string.Format("Illegal RENAMES: '{0}' is level 01", renames);
-                DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(node, message, renames, code: MessageCode.SemanticTCErrorInParser);
             }
             
         }
@@ -232,13 +232,13 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 DiagnosticUtils.AddError(node,
                     string.Format("A {0} level variable cannot be typed", data.LevelNumber.Value),
-                    MessageCode.SemanticTCErrorInParser);
+                    data, code: MessageCode.SemanticTCErrorInParser);
             }
 
             if (data.LevelNumber.Value == 77 && foundedType.Children.Count > 0)
             {
                 DiagnosticUtils.AddError(node, "A 77 level variable cannot be typed with a type containing children",
-                    MessageCode.SemanticTCErrorInParser);
+                    data, code: MessageCode.SemanticTCErrorInParser);
             }
 
             if (data.LevelNumber.Value <= 49)
@@ -251,7 +251,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         string.Format(
                             "Variable '{0}' has to be limited to level {1} because of '{2}' maximum estimated children level",
                             data.Name, data.LevelNumber.Value - (simulatedTypeLevel - 49), foundedType.Name);
-                    DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                    DiagnosticUtils.AddError(node, message, data, code: MessageCode.SemanticTCErrorInParser);
                 }
             }
 

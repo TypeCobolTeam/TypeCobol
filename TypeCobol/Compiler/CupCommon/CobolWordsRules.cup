@@ -368,10 +368,6 @@ characterValue4 ::= alphanumericOrNationalLiteralToken : v
 	{: RESULT = v; :}
 	;
 
-alphanumericValue1 ::= alphanumericLiteralToken : v
-	{: RESULT = v; :}
-	;
-
 alphanumericValue2 ::= alphanumericOrNationalLiteralToken : v
 	{: RESULT = v; :}
 	;
@@ -457,7 +453,7 @@ value2 ::= numericValue : v
 // - Commonly used symbol definition or reference syntax -
 // (not strictly necessary to describe the grammar, but useful to optimize the CodeElements builder code)
 
-symbolDefinition1 ::= alphanumericValue1 : v
+symbolDefinition1 ::= alphanumericLiteralToken : v
 	{: RESULT = v; :}
 	;
 
@@ -469,7 +465,7 @@ symbolDefinition5 ::= alphanumericValue5 : v
 	{: RESULT = v; :}
 	;
 
-symbolReference1 ::= alphanumericValue1 : v
+symbolReference1 ::= alphanumericLiteralToken : v
 	{: RESULT = v; :}
 	;
 
@@ -488,7 +484,7 @@ symbolReference12 ::= UserDefinedWord : v
 	{: RESULT = v; :}
 	;
 
-ambiguousSymbolReference1 ::= alphanumericValue1 : v
+ambiguousSymbolReference1 ::= alphanumericLiteralToken : v
 	{: RESULT = v; :}
 	;
 
@@ -496,7 +492,7 @@ ambiguousSymbolReference4 ::= UserDefinedWord : v
 	{: RESULT = v; :}
 	;
 
-symbolDefinitionOrReference1 ::= alphanumericValue1 : v
+symbolDefinitionOrReference1 ::= alphanumericLiteralToken : v
 	{: RESULT = v; :}
 	;
 

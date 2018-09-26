@@ -779,11 +779,18 @@ namespace TypeCobol.Compiler.Parser
 				conditionOperand = new ConditionOperand(
 					CreateArithmeticExpression(context.arithmeticExpression()));
 			}
-			else if (context.variableOrIndex() != null)
+			else if (context.alphanumericValue2() != null)
 			{
-				conditionOperand = new ConditionOperand(
-					CreateVariableOrIndex(context.variableOrIndex()));
-			}
+			    Variable variable = new Variable(CobolWordsBuilder.CreateAlphanumericValue(context.alphanumericValue2()));
+			    // No storage area read/writes to collect
+                conditionOperand = new ConditionOperand(variable);
+            }
+			else if (context.repeatedCharacterValue2() != null)
+			{
+			    Variable variable = new Variable(CobolWordsBuilder.CreateRepeatedCharacterValue(context.repeatedCharacterValue2()));
+			    // No storage area read/writes to collect
+                conditionOperand = new ConditionOperand(variable);
+            } 
 			else if (context.nullPointerValue() != null)
 			{
 				conditionOperand = new ConditionOperand(
@@ -1025,21 +1032,6 @@ namespace TypeCobol.Compiler.Parser
 		{
 			var variable = new NumericVariable(
 				CreateIdentifier(context.identifier()));
-
-            // Collect storage area read/writes at the code element level
-            if (variable.StorageArea != null)
-            {
-                this.storageAreaReads.Add(variable.StorageArea);
-            }
-
-            return variable;
-        }
-
-		internal NumericVariable CreateNumericVariable(CodeElementsParser.NumericVariable2Context context)
-		{
-			var variable = new NumericVariable(
-					new DataOrConditionStorageArea(
-						CobolWordsBuilder.CreateDataNameReference(context.dataNameReference())));
 
             // Collect storage area read/writes at the code element level
             if (variable.StorageArea != null)
