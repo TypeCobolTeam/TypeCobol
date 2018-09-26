@@ -15,12 +15,12 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
         /// </summary>
-        private Token LastSignificantToken { get; set; }
+        public Token LastSignificantToken { get; set; }
 
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
         /// </summary>
-        private Token BeforeLastSignificantToken { get; set; }
+        public Token BeforeLastSignificantToken { get; set; }
 
         /// <summary>
         /// True if we know from the keyword stream that we are inside a DATA DIVISION.
@@ -48,6 +48,11 @@ namespace TypeCobol.Compiler.Scanner
         /// True if we are between two formalizedComments markups
         /// </summary>
         public bool InsideFormalizedComment { get; private set; }
+
+        /// <summary>
+        /// True if we are inside the Params Field of a Formalized Comment
+        /// </summary>
+        public bool InsideParamsField { get; private set; }
 
         /// <summary>
         /// True if we are between two MultilineComments markups
@@ -107,19 +112,20 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
-            this(insideDataDivision, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+            this(insideDataDivision, false, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool insideFormalizedComment, bool insideMultilineComments, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
             InsidePseudoText = insidePseudoText;
             InsideFormalizedComment = insideFormalizedComment;
             InsideMultilineComments = insideMultilineComments;
+            InsideParamsField = insideParamsField;
             InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
@@ -131,7 +137,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, InsideFormalizedComment, InsideMultilineComments, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, InsideFormalizedComment, InsideMultilineComments, InsideParamsField, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -192,16 +198,6 @@ namespace TypeCobol.Compiler.Scanner
                         {
                             InsideProcedureDivision = false;
                         }
-                        // Register the start of DECLARE
-                        else if (LastSignificantToken.TokenType == TokenType.DECLARE)
-                        {
-                            InsideProcedureDivision = true;
-                        }
-                        // Register the end of DECLARE
-                        else if (LastSignificantToken.TokenType == TokenType.END_DECLARE)
-                        {
-                            InsideProcedureDivision = false;
-                        }
                     }
                     break;
                 case TokenType.PseudoTextDelimiter:
@@ -238,6 +234,21 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.FormalizedCommentsStop:
                     // Register the end of the formalized Comments
                     InsideFormalizedComment = false;
+                    InsideParamsField = false;
+                    break;
+                case TokenType.FormComsParameters:
+                    // Register the begin of the params field inside the formalized Comments
+                    InsideParamsField = true;
+                    return;
+                case TokenType.FormComsDescription:
+                case TokenType.FormComsDeprecated:
+                case TokenType.FormComsReplacedBy:
+                case TokenType.FormComsRestriction:
+                case TokenType.FormComsNeed:
+                case TokenType.FormComsSee:
+                case TokenType.FormComsToDo:
+                    // Register the end of the params field inside the formalized Comments
+                    InsideParamsField = false;
                     return;
                 case TokenType.MultilinesCommentsStart:
                     // Register the begin of the formalized Comments
@@ -247,10 +258,9 @@ namespace TypeCobol.Compiler.Scanner
                     // Register the end of the formalized Comments
                     InsideMultilineComments = false;
                     return;
-
             }
-
-            if (InsideFormalizedComment || InsideMultilineComments)
+            
+            if (InsideMultilineComments)
             {
                 return;
             }
@@ -451,7 +461,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool AtBeginningOfSentence
         {
-            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC ||
+            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FormalizedCommentsStop ||
                     // Special cases : compiler directives sometimes without a final PeriodSeparator
                     // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
                     //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.

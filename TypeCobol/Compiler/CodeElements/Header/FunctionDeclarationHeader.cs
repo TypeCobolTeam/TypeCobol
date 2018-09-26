@@ -5,11 +5,12 @@ namespace TypeCobol.Compiler.CodeElements {
 	using System.Collections.Generic;
 
     /// <summary>TypeCobol function declaration</summary>
-    public class FunctionDeclarationHeader: CodeElement {
+    public class FunctionDeclarationHeader: CodeElement, IFormalizedCommentable
+    {
 	    public SymbolDefinition FunctionName { get; private set; }
 	    public AccessModifier Visibility { get; private set; }
 	    public FunctionType UserDefinedType { get; private set; }
-        public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; private set; }
+        public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
         public FunctionType ActualType {
 		    get {
 			    if ( Profile.IsFunction && !Profile.IsProcedure) return FunctionType.Function;

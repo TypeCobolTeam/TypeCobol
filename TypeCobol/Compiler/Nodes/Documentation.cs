@@ -6,6 +6,9 @@ using Castle.Core.Internal;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Nodes
 {
@@ -33,6 +36,13 @@ namespace TypeCobol.Compiler.Nodes
     /// <param name="IsTypeDef">Is true if the current Node is a Type Definition</param>
     /// <param name="IsFunction">Is true if the current Node is a Functionn</param>
     /// <param name="IsProgram">Is true if the current Node is a Program</param>
+    /// <param name="Needs">Needs list coresponding to the Needs field inside the Formalized Comment</param>
+    /// <param name="ToDo">ToDo list coresponding to the ToDo field inside the Formalized Comment</param>
+    /// <param name="IsDeprecated">Is true if the Deprecated field is present, with or withour further informations</param>
+    /// <param name="Deprecated">Deprecated field value inside the Formalized Comment</param>
+    /// <param name="ReplacedBy">ReplacedBy field value inside the Formalized Comment</param>
+    /// <param name="Restriction">Restriction field value inside the Formalized Comment</param>
+    /// <param name="See">See field value inside the Formalized Comment</param>
     [Serializable]
     [XmlInclude(typeof(DocumentationForType))]
     [XmlInclude(typeof(DocumentationForFunction))]
@@ -42,8 +52,24 @@ namespace TypeCobol.Compiler.Nodes
         [XmlIgnore]
         public FormalizedCommentDocumentation FormCom { get; set; }
 
-        public string Name { get; set; }
+        // Data from Formalized comment 
+        [XmlArray("Needs")]
+        [XmlArrayItem("Need", typeof(string))]
+        public List<string> Needs { get; set; }
+
+        [XmlArray("ToDos")]
+        [XmlArrayItem("ToDo", typeof(string))]
+        public List<string> ToDo { get; set; }
+
         public string Description { get; set; }
+        public bool IsDeprecated => Deprecated != null;
+        public string Deprecated { get; set; }
+        public string ReplacedBy { get; set; }
+        public string Restriction { get; set; }
+        public string See { get; set; }
+
+        // Data from Node
+        public string Name { get; set; }
         public AccessModifier? Visibility { get; set; }
         public string Namespace { get; set; }
         public virtual bool IsTypeDef => false;
@@ -57,47 +83,22 @@ namespace TypeCobol.Compiler.Nodes
         protected Documentation(Node node)
         {
             Name = node.Name;
+            Namespace = node.Root.MainProgram.Namespace;
 
-            if (node is TypeDefinition || node is FunctionDeclaration || node is Program)
+            // Get the information of the Code Element
+            var ce = node.CodeElement as IFormalizedCommentable;
+            if (ce?.FormalizedCommentDocumentation != null)
             {
-                FormalizedCommentDocumentation doc = null;
-
-                // initialisation as TypeDefinition
-                if (node is TypeDefinition)
-                {
-                    DataTypeDescriptionEntry ce = ((TypeDefinition)node).CodeElement as DataTypeDescriptionEntry;
-                    if (ce != null)
-                    {
-                        doc = ce.FormalizedCommentDocumentation;
-                        Visibility = ce.Visibility;
-                    }
-
-                    Namespace = node.Root.MainProgram.Namespace;
-                }
-                // initialisation as Function Declaration
-                else if (node is FunctionDeclaration)
-                {
-                    FunctionDeclarationHeader
-                        ce = ((FunctionDeclaration)node).CodeElement as FunctionDeclarationHeader;
-                    if (ce != null)
-                    {
-                        doc = ce.FormalizedCommentDocumentation;
-                        Visibility = ce.Visibility;
-                    }
-
-                    Namespace = node.Root.MainProgram.Namespace;
-                }
-                // initialisation as Program Declaration
-                else
-                {
-                    ProgramIdentification ce = ((Program)node).CodeElement as ProgramIdentification;
-                    if (ce != null) doc = ce.FormalizedCommentDocumentation;
-                    Namespace = ((Program)node).Namespace;
-                }
-
-                if (doc != null && !doc.Description.IsNullOrEmpty())
-                    Description = doc.Description.Trim();
-                FormCom = doc;
+                FormCom     = ce.FormalizedCommentDocumentation;
+                // Avoid set empty string or list to have less data to transfert
+                Needs       = FormCom.Needs.IsNullOrEmpty()       ? null : FormCom.Needs;
+                ToDo        = FormCom.ToDo.IsNullOrEmpty()        ? null : FormCom.ToDo;
+                Description = FormCom.Description.IsNullOrEmpty() ? null : FormCom.Description;
+                Deprecated  = FormCom.Deprecated.IsNullOrEmpty()  ? null : FormCom.Deprecated;
+                ReplacedBy  = FormCom.ReplacedBy.IsNullOrEmpty()  ? null : FormCom.ReplacedBy;
+                Restriction = FormCom.Restriction.IsNullOrEmpty() ? null : FormCom.Restriction;
+                See         = FormCom.See.IsNullOrEmpty()         ? null : FormCom.See;
+                Deprecated = FormCom.Deprecated;
             }
         }
 
@@ -139,6 +140,7 @@ namespace TypeCobol.Compiler.Nodes
             {
                 IsBlankWheneZero = ce.IsBlankWhenZero?.Value ?? false;
                 Justified = ce.IsJustified?.Value ?? false;
+                Visibility = ce.Visibility;
             }
 
             // Build the TypeDef DataType in case of the type itself have data informations (Usage, Occurs, Value, PIC ...)
@@ -276,35 +278,15 @@ namespace TypeCobol.Compiler.Nodes
     /// <summary>
     /// DocumentationForFunction contains the documentation information relative to a Function Declaraton
     /// </summary>
-    /// <param name="Needs">Needs list coresponding to the Needs field inside the Formalized Comment</param>
-    /// <param name="ToDo">ToDo list coresponding to the ToDo field inside the Formalized Comment</param>
     /// <param name="Parameters">Parameters list coresponding to the Parameters field inside the Formalized Comment and completed with the function signature</param>
-    /// <param name="IsDeprecated">Is true if the Deprecated field is present, with or withour further informations</param>
-    /// <param name="Deprecated">Deprecated field value inside the Formalized Comment</param>
-    /// <param name="ReplacedBy">ReplacedBy field value inside the Formalized Comment</param>
-    /// <param name="Restriction">Restriction field value inside the Formalized Comment</param>
-    /// <param name="See">See field value inside the Formalized Comment</param>
     [Serializable]
     public class DocumentationForFunction : Documentation
     {
-        [XmlArray("Needs")]
-        [XmlArrayItem("Need", typeof(string))]
-        public List<string> Needs { get; set; }
-
-        [XmlArray("ToDos")]
-        [XmlArrayItem("ToDo", typeof(string))]
-        public List<string> ToDo { get; set; }
-
         [XmlArray("Parameters")]
         [XmlArrayItem("Parameter", typeof(DocumentationParameter))]
         public List<DocumentationParameter> Parameters { get; set; }
 
         public override bool IsFunction => true;
-        public bool IsDeprecated => Deprecated != null;
-        public string Deprecated { get; set; }
-        public string ReplacedBy { get; set; }
-        public string Restriction { get; set; }
-        public string See { get; set; }
 
         /// <summary>
         /// Main Constructor for DocumentationForFunction
@@ -312,50 +294,61 @@ namespace TypeCobol.Compiler.Nodes
         /// <param name="functionDeclaration">The Node to serialize</param>
         public DocumentationForFunction(FunctionDeclaration functionDeclaration) : base(functionDeclaration)
         {
+            FunctionDeclarationHeader ce = functionDeclaration.CodeElement as FunctionDeclarationHeader;
+
+            Visibility = ce?.Visibility;
+
             Parameters = new List<DocumentationParameter>();
 
-            FunctionDeclarationHeader ce = functionDeclaration.CodeElement as FunctionDeclarationHeader;
-            if (ce != null)
+            foreach (ParameterDescription param in functionDeclaration.Profile.Parameters)
             {
-                Visibility = ce.Visibility;
-                if (ce.FormalizedCommentDocumentation != null)
+                string info = null;
+                if (ce?.FormalizedCommentDocumentation?.Parameters.ContainsKey(param.Name) ?? false)
+                    info = ce.FormalizedCommentDocumentation.Parameters[param.Name];
+
+                Parameters.Add(new DocumentationParameter(param, info));
+            }
+
+            //// Set a Warning if the FormCom parameter in unknow or if the function parameter have no description
+
+            // Get the parameters inside the Formalized Comment that are not inside the function parameters
+            var formComParamOrphan = ce?.FormalizedCommentDocumentation?.Parameters.Keys.Except(
+                functionDeclaration.Profile.Parameters.Select(p => p.Name));
+
+            // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
+            foreach (var orphan in formComParamOrphan ?? Enumerable.Empty<string>())
+            {
+                var tokens = ce?.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
+                foreach (var token in tokens ?? Enumerable.Empty<Token>())
                 {
-                    // Description
-                    if (!ce.FormalizedCommentDocumentation.Description.IsNullOrEmpty())
-                        Description = ce.FormalizedCommentDocumentation.Description;
-
-                    // Deprecated
-                    Deprecated = ce.FormalizedCommentDocumentation.Deprecated;
-
-                    // ReplacedBy
-                    if (!ce.FormalizedCommentDocumentation.ReplacedBy.IsNullOrEmpty())
-                        ReplacedBy = ce.FormalizedCommentDocumentation.ReplacedBy;
-
-                    // Restriction
-                    if (!ce.FormalizedCommentDocumentation.Restriction.IsNullOrEmpty())
-                        Restriction = ce.FormalizedCommentDocumentation.Restriction;
-
-                    // See
-                    if (!ce.FormalizedCommentDocumentation.See.IsNullOrEmpty())
-                        See = ce.FormalizedCommentDocumentation.See;
-
-                    // Needs
-                    if (!ce.FormalizedCommentDocumentation.Needs.IsNullOrEmpty())
-                        Needs = ce.FormalizedCommentDocumentation.Needs;
-
-                    // ToDo
-                    if (!ce.FormalizedCommentDocumentation.ToDo.IsNullOrEmpty())
-                        ToDo = ce.FormalizedCommentDocumentation.ToDo;
+                    functionDeclaration.AddDiagnostic(new Diagnostic(
+                        MessageCode.Warning,
+                        token.StartIndex,
+                        token.StopIndex,
+                        token.Line, "Parameter name does not match to any function parameter: " + orphan));
                 }
+            }
 
-                foreach (ParameterDescription param in functionDeclaration.Profile.Parameters)
+            if (ce?.FormalizedCommentDocumentation != null)
+            {
+                // Get the parameters inside the function parameters that are not inside the Formalized Comment
+                var sameParameters = functionDeclaration.Profile.Parameters.Where(p =>
+                    ce.FormalizedCommentDocumentation.Parameters.Keys.Contains(p.Name));
+
+                var functionParamWithoutDesc = functionDeclaration.Profile.Parameters.Except(sameParameters);
+
+                // For each of them, place a warning on the parameter definition
+                foreach (var param in functionParamWithoutDesc)
                 {
-                    string info = null;
-                    if (ce.FormalizedCommentDocumentation != null &&
-                        ce.FormalizedCommentDocumentation.Parameters.ContainsKey(param.Name))
-                        info = ce.FormalizedCommentDocumentation.Parameters[param.Name];
-
-                    Parameters.Add(new DocumentationParameter(param, info));
+                    var token = param.CodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.UserDefinedWord);
+                    if (token != null)
+                    {
+                        functionDeclaration.AddDiagnostic(new Diagnostic(
+                            MessageCode.Warning,
+                            token.StartIndex,
+                            token.StopIndex,
+                            token.Line, "Parameter does not have any description inside the formalized comments: " + param.Name));
+                    }
                 }
             }
         }
@@ -371,33 +364,15 @@ namespace TypeCobol.Compiler.Nodes
     /// <summary>
     /// DocumentationForProgram contains the documentation information relative to a Program Declaraton (Source, Stacked or Nestead)
     /// </summary>
-    /// <param name="Needs">Needs list coresponding to the Needs field inside the Formalized Comment</param>
-    /// <param name="ToDo">ToDo list coresponding to the ToDo field inside the Formalized Comment</param>
     /// <param name="Parameters">Parameters list coresponding to the Parameters field inside the Formalized Comment and completed with the program signature</param>
-    /// <param name="IsDeprecated">Is true if the Deprecated field is present, with or withour further informations</param>
-    /// <param name="Deprecated">Deprecated field value inside the Formalized Comment</param>
-    /// <param name="ReplacedBy">ReplacedBy field value inside the Formalized Comment</param>
-    /// <param name="Restriction">Restriction field value inside the Formalized Comment</param>
-    /// <param name="See">See field value inside the Formalized Comment</param>
     [Serializable]
     public class DocumentationForProgram : Documentation
     {
-        [XmlArrayItem("Need", typeof(string))]
-        [XmlArray("Needs")]
-        public List<string> Needs { get; set; }
-        [XmlArrayItem("ToDo", typeof(string))]
-        [XmlArray("ToDos")]
-        public List<string> ToDo { get; set; }
         [XmlArrayItem("Parameter", typeof(DocumentationParameter))]
         [XmlArray("Parameters")]
         public List<DocumentationParameter> Parameters { get; set; }
 
         public override bool IsProgram => true;
-        public bool IsDeprecated => Deprecated != null;
-        public string Deprecated { get; set; }
-        public string ReplacedBy { get; set; }
-        public string Restriction { get; set; }
-        public string See { get; set; }
 
         /// <summary>
         /// Main Constructor for DocumentationForFunction
@@ -405,62 +380,73 @@ namespace TypeCobol.Compiler.Nodes
         /// <param name="program">The Node to serialize</param>
         public DocumentationForProgram(Program program) : base(program)
         {
-            // Formalized Comment information initialisation
             ProgramIdentification ce = program.CodeElement as ProgramIdentification;
-            if (ce != null && ce.FormalizedCommentDocumentation != null)
-            {
-                // Description
-                if (!ce.FormalizedCommentDocumentation.Description.IsNullOrEmpty())
-                    Description = ce.FormalizedCommentDocumentation.Description;
-
-                // Deprecated
-                Deprecated = ce.FormalizedCommentDocumentation.Deprecated;
-
-                // ReplacedBy
-                if (!ce.FormalizedCommentDocumentation.ReplacedBy.IsNullOrEmpty())
-                    ReplacedBy = ce.FormalizedCommentDocumentation.ReplacedBy;
-
-                // Restriction
-                if (!ce.FormalizedCommentDocumentation.Restriction.IsNullOrEmpty())
-                    Restriction = ce.FormalizedCommentDocumentation.Restriction;
-
-                // See
-                if (!ce.FormalizedCommentDocumentation.See.IsNullOrEmpty())
-                    See = ce.FormalizedCommentDocumentation.See;
-
-                // Needs
-                if (!ce.FormalizedCommentDocumentation.Needs.IsNullOrEmpty())
-                    Needs = ce.FormalizedCommentDocumentation.Needs;
-
-                // ToDo
-                if (!ce.FormalizedCommentDocumentation.ToDo.IsNullOrEmpty())
-                    ToDo = ce.FormalizedCommentDocumentation.ToDo;
-            }
-            
-            // Parameters
             ProcedureDivisionHeader procedureDivision = program.Children.FirstOrDefault(x => x is ProcedureDivision)
                 ?.CodeElement as ProcedureDivisionHeader;
+
             if (procedureDivision != null)
             {
-                // Get the using clause of the Procedure Division if any
-                var usingParams = procedureDivision.UsingParameters;
-                if (!usingParams.IsNullOrEmpty())
+                if (procedureDivision.UsingParameters != null)
                 {
                     Parameters = new List<DocumentationParameter>();
-                    foreach (var param in usingParams)
+                    foreach (CallTargetParameter param in procedureDivision.UsingParameters)
                     {
-                        // Get the DataDefinition related to each parameters
                         DataDefinition dataDef = program.SymbolTable.GetVariables(param.StorageArea.SymbolReference)
                             .FirstOrDefault();
+
                         if (dataDef != null)
                         {
                             // match the formalized comment parameter description with the right parameter
                             string info = null;
-                            if (ce != null && (ce.FormalizedCommentDocumentation != null &&
-                                               ce.FormalizedCommentDocumentation.Parameters.ContainsKey(dataDef.Name)))
+                            if (param.StorageArea.SymbolReference != null &&
+                                (ce?.FormalizedCommentDocumentation?.Parameters.ContainsKey(dataDef.Name) ?? false))
+                            {
                                 info = ce.FormalizedCommentDocumentation.Parameters[dataDef.Name];
-
+                            }
                             Parameters.Add(new DocumentationParameter(dataDef, info));
+                        }
+                    }
+
+                    //// Set a Warning if the FormCom parameter in unknow or if the program parameter have no description
+
+                    // Get the parameters inside the Formalized Comment that are not inside the program parameters
+                    var formComParamOrphan = ce?.FormalizedCommentDocumentation?.Parameters.Keys.Except(
+                        procedureDivision.UsingParameters.Select(p => p.StorageArea.SymbolReference?.Name));
+
+                    // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
+                    foreach (var orphan in formComParamOrphan ?? Enumerable.Empty<string>())
+                    {
+                        var tokens = ce?.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
+                        foreach (var token in tokens)
+                        {
+                            program.AddDiagnostic(new Diagnostic(
+                                MessageCode.Warning,
+                                token.StartIndex,
+                                token.StopIndex,
+                                token.Line, "Parameter name does not match to any program parameter: " + orphan));
+                        }
+                    }
+
+                    if (ce?.FormalizedCommentDocumentation != null)
+                    {
+                        // Get the parameters inside the program parameters that are not inside the Formalized Comment
+                        var sameParameters = procedureDivision.UsingParameters.Where(p =>
+                            ce.FormalizedCommentDocumentation.Parameters.Keys.Contains(p.StorageArea.SymbolReference?.Name));
+
+                        var programParamWithoutDesc = procedureDivision.UsingParameters.Except(sameParameters);
+
+                        // For each of them, place a warning on the parameter definition
+                        foreach (var param in programParamWithoutDesc)
+                        {
+                            var tokens = procedureDivision.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == param.StorageArea.SymbolReference?.Name);
+                            foreach (var token in tokens)
+                            {
+                                program.AddDiagnostic(new Diagnostic(
+                                    MessageCode.Warning,
+                                    token.StartIndex,
+                                    token.StopIndex,
+                                    token.Line, "Parameter does not have any description inside the formalized comments: " + param.StorageArea.SymbolReference?.Name));
+                            }
                         }
                     }
                 }

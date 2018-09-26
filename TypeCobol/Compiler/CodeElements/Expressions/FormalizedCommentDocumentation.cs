@@ -3,12 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Antlr4.Runtime;
 using Castle.Core.Internal;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements
 {
+    /// <summary>
+    /// Is implemented on CodeElements that can have a Formalized COmment
+    /// </summary>
+    public interface IFormalizedCommentable
+    {
+        FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
+    }
 
     /// <summary> 
     /// Specify the Formalized Comments content if any.
@@ -109,39 +120,28 @@ namespace TypeCobol.Compiler.CodeElements
                         // finally ad the value to the right parameter if any value is given
                         if (comLine.formalizedCommentOuterLevel().FormComsValue() != null)
                         {
-                            Add(currentParameter, comLine.formalizedCommentOuterLevel().FormComsValue().GetText());
+                            Add(currentParameter, comLine.formalizedCommentOuterLevel().FormComsValue().Symbol);
                         }
 
                     }
                     else if (comLine.formalizedCommentInnerLevel() != null)
                     { // The line is a list item or list key-value
 
-                        if (comLine.formalizedCommentInnerLevel().listItemValue != null)
+                        if (comLine.formalizedCommentInnerLevel().UserDefinedWord() != null && currentParameter == Fields.Parameters)
+                        { // this is a key-value pair (only for Params field)
+                            Add(currentParameter,
+                                comLine.formalizedCommentInnerLevel().UserDefinedWord().GetText(),
+                                comLine.formalizedCommentInnerLevel().FormComsValue().GetText());
+                        }
+                        else if (comLine.formalizedCommentInnerLevel().listItemValue != null)
                         { // this is a list item
                             Add(currentParameter,
-                                comLine.formalizedCommentInnerLevel().listItemValue.Text);
+                                comLine.formalizedCommentInnerLevel().listItemValue);
                         }
-
-                        else if (comLine.formalizedCommentInnerLevel().FormComsValue() != null && currentParameter == Fields.Parameters)
-                        { // this is a key-value pair (only for param)
-                            string key = "";
-                            if (comLine.formalizedCommentInnerLevel().formalizedCommentParam() != null)
-                            { // the key is a keyword
-                                key = comLine.formalizedCommentInnerLevel().formalizedCommentParam().GetText();
-                            }
-                            else if (comLine.formalizedCommentInnerLevel().UserDefinedWord() != null)
-                            { // the key is a UserDefinedWord
-                                key = comLine.formalizedCommentInnerLevel().UserDefinedWord().GetText();
-                            }
-
-                            // Funally add the key-value pair to the current parameter
-                            Add(currentParameter, key, comLine.formalizedCommentInnerLevel().FormComsValue().GetText());
-                        }
-                        
                     }
                     else if (comLine.FormComsValue() != null)
                     { // The line is a string continuation
-                        Add(currentParameter, comLine.FormComsValue().Symbol?.Text, true);
+                        Add(currentParameter, comLine.FormComsValue().Symbol, true);
                     }
                 }
             }
@@ -151,10 +151,12 @@ namespace TypeCobol.Compiler.CodeElements
         /// Add a value to the current parameter
         /// </summary>
         /// <param name="parameter">The current parameter that will recieve the value</param>
+        /// <param name="symbol"></param>
         /// <param name="value">The string to store</param>
         /// <param name="isContinuation">if set to true it mean that the value is juste the otherf part of the previous value and have to be concated</param>
-        public void Add(Fields parameter, string value = null, bool isContinuation = false)
+        public void Add(Fields parameter, IToken symbol = null, bool isContinuation = false)
         {
+            string value = symbol?.Text;
             value = value == null ? "" : cleanValue(value);
             if (!value.IsNullOrEmpty())
             {
@@ -162,13 +164,13 @@ namespace TypeCobol.Compiler.CodeElements
                 {
                 case Fields.Needs:
                     if (isContinuation)
-                        Needs[Needs.LastIndexOf(Needs.Last())] += " " + value;
+                        Needs[Needs.Count -1] += " " + value;
                     else
                         Needs.Add(value);
                     break;
                 case Fields.ToDo:
                     if (isContinuation)
-                        ToDo[ToDo.LastIndexOf(ToDo.Last())] += " " + value;
+                        ToDo[ToDo.Count - 1] += " " + value;
                     else
                         ToDo.Add(value);
                     break;
@@ -188,14 +190,15 @@ namespace TypeCobol.Compiler.CodeElements
                     See += value + " ";
                     break;
                 case Fields.Parameters:
-
                     if (isContinuation)
                         Parameters[_lastParameterRegistered] += (Parameters[_lastParameterRegistered].IsNullOrEmpty()? "" : " ") + value;
                     else
-                        throw new Exception("Parameters formalizedCommentDocumentation field only accepte key value pair");
+                    {
+                        Token token = symbol as Token;
+                        TokensLine tokensLine = token?.TokensLine as TokensLine;
+                        tokensLine?.AddDiagnostic(MessageCode.Warning, token, "Parameters formalizedCommentDocumentation field only accepte key value pair");
+                    }
                     break;
-                default:
-                    throw new Exception("Bad formalizedCommentDocumentation parameter given");
                 }
             }
             // For parameters that can be flag or have value
@@ -214,13 +217,10 @@ namespace TypeCobol.Compiler.CodeElements
         { 
             if (parameter == Fields.Parameters)
             {
-                if (key == null || value == null)
-                    throw new Exception("Parameters formalizedCommentDocumentation field does not accept null key or value");
-                Parameters.Add(cleanValue(key), cleanValue(value));
+                if (!key.IsNullOrEmpty() && !value.IsNullOrEmpty())
+                    Parameters.Add(cleanValue(key), cleanValue(value));
                 _lastParameterRegistered = cleanValue(key);
             }
-            else
-                throw new Exception("Only parameters formalizedCommentDocumentation field accepte key value pair");
         }
 
         /// <summary>

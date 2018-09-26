@@ -1,16 +1,17 @@
       *<< 
           Multiline Comment 1 here
-             *>>
+      *>>
        IDENTIFICATION DIVISION.
       *<< 
           Multiline Comment 2 here
-             *>>
-       PROGRAM-ID. SandBox.
-                   *<< 
+      *>>
+       PROGRAM-ID. MultilinesCommentsCodeGen.
+      *<< 
           Multiline Comment 3 here
-             *>>
+      *>>
        DATA DIVISION.
-      *<< Multiline Comment 4 here *>>
+      *<< Multiline Comment 4 here
+      *>>
        WORKING-STORAGE SECTION.
       *<< 
           Multiline Comment 5 here
@@ -74,7 +75,7 @@
       *<< 
           Multiline Comment 19 here
       *>>
-       END PROGRAM SandBox.
+       END PROGRAM MultilinesCommentsCodeGen.
       *<< 
           Multiline Comment 20 here
       *>>

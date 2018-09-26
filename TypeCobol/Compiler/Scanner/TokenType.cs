@@ -57,7 +57,7 @@ namespace TypeCobol.Compiler.Scanner
         InternalTokenGroup = 510,
         // 511 -> 522 : Formalized Comments Tokens
         FormalizedCommentsFamily = 511,
-        // 523 -> 524 : Formalized Comments Tokens
+        // 523 -> 524 : Multilines Comments Tokens
         MultilinesCommentsFamily = 523
     }
 

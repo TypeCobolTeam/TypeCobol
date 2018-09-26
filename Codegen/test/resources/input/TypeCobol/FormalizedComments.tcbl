@@ -1,5 +1,4 @@
-﻿
-      *<<< My program 
+﻿      *<<< My program 
           @ Description : description
           @deprecated:
           @    replacedBy : MyFonction2
@@ -12,17 +11,22 @@
               - implement a call counter
       *>>>
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. SandBox.
+       PROGRAM-ID. DocCodeGen.
 
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
        
       *<<< 
           @ description : inline typedef
-         *>>>
+          @ params:
+            - none: Type doesn't have any params
+          @deprec
+          @Restriction : Do not Use BOOL var 
+      *>>>
        01 myType TYPEDEF STRICT PUBLIC pic X(01).
 
-      *<<< Vect2D *>>>
+      *<<< Vect2D
+      *>>>
        01 Vect2D TYPEDEF STRICT.
          02 Coord2d.
            03 X PIC 9(4).
@@ -33,7 +37,7 @@
       *<<< MyProc info
           @ deprec : It is
        deprecated
-               -           need : long need
+               @           need : long need
           @ todo:
               - todo1
               - todo 2
@@ -41,7 +45,8 @@
           - myDate: just a date
           - bla: bla < 2
           - toto: toto 
-          -blu: will be ignored *>>>
+          -blu: will be ignored
+      *>>>
        DECLARE PROCEDURE MyProc PRIVATE
            INPUT    myDate      TYPE Date
                     bla         Pic S9(1)V9(12)
@@ -52,4 +57,4 @@
            CONTINUE.
        END-DECLARE.
 
-       END PROGRAM SandBox.
+       END PROGRAM DocCodeGen.

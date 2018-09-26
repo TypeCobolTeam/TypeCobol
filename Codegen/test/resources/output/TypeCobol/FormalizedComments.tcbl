@@ -1,5 +1,8 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
-
+﻿      * 3 errors
+      * Line 48[11,13] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
+      * Line 53[20,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+      * Line 55[20,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+      *TypeCobol_Version:TestTypeCobolVersion
       *<<< My program 
       *   @ Description : description
       *   @deprecated:
@@ -13,23 +16,33 @@
       *       - implement a call counter
       *>>>
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. SandBox.
+       PROGRAM-ID. DocCodeGen.
 
        DATA DIVISION.
        LOCAL-STORAGE SECTION.
        
       *<<<
       *   @ description : inline typedef
-      *  *>>>
+      *   @ params:
+      *     - none: Type doesn't have any params
+      *   @deprec
+      *   @Restriction : Do not Use BOOL var
+      *>>>
       *01 myType TYPEDEF STRICT PUBLIC pic X(01).
       *    
                                         
-             
+                   
+                                                
+                 
+                                             
+          
                                                  
 
-      *<<< Vect2D *>>>
+      *<<< Vect2D
+      *>>>
       *01 Vect2D TYPEDEF STRICT.
-      *               
+      *          
+          
                                 
       *  02 Coord2d.
       *    03 X PIC 9(4).
@@ -40,7 +53,7 @@
       *<<< MyProc info
       *   @ deprec : It is
       *deprecated
-      *        -           need : long need
+      *        @           need : long need
       *   @ todo:
       *       - todo1
       *       - todo 2
@@ -48,7 +61,8 @@
       *   - myDate: just a date
       *   - bla: bla < 2
       *   - toto: toto
-      *   -blu: will be ignored *>>>
+      *   -blu: will be ignored
+      *>>>
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    myDate      TYPE Date
       *             bla         Pic S9(1)V9(12)
@@ -66,7 +80,8 @@
                                
                         
                        
-                                    
+                               
+          
                                        
                                          
                                                
@@ -74,12 +89,12 @@
                                          
                                               
 
-       END PROGRAM SandBox.
+       END PROGRAM DocCodeGen.
       *
       *<<< MyProc info
       *   @ deprec : It is
       *deprecated
-      *        -           need : long need
+      *        @           need : long need
       *   @ todo:
       *       - todo1
       *       - todo 2
@@ -87,7 +102,8 @@
       *   - myDate: just a date
       *   - bla: bla < 2
       *   - toto: toto
-      *   -blu: will be ignored *>>>
+      *   -blu: will be ignored
+      *>>>
       *DECLARE PROCEDURE MyProc PRIVATE
       *    INPUT    myDate      TYPE Date
       *             bla         Pic S9(1)V9(12)
@@ -96,7 +112,7 @@
       *             bli         Pic PPP999PPP.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a726b68dMyProc.
+       PROGRAM-ID. fd48569eMyProc.
        DATA DIVISION.
        LINKAGE SECTION.
        01 myDate.
@@ -123,4 +139,4 @@
                    BY REFERENCE bli
            .
            CONTINUE.
-       END PROGRAM a726b68dMyProc.
+       END PROGRAM fd48569eMyProc.

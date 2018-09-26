@@ -10,8 +10,10 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Text;
+using String = System.String;
 
 namespace TypeCobol.Compiler.Scanner
 {
@@ -627,6 +629,11 @@ namespace TypeCobol.Compiler.Scanner
                 // if there is no Multiline Comments end marckup "*>>" then create a new Comment Token until the "*>>"
                 if (line.Length > currentIndex + 2 && line[currentIndex] == '*' && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
                 {
+                    // We are in the case of a Formalize Comment stop with the '*' on column other than 7 wich is forbidden
+                    tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
+                        startIndex,
+                        startIndex + 2);
+                    // consume the * char and the three < chars
                     currentIndex += 3;
                     return new Token(TokenType.MultilinesCommentsStop, startIndex, startIndex + 2, tokensLine);
                 }
@@ -656,14 +663,15 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         return new Token(TokenType.AtSign, startIndex, currentIndex - 1, tokensLine); 
                     case ':':
-                        // The colon char can appears inside the formalized comments as a separator between keys and value
-                        // Consume the rest of the line and create a FloatingComment token as value for the formalized comment
-                        currentIndex = lastIndex + 1;
-                        return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>>");
+                        currentIndex++;
+                        return new Token(TokenType.ColonSeparator, startIndex, currentIndex - 1, tokensLine);
                     case '*':
                         if (line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>' && line[currentIndex + 3] == '>')
                         {
-                            // We are in the case of a Formalize Comment stop with the '*' on column other than 7
+                            // We are in the case of a Formalize Comment stop with the '*' on column other than 7 wich is forbidden
+                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
+                                startIndex,
+                                startIndex + 3);
                             // consume the * char and the three < chars
                             currentIndex += 4;
                             return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 3, tokensLine);
@@ -681,32 +689,25 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         return new Token(TokenType.GreaterThanOperator, startIndex, currentIndex - 1, tokensLine);
                     default:
-                        // A word was found, it can be 
-                        // - a keyword as a key
-                        // - a UseDefineword as a key (only for Params)
-                        // - a string as a value
-                        // - a string as a list items
-                        // - a string continuation
-                        // register the keys or the description if no '-' was given
-
-                        if (tokensLine.SourceTokens.Count > 1 &&
-                            (tokensLine.SourceTokens[1].TokenType == TokenType.MinusOperator ||
-                             tokensLine.SourceTokens[1].TokenType == TokenType.AtSign))
+                        // If the previous significant Token is an At Sign then the following word have to be a field keyword
+                        // If the previous significant Token is a Minus Operator then the following have to be a key in case of Params field
+                        if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.AtSign ||
+                            (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.MinusOperator &&
+                             tokensLine.ScanState.InsideParamsField))
                         {
-                            // scan the first word
                             Token token = ScanCharacterString(startIndex);
-                            int i = token.StopIndex + 1;
-
-                            // mive the index i to the next no space charactere
-                            for (; tokensLine.Text.Length > i && tokensLine.Text[i] == ' '; i++) { }
-
-                            if ((tokensLine.Text.Length > i && tokensLine.Text[i] == ':') ||
-                                (tokensLine.SourceTokens[1].TokenType == TokenType.AtSign && tokensLine.Text.Length <= i))
-                                // if the first word is succeded by a ':' then it is a keyword or a UseDefineword as a key
-                                // or it is the end of line and it is just a keyword (only deprecated in Outer level)
-                                return token;
+                            if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.AtSign
+                                && token.TokenFamily != TokenFamily.FormalizedCommentsFamily)
+                            {
+                                tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentKeyword, token);
+                            }
+                            else if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.MinusOperator
+                                && token.TokenFamily == TokenFamily.FormalizedCommentsFamily)
+                            {
+                                token.CorrectType(TokenType.UserDefinedWord);
+                            }
+                            return token;
                         }
-                        // It's a string as a value/list items or a string continuation
                         return ScanUntilDelimiter(startIndex, TokenType.FormComsValue, "*>>>");
                 }
             }
@@ -774,6 +775,23 @@ namespace TypeCobol.Compiler.Scanner
                     //FloatingComment=5,                    
                     else if (line[currentIndex + 1] == '>')
                     {
+                        if (line.Length >= currentIndex +2 && line[currentIndex + 2] == '>')
+                        {
+                            if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '>')
+                            {
+                                // It is a Formalized Comment start that is not well positionned
+                                tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
+                                    startIndex,
+                                    startIndex + 3);
+                            }
+                            else
+                            {
+                                // It is a Multilines Comment start that is not well positionned
+                                tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
+                                    startIndex,
+                                    startIndex + 2);
+                            }
+                        }
                         return ScanFloatingComment(startIndex);
                     }
                     // ASTERISK_CBL = "*CBL"
@@ -794,18 +812,25 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex += 8;
                         return new Token(TokenType.ASTERISK_CONTROL, startIndex, startIndex + 7, tokensLine);
                     }
-                    // Multilines Comments or Formalized Comments
+                    // Multilines Comments or Formalized Comments start should begin on column 7
                     else if (line.Length > currentIndex + 2 && line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
                     {
                         if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '<')
-                        {
-                            // We are in the case of a Formalize Comment start
+                        { 
+                            // It is a Formalized Comment start that is not well positionned
+                            tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
+                                startIndex,
+                                startIndex + 3);
                             // consume the * char and the three < chars
                             currentIndex += 4;
                             return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 3, tokensLine);
                         }
                         else
                         {
+                            // It is a Multilines Comment start that is not well positionned
+                            tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
+                                startIndex,
+                                startIndex + 2);
                             // We are in the case of a Multilines Comment start
                             // consume the * char and the two < chars
                             currentIndex += 3;

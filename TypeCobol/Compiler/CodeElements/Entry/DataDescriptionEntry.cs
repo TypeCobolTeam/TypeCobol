@@ -888,7 +888,7 @@ namespace TypeCobol.Compiler.CodeElements {
     /// The TYPEDEF clause cannot be specified in the same data description entry as the following clauses: 
     /// EXTERNAL, REDEFINES.
     /// </summary>
-    public class DataTypeDescriptionEntry : DataDescriptionEntry
+    public class DataTypeDescriptionEntry : DataDescriptionEntry, IFormalizedCommentable
     {
         public DataTypeDescriptionEntry() : base() { }
 
@@ -912,7 +912,7 @@ namespace TypeCobol.Compiler.CodeElements {
             }
         }
 
-        public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; internal set; }
+        public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
         {

@@ -1,10 +1,9 @@
-﻿======================== Documentation ========================
+﻿Line 48[11,13] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
+Line 53[20,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 55[20,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+======================== Documentation ========================
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
-  <Name>DocCombined</Name>
-  <Description>My program description </Description>
-  <Visibility xsi:nil="true" />
-  <Namespace>DocCombined</Namespace>
   <Needs>
     <Need>some needs</Need>
     <Need>description</Need>
@@ -13,17 +12,23 @@
     <ToDo>Add BOOL support</ToDo>
     <ToDo>implement a call counter</ToDo>
   </ToDos>
+  <Description>My program description </Description>
   <Deprecated />
   <ReplacedBy>MyFonction2 </ReplacedBy>
   <Restriction>Do not Use BOOL var </Restriction>
   <See>Thank you for your attention </See>
+  <Name>DocCombined</Name>
+  <Visibility xsi:nil="true" />
+  <Namespace>DocCombined</Namespace>
 </Documentation>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Description>inline typedef </Description>
+  <Deprecated />
+  <Restriction>Do not Use BOOL var </Restriction>
   <Name>myType</Name>
-  <Description>inline typedef</Description>
   <Visibility>Public</Visibility>
   <Namespace>DocCombined</Namespace>
   <IsBlankWheneZero>false</IsBlankWheneZero>
@@ -38,8 +43,8 @@
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Description>Vect2D </Description>
   <Name>Vect2D</Name>
-  <Description>Vect2D</Description>
   <Visibility>Private</Visibility>
   <Namespace>DocCombined</Namespace>
   <Childrens>
@@ -92,14 +97,18 @@
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForFunction">
-  <Name>MyProc</Name>
-  <Description>MyProc info </Description>
-  <Visibility>Private</Visibility>
-  <Namespace>DocCombined</Namespace>
+  <Needs>
+    <Need>long need</Need>
+  </Needs>
   <ToDos>
     <ToDo>todo1</ToDo>
     <ToDo>todo 2</ToDo>
   </ToDos>
+  <Description>MyProc info </Description>
+  <Deprecated>It is deprecated </Deprecated>
+  <Name>MyProc</Name>
+  <Visibility>Private</Visibility>
+  <Namespace>DocCombined</Namespace>
   <Parameters>
     <Parameter>
       <Name>myDate</Name>
@@ -150,7 +159,6 @@
       </DocDataType>
     </Parameter>
   </Parameters>
-  <Deprecated>It is deprecated </Deprecated>
 </Documentation>
 ---------------------
 

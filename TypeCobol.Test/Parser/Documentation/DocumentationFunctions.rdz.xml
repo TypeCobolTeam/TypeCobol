@@ -1,4 +1,8 @@
-﻿======================== Documentation ========================
+﻿Line 12[12,13] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
+Line 14[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: IDS
+Line 28[20,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 29[20,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
+======================== Documentation ========================
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
   <Name>DocForFunctions</Name>
@@ -9,10 +13,6 @@
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForFunction">
-  <Name>MyProc1</Name>
-  <Description>MyProc1 description </Description>
-  <Visibility>Private</Visibility>
-  <Namespace>DocForFunctions</Namespace>
   <Needs>
     <Need>first need</Need>
     <Need>second need</Need>
@@ -20,6 +20,14 @@
   <ToDos>
     <ToDo>implement a call to MyProc8 in case of discount code</ToDo>
   </ToDos>
+  <Description>MyProc1 description </Description>
+  <Deprecated />
+  <ReplacedBy>ReplacedBy MyProc8 </ReplacedBy>
+  <Restriction>Do not support discount code </Restriction>
+  <See>you later </See>
+  <Name>MyProc1</Name>
+  <Visibility>Private</Visibility>
+  <Namespace>DocForFunctions</Namespace>
   <Parameters>
     <Parameter>
       <Name>myDate</Name>
@@ -70,10 +78,6 @@
       </DocDataType>
     </Parameter>
   </Parameters>
-  <Deprecated />
-  <ReplacedBy>ReplacedBy MyProc8 </ReplacedBy>
-  <Restriction>Do not support discount code </Restriction>
-  <See>you later </See>
 </Documentation>
 ---------------------
 

@@ -8,7 +8,8 @@
        01 Type10 TYPEDEF STRICT pic X(8).
 
       * Inline Typedef with good Formalized Comments
-      *<<< Description for Type11 *>>>
+      *<<< Description for Type11
+      *>>>
        01 Type11 TYPEDEF STRICT pic X(8).
 
       * Inline Typedef with too much informations inside Formalized Comments
@@ -38,7 +39,8 @@
           88 TestMember5 VALUE 1999 THRU 2050.
 
       * Group Typedef with good Formalized Comments
-      *<<< Description for Type21 *>>>
+      *<<< Description for Type21
+      *>>>
        01 Type21 TYPEDEF STRICT.
         02 Member1 Pic x(8) BLANK WHEN ZERO.
         02 Member2.

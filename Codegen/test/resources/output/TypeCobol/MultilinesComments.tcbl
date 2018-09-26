@@ -1,17 +1,18 @@
       *TypeCobol_Version:TestTypeCobolVersion
       *<< 
       *   Multiline Comment 1 here
-      *      *>>
+      *>>
        IDENTIFICATION DIVISION.
       *<< 
       *   Multiline Comment 2 here
-      *      *>>
-       PROGRAM-ID. SandBox.
-      *            *<< 
+      *>>
+       PROGRAM-ID. MultilinesCommentsCodeGen.
+      *<< 
       *   Multiline Comment 3 here
-      *      *>>
+      *>>
        DATA DIVISION.
-      *<< Multiline Comment 4 here *>>
+      *<< Multiline Comment 4 here
+      *>>
        WORKING-STORAGE SECTION.
       *<< 
       *   Multiline Comment 5 here
@@ -74,13 +75,13 @@
       *<< 
       *   Multiline Comment 19 here
       *>>
-       END PROGRAM SandBox.
+       END PROGRAM MultilinesCommentsCodeGen.
       *<< 
       *   Multiline Comment 20 here
       *>>
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f15932a6FUN.
+       PROGRAM-ID. acc4f1bfFUN.
        DATA DIVISION.
        LINKAGE SECTION.
        01 x.
@@ -106,4 +107,4 @@
       *   Multiline Comment 16 here
       *>>
              CONTINUE.
-       END PROGRAM f15932a6FUN.
+       END PROGRAM acc4f1bfFUN.

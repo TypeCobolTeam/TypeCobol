@@ -680,6 +680,19 @@ namespace TypeCobol.Test.Utils
                                                node.Documentation.IsFunction ? "Function" :
                                                node.Documentation.IsProgram ? "Program" : ""));
 
+            sb.AppendLine("IsDeprecated : " + node.Documentation.IsDeprecated);
+            sb.AppendLine("Deprecated : " + node.Documentation.Deprecated);
+            sb.AppendLine("ReplacedBy : " + node.Documentation.ReplacedBy);
+            sb.AppendLine("Restriction : " + node.Documentation.Restriction);
+            sb.AppendLine("See : " + node.Documentation.See);
+            sb.AppendLine("Needs : ");
+            foreach (var need in node.Documentation.Needs ?? Enumerable.Empty<string>())
+                sb.AppendLine("    " + need);
+            sb.AppendLine("ToDo : ");
+            foreach (var toDo in node.Documentation.ToDo ?? Enumerable.Empty<string>())
+                sb.AppendLine("    " + toDo);
+
+            // Typedefs Specific:
             DocumentationForType typeDoc = node.Documentation as DocumentationForType;
             if (typeDoc != null)
             {
@@ -696,68 +709,24 @@ namespace TypeCobol.Test.Utils
                     }
                 }
             }
-            else
+
+            // Programs and Functions Specific:
+            DocumentationForFunction funcDoc = node.Documentation as DocumentationForFunction;
+            DocumentationForProgram pgmDoc = node.Documentation as DocumentationForProgram;
+            if (funcDoc != null || pgmDoc != null)
             {
-                DocumentationForFunction funcDoc = node.Documentation as DocumentationForFunction;
-                if (funcDoc != null)
+                sb.AppendLine("Parameters : ");
+                bool isFirstParam = true;
+                foreach (var param in (funcDoc?.Parameters ?? pgmDoc?.Parameters) ?? Enumerable.Empty<DocumentationParameter>())
                 {
-                    sb.AppendLine("IsDeprecated : " + funcDoc.IsDeprecated);
-                    sb.AppendLine("Deprecated : " + funcDoc.Deprecated);
-                    sb.AppendLine("ReplacedBy : " + funcDoc.ReplacedBy);
-                    sb.AppendLine("Restriction : " + funcDoc.Restriction);
-                    sb.AppendLine("See : " + funcDoc.See);
-
-                    sb.AppendLine("Needs : ");
-                    foreach (var need in funcDoc.Needs ?? Enumerable.Empty<string>())
-                        sb.AppendLine("    " + need);
-                    sb.AppendLine("ToDo : ");
-                    foreach (var toDo in funcDoc.ToDo ?? Enumerable.Empty<string>())
-                        sb.AppendLine("    " + toDo);
-                    sb.AppendLine("Parameters : ");
-                    bool isFirstParam = true;
-                    foreach (var param in funcDoc.Parameters ?? Enumerable.Empty<DocumentationParameter>())
-                    {
-                        if (isFirstParam)
-                            isFirstParam = false;
-                        else
-                            sb.AppendLine("    --------");
-                        sb.AppendLine("    " + "Name : " + param.Name);
-                        sb.AppendLine("    " + "Info : " + param.Info);
-                        sb.AppendLine("    " + "PassingType : " + param.PassingType);
-                        WriteDocDataType(sb, param.DocDataType, 1);
-                    }
-                }
-                else
-                {
-                    DocumentationForProgram pgmDoc = node.Documentation as DocumentationForProgram;
-                    if (pgmDoc != null)
-                    {
-                        sb.AppendLine("IsDeprecated : " + pgmDoc.IsDeprecated);
-                        sb.AppendLine("Deprecated : " + pgmDoc.Deprecated);
-                        sb.AppendLine("ReplacedBy : " + pgmDoc.ReplacedBy);
-                        sb.AppendLine("Restriction : " + pgmDoc.Restriction);
-                        sb.AppendLine("See : " + pgmDoc.See);
-
-                        sb.AppendLine("Needs : ");
-                        foreach (var need in pgmDoc.Needs ?? Enumerable.Empty<string>())
-                            sb.AppendLine("    " + need);
-                        sb.AppendLine("ToDo : ");
-                        foreach (var toDo in pgmDoc.ToDo ?? Enumerable.Empty<string>())
-                            sb.AppendLine("    " + toDo);
-                        sb.AppendLine("Parameters : ");
-                        bool isFirstParam = true;
-                        foreach (var param in pgmDoc.Parameters ?? Enumerable.Empty<DocumentationParameter>())
-                        {
-                            if (isFirstParam)
-                                isFirstParam = false;
-                            else
-                                sb.AppendLine("    --------");
-                            sb.AppendLine("    " + "Name : " + param.Name);
-                            sb.AppendLine("    " + "Info : " + param.Info);
-                            sb.AppendLine("    " + "PassingType : " + param.PassingType);
-                            WriteDocDataType(sb, param.DocDataType, 1);
-                        }
-                    }
+                    if (isFirstParam)
+                        isFirstParam = false;
+                    else
+                        sb.AppendLine("    --------");
+                    sb.AppendLine("    " + "Name : " + param.Name);
+                    sb.AppendLine("    " + "Info : " + param.Info);
+                    sb.AppendLine("    " + "PassingType : " + param.PassingType);
+                    WriteDocDataType(sb, param.DocDataType, 1);
                 }
             }
         }

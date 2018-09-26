@@ -15,7 +15,7 @@
        PROCEDURE DIVISION.
        GOBACK.
 
-         *<<<
+      *<<<
             Nested Program
             @ params : 
               - param1:
@@ -28,7 +28,7 @@
               - param3: inout - this is an inout param
             @ need: This is my only need
             @ todo : slap car roof
-         *>>>
+      *>>>
          IDENTIFICATION DIVISION.
            PROGRAM-ID. NestedPgm IS COMMON.
            DATA DIVISION.

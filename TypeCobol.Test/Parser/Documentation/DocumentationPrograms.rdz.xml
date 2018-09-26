@@ -1,31 +1,34 @@
-﻿======================== Documentation ========================
+﻿Line 44[35,40] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param4
+Line 63[33,38] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param1
+Line 64[33,38] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param3
+======================== Documentation ========================
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
-  <Name>DocForPrograms</Name>
-  <Description>Main Program </Description>
-  <Visibility xsi:nil="true" />
-  <Namespace>DocForPrograms</Namespace>
   <Needs>
     <Need>This is my first need This is also my first need</Need>
     <Need>This is my second need</Need>
   </Needs>
+  <Description>Main Program </Description>
   <Restriction>restriction value </Restriction>
   <See>Thank you for your attention </See>
+  <Name>DocForPrograms</Name>
+  <Visibility xsi:nil="true" />
+  <Namespace>DocForPrograms</Namespace>
 </Documentation>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
-  <Name>NestedPgm</Name>
-  <Description>Nested Program </Description>
-  <Visibility xsi:nil="true" />
-  <Namespace>NestedPgm</Namespace>
   <Needs>
     <Need>This is my only need</Need>
   </Needs>
   <ToDos>
     <ToDo>slap car roof</ToDo>
   </ToDos>
+  <Description>Nested Program </Description>
+  <Name>NestedPgm</Name>
+  <Visibility xsi:nil="true" />
+  <Namespace>DocForPrograms</Namespace>
   <Parameters>
     <Parameter>
       <Name>param1</Name>
@@ -71,10 +74,10 @@
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
-  <Name>StackedPgm</Name>
   <Description>Stacked Program </Description>
+  <Name>StackedPgm</Name>
   <Visibility xsi:nil="true" />
-  <Namespace>StackedPgm</Namespace>
+  <Namespace>DocForPrograms</Namespace>
   <Parameters>
     <Parameter>
       <Name>param1</Name>

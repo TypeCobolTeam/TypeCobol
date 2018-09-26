@@ -24,8 +24,8 @@
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Description>Description for Type11 </Description>
   <Name>Type11</Name>
-  <Description>Description for Type11</Description>
   <Visibility>Private</Visibility>
   <Namespace>DocForTypeDefs</Namespace>
   <IsBlankWheneZero>false</IsBlankWheneZero>
@@ -40,8 +40,10 @@
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Description>Description for Type12 </Description>
+  <Deprecated />
+  <ReplacedBy>Type42 </ReplacedBy>
   <Name>Type12</Name>
-  <Description>Description for Type12</Description>
   <Visibility>Private</Visibility>
   <Namespace>DocForTypeDefs</Namespace>
   <IsBlankWheneZero>false</IsBlankWheneZero>
@@ -190,8 +192,8 @@
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Description>Description for Type21 </Description>
   <Name>Type21</Name>
-  <Description>Description for Type21</Description>
   <Visibility>Private</Visibility>
   <Namespace>DocForTypeDefs</Namespace>
   <Childrens>
@@ -325,8 +327,12 @@
 
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+  <Needs>
+    <Need>see here what is needed</Need>
+  </Needs>
+  <Description>Description for Type22 </Description>
+  <Deprecated />
   <Name>Type22</Name>
-  <Description>Description for Type22</Description>
   <Visibility>Private</Visibility>
   <Namespace>DocForTypeDefs</Namespace>
   <Childrens>

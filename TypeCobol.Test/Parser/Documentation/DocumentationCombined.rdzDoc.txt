@@ -1,3 +1,6 @@
+Line 48[11,13] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
+Line 53[20,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 55[20,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
 ======================== Nodes properties ========================
 Name : DocCombined
 Description : My program description 
@@ -20,10 +23,17 @@ Parameters :
 ---------------------
 
 Name : myType
-Description : inline typedef
+Description : inline typedef 
 Visibility : Public
 Namespace : DocCombined
 NodeType : TypeDef
+IsDeprecated : True
+Deprecated : 
+ReplacedBy : 
+Restriction : Do not Use BOOL var 
+See : 
+Needs : 
+ToDo : 
 IsBlankWheneZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
@@ -37,10 +47,17 @@ DataType :
 ---------------------
 
 Name : Vect2D
-Description : Vect2D
+Description : Vect2D 
 Visibility : Private
 Namespace : DocCombined
 NodeType : TypeDef
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
 IsBlankWheneZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
@@ -106,6 +123,7 @@ ReplacedBy :
 Restriction : 
 See : 
 Needs : 
+    long need
 ToDo : 
     todo1
     todo 2
@@ -181,13 +199,14 @@ Parameters :
 
 == myType ==
 Description : inline typedef 
-Deprecated : 
+Deprecated : *is present*
 ReplacedBy : 
-Restriction : 
+Restriction : Do not Use BOOL var 
 See : 
 Needs : 
 ToDo : 
 Parameters : 
+    none : Type doesn't have any params
 
 ---------------------
 
@@ -210,6 +229,7 @@ ReplacedBy :
 Restriction : 
 See : 
 Needs : 
+    long need
 ToDo : 
     todo1
     todo 2
