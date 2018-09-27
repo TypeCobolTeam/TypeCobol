@@ -377,7 +377,9 @@ namespace TUVienna.CS_CUP
 					try 
 					{
                         input_redirected=true;
-						System.Console.SetIn(new StreamReader(argv[i]));
+					    lexer.MainFile = lexer.CurrentFile = argv[i];
+
+                        System.Console.SetIn(new StreamReader(argv[i]));
 					} 
 					catch 
 					{

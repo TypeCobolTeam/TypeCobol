@@ -22,7 +22,7 @@
                            X'00' thru 'S'
                            'U' thru X'FF'.
                                                                         000080
-000090 01  mykey  PIC X(04). COPY Codegen-SECONDCOPY SUPPRESS.          000090
+000090 01  mykey. COPY Codegen-SECONDCOPY SUPPRESS.                     000090
 002440 77 myconstant PIC X(10) value 'SHIBBOLEET'.                      002440
 000100 01  result PIC 9(32).                                            000100
 

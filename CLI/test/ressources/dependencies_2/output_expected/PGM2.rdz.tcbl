@@ -85,12 +85,10 @@
       * OK public procedures declared in "dependencies" file
       *    CALL Callee::MyPublicProcedure
       *             INPUT      somedate
+           
            IF ADDRESS OF TC-Callee-c6db8d4a-Item = NULL
+             OR TC-Callee-c6db8d4a-Idt not = 'c6db8d4a'
                PERFORM TC-LOAD-POINTERS-Callee
-           ELSE
-               IF TC-Callee-c6db8d4a-Idt not = 'c6db8d4a'
-                   PERFORM TC-LOAD-POINTERS-Callee
-               END-IF
            END-IF
            CALL TC-Callee-c6db8d4a USING
                                  somedate
@@ -99,12 +97,10 @@
 
       *    CALL Callee::MySecondPublicProcedure
       *             INPUT      vect2
+           
            IF ADDRESS OF TC-Callee-d3faf219-Item = NULL
+             OR TC-Callee-d3faf219-Idt not = 'd3faf219'
                PERFORM TC-LOAD-POINTERS-Callee
-           ELSE
-               IF TC-Callee-d3faf219-Idt not = 'd3faf219'
-                   PERFORM TC-LOAD-POINTERS-Callee
-               END-IF
            END-IF
            CALL TC-Callee-d3faf219 USING
                                  vect2
@@ -128,12 +124,10 @@
       * __________________________________________________
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call dump input mymessage
-          IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
+          
+           IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
+             OR TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
                PERFORM TC-LOAD-POINTERS-MyIntrin
-           ELSE
-               IF TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
-                   PERFORM TC-LOAD-POINTERS-MyIntrin
-               END-IF
            END-IF
            CALL TC-MyIntrin-f9abcd81 USING
                                  mymessage
@@ -142,12 +136,10 @@
       
       *procedure declared as intrinsic in MyIntrinsicFunctions
       *   call MyIntrinsicFunctions::dump input mymessage
-          IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
+          
+           IF ADDRESS OF TC-MyIntrin-f9abcd81-Item = NULL
+             OR TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
                PERFORM TC-LOAD-POINTERS-MyIntrin
-           ELSE
-               IF TC-MyIntrin-f9abcd81-Idt not = 'f9abcd81'
-                   PERFORM TC-LOAD-POINTERS-MyIntrin
-               END-IF
            END-IF
            CALL TC-MyIntrin-f9abcd81 USING
                                  mymessage
@@ -182,6 +174,8 @@
                      TC-Callee-d3faf219-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .
@@ -198,6 +192,8 @@
                      TC-MyIntrin-f9abcd81-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .

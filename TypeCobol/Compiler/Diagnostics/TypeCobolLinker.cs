@@ -28,6 +28,34 @@ namespace TypeCobol.Compiler.Diagnostics
             return base.Visit(dataEntry);
         }
 
+        public override bool Visit(Paragraph paragraph)
+        {
+            return false;
+        }
+
+        public override bool Visit(Section section)
+        {
+            return false;
+        }
+
+        public override bool Visit(EnvironmentDivision environmentDivision)
+        {
+            return false;
+        }
+
+        public override bool IsStopVisitingChildren => false;
+
+        public override bool Visit(Declaratives declaratives)
+        {
+            return false;
+        }
+
+        public override bool Visit(ProcedureDivision procedureDivision)
+        {
+            var parent = procedureDivision.Parent as Program;
+            return parent != null && base.Visit(procedureDivision);
+        }
+
         public override bool Visit(FunctionDeclaration funcDeclare)
         {
             //Get Function declaration parameters
@@ -71,7 +99,8 @@ namespace TypeCobol.Compiler.Diagnostics
             });
             if (type == dataEntry.ParentTypeDefinition || circularRefInsideChildren) 
             {
-                DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", MessageCode.SemanticTCErrorInParser);
+                DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", 
+                    (DataDefinitionEntry) dataEntry.CodeElement, code: MessageCode.SemanticTCErrorInParser);
                 return; //Do not continue to prevent further work/crash with circular references
             }
 

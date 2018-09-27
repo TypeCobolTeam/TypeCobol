@@ -89,12 +89,10 @@
            .
            PERFORM TC-INITIALIZATIONS
       *    call TCOZCHKP::StartCheckpoint input var1
+           
            IF ADDRESS OF TC-TCOZCHKP-b179d81b-Item = NULL
+             OR TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
-           ELSE
-               IF TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
-                   PERFORM TC-LOAD-POINTERS-TCOZCHKP
-               END-IF
            END-IF
            CALL TC-TCOZCHKP-b179d81b USING
                                  var1
@@ -122,6 +120,8 @@
                      TC-TCOZCHKP-b179d81b-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .

@@ -8,11 +8,11 @@
 
 -- Line 4 --
 *** DIRECTIVE INVALID SYNTAX -> READY_TRACE ([8,12:READY]<READY>[13,13+:.]<PeriodSeparator>) ***
-Line 4[13,13] <27, Error, Syntax> - Syntax error : missing TRACE at '.'
+Line 4[13,13] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting TRACE
 
 -- Line 5 --
 *** DIRECTIVE INVALID SYNTAX -> RESET_TRACE ([8,12:reset]<RESET>[13,13+:.]<PeriodSeparator>) ***
-Line 5[13,13] <27, Error, Syntax> - Syntax error : missing TRACE at '.'
+Line 5[13,13] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting TRACE
 
 -- Line 6 --
 *** DIRECTIVE INVALID SYNTAX -> READY_TRACE ([8,12:READY]<READY>[13,13: ]<SpaceSeparator>[14,18:trace]<TRACE>) ***

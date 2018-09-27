@@ -109,7 +109,6 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (moveCorresponding != null)
             {
-                Tuple<string, DataDefinition> searchedDataDefintion = null;
                 DataDefinition fromVariable = null;
                 DataDefinition toVariable = null;
                 //For MoveCorrespondingStatement check children compatibility
@@ -122,7 +121,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     return
                         true; //Do not continue, the variables hasn't been found. An error will be raised later by CheckVariable()
                 }
-
                 var fromVariableChildren = fromVariable.Children.Where(c => c?.Name != null);
                 var toVariableChildren = toVariable.Children.Where(c => c?.Name != null);
 
@@ -136,8 +134,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     var retrievedChildrenTo =
                         toVariableChildren.Where(c => c.Name.ToLowerInvariant() == matchingChildName);
 
-                    if ((retrievedChildrenFrom != null && retrievedChildrenFrom.Count() != 1) ||
-                        (retrievedChildrenTo != null && retrievedChildrenTo.Count() != 1))
+                    if (retrievedChildrenFrom.Count() != 1 || retrievedChildrenTo.Count() != 1)
                         DiagnosticUtils.AddError(move,
                             string.Format("Multiple symbol \"{0}\" detected in MOVE CORR", matchingChildName));
 
@@ -159,21 +156,39 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
             }
-            else if (moveSimple != null)
+            else
             {
-                if (moveSimple.StorageAreaWrites != null)
+                if (moveSimple?.StorageAreaWrites == null)
                 {
-                    for (int i = 0; i < moveSimple.StorageAreaWrites.Count; i++)
-                    {
-                        var receiver = moveSimple.StorageAreaWrites[i].StorageArea;
-                        if (receiver is FunctionCallResult)
-                            DiagnosticUtils.AddError(moveSimple, "MOVE: illegal <function call> after TO");
-                    }
+                    return true;
+                }
+                foreach (var area in moveSimple.StorageAreaWrites)
+                {
+                    var receiver = area.StorageArea;
+                    if (receiver is FunctionCallResult)
+                        DiagnosticUtils.AddError(moveSimple, "MOVE: illegal <function call> after TO");
                 }
             }
 
 
+            return true;
+        }
 
+        public override bool Visit(Evaluate evaluate)
+        {
+            if(evaluate.GetChildren<WhenOther>().Count == 0)
+                DiagnosticUtils.AddError(evaluate.CodeElement,
+                    "\"when other\" is missing", MessageCode.Warning);
+            return true; 
+        }
+
+        public override bool Visit(If ifNode)
+        {
+            if(ifNode?.Children != null && !(ifNode.Children.Last() is End))
+            {
+                DiagnosticUtils.AddError(ifNode.CodeElement,
+                    "\"end-if\" is missing", MessageCode.Warning);
+            }
             return true;
         }
 
@@ -194,30 +209,97 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(DataDefinition dataDefinition)
         {
-            if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines)
+            CommonDataDescriptionAndDataRedefines commonDataDataDefinitionCodeElement =
+                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
+            if (commonDataDataDefinitionCodeElement!=null)
             {
                 CheckPicture(dataDefinition);
             }
 
-            //Check if DataDefinition is level 88 and declared under BOOL variable
-            if (!(dataDefinition.CodeElement is DataDefinitionEntry)) return true;
 
-            var levelNumber = ((DataDefinitionEntry) dataDefinition.CodeElement).LevelNumber;
-            var dataDefinitionParent = (dataDefinition.Parent as DataDefinition);
-            if (levelNumber != null && dataDefinitionParent != null &&
-                dataDefinitionParent.DataType == DataType.Boolean && levelNumber.Value == 88)
+            DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement as DataDefinitionEntry;
+            
+            if (dataDefinitionEntry == null) return true;
+
+            var levelNumber = dataDefinitionEntry.LevelNumber;
+            if (levelNumber != null)
             {
-                DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                    "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
+                var dataDefinitionParent = (dataDefinition.Parent as DataDefinition);
+                var levelNumberValue = levelNumber.Value;
+                if (dataDefinitionParent != null)
+                {
+                    //Check if DataDefinition is level 88 and declared under a Type BOOL variable
+                    if (dataDefinitionParent.DataType == DataType.Boolean && levelNumberValue == 88)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
+                    }
+                }
+                else
+                {
+                    //Parent is not a DataDefinition so it's a top level data definition under a section (eg working-storage)
+                    //These top level DataDefinition can only be level 01 or 77
+                    if (!(levelNumberValue == 01 || levelNumberValue == 77))
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77", dataDefinitionEntry);
+                    }
+                }
+
+                //Level 88 and 66 cannot have Children.
+                if ((levelNumberValue == 88 || levelNumberValue == 66))
+                {
+                    if (dataDefinition.ChildrenCount != 0)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.", dataDefinitionEntry);
+                    }
+
+                    if (dataDefinition.Usage != null)
+                    {
+                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                            "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.", dataDefinitionEntry);
+                    }
+                }
             }
-            if (levelNumber != null && !(levelNumber.Value == 01 || levelNumber.Value == 77) &&
-                dataDefinitionParent == null)
+
+
+            if (HasChildrenThatDeclareData(dataDefinition))
             {
-                DiagnosticUtils.AddError(dataDefinition.CodeElement,
-                    "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77");
+                if (dataDefinition.Picture != null)
+                {
+                    DiagnosticUtils.AddError(dataDefinition,
+                        "Group item " + dataDefinition.Name + " cannot have a \"PICTURE\"", dataDefinitionEntry);
+                }
+
+                if (commonDataDataDefinitionCodeElement?.UserDefinedDataType != null)
+                {
+                    DiagnosticUtils.AddError(dataDefinition,
+                        "Group item  " + dataDefinition.Name + " cannot have a \"TYPE\"", dataDefinitionEntry);
+                }
+
+                if (commonDataDataDefinitionCodeElement?.IsBlankWhenZero?.Value == true)
+                {
+                    DiagnosticUtils.AddError(dataDefinition,
+                        "Group itm " + dataDefinition.Name + " cannot have \"Blank when zero\" clause", dataDefinitionEntry);
+                }
+
+                return true;
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Test if the received DataDefinition has other children than DataConditionEntry or DataRenamesEntry
+        /// </summary>
+        /// <param name="dataDefinition">Item to check</param>
+        /// <returns>True if there are only DataConditionEntry or DataRenamesEntry childrens</returns>
+        private static bool HasChildrenThatDeclareData(DataDefinition dataDefinition)
+        {
+            return dataDefinition.Children.Any(elem=>elem.CodeElement != null && 
+                                                     elem.CodeElement.Type != CodeElementType.DataConditionEntry && 
+                                                     elem.CodeElement.Type != CodeElementType.DataRenamesEntry);
         }
 
         public override bool Visit(IndexDefinition indexDefinition)
@@ -261,7 +343,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     catch (Exception)
                     {
                         var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(node, m);
+                        DiagnosticUtils.AddError(node, m, codeElement);
                     }
                 }
             }
@@ -294,7 +376,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (!found.Any())
                 if (node.SymbolTable.GetFunction(area).Count < 1)
-                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced");
+                    DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference);
             if (found.Count() > 1)
             {
                 bool isFirst = true;
@@ -308,7 +390,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     errorMessage += (isFirst ? "" : " | ") + symbol.Key.Replace(".", "::");
                     isFirst = false;
                 }
-                DiagnosticUtils.AddError(node, errorMessage);
+                DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference);
             }
 
             if (found.Count() == 1)
@@ -354,12 +436,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (index.Name.Length > 22) //If index name is used with qualification and exceed 22 characters
                         DiagnosticUtils.AddError(index.Parent,
-                            "Index name '" + index.Name + "' is over 22 characters.");
+                            "Index name '" + index.Name + "' is over 22 characters.", area.SymbolReference);
                     if (
                             index.Parent.CodeElement.IsInsideCopy())
                         //If index comes from a copy, do not support qualification
                         DiagnosticUtils.AddError(node,
-                            "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol");
+                            "Index '" + index.Name + "' inside a COPY cannot be use with qualified symbol", area.SymbolReference);
                 }
 
                 if (area.SymbolReference.IsQualifiedReference || index.IsPartOfATypeDef)
@@ -396,7 +478,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                     if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
                         DiagnosticUtils.AddError(node,
-                            "Index can not be use with OF or IN qualifiers " + area);
+                            "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
                 }
                 else if (dataDefinition.DataType == DataType.Boolean && dataDefinition.CodeElement is DataDefinitionEntry &&
                          ((DataDefinitionEntry) dataDefinition?.CodeElement)?.LevelNumber?.Value != 88)
@@ -420,7 +502,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (!variabletoCheck.IsFlagSet(Node.Flag.LinkageSectionNode))
                     DiagnosticUtils.AddError(node,
                         "Cannot write into " + storageArea + ", " + variabletoCheck +
-                        " is declared out of LINKAGE SECTION.");
+                        " is declared out of LINKAGE SECTION.", area.SymbolReference);
             }
 
             if (specialRegister != null
@@ -455,7 +537,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 node.QualifiedStorageAreas.Add(storageArea, completeQualifiedName);
         }
     }
-
+    
     class SectionOrParagraphUsageChecker
     {
         public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
@@ -488,12 +570,12 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 if (sname == null)
                 {
-                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced");
+                    DiagnosticUtils.AddError(node, "Symbol " + symbol.Name + " is not referenced", symbol);
                 }
                 else
                 {
                     if (sfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to section " + symbol.Name);
+                        DiagnosticUtils.AddError(node, "Ambiguous reference to section " + symbol.Name, symbol);
                     return sname;
                 }
             }
@@ -502,12 +584,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (sname == null)
                 {
                     if (pfound.Count > 1)
-                        DiagnosticUtils.AddError(node, "Ambiguous reference to paragraph " + symbol.Name);
+                        DiagnosticUtils.AddError(node, "Ambiguous reference to paragraph " + symbol.Name, symbol);
                     return pname;
                 }
                 else
                 {
-                    DiagnosticUtils.AddError(node, "Ambiguous reference to procedure " + symbol.Name);
+                    DiagnosticUtils.AddError(node, "Ambiguous reference to procedure " + symbol.Name, symbol);
                 }
             }
             return null;
@@ -614,7 +696,7 @@ namespace TypeCobol.Compiler.Diagnostics
                                 ? "strongly"
                                 : "strictly", wname, receivingName);
 
-                        DiagnosticUtils.AddError(node, message, MessageCode.SemanticTCErrorInParser);
+                        DiagnosticUtils.AddError(node, message, wname.SymbolReference, code: MessageCode.SemanticTCErrorInParser);
                     }
                 }
                 else
@@ -622,7 +704,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (isUnsafe)
                     {
                         var message = "Useless UNSAFE with non strongly typed receiver.";
-                        DiagnosticUtils.AddError(node, message, MessageCode.SyntaxWarningInParser);
+                        DiagnosticUtils.AddError(node, message, code: MessageCode.SyntaxWarningInParser);
                     }
                 }
             }

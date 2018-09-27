@@ -47,6 +47,11 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
+        /// Children count.
+        /// </summary>
+        public int ChildrenCount => children?.Count ?? 0;
+
+        /// <summary>
         /// Get the Index position of the given child.
         /// </summary>
         /// <param name="child">The child to get the index position</param>
@@ -397,8 +402,7 @@ namespace TypeCobol.Compiler.Nodes {
             if(_Diagnostics == null)
                 _Diagnostics = new List<Diagnostic>();
 
-            if (!_Diagnostics.Contains(diagnostic)) //Check if diagnostic already exists (See Equals override in Diagnostic class)
-                _Diagnostics.Add(diagnostic);
+            _Diagnostics.Add(diagnostic);
         }
 
         /// <summary>

@@ -137,12 +137,10 @@
            .
            PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input param1
+           
            IF ADDRESS OF TC-PGM1-f1c0385c-Item = NULL
+             OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
-           ELSE
-               IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
-                   PERFORM TC-LOAD-POINTERS-PGM1
-               END-IF
            END-IF
            CALL TC-PGM1-f1c0385c USING
                                  param1
@@ -170,6 +168,8 @@
                      TC-PGM1-f1c0385c-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .
@@ -207,13 +207,10 @@
            .
            PERFORM TC-INITIALIZATIONS
       *                        call PGM1::StartCheckpoint input param1
-                               IF ADDRESS OF TC-PGM1-f1c0385c-Item = NUL
-      -    L                                                                             
+                               
+           IF ADDRESS OF TC-PGM1-f1c0385c-Item = NULL
+             OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
-           ELSE
-               IF TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
-                   PERFORM TC-LOAD-POINTERS-PGM1
-               END-IF
            END-IF
            CALL TC-PGM1-f1c0385c USING
                                  param1
@@ -241,6 +238,8 @@
                      TC-PGM1-f1c0385c-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .

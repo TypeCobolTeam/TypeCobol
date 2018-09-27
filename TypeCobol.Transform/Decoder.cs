@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TypeCobol.Transform
 {
@@ -16,10 +17,21 @@ namespace TypeCobol.Transform
         const string Part2MagicLine = "000000*£TC-PART2££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
         const string Part3MagicLine = "000000*£TC-PART3££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
         const string Part4MagicLine = "000000*£TC-PART4££££££££££££££££££££££££££££££££££££££££££££££££££££££££";
+
+        const string FuzzyPart1MagicLineRexExp = "......\\*(.)TC\\-PART1(.)PART2\\-([0-9]+)(.)PART3\\-([0-9]+)(.)PART4\\-([0-9]+)(.................).*";
+        const string FuzzyPart2MagicLineRexExp = "......\\*(.)TC-PART2(........................................................).*";
+        const string FuzzyPart3MagicLineRexExp = "......\\*(.)TC-PART3(........................................................).*";
+        const string FuzzyPart4MagicLineRexExp = "......\\*(.)TC-PART4(........................................................).*";
+
+        static System.Text.RegularExpressions.Regex _fuzzyPart1RegExpMatcher;
+        static System.Text.RegularExpressions.Regex _fuzzyPart2RegExpMatcher;
+        static System.Text.RegularExpressions.Regex _fuzzyPart3RegExpMatcher;
+        static System.Text.RegularExpressions.Regex _fuzzyPart4RegExpMatcher;
+
         static readonly String CompilerOptionsRegExp = "(.......)?([Cc][Oo][Nn][Tt][Rr][Oo][Ll]|[Pp][Rr][Oo][Cc][Ee][Ss][Ss]|[Cc][Bb][Ll]) +";
-        static System.Text.RegularExpressions.Regex CompilerOptionsRegExpMatcher;
+        static System.Text.RegularExpressions.Regex _compilerOptionsRegExpMatcher;
         static readonly String TypeCobolVersionRegExp = "......\\*TypeCobol_Version\\:[Vv]?[0-9]+\\.[0-9]+(\\.[0-9]+)?.*";
-        static System.Text.RegularExpressions.Regex TypeCobolVersionRegExpMatcher;
+        static System.Text.RegularExpressions.Regex _typeCobolVersionRegExpMatcher;
         const int LineLength = 66;
         const int CommentPos = 6;
 
@@ -30,9 +42,9 @@ namespace TypeCobol.Transform
         /// <returns>True if yes, false otherwise</returns>
         public static bool MaybeOption(string line)
         {
-            if (CompilerOptionsRegExpMatcher == null)
-                CompilerOptionsRegExpMatcher = new System.Text.RegularExpressions.Regex(CompilerOptionsRegExp);
-            return CompilerOptionsRegExpMatcher.IsMatch(line);
+            if (_compilerOptionsRegExpMatcher == null)
+                _compilerOptionsRegExpMatcher = new System.Text.RegularExpressions.Regex(CompilerOptionsRegExp);
+            return _compilerOptionsRegExpMatcher.IsMatch(line);
         }
 
         /// <summary>
@@ -42,9 +54,9 @@ namespace TypeCobol.Transform
         /// <returns></returns>
         public static bool MaybeTypeCobolVersion(string line)
         {
-            if (TypeCobolVersionRegExpMatcher == null)
-                TypeCobolVersionRegExpMatcher = new System.Text.RegularExpressions.Regex(TypeCobolVersionRegExp);
-            return TypeCobolVersionRegExpMatcher.IsMatch(line);
+            if (_typeCobolVersionRegExpMatcher == null)
+                _typeCobolVersionRegExpMatcher = new System.Text.RegularExpressions.Regex(TypeCobolVersionRegExp);
+            return _typeCobolVersionRegExpMatcher.IsMatch(line);
         }
 
         /// <summary>
@@ -177,13 +189,145 @@ namespace TypeCobol.Transform
         }
 
 
+
+        /// <summary>
+        /// Check that all fuzzy chars of PART1 are equals
+        /// </summary>
+        /// <param name="fuzzyChar1"></param>
+        /// <param name="fuzzyChar2"></param>
+        /// <param name="fuzzyChar4"></param>
+        /// <param name="fuzzyChar6"></param>
+        /// <param name="fuzzyChars8"></param>
+        /// <returns>true if all fuzzy chars are equals, false otherwise.</returns>
+        private static bool CheckFuzzyCharsPart1(string fuzzyChar1, string fuzzyChar2, string fuzzyChar4, string fuzzyChar6, string fuzzyChars8)
+        {
+            if (fuzzyChar1[0] != fuzzyChar2[0] || fuzzyChar1[0] != fuzzyChar4[0] || fuzzyChar2[0] != fuzzyChar4[0])
+            {
+                return false;
+            }
+            char fc = fuzzyChar1[0];
+            foreach (char c in fuzzyChars8)
+            {
+                if (fc != c)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Check Fuzzy characters of PART 2, 3 and 4
+        /// </summary>
+        /// <param name="fuzzyChar1"></param>
+        /// <param name="fuzzyChars2"></param>
+        /// <returns>true if all fuzzy chars are equals, false otherwise.</returns>
+        private static bool CheckFuzzyCharsPart234(string fuzzyChar1, string fuzzyChars2)
+        {
+            char fc = fuzzyChar1[0];
+            foreach (char c in fuzzyChars2)
+            {
+                if (fc != c)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Cheks if the given line corresponds to a PART1 descriptor line
+        /// </summary>
+        /// <param name="line">The line to check</param>
+        /// <returns>true if yes, false otherwise</returns>
+        public static bool IsPart1Descriptor(String line)
+        {
+            if (_fuzzyPart1RegExpMatcher == null)
+                _fuzzyPart1RegExpMatcher = new System.Text.RegularExpressions.Regex(FuzzyPart1MagicLineRexExp);
+            Match match = _fuzzyPart1RegExpMatcher.Match(line);
+            if (match.Success)
+            {
+                string fuzzyChar1 = match.Groups[1].Value;
+                string fuzzyChar2 = match.Groups[2].Value;
+                string sPart2Len = match.Groups[3].Value;
+                string fuzzyChar4 = match.Groups[4].Value;
+                string sPart3Len = match.Groups[5].Value;
+                string fuzzyChar6 = match.Groups[6].Value;
+                string sPart4Len = match.Groups[7].Value;
+                string fuzzyChars8 = match.Groups[8].Value;
+                // Check Fuzzy chars of Part1
+                return CheckFuzzyCharsPart1(fuzzyChar1, fuzzyChar2, fuzzyChar4, fuzzyChar6, fuzzyChars8);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check if the given line is the PART2 descriptor line
+        /// </summary>
+        /// <param name="line">Le line to be checked</param>
+        /// <returns>true if yes, false otherwise</returns>
+        public static bool IsPart2Descriptor(String line)
+        {
+            if (_fuzzyPart2RegExpMatcher == null)
+                _fuzzyPart2RegExpMatcher = new System.Text.RegularExpressions.Regex(FuzzyPart2MagicLineRexExp);
+            Match match = _fuzzyPart2RegExpMatcher.Match(line);
+            if (match.Success)
+            {
+                string fuzzyChar1 = match.Groups[1].Value;
+                string fuzzyChars2 = match.Groups[2].Value;
+                // Check Fuzzy chars of Part 2
+                return CheckFuzzyCharsPart234(fuzzyChar1, fuzzyChars2);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check if the given line is the PART3 descriptor line
+        /// </summary>
+        /// <param name="line">Le line to be checked</param>
+        /// <returns>true if yes, false otherwise</returns>
+        public static bool IsPart3Descriptor(String line)
+        {
+            if (_fuzzyPart3RegExpMatcher == null)
+                _fuzzyPart3RegExpMatcher = new System.Text.RegularExpressions.Regex(FuzzyPart3MagicLineRexExp);
+            Match match = _fuzzyPart3RegExpMatcher.Match(line);
+            if (match.Success)
+            {
+                string fuzzyChar1 = match.Groups[1].Value;
+                string fuzzyChars2 = match.Groups[2].Value;
+                // Check Fuzzy chars of Part 2
+                return CheckFuzzyCharsPart234(fuzzyChar1, fuzzyChars2);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check if the given line is the PART4 descriptor line
+        /// </summary>
+        /// <param name="line">Le line to be checked</param>
+        /// <returns>true if yes, false otherwise</returns>
+        public static bool IsPart4Descriptor(String line)
+        {
+            if (_fuzzyPart4RegExpMatcher == null)
+                _fuzzyPart4RegExpMatcher = new System.Text.RegularExpressions.Regex(FuzzyPart4MagicLineRexExp);
+            Match match = _fuzzyPart4RegExpMatcher.Match(line);
+            if (match.Success)
+            {
+                string fuzzyChar1 = match.Groups[1].Value;
+                string fuzzyChars2 = match.Groups[2].Value;
+                // Check Fuzzy chars of Part 2
+                return CheckFuzzyCharsPart234(fuzzyChar1, fuzzyChars2);
+            }
+            return false;
+        }
+
         /// <summary>
         /// he decoder method which extract the original TypeCobol source code froma mixed source code.
         /// </summary>
         /// <param name="concatenatedFilePath">The path to the concatened source file</param>
         /// <param name="typeCobolOutputFilePath">The output file which will contains the original TypeCobol source codde</param>
         /// <returns>True if the decoding is successfull, false otherwise</returns>
-	    public static int decode(string concatenatedFilePath, string typeCobolOutputFilePath)
+        public static int decode(string concatenatedFilePath, string typeCobolOutputFilePath)
         {
             Stream outputStream = File.OpenWrite(typeCobolOutputFilePath);
             var outputWriter = new StreamWriter(outputStream);
@@ -217,17 +361,17 @@ namespace TypeCobol.Transform
                     if (!isInPart3 && !isInPart4)
                         realPart3LineNumber++;
 
-                    if (line.Contains("*£TC-PART1")) //Detect first line
+                    if (IsPart1Descriptor(line)) //Detect first line
                     {
                         part3StartFromLine1 = Convert.ToInt32(line.Substring(36, 6));
                         continue; //Go on the next line
                     }
-                    else if (line.Contains("*£TC-PART3")) //Detect start of Part 3
+                    else if (IsPart3Descriptor(line)) //Detect start of Part 3
                     {
                         isInPart3 = true;
                         continue;
                     }
-                    else if (line.Contains("*£TC-PART4")) //Detect start of part 4
+                    else if (IsPart4Descriptor(line)) //Detect start of part 4
                     {
                         isInPart3 = false;
                         isInPart4 = true;

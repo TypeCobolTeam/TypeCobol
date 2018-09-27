@@ -238,7 +238,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
-        public bool IsPartOfATypeDef { get { return _ParentTypeDefinition != null; } }
+        public virtual bool IsPartOfATypeDef { get { return _ParentTypeDefinition != null; } }
     
         private TypeDefinition _ParentTypeDefinition;
         /// <summary>
@@ -371,6 +371,9 @@ namespace TypeCobol.Compiler.Nodes {
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
+
+
+        public override bool IsPartOfATypeDef => true;
 
         public override bool Equals(object obj)
         {

@@ -1,9 +1,9 @@
 ﻿--- Diagnostics ---
-Line 24[12,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol HolderNumber 
-Symbols found: VariableSeeking::Account2::HolderNumber | VariableSeeking::Account2::HolderNumber
-Line 31[12,42] <27, Error, Syntax> - Syntax error : Symbol Account1.HolderNumber is not referenced
-Line 64[8,23] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol bla 
-Symbols found: VariableSeeking::MyVar1::MySimpleType::bla | VariableSeeking::MyVar2::MySimpleType::bla | VariableSeeking::MySuperVar1::MySuperType::MySubType::bla | VariableSeeking::MySuperVar2::MySuperType::MySubType::bla
+Line 26[41,52] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol HolderNumber 
+Symbols found: VariableSeeking::Account2::HolderNumber | VariableSeeking::Account2::HolderNumber OffendingSymbol=[41,52:HolderNumber]<UserDefinedWord>
+Line 33[51,62] <27, Error, Syntax> - Syntax error : Symbol Account1.HolderNumber is not referenced OffendingSymbol=[51,62:HolderNumber]<UserDefinedWord>
+Line 64[21,23] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol bla 
+Symbols found: VariableSeeking::MyVar1::MySimpleType::bla | VariableSeeking::MyVar2::MySimpleType::bla | VariableSeeking::MySuperVar1::MySuperType::MySubType::bla | VariableSeeking::MySuperVar2::MySuperType::MySubType::bla OffendingSymbol=[21,23:bla]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: VariableSeeking common:False initial:False recursive:False

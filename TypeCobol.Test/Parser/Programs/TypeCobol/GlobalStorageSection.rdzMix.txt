@@ -4,7 +4,8 @@
        DATA DIVISION.
 
        GLOBAL-STORAGE SECTION.
-Line 7[8,41] <27, Error, Syntax> - Syntax error : The variable 'etdzefezf' can only be of level 01 or 77
+Line 7[11,19] <27, Error, Syntax> - Syntax error : The variable 'etdzefezf' can only be of level 01 or 77
+Line 7[11,19] <27, Error, Syntax> - Syntax error : The variable 'etdzefezf' with level 88 and 66 cannot be group item.
        88 etdzefezf         VALUE 'TRUE'.
 Line 8[12,19] <27, Error, Syntax> - Syntax error : Data must be declared between level 01 to 49, or equals to 66, 77, 88
        123 zefzefze         TYPE Bool.
@@ -14,11 +15,11 @@ Line 8[12,19] <27, Error, Syntax> - Syntax error : Data must be declared between
 
        01 MyGroup.
       *Global clause is not authorized inside Global Storage
-Line 15[12,54] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.
+Line 15[15,32] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.
            05 ForbiddenGlobalVar     PIC x(10) GLOBAL.
            88 zedzed                VALUE 'TEST'.
       *External clause is not authorized inside Global Storage
-Line 18[8,49] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.
+Line 18[11,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.
        01 ForbiddenExternalVar   PIC 10 EXTERNAL.
 
 
@@ -41,7 +42,7 @@ Line 18[8,49] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GL
         END-DECLARE.
 
        MOVE G-Date TO G-Date.
-Line 40[8,38] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 
+Line 40[13,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 
 Symbols found: GlobalStorageTest::DuplicatedVar | GlobalStorageTest::DuplicatedVar
        MOVE DuplicatedVar TO G-TechCtx.
 
@@ -90,7 +91,7 @@ Line 78[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
 
        PROCEDURE DIVISION.
       *G-Date is not accessible in StackedProgram
-Line 85[8,28] <27, Error, Syntax> - Syntax error : Symbol G-Date is not referenced
+Line 85[13,18] <27, Error, Syntax> - Syntax error : Symbol G-Date is not referenced
        MOVE G-Date TO MyDate.
 
        END PROGRAM StackedProg.

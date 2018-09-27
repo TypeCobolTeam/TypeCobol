@@ -1,12 +1,14 @@
 ﻿--- Diagnostics ---
-Line 12[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE1 is not referenced
-Line 13[3,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced
-Line 21[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE2 is not referenced
-Line 22[3,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced
-Line 25[3,8] <27, Error, Syntax> - Syntax error : Symbol B is not referenced
-Line 26[3,8] <27, Error, Syntax> - Syntax error : Symbol C is not referenced
-Line 39[1,15] <27, Error, Syntax> - Syntax error : Symbol VALUE3 is not referenced
-Line 40[3,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced
+Line 12[1,15] <37, Warning, General> - Warning: "when other" is missing
+Line 12[10,15] <27, Error, Syntax> - Syntax error : Symbol VALUE1 is not referenced OffendingSymbol=[10,15:VALUE1]<UserDefinedWord>
+Line 13[8,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
+Line 21[10,15] <27, Error, Syntax> - Syntax error : Symbol VALUE2 is not referenced OffendingSymbol=[10,15:VALUE2]<UserDefinedWord>
+Line 22[8,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
+Line 25[8,8] <27, Error, Syntax> - Syntax error : Symbol B is not referenced OffendingSymbol=[8,8:B]<UserDefinedWord>
+Line 26[8,8] <27, Error, Syntax> - Syntax error : Symbol C is not referenced OffendingSymbol=[8,8:C]<UserDefinedWord>
+Line 39[1,15] <37, Warning, General> - Warning: "when other" is missing
+Line 39[10,15] <27, Error, Syntax> - Syntax error : Symbol VALUE3 is not referenced OffendingSymbol=[10,15:VALUE3]<UserDefinedWord>
+Line 40[8,8] <27, Error, Syntax> - Syntax error : Symbol A is not referenced OffendingSymbol=[8,8:A]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: evaluate-semantic common:False initial:False recursive:False

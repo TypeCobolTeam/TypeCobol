@@ -132,12 +132,10 @@
            .
            PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
+           
            IF ADDRESS OF TC-PersonSe-cd991005-Item = NULL
+             OR TC-PersonSe-cd991005-Idt not = 'cd991005'
                PERFORM TC-LOAD-POINTERS-PersonSe
-           ELSE
-               IF TC-PersonSe-cd991005-Idt not = 'cd991005'
-                   PERFORM TC-LOAD-POINTERS-PersonSe
-               END-IF
            END-IF
            CALL TC-PersonSe-cd991005 USING
                                  mydate
@@ -165,6 +163,8 @@
                      TC-PersonSe-cd991005-Item
                      TO ADDRESS OF
                      TC-Library-Item(TC-Library-Idx)
+                WHEN OTHER
+                     CONTINUE
                 END-EVALUATE
             END-PERFORM
             .
