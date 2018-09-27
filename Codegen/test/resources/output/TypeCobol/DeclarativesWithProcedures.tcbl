@@ -140,6 +140,15 @@
                                        
        PROCEDURE DIVISION
            .
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display DEBUG-NAME
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
+      *DVZF0OSM.Toto  - No Params
 
       *     set Table-Tax::Tax::Idx-TaxElm to 1
             set ac7b6441Idx-TaxElm to 1
