@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. TestDefBool.
       
        ENVIRONMENT DIVISION.
@@ -170,7 +170,11 @@
        SOURCE-COMPUTER. IBM-370
                       .
        data division.
-       local-storage section.
+       LOCAL-STORAGE SECTION.
+      *TestDefBool.LoopTraceback - Params :
+      *		input(startingDsa: ? Usage: Pointer)
+      *		output(errCode: ErrorCode)
+                             
       *01 LoopControl typedef strict private.
       *  05 loop          pic S9(5) COMP-5.
       *  05 sta           type bool value true.
@@ -199,7 +203,11 @@
                              X'00' thru 'S'
                              'U' thru X'FF'.
                                       
-       linkage section.
+       LINKAGE SECTION.
+      *TestDefBool.LoopTraceback - Params :
+      *		input(startingDsa: ? Usage: Pointer)
+      *		output(errCode: ErrorCode)
+                       
             
        01 startingDsa pointer.
        01 errCode.
@@ -208,6 +216,9 @@
              USING BY REFERENCE startingDsa
                    BY REFERENCE errCode
            .
+      *TestDefBool.LoopTraceback - Params :
+      *		input(startingDsa: ? Usage: Pointer)
+      *		output(errCode: ErrorCode)
            goback
            .
        END PROGRAM ae4b6d10LoopTraceback.

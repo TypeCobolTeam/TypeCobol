@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. TCOZCHKP.
        DATA DIVISION.
                                                              
@@ -62,7 +62,9 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d58351d5testos.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *TCOZCHKP.testos  - No Params
+                               
        01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
 
        01 TC-Call          PIC X     VALUE 'T'.
@@ -72,6 +74,7 @@
                             'U' thru X'FF'.
        01 var1 pic X.
        LINKAGE SECTION.
+      *TCOZCHKP.testos  - No Params
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -87,6 +90,7 @@
           05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
+      *TCOZCHKP.testos  - No Params
            PERFORM TC-INITIALIZATIONS
       *    call TCOZCHKP::StartCheckpoint input var1
            

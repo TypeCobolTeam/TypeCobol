@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. ProcedureCall.
 
        DATA DIVISION.
@@ -215,12 +215,18 @@
        PROGRAM-ID. d03c3701GetPtrFn.
        DATA DIVISION.
        LINKAGE SECTION.
+      *ProcedureCall.GetPtrFn - Params :
+      *		input(ptrFn: ? Usage: FunctionPointer, ptrPr: ? Usage: Procedur
+      *ePointer)
        01 ptrFn function-pointer.
        01 ptrPr procedure-pointer.
        PROCEDURE DIVISION
              USING BY REFERENCE ptrFn
                    BY REFERENCE ptrPr
            .
+      *ProcedureCall.GetPtrFn - Params :
+      *		input(ptrFn: ? Usage: FunctionPointer, ptrPr: ? Usage: Procedur
+      *ePointer)
            CONTINUE.
        END PROGRAM d03c3701GetPtrFn.
       *
@@ -247,6 +253,9 @@
        PROGRAM-ID. df9b9795ValidateDateFormat.
        DATA DIVISION.
        LINKAGE SECTION.
+      *ProcedureCall.ValidateDateFormat - Params :
+      *		input(mydate: DATE, format: PIC X(08))
+      *		output(okay: BOOL, actual-format: PIC X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -264,6 +273,9 @@
                    BY REFERENCE okay-value
                    BY REFERENCE actual-format
            .
+      *ProcedureCall.ValidateDateFormat - Params :
+      *		input(mydate: DATE, format: PIC X(08))
+      *		output(okay: BOOL, actual-format: PIC X(08))
            CONTINUE.
        END PROGRAM df9b9795ValidateDateFormat.
       *
@@ -282,6 +294,11 @@
        PROGRAM-ID. e6e45a7dmyProc.
        DATA DIVISION.
        LINKAGE SECTION.
+      *ProcedureCall.myProc - Params :
+      *		input(mydate: DATE, format: PIC X(08), myDate2: DATE, arg0: ? U
+      *sage: Pointer)
+      *		in-out(myDate3: DATE, myDate4: DATE)
+      *		output(okay: BOOL, actual-format: PIC X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -316,5 +333,10 @@
                    BY REFERENCE okay-value
                    BY REFERENCE actual-format
            .
+      *ProcedureCall.myProc - Params :
+      *		input(mydate: DATE, format: PIC X(08), myDate2: DATE, arg0: ? U
+      *sage: Pointer)
+      *		in-out(myDate3: DATE, myDate4: DATE)
+      *		output(okay: BOOL, actual-format: PIC X(08))
            CONTINUE.
        END PROGRAM e6e45a7dmyProc.

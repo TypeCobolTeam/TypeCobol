@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
        DATA DIVISION .
        working-storage section.
@@ -27,7 +27,9 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ee0864c9IsDateValid.
        DATA DIVISION .
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *DVZF0OSM.IsDateValid  - No Params
+                               
       *01  Result type bool.
        01  Result-value PIC X VALUE LOW-VALUE.
            88  Result       VALUE 'T'.
@@ -37,6 +39,7 @@
                             
        PROCEDURE DIVISION
            .
+      *DVZF0OSM.IsDateValid  - No Params
       *-----------------------------------------------------------------
                SET Result  TO true
       *        SET Result  TO false

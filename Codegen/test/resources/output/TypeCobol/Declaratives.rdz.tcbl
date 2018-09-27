@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DeclarativesTest.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
@@ -71,8 +71,13 @@
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
         DATA DIVISION.
         WORKING-STORAGE SECTION.
+      *DeclarativesTest.MyProc  - No Params
+                                
         LINKAGE SECTION.
+      *DeclarativesTest.MyProc  - No Params
+                        
        PROCEDURE DIVISION
            .
+      *DeclarativesTest.MyProc  - No Params
         .
        END PROGRAM da2f236eMyProc.

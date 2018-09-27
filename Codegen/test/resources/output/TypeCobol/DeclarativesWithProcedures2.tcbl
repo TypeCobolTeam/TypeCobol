@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. TCOZFCPT.
 
@@ -42,6 +42,7 @@
        SPECIAL-NAMES.  DECIMAL-POINT IS COMMA.
        PROCEDURE DIVISION
            .
+      *TCOZFCPT.Dump  - No Params
       DDECLARATIVES.
       DDECLARATION SECTION.
       D      USE FOR DEBUGGING ON ALL PROCEDURES.
@@ -70,6 +71,7 @@
       DAFFICHAGE-PARAGRAPHE.
       D    display "in main program".
       DEND DECLARATIVES.
+      *TCOZFCPT.Dump2  - No Params
            goback
            .
        END PROGRAM e4c075b4Dump2.

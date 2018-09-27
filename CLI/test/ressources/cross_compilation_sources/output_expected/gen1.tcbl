@@ -2,7 +2,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZFSCTX.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.                                               
        PROCEDURE DIVISION.
        declare procedure  GetTechnicalContext public
            output TechCtx    type BOOL

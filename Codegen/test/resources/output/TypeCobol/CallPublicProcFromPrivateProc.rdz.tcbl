@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
 
        DATA DIVISION.
@@ -84,6 +84,8 @@
        PROGRAM-ID. cd991005GetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.GetPersonById - Params :
+      *		input(personId: DATE)
        01 personId.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -91,6 +93,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE personId
            .
+      *PGM1.GetPersonById - Params :
+      *		input(personId: DATE)
            CONTINUE.
        END PROGRAM cd991005GetPersonById.
       *
@@ -101,7 +105,10 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a0508f35check.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
+                               
        01 TC-PersonSe pic X(08) value 'PERSONSE'.
 
        01 TC-Call          PIC X     VALUE 'T'.
@@ -109,7 +116,10 @@
            88 TC-NthCall    VALUE 'F'
                             X'00' thru 'S'
                             'U' thru X'FF'.
-       linkage section.
+       LINKAGE SECTION.
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
+                       
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -130,6 +140,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
            PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
            
