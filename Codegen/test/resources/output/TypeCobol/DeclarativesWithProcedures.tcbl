@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
        ENVIRONMENT DIVISION.
@@ -85,7 +85,9 @@
                       .
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *DVZF0OSM.Titi  - No Params
+                               
        01 Table-Tax.
       *  05 Tax TYPE TaxElm
       *    OCCURS 200
@@ -97,6 +99,7 @@
                                        
        PROCEDURE DIVISION
            .
+      *DVZF0OSM.Titi  - No Params
 
       DDECLARATIVES.
       DDECLARATION SECTION.
@@ -123,7 +126,9 @@
                       .
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *DVZF0OSM.Toto  - No Params
+                               
        01 Table-Tax.
       *  05 Tax TYPE TaxElm
       *    OCCURS 200

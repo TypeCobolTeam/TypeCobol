@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OS3.
        data DIVISION.
        working-storage section.
@@ -122,7 +122,10 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d1447c56DisplayEventList.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
+                               
       *01 EventList2 type EventList.
        01 EventList2.
            02 Counter pic 9(04) comp-5.
@@ -134,6 +137,8 @@
                04 Periodicity pic 9(03).
                                     
        LINKAGE SECTION.
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
        01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
@@ -145,6 +150,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE EventList
            .
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
       *   Dans pgm Imbrique
       *    PERFORM VARYING EventList::Idx FROM 1 BY 1
       *    UNTIL EventList::Idx > EventList2::Idx
@@ -161,7 +168,10 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. c715cbccDisplayEventList.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
+                               
       *01 EventList2 type EventList.
        01 EventList2.
            02 Counter pic 9(04) comp-5.
@@ -173,6 +183,8 @@
                04 Periodicity pic 9(03).
                                     
        LINKAGE SECTION.
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
        01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
@@ -184,6 +196,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE EventList
            .
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
       *    PERFORM VARYING EventList::Idx FROM 1 BY 1
       *    UNTIL EventList::Idx > EventList2::Idx
            PERFORM VARYING bc4d8f27Idx FROM 1 BY 1
@@ -199,7 +213,10 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e427e27cDisplayEventList.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
+                               
       *01 EventList2 type EventList.
        01 EventList2.
            02 Counter pic 9(04) comp-5.
@@ -211,6 +228,8 @@
                04 Periodicity pic 9(03).
                                     
        LINKAGE SECTION.
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
        01 EventList.
            02 Counter pic 9(04) comp-5.
            02 EventArray.
@@ -222,6 +241,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE EventList
            .
+      *DVZF0OS3.DisplayEventList - Params :
+      *		input(EventList: EventList)
       * Dans Pgm superposé
       *    PERFORM VARYING EventList::Idx FROM 1 BY 1
       *    UNTIL EventList::Idx > EventList2::Idx

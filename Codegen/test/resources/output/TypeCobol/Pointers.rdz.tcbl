@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Pointers.
 
@@ -87,14 +87,21 @@
        PROGRAM-ID. e0410090PointerProcedure.
   
          data division.
-         working-storage section.
+         WORKING-STORAGE SECTION.
+      *Pointers.PointerProcedure - Params :
+      *		input(ptr: ? Usage: Pointer)
+                                 
        LINKAGE SECTION.
+      *Pointers.PointerProcedure - Params :
+      *		input(ptr: ? Usage: Pointer)
        01 ptr pointer.
        01 redefines ptr.
            02 ptrdbef1f3d pic S9(05) comp-5.
        PROCEDURE DIVISION
              USING BY REFERENCE ptr
            .
+      *Pointers.PointerProcedure - Params :
+      *		input(ptr: ? Usage: Pointer)
       *      set ptr up by 1
              ADD 1 to ptrdbef1f3d
                             

@@ -1,4 +1,6 @@
-﻿namespace TypeCobol.Codegen.Nodes {
+﻿using TypeCobol.Compiler.Nodes;
+
+namespace TypeCobol.Codegen.Nodes {
 
 	using System.Collections.Generic;
 	using TypeCobol.Compiler.CodeElements;
@@ -17,7 +19,7 @@ internal class DataDivision: Compiler.Nodes.DataDivision, Generated {
                 if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
                     _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "DATA DIVISION.", null));
-			}
+            }
 			return _cache;
 		}
 	}
@@ -29,7 +31,19 @@ internal class DataDivision: Compiler.Nodes.DataDivision, Generated {
 internal class WorkingStorageSection: Compiler.Nodes.WorkingStorageSection, Generated {
 	public WorkingStorageSection(): base(null) { }
 
-	private IList<ITextLine> _cache = null;
+	public WorkingStorageSection(FunctionDeclaration declare): base(null)
+    {
+        var signature = new List<TextLineSnapshot>();
+        signature.Add(new TextLineSnapshot(-1,
+            string.Format("*{0}.{1} {2}", declare.Root.MainProgram.Name, declare.Name,
+                declare.Profile.Parameters.Count != 0 ? "- Params :" : " - No Params"), null));
+        signature.AddRange(declare.Profile.GetSignatureForComment());
+
+        Signature = signature;
+    }
+
+    private readonly IEnumerable<TextLineSnapshot> Signature;
+    private IList<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
@@ -37,7 +51,15 @@ internal class WorkingStorageSection: Compiler.Nodes.WorkingStorageSection, Gene
                 if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
                     _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "WORKING-STORAGE SECTION.", null));
-			}
+
+			    if (Signature != null)
+			    {
+			        foreach (var signature in Signature)
+			        {
+			            _cache.Add(signature);
+			        }
+			    }
+            }
 			return _cache;
 		}
 	}
@@ -47,7 +69,19 @@ internal class WorkingStorageSection: Compiler.Nodes.WorkingStorageSection, Gene
 internal class LocalStorageSection: Compiler.Nodes.LocalStorageSection, Generated {
 	public LocalStorageSection(): base(null) { }
 
-	private IList<ITextLine> _cache = null;
+	public LocalStorageSection(FunctionDeclaration declare): base(null)
+    {
+        var signature = new List<TextLineSnapshot>();
+        signature.Add(new TextLineSnapshot(-1,
+            string.Format("*{0}.{1} {2}", declare.Root.MainProgram.Name, declare.Name,
+                declare.Profile.Parameters.Count != 0 ? "- Params :" : " - No Params"), null));
+        signature.AddRange(declare.Profile.GetSignatureForComment());
+
+        Signature = signature;
+    }
+
+    private readonly IEnumerable<TextLineSnapshot> Signature;
+    private IList<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
@@ -55,7 +89,16 @@ internal class LocalStorageSection: Compiler.Nodes.LocalStorageSection, Generate
                 if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
                     _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "LOCAL-STORAGE SECTION.", null));
-			}
+
+
+			    if (Signature != null)
+			    {
+			        foreach (var signature in Signature)
+			        {
+			            _cache.Add(signature);
+			        }
+			    }
+            }
 			return _cache;
 		}
 	}
@@ -65,6 +108,18 @@ internal class LocalStorageSection: Compiler.Nodes.LocalStorageSection, Generate
 internal class LinkageSection: Compiler.Nodes.LinkageSection, Generated {
 	public LinkageSection(): base(null) { }
 
+    public LinkageSection(FunctionDeclaration declare) : base(null)
+    {
+        var signature = new List<TextLineSnapshot>();
+        signature.Add(new TextLineSnapshot(-1,
+            string.Format("*{0}.{1} {2}", declare.Root.MainProgram.Name, declare.Name,
+                declare.Profile.Parameters.Count != 0 ? "- Params :" : " - No Params"), null));
+        signature.AddRange(declare.Profile.GetSignatureForComment());
+
+        Signature = signature;
+    }
+
+    private readonly IEnumerable<TextLineSnapshot> Signature;
 	private IList<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {
@@ -73,6 +128,15 @@ internal class LinkageSection: Compiler.Nodes.LinkageSection, Generated {
                 if (this.IsFlagSet(Flag.FactoryGeneratedNodeWithFirstNewLine))
                     _cache.Add(new TextLineSnapshot(-1, "", null));
 				_cache.Add(new TextLineSnapshot(-1, "LINKAGE SECTION.", null));
+
+			    if (Signature != null)
+			    {
+			        foreach (var signature in Signature)
+			        {
+			            _cache.Add(signature);
+			        }
+			    }
+
 			}
 			return _cache;
 		}

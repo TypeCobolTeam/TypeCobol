@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Text;
+using JetBrains.Annotations;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements {
 
@@ -112,6 +114,88 @@ namespace TypeCobol.Compiler.CodeElements {
             }
             if (parameterList.ReturningParameter != null) str.Append(" : ").Append(parameterList.ReturningParameter);
             return str.ToString();
+        }
+
+        public static IEnumerable<TextLineSnapshot> GetSignatureForComment([NotNull] this Nodes.ParametersProfileNode parameterList)
+        {
+            var signature = new List<TextLineSnapshot>();
+
+            StringBuilder str;
+            
+            if (parameterList.InputParameters.Count > 0)
+            {
+                str = new StringBuilder();
+                str.Append("*\t\tinput(");
+                foreach (var p in parameterList.InputParameters)
+                {
+                    str.Append(p.DataName.Name + ": ");
+                    if (p.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 && p.Picture != null)
+                        str.Append("PIC " + p.Picture);
+                    else
+                        str.Append(p.DataType);
+                    if (p.Usage != null)
+                        str.Append(" Usage: " + p.Usage);
+                    str.Append(", ");
+                }
+                str.Length -= 2;
+                str.Append(")");
+                signature.Add(new TextLineSnapshot(-1, str.ToString(), null));
+            }
+            if (parameterList.InoutParameters.Count > 0)
+            {
+                str = new StringBuilder();
+                str.Append("*\t\tin-out(");
+                foreach (var p in parameterList.InoutParameters)
+                {
+                    str.Append(p.DataName.Name + ": ");
+                    if (p.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 && p.Picture != null)
+                        str.Append("PIC " + p.Picture);
+                    else
+                        str.Append(p.DataType);
+                    if (p.Usage != null)
+                        str.Append(" Usage: " + p.Usage);
+                    str.Append(", ");
+                }
+                str.Length -= 2;
+                str.Append(")");
+                signature.Add(new TextLineSnapshot(-1, str.ToString(), null));
+            }
+            if (parameterList.OutputParameters.Count > 0)
+            {
+                str = new StringBuilder();
+                str.Append("*\t\toutput(");
+                foreach (var p in parameterList.OutputParameters)
+                {
+                    str.Append(p.DataName.Name + ": ");
+                    if (p.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 && p.Picture != null)
+                        str.Append("PIC " + p.Picture);
+                    else
+                        str.Append(p.DataType);
+                    if (p.Usage != null)
+                        str.Append(" Usage: " + p.Usage);
+                    str.Append(", ");
+                }
+                str.Length -= 2;
+                str.Append(")");
+                signature.Add(new TextLineSnapshot(-1, str.ToString(), null));
+            }
+            if (parameterList.ReturningParameter != null) {
+                str = new StringBuilder();
+
+                str.Append("*\t\treturns(");
+                str.Append(parameterList.ReturningParameter.DataName.Name + ": ");
+                if (parameterList.ReturningParameter.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 
+                    && parameterList.ReturningParameter.Picture != null)
+                    str.Append("PIC " + parameterList.ReturningParameter.Picture);
+                else
+                    str.Append(parameterList.ReturningParameter.DataType);
+                if (parameterList.ReturningParameter.Usage != null)
+                    str.Append(" Usage: " + parameterList.ReturningParameter.Usage);
+                str.Append(")");
+
+                signature.Add(new TextLineSnapshot(-1, str.ToString(), null));
+            }
+            return signature;
         }
     }
 

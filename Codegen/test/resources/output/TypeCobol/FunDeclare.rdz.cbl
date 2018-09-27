@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. FunDeclare.
        PROCEDURE DIVISION.
 
@@ -33,6 +33,7 @@
        PROGRAM-ID. c49a4761DoesNothing.
        PROCEDURE DIVISION
            .
+      *FunDeclare.DoesNothing  - No Params
            DISPLAY 'I DO NOTHING'
            .
        END PROGRAM c49a4761DoesNothing.
@@ -44,10 +45,14 @@
        PROGRAM-ID. e61a1c43ReturnsZero.
        DATA DIVISION.
        LINKAGE SECTION.
+      *FunDeclare.ReturnsZero  - No Params
+      *		returns(result: PIC 9(04))
        01 result PIC 9(04).
        PROCEDURE DIVISION
              USING BY REFERENCE result
            .
+      *FunDeclare.ReturnsZero  - No Params
+      *		returns(result: PIC 9(04))
            MOVE 0 TO result.
            .
        END PROGRAM e61a1c43ReturnsZero.
@@ -59,10 +64,14 @@
        PROGRAM-ID. cd51a7fdDoesNothing.
        DATA DIVISION.
        LINKAGE SECTION.
+      *FunDeclare.DoesNothing - Params :
+      *		input(x: PIC 9(04))
        01 x PIC 9(04).
        PROCEDURE DIVISION
              USING BY REFERENCE x
            .
+      *FunDeclare.DoesNothing - Params :
+      *		input(x: PIC 9(04))
            DISPLAY 'I DO NOTHING WITH ' x
            .
        END PROGRAM cd51a7fdDoesNothing.
@@ -76,12 +85,19 @@
        PROGRAM-ID. c498f2f1StrangelyReturnsItsInp.
        DATA DIVISION.
        LINKAGE SECTION.
+      *FunDeclare.StrangelyReturnsItsInput - Params :
+      *		input(x: PIC 9(04) Usage: PackedDecimal)
+      *		returns(result: PIC 9(04) Usage: Binary)
+                       
        01 x PIC 9(04) comp-3.
        01 result PIC 9(04) comp.
        PROCEDURE DIVISION
              USING BY REFERENCE x
                    BY REFERENCE result
            .
+      *FunDeclare.StrangelyReturnsItsInput - Params :
+      *		input(x: PIC 9(04) Usage: PackedDecimal)
+      *		returns(result: PIC 9(04) Usage: Binary)
            IF x = 0
              MOVE 0 TO result
            ELSE
@@ -95,15 +111,22 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e7b552c0UseACopy.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *FunDeclare.UseACopy - Params :
+      *		input(x: PIC X)
+                               
        01 yoto pic X.
        REPLACE ==:MyPrefix:== by ==MyPrefix2==.
        COPY MyDataCopy.
        LINKAGE SECTION.
+      *FunDeclare.UseACopy - Params :
+      *		input(x: PIC X)
        01 x pic X.
        PROCEDURE DIVISION
              USING BY REFERENCE x
            .
+      *FunDeclare.UseACopy - Params :
+      *		input(x: PIC X)
            display "Hello"
            COPY MyProcedureCopy.
            .

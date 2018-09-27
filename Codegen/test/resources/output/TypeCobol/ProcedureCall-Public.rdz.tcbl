@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
 
        DATA DIVISION.
@@ -396,6 +396,8 @@
        PROGRAM-ID. ca0ab46ccheck.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -403,6 +405,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
            CONTINUE.
        END PROGRAM ca0ab46ccheck.
       *
@@ -414,6 +418,8 @@
        PROGRAM-ID. d0a59141check2.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.check2 - Params :
+      *		input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -421,6 +427,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+      *PGM1.check2 - Params :
+      *		input(mydate: DATE)
            CONTINUE.
        END PROGRAM d0a59141check2.
       *
@@ -433,6 +441,8 @@
        PROGRAM-ID. e5b741a8check2.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.check2 - Params :
+      *		input(mydate: DATE, myDate2: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -445,6 +455,8 @@
              USING BY REFERENCE mydate
                    BY REFERENCE myDate2
            .
+      *PGM1.check2 - Params :
+      *		input(mydate: DATE, myDate2: DATE)
            CONTINUE.
        END PROGRAM e5b741a8check2.
       *
@@ -459,6 +471,9 @@
        PROGRAM-ID. ebb060eaMyPublicProcedure.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.MyPublicProcedure - Params :
+      *		input(mydate: DATE, format: PIC X(08))
+      *		output(okay: BOOL, actual-format: PIC X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -476,6 +491,9 @@
                    BY REFERENCE okay-value
                    BY REFERENCE actual-format
            .
+      *PGM1.MyPublicProcedure - Params :
+      *		input(mydate: DATE, format: PIC X(08))
+      *		output(okay: BOOL, actual-format: PIC X(08))
            CONTINUE.
        END PROGRAM ebb060eaMyPublicProcedure.
       *
@@ -488,6 +506,9 @@
        PROGRAM-ID. d2b57642GetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.GetPersonById - Params :
+      *		input(person1Id: PIC 9(10))
+      *		output(person: Person)
        01 person1Id pic 9(10).
        01 person.
            02 PersonId pic 9(10).
@@ -497,6 +518,9 @@
              USING BY REFERENCE person1Id
                    BY REFERENCE person
            .
+      *PGM1.GetPersonById - Params :
+      *		input(person1Id: PIC 9(10))
+      *		output(person: Person)
            CONTINUE.
        END PROGRAM d2b57642GetPersonById.
       *
@@ -508,6 +532,8 @@
        PROGRAM-ID. a0508f35check.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -515,6 +541,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
            CONTINUE.
        END PROGRAM a0508f35check.
       *
@@ -531,6 +559,10 @@
        PROGRAM-ID. f3a0a09cPgm1PrivateValidateDat.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.Pgm1PrivateValidateDateFormat - Params :
+      *		input(mydate: DATE, format: PIC X(08), alength: PIC 9(8) Usage:
+      * NativeBinary, anotherlength: PIC S9(05) Usage: NativeBinary)
+      *		output(okay: BOOL, actual-format: PIC X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -552,5 +584,9 @@
                    BY REFERENCE okay-value
                    BY REFERENCE actual-format
            .
+      *PGM1.Pgm1PrivateValidateDateFormat - Params :
+      *		input(mydate: DATE, format: PIC X(08), alength: PIC 9(8) Usage:
+      * NativeBinary, anotherlength: PIC S9(05) Usage: NativeBinary)
+      *		output(okay: BOOL, actual-format: PIC X(08))
            CONTINUE.
        END PROGRAM f3a0a09cPgm1PrivateValidateDat.

@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZOSM7.
        DATA DIVISION .
        WORKING-STORAGE SECTION.
@@ -57,7 +57,9 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a711ebb5StartCheckpoint.
        data division.
-       working-storage section.
+       WORKING-STORAGE SECTION.
+      *DVZZOSM7.StartCheckpoint  - No Params
+                               
       
        01 Var2.
            05 JobName pic X(08).
@@ -67,6 +69,7 @@
       
        PROCEDURE DIVISION
            .
+      *DVZZOSM7.StartCheckpoint  - No Params
       *    if Var2::JobName(1:2) = 'ET'
       *       or Var2::JobName(1:4) = 'PSAT'
            if JobName OF Var2(1:2) = 'ET'

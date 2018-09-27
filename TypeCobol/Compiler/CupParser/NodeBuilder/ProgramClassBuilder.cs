@@ -106,11 +106,15 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             node.SymbolTable = table ?? SyntaxTree.CurrentNode.SymbolTable;
             if (_IsInsideProcedure)
+            {
                 node.SetFlag(Node.Flag.InsideProcedure, true);      //Set flag to know that this node belongs a Procedure or Function
+                if (node is WorkingStorageSection || node is LocalStorageSection || node is LinkageSection || node is ProcedureDivision)
+                    node.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
+            }
             SyntaxTree.Enter(node, context);
 
             if (node.CodeElement != null)
-                NodeCodeElementLinkers.Add(node.CodeElement, node);            
+                NodeCodeElementLinkers.Add(node.CodeElement, node);
         }
 
         private void Exit()
