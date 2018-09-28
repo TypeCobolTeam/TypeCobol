@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Tools.Options_Config;
 
 namespace TypeCobol.Compiler.Directives
 {
@@ -28,6 +29,34 @@ namespace TypeCobol.Compiler.Directives
         /// Shall we use Antlr for Parsing the Program.
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
+        /// <summary>
+        /// Shall we use EUROINFO_LEGACY_REPLACING_SYNTAX snippets for Parsing the Program.
+        /// </summary>
+        public bool UseEuroInformationLegacyReplacingSyntax
+        {
+            get { return _useEuroInformationLegacyReplacingSyntax; }
+            set { _useEuroInformationLegacyReplacingSyntax = value; }
+        }
+
+#if EUROINFO_RULES
+        private bool _useEuroInformationLegacyReplacingSyntax = true;
+#else
+        private bool _useEuroInformationLegacyReplacingSyntax;
+#endif
+
+        public TypeCobolOptions(TypeCobolConfiguration config)
+        {
+            HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
+            ExecToStep = config.ExecToStep;
+            UseAntlrProgramParsing = config.UseAntlrProgramParsing;
+            UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
+        }
+
+        public TypeCobolOptions()
+        {
+                
+        }
+
 
         /// <summary>
         /// Clone the compiler options to enable specific parameters for each file

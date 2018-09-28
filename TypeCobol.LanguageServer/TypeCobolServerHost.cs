@@ -101,6 +101,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseAntlrProgramParsing { get; set; }
 
+        /// <summary>
+        /// True to use Euro-Information replacement rules
+        /// </summary>
+        public static bool UseEuroInformationLegacyReplacingSyntax { get; set; }
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -186,6 +191,7 @@ namespace TypeCobol.LanguageServer
                 { "tparser",  "parsing testing mode.", _ => LsrParserTesting = true},
                 { "tsemantic",  "Semantic analysis testing mode.", _ => LsrSemanticTesting = true},
                 { "antlrp",  "Use ANTLR to parse a Program.", _ => UseAntlrProgramParsing = true},
+                { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -258,6 +264,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.LsrSemanticTesting = LsrSemanticTesting;
                 typeCobolServer.TimerDisabledOption = TimerDisabledOption;
                 typeCobolServer.UseAntlrProgramParsing = UseAntlrProgramParsing;
+                typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
 
 
                 //Creating the thread that will read mesages and handle them 
