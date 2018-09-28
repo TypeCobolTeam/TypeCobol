@@ -1,7 +1,7 @@
        CBL ARTH(EXTEND)
        CBL TestValue
       *TypeCobol_Version:v1.1.2
-	   IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. ProcedureCall.
       
        DATA DIVISION.

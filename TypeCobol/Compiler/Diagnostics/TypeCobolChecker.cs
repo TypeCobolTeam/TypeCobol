@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var parameterList = functionCaller.FunctionCall.AsProfile(node);
                 var functionDeclarations =
                     node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName),
-                        parameterList, functionCaller.FunctionCall.Namespace);
+                    parameterList, functionCaller.FunctionCall.Namespace);
 
                 string message;
                 //There is one CallSite per function call
@@ -225,14 +225,14 @@ namespace TypeCobol.Compiler.Diagnostics
                             return;
                         }
                     }
-
-
+                    
+                    
                     var actual = call.Arguments[c].StorageAreaOrValue;
                     if (actual.IsLiteral) continue; //TODO
 
                     var callArgName = actual.StorageArea.ToString();
                     var found = node.GetDataDefinitionFromStorageAreaDictionary(actual.StorageArea);
-                    if (found == null)
+                   if (found == null)
                     {
                         continue;
                     }
@@ -256,7 +256,7 @@ namespace TypeCobol.Compiler.Diagnostics
                                 }
                             }
 
-                            // accepted format is "PIC [S]9(5..9) comp-5"
+                               // accepted format is "PIC [S]9(5..9) comp-5"
                             if (expected.PrimitiveDataType.Name != "Numeric" || expected.Length < 5 ||
                                 expected.Length > 9 || expected.Usage != DataUsage.NativeBinary)
                             {
@@ -287,7 +287,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         continue; //If it's a special register we don't want to check more rules. 
                     }
 
-
+                    
 
                     //TODO use SubscriptExpression and ReferenceModifier of the StorageArea to correct the type
                     //Ex: MyVar1(1:10) has a length of 10 and is of type Alphanumeric
@@ -325,22 +325,22 @@ namespace TypeCobol.Compiler.Diagnostics
                             actualIsTableOccurence = false;
                         }
                     }
-
+                    
 
                     //Cobol 85 Type will be checked with their picture
-                    if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 ||
-                        expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85)
+                        if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 ||
+                        expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) 
                     {
                         if (actualDataDefinition.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85 ||
                             expected.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
                         {
                             var m = string.Format(
-                                "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                call.FunctionName, expected.Name, expected.DataType,
-                                callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.DataType);
+                                    "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
+                                    call.FunctionName, expected.Name, expected.DataType,
+                                    callArgName ?? string.Format("position {0}", c + 1), actualDataDefinition.DataType);
                             DiagnosticUtils.AddError(node, m);
 
-
+                            
                         }
                         else if (actualDataDefinition.DataType != expected.DataType)
                         {
@@ -353,9 +353,9 @@ namespace TypeCobol.Compiler.Diagnostics
                             else if (!Equals(callerType.QualifiedName, calleeType.QualifiedName))
                             {
                                 var m = string.Format(
-                                    "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
-                                    call.FunctionName, calleeType.Name, calleeType.DataType,
-                                    callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
+                                        "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
+                                        call.FunctionName, calleeType.Name, calleeType.DataType,
+                                        callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
                                 DiagnosticUtils.AddError(node, m);
                             }
                         }
@@ -372,7 +372,7 @@ namespace TypeCobol.Compiler.Diagnostics
                                 actualDataDefinition.Picture.Value);
                         DiagnosticUtils.AddError(node, m);
                     }
-
+              
 
 //                    if (dataDefinitionOfActual.Length != expectedParameter.Length)
 //                    {
@@ -408,8 +408,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualDataDefinition.IsGroupUsageNational != expected.IsGroupUsageNational)
                     {
                         var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
+                           string.Format(
+                               "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                 call.FunctionName, expected.Name,
                                 expected.IsGroupUsageNational ? "national group-usage" : "non national group-usage",
                                 callArgName ?? string.Format("position {0}", c + 1),
@@ -425,8 +425,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualIsTableOccurence != expected.IsTableOccurence)
                     {
                         var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' to {2} an array and received '{3}' which {4} an array",
+                           string.Format(
+                               "Function '{0}' expected parameter '{1}' to {2} an array and received '{3}' which {4} an array",
                                 call.FunctionName, expected.Name, expected.IsTableOccurence ? "be" : "be NOT",
                                 actualDataDefinition.Name,
                                 actualIsTableOccurence ? "is" : "is NOT ");
@@ -458,18 +458,18 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualOccursDependingOn != expected.OccursDependingOn)
                     {
                         var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' occurs depending on ({2}) occurences and received '{3}' occurs depending on ({4})",
-                                call.FunctionName, expected.Name, expected.OccursDependingOn,
-                                callArgName ?? string.Format("position {0}", c + 1), actualOccursDependingOn);
+                           string.Format(
+                               "Function '{0}' expected parameter '{1}' occurs depending on ({2}) occurences and received '{3}' occurs depending on ({4})",
+                               call.FunctionName, expected.Name, expected.OccursDependingOn,
+                               callArgName ?? string.Format("position {0}", c + 1), actualOccursDependingOn);
                         DiagnosticUtils.AddError(node, m);
                     }
 
                     if (actualHasUnboundedNumberOfOccurences != expected.HasUnboundedNumberOfOccurences)
                     {
                         var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
+                           string.Format(
+                               "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                 call.FunctionName, expected.Name,
                                 expected.HasUnboundedNumberOfOccurences
                                     ? "has unbounded number of occurences"
@@ -485,8 +485,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualDataDefinition.SignIsSeparate != expected.SignIsSeparate)
                     {
                         var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
+                           string.Format(
+                               "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                 call.FunctionName, expected.Name,
                                 expected.HasUnboundedNumberOfOccurences
                                     ? "has unbounded number of occurences"
@@ -501,8 +501,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualDataDefinition.SignPosition != expected.SignPosition)
                     {
                         var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' with sign position {2} and received '{3}' with sign position {4}",
+                           string.Format(
+                               "Function '{0}' expected parameter '{1}' with sign position {2} and received '{3}' with sign position {4}",
                                 call.FunctionName, expected.Name,
                                 expected.SignPosition == null ? "empty" : expected.SignPosition.ToString(),
                                 callArgName ?? string.Format("position {0}", c + 1),
@@ -515,8 +515,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualDataDefinition.IsSynchronized != expected.IsSynchronized)
                     {
                         var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
+                           string.Format(
+                               "Function '{0}' expected parameter '{1}' {2} and received '{3}' {4}",
                                 call.FunctionName, expected.Name,
                                 expected.IsSynchronized ? "synchonized" : "not synchronized",
                                 callArgName ?? string.Format("position {0}", c + 1),
@@ -527,9 +527,9 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (actualDataDefinition.ObjectReferenceClass != expected.ObjectReferenceClass)
                     {
                         var m =
-                            string.Format(
-                                "Function '{0}' expected parameter '{1}' and received '{2}' with wrong object reference.",
-                                call.FunctionName, expected.Name, callArgName ?? string.Format("position {0}", c + 1));
+                          string.Format(
+                              "Function '{0}' expected parameter '{1}' and received '{2}' with wrong object reference.",
+                              call.FunctionName, expected.Name, callArgName ?? string.Format("position {0}", c + 1));
                         DiagnosticUtils.AddError(node, m);
                     }
                 }
@@ -568,16 +568,16 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static string ToString(FunctionType type)
         {
-            if (type == FunctionType.Undefined) return "symbol";
-            if (type == FunctionType.Function) return "function";
-            if (type == FunctionType.Procedure) return "procedure";
-            return "function or procedure";
-        }
-    }
+		if (type == FunctionType.Undefined) return "symbol";
+		if (type == FunctionType.Function) return "function";
+		if (type == FunctionType.Procedure) return "procedure";
+		return "function or procedure";
+	}
+}
 
     class FunctionDeclarationChecker
     {
-
+     
         public static void OnNode(FunctionDeclaration functionDeclaration)
         {
             var header = functionDeclaration?.CodeElement as FunctionDeclarationHeader;
@@ -585,7 +585,7 @@ namespace TypeCobol.Compiler.Diagnostics
             var filesection = functionDeclaration.Get<FileSection>("file");
             if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
             {
-
+                
                 DiagnosticUtils.AddError(filesection,
                     "Illegal FILE SECTION in function \"" + header.Name + "\" declaration");
             }
@@ -778,68 +778,68 @@ namespace TypeCobol.Compiler.Diagnostics
     }
 
     /// <summary>
-    /// Checks the TypeCobol rules for Library
-    /// </summary>
+/// Checks the TypeCobol rules for Library
+/// </summary>
     public class LibraryChecker
     {
         public static void CheckLibrary([NotNull] ProcedureDivision procedureDivision)
         {
-            //A procedure or a function cannot contains another procedure or function declaration
-            //So we only need to check ProcedureDivision of Program
+        //A procedure or a function cannot contains another procedure or function declaration
+        //So we only need to check ProcedureDivision of Program
             if (!(procedureDivision.Parent is Program))
-                return;
+	        return;
 
 
-            //If the procedure division contains a PUBLIC procedure or function then it's considered as a "Library"
-            bool isLibrary = procedureDivision.Children.Any(c =>
-            {
-                var f = c.CodeElement as FunctionDeclarationHeader;
+        //If the procedure division contains a PUBLIC procedure or function then it's considered as a "Library"
+	    bool isLibrary = procedureDivision.Children.Any(c =>
+		{
+		    var f = c.CodeElement as FunctionDeclarationHeader;
                 return f != null && f.Visibility == AccessModifier.Public;
             });
 
-            if (isLibrary)
+	    if (isLibrary)
+        {
+	        bool firstParagraphChecked = false;
+	        foreach (var child in procedureDivision.Children)
             {
-                bool firstParagraphChecked = false;
-                foreach (var child in procedureDivision.Children)
+                //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
+                if (child is Paragraph)
                 {
-                    //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
-                    if (child is Paragraph)
+	                if (!firstParagraphChecked &&
+	                    !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        if (!firstParagraphChecked &&
-                            !child.Name.Equals("INIT-LIBRARY", StringComparison.InvariantCultureIgnoreCase))
-                        {
                             DiagnosticUtils.AddError(child.CodeElement == null ? procedureDivision : child,
                                 "First paragraph of a program which contains public procedure must be INIT-LIBRARY. Move paragraph " +
                                 child.Name + " lower in the source.");
-                        }
-
-                        firstParagraphChecked = true;
-
-                        continue; //A paragraph is always accepted as a child of ProcedureDivision
                     }
 
-                    //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
-                    if (!(child is FunctionDeclaration || child is Declaratives))
-                    {
+	                firstParagraphChecked = true;
+
+	                continue; //A paragraph is always accepted as a child of ProcedureDivision
+	            }
+
+                //TCRFUN_ONLY_PARAGRAPH_AND_PUBLIC_FUNC_IN_LIBRARY
+                if (!(child is FunctionDeclaration || child is Declaratives))
+                {
                         DiagnosticUtils.AddError(child.CodeElement == null
                                 ? (child is Sentence
-                                    ? (child.Children.FirstOrDefault(c => c.CodeElement != null) ?? procedureDivision)
+                            ? (child.Children.FirstOrDefault(c => c.CodeElement != null) ?? procedureDivision)
                                     : procedureDivision)
                                 : child,
                             "Inside a library only function declaration or declaratives are allowed " + child.Name +
                             " / " + child.ID);
                     }
-                }
+            }
 
-                var pdiv = procedureDivision.CodeElement as ProcedureDivisionHeader;
+		    var pdiv = procedureDivision.CodeElement as ProcedureDivisionHeader;
 
-                //TCRFUN_LIBRARY_PROCEDURE_NO_USING 
-                if (pdiv?.UsingParameters != null && pdiv.UsingParameters.Count > 0)
+            //TCRFUN_LIBRARY_PROCEDURE_NO_USING 
+            if (pdiv?.UsingParameters != null && pdiv.UsingParameters.Count > 0)
                     DiagnosticUtils.AddError(procedureDivision,
                         "Illegal " + pdiv.UsingParameters.Count + " USING in library PROCEDURE DIVISION.");
-            }
-        }
-    }
+		}
+	}
+}
 
     public class SetStatementChecker
     {
@@ -881,9 +881,9 @@ namespace TypeCobol.Compiler.Diagnostics
                         receiver.SetFlag(Node.Flag.NodeisIncrementedPointer, true);
                     }
                     else
-                        allArePointers = false;
+                        allArePointers = false; 
 
-                    // Do note break here because it can be all indexes wich is correct or a pointer as last receiver wich is not
+                        // Do note break here because it can be all indexes wich is correct or a pointer as last receiver wich is not
                 }
 
                 if (allArePointers)
@@ -892,7 +892,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 else if (containsPointers)
                     DiagnosticUtils.AddError(node,
                         "[Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.");
-
+                
                 // Check sender (increment)
                 int outputResult; // not used
                 if (!int.TryParse(statement.SendingVariable.ToString(), out outputResult))
@@ -954,6 +954,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (dataDescription.IsExternal) //GLOBALSS_NO_EXTERNAL
                     DiagnosticUtils.AddError(dataDescription, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
             }
+
 
             if (node.Children.Count > 0)
             {
