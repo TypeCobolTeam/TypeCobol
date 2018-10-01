@@ -180,6 +180,14 @@ namespace TypeCobol.Compiler.Nodes {
             /// Flag node belongs to Global Storage Section (usefull for DataDefinition)
             /// </summary>
             GlobalStorageSection = 0x01 << 24,
+            /// <summary>
+            /// The Node for a missing END PROGRAM.
+            /// </summary>
+            MissingEndProgram = 0x01 << 25,
+            /// <summary>
+            /// Mark a program that contains procedure declaration.
+            /// </summary>
+            ContainsProcedure = 0x01 << 26,
 
 
 

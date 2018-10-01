@@ -1,4 +1,7 @@
-﻿--- Program ---
+--- Diagnostics ---
+Line 1[1,22] <37, Warning, General> - Warning: "END PROGRAM" is missing. It will automatically be generated at the end of this program if there is any procedure declaration
+
+--- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program

@@ -18,14 +18,25 @@ internal class ProgramEnd: Compiler.Nodes.End, Generated {
 
 
     }
+    public ProgramEnd(string originalProcName) : base(new Compiler.CodeElements.ProgramEnd())
+    {
+        this.OriginalProcName = originalProcName;
+        this.ProgramHashName = new URI("");
+    }
 
-	private IList<ITextLine> _cache = null;
+        private IList<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
 		get {
 			if (_cache == null) {
 				_cache = new List<ITextLine>();
-			    _cache.Add(new TextLineSnapshot(-1, "END PROGRAM " + ProgramHashName.Head + OriginalProcName + ".", null));
-			}
+                if(ProgramHashName.Head == "")
+                {
+                        _cache.Add(new TextLineSnapshot(-1, "", null));
+                        _cache.Add(new TextLineSnapshot(-1, "END PROGRAM " + ProgramHashName.Head + OriginalProcName + ".", null));
+                    }
+                else
+                    _cache.Add(new TextLineSnapshot(-1, "END PROGRAM " + ProgramHashName.Head + OriginalProcName + ".", null));
+            }
 			return _cache;
 		}
 	}

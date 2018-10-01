@@ -1,4 +1,4 @@
-﻿Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries
+Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries
 Line 50[29,35] <27, Error, Syntax> - Syntax error : extraneous input 'TYPEDEF' expecting {separator, statement starting keyword, keyword}
 Line 63[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
 Line 68[17,25] <27, Error, Syntax> - Syntax error : REDEFINES clause cannot be specified with TYPEDEF clause
@@ -7,6 +7,7 @@ Line 93[26,33] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be sp
 Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01
 Line 101[27,32] <27, Error, Syntax> - Syntax error : Elementary TYPEDEF cannot be STRONG
 Line 113[29,33] <27, Error, Syntax> - Syntax error : STRONG TYPEDEF cannot contain VALUE clause:
+Line 1[1,24] <37, Warning, General> - Warning: "END PROGRAM" is missing. It will automatically be generated at the end of this program if there is any procedure declaration
 Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
 Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
 Line 57[1,32] <30, Error, Semantics> - Semantic error: TYPEDEF 'NoDescription' has no description.

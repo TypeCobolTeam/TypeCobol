@@ -677,6 +677,15 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenCorrStatements") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
         }
 
+	    [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void GenEndProgramTest()
+        {
+            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenEndProgram") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
+
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]

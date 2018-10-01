@@ -1,4 +1,5 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
+Line 1[1,28] <37, Warning, General> - Warning: "END PROGRAM" is missing. It will automatically be generated at the end of this program if there is any procedure declaration
 Line 33[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
 Line 35[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[12,18:TYPEDEF]<TYPEDEF>
 Line 39[16,22] <27, Error, Syntax> - Syntax error : Custom EI rule : Only TYPEDEF STRICT is allowed. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[16,22:TYPEDEF]<TYPEDEF>
