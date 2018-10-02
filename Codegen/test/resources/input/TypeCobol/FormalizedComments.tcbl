@@ -1,16 +1,4 @@
-﻿      *<<< My program 
-          @ Description : description
-          @deprecated:
-          @    replacedBy : MyFonction2
-          @ rEsTrIcTiOn : Do not Use BOOL var
-          @ need : some needs
-              - description
-          @ see : Thank you for your attention
-          @ todo :
-              - Add BOOL support 
-              - implement a call counter
-      *>>>
-       IDENTIFICATION DIVISION.
+﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. DocCodeGen.
 
        DATA DIVISION.
@@ -32,6 +20,18 @@
            03 X PIC 9(4).
            03 Y PIC 9(4).
 
+      *<<< My program 
+          @ Description : description
+          @deprecated:
+          @    replacedBy : MyFonction2
+          @ rEsTrIcTiOn : Do not Use BOOL var
+          @ need : some needs
+              - description
+          @ see : Thank you for your attention
+          @ todo :
+              - Add BOOL support 
+              - implement a call counter
+      *>>>
        PROCEDURE DIVISION.
 
       *<<< MyProc info

@@ -1,20 +1,9 @@
-﻿      * 3 errors
+﻿      * 4 errors
+      * Line 9[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
       * Line 48[11,13] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
       * Line 53[20,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
       * Line 55[20,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
       *TypeCobol_Version:TestTypeCobolVersion
-      *<<< My program 
-      *   @ Description : description
-      *   @deprecated:
-      *   @    replacedBy : MyFonction2
-      *   @ rEsTrIcTiOn : Do not Use BOOL var
-      *   @ need : some needs
-      *       - description
-      *   @ see : Thank you for your attention
-      *   @ todo :
-      *       - Add BOOL support 
-      *       - implement a call counter
-      *>>>
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DocCodeGen.
 
@@ -48,6 +37,18 @@
       *    03 X PIC 9(4).
       *    03 Y PIC 9(4).
 
+      *<<< My program 
+      *   @ Description : description
+      *   @deprecated:
+      *   @    replacedBy : MyFonction2
+      *   @ rEsTrIcTiOn : Do not Use BOOL var
+      *   @ need : some needs
+      *       - description
+      *   @ see : Thank you for your attention
+      *   @ todo :
+      *       - Add BOOL support 
+      *       - implement a call counter
+      *>>>
        PROCEDURE DIVISION.
 
       *<<< MyProc info

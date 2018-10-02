@@ -216,10 +216,10 @@ formalizedCommentParam:
     | FormComsToDo; 
  
 formalizedCommentOuterLevel:
-	AtSign (formalizedCommentParam | (formalizedCommentParam ColonSeparator FormComsValue?));
+	AtSign (formalizedCommentParam ColonSeparator? FormComsValue?);
 
 formalizedCommentInnerLevel:
-	MinusOperator ((UserDefinedWord ColonSeparator FormComsValue) | listItemValue=FormComsValue);
+	MinusOperator ((UserDefinedWord ColonSeparator? FormComsValue) | listItemValue=FormComsValue);
 
 formalizedCommentLine: 
     formalizedCommentOuterLevel | formalizedCommentInnerLevel | FormComsValue; 

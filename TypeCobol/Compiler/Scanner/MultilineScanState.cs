@@ -239,7 +239,7 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.FormComsParameters:
                     // Register the begin of the params field inside the formalized Comments
                     InsideParamsField = true;
-                    return;
+                    break;
                 case TokenType.FormComsDescription:
                 case TokenType.FormComsDeprecated:
                 case TokenType.FormComsReplacedBy:
@@ -249,7 +249,7 @@ namespace TypeCobol.Compiler.Scanner
                 case TokenType.FormComsToDo:
                     // Register the end of the params field inside the formalized Comments
                     InsideParamsField = false;
-                    return;
+                    break;
                 case TokenType.MultilinesCommentsStart:
                     // Register the begin of the formalized Comments
                     InsideMultilineComments = true;
@@ -260,10 +260,9 @@ namespace TypeCobol.Compiler.Scanner
                     return;
             }
             
-            if (InsideMultilineComments)
-            {
-                return;
-            }
+            // Avoid setting last significative token for multiline Comments
+            if (InsideMultilineComments) { return;}
+
             // Register the end of a SYMBOLIC CHARACTERS? clause
             if (InsideSymbolicCharacterDefinitions &&
                 newToken.TokenType != TokenType.SYMBOLIC && newToken.TokenType != TokenType.CHARACTERS &&
