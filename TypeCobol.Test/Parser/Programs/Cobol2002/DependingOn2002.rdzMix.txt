@@ -57,29 +57,29 @@
             depending on Counter.
 
       *KO, trying to use a variable declared outside typedef
-Line 60[13,50] <27, Error, Syntax> - Syntax error : Symbol MyTypedVar2.TypeCounter is not referenced
             05 tableVar PIC X(1) occurs 5 
+Line 61[39,49] <27, Error, Syntax> - Syntax error : Symbol MyTypedVar2.TypeCounter is not referenced
             depending on MyTypedVar2::TypeCounter.
 
       *KO, trying to use a variable declared outside typedef
-Line 64[13,50] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.Counter is not referenced
             05 tableVar PIC X(1) occurs 5 
+Line 65[43,49] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.Counter is not referenced
             depending on DenpendingGroup::Counter.
 
       *KO, trying to use a variable declared outside typedef
-Line 68[13,62] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.VarCounter.Counter is not referenced
             05 tableVar PIC X(1) occurs 5 
+Line 69[55,61] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.VarCounter.Counter is not referenced
             depending on DenpendingGroup::VarCounter::Counter.
 
       *KO, trying to use a variable declared outside typedef
-Line 72[13,54] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.TypeCounter is not referenced
             05 tableVar PIC X(1) occurs 5 
+Line 73[43,53] <27, Error, Syntax> - Syntax error : Symbol DenpendingGroup.TypeCounter is not referenced
             depending on DenpendingGroup::TypeCounter.
 
       *KO, trying to use an ambigous local var
-Line 76[13,43] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter 
-Symbols found: DependOnPgm::DependType::ambigousCounter::DuplicatedCounterType::DuplicatedCounter | DependOnPgm::DependType::ambigousCounter2::DuplicatedCounterType::DuplicatedCounter
             05 tableVar PIC X(1) occurs 5 
+Line 77[26,42] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedCounter 
+Symbols found: DependOnPgm::DependType::ambigousCounter::DuplicatedCounterType::DuplicatedCounter | DependOnPgm::DependType::ambigousCounter2::DuplicatedCounterType::DuplicatedCounter
             depending on DuplicatedCounter.
 
       *OK, using local variable with qualifiedName

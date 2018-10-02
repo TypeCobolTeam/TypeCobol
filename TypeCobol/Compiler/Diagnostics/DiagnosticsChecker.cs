@@ -40,8 +40,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (_Diagnostic == null)
                 throw new Exception("Diagnostics list has not been intialized");
 
-            if (!_Diagnostic.Contains(diagnostic))
-                _Diagnostic.Add(diagnostic);
+            _Diagnostic.Add(diagnostic);
         }
 
         /// <summary>

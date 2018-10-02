@@ -1,29 +1,31 @@
 ﻿--- Diagnostics ---
 Line 57[8,22] <27, Error, Syntax> - Syntax error : x is already a parameter.
 Line 58[8,22] <27, Error, Syntax> - Syntax error : y is already a parameter.
-Line 59[8,22] <27, Error, Syntax> - Syntax error : Group item a cannot have a "PICTURE"
+Line 59[11,11] <27, Error, Syntax> - Syntax error : Group item a cannot have a "PICTURE" OffendingSymbol=[11,11:a]<UserDefinedWord>
 Line 60[12,26] <27, Error, Syntax> - Syntax error : x is already a parameter.
 Line 61[12,26] <27, Error, Syntax> - Syntax error : z is already a parameter.
 Line 64[8,27] <27, Error, Syntax> - Syntax error : result is already a parameter.
-Line 66[12,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
-Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result
-Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol x 
-Symbols found: FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::a::x
-Line 67[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
-Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result
-Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol y 
-Symbols found: FunDeclare::SumThreeWithClutterInLinkage::y | FunDeclare::SumThreeWithClutterInLinkage::y
-Line 68[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
-Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result
-Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol z 
-Symbols found: FunDeclare::SumThreeWithClutterInLinkage::z | FunDeclare::SumThreeWithClutterInLinkage::a::z
-Line 69[12,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
-Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result
-Line 88[8,10] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times
-Line 88[8,10] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times
-Line 103[8,28] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item.
-Line 123[8,10] <27, Error, Syntax> - Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter.
-Line 123[8,10] <27, Error, Syntax> - Syntax error : Condition parameter "male" must be level 88.
+Line 66[22,27] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[22,27:result]<UserDefinedWord>
+Line 67[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol x 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::x | FunDeclare::SumThreeWithClutterInLinkage::a::x OffendingSymbol=[16,16:x]<UserDefinedWord>
+Line 67[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
+Line 68[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol y 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::y | FunDeclare::SumThreeWithClutterInLinkage::y OffendingSymbol=[16,16:y]<UserDefinedWord>
+Line 68[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
+Line 69[16,16] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol z 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::z | FunDeclare::SumThreeWithClutterInLinkage::a::z OffendingSymbol=[16,16:z]<UserDefinedWord>
+Line 69[21,26] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol result 
+Symbols found: FunDeclare::SumThreeWithClutterInLinkage::result | FunDeclare::SumThreeWithClutterInLinkage::result OffendingSymbol=[21,26:result]<UserDefinedWord>
+Line 89[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times OffendingSymbol=[21,21:x]<UserDefinedWord>
+Line 90[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times OffendingSymbol=[21,21:y]<UserDefinedWord>
+Line 92[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'x' declared multiple times OffendingSymbol=[21,21:x]<UserDefinedWord>
+Line 93[21,21] <27, Error, Syntax> - Syntax error : Parameter with name 'y' declared multiple times OffendingSymbol=[21,21:y]<UserDefinedWord>
+Line 103[11,11] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in function data item. OffendingSymbol=[11,11:g]<UserDefinedWord>
+Line 124[23,34] <27, Error, Syntax> - Syntax error : Condition parameter "valid-gender" must be subordinate to another parameter. OffendingSymbol=[23,34:valid-gender]<UserDefinedWord>
+Line 127[24,27] <27, Error, Syntax> - Syntax error : Condition parameter "male" must be level 88. OffendingSymbol=[24,27:male]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: FunDeclare common:False initial:False recursive:False

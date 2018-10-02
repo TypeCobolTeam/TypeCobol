@@ -87,7 +87,7 @@ namespace TypeCobol.Test {
 			    {
 			        ExecToStep = ExecutionStep.CrossCheck,
 #if EUROINFO_RULES
-                    AutoRemarksEnable = autoRemarks
+			        AutoRemarksEnable = autoRemarks
 #endif
                 };
 

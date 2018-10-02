@@ -100,6 +100,18 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Test if Euro Information suffixing rule is deactivated
+        /// </summary>
+        [TestMethod]
+        public void TestReplacingSyntaxOption()
+        {
+#if EUROINFO_RULES
+            CLITestHelper.Test("replacingSyntaxOption", ReturnCode.ParsingDiagnostics);
+#endif
+
+        }
+
+        /// <summary>
         /// Test Various Return Code that can be returned by the CLI
         /// (with CLI arguments well formed, for bad argument test see TestArgumentsErrors())
         /// </summary>

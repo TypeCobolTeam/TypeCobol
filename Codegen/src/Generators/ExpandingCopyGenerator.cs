@@ -437,7 +437,7 @@ namespace TypeCobol.Codegen.Generators
 
             // Create a token iterator on top of pre-processed tokens lines
             Compiler.Scanner.ITokensLinesIterator tokensIterator = Compiler.Preprocessor.ProcessedTokensDocument.GetProcessedTokensIterator(
-                compilationUnit.TextSourceInfo, processedTokensDocument.Lines);
+                compilationUnit.TextSourceInfo, processedTokensDocument.Lines, compilationUnit.CompilerOptions);
 
             //var date1 = DateTime.Now;
             TypeCobol.Compiler.Scanner.Token curToken = null;

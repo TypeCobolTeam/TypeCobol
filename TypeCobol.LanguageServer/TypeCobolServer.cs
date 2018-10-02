@@ -49,6 +49,11 @@ namespace TypeCobol.LanguageServer
         public bool UseAntlrProgramParsing { get; set; }
 
         /// <summary>
+        /// true to use Euro-Information replacement rules
+        /// </summary>
+        public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
+
+        /// <summary>
         /// Lstr Testing Source document
         /// </summary>
         public bool LsrSourceTesting { get; set; }
@@ -97,6 +102,7 @@ namespace TypeCobol.LanguageServer
             if (LsrSemanticTesting) typeCobolWorkspace.IsLsrSemanticTesting = LsrSemanticTesting;
 
             typeCobolWorkspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
+            typeCobolWorkspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
             typeCobolWorkspace.TimerDisabledOption = TimerDisabledOption;
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
             typeCobolWorkspace.ExceptionTriggered += ExceptionTriggered;
