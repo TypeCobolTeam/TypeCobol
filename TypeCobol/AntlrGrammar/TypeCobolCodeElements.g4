@@ -227,10 +227,7 @@ formalizedCommentLine:
 formalizedComment: 
     FormalizedCommentsStart formalizedCommentLine* FormalizedCommentsStop; 
 
-	
-programIdentification:
-	formalizedComment?
-	(IDENTIFICATION | ID) DIVISION PeriodSeparator 
-	PROGRAM_ID PeriodSeparator? programNameDefinition
-	(IS? (RECURSIVE | INITIAL | (COMMON INITIAL?) | (INITIAL COMMON?)) PROGRAM?)? PeriodSeparator?
-	authoringProperties;
+
+
+procedureDivisionHeader: 
+	formalizedComment? PROCEDURE DIVISION usingPhrase? returningPhrase? PeriodSeparator;

@@ -1339,8 +1339,8 @@ namespace TypeCobol.Codegen.Generators
 
         public void CommentSpecificParts(Node node)
         {
-            // Formalised Comments
-            if (node is Compiler.CodeModel.Program)
+            // Formalised Comments of Programs (Formalised Comments of Typedef and Functions is already commented)
+            if (node is Compiler.Nodes.ProcedureDivision && node.Parent is Compiler.CodeModel.Program)
             {
                 CommentBetweenTokens(node, TokenType.FormalizedCommentsStart, TokenType.FormalizedCommentsStop);
             }

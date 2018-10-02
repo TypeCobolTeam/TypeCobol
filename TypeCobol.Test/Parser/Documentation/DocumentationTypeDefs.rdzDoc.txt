@@ -1,3 +1,5 @@
+Line 19[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
 ======================== Nodes properties ========================
 Name : DocForTypeDefs
 Description : 

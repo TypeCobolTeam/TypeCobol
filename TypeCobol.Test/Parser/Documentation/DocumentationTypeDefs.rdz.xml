@@ -1,4 +1,6 @@
-﻿======================== Documentation ========================
+﻿Line 19[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+======================== Documentation ========================
 <?xml version="1.0" encoding="utf-16"?>
 <Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
   <Name>DocForTypeDefs</Name>

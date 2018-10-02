@@ -82,23 +82,42 @@ namespace TypeCobol.Compiler.Nodes
         /// <param name="node">generic Node, have to be TypeDefinition, FunctionDeclaration, or Program</param>
         protected Documentation(Node node)
         {
-            Name = node.Name;
-            Namespace = node.Root.MainProgram.Namespace;
-
-            // Get the information of the Code Element
-            var ce = node.CodeElement as IFormalizedCommentable;
-            if (ce?.FormalizedCommentDocumentation != null)
+            if (node != null)
             {
-                FormCom     = ce.FormalizedCommentDocumentation;
-                // Avoid set empty string or list to have less data to transfert
-                Needs       = FormCom.Needs.IsNullOrEmpty()       ? null : FormCom.Needs;
-                ToDo        = FormCom.ToDo.IsNullOrEmpty()        ? null : FormCom.ToDo;
-                Description = FormCom.Description.IsNullOrEmpty() ? null : FormCom.Description;
-                Deprecated  = FormCom.Deprecated.IsNullOrEmpty()  ? null : FormCom.Deprecated;
-                ReplacedBy  = FormCom.ReplacedBy.IsNullOrEmpty()  ? null : FormCom.ReplacedBy;
-                Restriction = FormCom.Restriction.IsNullOrEmpty() ? null : FormCom.Restriction;
-                See         = FormCom.See.IsNullOrEmpty()         ? null : FormCom.See;
-                Deprecated = FormCom.Deprecated;
+                Name = node.Name;
+                Namespace = node.Root.MainProgram.Namespace;
+
+                // Get the information of the Code Element
+                var ce = node.CodeElement as IFormalizedCommentable;
+                if (ce?.FormalizedCommentDocumentation != null)
+                {
+                    FormCom     = ce.FormalizedCommentDocumentation;
+                    // Avoid set empty string or list to have less data to transfert
+                    Needs       = FormCom.Needs.IsNullOrEmpty()       ? null : FormCom.Needs;
+                    ToDo        = FormCom.ToDo.IsNullOrEmpty()        ? null : FormCom.ToDo;
+                    Description = FormCom.Description.IsNullOrEmpty() ? null : FormCom.Description;
+                    ReplacedBy  = FormCom.ReplacedBy.IsNullOrEmpty()  ? null : FormCom.ReplacedBy;
+                    Restriction = FormCom.Restriction.IsNullOrEmpty() ? null : FormCom.Restriction;
+                    See         = FormCom.See.IsNullOrEmpty()         ? null : FormCom.See;
+                    Deprecated  = FormCom.Deprecated;
+                }
+
+                var groupBy = node.CodeElement.ConsumedTokens.GroupBy(t => t.TokenType);
+                // Add a warning if a Field is set more than one time
+                foreach (var tokenGroup in groupBy)
+                {
+                    if ((int)tokenGroup.Key >= 513 && (int)tokenGroup.Key <= 520 && tokenGroup.Count() > 1)
+                    {
+                        foreach (var token in tokenGroup)
+                        {
+                            node.AddDiagnostic(new Diagnostic(
+                                MessageCode.Warning,
+                                token.StartIndex,
+                                token.StopIndex,
+                                token.Line, "Formalized comment field is declared more than once"));
+                        }
+                    }
+                }
             }
         }
 
@@ -141,6 +160,23 @@ namespace TypeCobol.Compiler.Nodes
                 IsBlankWheneZero = ce.IsBlankWhenZero?.Value ?? false;
                 Justified = ce.IsJustified?.Value ?? false;
                 Visibility = ce.Visibility;
+
+                // Add a warning if a parameters field is set
+                if (ce.FormalizedCommentDocumentation != null)
+                {
+                    if (!ce.FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
+                    {
+                        var token = ce.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.FormComsParameters);
+                        if (token != null)
+                        {
+                            typeDefinition.AddDiagnostic(new Diagnostic(
+                                MessageCode.Warning,
+                                token.StartIndex,
+                                token.StopIndex,
+                                token.Line, "Type Definition does not support Parameters field"));
+                        }
+                    }
+                }
             }
 
             // Build the TypeDef DataType in case of the type itself have data informations (Usage, Occurs, Value, PIC ...)
@@ -304,7 +340,7 @@ namespace TypeCobol.Compiler.Nodes
             {
                 string info = null;
                 if (ce?.FormalizedCommentDocumentation?.Parameters.ContainsKey(param.Name) ?? false)
-                    info = ce.FormalizedCommentDocumentation.Parameters[param.Name];
+                    info = ce.FormalizedCommentDocumentation?.Parameters[param.Name];
 
                 Parameters.Add(new DocumentationParameter(param, info));
             }
@@ -378,11 +414,15 @@ namespace TypeCobol.Compiler.Nodes
         /// Main Constructor for DocumentationForFunction
         /// </summary>
         /// <param name="program">The Node to serialize</param>
-        public DocumentationForProgram(Program program) : base(program)
+        public DocumentationForProgram(Program program) : base(program.Children.FirstOrDefault(x => x is ProcedureDivision))
         {
+            Name = program.Name;
             ProgramIdentification ce = program.CodeElement as ProgramIdentification;
             ProcedureDivisionHeader procedureDivision = program.Children.FirstOrDefault(x => x is ProcedureDivision)
                 ?.CodeElement as ProcedureDivisionHeader;
+
+            ProcedureDivisionHeader procDiv = program.Children.FirstOrDefault(c => c is ProcedureDivision)?.CodeElement as ProcedureDivisionHeader;
+            var formCom = procDiv?.FormalizedCommentDocumentation;
 
             if (procedureDivision != null)
             {
@@ -399,9 +439,9 @@ namespace TypeCobol.Compiler.Nodes
                             // match the formalized comment parameter description with the right parameter
                             string info = null;
                             if (param.StorageArea.SymbolReference != null &&
-                                (ce?.FormalizedCommentDocumentation?.Parameters.ContainsKey(dataDef.Name) ?? false))
+                                (formCom?.Parameters.ContainsKey(dataDef.Name) ?? false))
                             {
-                                info = ce.FormalizedCommentDocumentation.Parameters[dataDef.Name];
+                                info = formCom.Parameters[dataDef.Name];
                             }
                             Parameters.Add(new DocumentationParameter(dataDef, info));
                         }
@@ -410,7 +450,7 @@ namespace TypeCobol.Compiler.Nodes
                     //// Set a Warning if the FormCom parameter in unknow or if the program parameter have no description
 
                     // Get the parameters inside the Formalized Comment that are not inside the program parameters
-                    var formComParamOrphan = ce?.FormalizedCommentDocumentation?.Parameters.Keys.Except(
+                    var formComParamOrphan = formCom?.Parameters.Keys.Except(
                         procedureDivision.UsingParameters.Select(p => p.StorageArea.SymbolReference?.Name));
 
                     // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
@@ -427,11 +467,11 @@ namespace TypeCobol.Compiler.Nodes
                         }
                     }
 
-                    if (ce?.FormalizedCommentDocumentation != null)
+                    if (formCom != null)
                     {
                         // Get the parameters inside the program parameters that are not inside the Formalized Comment
                         var sameParameters = procedureDivision.UsingParameters.Where(p =>
-                            ce.FormalizedCommentDocumentation.Parameters.Keys.Contains(p.StorageArea.SymbolReference?.Name));
+                            formCom.Parameters.Keys.Contains(p.StorageArea.SymbolReference?.Name));
 
                         var programParamWithoutDesc = procedureDivision.UsingParameters.Except(sameParameters);
 

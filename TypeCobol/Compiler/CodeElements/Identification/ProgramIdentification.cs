@@ -1,6 +1,6 @@
 ﻿namespace TypeCobol.Compiler.CodeElements {
 
-    public class ProgramIdentification : CodeElement, IFormalizedCommentable
+    public class ProgramIdentification : CodeElement
     {
         public ProgramIdentification() : base(CodeElementType.ProgramIdentification) { }
 
@@ -74,7 +74,6 @@
         /// </summary>
         public SyntaxProperty<bool> Common { get; set; }
         public bool IsCommon { get { return Common != null && Common.Value; } }
-        public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
 
         public override string ToString() {
 			var sb = new System.Text.StringBuilder(base.ToString());

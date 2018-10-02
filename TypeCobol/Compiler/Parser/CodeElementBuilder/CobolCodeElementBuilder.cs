@@ -129,12 +129,7 @@ namespace TypeCobol.Compiler.Parser
 				program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
 			}
 			program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
-
-            // [TypeCobol]
-            if (context.formalizedComment() != null)
-                program.FormalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
-            // [/TypeCobol]
-
+            
             Context = context;
 			CodeElement = program;
 		}
@@ -1377,8 +1372,13 @@ namespace TypeCobol.Compiler.Parser
 		////////////////////////
 
 		public override void EnterProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context) {
+		    // [TypeCobol]
+		    FormalizedCommentDocumentation formalizedCommentDocumentation = null;
+		    if (context.formalizedComment() != null)
+		        formalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
+		    // [/TypeCobol]
             Context = context;
-            CodeElement = new ProcedureDivisionHeader();
+            CodeElement = new ProcedureDivisionHeader(formalizedCommentDocumentation);
 		}
 		public override void EnterUsingPhrase(CodeElementsParser.UsingPhraseContext context) {
 			var inputs = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());
