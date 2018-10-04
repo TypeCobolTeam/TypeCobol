@@ -268,61 +268,6 @@ namespace TypeCobol.Compiler.AntlrUtils
             string msg = ErrorMessageForMissingToken(recognizer, t);
             recognizer.NotifyErrorListeners(t, msg, null);
         }
-
-        public override void Sync(Antlr4.Runtime.Parser recognizer)
-        {
-            Antlr4.Runtime.Atn.ATNState s = recognizer.Interpreter.atn.states[recognizer.State];
-            //		System.err.println("sync @ "+s.stateNumber+"="+s.getClass().getSimpleName());
-            // If already recovering, don't try to sync
-            if (InErrorRecoveryMode(recognizer))
-            {
-                return;
-            }
-            ITokenStream tokens = ((ITokenStream)recognizer.InputStream);
-            int la = tokens.La(1);
-            // try cheaper subset first; might get lucky. seems to shave a wee bit off
-            if (recognizer.Atn.NextTokens(s).Contains(la) || la == TokenConstants.Eof)
-            {
-                return;
-            }
-            // Return but don't end recovery. only do that upon valid token match
-            if (recognizer.IsExpectedToken(la))
-            {
-                return;
-            }
-            switch (s.StateType)
-            {
-                case Antlr4.Runtime.Atn.StateType.BlockStart:
-                case Antlr4.Runtime.Atn.StateType.StarBlockStart:
-                case Antlr4.Runtime.Atn.StateType.PlusBlockStart:
-                case Antlr4.Runtime.Atn.StateType.StarLoopEntry:
-                    {
-                        // report error and recover if possible
-                        if (SingleTokenDeletion(recognizer) != null)
-                        {
-                            return;
-                        }
-                        throw new InputMismatchException(recognizer);
-                    }
-
-                case Antlr4.Runtime.Atn.StateType.PlusLoopBack:
-                case Antlr4.Runtime.Atn.StateType.StarLoopBack:
-                    {
-                        //			System.err.println("at loop back: "+s.getClass().getSimpleName());
-                        ReportUnwantedToken(recognizer);
-                        IntervalSet expecting = recognizer.GetExpectedTokens();
-                        IntervalSet whatFollowsLoopIterationOrRule = expecting.Or(GetErrorRecoverySet(recognizer));
-                        ConsumeUntil(recognizer, whatFollowsLoopIterationOrRule);
-                        break;
-                    }
-
-                default:
-                    {
-                        // do nothing if we can't identify the exact kind of ATN state
-                        break;
-                    }
-            }
-        }
     }
 
     /// <summary>
