@@ -1,4 +1,4 @@
---- Diagnostics ---
+﻿--- Diagnostics ---
 Line 3[22,22] <27, Error, Syntax> - Syntax error : mismatched input '1' expecting {alphanumeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>inspectStatement>convertingPhrase>alphanumericVariable1,  OffendingSymbol=[22,22:1]<IntegerLiteral>{1}
 Line 4[27,27] <27, Error, Syntax> - Syntax error : mismatched input '1' expecting {alphanumeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>inspectStatement>convertingPhrase>alphanumericVariable2,  OffendingSymbol=[27,27:1]<IntegerLiteral>{1}
 Line 5[22,22] <27, Error, Syntax> - Syntax error : mismatched input '2' expecting {alphanumeric literal, symbol, special register, figurative constant, keyword} RuleStack=codeElement>inspectStatement>convertingPhrase>alphanumericVariable1,  OffendingSymbol=[22,22:2]<IntegerLiteral>{2}
