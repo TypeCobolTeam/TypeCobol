@@ -317,14 +317,16 @@ public static void CheckWithResultFile(string result, string testName)
 {
 using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Parser\CodeElements\" + testName + ".txt")))
 {
-    CheckWithResultReader(testName, result, reader);
-}
+CheckWithResultReader(testName, result, reader, PlatformUtils.GetPathForProjectFile(@"Parser\CodeElements\" + testName + ".txt"));
+};
 }
 
-public static void CheckWithResultReader(string testName, string result, StreamReader reader)
+
+public static void CheckWithResultReader(string testName, string result, StreamReader reader, string expectedResultPath)
 {
 string expectedResult = reader.ReadToEnd();
-TestUtils.compareLines(testName, result, expectedResult);
+reader.Close();
+TestUtils.compareLines(testName, result, expectedResult, expectedResultPath);
 }
 }
 

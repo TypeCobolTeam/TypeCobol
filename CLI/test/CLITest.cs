@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Server;
@@ -298,7 +299,14 @@ namespace CLI.Test
 
     public static class UnitTestHelper
     {
-        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir)
+        /// <summary>
+        /// Compare results of LSR tests
+        /// Or replace automatically the input content of the test if autoReplace is true
+        /// </summary>
+        /// <param name="targetDir"></param>
+        /// <param name="actualDir"></param>
+        /// <returns></returns>
+        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir, string testSourcePath = null)
         {
             if (!targetDir.Exists)
             {
@@ -346,21 +354,66 @@ namespace CLI.Test
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!targetFileContent.SequenceEqual(actualFileContent))
                 {
-                    Console.WriteLine("File not equals: " + commonTargetFiles[i]);
-                    Console.WriteLine("___Actual file content___:\n");
-                    foreach (var actual in actualFileContent)
-                    {
-                        Console.WriteLine(actual);
-                    }
-                    Console.WriteLine("\n________________\n");
-                    Console.WriteLine("___Expected file content___:\n");
-                    foreach (var expected in targetFileContent)
-                    {
-                        Console.WriteLine(expected);
-                    }
-                    Console.WriteLine("________________");
+                    bool autoReplace = false;
 
-                    dirIdentical = false;
+                    //Replacement logic only works for LSR tests
+                    if (autoReplace && testSourcePath != null && testSourcePath.Contains("LSRTests"))
+                    {
+                        string path = commonTargetFiles[i].FullName.Replace("bin\\EI_Debug\\LSRTests",
+                            testSourcePath);
+                        path = path.Replace("output_expected", "input");
+                        path = path.Replace(".rlsp", ".tlsp");
+
+                        var inputFileContent = File.ReadAllLines(path);
+                        //Looks for the begining of the message array in the input file, 
+                        //symbolized by a succession of white space from the bebinning of the line and ending with a "{" e.g. "    {"
+                        Regex rxStartUseActual = new Regex(@"^\s+{$");
+                        //Looks for the ending of the message array in the input file,
+                        //symbolized by a succession of white space from the bebinning of the line and ending with a "]" e.g. "  ]"
+                        Regex rxStopUseActual = new Regex(@"^\s+],$");
+                        using (StreamWriter writer = new StreamWriter(new FileStream(path, FileMode.Truncate)))
+                        {
+                            for (var index = 0; index < inputFileContent.Length; index++)
+                            {
+                                //if regex string is true and line is followed by the begining of a message. (a message will always start with a "category" item)
+                                if (rxStartUseActual.IsMatch(inputFileContent[index]) && inputFileContent[index+1].Contains("\"category\""))
+                                {
+                                    ReplaceResultLines(actualFileContent, writer);
+                                    while (!rxStopUseActual.IsMatch(inputFileContent[index]))
+                                    {
+                                        index++;
+                                    }
+                                }
+
+                                //Writes any lines that isn't a message
+                                writer.WriteLine(inputFileContent[index]);
+                            }
+                        }
+
+                        Console.WriteLine("File not equals: " + commonTargetFiles[i]);
+                        Console.WriteLine("Input file has been modified\n");
+                        Console.WriteLine("Please rerun unit test\n");
+                        dirIdentical = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("File not equals: " + commonTargetFiles[i]);
+                        Console.WriteLine("See \"CLITest.cs\" CompareDirectory method to autoreplace input file");
+                        Console.WriteLine("___Actual file content___:\n");
+                        foreach (var actual in actualFileContent)
+                        {
+                            Console.WriteLine(actual);
+                        }
+                        Console.WriteLine("\n________________\n");
+                        Console.WriteLine("___Expected file content___:\n");
+                        foreach (var expected in targetFileContent)
+                        {
+                            Console.WriteLine(expected);
+                        }
+                        Console.WriteLine("________________");
+
+                        dirIdentical = false;
+                    }
                 }
             }
 
@@ -390,6 +443,48 @@ namespace CLI.Test
             }
 
             return dirIdentical;
+        }
+
+        /// <summary>
+        /// Replaces messages in LSR test inputs by ActualResult messages
+        /// </summary>
+        /// <param name="replacingText"></param>
+        /// <param name="writer"></param>
+        /// <returns></returns>
+        private static int ReplaceResultLines(string[] replacingText, StreamWriter writer)
+        {
+            //Looks for the begining of the result_message array, 
+            //symbolized by a succession of white space from the bebinning of the line and ending with a "{" e.g. "    {"
+            Regex rxStartUseActual = new Regex(@"^\s+{$");
+            //Looks for the ending of the result_message array,
+            //symbolized by a succession of white space from the bebinning of the line and ending with a "]" e.g. "  ]"
+            Regex rxStopUseActual = new Regex(@"^\s+]$");
+
+            int writenLines = 0;
+
+            bool write = false;
+
+            for (int i = 0; i < replacingText.Length; i++)
+            {
+                //if regex string is true and line is followed by the begining of a message. (a message will always start with a "category" item)
+                if (rxStartUseActual.IsMatch(replacingText[i]) && replacingText[i + 1].Contains("\"category\""))
+                {
+                    write = true;
+                }
+
+                if (rxStopUseActual.IsMatch(replacingText[i]))
+                {
+                    write = false;
+                }
+
+                if (write)
+                {
+                    writer.WriteLine(replacingText[i]);
+                    writenLines++;
+                }
+                
+            }
+            return writenLines;
         }
     }
 }
