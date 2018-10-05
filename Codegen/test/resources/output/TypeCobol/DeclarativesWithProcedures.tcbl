@@ -140,6 +140,7 @@
                                        
        PROCEDURE DIVISION
            .
+      *DVZF0OSM.Toto  - No Params
 
       *     set Table-Tax::Tax::Idx-TaxElm to 1
             set ac7b6441Idx-TaxElm to 1
