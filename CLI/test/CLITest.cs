@@ -353,12 +353,17 @@ namespace CLI.Test
                         path = path.Replace(".rlsp", ".tlsp");
 
                         var inputFileContent = File.ReadAllLines(path);
-                        Regex rxStartUseActual = new Regex(@"^\s+{");
+                        //Looks for the begining of the message array in the input file, 
+                        //symbolized by a succession of white space from the bebinning of the line and ending with a "{" e.g. "    {"
+                        Regex rxStartUseActual = new Regex(@"^\s+{$");
+                        //Looks for the ending of the message array in the input file,
+                        //symbolized by a succession of white space from the bebinning of the line and ending with a "]" e.g. "  ]"
                         Regex rxStopUseActual = new Regex(@"^\s+],$");
                         using (StreamWriter writer = new StreamWriter(new FileStream(path, FileMode.Truncate)))
                         {
                             for (var index = 0; index < inputFileContent.Length; index++)
                             {
+                                //if regex string is true and line is followed by the begining of a message. (a message will always start with a "category" item)
                                 if (rxStartUseActual.IsMatch(inputFileContent[index]) && inputFileContent[index+1].Contains("\"category\""))
                                 {
                                     ReplaceResultLines(actualFileContent, writer);
@@ -368,6 +373,7 @@ namespace CLI.Test
                                     }
                                 }
 
+                                //Writes any lines that isn't a message
                                 writer.WriteLine(inputFileContent[index]);
                             }
                         }
@@ -435,7 +441,11 @@ namespace CLI.Test
         /// <returns></returns>
         private static int ReplaceResultLines(string[] replacingText, StreamWriter writer)
         {
-            Regex rxStartUseActual = new Regex(@"^\s+{");
+            //Looks for the begining of the result_message array, 
+            //symbolized by a succession of white space from the bebinning of the line and ending with a "{" e.g. "    {"
+            Regex rxStartUseActual = new Regex(@"^\s+{$");
+            //Looks for the ending of the result_message array,
+            //symbolized by a succession of white space from the bebinning of the line and ending with a "]" e.g. "  ]"
             Regex rxStopUseActual = new Regex(@"^\s+]$");
 
             int writenLines = 0;
@@ -444,6 +454,7 @@ namespace CLI.Test
 
             for (int i = 0; i < replacingText.Length; i++)
             {
+                //if regex string is true and line is followed by the begining of a message. (a message will always start with a "category" item)
                 if (rxStartUseActual.IsMatch(replacingText[i]) && replacingText[i + 1].Contains("\"category\""))
                 {
                     write = true;
