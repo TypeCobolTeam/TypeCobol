@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements {
@@ -120,82 +121,59 @@ namespace TypeCobol.Compiler.CodeElements {
         {
             var signature = new List<TextLineSnapshot>();
 
-            StringBuilder str;
+            string paramsDescription;
             
             if (parameterList.InputParameters.Count > 0)
             {
-                str = new StringBuilder();
-                str.Append("*\t\tinput(");
-                foreach (var p in parameterList.InputParameters)
-                {
-                    str.Append(p.DataName.Name + ": ");
-                    if (p.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 && p.Picture != null)
-                        str.Append("PIC " + p.Picture);
-                    else
-                        str.Append(p.DataType);
-                    if (p.Usage != null)
-                        str.Append(" Usage: " + p.Usage);
-                    str.Append(", ");
-                }
-                str.Length -= 2;
-                str.Append(")");
-                signature.Add(new TextLineSnapshot(-1, str.ToString(), null));
+                paramsDescription = string.Format("*\t\tinput({0})",
+                    GetParameterDescriptions(parameterList.InputParameters));
+                signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
             }
             if (parameterList.InoutParameters.Count > 0)
             {
-                str = new StringBuilder();
-                str.Append("*\t\tin-out(");
-                foreach (var p in parameterList.InoutParameters)
-                {
-                    str.Append(p.DataName.Name + ": ");
-                    if (p.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 && p.Picture != null)
-                        str.Append("PIC " + p.Picture);
-                    else
-                        str.Append(p.DataType);
-                    if (p.Usage != null)
-                        str.Append(" Usage: " + p.Usage);
-                    str.Append(", ");
-                }
-                str.Length -= 2;
-                str.Append(")");
-                signature.Add(new TextLineSnapshot(-1, str.ToString(), null));
+                paramsDescription = string.Format("*\t\tin-out({0})",
+                    GetParameterDescriptions(parameterList.InoutParameters));
+                signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
             }
             if (parameterList.OutputParameters.Count > 0)
             {
-                str = new StringBuilder();
-                str.Append("*\t\toutput(");
-                foreach (var p in parameterList.OutputParameters)
-                {
-                    str.Append(p.DataName.Name + ": ");
-                    if (p.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 && p.Picture != null)
-                        str.Append("PIC " + p.Picture);
-                    else
-                        str.Append(p.DataType);
-                    if (p.Usage != null)
-                        str.Append(" Usage: " + p.Usage);
-                    str.Append(", ");
-                }
-                str.Length -= 2;
-                str.Append(")");
-                signature.Add(new TextLineSnapshot(-1, str.ToString(), null));
+                paramsDescription = string.Format("*\t\toutput({0})",
+                    GetParameterDescriptions(parameterList.OutputParameters));
+                signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
             }
             if (parameterList.ReturningParameter != null) {
-                str = new StringBuilder();
-
-                str.Append("*\t\treturns(");
-                str.Append(parameterList.ReturningParameter.DataName.Name + ": ");
-                if (parameterList.ReturningParameter.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 
-                    && parameterList.ReturningParameter.Picture != null)
-                    str.Append("PIC " + parameterList.ReturningParameter.Picture);
-                else
-                    str.Append(parameterList.ReturningParameter.DataType);
-                if (parameterList.ReturningParameter.Usage != null)
-                    str.Append(" Usage: " + parameterList.ReturningParameter.Usage);
-                str.Append(")");
-
-                signature.Add(new TextLineSnapshot(-1, str.ToString(), null));
+                paramsDescription = string.Format("*\t\treturns({0})",
+                    GetParameterDetails(parameterList.ReturningParameter));
+                signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
             }
             return signature;
+        }
+
+        private static string GetParameterDescriptions(IList<ParameterDescription> parameters)
+        {
+            StringBuilder str = new StringBuilder();
+            foreach (var p in parameters)
+            {
+                str.Append(GetParameterDetails(p));
+                str.Append(", ");
+            }
+            str.Length -= 2;
+
+            return str.ToString();
+        }
+
+        private static string GetParameterDetails(ParameterDescription parameter)
+        {
+            StringBuilder str = new StringBuilder();
+            str.Append(parameter.DataName.Name + ": ");
+            if (parameter.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 && parameter.Picture != null)
+                str.Append("PIC " + parameter.Picture);
+            else
+                str.Append(parameter.DataType);
+            if (parameter.Usage != null)
+                str.Append(" Usage: " + parameter.Usage);
+
+            return str.ToString();
         }
     }
 

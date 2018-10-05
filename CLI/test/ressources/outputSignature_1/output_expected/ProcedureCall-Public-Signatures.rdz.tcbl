@@ -2,7 +2,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. Callee.
        DATA DIVISION.
-       WORKING-STORAGE SECTION.                                               
+       working-storage section.                                               
        01  MyType1 TYPEDEF STRICT PUBLIC.
           05 Var1 pic X.
        01  MyType2 TYPEDEF STRICT PUBLIC.

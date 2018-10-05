@@ -122,7 +122,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d1447c56DisplayEventList.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OS3.DisplayEventList - Params :
       *		input(EventList: EventList)
                                
@@ -168,7 +168,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. c715cbccDisplayEventList.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OS3.DisplayEventList - Params :
       *		input(EventList: EventList)
                                
@@ -213,7 +213,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e427e27cDisplayEventList.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OS3.DisplayEventList - Params :
       *		input(EventList: EventList)
                                

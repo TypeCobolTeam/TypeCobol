@@ -72,7 +72,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d5479a8frechercheListeElements.
        DATA DIVISION.                                                   12340000
-       WORKING-STORAGE SECTION.
+       WORKING-STORAGE SECTION. 
       *MOVECORR.rechercheListeElements - Params :
       *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: PIC S9
       *(2) Usage: NativeBinary, site-ims: PIC X(2))

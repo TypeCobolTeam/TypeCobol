@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler.Nodes {
             get
             {
                 List<ITextLine> lines = new List<ITextLine>();
-                lines.Add(new TextLineSnapshot(-1, "WORKING-STORAGE SECTION.", null));
+                lines.Add(new TextLineSnapshot(-1, CodeElement.SourceText, null));
 
                 if (IsFlagSet(Flag.InsideProcedure))
                 {
@@ -130,7 +130,7 @@ namespace TypeCobol.Compiler.Nodes {
             get
             {
                 List<ITextLine> lines = new List<ITextLine>();
-                lines.Add(new TextLineSnapshot(-1, "LOCAL-STORAGE SECTION.", null));
+                lines.Add(new TextLineSnapshot(-1, CodeElement.SourceText, null));
 
                 if (IsFlagSet(Flag.InsideProcedure))
                 {
@@ -162,7 +162,7 @@ namespace TypeCobol.Compiler.Nodes {
             get
             {
                 List<ITextLine> lines = new List<ITextLine>();
-                lines.Add(new TextLineSnapshot(-1, "LINKAGE SECTION.", null));
+                lines.Add(new TextLineSnapshot(-1, CodeElement.SourceText, null));
 
                 if (IsFlagSet(Flag.InsideProcedure))
                 {

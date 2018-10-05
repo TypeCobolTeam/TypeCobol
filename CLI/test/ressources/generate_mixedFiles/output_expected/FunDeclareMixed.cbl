@@ -115,7 +115,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. e7b552c0UseACopy.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *FunDeclare.UseACopy - Params :
       *		input(x: PIC X)
                                

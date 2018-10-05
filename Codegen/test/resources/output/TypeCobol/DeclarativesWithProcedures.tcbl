@@ -85,7 +85,7 @@
                       .
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OSM.Titi  - No Params
                                
        01 Table-Tax.
@@ -126,7 +126,7 @@
                       .
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OSM.Toto  - No Params
                                
        01 Table-Tax.
@@ -140,6 +140,14 @@
                                        
        PROCEDURE DIVISION
            .
+      DDECLARATIVES.
+      DDECLARATION SECTION.
+      D    USE FOR DEBUGGING ON ALL PROCEDURES.
+      DAFFICHAGE-PARAGRAPHE.
+      D       display DEBUG-NAME
+      D    .
+      DX.  EXIT.
+      DEND DECLARATIVES.
       *DVZF0OSM.Toto  - No Params
 
       *     set Table-Tax::Tax::Idx-TaxElm to 1

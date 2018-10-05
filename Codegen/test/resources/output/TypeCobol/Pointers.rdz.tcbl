@@ -87,7 +87,7 @@
        PROGRAM-ID. e0410090PointerProcedure.
   
          data division.
-         WORKING-STORAGE SECTION.
+           working-storage section.
       *Pointers.PointerProcedure - Params :
       *		input(ptr: ? Usage: Pointer)
                                  

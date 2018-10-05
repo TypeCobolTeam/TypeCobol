@@ -27,7 +27,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ee0864c9IsDateValid.
        DATA DIVISION .
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OSM.IsDateValid  - No Params
                                
       *01  Result type bool.

@@ -186,7 +186,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. bfc74757testos.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *PGM1.testos  - No Params
                                
        01 TC-PGM2 pic X(08) value 'PGM2'.
