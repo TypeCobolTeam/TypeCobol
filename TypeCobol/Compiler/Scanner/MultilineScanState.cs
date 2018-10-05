@@ -125,7 +125,7 @@ namespace TypeCobol.Compiler.Scanner
             {
                 clone.SymbolicCharacters = new List<string>(SymbolicCharacters);
             }
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+#if EUROINFO_RULES
             clone.InsideRemarksDirective = InsideRemarksDirective;
             clone.InsideRemarksParentheses = InsideRemarksParentheses;
             clone.LeavingRemarksDirective = LeavingRemarksDirective;
@@ -432,7 +432,7 @@ namespace TypeCobol.Compiler.Scanner
                        InsideProcedureDivision == otherScanState.InsideProcedureDivision &&
                        InsidePseudoText == otherScanState.InsidePseudoText &&
                        InsideSymbolicCharacterDefinitions == otherScanState.InsideSymbolicCharacterDefinitions &&
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+#if EUROINFO_RULES
                 InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
                     //((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
                     // (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
@@ -458,7 +458,7 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideProcedureDivision.GetHashCode();
                 hash = hash * 23 + InsidePseudoText.GetHashCode();
                 hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+#if EUROINFO_RULES
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();
 #endif
                 hash = hash * 23 + DecimalPointIsComma.GetHashCode();

@@ -54,8 +54,7 @@ namespace TypeCobol.Test.Report
                 var parser = new TypeCobol.Parser();
                 var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
 #if EUROINFO_RULES
-                bool autoRemarks = false;
-                typeCobolOption.AutoRemarksEnable = autoRemarks;
+                typeCobolOption.AutoRemarksEnable = false;
 #endif
                 String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
@@ -72,7 +71,7 @@ namespace TypeCobol.Test.Report
                             // compare with expected result
                             string result = sw.ToString();
                             string expected = File.ReadAllText(output, format.Encoding);
-                            TypeCobol.Test.TestUtils.compareLines(input, result, expected);
+                            TypeCobol.Test.TestUtils.compareLines(input, result, expected, PlatformUtils.GetPathForProjectFile(output));
                         }
                     }
                 }

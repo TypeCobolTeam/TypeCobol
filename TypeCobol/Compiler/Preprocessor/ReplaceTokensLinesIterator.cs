@@ -29,7 +29,7 @@ namespace TypeCobol.Compiler.Preprocessor
             // Underlying tokens iterator position
             public object SourceIteratorPosition;
 
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+#if EUROINFO_RULES
 
             // Support for legacy replacing syntax semantics : 
             // Remove the first 01 level data item found in the COPY text
@@ -61,23 +61,28 @@ namespace TypeCobol.Compiler.Preprocessor
         // Previous snapshot position
         private object snaphsotPosition;
 
+        // Options entered in CLI
+        private TypeCobolOptions CompilerOptions;
+
         /// <summary>
         /// Implement REPLACE directives on top of a CopyTokensLinesIterator
         /// </summary>
-        public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator)
+        public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, TypeCobolOptions compilerOptions)
         {
             this.sourceIterator = sourceIterator;
+            CompilerOptions = compilerOptions;
         }
 
         /// <summary>
         /// Implement COPY REPLACING on top of an underlying tokens line iterator
         /// </summary>
-        public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, CopyDirective copyReplacingDirective)
+        public ReplaceTokensLinesIterator(ITokensLinesIterator sourceIterator, CopyDirective copyReplacingDirective, TypeCobolOptions compilerOptions)
         {
             this.sourceIterator = sourceIterator;
             this.CopyReplacingDirective = copyReplacingDirective;
+            CompilerOptions = compilerOptions;
 
-            if(copyReplacingDirective.ReplaceOperations.Count > 0)
+            if (copyReplacingDirective.ReplaceOperations.Count > 0)
             {
                 if(copyReplacingDirective.ReplaceOperations.Count == 1)
                 {
@@ -173,36 +178,40 @@ namespace TypeCobol.Compiler.Preprocessor
             {
                 Token nextToken = sourceIterator.NextToken();
 
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+#if EUROINFO_RULES
 
-                // Support for legacy replacing syntax semantics : 
-                // Remove the first 01 level data item found in the COPY text
-                // before copying it into the main program
-                if(CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && CopyReplacingDirective.ReplaceOperations.Count == 0)
+                if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
-                    //A Data description entry starts with an integer literal
-                    if(nextToken.TokenType == TokenType.LevelNumber)
+                    // Support for legacy replacing syntax semantics : 
+                    // Remove the first 01 level data item found in the COPY text
+                    // before copying it into the main program
+                    if (CopyReplacingDirective != null && CopyReplacingDirective.RemoveFirst01Level && CopyReplacingDirective.ReplaceOperations.Count == 0)
                     {
-                        if (nextToken.Text == "01" && nextToken.Column <= 10) {
-                            var firstLevelFound = true;
-                            // Register that we saw the first "01" integer literal in the underlying file
-                            currentPosition.SawFirstIntegerLiteral = true;
-                            // Skip all tokens after 01 until the next period separator 
-                            while (firstLevelFound && nextToken.TokenType != TokenType.EndOfFile)
+                        //A Data description entry starts with an integer literal
+                        if (nextToken.TokenType == TokenType.LevelNumber)
+                        {
+                            if (nextToken.Text == "01" && nextToken.Column <= 10)
                             {
-                                nextToken = sourceIterator.NextToken();
-
-                                if (nextToken.TokenType == TokenType.PeriodSeparator)
+                                var firstLevelFound = true;
+                                // Register that we saw the first "01" integer literal in the underlying file
+                                currentPosition.SawFirstIntegerLiteral = true;
+                                // Skip all tokens after 01 until the next period separator 
+                                while (firstLevelFound && nextToken.TokenType != TokenType.EndOfFile)
                                 {
                                     nextToken = sourceIterator.NextToken();
-                                    if (nextToken.Text != "01" || nextToken.Column > 9)
-                                        firstLevelFound = false;
-                                    
+
+                                    if (nextToken.TokenType == TokenType.PeriodSeparator)
+                                    {
+                                        nextToken = sourceIterator.NextToken();
+                                        if (nextToken.Text != "01" || nextToken.Column > 9)
+                                            firstLevelFound = false;
+
+                                    }
                                 }
                             }
-                        } 
+                        }
                     }
-                }
+                }                
 #endif
 
                 // If the next token is a REPLACE directive, update the current replace directive in effect
@@ -286,26 +295,29 @@ namespace TypeCobol.Compiler.Preprocessor
             ReplaceStatus status = new ReplaceStatus();
             IList<Token> originalMatchingTokens;
 
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+#if EUROINFO_RULES
 
-            // Support for legacy replacing syntax semantics : 
-            // Insert Suffix before the first '-' in all user defined words found in the COPY text 
-            // before copying it into the main program
-            if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
+            if (CompilerOptions.UseEuroInformationLegacyReplacingSyntax)
             {
-                string originalText = nextToken.Text;
-                if (originalText.Contains(CopyReplacingDirective.PreSuffix))
+                // Support for legacy replacing syntax semantics : 
+                // Insert Suffix before the first '-' in all user defined words found in the COPY text 
+                // before copying it into the main program
+                if (CopyReplacingDirective != null && CopyReplacingDirective.InsertSuffixChar && nextToken.TokenType == TokenType.UserDefinedWord)
                 {
-                    string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix , CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix));
-                    TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
-                    Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
-                        virtualTokensLine);
+                    string originalText = nextToken.Text;
+                    if (originalText.Contains(CopyReplacingDirective.PreSuffix))
+                    {
+                        string replacedText = originalText.Replace(CopyReplacingDirective.PreSuffix , CopyReplacingDirective.PreSuffix.Insert(3, CopyReplacingDirective.Suffix));
+                        TokensLine virtualTokensLine = TokensLine.CreateVirtualLineForInsertedToken(0, replacedText);
+                        Token replacementToken = new Token(TokenType.UserDefinedWord, 0, replacedText.Length - 1,
+                            virtualTokensLine);
 
-                    status.replacedToken = new ReplacedToken(replacementToken, nextToken);
-                    currentPosition.CurrentToken = status.replacedToken;
+                        status.replacedToken = new ReplacedToken(replacementToken, nextToken);
+                        currentPosition.CurrentToken = status.replacedToken;
+                    }
                 }
             }
-#endif      
+#endif
 
             if (replaceOperation != null && TryMatchReplaceOperation(nextToken, replaceOperation, out originalMatchingTokens))
             {

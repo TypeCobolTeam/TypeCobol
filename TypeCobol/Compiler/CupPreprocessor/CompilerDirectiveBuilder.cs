@@ -92,42 +92,45 @@ namespace TypeCobol.Compiler.CupPreprocessor
             copy.TextName = GetName(qualifiedTextName.TextName);
             copy.TextNameSymbol = qualifiedTextName.TextName;
             {                
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
-                if (copy.TextName != null)
+#if EUROINFO_RULES
+                if (TypeCobolOptions.UseEuroInformationLegacyReplacingSyntax)
                 {
-
-                    // Find the list of copy text names variations declared by previous REMARKS compiler directives
-                    var variations = CopyTextNameVariations;
-                    if (TypeCobolOptions.AutoRemarksEnable &&
-                        (variations == null ||
-                         !variations.Any(
-                             v =>
-                                 string.Equals(v.TextNameWithSuffix, copy.TextName,
-                                     StringComparison.InvariantCultureIgnoreCase))))
-                        //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
+                    if (copy.TextName != null)
                     {
-                        variations = new List<RemarksDirective.TextNameVariation>
+
+                        // Find the list of copy text names variations declared by previous REMARKS compiler directives
+                        var variations = CopyTextNameVariations;
+                        if (TypeCobolOptions.AutoRemarksEnable &&
+                            (variations == null ||
+                             !variations.Any(
+                                 v =>
+                                     string.Equals(v.TextNameWithSuffix, copy.TextName,
+                                         StringComparison.InvariantCultureIgnoreCase))))
+                        //If it does not exists, create the text variation (AutoRemarks mechanism Issue #440)
+                        {
+                            variations = new List<RemarksDirective.TextNameVariation>
                         {
                             new RemarksDirective.TextNameVariation(copy.TextName)
                         };
 
-                        CopyTextNameVariations.AddRange(variations);
-                    }
+                            CopyTextNameVariations.AddRange(variations);
+                        }
 
-                    if (variations != null)
-                    {
-                        var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName,
-                                        StringComparison.InvariantCultureIgnoreCase));
-                        if (declaration != null && copy.TextName.StartsWith("Y", StringComparison.InvariantCultureIgnoreCase))
+                        if (variations != null)
                         {
-                            // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
-                            copy.RemoveFirst01Level = true;
-                            if (declaration.HasSuffix)
+                            var declaration = variations.Find(d => String.Equals(d.TextNameWithSuffix, copy.TextName,
+                                            StringComparison.InvariantCultureIgnoreCase));
+                            if (declaration != null && copy.TextName.StartsWith("Y", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                copy.TextName = declaration.TextName;
-                                copy.InsertSuffixChar = true;
-                                copy.Suffix = declaration.Suffix;
-                                copy.PreSuffix = declaration.PreSuffix;
+                                // Declaration found and copy name starts with Y => apply the legacy REPLACING semantics to the copy directive
+                                copy.RemoveFirst01Level = true;
+                                if (declaration.HasSuffix)
+                                {
+                                    copy.TextName = declaration.TextName;
+                                    copy.InsertSuffixChar = true;
+                                    copy.Suffix = declaration.Suffix;
+                                    copy.PreSuffix = declaration.PreSuffix;
+                                }
                             }
                         }
                     }

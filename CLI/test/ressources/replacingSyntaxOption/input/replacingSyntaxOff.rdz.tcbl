@@ -1,0 +1,18 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZS0OSM.
+      
+001930*REMARKS.         COPY=(                                 
+002630*                       YCONVEAL  
+002700*                                 ).                     
+      
+       data division.
+       working-storage section.
+       
+000000    01 CONVEAL. COPY  YCONVEAL.   
+
+000000 PROCEDURE DIVISION.
+           MOVE "" TO CONVEA-TESTVEA-TEST. 
+           MOVE "" TO CONVEAL-TESTVEA-TEST. 
+000000     GOBACK
+000000     .
+       END PROGRAM DVZS0OSM.
