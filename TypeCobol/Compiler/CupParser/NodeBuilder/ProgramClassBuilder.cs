@@ -580,6 +580,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Library = CurrentProgram.Identification.ProgramName.Name
             };
             _IsInsideProcedure = true;
+            CurrentProgram.Root.SetFlag(Node.Flag.ContainsProcedure, true);
             //DO NOT change this without checking all references of Library. 
             // (SymbolTable - function, type finding could be impacted) 
 

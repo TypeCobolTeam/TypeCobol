@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 1[1,33] <37, Warning, General> - Warning: "END PROGRAM" is missing. It will automatically be generated at the end of this program if there is any procedure declaration
+Line 1[1,33] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 73[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 76[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x
 Line 78[3,11] <28, Error, Directives> - Failed to load COPY : Cobol source file not found: x

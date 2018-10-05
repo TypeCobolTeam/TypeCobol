@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 1[1,22] <37, Warning, General> - Warning: "END PROGRAM" is missing. It will automatically be generated at the end of this program if there is any procedure declaration
+Line 1[1,22] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 1[6,6] <27, Error, Syntax> - Syntax error : Symbol c is not referenced OffendingSymbol=[6,6:c]<UserDefinedWord> in COPY CPYProc
 Line 1[11,11] <27, Error, Syntax> - Syntax error : Symbol d is not referenced OffendingSymbol=[11,11:d]<UserDefinedWord> in COPY CPYProc
 

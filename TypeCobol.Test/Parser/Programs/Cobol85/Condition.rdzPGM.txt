@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 2[8,29] <37, Warning, General> - Warning: "END PROGRAM" is missing. It will automatically be generated at the end of this program if there is any procedure declaration
+Line 2[8,29] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 
 --- Program ---
 PROGRAM: MyPGM common:False initial:False recursive:False

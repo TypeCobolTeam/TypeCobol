@@ -583,8 +583,6 @@ namespace TypeCobol.Compiler.Diagnostics
             var header = functionDeclaration?.CodeElement as FunctionDeclarationHeader;
             if (header == null) return; //not my job
 
-            functionDeclaration.GetProgramNode().SetFlag(Node.Flag.ContainsProcedure, true);
-
             var filesection = functionDeclaration.Get<FileSection>("file");
             if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
             {
@@ -925,7 +923,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (node.IsFlagSet(Node.Flag.MissingEndProgram))
             {
                 DiagnosticUtils.AddError(node,
-                    "\"END PROGRAM\" is missing. It will automatically be generated at the end of this program if there is any procedure declaration", MessageCode.Warning);
+                    "\"END PROGRAM\" is missing.", MessageCode.Warning);
             }
 
         }

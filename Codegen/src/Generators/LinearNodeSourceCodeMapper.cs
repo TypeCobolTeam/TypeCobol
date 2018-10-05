@@ -643,7 +643,9 @@ namespace TypeCobol.Codegen.Generators
                         }
                     }
 
-                    if (node.Parent.Children.Count > 1 && index == (node.Parent.Children.Count - 1) && node.Parent.Children.Any(c => c is NestedProgram))
+                    //Special case if the program contains a nested program
+                    //If the program node contains a generated node after a Nested, the corresponding text will be generated after him
+                    if (node.Parent.Children.Count > 1 && node.Parent.Children.Any(c => c is NestedProgram))
                     {
                         Node lastSibling = node.Parent.Children[index - 1].Children.Last();
                         if (lastSibling != null && (lastSibling.NodeIndex < 0 || Nodes[lastSibling.NodeIndex].Positions == null))

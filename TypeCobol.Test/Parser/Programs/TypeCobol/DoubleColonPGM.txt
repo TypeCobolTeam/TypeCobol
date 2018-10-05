@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 1[1,18] <37, Warning, General> - Warning: "END PROGRAM" is missing. It will automatically be generated at the end of this program if there is any procedure declaration
+Line 1[1,18] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 89[25,29] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced OffendingSymbol=[25,29:T1-B3]<UserDefinedWord>
 Line 90[17,21] <27, Error, Syntax> - Syntax error : Symbol T1-A.T1-B3 is not referenced OffendingSymbol=[17,21:T1-B3]<UserDefinedWord>
 Line 92[26,29] <27, Error, Syntax> - Syntax error : Symbol T1-B2.T1-A is not referenced OffendingSymbol=[26,29:T1-A]<UserDefinedWord>
