@@ -62,7 +62,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d58351d5testos.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *TCOZCHKP.testos  - No Params
                                
        01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.

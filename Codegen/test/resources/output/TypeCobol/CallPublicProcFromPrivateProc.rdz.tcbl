@@ -105,7 +105,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a0508f35check.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *PGM1.check - Params :
       *		input(mydate: DATE)
                                
@@ -116,7 +116,7 @@
            88 TC-NthCall    VALUE 'F'
                             X'00' thru 'S'
                             'U' thru X'FF'.
-       LINKAGE SECTION.
+       linkage section.
       *PGM1.check - Params :
       *		input(mydate: DATE)
                        

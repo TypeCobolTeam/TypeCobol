@@ -170,7 +170,7 @@
        SOURCE-COMPUTER. IBM-370
                       .
        data division.
-       LOCAL-STORAGE SECTION.
+       local-storage section.
       *TestDefBool.LoopTraceback - Params :
       *		input(startingDsa: ? Usage: Pointer)
       *		output(errCode: ErrorCode)
@@ -203,7 +203,7 @@
                              X'00' thru 'S'
                              'U' thru X'FF'.
                                       
-       LINKAGE SECTION.
+       linkage section.
       *TestDefBool.LoopTraceback - Params :
       *		input(startingDsa: ? Usage: Pointer)
       *		output(errCode: ErrorCode)

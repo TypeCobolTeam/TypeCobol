@@ -29,7 +29,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. c9ad76ebToto.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OSM.Toto  - No Params
                                
        01 Table-Tax.

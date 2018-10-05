@@ -12,7 +12,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. da82b615toto.
        DATA DIVISION.
-       LINKAGE SECTION.
+       linkage section.
       *DVZF0OSM.toto - Params :
       *		input(IsOk: BOOL)
                        

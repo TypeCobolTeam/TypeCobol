@@ -85,7 +85,7 @@
                       .
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OSM.Titi  - No Params
                                
        01 Table-Tax.
@@ -126,7 +126,7 @@
                       .
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZF0OSM.Toto  - No Params
                                
        01 Table-Tax.

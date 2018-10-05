@@ -57,7 +57,7 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. a711ebb5StartCheckpoint.
        data division.
-       WORKING-STORAGE SECTION.
+       working-storage section.
       *DVZZOSM7.StartCheckpoint  - No Params
                                
       

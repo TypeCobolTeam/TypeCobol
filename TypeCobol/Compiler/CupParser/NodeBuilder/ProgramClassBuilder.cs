@@ -108,8 +108,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (_IsInsideProcedure)
             {
                 node.SetFlag(Node.Flag.InsideProcedure, true);      //Set flag to know that this node belongs a Procedure or Function
-                if (node is WorkingStorageSection || node is LocalStorageSection || node is LinkageSection || node is ProcedureDivision)
-                    node.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
             SyntaxTree.Enter(node, context);
 
@@ -512,6 +510,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new WorkingStorageSection(header), header);
             _IsInsideWorkingStorageContext = true;
+            if (_IsInsideProcedure)
+            {
+                CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
+            }
         }
 
         public virtual void EndWorkingStorageSection()
@@ -525,6 +527,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new LocalStorageSection(header), header);
             _IsInsideLocalStorageSectionContext = true;
+            if (_IsInsideProcedure)
+            {
+                CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
+            }
         }
 
         public virtual void EndLocalStorageSection()
@@ -538,6 +544,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new LinkageSection(header), header);
             _IsInsideLinkageSectionContext = true;
+            if (_IsInsideProcedure)
+            {
+                CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
+            }
         }
 
         public virtual void EndLinkageSection()
@@ -550,6 +560,10 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartProcedureDivision(ProcedureDivisionHeader header)
         {
             Enter(new ProcedureDivision(header), header);
+            if (_IsInsideProcedure)
+            {
+                CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
+            }
         }
 
         public virtual void EndProcedureDivision()

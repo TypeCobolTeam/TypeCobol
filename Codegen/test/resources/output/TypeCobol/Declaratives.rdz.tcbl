@@ -70,10 +70,10 @@
                       .
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
         DATA DIVISION.
-        WORKING-STORAGE SECTION.
+         WORKING-STORAGE SECTION.
       *DeclarativesTest.MyProc  - No Params
                                 
-        LINKAGE SECTION.
+         LINKAGE SECTION.
       *DeclarativesTest.MyProc  - No Params
                         
        PROCEDURE DIVISION
