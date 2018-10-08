@@ -80,16 +80,15 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 				_cache.Add(new TextLineSnapshot(-1, "    .", null));
 
                 
-                }
-
-			    if (Signature != null)
-			    {
-			        foreach (var signature in Signature)
-			        {
-			            _cache.Add(signature);
-			        }
-			    }
             }
+
+			if (Signature != null)
+			{
+			    foreach (var signature in Signature)
+			    {
+			        _cache.Add(signature);
+			    }
+			}
 			return _cache;
 		}
 	}
