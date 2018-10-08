@@ -565,7 +565,9 @@ namespace TypeCobol.Compiler.Parser
 			if(context.INITIAL() != null) {
 				condition.InitialOccurence = CreateSyntaxProperty(true, context.INITIAL());
 			}
-			condition.Delimiter = CobolExpressionsBuilder.CreateAlphanumericVariable(context.alphanumericVariable1());
+		    if (context.alphanumericVariable1() != null) {
+		        condition.Delimiter = CobolExpressionsBuilder.CreateAlphanumericVariable(context.alphanumericVariable1());
+            }
 			return condition;
 		}
 
