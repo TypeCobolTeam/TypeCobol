@@ -32,7 +32,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL698913763795011977.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":7,\"character\":8},\"end\":{\"line\":7,\"character\":9}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : no viable alternative at input '<end of file>'\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/publishDiagnostics\",\"params\":{\"uri\":\"file:///C:/Users/COLLARBE/AppData/Local/Temp/tcbl/PROCCALL698913763795011977.cee\",\"diagnostics\":[{\"range\":{\"start\":{\"line\":7,\"character\":8},\"end\":{\"line\":7,\"character\":9}},\"severity\":1,\"code\":\"27\",\"source\":\"Find the syntax diagram describing the statement in error in the language reference\",\"message\":\"Syntax error : mismatched input '' expecting {user defined word, CURRENCY, DATE}\"}]}}"
     },
     {
       "category": 2,

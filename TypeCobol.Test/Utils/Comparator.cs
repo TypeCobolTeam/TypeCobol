@@ -60,7 +60,7 @@ namespace TypeCobol.Test.Utils
 		public void Compare() {
             
             using (StreamReader reader = new StreamReader(new FileStream(Comparator.paths.Result, FileMode.Open))) {
-				Comparator.Compare(Compiler.CompilationResultsForProgram, reader);
+				Comparator.Compare(Compiler.CompilationResultsForProgram, reader, Comparator.paths.Result);
             }
 		}
 
@@ -68,7 +68,7 @@ namespace TypeCobol.Test.Utils
         {
             using (StreamReader reader = new StreamReader(new FileStream(Comparator.paths.Result, FileMode.Open)))
             {
-                ParserUtils.CheckWithResultReader(Comparator.paths.SamplePath, parsingResult, reader);
+                ParserUtils.CheckWithResultReader(Comparator.paths.SamplePath, parsingResult, reader, Comparator.paths.Result);
             }
         }
 
@@ -242,7 +242,7 @@ namespace TypeCobol.Test.Utils
     
     internal interface Comparator
     {
-        void Compare(CompilationUnit result, StreamReader expected);
+        void Compare(CompilationUnit result, StreamReader expected, string expectedResultPath);
     }
 
     internal class FilesComparator : Comparator
@@ -262,15 +262,15 @@ namespace TypeCobol.Test.Utils
             IsEI = isEI;
 		}
 
-		public virtual void Compare(CompilationUnit result, StreamReader reader) {
+		public virtual void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
             //Warning by default we only want All codeElementDiagnostics EXCEPT Node Diagnostics
-			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(false), reader);
+			Compare(result.CodeElementsDocumentSnapshot.CodeElements, result.AllDiagnostics(false), reader, expectedResultPath);
 		}
 
-		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected) {
+		internal virtual void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath) {
 			string result = ParserUtils.DumpResult(elements, codeElementDiagnostics);
 			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
+			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
 		}
 
 		internal DocumentFormat GetSampleFormat() {
@@ -283,7 +283,7 @@ namespace TypeCobol.Test.Utils
     internal class ArithmeticComparator : FilesComparator
     {
         public ArithmeticComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath)
         {
             var errors = new System.Text.StringBuilder();
             int c = 0, line = 1;
@@ -322,7 +322,7 @@ namespace TypeCobol.Test.Utils
     {
         public NYComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath)
         {
             int c = 0;
             StringBuilder errors = new StringBuilder();
@@ -353,7 +353,7 @@ namespace TypeCobol.Test.Utils
 
         public Outputter(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected)
+        internal override void Compare(IEnumerable<CodeElement> elements, IEnumerable<Diagnostic> codeElementDiagnostics, StreamReader expected, string expectedResultPath)
         {
             foreach (var e in elements)
             {
@@ -385,19 +385,19 @@ namespace TypeCobol.Test.Utils
     {
         public ProgramsComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             
-            Compare(pcd.Root.Programs, pcd.Root.Classes, diagnostics, reader);
+            Compare(pcd.Root.Programs, pcd.Root.Classes, diagnostics, reader, expectedResultPath);
         }
 
-        internal void Compare(IEnumerable<Program> programs, IEnumerable<TypeCobol.Compiler.Nodes.Class> classes, IList<Diagnostic> diagnostics, StreamReader expected)
+        internal void Compare(IEnumerable<Program> programs, IEnumerable<TypeCobol.Compiler.Nodes.Class> classes, IList<Diagnostic> diagnostics, StreamReader expected, string expectedResultPath)
         {
             string result = ParserUtils.DumpResult(programs, classes, diagnostics);
             if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
         }
     }
 
@@ -409,7 +409,7 @@ namespace TypeCobol.Test.Utils
     {
         public ProgramsComparator2(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
             var sortedDiags = compilationUnit.AllDiagnostics().OrderBy(d => d.Line).GetEnumerator();
             
@@ -445,7 +445,7 @@ namespace TypeCobol.Test.Utils
 
             string result = resultBuilder.ToString();
             if (debug) Console.WriteLine("\"" + paths.SamplePath+ "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
         }
     }
 
@@ -453,7 +453,7 @@ namespace TypeCobol.Test.Utils
     {
         public NodeComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader) {
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath) {
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
             
@@ -467,7 +467,7 @@ namespace TypeCobol.Test.Utils
 
             string result = sb.ToString();
             if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
         }
     }
 
@@ -475,7 +475,7 @@ namespace TypeCobol.Test.Utils
     {
         public TokenComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
 
@@ -496,7 +496,7 @@ namespace TypeCobol.Test.Utils
 
             string result = sb.ToString();
             if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
         }
     }
 
@@ -504,18 +504,18 @@ namespace TypeCobol.Test.Utils
 	{
 	    public MemoryComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit result, StreamReader reader) {
+        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
 			ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
             var symbolTables = new List<SymbolTable>();
             symbolTables.Add(pcd.Root.SymbolTable);
 
-			Compare(symbolTables, reader);
+			Compare(symbolTables, reader, expectedResultPath);
 		}
 
-		internal void Compare(List<SymbolTable> tables, StreamReader expected) {
+		internal void Compare(List<SymbolTable> tables, StreamReader expected, string expectedResultPath) {
 			string result = Dump(tables);
 			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected);
+			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
 		}
 
 		private string Dump(List<SymbolTable> tables) {
@@ -585,15 +585,15 @@ namespace TypeCobol.Test.Utils
     {
         public AntlrComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit result, StreamReader reader)
+        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
         {
-            Compare(result.AntlrResult, reader);
+            Compare(result.AntlrResult, reader, expectedResultPath);
         }
 
-        internal void Compare(string AntlrResult, StreamReader reader)
+        internal void Compare(string AntlrResult, StreamReader reader, string expectedResultPath)
         {
             if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + AntlrResult);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, AntlrResult, reader);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, AntlrResult, reader, expectedResultPath);
         }
 
     }
@@ -602,7 +602,7 @@ namespace TypeCobol.Test.Utils
     {
         public DocumentationComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
@@ -626,7 +626,7 @@ namespace TypeCobol.Test.Utils
 
             string result = sb.ToString();
             if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
         }
     }
 
@@ -634,7 +634,7 @@ namespace TypeCobol.Test.Utils
     {
         public DocumentationPropertiesComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit compilationUnit, StreamReader reader)
+        public override void Compare(CompilationUnit compilationUnit, StreamReader reader, string expectedResultPath)
         {
             ProgramClassDocument pcd = compilationUnit.ProgramClassDocumentSnapshot;
             IList<Diagnostic> diagnostics = compilationUnit.AllDiagnostics();
@@ -670,7 +670,7 @@ namespace TypeCobol.Test.Utils
 
             string result = sb.ToString();
             if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
-            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
+            ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader, expectedResultPath);
         }
 
         private void WriteDocumentedNodeProperties(Documentation doc, StringBuilder sb)
