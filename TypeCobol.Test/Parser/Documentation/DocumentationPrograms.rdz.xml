@@ -1,9 +1,9 @@
-﻿Line 44[35,40] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param4
-Line 63[33,38] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param1
-Line 64[33,38] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param3
+﻿Line 44[36,41] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param4
+Line 63[34,39] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param1
+Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param3
 ======================== Documentation ========================
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+<DocumentationForProgram xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Needs>
     <Need>This is my first need This is also my first need</Need>
     <Need>This is my second need</Need>
@@ -14,11 +14,11 @@ Line 64[33,38] <37, Warning, General> - Warning: Parameter does not have any des
   <Name>DocForPrograms</Name>
   <Visibility xsi:nil="true" />
   <Namespace>DocForPrograms</Namespace>
-</Documentation>
+</DocumentationForProgram>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+<DocumentationForProgram xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Needs>
     <Need>This is my only need</Need>
   </Needs>
@@ -32,7 +32,7 @@ Line 64[33,38] <37, Warning, General> - Warning: Parameter does not have any des
   <Parameters>
     <Parameter>
       <Name>param1</Name>
-      <PassingType>Unknow</PassingType>
+      <PassingType>Unknown</PassingType>
       <Info>This is my first param</Info>
       <DocDataType>
         <Usage xsi:nil="true" />
@@ -61,7 +61,7 @@ Line 64[33,38] <37, Warning, General> - Warning: Parameter does not have any des
     </Parameter>
     <Parameter>
       <Name>param4</Name>
-      <PassingType>Unknow</PassingType>
+      <PassingType>Unknown</PassingType>
       <DocDataType>
         <Usage xsi:nil="true" />
         <MaxOccurence>1</MaxOccurence>
@@ -69,11 +69,11 @@ Line 64[33,38] <37, Warning, General> - Warning: Parameter does not have any des
       </DocDataType>
     </Parameter>
   </Parameters>
-</Documentation>
+</DocumentationForProgram>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+<DocumentationForProgram xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Description>Stacked Program </Description>
   <Name>StackedPgm</Name>
   <Visibility xsi:nil="true" />
@@ -81,7 +81,7 @@ Line 64[33,38] <37, Warning, General> - Warning: Parameter does not have any des
   <Parameters>
     <Parameter>
       <Name>param1</Name>
-      <PassingType>Unknow</PassingType>
+      <PassingType>Unknown</PassingType>
       <DocDataType>
         <Usage xsi:nil="true" />
         <MaxOccurence>1</MaxOccurence>
@@ -90,13 +90,13 @@ Line 64[33,38] <37, Warning, General> - Warning: Parameter does not have any des
     </Parameter>
     <Parameter>
       <Name>param3</Name>
-      <PassingType>Unknow</PassingType>
+      <PassingType>Unknown</PassingType>
       <DocDataType>
         <Usage>Pointer</Usage>
         <MaxOccurence>1</MaxOccurence>
       </DocDataType>
     </Parameter>
   </Parameters>
-</Documentation>
+</DocumentationForProgram>
 ---------------------
 

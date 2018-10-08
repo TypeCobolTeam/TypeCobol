@@ -1,16 +1,16 @@
-﻿Line 19[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
-Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+﻿Line 19[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
 ======================== Documentation ========================
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+<DocumentationForProgram xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>DocForTypeDefs</Name>
   <Visibility xsi:nil="true" />
   <Namespace>DocForTypeDefs</Namespace>
-</Documentation>
+</DocumentationForProgram>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+<DocumentationForType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>Type10</Name>
   <Visibility>Private</Visibility>
   <Namespace>DocForTypeDefs</Namespace>
@@ -21,11 +21,11 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
     <MaxOccurence>1</MaxOccurence>
     <Picture>X(8)</Picture>
   </DocDataType>
-</Documentation>
+</DocumentationForType>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+<DocumentationForType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Description>Description for Type11 </Description>
   <Name>Type11</Name>
   <Visibility>Private</Visibility>
@@ -37,11 +37,11 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
     <MaxOccurence>1</MaxOccurence>
     <Picture>X(8)</Picture>
   </DocDataType>
-</Documentation>
+</DocumentationForType>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+<DocumentationForType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Description>Description for Type12 </Description>
   <Deprecated />
   <ReplacedBy>Type42 </ReplacedBy>
@@ -55,11 +55,11 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
     <MaxOccurence>1</MaxOccurence>
     <Picture>X(8)</Picture>
   </DocDataType>
-</Documentation>
+</DocumentationForType>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+<DocumentationForType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>Type20</Name>
   <Visibility>Private</Visibility>
   <Namespace>DocForTypeDefs</Namespace>
@@ -167,6 +167,7 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
           <DocDataType>
             <Usage xsi:nil="true" />
             <MaxOccurence>1</MaxOccurence>
+            <TypeName>BOOL</TypeName>
           </DocDataType>
         </Children>
       </Childrens>
@@ -189,11 +190,11 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
     <Usage xsi:nil="true" />
     <MaxOccurence>1</MaxOccurence>
   </DocDataType>
-</Documentation>
+</DocumentationForType>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+<DocumentationForType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Description>Description for Type21 </Description>
   <Name>Type21</Name>
   <Visibility>Private</Visibility>
@@ -302,6 +303,7 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
           <DocDataType>
             <Usage xsi:nil="true" />
             <MaxOccurence>1</MaxOccurence>
+            <TypeName>BOOL</TypeName>
           </DocDataType>
         </Children>
       </Childrens>
@@ -324,11 +326,11 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
     <Usage xsi:nil="true" />
     <MaxOccurence>1</MaxOccurence>
   </DocDataType>
-</Documentation>
+</DocumentationForType>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
+<DocumentationForType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Needs>
     <Need>see here what is needed</Need>
   </Needs>
@@ -441,6 +443,7 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
           <DocDataType>
             <Usage xsi:nil="true" />
             <MaxOccurence>1</MaxOccurence>
+            <TypeName>BOOL</TypeName>
           </DocDataType>
         </Children>
       </Childrens>
@@ -463,6 +466,6 @@ Line 59[12,17] <37, Warning, General> - Warning: Type Definition does not suppor
     <Usage xsi:nil="true" />
     <MaxOccurence>1</MaxOccurence>
   </DocDataType>
-</Documentation>
+</DocumentationForType>
 ---------------------
 

@@ -1,18 +1,18 @@
-﻿Line 12[12,13] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
-Line 14[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: IDS
-Line 28[20,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
-Line 29[20,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
+﻿Line 12[13,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
+Line 14[13,15] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: IDS
+Line 28[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 29[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
 ======================== Documentation ========================
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
+<DocumentationForProgram xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>DocForFunctions</Name>
   <Visibility xsi:nil="true" />
   <Namespace>DocForFunctions</Namespace>
-</Documentation>
+</DocumentationForProgram>
 ---------------------
 
 <?xml version="1.0" encoding="utf-16"?>
-<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForFunction">
+<DocumentationForFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Needs>
     <Need>first need</Need>
     <Need>second need</Need>
@@ -78,6 +78,6 @@ Line 29[20,24] <37, Warning, General> - Warning: Parameter does not have any des
       </DocDataType>
     </Parameter>
   </Parameters>
-</Documentation>
+</DocumentationForFunction>
 ---------------------
 

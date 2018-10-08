@@ -365,7 +365,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
     // [COBOL 2002]
-    public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>, IDocumented
+    public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>, IDocumentable
     {
         public TypeDefinition(DataTypeDescriptionEntry entry) : base(entry) { }
         public RestrictionLevel RestrictionLevel { get { return this.CodeElement().RestrictionLevel; } }
@@ -399,22 +399,6 @@ namespace TypeCobol.Compiler.Nodes {
             }
             return false;
         }
-
-
-        public string XMLDocumentation
-        {
-            get
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(Documentation));
-                using (StringWriter textWriter = new StringWriter())
-                {
-                    serializer.Serialize(textWriter, Documentation);
-                    return textWriter.ToString();
-                }
-            }
-        }
-        public bool IsDocumented => Documentation != null;
-        public Documentation Documentation { get; set; }
     }
     // [/COBOL 2002]
 

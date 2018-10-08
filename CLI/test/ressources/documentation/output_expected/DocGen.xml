@@ -1,10 +1,6 @@
-﻿Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
-Line 49[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
-Line 54[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
-Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
-======================== Documentation ========================
+﻿      *TypeCobol_Version:0.1(alpha)
 <?xml version="1.0" encoding="utf-16"?>
-<DocumentationForProgram xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForProgram">
   <Needs>
     <Need>some needs</Need>
     <Need>description</Need>
@@ -18,20 +14,18 @@ Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any des
   <ReplacedBy>MyFonction2 </ReplacedBy>
   <Restriction>Do not Use BOOL var </Restriction>
   <See>Thank you for your attention </See>
-  <Name>DocCombined</Name>
+  <Name>DocGen</Name>
   <Visibility xsi:nil="true" />
-  <Namespace>DocCombined</Namespace>
-</DocumentationForProgram>
----------------------
-
+  <Namespace>DocGen</Namespace>
+</Documentation>
 <?xml version="1.0" encoding="utf-16"?>
-<DocumentationForType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
   <Description>inline typedef </Description>
   <Deprecated />
   <Restriction>Do not Use BOOL var </Restriction>
   <Name>myType</Name>
   <Visibility>Public</Visibility>
-  <Namespace>DocCombined</Namespace>
+  <Namespace>DocGen</Namespace>
   <IsBlankWheneZero>false</IsBlankWheneZero>
   <Justified>false</Justified>
   <DocDataType>
@@ -39,15 +33,13 @@ Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any des
     <MaxOccurence>1</MaxOccurence>
     <Picture>X(01)</Picture>
   </DocDataType>
-</DocumentationForType>
----------------------
-
+</Documentation>
 <?xml version="1.0" encoding="utf-16"?>
-<DocumentationForType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForType">
   <Description>Vect2D </Description>
   <Name>Vect2D</Name>
-  <Visibility>Private</Visibility>
-  <Namespace>DocCombined</Namespace>
+  <Visibility>Public</Visibility>
+  <Namespace>DocGen</Namespace>
   <Childrens>
     <Children>
       <Childrens>
@@ -93,11 +85,9 @@ Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any des
     <Usage xsi:nil="true" />
     <MaxOccurence>1</MaxOccurence>
   </DocDataType>
-</DocumentationForType>
----------------------
-
+</Documentation>
 <?xml version="1.0" encoding="utf-16"?>
-<DocumentationForFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DocumentationForFunction">
   <Needs>
     <Need>long need</Need>
   </Needs>
@@ -108,8 +98,8 @@ Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any des
   <Description>MyProc info </Description>
   <Deprecated>It is deprecated </Deprecated>
   <Name>MyProc</Name>
-  <Visibility>Private</Visibility>
-  <Namespace>DocCombined</Namespace>
+  <Visibility>Public</Visibility>
+  <Namespace>DocGen</Namespace>
   <Parameters>
     <Parameter>
       <Name>myDate</Name>
@@ -160,6 +150,4 @@ Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any des
       </DocDataType>
     </Parameter>
   </Parameters>
-</DocumentationForFunction>
----------------------
-
+</Documentation>

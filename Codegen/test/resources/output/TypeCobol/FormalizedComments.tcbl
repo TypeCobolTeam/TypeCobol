@@ -1,8 +1,8 @@
 ﻿      * 4 errors
-      * Line 9[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
-      * Line 48[11,13] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
-      * Line 53[20,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
-      * Line 55[20,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+      * Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+      * Line 48[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
+      * Line 53[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+      * Line 55[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
       *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DocCodeGen.

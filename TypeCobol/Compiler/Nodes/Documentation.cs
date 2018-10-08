@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Serialization;
 using Castle.Core.Internal;
 using JetBrains.Annotations;
@@ -16,12 +19,8 @@ namespace TypeCobol.Compiler.Nodes
     /// <summary>
     /// Is implemented on Nodes that are documentable
     /// </summary>
-    public interface IDocumented
+    public interface IDocumentable
     {
-        string XMLDocumentation { get; }
-
-        bool IsDocumented { get; }
-        Documentation Documentation { get; set; }
     }
 
     /// <summary>
@@ -125,6 +124,43 @@ namespace TypeCobol.Compiler.Nodes
         /// Default constructor needed for serialisation. Do not use it.
         /// </summary>
         protected Documentation() { }
+
+        public StringBuilder SerializeToXml()
+        {
+            StringBuilder sb = new StringBuilder();
+            Type documentationType = IsTypeDef ? typeof(DocumentationForType) :
+                                    IsFunction ? typeof(DocumentationForFunction) :
+                                    IsProgram  ? typeof(DocumentationForProgram) :
+                                    null;
+            if (documentationType != null)
+            {
+                XmlSerializer serializer = new XmlSerializer(documentationType);
+                using (StringWriter textWriter = new StringWriter())
+                {
+                    serializer.Serialize(textWriter, this);
+                    sb.Append(textWriter);
+                }
+            }
+            return sb;
+        }
+
+        public static Documentation CreateAppropriateDocumentation(IDocumentable node)
+        {
+            if (node is Program)
+            {
+                return new DocumentationForProgram(node as Program);
+            }
+            else if (node is FunctionDeclaration)
+            {
+                return new DocumentationForFunction(node as FunctionDeclaration);
+            }
+            else if (node is TypeDefinition)
+            {
+                return new DocumentationForType(node as TypeDefinition);
+            }
+            else
+                throw new Exception("Documentable Nodes are: Program, FunctionDeclaration, TypeDefinition");
+        }
     }
 
 
@@ -132,7 +168,7 @@ namespace TypeCobol.Compiler.Nodes
     /// DocumentationForType contains the documentation information relative to a Type Definition
     /// </summary>
     /// <param name="Childrens">List of the Type children in case of group otherwise Childrens is null</param>
-    /// <param name="IsBlankWheneZero">Is set to true if the Type have the option "BLANK WHENE ZERO"</param>
+    /// <param name="IsBlankWheneZero">Is set to true if the Type have the option "BLANK WHEN ZERO"</param>
     /// <param name="Justified">Is set to true if the Type have the option "JUSTIFIED RIGHT"</param>
     /// <param name="DocDataType">Contains the information relative to the type data type(Usage, Occurs, Value, PIC ...)</param>
     [Serializable]
@@ -160,23 +196,6 @@ namespace TypeCobol.Compiler.Nodes
                 IsBlankWheneZero = ce.IsBlankWhenZero?.Value ?? false;
                 Justified = ce.IsJustified?.Value ?? false;
                 Visibility = ce.Visibility;
-
-                // Add a warning if a parameters field is set
-                if (ce.FormalizedCommentDocumentation != null)
-                {
-                    if (!ce.FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
-                    {
-                        var token = ce.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.FormComsParameters);
-                        if (token != null)
-                        {
-                            typeDefinition.AddDiagnostic(new Diagnostic(
-                                MessageCode.Warning,
-                                token.StartIndex,
-                                token.StopIndex,
-                                token.Line, "Type Definition does not support Parameters field"));
-                        }
-                    }
-                }
             }
 
             // Build the TypeDef DataType in case of the type itself have data informations (Usage, Occurs, Value, PIC ...)
@@ -209,7 +228,7 @@ namespace TypeCobol.Compiler.Nodes
     /// </summary>
     /// <param name="Childrens">List of this data children in case of group otherwise Childrens will be null</param>
     /// <param name="Name">List of the Type children in case of group otherwise Childrens is null</param>
-    /// <param name="IsBlankWheneZero">Is set to true if current data have the option "BLANK WHENE ZERO"</param>
+    /// <param name="IsBlankWheneZero">Is set to true if current data have the option "BLANK WHEN ZERO"</param>
     /// <param name="Justified">Is set to true if current data have the option "JUSTIFIED RIGHT"</param>
     /// <param name="IsLevel77">Is set to true if current data is defined in level 77</param>
     /// <param name="IsLevel88">Is set to true if current data is defined in level 77</param>
@@ -314,7 +333,7 @@ namespace TypeCobol.Compiler.Nodes
     /// <summary>
     /// DocumentationForFunction contains the documentation information relative to a Function Declaraton
     /// </summary>
-    /// <param name="Parameters">Parameters list coresponding to the Parameters field inside the Formalized Comment and completed with the function signature</param>
+    /// <param name="Parameters">Parameters list corresponding to the Parameters field inside the Formalized Comment and completed with the function signature</param>
     [Serializable]
     public class DocumentationForFunction : Documentation
     {
@@ -344,49 +363,6 @@ namespace TypeCobol.Compiler.Nodes
 
                 Parameters.Add(new DocumentationParameter(param, info));
             }
-
-            //// Set a Warning if the FormCom parameter in unknow or if the function parameter have no description
-
-            // Get the parameters inside the Formalized Comment that are not inside the function parameters
-            var formComParamOrphan = ce?.FormalizedCommentDocumentation?.Parameters.Keys.Except(
-                functionDeclaration.Profile.Parameters.Select(p => p.Name));
-
-            // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
-            foreach (var orphan in formComParamOrphan ?? Enumerable.Empty<string>())
-            {
-                var tokens = ce?.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
-                foreach (var token in tokens ?? Enumerable.Empty<Token>())
-                {
-                    functionDeclaration.AddDiagnostic(new Diagnostic(
-                        MessageCode.Warning,
-                        token.StartIndex,
-                        token.StopIndex,
-                        token.Line, "Parameter name does not match to any function parameter: " + orphan));
-                }
-            }
-
-            if (ce?.FormalizedCommentDocumentation != null)
-            {
-                // Get the parameters inside the function parameters that are not inside the Formalized Comment
-                var sameParameters = functionDeclaration.Profile.Parameters.Where(p =>
-                    ce.FormalizedCommentDocumentation.Parameters.Keys.Contains(p.Name));
-
-                var functionParamWithoutDesc = functionDeclaration.Profile.Parameters.Except(sameParameters);
-
-                // For each of them, place a warning on the parameter definition
-                foreach (var param in functionParamWithoutDesc)
-                {
-                    var token = param.CodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.UserDefinedWord);
-                    if (token != null)
-                    {
-                        functionDeclaration.AddDiagnostic(new Diagnostic(
-                            MessageCode.Warning,
-                            token.StartIndex,
-                            token.StopIndex,
-                            token.Line, "Parameter does not have any description inside the formalized comments: " + param.Name));
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -398,9 +374,9 @@ namespace TypeCobol.Compiler.Nodes
 
 
     /// <summary>
-    /// DocumentationForProgram contains the documentation information relative to a Program Declaraton (Source, Stacked or Nestead)
+    /// DocumentationForProgram contains the documentation information relative to a Program Declaration (Source, Stacked or Nested)
     /// </summary>
-    /// <param name="Parameters">Parameters list coresponding to the Parameters field inside the Formalized Comment and completed with the program signature</param>
+    /// <param name="Parameters">Parameters list corresponding to the Parameters field inside the Formalized Comment and completed with the program signature</param>
     [Serializable]
     public class DocumentationForProgram : Documentation
     {
@@ -421,8 +397,7 @@ namespace TypeCobol.Compiler.Nodes
             ProcedureDivisionHeader procedureDivision = program.Children.FirstOrDefault(x => x is ProcedureDivision)
                 ?.CodeElement as ProcedureDivisionHeader;
 
-            ProcedureDivisionHeader procDiv = program.Children.FirstOrDefault(c => c is ProcedureDivision)?.CodeElement as ProcedureDivisionHeader;
-            var formCom = procDiv?.FormalizedCommentDocumentation;
+            var formCom = procedureDivision?.FormalizedCommentDocumentation;
 
             if (procedureDivision != null)
             {
@@ -447,48 +422,6 @@ namespace TypeCobol.Compiler.Nodes
                         }
                     }
 
-                    //// Set a Warning if the FormCom parameter in unknow or if the program parameter have no description
-
-                    // Get the parameters inside the Formalized Comment that are not inside the program parameters
-                    var formComParamOrphan = formCom?.Parameters.Keys.Except(
-                        procedureDivision.UsingParameters.Select(p => p.StorageArea.SymbolReference?.Name));
-
-                    // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
-                    foreach (var orphan in formComParamOrphan ?? Enumerable.Empty<string>())
-                    {
-                        var tokens = ce?.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
-                        foreach (var token in tokens)
-                        {
-                            program.AddDiagnostic(new Diagnostic(
-                                MessageCode.Warning,
-                                token.StartIndex,
-                                token.StopIndex,
-                                token.Line, "Parameter name does not match to any program parameter: " + orphan));
-                        }
-                    }
-
-                    if (formCom != null)
-                    {
-                        // Get the parameters inside the program parameters that are not inside the Formalized Comment
-                        var sameParameters = procedureDivision.UsingParameters.Where(p =>
-                            formCom.Parameters.Keys.Contains(p.StorageArea.SymbolReference?.Name));
-
-                        var programParamWithoutDesc = procedureDivision.UsingParameters.Except(sameParameters);
-
-                        // For each of them, place a warning on the parameter definition
-                        foreach (var param in programParamWithoutDesc)
-                        {
-                            var tokens = procedureDivision.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == param.StorageArea.SymbolReference?.Name);
-                            foreach (var token in tokens)
-                            {
-                                program.AddDiagnostic(new Diagnostic(
-                                    MessageCode.Warning,
-                                    token.StartIndex,
-                                    token.StopIndex,
-                                    token.Line, "Parameter does not have any description inside the formalized comments: " + param.StorageArea.SymbolReference?.Name));
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -504,7 +437,7 @@ namespace TypeCobol.Compiler.Nodes
     /// Parameter inside a Function or a Program
     /// </summary>
     /// <param name="Name">The Name of the parameter data</param>
-    /// <param name="PassingType">The passing type (INPUT/OUTPUT/INOUT/Unknow)</param>
+    /// <param name="PassingType">The passing type (INPUT/OUTPUT/INOUT/Unknown)</param>
     /// <param name="Info">The Description of the parameter given inside the Formalized Comment</param>
     /// <param name="DocDataType">   </param>
     [Serializable]
@@ -515,7 +448,7 @@ namespace TypeCobol.Compiler.Nodes
             Input,
             Output,
             InOut,
-            Unknow
+            Unknown
         }
 
         [XmlIgnore]
@@ -543,7 +476,7 @@ namespace TypeCobol.Compiler.Nodes
             DocDataType = new DocumentationDataType(parameter);
 
             int passTypeInt = (int)parameter.PassingType;
-            PassingType = passTypeInt < 3 ? (PassingTypes)passTypeInt : PassingTypes.Unknow;
+            PassingType = passTypeInt < 3 ? (PassingTypes)passTypeInt : PassingTypes.Unknown;
         }
 
         /// <summary>
@@ -566,7 +499,7 @@ namespace TypeCobol.Compiler.Nodes
                 Info = processedData.Item2;
             }
             else
-                PassingType = PassingTypes.Unknow;
+                PassingType = PassingTypes.Unknown;
         }
         
 
@@ -598,11 +531,11 @@ namespace TypeCobol.Compiler.Nodes
                     passingType = PassingTypes.InOut;
                     break;
                 default:
-                    passingType = PassingTypes.Unknow;
+                    passingType = PassingTypes.Unknown;
                     break;
             }
 
-            if (passingType != PassingTypes.Unknow)
+            if (passingType != PassingTypes.Unknown)
             {
                 int index;
                 for (index = 6; !char.IsLetter(info, index); index++){}
@@ -670,4 +603,5 @@ namespace TypeCobol.Compiler.Nodes
             
         }
     }
+
 }

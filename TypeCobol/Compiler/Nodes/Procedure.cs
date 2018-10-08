@@ -74,7 +74,7 @@ namespace TypeCobol.Compiler.Nodes {
 
     // [TYPECOBOL]
 
-    public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller, IDocumented
+    public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller, IDocumentable
     {
         public FunctionDeclaration(FunctionDeclarationHeader header) : base(header)
         {
@@ -90,21 +90,6 @@ namespace TypeCobol.Compiler.Nodes {
 	    public string Copy { get { return Library+"cpy"; } }
 	    //public ParametersProfile Profile { get { return this.CodeElement().Profile; } }
         public ParametersProfileNode Profile{ get; set; }
-
-        public string XMLDocumentation
-        {
-            get
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(Documentation));
-                using (StringWriter textWriter = new StringWriter())
-                {
-                    serializer.Serialize(textWriter, Documentation);
-                    return textWriter.ToString();
-                }
-            }
-        }
-        public bool IsDocumented => Documentation != null;
-        public Documentation Documentation { get; set; }
 
 
         private string _hash;

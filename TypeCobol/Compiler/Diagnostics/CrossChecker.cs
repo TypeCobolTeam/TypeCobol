@@ -63,7 +63,6 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(FunctionDeclaration functionDeclaration)
         {
             FunctionDeclarationChecker.OnNode(functionDeclaration);
-            functionDeclaration.Documentation = new DocumentationForFunction(functionDeclaration);
             return true;
         }
 
@@ -199,7 +198,57 @@ namespace TypeCobol.Compiler.Diagnostics
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
-            typeDefinition.Documentation = new DocumentationForType(typeDefinition);
+            return true;
+        }
+
+        public override bool Visit(Program program)
+        {
+            //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
+
+            ProcedureDivisionHeader procedureDivision = program.Children.FirstOrDefault(c => c is ProcedureDivision)?.CodeElement as ProcedureDivisionHeader;
+            var formCom = procedureDivision?.FormalizedCommentDocumentation;
+
+            if (formCom != null && procedureDivision.UsingParameters!= null)
+            {
+                // Get the parameters inside the Formalized Comment that are not inside the program parameters
+                var formComParamOrphan = formCom.Parameters.Keys.Except(
+                    procedureDivision.UsingParameters.Select(p => p.StorageArea.SymbolReference?.Name)) ?? Enumerable.Empty<string>();
+
+                // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
+                foreach (var orphan in formComParamOrphan)
+                {
+                    var tokens =
+                        procedureDivision.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
+                    foreach (var token in tokens)
+                    {
+                        DiagnosticUtils.AddError(procedureDivision,
+                            "Parameter name does not match to any program parameter: " + orphan,
+                            token, code: MessageCode.Warning);
+                    }
+                }
+
+                
+                // Get the parameters inside the program parameters that are not inside the Formalized Comment
+                var sameParameters = procedureDivision.UsingParameters.Where(p =>
+                    formCom.Parameters.Keys.Contains(p.StorageArea.SymbolReference?.Name));
+
+                var programParamWithoutDesc = procedureDivision.UsingParameters.Except(sameParameters);
+
+                // For each of them, place a warning on the parameter definition
+                foreach (var param in programParamWithoutDesc)
+                {
+                    var tokens = procedureDivision.ConsumedTokens.Where(t =>
+                        t.TokenType == TokenType.UserDefinedWord &&
+                        t.Text == param.StorageArea.SymbolReference?.Name);
+                    foreach (var token in tokens)
+                    {
+                        DiagnosticUtils.AddError(procedureDivision,
+                            "Parameter does not have any description inside the formalized comments: " + param.StorageArea.SymbolReference?.Name,
+                            token, code: MessageCode.Warning);
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -316,12 +365,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement,
                     "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
             }
-            return true;
-        }
-
-        public override bool Visit(Program program)
-        {
-            program.Documentation = new DocumentationForProgram(program);
             return true;
         }
 

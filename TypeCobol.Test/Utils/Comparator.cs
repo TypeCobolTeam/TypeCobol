@@ -612,12 +612,13 @@ namespace TypeCobol.Test.Utils
             {
                 sb.AppendLine(diagnostic.ToString());
             }
-            List<IDocumented> documentedNodes = ParserUtils.GetDocumentedNodes(pcd.Root);
+            List<IDocumentable> documentedNodes = ParserUtils.GetDocumentedNodes(pcd.Root);
 
             sb.AppendLine("======================== Documentation ========================");
             foreach (var node in documentedNodes)
             {
-                sb.Append(node.XMLDocumentation);
+                var doc = Documentation.CreateAppropriateDocumentation(node);
+                sb.Append(doc.SerializeToXml());
                 sb.AppendLine();
                 sb.AppendLine("---------------------");
                 sb.AppendLine();
@@ -644,12 +645,13 @@ namespace TypeCobol.Test.Utils
                 sb.AppendLine(diagnostic.ToString());
             }
 
-            List<IDocumented> documentedNodes = ParserUtils.GetDocumentedNodes(pcd.Root);
+            List<IDocumentable> documentedNodes = ParserUtils.GetDocumentedNodes(pcd.Root);
 
             sb.AppendLine("======================== Nodes properties ========================");
             foreach (var node in documentedNodes)
             {
-                WriteDocumentedNodeProperties(node, sb);
+                var doc = Documentation.CreateAppropriateDocumentation(node);
+                WriteDocumentedNodeProperties(doc, sb);
                 sb.AppendLine();
                 sb.AppendLine("---------------------");
                 sb.AppendLine();
@@ -658,7 +660,8 @@ namespace TypeCobol.Test.Utils
             sb.AppendLine("======================== Code Element properties ========================");
             foreach (var node in documentedNodes)
             {
-                WriteDocumentedCodeElementProperties(node, sb);
+                var doc = Documentation.CreateAppropriateDocumentation(node);
+                WriteDocumentedCodeElementProperties(doc, sb);
                 sb.AppendLine();
                 sb.AppendLine("---------------------");
                 sb.AppendLine();
@@ -670,30 +673,30 @@ namespace TypeCobol.Test.Utils
             ParserUtils.CheckWithResultReader(paths.SamplePath, result, reader);
         }
 
-        private void WriteDocumentedNodeProperties(IDocumented node, StringBuilder sb)
+        private void WriteDocumentedNodeProperties(Documentation doc, StringBuilder sb)
         {
-            sb.AppendLine("Name : " + node.Documentation.Name);
-            sb.AppendLine("Description : " + node.Documentation.Description);
-            sb.AppendLine("Visibility : " + node.Documentation.Visibility);
-            sb.AppendLine("Namespace : " + node.Documentation.Namespace);
-            sb.AppendLine("NodeType : " + (node.Documentation.IsTypeDef ? "TypeDef" :
-                                               node.Documentation.IsFunction ? "Function" :
-                                               node.Documentation.IsProgram ? "Program" : ""));
+            sb.AppendLine("Name : " + doc.Name);
+            sb.AppendLine("Description : " + doc.Description);
+            sb.AppendLine("Visibility : " + doc.Visibility);
+            sb.AppendLine("Namespace : " + doc.Namespace);
+            sb.AppendLine("NodeType : " + (doc.IsTypeDef ? "TypeDef" :
+                                               doc.IsFunction ? "Function" :
+                                               doc.IsProgram ? "Program" : ""));
 
-            sb.AppendLine("IsDeprecated : " + node.Documentation.IsDeprecated);
-            sb.AppendLine("Deprecated : " + node.Documentation.Deprecated);
-            sb.AppendLine("ReplacedBy : " + node.Documentation.ReplacedBy);
-            sb.AppendLine("Restriction : " + node.Documentation.Restriction);
-            sb.AppendLine("See : " + node.Documentation.See);
+            sb.AppendLine("IsDeprecated : " + doc.IsDeprecated);
+            sb.AppendLine("Deprecated : " + doc.Deprecated);
+            sb.AppendLine("ReplacedBy : " + doc.ReplacedBy);
+            sb.AppendLine("Restriction : " + doc.Restriction);
+            sb.AppendLine("See : " + doc.See);
             sb.AppendLine("Needs : ");
-            foreach (var need in node.Documentation.Needs ?? Enumerable.Empty<string>())
+            foreach (var need in doc.Needs ?? Enumerable.Empty<string>())
                 sb.AppendLine("    " + need);
             sb.AppendLine("ToDo : ");
-            foreach (var toDo in node.Documentation.ToDo ?? Enumerable.Empty<string>())
+            foreach (var toDo in doc.ToDo ?? Enumerable.Empty<string>())
                 sb.AppendLine("    " + toDo);
 
             // Typedefs Specific:
-            DocumentationForType typeDoc = node.Documentation as DocumentationForType;
+            DocumentationForType typeDoc = doc as DocumentationForType;
             if (typeDoc != null)
             {
                 sb.AppendLine("IsBlankWheneZero : " + typeDoc.IsBlankWheneZero);
@@ -711,8 +714,8 @@ namespace TypeCobol.Test.Utils
             }
 
             // Programs and Functions Specific:
-            DocumentationForFunction funcDoc = node.Documentation as DocumentationForFunction;
-            DocumentationForProgram pgmDoc = node.Documentation as DocumentationForProgram;
+            DocumentationForFunction funcDoc = doc as DocumentationForFunction;
+            DocumentationForProgram pgmDoc = doc as DocumentationForProgram;
             if (funcDoc != null || pgmDoc != null)
             {
                 sb.AppendLine("Parameters : ");
@@ -731,11 +734,11 @@ namespace TypeCobol.Test.Utils
             }
         }
 
-        private void WriteDocumentedCodeElementProperties(IDocumented node, StringBuilder sb)
+        private void WriteDocumentedCodeElementProperties(Documentation doc, StringBuilder sb)
         {
 
-            sb.AppendLine("== " + node.Documentation.Name + " ==");
-            FormalizedCommentDocumentation formCom = node.Documentation.FormCom;
+            sb.AppendLine("== " + doc.Name + " ==");
+            FormalizedCommentDocumentation formCom = doc.FormCom;
 
             if (formCom != null)
             {

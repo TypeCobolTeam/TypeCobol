@@ -330,13 +330,13 @@ return str;
         }
 
 
-        public static List<IDocumented> GetDocumentedNodes(Node root)
+        public static List<IDocumentable> GetDocumentedNodes(Node root)
         {
-            List<IDocumented> documentedNodes = new List<IDocumented>();
+            List<IDocumentable> documentedNodes = new List<IDocumentable>();
 
             foreach (var child in root.Children)
             {
-                var documentedChild = child as IDocumented;
+                var documentedChild = child as IDocumentable;
                 if (documentedChild != null)
                     documentedNodes.Add(documentedChild);
                 documentedNodes.AddRange(GetDocumentedNodes(child));

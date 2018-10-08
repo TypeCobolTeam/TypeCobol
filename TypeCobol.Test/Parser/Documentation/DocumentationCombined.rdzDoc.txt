@@ -1,7 +1,7 @@
-Line 9[12,17] <37, Warning, General> - Warning: Type Definition does not support Parameters field
-Line 49[11,13] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
-Line 54[20,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
-Line 56[20,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 49[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
+Line 54[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
 ======================== Nodes properties ========================
 Name : DocCombined
 Description : My program description 

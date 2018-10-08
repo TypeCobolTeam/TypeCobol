@@ -1,0 +1,6 @@
+﻿ReturnCode=Warning_
+4 errors in "input\DocGen.tcbl":
+Line 9[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 56[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
+Line 61[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 63[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli

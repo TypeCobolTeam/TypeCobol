@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
+using Castle.Core.Internal;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -1036,7 +1037,10 @@ namespace TypeCobol.Compiler.Parser
         
         // [TypeCobol]
                 if (context.formalizedComment() != null)
+                {
                     typedef.FormalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
+                    
+                }
         // [/TypeCobol]
         
                 entry = typedef;
