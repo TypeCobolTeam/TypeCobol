@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
        DATA DIVISION.
                                                          
@@ -116,6 +116,8 @@
        PROGRAM-ID. bfc74757testos.
        data division.
        working-storage section.
+      *PGM1.testos  - No Params
+                               
        01 TC-PGM2 pic X(08) value 'PGM2'.
 
        01 TC-PGM1 pic X(08) value 'PGM1'.
@@ -127,6 +129,7 @@
                             'U' thru X'FF'.
        01 var1 pic X.
        LINKAGE SECTION.
+      *PGM1.testos  - No Params
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -147,6 +150,7 @@
           05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
+      *PGM1.testos  - No Params
            PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input var1
            

@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        DATA DIVISION.
                                                              
@@ -53,10 +53,14 @@
        PROGRAM-ID. b173dd7bcurrentDateString.
        DATA DIVISION.
        LINKAGE SECTION.
+      *DVZZDATE.currentDateString  - No Params
+      *		returns(Result: PIC 9(08))
        01 Result PIC 9(08).
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
+      *DVZZDATE.currentDateString  - No Params
+      *		returns(Result: PIC 9(08))
            display "toto"
            .
        END PROGRAM b173dd7bcurrentDateString.

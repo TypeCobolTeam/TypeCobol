@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. MOVECORR.
 
@@ -72,7 +72,12 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. d5479a8frechercheListeElements.
        DATA DIVISION.                                                   12340000
-       WORKING-STORAGE SECTION.                                         12350000
+       WORKING-STORAGE SECTION. 
+      *MOVECORR.rechercheListeElements - Params :
+      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: PIC S9
+      *(2) Usage: NativeBinary, site-ims: PIC X(2))
+      *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
+                                                                        12350000
           01  I                            PIC 9(4) COMP-5.             12360000
       *   01  enr-lu                         TYPE CTGCPL-Enreg.
           01 enr-lu. 
@@ -116,6 +121,10 @@
                                                                         12370011
                                                                         12380000
        LINKAGE SECTION.
+      *MOVECORR.rechercheListeElements - Params :
+      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: PIC S9
+      *(2) Usage: NativeBinary, site-ims: PIC X(2))
+      *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
        01 liste-a-chercher.
            02 TBL10-CTGCPL-RTA-tbl
                                OCCURS 10.
@@ -146,6 +155,10 @@
                    BY REFERENCE trouve-value
                    BY REFERENCE lis-trouvee
            .
+      *MOVECORR.rechercheListeElements - Params :
+      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: PIC S9
+      *(2) Usage: NativeBinary, site-ims: PIC X(2))
+      *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
 
       * recherche de l'element dans la table
       *    PERFORM VARYING L-I FROM 1 BY 1

@@ -16,11 +16,12 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 	public IList<CallTargetParameter> UsingParameters { get; private set; }
 	public CallTargetParameter ReturningParameter { get; private set; }
 	private SymbolTable table;
+    private readonly IEnumerable<TextLineSnapshot> Signature;
 
 
-	public ProcedureDivision(Compiler.Nodes.FunctionDeclaration declaration, [NotNull] List<Compiler.Nodes.Node> sentences): base(null) {
+    public ProcedureDivision(Compiler.Nodes.FunctionDeclaration declaration, [NotNull] List<Compiler.Nodes.Node> sentences): base(null) {
 		table = declaration.SymbolTable;
-		UsingParameters = new List<CallTargetParameter>();
+        UsingParameters = new List<CallTargetParameter>();
 		// TCRFUN_CODEGEN_PARAMETERS_ORDER
 		foreach(var parameter in declaration.Profile.InputParameters)
 			if (parameter.LevelNumber.Value == 1)
@@ -37,7 +38,15 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 				ReturningParameter = new CallTargetParameter() { StorageArea = GeneratedParameter.CreateReceivingStorageArea(declaration.Profile.ReturningParameter.DataName) };
 
 		this.children.AddRange(sentences);
-	}
+
+        var signature = new List<TextLineSnapshot>();
+        signature.Add(new TextLineSnapshot(-1,
+            string.Format("*{0}.{1} {2}", declaration.Root.MainProgram.Name, declaration.Name,
+                declaration.Profile.Parameters.Count != 0 ? "- Params :" : " - No Params"), null));
+        signature.AddRange(declaration.Profile.GetSignatureForComment());
+
+        Signature = signature;
+    }
 
 	private IList<ITextLine> _cache = null;
 	public override IEnumerable<ITextLine> Lines {
@@ -70,8 +79,23 @@ internal class ProcedureDivision: Compiler.Nodes.ProcedureDivision, Generated {
 				}
 				_cache.Add(new TextLineSnapshot(-1, "    .", null));
 
-                
-                }
+        var originalProcedure = this.Children?.FirstOrDefault()?.Parent?.Parent?.CodeElement as FunctionDeclarationHeader;
+        if (originalProcedure != null && originalProcedure.Visibility == AccessModifier.Private && this.GetChildren<Declaratives>().Count == 0)
+        {
+            var declarativesNode = this.Children.First().Parent.GetProgramNode().GetChildren<Compiler.Nodes.ProcedureDivision>().First().GetChildren<Compiler.Nodes.Declaratives>();
+            if (declarativesNode != null && declarativesNode.Count == 1)
+                foreach (var line in declarativesNode.First().SelfAndChildrenLines.Distinct())
+                    _cache.Add(line);
+        }
+
+        if (Signature != null)
+        {
+            foreach (var signature in Signature)
+            {
+                _cache.Add(signature);
+            }
+        }
+      }
 			return _cache;
 		}
 	}

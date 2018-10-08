@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. ParamIntrinsic.
 
@@ -50,6 +50,11 @@
        PROGRAM-ID. a9d5681cCompressString.
        DATA DIVISION.
        LINKAGE SECTION.
+      *ParamIntrinsic.CompressString - Params :
+      *		input(StringPointer: ? Usage: Pointer, StringLength: PIC 9(09)
+      *Usage: Binary, I-Trim: PIC X(01), I-nOption: MyInteger, P1: MySma
+      *llInt, P2: MyReal)
+      *		output(FinalLength: PIC 9(09) Usage: Binary)
        01 StringPointer POINTER.
        01 StringLength PIC 9(09) COMP.
        01 I-Trim PIC X(01).
@@ -66,5 +71,10 @@
                    BY REFERENCE P2
                    BY REFERENCE FinalLength
            .
+      *ParamIntrinsic.CompressString - Params :
+      *		input(StringPointer: ? Usage: Pointer, StringLength: PIC 9(09)
+      *Usage: Binary, I-Trim: PIC X(01), I-nOption: MyInteger, P1: MySma
+      *llInt, P2: MyReal)
+      *		output(FinalLength: PIC 9(09) Usage: Binary)
            DISPLAY "TOTO".
        END PROGRAM a9d5681cCompressString.

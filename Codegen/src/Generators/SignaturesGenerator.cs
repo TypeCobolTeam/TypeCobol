@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
@@ -46,7 +47,15 @@ namespace TypeCobol.Codegen.Generators
             var lines = sourceFile.SelfAndChildrenLines;
             foreach (var textLine in lines)
             {
-                Destination.AppendLine(textLine.Text);
+                if (textLine is TextLineSnapshot)
+                {
+                    var test = CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat);
+                    Destination.AppendLine(test.First().Text);
+                }
+                else
+                {
+                    Destination.AppendLine(textLine.Text);
+                }
             }
         }
 

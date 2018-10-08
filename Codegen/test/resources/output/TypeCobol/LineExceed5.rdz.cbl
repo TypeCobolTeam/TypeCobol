@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
        DATA DIVISION.
                                                          
@@ -110,6 +110,8 @@
        PROGRAM-ID. f73481e6CheckContract.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+      *PGM1.CheckContract - Params :
+      *		input(param1: PIC X)
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        01 TC-Call          PIC X     VALUE 'T'.
@@ -118,6 +120,8 @@
                             X'00' thru 'S'
                             'U' thru X'FF'.
        LINKAGE SECTION.
+      *PGM1.CheckContract - Params :
+      *		input(param1: PIC X)
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -135,6 +139,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE param1
            .
+      *PGM1.CheckContract - Params :
+      *		input(param1: PIC X)
            PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input param1
            
@@ -181,6 +187,8 @@
        PROGRAM-ID. bfc74757testos.
        data division.
        working-storage section.
+      *PGM1.testos  - No Params
+                               
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        01 TC-Call          PIC X     VALUE 'T'.
@@ -190,6 +198,7 @@
                             'U' thru X'FF'.
        01 param1 pic X.
        LINKAGE SECTION.
+      *PGM1.testos  - No Params
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -205,6 +214,7 @@
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
+      *PGM1.testos  - No Params
            PERFORM TC-INITIALIZATIONS
       *                        call PGM1::StartCheckpoint input param1
                                

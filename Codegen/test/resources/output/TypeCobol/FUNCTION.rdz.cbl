@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. Functions.
 
        DATA DIVISION.
@@ -40,6 +40,9 @@
        PROGRAM-ID. c40368ddPOW.
        DATA DIVISION.
        LINKAGE SECTION.
+      *Functions.POW - Params :
+      *		input(x: PIC 9(05), y: PIC 9(03))
+      *		returns(result: PIC 9(08))
        01 x PIC 9(05).
        01 y PIC 9(03).
        01 result PIC 9(08).
@@ -48,5 +51,8 @@
                    BY REFERENCE y
                    BY REFERENCE result
            .
+      *Functions.POW - Params :
+      *		input(x: PIC 9(05), y: PIC 9(03))
+      *		returns(result: PIC 9(08))
            CONTINUE.
        END PROGRAM c40368ddPOW.
