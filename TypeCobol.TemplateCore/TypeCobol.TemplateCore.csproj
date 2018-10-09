@@ -42,7 +42,46 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Action.cs" />
+    <Compile Include="Model\Attribute.cs" />
+    <Compile Include="Model\AttributedEntity.cs" />
+    <Compile Include="Model\AttributeNames.cs" />
+    <Compile Include="Model\Condition.cs" />
+    <Compile Include="Model\Conditions.cs" />
+    <Compile Include="Model\Pattern.cs" />
+    <Compile Include="Model\Patterns.cs" />
+    <Compile Include="Model\Skeleton.cs" />
+    <Compile Include="Model\Skeletons.cs" />
+    <Compile Include="SaxParser\TagNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SaxParser\SaxParser.cs" />
+    <Compile Include="SaxParser\SaxScanner.cs" />
+    <Compile Include="SaxParser\SaxToken.cs" />
+    <Compile Include="SaxParser\SkeletonSaxParser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="SaxParser\SkeletonSaxParser.cd" />
+    <None Include="Xml\Skeleton.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Xml\skeletons.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

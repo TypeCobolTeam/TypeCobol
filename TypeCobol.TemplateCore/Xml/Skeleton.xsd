@@ -96,12 +96,8 @@
             <!-- Meta variables used by the skeleton -->
             <xs:attribute name="var" type="xs:string"/>
           </xs:complexType>
-        </xs:element>
+         </xs:element>
       </xs:sequence>
     </xs:complexType>
-    <xs:unique name="oneSkeletonNameID">
-      <xs:selector xpath="./skeleton"/>
-      <xs:field xpath="@name"/>
-    </xs:unique>
   </xs:element>    
 </xs:schema>
