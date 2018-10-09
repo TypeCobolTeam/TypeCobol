@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
@@ -11,6 +12,7 @@ using LocalStorageSection = TypeCobol.Compiler.Nodes.LocalStorageSection;
 using ProcedureDivision = TypeCobol.Compiler.Nodes.ProcedureDivision;
 using WorkingStorageSection = TypeCobol.Compiler.Nodes.WorkingStorageSection;
 using System.Text;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Codegen.Generators
 {
@@ -44,9 +46,30 @@ namespace TypeCobol.Codegen.Generators
             var sourceFile = compilationUnit.ProgramClassDocumentSnapshot.Root;
             sourceFile.AcceptASTVisitor(new ExportToDependency());
             var lines = sourceFile.SelfAndChildrenLines;
+            bool insideFormalizedComment = false;
+            bool insideMultilineComment = false;
             foreach (var textLine in lines)
             {
-                Destination.AppendLine(textLine.Text);
+                string text = textLine.Text;
+
+                ITokensLine tokensLine = textLine as ITokensLine;
+                if (tokensLine != null)
+                {
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FormalizedCommentsStart))
+                        insideFormalizedComment = true;
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MultilinesCommentsStart))
+                        insideMultilineComment = true;
+
+                    if (insideFormalizedComment || insideMultilineComment)
+                        text = text.Substring(0, 6) + '*' + text.Substring(7, text.Length - 7);
+
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FormalizedCommentsStop))
+                        insideFormalizedComment = false;
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MultilinesCommentsStop))
+                        insideMultilineComment = false;
+                }
+                
+                Destination.AppendLine(text);
             }
         }
 
