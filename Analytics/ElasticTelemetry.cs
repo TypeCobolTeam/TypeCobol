@@ -25,6 +25,13 @@ namespace Analytics
                 //Load custom app.config for this assembly
                 var appConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location); 
 
+                if (appConfig.AppSettings.Settings["SmtpServer"].Value == "your.smtp.server")
+                {
+                    logger.Error("Server settings are not configured");
+                    _ElasticClient = null;
+                    return;
+                }
+
                 //Configure connection settings 
                 var connectionSettings = new ConnectionConfiguration(new Uri(appConfig.AppSettings.Settings["ElasticServer"].Value));
                 connectionSettings
@@ -51,7 +58,7 @@ namespace Analytics
         {
             try
             {
-                _ElasticClient.Index<BytesResponse>(_ElasticIndex, _ElasticType, PostData.Serializable(plainEvent));
+                _ElasticClient?.Index<BytesResponse>(_ElasticIndex, _ElasticType, PostData.Serializable(plainEvent));
             }
             catch (Exception e) { logger.Fatal(e); }
         }
