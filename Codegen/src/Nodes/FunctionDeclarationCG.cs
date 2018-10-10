@@ -37,7 +37,7 @@ namespace TypeCobol.Codegen.Nodes {
                     //DataDivision manage order of their children so it's ok
                     if (needToGenerateParametersIntoLinkage || containsPublicCall) {
                         dataDivision = GetOrCreateNode<Compiler.Nodes.DataDivision>(originalNode, () => new DataDivision());
-                        linkageSection = GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(), dataDivision);
+                        linkageSection = GetOrCreateNode<Compiler.Nodes.LinkageSection>(dataDivision, () => new LinkageSection(originalNode), dataDivision);
 
 
                         //declare procedure parameters into linkage
@@ -56,7 +56,7 @@ namespace TypeCobol.Codegen.Nodes {
                     //Generate code if this procedure call a public procedure in another source
                     
                     if (containsPublicCall) {
-                        var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(), dataDivision);
+                        var workingStorageSection = GetOrCreateNode<Compiler.Nodes.WorkingStorageSection>(dataDivision, () => new WorkingStorageSection(originalNode), dataDivision);
 
                         ProgramImports imports = ProgramImportsAttribute.GetProgramImports(originalNode);
                         Node[] toAddRange =
