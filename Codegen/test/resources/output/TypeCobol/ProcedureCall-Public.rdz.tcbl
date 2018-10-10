@@ -472,8 +472,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.MyPublicProcedure - Params :
-      *		input(mydate: DATE, format: PIC X(08))
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -492,8 +492,8 @@
                    BY REFERENCE actual-format
            .
       *PGM1.MyPublicProcedure - Params :
-      *		input(mydate: DATE, format: PIC X(08))
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM ebb060eaMyPublicProcedure.
       *
@@ -507,7 +507,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonById - Params :
-      *		input(person1Id: PIC 9(10))
+      *		input(person1Id: pic 9(10))
       *		output(person: Person)
        01 person1Id pic 9(10).
        01 person.
@@ -519,7 +519,7 @@
                    BY REFERENCE person
            .
       *PGM1.GetPersonById - Params :
-      *		input(person1Id: PIC 9(10))
+      *		input(person1Id: pic 9(10))
       *		output(person: Person)
            CONTINUE.
        END PROGRAM d2b57642GetPersonById.
@@ -560,9 +560,9 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
-      *		input(mydate: DATE, format: PIC X(08), alength: PIC 9(8) Usage:
-      * NativeBinary, anotherlength: PIC S9(05) Usage: NativeBinary)
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08), alength: pic 9(8) comp-5
+      *, anotherlength: pic S9(05) comp-5)
+      *		output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -585,8 +585,8 @@
                    BY REFERENCE actual-format
            .
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
-      *		input(mydate: DATE, format: PIC X(08), alength: PIC 9(8) Usage:
-      * NativeBinary, anotherlength: PIC S9(05) Usage: NativeBinary)
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08), alength: pic 9(8) comp-5
+      *, anotherlength: pic S9(05) comp-5)
+      *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM f3a0a09cPgm1PrivateValidateDat.

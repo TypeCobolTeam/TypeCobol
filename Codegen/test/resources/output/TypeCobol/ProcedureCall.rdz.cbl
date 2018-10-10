@@ -216,8 +216,7 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *ProcedureCall.GetPtrFn - Params :
-      *		input(ptrFn: ? Usage: FunctionPointer, ptrPr: ? Usage: Procedur
-      *ePointer)
+      *		input(ptrFn: function-pointer, ptrPr: procedure-pointer)
        01 ptrFn function-pointer.
        01 ptrPr procedure-pointer.
        PROCEDURE DIVISION
@@ -225,8 +224,7 @@
                    BY REFERENCE ptrPr
            .
       *ProcedureCall.GetPtrFn - Params :
-      *		input(ptrFn: ? Usage: FunctionPointer, ptrPr: ? Usage: Procedur
-      *ePointer)
+      *		input(ptrFn: function-pointer, ptrPr: procedure-pointer)
            CONTINUE.
        END PROGRAM d03c3701GetPtrFn.
       *
@@ -254,8 +252,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *ProcedureCall.ValidateDateFormat - Params :
-      *		input(mydate: DATE, format: PIC X(08))
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -274,8 +272,8 @@
                    BY REFERENCE actual-format
            .
       *ProcedureCall.ValidateDateFormat - Params :
-      *		input(mydate: DATE, format: PIC X(08))
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM df9b9795ValidateDateFormat.
       *
@@ -295,10 +293,10 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *ProcedureCall.myProc - Params :
-      *		input(mydate: DATE, format: PIC X(08), myDate2: DATE, arg0: ? U
-      *sage: Pointer)
+      *		input(mydate: DATE, format: pic X(08), myDate2: DATE, arg0: poi
+      *nter)
       *		in-out(myDate3: DATE, myDate4: DATE)
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -334,9 +332,9 @@
                    BY REFERENCE actual-format
            .
       *ProcedureCall.myProc - Params :
-      *		input(mydate: DATE, format: PIC X(08), myDate2: DATE, arg0: ? U
-      *sage: Pointer)
+      *		input(mydate: DATE, format: pic X(08), myDate2: DATE, arg0: poi
+      *nter)
       *		in-out(myDate3: DATE, myDate4: DATE)
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM e6e45a7dmyProc.

@@ -162,16 +162,39 @@ namespace TypeCobol.Compiler.CodeElements {
             return str.ToString();
         }
 
-        private static string GetParameterDetails(ParameterDescription parameter)
-        {
+        private static string GetParameterDetails(ParameterDescription parameter) {
+            
             StringBuilder str = new StringBuilder();
             str.Append(parameter.DataName.Name + ": ");
-            if (parameter.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002 && parameter.Picture != null)
-                str.Append("PIC " + parameter.Picture);
+            bool addSpaceSeparatorBeforeUsage = false;
+            if (parameter.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002)
+            {
+                if (parameter.Picture != null)
+                {
+                    str.Append("pic ").Append(parameter.Picture);
+                    addSpaceSeparatorBeforeUsage = true;
+                }
+            }
             else
+            {
+                //Do not write DataType if LanguageLevel is under Cobol 2002 
+                //because DataType for Cobol85 is an internal representation of Cobol picture.
                 str.Append(parameter.DataType);
-            if (parameter.Usage != null)
-                str.Append(" Usage: " + parameter.Usage);
+                addSpaceSeparatorBeforeUsage = true;
+            }
+
+
+            //Use the Token.Text of usage instead of the DataUsage enum. 
+            //Because Cobol developers won't understand enum value (eg for "comp-3" in Token.Text you get "PackedDecimal" in the enum).
+            var usageToken = ((ParameterDescriptionEntry) parameter.CodeElement).Usage?.Token;
+            if (usageToken != null)
+            {
+                if (addSpaceSeparatorBeforeUsage)
+                {
+                    str.Append(" ");
+                }
+                str.Append(usageToken.Text);
+            }
 
             return str.ToString();
         }

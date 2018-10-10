@@ -111,7 +111,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *PGM1.CheckContract - Params :
-      *		input(param1: PIC X)
+      *		input(param1: pic X)
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        01 TC-Call          PIC X     VALUE 'T'.
@@ -121,7 +121,7 @@
                             'U' thru X'FF'.
        LINKAGE SECTION.
       *PGM1.CheckContract - Params :
-      *		input(param1: PIC X)
+      *		input(param1: pic X)
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -140,7 +140,7 @@
              USING BY REFERENCE param1
            .
       *PGM1.CheckContract - Params :
-      *		input(param1: PIC X)
+      *		input(param1: pic X)
            PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input param1
            

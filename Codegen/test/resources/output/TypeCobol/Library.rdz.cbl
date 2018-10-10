@@ -244,9 +244,9 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       *DVZZDATE.currentDateFreeFormat - Params :
-      *		input(dateType: PIC X(01), direction: PIC X(01), separator: PIC
-      * X(01), culture: culture, returnCode: PIC 9(04))
-      *		returns(Result: PIC X(40))
+      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
+      * X(01), culture: culture, returnCode: pic 9(04))
+      *		returns(Result: pic X(40))
                                
       *01  W-Dat       TYPE date.
        01 W-Dat.
@@ -257,9 +257,9 @@
 
        LINKAGE SECTION.
       *DVZZDATE.currentDateFreeFormat - Params :
-      *		input(dateType: PIC X(01), direction: PIC X(01), separator: PIC
-      * X(01), culture: culture, returnCode: PIC 9(04))
-      *		returns(Result: PIC X(40))
+      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
+      * X(01), culture: culture, returnCode: pic 9(04))
+      *		returns(Result: pic X(40))
        01 dateType PIC X(01).
        01 direction PIC X(01).
        01 separator PIC X(01).
@@ -277,9 +277,9 @@
                    BY REFERENCE Result
            .
       *DVZZDATE.currentDateFreeFormat - Params :
-      *		input(dateType: PIC X(01), direction: PIC X(01), separator: PIC
-      * X(01), culture: culture, returnCode: PIC 9(04))
-      *		returns(Result: PIC X(40))
+      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
+      * X(01), culture: culture, returnCode: pic 9(04))
+      *		returns(Result: pic X(40))
 
            continue
            .

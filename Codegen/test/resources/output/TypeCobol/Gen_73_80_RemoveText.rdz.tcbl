@@ -74,8 +74,8 @@
        DATA DIVISION.                                                   12340000
        WORKING-STORAGE SECTION. 
       *MOVECORR.rechercheListeElements - Params :
-      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: PIC S9
-      *(2) Usage: NativeBinary, site-ims: PIC X(2))
+      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic S9
+      *(2) COMP-5, site-ims: pic X(2))
       *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
                                                                         12350000
           01  I                            PIC 9(4) COMP-5.             12360000
@@ -122,8 +122,8 @@
                                                                         12380000
        LINKAGE SECTION.
       *MOVECORR.rechercheListeElements - Params :
-      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: PIC S9
-      *(2) Usage: NativeBinary, site-ims: PIC X(2))
+      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic S9
+      *(2) COMP-5, site-ims: pic X(2))
       *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
        01 liste-a-chercher.
            02 TBL10-CTGCPL-RTA-tbl
@@ -156,8 +156,8 @@
                    BY REFERENCE lis-trouvee
            .
       *MOVECORR.rechercheListeElements - Params :
-      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: PIC S9
-      *(2) Usage: NativeBinary, site-ims: PIC X(2))
+      *		input(liste-a-chercher: Table10-CTGCPL, nombre-elements: pic S9
+      *(2) COMP-5, site-ims: pic X(2))
       *		output(trouve: BOOL, lis-trouvee: Table10-CTGCPL-Resultat)
 
       * recherche de l'element dans la table

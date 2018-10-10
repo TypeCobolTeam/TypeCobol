@@ -51,10 +51,9 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *ParamIntrinsic.CompressString - Params :
-      *		input(StringPointer: ? Usage: Pointer, StringLength: PIC 9(09)
-      *Usage: Binary, I-Trim: PIC X(01), I-nOption: MyInteger, P1: MySma
-      *llInt, P2: MyReal)
-      *		output(FinalLength: PIC 9(09) Usage: Binary)
+      *		input(StringPointer: POINTER, StringLength: pic 9(09) COMP, I-T
+      *rim: pic X(01), I-nOption: MyInteger, P1: MySmallInt, P2: MyReal)
+      *		output(FinalLength: pic 9(09) COMP)
        01 StringPointer POINTER.
        01 StringLength PIC 9(09) COMP.
        01 I-Trim PIC X(01).
@@ -72,9 +71,8 @@
                    BY REFERENCE FinalLength
            .
       *ParamIntrinsic.CompressString - Params :
-      *		input(StringPointer: ? Usage: Pointer, StringLength: PIC 9(09)
-      *Usage: Binary, I-Trim: PIC X(01), I-nOption: MyInteger, P1: MySma
-      *llInt, P2: MyReal)
-      *		output(FinalLength: PIC 9(09) Usage: Binary)
+      *		input(StringPointer: POINTER, StringLength: pic 9(09) COMP, I-T
+      *rim: pic X(01), I-nOption: MyInteger, P1: MySmallInt, P2: MyReal)
+      *		output(FinalLength: pic 9(09) COMP)
            DISPLAY "TOTO".
        END PROGRAM a9d5681cCompressString.

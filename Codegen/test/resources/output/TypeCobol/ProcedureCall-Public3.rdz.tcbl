@@ -386,8 +386,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.MyPublicProcedure - Params :
-      *		input(mydate: DATE, format: PIC X(08))
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -406,8 +406,8 @@
                    BY REFERENCE actual-format
            .
       *PGM1.MyPublicProcedure - Params :
-      *		input(mydate: DATE, format: PIC X(08))
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM ebb060eaMyPublicProcedure.
       *
@@ -445,8 +445,8 @@
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
-      *		input(mydate: DATE, format: PIC X(08))
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -465,7 +465,7 @@
                    BY REFERENCE actual-format
            .
       *PGM1.Pgm1PrivateValidateDateFormat - Params :
-      *		input(mydate: DATE, format: PIC X(08))
-      *		output(okay: BOOL, actual-format: PIC X(08))
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM fde394fbPgm1PrivateValidateDat.

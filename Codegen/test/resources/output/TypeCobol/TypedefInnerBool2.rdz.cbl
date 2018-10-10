@@ -35,7 +35,7 @@
        data division.
        local-storage section.
       *TestDefBool.LoopTraceback - Params :
-      *		input(startingDsa: ? Usage: Pointer)
+      *		input(startingDsa: pointer)
       *		output(errCode: ErrorCode)
                              
       *01 LoopControl typedef strict private.
@@ -56,7 +56,7 @@
                                       
        linkage section.
       *TestDefBool.LoopTraceback - Params :
-      *		input(startingDsa: ? Usage: Pointer)
+      *		input(startingDsa: pointer)
       *		output(errCode: ErrorCode)
                        
       
@@ -69,7 +69,7 @@
                    BY REFERENCE errCode
            .
       *TestDefBool.LoopTraceback - Params :
-      *		input(startingDsa: ? Usage: Pointer)
+      *		input(startingDsa: pointer)
       *		output(errCode: ErrorCode)
            goback
            .
