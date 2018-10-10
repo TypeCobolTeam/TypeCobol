@@ -126,6 +126,9 @@
   <data name="ParserErrorExpectedToken" xml:space="preserve">
     <value>Sax parser error, expecting token : '{0}'</value>
   </data>
+  <data name="ParserErrorMissingVersionEncoding" xml:space="preserve">
+    <value>Xml parsing error, missing version and encoding.</value>
+  </data>
   <data name="WarningMsg" xml:space="preserve">
     <value>Warning: {0}</value>
   </data>

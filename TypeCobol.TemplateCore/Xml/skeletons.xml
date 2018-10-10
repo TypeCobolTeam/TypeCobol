@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version='1.0'?>
 <skeletons>
   <!-- comment TYPEDEF -->
   <skeleton name="TYPEDEF">
@@ -441,9 +441,6 @@
       
       <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
       <pattern location="program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="false"  boolean_property="imports.HasPublicProcedures">
-        <conditions>
-          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
-        </conditions>
         @{
         var clause = "";
         if (%imports.HasPublicProcedures) {
@@ -455,9 +452,6 @@
       </pattern>
 
       <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="false">
-        <conditions>
-          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
-        </conditions>
         @{
         var clause = "";
         if (%imports.HasPublicProcedures) {

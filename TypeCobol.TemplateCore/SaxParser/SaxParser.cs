@@ -44,11 +44,15 @@ namespace TypeCobol.TemplateCore.SaxParser
         public SaxParser(String xmlFile, String schema)
         {
             XmlFile = xmlFile;
-            XmlReaderSettings testSettings = new XmlReaderSettings();
-            testSettings.Schemas.Add(null, schema);
-            testSettings.ValidationType = ValidationType.Schema;
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.Schemas.Add(null, schema);
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;            
+            settings.ValidationType = ValidationType.Schema;
+            settings.ValidationEventHandler += XMLValidationEventHandler;
 
-            Scanner = new SaxScanner(XmlReader.Create(xmlFile, testSettings));
+            Scanner = new SaxScanner(XmlReader.Create(xmlFile, settings));
 
         }
 
@@ -137,7 +141,19 @@ namespace TypeCobol.TemplateCore.SaxParser
         }
 
         /// <summary>
-        /// Test That the gien Xml Node's type and name matches the current Lookahead
+        /// Test That the given Xml Node's type matches the current Lookahead
+        /// </summary>
+        /// <param name="type">Xml Node's type</param>
+        /// <returns>Return true if the lookahead matches, false otherwise.</returns>
+        protected bool TestLookahead(XmlNodeType type)
+        {
+            if (Lookahead == null)
+                return false;
+            return Lookahead.Value.type == type;
+        }
+
+        /// <summary>
+        /// Test That the given Xml Node's type and name matches the current Lookahead
         /// </summary>
         /// <param name="type">Xml Node's type</param>
         /// <param name="name">Xml Node's name</param>
@@ -160,7 +176,32 @@ namespace TypeCobol.TemplateCore.SaxParser
         /// <summary>
         /// The parsing function
         /// </summary>
-        protected abstract void Parse();
+        public abstract void Parse();
+
+        /// <summary>
+        /// Validate the XML file by Scanning the entire document.
+        /// </summary>
+        /// <returns>Return true if validation is ok, false otherwise</returns>
+        /// <remarks>If the Validation was not ok, the Properties ValidationWarningCount and ValidationErrorCount will give the count of warning and errors.</remarks>
+        public abstract bool Validate();
+
+        /// <summary>
+        /// The Count of Schema Validation warnings
+        /// </summary>
+        public int ValidationWarningCount
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// The Count of Schema Validation errors
+        /// </summary>
+        public int ValidationErrorCount
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Validation Error Event Handler
@@ -176,19 +217,21 @@ namespace TypeCobol.TemplateCore.SaxParser
                 var xml_e = e.Exception;
                 String msg = String.Format(Resource.WarningMsg, e.Message, xml_e.LineNumber);
                 ValidationMessage.AppendLine(msg);
+                ValidationWarningCount++;
             }
             else if (e.Severity == XmlSeverityType.Error)
             {
                 var xml_e = e.Exception;
                 String msg = String.Format(Resource.ErrorMsg, e.Message, xml_e.LineNumber);
                 ValidationMessage.AppendLine(msg);
+                ValidationErrorCount++;
             }
         }
 
         /// <summary>
         /// Validation Message.
         /// </summary>
-        protected StringBuilder ValidationMessage
+        public StringBuilder ValidationMessage
         {
             get;
             set;

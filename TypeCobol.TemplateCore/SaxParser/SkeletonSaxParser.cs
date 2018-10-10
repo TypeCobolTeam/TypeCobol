@@ -19,7 +19,8 @@ namespace TypeCobol.TemplateCore.SaxParser
     /// ;
     /// skeleton(name, var) ::= SKELETON_TAG conditions patterns END_SKELETON_TAG
     /// ;
-    /// conditions ::= CONDITIONS_TAG condition_list END_CONDITIONS_TAG
+    /// conditions ::= /*empty*/
+    /// | CONDITIONS_TAG condition_list END_CONDITIONS_TAG
     /// ;
     /// condition_list ::= condition(node, name, level, type, sender, receiver,unsafe,function,definitions,variables,typecobol,visibility,copyname,Usage,isPointerIncrementation,receiverUsage)
     /// | condition_list condition(node, name, level, type, sender, receiver,unsafe,function,definitions,variables,typecobol,visibility,copyname,Usage,isPointerIncrementation,receiverUsage)
@@ -54,6 +55,15 @@ namespace TypeCobol.TemplateCore.SaxParser
             private set;
         }
         /// <summary>
+        /// Xml version
+        /// </summary>
+        public string Version { get; private set; }
+        /// <summary>
+        /// Xml encoding
+        /// </summary>
+        public string Encoding { get; private set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="skeletonFile">The Skeleton file to parse</param>
@@ -61,7 +71,6 @@ namespace TypeCobol.TemplateCore.SaxParser
         {
             //Get the First Token.
             Lookahead = Scanner.NextToken;
-            Parse();
         }
 
         /// <summary>
@@ -71,7 +80,8 @@ namespace TypeCobol.TemplateCore.SaxParser
         /// <param name="skeletonSchemaFile">The Skeleton Schema file</param>
         public SkeletonSaxParser(String skeletonFile, String skeletonSchemaFile) : base(skeletonFile, skeletonSchemaFile)
         {
-
+            //Get the First Token.
+            Lookahead = Scanner.NextToken;
         }
 
         /// <summary>
@@ -88,20 +98,51 @@ namespace TypeCobol.TemplateCore.SaxParser
                     Model.Attribute attr = new Model.Attribute();
                     attr.Name = e.Key;
                     attr.Value = e.Value;
-                    entity[e.Key] = attr;
+                    entity.Attributes[e.Key] = attr;
                 }
             }
         }
 
         /// <summary>
+        /// Validate the Skeleton File by reading all tokens.
+        /// </summary>
+        public override bool Validate()
+        {
+            while (this.Scanner.NextToken != null)
+                ;
+            return ValidationWarningCount == 0 && ValidationErrorCount == 0;
+        }
+        /// <summary>
         /// Parse Skeleton the file according to the grammar.
         /// </summary>
-        protected override void Parse()
+        public override void Parse()
         {
+            //Get the First Token.
+            //Lookahead = Scanner.NextToken;
             //Version
             if (Lookahead == null)
                 return;
+            ParseVersion();
             ParseSkeletons();       
+        }
+
+        /// <summary>
+        /// Match the Version and the Encoding
+        /// </summary>
+        protected void ParseVersion()
+        {
+            if (Lookahead.Value.type == XmlNodeType.XmlDeclaration)
+            {
+                if (Lookahead.Value.attributes.ContainsKey(AttributeNames.Version))
+                    Version = Lookahead.Value.attributes[AttributeNames.Version];
+                if (Lookahead.Value.attributes.ContainsKey(AttributeNames.Encoding))
+                    Encoding = Lookahead.Value.attributes[AttributeNames.Encoding];
+                NextToken();
+            }
+            else
+            {
+                throw new ParsingException(Resource.ParserErrorMissingVersionEncoding);
+            }
         }
 
         /// <summary>
@@ -114,7 +155,6 @@ namespace TypeCobol.TemplateCore.SaxParser
             CopyTokenAttributes(token, Skeletons);
             while (TestLookahead(XmlNodeType.Element, TagNames.Skeleton))
             {   //Parse each single Skeleton
-                token = Match(XmlNodeType.Element, TagNames.Skeleton);
                 Skeleton skeleton = ParseSkeleton();
                 //Add it to the model
                 Skeletons.Add(skeleton);
@@ -132,7 +172,7 @@ namespace TypeCobol.TemplateCore.SaxParser
             Skeleton skeleton = new Skeleton();
             CopyTokenAttributes(token, skeleton);
             //Parse Conditions
-            if(TestLookahead(XmlNodeType.Element, TagNames.Condition))
+            if(TestLookahead(XmlNodeType.Element, TagNames.Conditions))
             {
                 skeleton.Conditions = ParseConditions();
             }
@@ -172,7 +212,7 @@ namespace TypeCobol.TemplateCore.SaxParser
             SaxToken? token = Match(XmlNodeType.Element, TagNames.Condition);
             Condition condition = new Condition();
             CopyTokenAttributes(token, condition);
-            OptionalMatch(XmlNodeType.Element, TagNames.Condition);
+            OptionalMatch(XmlNodeType.EndElement, TagNames.Condition);
             return condition;
         }
 
@@ -190,7 +230,7 @@ namespace TypeCobol.TemplateCore.SaxParser
                 Pattern pattern = ParsePattern();
                 patterns.Add(pattern);
             }
-            token = Match(XmlNodeType.EndElement, TagNames.Conditions);
+            token = Match(XmlNodeType.EndElement, TagNames.Patterns);
             return patterns;
         }
 
@@ -202,9 +242,13 @@ namespace TypeCobol.TemplateCore.SaxParser
         {
             SaxToken? token = Match(XmlNodeType.Element, TagNames.Pattern);
             Pattern pattern = new Pattern();
-            pattern.Code = token.Value.text;
+            if (TestLookahead(XmlNodeType.Text))
+            {
+                SaxToken? textToken = Match(XmlNodeType.Text);
+                pattern.Code = textToken.Value.value;
+            }            
             CopyTokenAttributes(token, pattern);
-            OptionalMatch(XmlNodeType.Element, TagNames.Pattern);
+            OptionalMatch(XmlNodeType.EndElement, TagNames.Pattern);
             return pattern;
         }
     }

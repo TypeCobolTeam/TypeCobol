@@ -88,6 +88,15 @@ namespace TypeCobol.TemplateCore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Xml parsing error, missing version and encoding..
+        /// </summary>
+        internal static string ParserErrorMissingVersionEncoding {
+            get {
+                return ResourceManager.GetString("ParserErrorMissingVersionEncoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning: {0}.
         /// </summary>
         internal static string WarningMsg {

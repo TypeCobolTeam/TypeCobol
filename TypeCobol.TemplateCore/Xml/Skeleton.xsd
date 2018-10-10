@@ -1,11 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="Skeleton"
-    targetNamespace="http://tempuri.org/Skeleton.xsd"
-    elementFormDefault="qualified"
-    xmlns="http://tempuri.org/Skeleton.xsd"
-    xmlns:mstns="http://tempuri.org/Skeleton.xsd"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
->
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
 
   <!-- Enumeration Type of the action attribute in a pattern element-->
   <xs:simpleType name="ActionEnumType">
@@ -27,13 +22,13 @@
 
   <xs:element name="skeletons">
     <xs:complexType>
-      <xs:sequence>
+      <xs:sequence minOccurs="1" maxOccurs="unbounded">
         <xs:element name="skeleton">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="conditions">
+              <xs:element name="conditions" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
-                  <xs:sequence>
+                  <xs:sequence minOccurs="1" maxOccurs="unbounded">
                     <!-- Condition that must satisfy the the node to match the skeleton -->
                     <xs:element name="condition">
                       <xs:complexType>
@@ -63,7 +58,7 @@
               </xs:element>
               <xs:element name="patterns">
                 <xs:complexType>
-                  <xs:sequence>
+                  <xs:sequence minOccurs="1" maxOccurs="unbounded">
                     <!-- Pattern <==> Template -->
                     <xs:element name="pattern">
                       <xs:complexType>

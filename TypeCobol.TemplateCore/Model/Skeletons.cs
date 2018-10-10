@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace TypeCobol.TemplateCore.Model
         /// <summary>
         /// The List of all single skeletons.
         /// </summary>
-        public List<Skeleton> SkeletonList
+        public IList<Skeleton> SkeletonList
         {
             get;
             private set;
@@ -71,11 +72,29 @@ namespace TypeCobol.TemplateCore.Model
             return SkeletonList.GetEnumerator();
         }
 
+        public void Clear()
+        {
+            SkeletonList.Clear();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return SkeletonList.GetEnumerator();
+        }
+
         public bool IsReadOnly
         {
             get
             {
-                return false;
+                return SkeletonList.IsReadOnly;
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return SkeletonList.Count;
             }
         }
 

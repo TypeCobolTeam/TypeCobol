@@ -11,6 +11,9 @@ namespace TypeCobol.TemplateCore.Model
     /// </summary>
     public static class AttributeNames
     {
+        public static string Version = "version";
+        public static string Encoding = "encoding";
+
         public static string Node = "node";
         public static string Name = "name";
         public static string Var = "var";

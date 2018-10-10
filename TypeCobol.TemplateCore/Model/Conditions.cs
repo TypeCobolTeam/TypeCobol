@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,7 +37,21 @@ namespace TypeCobol.TemplateCore.Model
             set => throw new NotImplementedException();
         }
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly
+        {
+            get
+            {
+                return ConditionList.IsReadOnly;
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return ConditionList.Count;
+            }
+        }
 
         public void Add(Condition item)
         {
@@ -74,6 +89,16 @@ namespace TypeCobol.TemplateCore.Model
         }
 
         IEnumerator<Condition> IEnumerable<Condition>.GetEnumerator()
+        {
+            return ConditionList.GetEnumerator();
+        }
+
+        public void Clear()
+        {
+            ConditionList.Clear();
+        }
+
+        public IEnumerator GetEnumerator()
         {
             return ConditionList.GetEnumerator();
         }
