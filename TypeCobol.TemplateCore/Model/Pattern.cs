@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TypeCobol.TemplateCore.Model
 {
     /// <summary>
-    /// A Single pattern, a pattern is seen an an Action.
+    /// A Single pattern, a pattern is seen as an Action.
     /// </summary>
     public class Pattern : Action
     {

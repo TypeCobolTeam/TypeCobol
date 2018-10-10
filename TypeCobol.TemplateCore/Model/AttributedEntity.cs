@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TypeCobol.TemplateCore.Model
 {
     /// <summary>
-    /// The base class of an attributed entity: an antity which have attributes
+    /// The base class of an attributed entity: an entity which have attributes
     /// </summary>
     public class AttributedEntity : Dictionary<string,Attribute>
     {

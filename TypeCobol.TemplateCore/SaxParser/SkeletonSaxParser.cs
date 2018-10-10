@@ -136,10 +136,11 @@ namespace TypeCobol.TemplateCore.SaxParser
             {
                 skeleton.Conditions = ParseConditions();
             }
-            if (TestLookahead(XmlNodeType.Element, TagNames.Patterns))
-            {                
-            }
             //Parse Patterns
+            if (TestLookahead(XmlNodeType.Element, TagNames.Patterns))
+            {
+                skeleton.Patterns = ParsePatterns();
+            }            
             token = Match(XmlNodeType.EndElement, TagNames.Skeleton);
             return skeleton;
         }
