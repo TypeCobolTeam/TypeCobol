@@ -24,6 +24,7 @@ namespace TypeCobol.TemplateCore.Test
 
         /// <summary>
         /// Test to both parse and validate on the fly the XML Skeleton file against the Schema.
+        /// The Validation will be performed simultaneously during parsing.
         /// </summary>
         [TestMethod]
         public void SkeletonFileXmlSaxParsingWithValidationTest()
