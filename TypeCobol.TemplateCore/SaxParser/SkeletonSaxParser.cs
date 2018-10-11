@@ -9,6 +9,7 @@ using TypeCobol.TemplateCore.Model;
 namespace TypeCobol.TemplateCore.SaxParser
 {
     /// <summary>
+    /// =============================================================================================
     /// This is the Sax Parser of a Skeleton file based on the pseudo LL(1) attributed grammar below
     /// =============================================================================================
     /// 
