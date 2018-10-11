@@ -1,4 +1,7 @@
-﻿using JetBrains.Annotations;
+﻿using System.Text;
+using JetBrains.Annotations;
+using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeElements {
 
@@ -111,6 +114,88 @@ namespace TypeCobol.Compiler.CodeElements {
                 str.Append(")");
             }
             if (parameterList.ReturningParameter != null) str.Append(" : ").Append(parameterList.ReturningParameter);
+            return str.ToString();
+        }
+
+        public static IEnumerable<TextLineSnapshot> GetSignatureForComment([NotNull] this Nodes.ParametersProfileNode parameterList)
+        {
+            var signature = new List<TextLineSnapshot>();
+
+            string paramsDescription;
+            
+            if (parameterList.InputParameters.Count > 0)
+            {
+                paramsDescription = string.Format("*\t\tinput({0})",
+                    GetParameterDescriptions(parameterList.InputParameters));
+                signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
+            }
+            if (parameterList.InoutParameters.Count > 0)
+            {
+                paramsDescription = string.Format("*\t\tin-out({0})",
+                    GetParameterDescriptions(parameterList.InoutParameters));
+                signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
+            }
+            if (parameterList.OutputParameters.Count > 0)
+            {
+                paramsDescription = string.Format("*\t\toutput({0})",
+                    GetParameterDescriptions(parameterList.OutputParameters));
+                signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
+            }
+            if (parameterList.ReturningParameter != null) {
+                paramsDescription = string.Format("*\t\treturns({0})",
+                    GetParameterDetails(parameterList.ReturningParameter));
+                signature.Add(new TextLineSnapshot(-1, paramsDescription, null));
+            }
+            return signature;
+        }
+
+        private static string GetParameterDescriptions(IList<ParameterDescription> parameters)
+        {
+            StringBuilder str = new StringBuilder();
+            foreach (var p in parameters)
+            {
+                str.Append(GetParameterDetails(p));
+                str.Append(", ");
+            }
+            str.Length -= 2;
+
+            return str.ToString();
+        }
+
+        private static string GetParameterDetails(ParameterDescription parameter) {
+            
+            StringBuilder str = new StringBuilder();
+            str.Append(parameter.DataName.Name + ": ");
+            bool addSpaceSeparatorBeforeUsage = false;
+            if (parameter.DataType.CobolLanguageLevel < CobolLanguageLevel.Cobol2002)
+            {
+                if (parameter.Picture != null)
+                {
+                    str.Append("pic ").Append(parameter.Picture);
+                    addSpaceSeparatorBeforeUsage = true;
+                }
+            }
+            else
+            {
+                //Do not write DataType if LanguageLevel is under Cobol 2002 
+                //because DataType for Cobol85 is an internal representation of Cobol picture.
+                str.Append(parameter.DataType);
+                addSpaceSeparatorBeforeUsage = true;
+            }
+
+
+            //Use the Token.Text of usage instead of the DataUsage enum. 
+            //Because Cobol developers won't understand enum value (eg for "comp-3" in Token.Text you get "PackedDecimal" in the enum).
+            var usageToken = ((ParameterDescriptionEntry) parameter.CodeElement).Usage?.Token;
+            if (usageToken != null)
+            {
+                if (addSpaceSeparatorBeforeUsage)
+                {
+                    str.Append(" ");
+                }
+                str.Append(usageToken.Text);
+            }
+
             return str.ToString();
         }
     }

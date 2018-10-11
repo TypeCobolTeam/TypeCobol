@@ -235,8 +235,6 @@ namespace TypeCobol.Codegen
                 throw new GenerationException("Unable to generate because of error diagnostics", compilationUnit.TextSourceInfo.Name, null, false, false);
             }
 
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Generation, "[Generation] Started", LogType.Genration);
-           
             // STEP 0: Initialize the global values.
             RootNode = compilationUnit.ProgramClassDocumentSnapshot.Root;
             SymTable = compilationUnit.ProgramClassDocumentSnapshot.Root.SymbolTable;
@@ -251,8 +249,6 @@ namespace TypeCobol.Codegen
             Actions.Perform(RootNode);
             // STEP 2: convert tree to destination language code
             TreeToCode();
-      
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.Generation, "[Generation] Ended", LogType.Genration);
         }
 
         /// <summary>

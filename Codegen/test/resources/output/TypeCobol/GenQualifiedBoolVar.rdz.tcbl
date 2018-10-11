@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. MyPgm.
        DATA DIVISION .
@@ -50,6 +50,8 @@
        PROGRAM-ID. ea379882check.
        DATA DIVISION.
        LINKAGE SECTION.
+      *MyPgm.check - Params :
+      *		output(mydate: BOOL)
        01 mydate-value PIC X     VALUE LOW-VALUE.
            88 mydate       VALUE 'T'.
            88 mydate-false VALUE 'F'
@@ -58,5 +60,7 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate-value
            .
+      *MyPgm.check - Params :
+      *		output(mydate: BOOL)
            CONTINUE.
        END PROGRAM ea379882check.

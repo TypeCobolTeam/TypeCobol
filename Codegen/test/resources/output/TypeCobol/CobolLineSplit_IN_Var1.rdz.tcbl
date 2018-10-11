@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. CobolLineSplitINVar.
        DATA DIVISION.
@@ -66,9 +66,13 @@
        PROGRAM-ID. cb5016dbcheck.
        DATA DIVISION.
        LINKAGE SECTION.
+      *CobolLineSplitINVar.check - Params :
+      *		output(mydate: pic X(30))
        01 mydate PIC X(30).
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+      *CobolLineSplitINVar.check - Params :
+      *		output(mydate: pic X(30))
            CONTINUE.
        END PROGRAM cb5016dbcheck.

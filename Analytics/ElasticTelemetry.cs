@@ -58,7 +58,7 @@ namespace Analytics
         {
             try
             {
-                _ElasticClient?.Index<BytesResponse>(_ElasticIndex, _ElasticType, PostData.Serializable(plainEvent));
+                _ElasticClient?.IndexAsync<BytesResponse>(_ElasticIndex, _ElasticType, PostData.Serializable(plainEvent));
             }
             catch (Exception e) { logger.Fatal(e); }
         }
