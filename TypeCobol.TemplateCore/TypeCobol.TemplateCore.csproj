@@ -63,6 +63,11 @@
     <Compile Include="SaxParser\SaxScanner.cs" />
     <Compile Include="SaxParser\SaxToken.cs" />
     <Compile Include="SaxParser\SkeletonSaxParser.cs" />
+    <Compile Include="Transpiler\CSharpHtmlRazorInterpolation.cs" />
+    <Compile Include="Transpiler\CSharpHtmlRazorTranspiler.cs" />
+    <Compile Include="Transpiler\BaseParserVisitor.cs" />
+    <Compile Include="Transpiler\CSharpRazorTokenizer.cs" />
+    <Compile Include="Transpiler\RazorTranspiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resource.resx">
