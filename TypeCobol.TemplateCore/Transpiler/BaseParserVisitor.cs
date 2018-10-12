@@ -9,7 +9,7 @@ using System.Web.Razor.Parser.SyntaxTree;
 namespace TypeCobol.TemplateCore.Transpiler
 {
     /// <summary>
-    /// This is Basic Parser Visitor that only collect errors.
+    /// This is the Basic Parser Visitor that only collects errors.
     /// </summary>
     public class BaseParserVisitor : ParserVisitor
     {
