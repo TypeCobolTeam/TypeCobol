@@ -125,11 +125,15 @@ namespace TypeCobol.Test.Parser.Performance
                 AutoRemarksEnable = true
 #endif
             };
-            documentWarmup.Init(path, optionsWarmup, format, copiesFolder);
-            documentWarmup.Parse(path);
+            
 
             for (int i = 0; i < stats.IterationNumber; i++)
             {
+
+                documentWarmup = new TypeCobol.Parser();
+                documentWarmup.Init(path, optionsWarmup, format, copiesFolder);
+                documentWarmup.Parse(path);
+
                 var document = new TypeCobol.Parser();
                 var options = new TypeCobolOptions
                 {
