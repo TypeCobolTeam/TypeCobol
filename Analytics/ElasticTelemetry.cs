@@ -25,12 +25,7 @@ namespace Analytics
                 //Load custom app.config for this assembly
                 var appConfig = ConfigurationManager.OpenExeConfiguration(Assembly.GetExecutingAssembly().Location); 
 
-                if (appConfig.AppSettings.Settings["SmtpServer"].Value == "your.smtp.server")
-                {
-                    logger.Error("Server settings are not configured");
-                    _ElasticClient = null;
-                    return;
-                }
+                
 
                 //Configure connection settings 
                 var connectionSettings = new ConnectionConfiguration(new Uri(appConfig.AppSettings.Settings["ElasticServer"].Value));
@@ -58,7 +53,14 @@ namespace Analytics
         {
             try
             {
-                _ElasticClient?.IndexAsync<BytesResponse>(_ElasticIndex, _ElasticType, PostData.Serializable(plainEvent));
+                //Check if we can connect to the ElasticSearch Server
+                if (_ElasticClient != null && 
+                    !_ElasticClient.IndexAsync<BytesResponse>(_ElasticIndex, _ElasticType, PostData.Serializable(plainEvent)).Result.Success)
+                {
+                    logger.Error("Server settings are not configured");
+                    _ElasticClient = null;
+                    return;
+                }
             }
             catch (Exception e) { logger.Fatal(e); }
         }
