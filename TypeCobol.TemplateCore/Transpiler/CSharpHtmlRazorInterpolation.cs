@@ -17,6 +17,53 @@ namespace TypeCobol.TemplateCore.Transpiler
     /// </summary>
     public class CSharpHtmlRazorInterpolation : BaseParserVisitor
     {
+        /// <summary>
+        /// The resulting interpolation String
+        /// </summary>
+        public StringBuilder InterpolationString
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The Code String
+        /// </summary>
+        public StringBuilder CodeString
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The Real C# interpolation String literal using $ and @ special string characters.
+        /// </summary>
+        public string CSharpInterpolationString
+        {
+            get
+            {
+                StringBuilder body = new StringBuilder();                                
+                body.Append(@"$@""");
+                body.Append(InterpolationString.ToString());
+                body.Append(@"""");
+                return body.ToString();
+            }
+        }
+
+        /// <summary>
+        /// MetaCode @{... } toogle flag.
+        /// </summary>
+        private bool MetaCodeToggleFlag;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public CSharpHtmlRazorInterpolation()
+        {
+            InterpolationString = new StringBuilder();
+            CodeString = new StringBuilder();
+        }
+
         //
         // Summary:
         //     Visits the specified block before parsing.
@@ -67,15 +114,44 @@ namespace TypeCobol.TemplateCore.Transpiler
                 case SpanKind.Transition:
                     break;
                 case SpanKind.MetaCode:
+                    MetaCodeToggleFlag = !MetaCodeToggleFlag;
                     break;
                 case SpanKind.Comment:
+                    if (MetaCodeToggleFlag)
+                    {
+                        this.CodeString.Append(span.Content);
+                    }
+                    else
+                    {
+                        this.InterpolationString.Append(span.Content);
+                    }
                     break;
                 case SpanKind.Code:
+                    if (MetaCodeToggleFlag)
+                    {
+                        this.CodeString.Append(span.Content);
+                    }
+                    else
+                    {   //Code translated to argument of an interpolation String.
+                        this.InterpolationString.Append("{@");
+                        this.InterpolationString.Append(span.Content);
+                        this.InterpolationString.Append('}');
+                    }
                     break;
                 case SpanKind.Markup:
+                    //Markup always goes in the interpolation string
+                    this.InterpolationString.Append(span.Content);
                     break;
             }
-            string content = span.Content;
+            //DumpTokens(span.Content);
+        }
+
+        /// <summary>
+        /// Static method for dumping the tokenization of a string content.
+        /// </summary>
+        /// <param name="content">The string content to dump the tokenization</param>
+        public static void DumpTokens(string content)
+        {
             SeekableTextReader reader = new SeekableTextReader(new StringReader(content));
             CSharpRazorTokenizer tokenizer = new CSharpRazorTokenizer(reader);
             CSharpSymbol csSym = null;
