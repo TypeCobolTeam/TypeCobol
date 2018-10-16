@@ -59,6 +59,10 @@ namespace TypeCobol.Codegen
         }
 
 
+        public TypeCobol.Codegen.Actions.Action CreateAction(Node node, string code, string action, string group, string location, string position)
+        {
+            return null;
+        }
 
         /// <summary>
         /// Get all actions created for a node.

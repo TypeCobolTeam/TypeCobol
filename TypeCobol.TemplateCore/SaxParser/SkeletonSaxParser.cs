@@ -96,8 +96,8 @@ namespace TypeCobol.TemplateCore.SaxParser
                 foreach (var e in token.Value.attributes)
                 {
                     Model.Attribute attr = new Model.Attribute();
-                    attr.Name = e.Key;
-                    attr.Value = e.Value;
+                    attr.Name = e.Key.ToLower();
+                    attr.Value = e.Value.Trim();
                     entity.Attributes[e.Key] = attr;
                 }
             }
@@ -197,6 +197,7 @@ namespace TypeCobol.TemplateCore.SaxParser
             while (TestLookahead(XmlNodeType.Element, TagNames.Condition))
             {
                 Condition condition = ParseCondition();
+                condition.Index = conditions.Count;
                 conditions.Add(condition);
             }
             token = Match(XmlNodeType.EndElement, TagNames.Conditions);

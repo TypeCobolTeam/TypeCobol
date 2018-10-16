@@ -17,5 +17,17 @@ namespace TypeCobol.TemplateCore.Model
         public Pattern()
         {
         }
+        /// <summary>
+        /// Visitor Method
+        /// </summary>
+        /// <typeparam name="R"></typeparam>
+        /// <typeparam name="D"></typeparam>
+        /// <param name="v"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public R Accept<R, D>(IModelVisitor<R, D> v, D data)
+        {
+            return v.Visit(this, data);
+        }
     }
 }
