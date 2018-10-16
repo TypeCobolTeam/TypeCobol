@@ -16,6 +16,7 @@ namespace TypeCobol.TemplateCore.Model
 
         public static string Node = "node";
         public static string Name = "name";
+        public static string Value = "value";
         public static string Var = "var";
         public static string Level = "level";
         public static string Sender = "sender";
@@ -25,8 +26,8 @@ namespace TypeCobol.TemplateCore.Model
         public static string TypeCobol = "typecobol";
         public static string Visibility = "visibility";
         public static string CopyName = "copyname";
-        public static string Usage = "Usage";
-        public static string IsPointerIncrementation = "isPointerIncrementation";
+        public static string Usage = "usage";
+        public static string IsPointerIncrementation = "ispointerincrementation";
         public static string ReceiverUsage = "receiverUsage";
 
         public static string Group = "group";
