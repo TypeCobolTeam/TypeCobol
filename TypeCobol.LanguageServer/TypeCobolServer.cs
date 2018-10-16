@@ -350,37 +350,47 @@ namespace TypeCobol.LanguageServer
         {
             //Commented because it's too slow
             //AnalyticsWrapper.Telemetry.TrackEvent(EventType.Hover, "Hover event", LogType.Completion);
-
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
             if (fileCompiler == null)
                 return null;
 
-            // Find the token located below the mouse pointer
-            var tokensLine =
-                fileCompiler.CompilationResultsForProgram.ProcessedTokensDocumentSnapshot.Lines[
-                    parameters.position.line];
-            var hoveredToken =
-                tokensLine.TokensWithCompilerDirectives.First(
-                    token =>
-                        token.StartIndex <= parameters.position.character &&
-                        token.StopIndex >= parameters.position.character);
+            var wrappedCodeElements = CodeElementFinder(fileCompiler, parameters.position);
+            if (wrappedCodeElements == null)
+                return null;
 
-            // Return a text describing this token
-            if (hoveredToken != null)
+            Token userFilterToken = null;
+            Token lastSignificantToken = null;
+            //Try to get a significant token for competion and return the codeelement containing the matching token.
+            CodeElement matchingCodeElement = CodeElementMatcher.MatchCompletionCodeElement(parameters.position,
+                wrappedCodeElements,
+                out userFilterToken, out lastSignificantToken); //Magic happens here
+            if (matchingCodeElement == null)
             {
-                string tokenDescription = hoveredToken.TokenFamily.ToString() + " - " +
-                                          hoveredToken.TokenType.ToString();
+                System.Diagnostics.Debug.WriteLine("Matching code element null: " + DateTime.Now);
+                return null;
+            }
+                
+            var matchingNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[((CodeElementWrapper)matchingCodeElement).CodeElement];
+            if (matchingNode == null)
+                return null;
+
+            //OnHover for data declared with a type
+            var dataDefinition = matchingNode as DataDefinition;
+            if (dataDefinition?.TypeDefinition != null)
+            {
                 return new Hover()
                 {
-                    range =
-                        new Range(parameters.position.line, hoveredToken.StartIndex, parameters.position.line,
-                            hoveredToken.StopIndex + 1),
+					range =
+					  new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex, matchingCodeElement.Line,
+						matchingCodeElement.StopIndex + 1),
                     contents =
-                        new MarkedString[] {new MarkedString() {language = "Cobol", value = tokenDescription}}
+                            new MarkedString[] { new MarkedString() { language = "Cobol", value = "<b><pre>" + string.Join("\r\n", dataDefinition.TypeDefinition.SelfAndChildrenLines.Select(e => e.Text + "<br>&#9;")) + "</pre></b>" } }
                 };
             }
 
+            
             return null;
+
         }
 
         /// <summary>
@@ -923,9 +933,11 @@ namespace TypeCobol.LanguageServer
     }
     public class CodeElementWrapper : CodeElement
     {
+        public CodeElement CodeElement { get; set; }
         public CodeElementWrapper(CodeElement codeElement)
             : base(codeElement.Type)
         {
+            this.CodeElement = codeElement;
             ConsumedTokens = codeElement.ConsumedTokens;
 
             ArrangedConsumedTokens = new List<Token>();
