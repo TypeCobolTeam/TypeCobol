@@ -72,6 +72,7 @@ namespace TypeCobol.TemplateCore.Transpiler
             InterpolationString = new StringBuilder();
             CodeString = new StringBuilder();
             MixedCodeInterpolationString = new StringBuilder();
+            MetaCodeToggleFlag = true;//We start int Code Section
         }
 
         //
@@ -122,9 +123,10 @@ namespace TypeCobol.TemplateCore.Transpiler
             switch (span.Kind)
             {
                 case SpanKind.Transition:
+                    MetaCodeToggleFlag = false;
                     break;
                 case SpanKind.MetaCode:
-                    MetaCodeToggleFlag = !MetaCodeToggleFlag;
+                    MetaCodeToggleFlag = span.Content.Equals("{");
                     break;
                 case SpanKind.Comment:
                     if (MetaCodeToggleFlag)
@@ -138,24 +140,27 @@ namespace TypeCobol.TemplateCore.Transpiler
                     this.MixedCodeInterpolationString.Append(span.Content);
                     break;
                 case SpanKind.Code:
-                    if (MetaCodeToggleFlag)
                     {
-                        this.CodeString.Append(span.Content);
-                        this.MixedCodeInterpolationString.Append(span.Content);
-                    }
-                    else
-                    {   //Code translated to argument of an interpolation String.                        
-                        this.InterpolationString.Append("{@");
-                        this.InterpolationString.Append(span.Content);
-                        this.InterpolationString.Append('}');
+                        bool isCode = span.Content.Trim().Length == 0;
+                        if (MetaCodeToggleFlag || isCode)
+                        {
+                            this.CodeString.Append(span.Content);
+                            this.MixedCodeInterpolationString.Append(span.Content);
+                        }
+                        else
+                        {   //Code translated to argument of an interpolation String.                        
+                            this.InterpolationString.Append("{@");
+                            this.InterpolationString.Append(span.Content);
+                            this.InterpolationString.Append('}');
 
-                        //For the mixed argument of an interpoation string of Appended in a Result Buffer
-                        this.MixedCodeInterpolationString.Append("@SelfResult.Append(");
-                        this.MixedCodeInterpolationString.Append(@"$@""{@");
-                        this.MixedCodeInterpolationString.Append(span.Content);
-                        this.MixedCodeInterpolationString.Append('}');
-                        this.MixedCodeInterpolationString.Append(@"""");
-                        this.MixedCodeInterpolationString.Append(");");
+                            //For the mixed argument of an interpoation string of Appended in a Result Buffer
+                            this.MixedCodeInterpolationString.Append("@SelfResult.Append(");
+                            this.MixedCodeInterpolationString.Append(@"$@""{@");
+                            this.MixedCodeInterpolationString.Append(span.Content);
+                            this.MixedCodeInterpolationString.Append('}');
+                            this.MixedCodeInterpolationString.Append(@"""");
+                            this.MixedCodeInterpolationString.Append(");");
+                        }
                     }
                     break;
                 case SpanKind.Markup:

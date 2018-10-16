@@ -84,5 +84,16 @@ namespace TypeCobol.TemplateCore.Transpiler
         {
             base.VisitStartBlock(block);
         }
+
+        /// <summary>
+        /// Write Errors in the Error console
+        /// </summary>
+        public void WriteErrors()
+        {
+            foreach (RazorError err in Errors)
+            {
+                System.Console.Error.WriteLine(err.Message);
+            }
+        }
     }
 }

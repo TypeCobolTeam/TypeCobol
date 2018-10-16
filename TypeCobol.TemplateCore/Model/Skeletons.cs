@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.TemplateCore.Util;
 
 namespace TypeCobol.TemplateCore.Model
 {
     /// <summary>
     /// The Skeletons model.
     /// </summary>
-    public class Skeletons : AttributedEntity, IList<Skeleton>
+    public class Skeletons : AttributedEntity, IList<Skeleton>, ITranspilable
     {
         /// <summary>
         /// The List of all single skeletons.
@@ -98,6 +99,84 @@ namespace TypeCobol.TemplateCore.Model
             }
         }
 
+        private void WriteCheckConditionsStaticMethod(TextCodeWriter codeWriter)
+        {
+            codeWriter.Indent();
+            codeWriter.WriteLine($"public static bool CheckConditions(TypeCobol.Compiler.Nodes.Node node, Tuple<string,string>[] conditions)");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+
+            codeWriter.WriteLine("System.Diagnostics.Debug.Assert(typeof(TypeCobol.Compiler.Nodes.Node).IsAssignableFrom(node.GetType()));");
+            codeWriter.WriteLine("foreach(var x in conditions)");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+
+            codeWriter.WriteLine("var property = node[x.Item1];");
+            codeWriter.WriteLine(@"if ("" + "".Equals(x.Item2))");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("var values = property as System.Collections.ICollection;");
+            codeWriter.WriteLine("return values != null && values.Count > 0;");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.WriteLine(@"else if ("" * "".Equals(x.Item2))");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("return (property == null ? null : property.ToString()) != null;");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.WriteLine(@"else if (!x.Item2.Equals(property == null ? null : property.ToString(), System.StringComparison.InvariantCultureIgnoreCase))");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("return false;");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+
+            codeWriter.WriteLine("return true;");
+
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.Outdent();
+        }
+
+        private string _TranspiledCode;
+        /// <summary>
+        /// The Transpilaled code for skeletons header and model classes.
+        /// </summary>
+        public string TranspiledCode
+        {
+            get
+            {
+                if (_TranspiledCode == null)
+                {                    
+                    System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+                    TextCodeWriter codeWriter = new TextCodeWriter(stringWriter);
+
+                    //---------------------------------------------------
+                    //Output static local method for Checking conditions.
+                    //---------------------------------------------------
+                    WriteCheckConditionsStaticMethod(codeWriter);
+
+                    //---------------------------------
+                    //Output all Skeletons class Model
+                    //---------------------------------
+                    codeWriter.Indent();
+                    foreach (Skeleton skeleton in SkeletonList)
+                    {
+                        string skeletonCode = skeleton.TranspiledCode;
+                        codeWriter.WriteLine(skeletonCode);
+                    }
+                    codeWriter.Outdent();
+                    codeWriter.Flush();
+                    _TranspiledCode = stringWriter.ToString();
+                }
+                return _TranspiledCode;
+            }
+        }
+
         Skeleton IList<Skeleton>.this[int index]
         {
             get
@@ -118,6 +197,19 @@ namespace TypeCobol.TemplateCore.Model
             {
                 return SkeletonList[i];
             }
+        }
+
+        /// <summary>
+        /// Visitor Method
+        /// </summary>
+        /// <typeparam name="R"></typeparam>
+        /// <typeparam name="D"></typeparam>
+        /// <param name="v"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public R Accept<R, D>(IModelVisitor<R, D> v, D data)
+        {
+            return v.Visit(this, data);
         }
     }
 }
