@@ -12,9 +12,18 @@ namespace TypeCobol.TemplateCore.Model
     public class Action : AttributedEntity
     {
         /// <summary>
-        /// The action's code
+        /// The action's Script code
         /// </summary>
-        public String Code
+        public string Code
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The Action C# Code
+        /// </summary>
+        public string CSharpCode
         {
             get;
             set;
@@ -35,6 +44,6 @@ namespace TypeCobol.TemplateCore.Model
         public Action(string code)
         {
             Code = code;
-        }
+        }        
     }
 }

@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.TemplateCore.Util;
 
 namespace TypeCobol.TemplateCore.Model
 {
     /// <summary>
     /// A List of Conditions.
     /// </summary>
-    public class Conditions : AttributedEntity, IList<Condition>
+    public class Conditions : AttributedEntity, IList<Condition>, ITranspilable
     {
         /// <summary>
         /// The List of conditions.
@@ -30,7 +31,7 @@ namespace TypeCobol.TemplateCore.Model
         }
 
         public Condition this[int index]
-        {   get
+        { get
             {
                 return ConditionList[index];
             }
@@ -51,6 +52,39 @@ namespace TypeCobol.TemplateCore.Model
             {
                 return ConditionList.Count;
             }
+        }
+
+        private string _TranspiledCode;
+        /// <summary>
+        /// The Transpiled code for the list of conditions is a list of C# methods
+        /// and a list of static array of condition tuples.
+        /// </summary>
+        public string TranspiledCode
+        {
+            get
+            {
+                if (_TranspiledCode == null)
+                {
+                    System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+                    TextCodeWriter codeWriter = new TextCodeWriter(stringWriter);
+                    codeWriter.Indent();
+                    codeWriter.Indent();
+                    for (int i = 0; i < Count; i++)
+                    {
+                        string condition = this[i].TranspiledCode;
+                        codeWriter.WriteLine($"private static Tuple<string,string>[] __ConditionsAttributes_{i} = {condition};");
+                        codeWriter.WriteLine($"public bool Conditions_{i}(TypeCobol.Compiler.Nodes.Node node)");
+                        codeWriter.WriteLine("{");
+                        codeWriter.Indent();
+                        codeWriter.WriteLine($"return CheckConditions(node, __ConditionsAttributes_{i});");
+                        codeWriter.Outdent();
+                        codeWriter.WriteLine("}");
+                    }
+                    codeWriter.Flush();
+                    _TranspiledCode = stringWriter.ToString();
+                }
+                return _TranspiledCode;
+            }            
         }
 
         public void Add(Condition item)
@@ -101,6 +135,18 @@ namespace TypeCobol.TemplateCore.Model
         public IEnumerator GetEnumerator()
         {
             return ConditionList.GetEnumerator();
+        }
+        /// <summary>
+        /// Visitor Method
+        /// </summary>
+        /// <typeparam name="R"></typeparam>
+        /// <typeparam name="D"></typeparam>
+        /// <param name="v"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public R Accept<R, D>(IModelVisitor<R, D> v, D data)
+        {
+            return v.Visit(this, data);
         }
     }
 }

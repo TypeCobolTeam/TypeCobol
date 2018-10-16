@@ -97,7 +97,7 @@ namespace TypeCobol.TemplateCore.SaxParser
                 foreach (var e in token.Value.attributes)
                 {
                     Model.Attribute attr = new Model.Attribute();
-                    attr.Name = e.Key;
+                    attr.Name = e.Key.ToLower();
                     attr.Value = e.Value;
                     entity.Attributes[e.Key] = attr;
                 }
