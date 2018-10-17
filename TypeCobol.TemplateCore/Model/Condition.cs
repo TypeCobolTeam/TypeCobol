@@ -12,6 +12,14 @@ namespace TypeCobol.TemplateCore.Model
     /// </summary>
     public class Condition : AttributedEntity, ITranspilable
     {
+        /// <summary>
+        /// The Index of this condition in its Condition List.
+        /// </summary>
+        public int Index
+        {
+            get;
+            set;
+        }
         private string _TranspiledCode;
         /// <summary>
         /// The Transpiled code for a condition is in fact a C# array of Tuple<name:string,value:string>

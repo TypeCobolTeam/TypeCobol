@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\SkeletonsNodesModeler.cs" />
     <Compile Include="Model\Action.cs" />
     <Compile Include="Model\Attribute.cs" />
     <Compile Include="Model\AttributedEntity.cs" />
@@ -90,6 +91,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="SaxParser\SkeletonSaxParser.cd" />
+    <None Include="Transpiler\RazorTranspiler.cd" />
     <None Include="Xml\Skeleton.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

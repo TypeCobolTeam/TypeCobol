@@ -30,6 +30,19 @@ namespace TypeCobol.TemplateCore.Model
             set;
         }
 
+        /// <summary>
+        /// Get the Skeleton Model Name for C#.
+        /// </summary>
+        public string SkeletonModelName
+        {
+            get
+            {
+                Attribute nameAttribute = this.Attributes[AttributeNames.Name];
+                string name = nameAttribute.Value.ToString();
+                name = name.Replace('.', '_');
+                return $"SkeleTon{name}Model";
+            }
+        }
         private string _TranspiledCode;
         /// <summary>
         /// The transpiled code of a Skeleton is a struct declaration of
@@ -42,12 +55,10 @@ namespace TypeCobol.TemplateCore.Model
                 if (_TranspiledCode == null)
                 {
                     System.IO.StringWriter stringWriter = new System.IO.StringWriter();
-                    TextCodeWriter codeWriter = new TextCodeWriter(stringWriter);
-                    Attribute nameAttribute = this.Attributes[AttributeNames.Name];
-                    string name = nameAttribute.Value.ToString();
-                    name = name.Replace('.', '_');
+                    TextCodeWriter codeWriter = new TextCodeWriter(stringWriter);                    
+                    string name = SkeletonModelName;
                     codeWriter.Indent();
-                    codeWriter.WriteLine($"struct SkeleTon{name}Model {{");
+                    codeWriter.WriteLine($"struct {name} {{");
                     codeWriter.Indent();
                     if (this.Attributes.ContainsKey(AttributeNames.Var))
                     {

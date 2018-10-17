@@ -11,7 +11,7 @@ namespace TypeCobol.TemplateCore.Controller
     /// Skeletons Controller class, that manages the tranpilation of a set of Skeletons
     /// to their C# code.
     /// </summary>
-    public class SkeletonsController
+    public class SkeletonsController : ITranspilable
     {
         /// <summary>
         /// The list of Skeleton
@@ -30,6 +30,8 @@ namespace TypeCobol.TemplateCore.Controller
             get;
             private set;
         }
+
+        public string TranspiledCode => throw new NotImplementedException();
 
 
         /// <summary>
@@ -55,6 +57,12 @@ namespace TypeCobol.TemplateCore.Controller
         /// </summary>
         public void TranspileNodeActions()
         {
+            //First Construction the Dictionary of Nodes as model of nodes.
+            SkeletonsNodesModeler modeler = new SkeletonsNodesModeler();
+            Nodes = new Dictionary<string, Node>();
+            this.SkeletonsList.Accept(modeler, Nodes);
+
+            //Now that we have node model
 
         }
     }

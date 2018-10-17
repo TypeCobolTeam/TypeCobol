@@ -46,7 +46,7 @@ namespace TypeCobol.TemplateCore.Controller
             {
                 targeNode = data[node];
             }
-            targeNode.AddPatternWithGuard(CurretPattern, that);
+            targeNode.AddPatternWithGuard(CurretPattern, that, CurrentSkeleton);
             return targeNode;
         }
 

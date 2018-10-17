@@ -198,6 +198,7 @@ namespace TypeCobol.TemplateCore.SaxParser
             while (TestLookahead(XmlNodeType.Element, TagNames.Condition))
             {
                 Condition condition = ParseCondition();
+                condition.Index = conditions.Count;
                 conditions.Add(condition);
             }
             token = Match(XmlNodeType.EndElement, TagNames.Conditions);
