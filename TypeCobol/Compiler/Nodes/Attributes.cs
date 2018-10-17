@@ -210,12 +210,13 @@ namespace TypeCobol.Compiler.Nodes {
     {
         public object GetValue(object o, SymbolTable table)
         {
-            var data = o as DataDefinition;
+            var dataDef = o as DataDefinition;
+            var data = dataDef?.CodeElement as DataDescriptionEntry;
+
             if (data == null) return null;
-            if (((DataDescriptionEntry) data.CodeElement).Global != null && 
-                ((DataDescriptionEntry)data.CodeElement).Global.Value)
+            if (data.Global != null && data.Global.Value)
             {
-                return " " + ((DataDescriptionEntry)data.CodeElement).Global.Token.Text;
+                return " " + data.Global.Token.Text;
             }
             else
                 return "";
