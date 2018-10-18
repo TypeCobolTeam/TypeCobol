@@ -110,6 +110,25 @@ namespace TypeCobol.TemplateCore.Test
                     X'00' thru 'S'
                     'U' thru X'FF'.""";
 
+        public static string ResultMixedCSharpStringInterpolationTest =
+@"@SelfResult.Append(@""        "");
+        var items = """";
+        if (@Model.value.Length == 0) {
+        items = @Model.level +""  ""+@Model.name+""-value PIC X VALUE LOW-VALUE."";
+        }
+        else {
+        items = @Model.level + ""  "" + @Model.name + ""-value PIC X VALUE "" +  @Model.value  + ""."";
+        }
+        @SelfResult.Append(@""
+"");@SelfResult.Append($@""{@items}"");@SelfResult.Append(@""
+    88  "");@SelfResult.Append($@""{@Model.name}"");@SelfResult.Append(@"" VALUE 'T'.
+    88  "");@SelfResult.Append($@""{@Model.name}"");@SelfResult.Append(@""-false VALUE 'F'
+                    X'00' thru 'S'
+                    'U' thru X'FF'."");";
+
+        /// <summary>
+        /// Test the result as the content of an interpolate string.
+        /// </summary>
         [TestMethod]
         public void StringInterpolationTest1()
         {
@@ -121,6 +140,9 @@ namespace TypeCobol.TemplateCore.Test
             Assert.AreEqual(ResultInterpolationString1, interpolateString);
         }
 
+        /// <summary>
+        /// Test the C# code part of the script.
+        /// </summary>
         [TestMethod]
         public void CodeStringTest1()
         {
@@ -131,6 +153,10 @@ namespace TypeCobol.TemplateCore.Test
             System.Diagnostics.Debug.Write(codeString);
             Assert.AreEqual(ResultCodeString1, codeString);
         }
+
+        /// <summary>
+        /// Test the result as an interpolation String.
+        /// </summary>
         [TestMethod]
         public void CSharpStringInterpolationTest1()
         {
@@ -140,6 +166,21 @@ namespace TypeCobol.TemplateCore.Test
             string csharpInterpolateString = interpolator.CSharpInterpolationString;
             System.Diagnostics.Debug.Write(csharpInterpolateString);
             Assert.AreEqual(ResultCHarpInterpolationString1, csharpInterpolateString);
+        }
+
+        /// <summary>
+        /// Test the transpilation of the script into an unique buffer, test the adding of
+        /// Markup text into a target@SelResult variable which will be a StringBuilder instance.
+        /// </summary>
+        [TestMethod]
+        public void MixedCSharpStringInterpolationTest()
+        {
+            CSharpHtmlRazorInterpolation interpolator = new CSharpHtmlRazorInterpolation();
+            RazorTranspiler transpiler = new CSharpHtmlRazorTranspiler(interpolator);
+            Assert.IsTrue(transpiler.Parse(String1));
+            string mixedcsharpInterpolateString = interpolator.MixedCodeInterpolationString.ToString();
+            System.Diagnostics.Debug.Write(mixedcsharpInterpolateString);
+            Assert.AreEqual(ResultMixedCSharpStringInterpolationTest, mixedcsharpInterpolateString);
         }
     }
 }

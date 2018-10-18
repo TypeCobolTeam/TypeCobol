@@ -36,6 +36,15 @@ namespace TypeCobol.TemplateCore.Transpiler
         }
 
         /// <summary>
+        /// Mixed code: All codes are mixed in this buffer
+        /// </summary>
+        public StringBuilder MixedCodeInterpolationString
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// The Real C# interpolation String literal using $ and @ special string characters.
         /// </summary>
         public string CSharpInterpolationString
@@ -62,6 +71,7 @@ namespace TypeCobol.TemplateCore.Transpiler
         {
             InterpolationString = new StringBuilder();
             CodeString = new StringBuilder();
+            MixedCodeInterpolationString = new StringBuilder();
         }
 
         //
@@ -119,28 +129,43 @@ namespace TypeCobol.TemplateCore.Transpiler
                 case SpanKind.Comment:
                     if (MetaCodeToggleFlag)
                     {
-                        this.CodeString.Append(span.Content);
+                        this.CodeString.Append(span.Content);                        
                     }
                     else
                     {
                         this.InterpolationString.Append(span.Content);
                     }
+                    this.MixedCodeInterpolationString.Append(span.Content);
                     break;
                 case SpanKind.Code:
                     if (MetaCodeToggleFlag)
                     {
                         this.CodeString.Append(span.Content);
+                        this.MixedCodeInterpolationString.Append(span.Content);
                     }
                     else
-                    {   //Code translated to argument of an interpolation String.
+                    {   //Code translated to argument of an interpolation String.                        
                         this.InterpolationString.Append("{@");
                         this.InterpolationString.Append(span.Content);
                         this.InterpolationString.Append('}');
+
+                        //For the mixed argument of an interpoation string of Appended in a Result Buffer
+                        this.MixedCodeInterpolationString.Append("@SelfResult.Append(");
+                        this.MixedCodeInterpolationString.Append(@"$@""{@");
+                        this.MixedCodeInterpolationString.Append(span.Content);
+                        this.MixedCodeInterpolationString.Append('}');
+                        this.MixedCodeInterpolationString.Append(@"""");
+                        this.MixedCodeInterpolationString.Append(");");
                     }
                     break;
                 case SpanKind.Markup:
                     //Markup always goes in the interpolation string
                     this.InterpolationString.Append(span.Content);
+                    this.MixedCodeInterpolationString.Append("@SelfResult.Append(");
+                    this.MixedCodeInterpolationString.Append(@"@""");
+                    this.MixedCodeInterpolationString.Append(span.Content);
+                    this.MixedCodeInterpolationString.Append(@"""");
+                    this.MixedCodeInterpolationString.Append(");");
                     break;
             }
             //DumpTokens(span.Content);
