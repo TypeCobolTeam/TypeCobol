@@ -97,6 +97,15 @@ namespace TypeCobol.TemplateCore {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Skeleton &apos;{0}&apos; with no conditions is ignored!.
+        /// </summary>
+        internal static string SkeletonwithNoConditionsIgnored {
+            get {
+                return ResourceManager.GetString("SkeletonwithNoConditionsIgnored", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning: {0}.
         /// </summary>
         internal static string WarningMsg {

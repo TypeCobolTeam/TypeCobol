@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.TemplateCore.Transpiler;
 using TypeCobol.TemplateCore.Util;
 
 namespace TypeCobol.TemplateCore.Model
@@ -70,7 +71,7 @@ namespace TypeCobol.TemplateCore.Model
             {
                 foreach (var condition in conditions)
                 {
-                    string condExpr = condition.TranspiledCode;
+                    string condExpr = $"@Model.Conditions_{condition.Index}(@Self)";
                     expr.Append(condSep);
                     expr.Append(condExpr);
                     condSep = " || ";
@@ -98,10 +99,10 @@ namespace TypeCobol.TemplateCore.Model
                         Attribute nodeAttribue = this.Attributes[AttributeNames.Node];
                         string node = nodeAttribue.Value as String;
                         string methodName = node.Replace('.', '_');
-                        codeWriter.WriteLine($"public static List<TypeCobol.Codegen.Actions.Action> {methodName}(TypeCobol.Compiler.Nodes.Node @Self)");
+                        codeWriter.WriteLine($"public static List<TypeCobol.Codegen.Actions.Action> {methodName}(TypeCobol.Compiler.Nodes.Node @Self, TypeCobol.Codegen.GeneratorActions @SelfContext)");
                         codeWriter.WriteLine("{");
                         codeWriter.Indent();
-                        codeWriter.WriteLine("List<TypeCobol.Codegen.Actions.Action> @SelfAction = new List<TypeCobol.Codegen.Actions.Action>();");
+                        codeWriter.WriteLine("List<TypeCobol.Codegen.Actions.Action> @SelfActions = new List<TypeCobol.Codegen.Actions.Action>();");
 
                         foreach (var guards in Guards)
                         {//For each pattern
@@ -125,6 +126,34 @@ namespace TypeCobol.TemplateCore.Model
                             }
 
                             //Now emit the Action Pattern code.
+                            //1) Create the result variable of the emitted code
+                            codeWriter.WriteLine("StringBuilder @SelfResult = new StringBuilder();");
+                            //2)  Create the interpolation mixed code, if we have some code.
+                            if (pattern.Code != null)
+                            {
+                                CSharpHtmlRazorInterpolation interpolator = new CSharpHtmlRazorInterpolation();
+                                RazorTranspiler transpiler = new CSharpHtmlRazorTranspiler(interpolator);
+                                bool bResult = transpiler.Parse(pattern.Code);
+                                if (!bResult)
+                                {//Transpilation error ==> generate a message
+                                    interpolator.WriteErrors();
+                                }
+                                else
+                                {
+                                    string mixedcsharpInterpolateString = interpolator.MixedCodeInterpolationString.ToString();
+                                    codeWriter.WriteLine(mixedcsharpInterpolateString);
+                                }
+                            }
+                            //if we have an action ==> Create the Action and add it to the list of action.
+                            string createActionStmt = pattern.TranspiledCode;
+                            codeWriter.WriteLine(createActionStmt);
+                            codeWriter.WriteLine("if (@SelfAction != null)");
+                            codeWriter.WriteLine("{");
+                            codeWriter.Indent();
+                            codeWriter.WriteLine("@SelfActions.Add(@SelfAction);");
+                            codeWriter.Outdent();
+                            codeWriter.WriteLine("}");
+
 
                             if (condExpr.Length > 0)
                             {
@@ -136,7 +165,7 @@ namespace TypeCobol.TemplateCore.Model
                             codeWriter.WriteLine("}");
                         }
 
-                        codeWriter.WriteLine("return @SelfAction;");
+                        codeWriter.WriteLine("return @SelfActions;");
                         codeWriter.Outdent();                        
                         codeWriter.WriteLine("}");
                         codeWriter.Outdent();

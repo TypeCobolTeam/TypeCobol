@@ -58,7 +58,8 @@ namespace TypeCobol.TemplateCore.Model
                     TextCodeWriter codeWriter = new TextCodeWriter(stringWriter);                    
                     string name = SkeletonModelName;
                     codeWriter.Indent();
-                    codeWriter.WriteLine($"struct {name} {{");
+                    codeWriter.WriteLine($"struct {name}");
+                    codeWriter.WriteLine("{");
                     codeWriter.Indent();
                     if (this.Attributes.ContainsKey(AttributeNames.Var))
                     {
@@ -77,7 +78,7 @@ namespace TypeCobol.TemplateCore.Model
                         //-------------------------------------------------
                         //Now Ouput the constructor with a Node parameters
                         //-------------------------------------------------
-                        codeWriter.WriteLine($"public SkeleTon{name}Model(TypeCobol.Compiler.Nodes.Node node)");
+                        codeWriter.WriteLine($"public {name}(TypeCobol.Compiler.Nodes.Node node)");
                         codeWriter.WriteLine("{");
                         codeWriter.Indent();
                         for (int i = 0; i < var_items.Length; i++)
@@ -89,14 +90,17 @@ namespace TypeCobol.TemplateCore.Model
                         //----------------------------
                         //Now Output conditions code.
                         //----------------------------
-                        string conditions = Conditions.TranspiledCode;
-                        if (conditions != null)
+                        if (Conditions != null)
                         {
-                            codeWriter.WriteLine(conditions);
+                            string conditions = Conditions.TranspiledCode;
+                            if (conditions != null)
+                            {
+                                codeWriter.WriteLine(conditions);
+                            }
                         }
-                    }
-                    codeWriter.WriteLine("}");                    
+                    }                    
                     codeWriter.Outdent();
+                    codeWriter.WriteLine("}");
                     codeWriter.Flush();
                     _TranspiledCode = stringWriter.ToString();
                 }

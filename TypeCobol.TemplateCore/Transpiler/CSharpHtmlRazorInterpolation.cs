@@ -72,6 +72,7 @@ namespace TypeCobol.TemplateCore.Transpiler
             InterpolationString = new StringBuilder();
             CodeString = new StringBuilder();
             MixedCodeInterpolationString = new StringBuilder();
+            MetaCodeToggleFlag = true;//We start int Code Section
         }
 
         //
@@ -124,7 +125,7 @@ namespace TypeCobol.TemplateCore.Transpiler
                 case SpanKind.Transition:
                     break;
                 case SpanKind.MetaCode:
-                    MetaCodeToggleFlag = !MetaCodeToggleFlag;
+                    MetaCodeToggleFlag = span.Content.Equals("{");
                     break;
                 case SpanKind.Comment:
                     if (MetaCodeToggleFlag)

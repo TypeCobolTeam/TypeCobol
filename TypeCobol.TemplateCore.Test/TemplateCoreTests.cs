@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TypeCobol.TemplateCore.Controller;
 using TypeCobol.TemplateCore.SaxParser;
 using TypeCobol.TemplateCore.Transpiler;
 
@@ -15,7 +16,7 @@ namespace TypeCobol.TemplateCore.Test
         public void SkeletonFileXmlSchemaValidationTest()
         {
             string currentDir = System.IO.Directory.GetCurrentDirectory();
-            string xmlFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeletons.xml");
+            string xmlFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "TestSkeletons.xml");
             string xsdFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeleton.xsd");
 
             SkeletonSaxParser parser = new SkeletonSaxParser(xmlFile, xsdFile);
@@ -31,7 +32,7 @@ namespace TypeCobol.TemplateCore.Test
         public void SkeletonFileXmlSaxParsingWithValidationTest()
         {
             string currentDir = System.IO.Directory.GetCurrentDirectory();
-            string xmlFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeletons.xml");
+            string xmlFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "TestSkeletons.xml");
             string xsdFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeleton.xsd");
 
             SkeletonSaxParser parser = new SkeletonSaxParser(xmlFile, xsdFile);
@@ -54,7 +55,7 @@ namespace TypeCobol.TemplateCore.Test
         public void SkeletonFileXmlSaxParsingWithoutValidationTest()
         {
             string currentDir = System.IO.Directory.GetCurrentDirectory();
-            string xmlFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeletons.xml");
+            string xmlFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "TestSkeletons.xml");
 
             SkeletonSaxParser parser = new SkeletonSaxParser(xmlFile);
             try
@@ -182,5 +183,61 @@ namespace TypeCobol.TemplateCore.Test
             System.Diagnostics.Debug.Write(mixedcsharpInterpolateString);
             Assert.AreEqual(ResultMixedCSharpStringInterpolationTest, mixedcsharpInterpolateString);
         }
+
+        /// <summary>
+        /// This a First test that only dump the code generated for a Node actions.
+        /// </summary>
+        [TestMethod]
+        public void NodeTranspilationCodeTest0()
+        {
+            string currentDir = System.IO.Directory.GetCurrentDirectory();
+            string xmlFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "TestSkeletons.xml");
+            string xsdFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeleton.xsd");
+
+            SkeletonSaxParser parser = new SkeletonSaxParser(xmlFile, xsdFile);
+            try
+            {
+                parser.Parse();
+                bool bValidate = parser.ValidationErrorCount == 0 && parser.ValidationWarningCount == 0;
+                Assert.IsTrue(bValidate, bValidate ? "" : parser.ValidationMessage.ToString());
+                SkeletonsController controller = new SkeletonsController(parser.Skeletons);
+                controller.CreateNodesModel();
+                var node = controller.Nodes["TypeCobol.Compiler.Nodes.DataDescription"];
+                string code = node.TranspiledCode;
+                System.Diagnostics.Debug.Write(code);
+            }
+            catch (SaxParser.SaxParser.ParsingException e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// This a First test that only dump the code generated for a skeletons file.
+        /// </summary>
+        [TestMethod]
+        public void SkeletonsFileTranspilationTest0()
+        {
+            string currentDir = System.IO.Directory.GetCurrentDirectory();
+            string xmlFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "TestSkeletons.xml");
+            string xsdFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeleton.xsd");
+
+            SkeletonSaxParser parser = new SkeletonSaxParser(xmlFile, xsdFile);
+            try
+            {
+                parser.Parse();
+                bool bValidate = parser.ValidationErrorCount == 0 && parser.ValidationWarningCount == 0;
+                Assert.IsTrue(bValidate, bValidate ? "" : parser.ValidationMessage.ToString());
+                SkeletonsController controller = new SkeletonsController(parser.Skeletons);
+                string code = controller.TranspiledCode;
+                controller.CreateNodesModel();                                
+                System.Diagnostics.Debug.Write(code);
+            }
+            catch (SaxParser.SaxParser.ParsingException e)
+            {
+                throw e;
+            }
+        }
+
     }
 }

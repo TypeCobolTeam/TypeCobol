@@ -38,7 +38,7 @@ namespace TypeCobol.TemplateCore.Controller
             if (!data.ContainsKey(node))
             {//We must create a new node.
                 Node n = new Node();
-                n.Attributes[node] = nameAttribute;
+                n.Attributes[AttributeNames.Node] = nameAttribute;
                 data[node] = n;
                 targeNode = n;
             }
@@ -73,6 +73,11 @@ namespace TypeCobol.TemplateCore.Controller
         public Node Visit(Skeleton that, Dictionary<string, Node> data)
         {
             CurrentSkeleton = that;
+            if (that.Conditions == null)
+            {
+                System.Console.Error.WriteLine(string.Format(Resource.SkeletonwithNoConditionsIgnored, that.Attributes[AttributeNames.Name]));
+                return null;
+            }
             //For each pattern we must visit all conditions.
             foreach (var pattern in that.Patterns.PatternList)
             {

@@ -30,7 +30,7 @@ namespace TypeCobol.TemplateCore.Model
         {
             get
             {
-                if (_TranspiledCode != null)
+                if (_TranspiledCode == null)
                 {
                     Attribute nameAttribute = this.Attributes[AttributeNames.Node];
                     string node = nameAttribute.Value.ToString();
@@ -39,13 +39,13 @@ namespace TypeCobol.TemplateCore.Model
                     sb.Append($@"new Tuple<string,string>(""{AttributeNames.Node}"",""{node}"")");
                     foreach (KeyValuePair<string, Attribute> e in this.Attributes)
                     {
-                        if (e.Key.Equals(AttributeNames.Node))
+                        if (!e.Key.Equals(AttributeNames.Node))
                         {
-                            sb.Append($@", new Tuple<string,string>(""{e.Key}"",""{e.Value}"")");
+                            sb.Append($@", new Tuple<string,string>(""{e.Key}"",""{e.Value.Value}"")");
                         }
                     }
-                    sb.Append('}');
-                    _TranspiledCode = sb.ToString();
+                    sb.Append("}");
+                    _TranspiledCode = sb.ToString();                    
                 }
                 return _TranspiledCode;
             }            

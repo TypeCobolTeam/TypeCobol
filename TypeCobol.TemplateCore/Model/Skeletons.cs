@@ -163,13 +163,17 @@ namespace TypeCobol.TemplateCore.Model
                     //---------------------------------
                     //Output all Skeletons class Model
                     //---------------------------------
+                    codeWriter.Indent();
                     foreach (Skeleton skeleton in SkeletonList)
                     {
                         string skeletonCode = skeleton.TranspiledCode;
                         codeWriter.WriteLine(skeletonCode);
                     }
+                    codeWriter.Outdent();
+                    codeWriter.Flush();
+                    _TranspiledCode = stringWriter.ToString();
                 }
-                return TranspiledCode;
+                return _TranspiledCode;
             }
         }
 
