@@ -2,6 +2,8 @@
 Line 49[12,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: blu
 Line 54[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
 Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: bli
+Line 66[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate
+Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
 ======================== Documentation ========================
 <?xml version="1.0" encoding="utf-16"?>
 <DocumentationForProgram xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -108,7 +110,7 @@ Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any des
   <Description>MyProc info </Description>
   <Deprecated>It is deprecated </Deprecated>
   <Name>MyProc</Name>
-  <Visibility>Private</Visibility>
+  <Visibility>Public</Visibility>
   <Namespace>DocCombined</Namespace>
   <Parameters>
     <Parameter>
@@ -157,6 +159,39 @@ Line 56[21,23] <37, Warning, General> - Warning: Parameter does not have any des
         <Usage xsi:nil="true" />
         <MaxOccurence>1</MaxOccurence>
         <Picture>PPP999PPP</Picture>
+      </DocDataType>
+    </Parameter>
+  </Parameters>
+</DocumentationForFunction>
+---------------------
+
+<?xml version="1.0" encoding="utf-16"?>
+<DocumentationForFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ToDos>
+    <ToDo>Add a body</ToDo>
+  </ToDos>
+  <Description>MyPivateProc is a Proc but Pivate </Description>
+  <Deprecated />
+  <Name>MyPivateProc</Name>
+  <Visibility>Private</Visibility>
+  <Namespace>DocCombined</Namespace>
+  <Parameters>
+    <Parameter>
+      <Name>myDate</Name>
+      <PassingType>Input</PassingType>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <TypeName>DATE</TypeName>
+      </DocDataType>
+    </Parameter>
+    <Parameter>
+      <Name>toto</Name>
+      <PassingType>Output</PassingType>
+      <DocDataType>
+        <Usage xsi:nil="true" />
+        <MaxOccurence>1</MaxOccurence>
+        <TypeName>BOOL</TypeName>
       </DocDataType>
     </Parameter>
   </Parameters>

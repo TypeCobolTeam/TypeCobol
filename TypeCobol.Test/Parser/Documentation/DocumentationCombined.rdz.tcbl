@@ -48,12 +48,23 @@
           - toto: toto 
           -blu: will be ignored
       *>>>
-       DECLARE PROCEDURE MyProc PRIVATE
+       DECLARE PROCEDURE MyProc PUBLIC
            INPUT    myDate      TYPE Date
                     bla         Pic S9(1)V9(12)
            IN-OUT   myBool      TYPE BOOL
            OUTPUT   toto        TYPE BOOL
                     bli         Pic PPP999PPP.
+           PROCEDURE DIVISION.
+           CONTINUE.
+       END-DECLARE.
+
+      *<<< MyPivateProc is a Proc but Pivate
+        @deprecated
+          @ todo: Add a body
+      *>>>
+       DECLARE PROCEDURE MyPivateProc
+           INPUT    myDate      TYPE Date
+           OUTPUT   toto        TYPE BOOL.
            PROCEDURE DIVISION.
            CONTINUE.
        END-DECLARE.

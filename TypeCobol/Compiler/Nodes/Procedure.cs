@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Nodes {
 
@@ -35,10 +36,20 @@ namespace TypeCobol.Compiler.Nodes {
                 bool bPeriodSeen = false;
                 string use = " USING PntTab-Pnt.";
                 string sep = "";
-                StringBuilder sb = new StringBuilder();                    
+                StringBuilder sb = new StringBuilder();
+                bool insideFormalizedComment = false;
+                int lastComputedLine = 0;
                 foreach (var token in CodeElement.ConsumedTokens)
-                {//JCM: Don't take in account imported token.                    
-                    if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken))
+                {//JCM: Don't take in account imported token.
+                    if (token.TokenType == TokenType.FormalizedCommentsStart)
+                        insideFormalizedComment = true;
+                    if (insideFormalizedComment && lastComputedLine != token.TokensLine.LineIndex)
+                    {
+                        lastComputedLine = token.TokensLine.LineIndex;
+                        string text = '*' + token.TokensLine.Text.Substring(7, token.TokensLine.Text.Length - 7);
+                        lines.Add(new TypeCobol.Compiler.Text.TextLineSnapshot(-1, text, null));
+                    }
+                    else if (!(token is TypeCobol.Compiler.Preprocessor.ImportedToken) && !insideFormalizedComment)
                     {
                         if (token.TokenType == TypeCobol.Compiler.Scanner.TokenType.PeriodSeparator)
                         {
@@ -52,6 +63,8 @@ namespace TypeCobol.Compiler.Nodes {
                         }
                         sep = " ";
                     }
+                    if (token.TokenType == TokenType.FormalizedCommentsStop)
+                        insideFormalizedComment = false;
                 }
                 if (!bPeriodSeen)
                     sb.Append(use);

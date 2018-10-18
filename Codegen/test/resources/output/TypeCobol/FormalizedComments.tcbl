@@ -8,6 +8,16 @@
        PROGRAM-ID. DocCodeGen.
 
        DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  TC-DocCodeG-FctList-Loaded PIC X(02).
+           88 TC-DocCodeG-FctList-IsLoaded      VALUE 'OK'.
+       01 TC-DocCodeG-PntTab.
+           05 TC-DocCodeG-PntNbr         PIC S9(04) COMP VALUE 1.
+      *DocCodeG::MyProc
+           05 TC-DocCodeG-fd48569e-Idt   PIC X(08) VALUE 'fd48569e'.
+           05 TC-DocCodeG-fd48569e PROCEDURE-POINTER.
+
+                     
        LOCAL-STORAGE SECTION.
        
       *<<<
@@ -18,24 +28,16 @@
       *   @Restriction : Do not Use BOOL var
       *>>>
       *01 myType TYPEDEF STRICT PUBLIC pic X(01).
-      *    
-                                        
-                   
-                                                
-                 
-                                             
-          
-                                                 
 
       *<<< Vect2D
       *>>>
       *01 Vect2D TYPEDEF STRICT.
-      *          
-          
-                                
       *  02 Coord2d.
       *    03 X PIC 9(4).
       *    03 Y PIC 9(4).
+       LINKAGE SECTION.
+       01 PntTab-Pnt POINTER.
+
 
       *<<< My program 
       *   @ Description : description
@@ -46,10 +48,33 @@
       *       - description
       *   @ see : Thank you for your attention
       *   @ todo :
-      *       - Add BOOL support 
+      *       - Add BOOL support
       *       - implement a call counter
       *>>>
-       PROCEDURE DIVISION.
+       PROCEDURE DIVISION USING PntTab-Pnt.
+                          
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-DocCodeG-FctList-IsLoaded
+              SET TC-DocCodeG-fd48569e   TO ENTRY 'fd48569e'
+
+              SET TC-DocCodeG-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-DocCodeG-PntTab
+
+           .
+                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
       *<<< MyProc info
       *   @ deprec : It is
@@ -64,31 +89,12 @@
       *   - toto: toto
       *   -blu: will be ignored
       *>>>
-      *DECLARE PROCEDURE MyProc PRIVATE
+      *DECLARE PROCEDURE MyProc PUBLIC
       *    INPUT    myDate      TYPE Date
       *             bla         Pic S9(1)V9(12)
       *    IN-OUT   myBool      TYPE BOOL
       *    OUTPUT   toto        TYPE BOOL
       *             bli         Pic PPP999PPP.
-      *               
-                          
-                 
-                                           
-                 
-                     
-                      
-                 
-                               
-                        
-                       
-                               
-          
-                                       
-                                         
-                                               
-                                         
-                                         
-                                              
 
        END PROGRAM DocCodeGen.
       *
@@ -105,7 +111,7 @@
       *   - toto: toto
       *   -blu: will be ignored
       *>>>
-      *DECLARE PROCEDURE MyProc PRIVATE
+      *DECLARE PROCEDURE MyProc PUBLIC
       *    INPUT    myDate      TYPE Date
       *             bla         Pic S9(1)V9(12)
       *    IN-OUT   myBool      TYPE BOOL

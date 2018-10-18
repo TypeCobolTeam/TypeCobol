@@ -1302,7 +1302,7 @@ namespace TypeCobol.Codegen.Generators
             if (nodeData != null)
             {
                 // get the array delimiter consumed Tokens
-                var delimiterTokens = GetEnclosingTokensIfAny(node, startTokenType, stopTokenType);
+                var delimiterTokens = GetEnclosingTokensIfAny(node, startTokenType, stopTokenType)?.ToArray();
                 if (delimiterTokens != null && delimiterTokens.Any())
                 {
 
@@ -1312,34 +1312,34 @@ namespace TypeCobol.Codegen.Generators
                         new[] { "\r\n", "\r", "\n" },
                         StringSplitOptions.None
                     );
-
+                    int[,] bufferLines = nodeData.Buffer.ComputeLinePositions(0, nodeData.Buffer.Size); 
+                    var positionList = nodeData.Buffer.GetPositionList();
+                    lines = lines.Take(bufferLines.Length).ToArray();
                     foreach (var delimiterToken in delimiterTokens)
                     {
-                        // Get the delimiters lines by the Tokens
-                        int linestart = delimiterToken.Item1.Line;
-                        int linestop = delimiterToken.Item2.Line;
 
-
-                        // for each lines, if it is inside the formalized comment then comment them (replace the 6th character by a '*') 
-                        for (int i = 0; i < lines.Length - 1; i++)
+                        // for each lines, if it is inside the formalized comment then comment them (replace the 7th character by a '*') 
+                        for (int i = 0; i < bufferLines.GetLength(0) - 1; i++)
                         {
-                            if (nodeData.Positions.Item4[i] >= linestart && nodeData.Positions.Item4[i] <= linestop &&
-                                lines[i].Length >= 7)
+                            if (nodeData.Positions.Item4[i] >= delimiterToken.Item1.Line &&
+                                nodeData.Positions.Item4[i] <= delimiterToken.Item2.Line &&
+                                bufferLines[i, 1] >= 7) // Avoid comment blank lines
                             {
-                                lines[i] = lines[i].Substring(0, 6) + '*' + lines[i].Substring(7, lines[i].Length - 7);
+                                if (positionList.Any() && positionList[0].Pos == bufferLines[i, 0] + 6)
+                                {
+                                    positionList[0].SetFlag(Position.Flags.InclStart);
+                                }
+                                nodeData.Buffer.Insert("*", bufferLines[i,0]+6, bufferLines[i,0] + 7);
                             }
                         }
                     }
-                    // Replace the buffer content by the new one commented
-                    string newContent = string.Join(Environment.NewLine, lines);
-                    nodeData.Buffer.Insert(newContent, 0, newContent.Length);
                 }
             }
         }
 
         public void CommentSpecificParts(Node node)
         {
-            // Formalised Comments of Programs (Formalised Comments of Typedef and Functions is already commented)
+            // Formalised Comments of Programs (Formalized Comments of Typedef and Functions is already commented)
             if (node is Compiler.Nodes.ProcedureDivision && node.Parent is Compiler.CodeModel.Program)
             {
                 CommentBetweenTokens(node, TokenType.FormalizedCommentsStart, TokenType.FormalizedCommentsStop);
