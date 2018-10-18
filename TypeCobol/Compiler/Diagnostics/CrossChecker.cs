@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +63,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(FunctionDeclaration functionDeclaration)
         {
             FunctionDeclarationChecker.OnNode(functionDeclaration);
+            CheckMultipleFormComParam(functionDeclaration.CodeElement);
             return true;
         }
 
@@ -87,6 +88,13 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(ProcedureDivision procedureDivision)
         {
             LibraryChecker.CheckLibrary(procedureDivision);
+            ProcedureDivisionHeader ce = procedureDivision.CodeElement as ProcedureDivisionHeader;
+            if (ce?.FormalizedCommentDocumentation != null && procedureDivision.Parent is FunctionDeclaration)
+            {
+                DiagnosticUtils.AddError(ce,
+                    "Formalized Comments can be placed above Procedure Division only for Programs",
+                    MessageCode.ErrorFormalizedCommentMissplaced);
+            }
             return true;
         }
 
@@ -198,6 +206,7 @@ namespace TypeCobol.Compiler.Diagnostics
             //TODO need to clarify if we have 1 visitor per LanguageLevel
             //For performance reason it seems better to have only one here
             TypeDefinitionChecker.CheckTypeDefinition(typeDefinition);
+            CheckMultipleFormComParam(typeDefinition.CodeElement);
             return true;
         }
 
@@ -210,6 +219,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (formCom != null && procedureDivision.UsingParameters!= null)
             {
+                CheckMultipleFormComParam(procedureDivision);
                 // Get the parameters inside the Formalized Comment that are not inside the program parameters
                 var formComParamOrphan = formCom.Parameters.Keys.Except(
                     procedureDivision.UsingParameters.Select(p => p.StorageArea.SymbolReference?.Name)) ?? Enumerable.Empty<string>();
@@ -576,6 +586,25 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
+        /// <summary>
+        /// Add a warning if a Field is set more than one time
+        /// </summary>
+        private static void CheckMultipleFormComParam(CodeElement codeElement)
+        {
+            var tokenGroups = codeElement.ConsumedTokens.GroupBy(t => t.TokenType);
+            foreach (var tokenGroup in tokenGroups)
+            {
+                if ((int)tokenGroup.Key >= 513 && (int)tokenGroup.Key <= 520 && tokenGroup.Count() > 1)
+                {
+                    foreach (var token in tokenGroup)
+                    {
+                        DiagnosticUtils.AddError(codeElement,
+                            "Formalized comment field is declared more than once : " + token.Text,
+                            token, code: MessageCode.Warning);
+                    }
+                }
+            }
+        }
 
         private static void FlagNodeAndCreateQualifiedStorageAreas(Node.Flag flag, Node node, StorageArea storageArea,
             string completeQualifiedName)

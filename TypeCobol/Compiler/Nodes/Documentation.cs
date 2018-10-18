@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
@@ -100,28 +100,11 @@ namespace TypeCobol.Compiler.Nodes
                     See         = FormCom.See.IsNullOrEmpty()         ? null : FormCom.See;
                     Deprecated  = FormCom.Deprecated;
                 }
-
-                var groupBy = node.CodeElement.ConsumedTokens.GroupBy(t => t.TokenType);
-                // Add a warning if a Field is set more than one time
-                foreach (var tokenGroup in groupBy)
-                {
-                    if ((int)tokenGroup.Key >= 513 && (int)tokenGroup.Key <= 520 && tokenGroup.Count() > 1)
-                    {
-                        foreach (var token in tokenGroup)
-                        {
-                            node.AddDiagnostic(new Diagnostic(
-                                MessageCode.Warning,
-                                token.StartIndex,
-                                token.StopIndex,
-                                token.Line, "Formalized comment field is declared more than once"));
-                        }
-                    }
-                }
             }
         }
 
         /// <summary>
-        /// Default constructor needed for serialisation. Do not use it.
+        /// Default constructor needed for serialization. Do not use it.
         /// </summary>
         protected Documentation() { }
 

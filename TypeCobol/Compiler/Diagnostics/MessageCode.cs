@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,5 +50,6 @@ namespace TypeCobol.Compiler.Diagnostics
         WrongFormalizedCommentKeyword = 40,
         WrongFormalizedCommentMarckupPosition = 41,
         WrongMultilineCommentMarckupPosition = 42,
+        ErrorFormalizedCommentMissplaced = 43,
     }
 }

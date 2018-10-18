@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -647,7 +647,7 @@ namespace TypeCobol.Compiler.Scanner
                 else if (line[currentIndex] == '>' && line[currentIndex - 1] == '*' && line.Length > currentIndex + 1 && line[currentIndex + 1] == '>')
                 {
                     currentIndex += 2;
-                    return new Token(TokenType.MultilinesCommentsStop, startIndex, startIndex + 1, tokensLine);
+                    return new Token(TokenType.MultilinesCommentsStop, startIndex-1, startIndex + 1, tokensLine);
                 }
                 else
                 {
@@ -691,7 +691,7 @@ namespace TypeCobol.Compiler.Scanner
                             // We are in the case of a Formalize Comment stop with the '*' on column 7
                             // consume the three > chars
                             currentIndex += 3;
-                            return new Token(TokenType.FormalizedCommentsStop, startIndex, startIndex + 2, tokensLine);
+                            return new Token(TokenType.FormalizedCommentsStop, startIndex-1, startIndex + 2, tokensLine);
                         }
                         currentIndex++;
                         return new Token(TokenType.GreaterThanOperator, startIndex, currentIndex - 1, tokensLine);
@@ -952,13 +952,13 @@ namespace TypeCobol.Compiler.Scanner
                             // We are in the case of a Formalize Comment start
                             // consume the three < chars
                             currentIndex += 3;
-                            return new Token(TokenType.FormalizedCommentsStart, startIndex, startIndex + 2, tokensLine);
+                            return new Token(TokenType.FormalizedCommentsStart, startIndex-1, startIndex + 2, tokensLine);
                         }
                         else
                         {
                             // We are in the case of a Multilines comments start
                             currentIndex += 2;
-                            return new Token(TokenType.MultilinesCommentsStart, startIndex, startIndex + 1, tokensLine);
+                            return new Token(TokenType.MultilinesCommentsStart, startIndex-1, startIndex + 1, tokensLine);
                         }
                     }
                     else
