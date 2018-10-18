@@ -1,0 +1,485 @@
+﻿Line 19[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+======================== Documentation ========================
+{
+  "IsProgram": true,
+  "IsDeprecated": false,
+  "Name": "DocForTypeDefs",
+  "Namespace": "DocForTypeDefs",
+  "IsTypeDef": false,
+  "IsFunction": false
+}
+---------------------
+
+{
+  "IsTypeDef": true,
+  "IsBlankWheneZero": false,
+  "Justified": false,
+  "DocDataType": {
+    "MaxOccurence": 1,
+    "Picture": "X(8)"
+  },
+  "IsDeprecated": false,
+  "Name": "Type10",
+  "Visibility": 1,
+  "Namespace": "DocForTypeDefs",
+  "IsFunction": false,
+  "IsProgram": false
+}
+---------------------
+
+{
+  "IsTypeDef": true,
+  "IsBlankWheneZero": false,
+  "Justified": false,
+  "DocDataType": {
+    "MaxOccurence": 1,
+    "Picture": "X(8)"
+  },
+  "Description": "Description for Type11 ",
+  "IsDeprecated": false,
+  "Name": "Type11",
+  "Visibility": 1,
+  "Namespace": "DocForTypeDefs",
+  "IsFunction": false,
+  "IsProgram": false
+}
+---------------------
+
+{
+  "IsTypeDef": true,
+  "IsBlankWheneZero": false,
+  "Justified": false,
+  "DocDataType": {
+    "MaxOccurence": 1,
+    "Picture": "X(8)"
+  },
+  "Description": "Description for Type12 ",
+  "IsDeprecated": true,
+  "Deprecated": "",
+  "ReplacedBy": "Type42 ",
+  "Name": "Type12",
+  "Visibility": 1,
+  "Namespace": "DocForTypeDefs",
+  "IsFunction": false,
+  "IsProgram": false
+}
+---------------------
+
+{
+  "Childrens": [
+    {
+      "IsSubGroup": false,
+      "Name": "Member1",
+      "IsBlankWheneZero": true,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "x(8)"
+      }
+    },
+    {
+      "IsSubGroup": true,
+      "Childrens": [
+        {
+          "IsSubGroup": false,
+          "Name": "Member21",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "PPP999PPP"
+          }
+        },
+        {
+          "IsSubGroup": false,
+          "Name": "Member22",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "DATE"
+          }
+        },
+        {
+          "IsSubGroup": false,
+          "Name": "Member23",
+          "IsBlankWheneZero": false,
+          "Justified": true,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "x(10)"
+          }
+        }
+      ],
+      "Name": "Member2",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1
+      }
+    },
+    {
+      "IsSubGroup": false,
+      "Name": "Member3",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "Type10"
+      }
+    },
+    {
+      "IsSubGroup": false,
+      "Name": "Member4",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "DefaultValue": "FALSE",
+        "TypeName": "BOOL"
+      }
+    },
+    {
+      "IsSubGroup": true,
+      "Childrens": [
+        {
+          "IsSubGroup": false,
+          "ConditionValuesRanges": [
+            {
+              "MinValue": "1999",
+              "MaxValue": "2050"
+            }
+          ],
+          "Name": "TestMember5",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": true,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "BOOL"
+          }
+        }
+      ],
+      "Name": "Member5",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "DefaultValue": "2018",
+        "Picture": "S9(4)"
+      }
+    }
+  ],
+  "IsTypeDef": true,
+  "IsBlankWheneZero": false,
+  "Justified": false,
+  "DocDataType": {
+    "MaxOccurence": 1
+  },
+  "IsDeprecated": false,
+  "Name": "Type20",
+  "Visibility": 1,
+  "Namespace": "DocForTypeDefs",
+  "IsFunction": false,
+  "IsProgram": false
+}
+---------------------
+
+{
+  "Childrens": [
+    {
+      "IsSubGroup": false,
+      "Name": "Member1",
+      "IsBlankWheneZero": true,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "x(8)"
+      }
+    },
+    {
+      "IsSubGroup": true,
+      "Childrens": [
+        {
+          "IsSubGroup": false,
+          "Name": "Member21",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "PPP999PPP"
+          }
+        },
+        {
+          "IsSubGroup": false,
+          "Name": "Member22",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "DATE"
+          }
+        },
+        {
+          "IsSubGroup": false,
+          "Name": "Member23",
+          "IsBlankWheneZero": false,
+          "Justified": true,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "x(10)"
+          }
+        }
+      ],
+      "Name": "Member2",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1
+      }
+    },
+    {
+      "IsSubGroup": false,
+      "Name": "Member3",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "Type11"
+      }
+    },
+    {
+      "IsSubGroup": false,
+      "Name": "Member4",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "DefaultValue": "FALSE",
+        "TypeName": "BOOL"
+      }
+    },
+    {
+      "IsSubGroup": true,
+      "Childrens": [
+        {
+          "IsSubGroup": false,
+          "ConditionValuesRanges": [
+            {
+              "MinValue": "1999",
+              "MaxValue": "2050"
+            }
+          ],
+          "Name": "TestMember5",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": true,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "BOOL"
+          }
+        }
+      ],
+      "Name": "Member5",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "DefaultValue": "2018",
+        "Picture": "S9(4)"
+      }
+    }
+  ],
+  "IsTypeDef": true,
+  "IsBlankWheneZero": false,
+  "Justified": false,
+  "DocDataType": {
+    "MaxOccurence": 1
+  },
+  "Description": "Description for Type21 ",
+  "IsDeprecated": false,
+  "Name": "Type21",
+  "Visibility": 1,
+  "Namespace": "DocForTypeDefs",
+  "IsFunction": false,
+  "IsProgram": false
+}
+---------------------
+
+{
+  "Childrens": [
+    {
+      "IsSubGroup": false,
+      "Name": "Member1",
+      "IsBlankWheneZero": true,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "x(8)"
+      }
+    },
+    {
+      "IsSubGroup": true,
+      "Childrens": [
+        {
+          "IsSubGroup": false,
+          "Name": "Member21",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "PPP999PPP"
+          }
+        },
+        {
+          "IsSubGroup": false,
+          "Name": "Member22",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "DATE"
+          }
+        },
+        {
+          "IsSubGroup": false,
+          "Name": "Member23",
+          "IsBlankWheneZero": false,
+          "Justified": true,
+          "IsLevel77": false,
+          "IsLevel88": false,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "x(10)"
+          }
+        }
+      ],
+      "Name": "Member2",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1
+      }
+    },
+    {
+      "IsSubGroup": false,
+      "Name": "Member3",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "Type12"
+      }
+    },
+    {
+      "IsSubGroup": false,
+      "Name": "Member4",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "DefaultValue": "FALSE",
+        "TypeName": "BOOL"
+      }
+    },
+    {
+      "IsSubGroup": true,
+      "Childrens": [
+        {
+          "IsSubGroup": false,
+          "ConditionValuesRanges": [
+            {
+              "MinValue": "1999",
+              "MaxValue": "2050"
+            }
+          ],
+          "Name": "TestMember5",
+          "IsBlankWheneZero": false,
+          "Justified": false,
+          "IsLevel77": false,
+          "IsLevel88": true,
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "BOOL"
+          }
+        }
+      ],
+      "Name": "Member5",
+      "IsBlankWheneZero": false,
+      "Justified": false,
+      "IsLevel77": false,
+      "IsLevel88": false,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "DefaultValue": "2018",
+        "Picture": "S9(4)"
+      }
+    }
+  ],
+  "IsTypeDef": true,
+  "IsBlankWheneZero": false,
+  "Justified": false,
+  "DocDataType": {
+    "MaxOccurence": 1
+  },
+  "Needs": [
+    "see here what is needed"
+  ],
+  "Description": "Description for Type22 ",
+  "IsDeprecated": true,
+  "Deprecated": "",
+  "Name": "Type22",
+  "Visibility": 1,
+  "Namespace": "DocForTypeDefs",
+  "IsFunction": false,
+  "IsProgram": false
+}
+---------------------
+

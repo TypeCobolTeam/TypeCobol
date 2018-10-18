@@ -15,7 +15,7 @@ using TypeCobol.Compiler.Text;
 namespace TypeCobol.Codegen.Generators
 {
     /// <summary>
-    /// Generator than create the documentation of all applicables Nodes
+    /// Generator than create the documentation of all applicable Nodes
     /// </summary>
     class DocumentationGenerator : IGenerator
     {
@@ -36,16 +36,10 @@ namespace TypeCobol.Codegen.Generators
             var docBuilder = new DocumentationBuilder();
             sourceFile.AcceptASTVisitor(docBuilder);
 
-            // For now serialize as XML
-            XmlSerializer serializer = new XmlSerializer(typeof(Documentation));
+            // For now serialize as JSON
             foreach (var doc in docBuilder.DTOs)
             {
-              
-                using (StringWriter textWriter = new StringWriter())
-                {
-                    serializer.Serialize(textWriter, doc);
-                    Destination.AppendLine(textWriter.ToString());
-                }
+                Destination.Append(doc.SerializeToJSON());
             }
         }
 

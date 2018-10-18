@@ -1,0 +1,83 @@
+﻿Line 12[13,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
+Line 14[13,15] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: IDS
+Line 28[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 29[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
+======================== Documentation ========================
+{
+  "IsProgram": true,
+  "IsDeprecated": false,
+  "Name": "DocForFunctions",
+  "Namespace": "DocForFunctions",
+  "IsTypeDef": false,
+  "IsFunction": false
+}
+---------------------
+
+{
+  "Parameters": [
+    {
+      "Name": "myDate",
+      "PassingType": 0,
+      "Info": "sell date",
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      }
+    },
+    {
+      "Name": "name",
+      "PassingType": 0,
+      "Info": "product name",
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(50)"
+      }
+    },
+    {
+      "Name": "myBool",
+      "PassingType": 2,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      }
+    },
+    {
+      "Name": "price",
+      "PassingType": 1,
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "S9(5)V9(2)"
+      }
+    },
+    {
+      "Name": "desc",
+      "PassingType": 1,
+      "Info": "this is not a description",
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(200)"
+      }
+    }
+  ],
+  "IsFunction": true,
+  "Needs": [
+    "first need",
+    "second need"
+  ],
+  "ToDos": [
+    "implement a call to MyProc8 in case of discount code"
+  ],
+  "Description": "MyProc1 description ",
+  "IsDeprecated": true,
+  "Deprecated": "",
+  "ReplacedBy": "ReplacedBy MyProc8 ",
+  "Restriction": "Do not support discount code ",
+  "See": "you later ",
+  "Name": "MyProc1",
+  "Visibility": 1,
+  "Namespace": "DocForFunctions",
+  "IsTypeDef": false,
+  "IsProgram": false
+}
+---------------------
+

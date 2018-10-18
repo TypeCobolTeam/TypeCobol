@@ -126,6 +126,28 @@ namespace TypeCobol.Compiler.Nodes
             }
             return sb;
         }
+        public StringBuilder SerializeToJSON(bool isDebug = false)
+        {
+            StringBuilder sb = new StringBuilder();
+            Type documentationType = IsTypeDef ? typeof(DocumentationForType) :
+                IsFunction ? typeof(DocumentationForFunction) :
+                IsProgram ? typeof(DocumentationForProgram) :
+                null;
+            if (documentationType != null)
+            {
+                JsonSerializer serializer = new JsonSerializer
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    Formatting = isDebug ? Formatting.Indented : Formatting.None
+                };
+                using (StringWriter textWriter = new StringWriter())
+                {
+                    serializer.Serialize(textWriter, this, documentationType);
+                    sb.Append(textWriter);
+                }
+            }
+            return sb;
+        }
 
         public static Documentation CreateAppropriateDocumentation(IDocumentable node)
         {

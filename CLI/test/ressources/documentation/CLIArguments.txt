@@ -1,1 +1,1 @@
-﻿-1 -i input\DocGen.tcbl -o output\DocGen.xml -d output\error.txt -e rdz -f Documentation -s ..\skeletons.xml
+﻿-1 -i input\DocGen.tcbl -o output\DocGen.json -d output\error.txt -e rdz -f Documentation -s ..\skeletons.xml

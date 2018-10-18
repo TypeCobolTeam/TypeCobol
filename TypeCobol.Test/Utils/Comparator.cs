@@ -618,7 +618,7 @@ namespace TypeCobol.Test.Utils
             foreach (var node in documentedNodes)
             {
                 var doc = Documentation.CreateAppropriateDocumentation(node);
-                sb.Append(doc.SerializeToXml());
+                sb.Append(doc.SerializeToJSON(true));
                 sb.AppendLine();
                 sb.AppendLine("---------------------");
                 sb.AppendLine();
@@ -899,7 +899,7 @@ namespace TypeCobol.Test.Utils
     {
         public override string CreateName(string name) { return name + Rextension; }
         public override Type GetComparatorType() { return typeof(DocumentationComparator); }
-        public new string Rextension => ".xml";
+        public new string Rextension => ".json";
     }
 
     internal class DocumentationPropName : AbstractNames
