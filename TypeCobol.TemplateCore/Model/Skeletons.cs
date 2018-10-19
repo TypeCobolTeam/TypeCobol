@@ -103,6 +103,7 @@ namespace TypeCobol.TemplateCore.Model
         {
             codeWriter.Indent();
             codeWriter.WriteLine($"public static bool CheckConditions(TypeCobol.Compiler.Nodes.Node node, Tuple<string,string>[] conditions)");
+            codeWriter.Indent();
             codeWriter.WriteLine("{");
             codeWriter.Indent();
 
