@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.TemplateCore.Model;
+using TypeCobol.TemplateCore.SaxParser;
+using TypeCobol.TemplateCore.Transpiler;
 using TypeCobol.TemplateCore.Util;
 
 namespace TypeCobol.TemplateCore.Controller
@@ -39,15 +42,15 @@ namespace TypeCobol.TemplateCore.Controller
         private void EmitStaticDeclarations(TextCodeWriter codeWriter)
         {
             //1) Emit the Node GetAction provider methods Map
-            codeWriter.WriteLine("private static Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;");
+            codeWriter.WriteLine("private static Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;");
             //2) Emit the Static Constructor
             codeWriter.WriteLine($"static {SkeletonClassName}()");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
-            codeWriter.WriteLine("NodeActionsProviderMap = new Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();");
+            codeWriter.WriteLine("NodeActionsProviderMap = new Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();");
             foreach(var node in Nodes)
             {
-                codeWriter.WriteLine($@"NodeActionsProviderMap[""{node.Key}""]={node.Key.Replace('.', '_')};");
+                codeWriter.WriteLine($@"NodeActionsProviderMap[typeof({node.Key})]={node.Key.Replace('.', '_')};");
             }
 
             codeWriter.Outdent();
@@ -74,12 +77,69 @@ namespace TypeCobol.TemplateCore.Controller
             codeWriter.WriteLine("{");            
             codeWriter.Indent();
             codeWriter.WriteLine("if (@Self == null) return null;");
-            codeWriter.WriteLine("string node = @Self.GetType().FullName.Replace('.', '_');");
-            codeWriter.WriteLine("if (NodeActionsProviderMap.ContainsKey(node))");
+            codeWriter.WriteLine("System.Type curType = @Self.GetType();");
+            codeWriter.WriteLine("List<System.Type> typesMatching = new List<System.Type>();");
+            codeWriter.WriteLine("while (curType != null)");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
-            codeWriter.WriteLine("Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> provider = NodeActionsProviderMap[node];");
+            codeWriter.WriteLine("if (NodeActionsProviderMap.ContainsKey(curType))");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("typesMatching.Add(curType);");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.WriteLine("Type[] interfaces = curType.GetInterfaces();");
+            codeWriter.WriteLine("Type curIntf = null;");
+            codeWriter.WriteLine("//Only look for direct interfaces matching.");
+            codeWriter.WriteLine("if (interfaces != null && interfaces.Length > 0)");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("foreach (Type intf in interfaces)");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("if (NodeActionsProviderMap.ContainsKey(intf))");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("typesMatching.Add(intf);");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+
+
+            codeWriter.WriteLine("curType = curType.BaseType;");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.WriteLine("if (typesMatching.Count > 0)");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("if (typesMatching.Count == 1)");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> provider = NodeActionsProviderMap[typesMatching[0]];");
             codeWriter.WriteLine("return provider(@Self, @SelfContext);");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.WriteLine("else");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("List<TypeCobol.Codegen.Actions.Action> allActions = new List<TypeCobol.Codegen.Actions.Action>();");
+            codeWriter.WriteLine("foreach(System.Type type in typesMatching)");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> provider = NodeActionsProviderMap[type];");
+            codeWriter.WriteLine("List<TypeCobol.Codegen.Actions.Action> actions = provider(@Self, @SelfContext);");
+            codeWriter.WriteLine("if (actions != null) allActions.AddRange(actions);");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.WriteLine("return allActions;");
+
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
             codeWriter.Outdent();
             codeWriter.WriteLine("}");
             codeWriter.WriteLine("return null;");
@@ -87,7 +147,20 @@ namespace TypeCobol.TemplateCore.Controller
             codeWriter.WriteLine("}");
         }
 
-        private string SkeletonClassName = "Skeletons";
+        private static string DefaultOutputClassName = "Skeletons";
+        private string _SkeletonClassName = DefaultOutputClassName;
+        public string SkeletonClassName
+        {
+            get
+            {
+                return _SkeletonClassName ?? DefaultOutputClassName;
+            }
+            set
+            {
+                _SkeletonClassName = value;
+            }
+        }
+
         private string _TranspiledCode;
         public string TranspiledCode
         {
@@ -109,7 +182,7 @@ namespace TypeCobol.TemplateCore.Controller
                     codeWriter.Indent();
 
                     //1) Emit the class header
-                    codeWriter.WriteLine($"public partial class {SkeletonClassName}");
+                    codeWriter.WriteLine($"public partial class {SkeletonClassName} : TypeCobol.Codegen.Actions.IActionsProvider");
                     codeWriter.WriteLine("{");
                     codeWriter.Indent();
                     //2) Emit the static Constructor
@@ -141,6 +214,56 @@ namespace TypeCobol.TemplateCore.Controller
         public SkeletonsController() : this(null)
         {
 
+        }
+
+        /// <summary>
+        /// Transpile the given input file in the given output file
+        /// </summary>
+        /// <param name="input">The input file</param>
+        /// <param name="output">The output file</param>
+        /// <param name="output">The output file</param>
+        /// <param name=className">The defautl class name to use</param>
+        /// <returns></returns>
+        public static bool Transpile(string input, string output, string className = null)
+        {
+            string currentDir = System.IO.Directory.GetCurrentDirectory();            
+            string xsdFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeleton.xsd");
+            System.IO.FileInfo fi = new System.IO.FileInfo(xsdFile);
+
+            SkeletonSaxParser parser = fi.Exists ? new SkeletonSaxParser(input, xsdFile) : new SkeletonSaxParser(input);
+            try
+            {
+                parser.Parse();
+                bool bValidate = parser.ValidationErrorCount == 0 && parser.ValidationWarningCount == 0;
+                if (!bValidate)
+                {
+                    System.Console.Error.WriteLine(parser.ValidationMessage.ToString());
+                    return false;
+                }                
+            }
+            catch (Exception e)
+            {
+                System.Console.Error.WriteLine(e.Message);
+                return false;
+            }
+            SkeletonsController controller = new SkeletonsController(parser.Skeletons);
+            if (className != null)
+                controller.SkeletonClassName = className;
+            string code = controller.TranspiledCode;
+            try
+            {                
+                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(new FileStream(output, FileMode.Create), Encoding.UTF8))
+                {
+                    sw.Write(code);
+                    sw.Flush();
+                }
+            }
+            catch(Exception e)
+            {
+                System.Console.Error.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
