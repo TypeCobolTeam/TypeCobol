@@ -41,12 +41,39 @@ namespace TypeCobol.TemplateCore.Model
         }
 
         /// <summary>
+        /// Chek for a dynamic boolean expression on a pattern.
+        /// </summary>
+        /// <param name="pattern">the Pattern to be used</param>
+        /// <returns>The condition expression string if any, and Empty string otherwise.</returns>
+        private String GetBooleanProprtyExpression(Pattern pattern)
+        {
+            //Check for the deprecated attribute.
+            if (pattern.Attributes.ContainsKey(AttributeNames.Deprecated))
+            {
+                var attr = pattern.Attributes[AttributeNames.Deprecated];
+                if (attr.Value.Equals("true"))
+                    return string.Empty;
+            }
+
+            StringBuilder expr = new StringBuilder();
+            //Check for the boolean_property
+            if (pattern.Attributes.ContainsKey(AttributeNames.BooleanProperty))
+            {
+                var attr = pattern.Attributes[AttributeNames.BooleanProperty];
+                string property = (string)attr.Value;
+                expr.Append($"(@Model.{property})");                
+            }
+            return expr.ToString();
+        }
+
+        /// <summary>
         /// Get the C# expression for checking if a Pattern can be applied
         /// </summary>
         /// <param name="condition">The list of condition</param>
         /// <param name="pattern">the Pattern to be used</param>
+        /// <param name="modelName">The name of the underlying model</param>
         /// <returns>The condition expression string if any, and Empty string otherwise.</returns>
-        private String GetConditionsPatternExpression(List<Condition> conditions, Pattern pattern)
+        private String GetConditionsPatternExpression(List<Condition> conditions, Pattern pattern, string modelName)
         {
             //Check for the deprecated attribute.
             if (pattern.Attributes.ContainsKey(AttributeNames.Deprecated))
@@ -57,21 +84,13 @@ namespace TypeCobol.TemplateCore.Model
             }
             StringBuilder expr = new StringBuilder();
             String sep = "";
-            //Check for the boolean_property
-            if (pattern.Attributes.ContainsKey(AttributeNames.BooleanProperty))
-            {
-                var attr = pattern.Attributes[AttributeNames.BooleanProperty];
-                string property = (string)attr.Value;
-                expr.Append($"@Model.{property}");
-                sep = " && ";
-            }
             //Add all condition as || conditions
             String condSep = sep + '(';
             if (conditions != null && conditions.Count > 0)
             {
                 foreach (var condition in conditions)
                 {
-                    string condExpr = $"@Model.Conditions_{condition.Index}(@Self)";
+                    string condExpr = $"{modelName}.Conditions_{condition.Index}(@Self)";
                     expr.Append(condSep);
                     expr.Append(condExpr);
                     condSep = " || ";
@@ -100,6 +119,7 @@ namespace TypeCobol.TemplateCore.Model
                         string node = nodeAttribue.Value as String;
                         string methodName = node.Replace('.', '_');
                         codeWriter.WriteLine($"public static List<TypeCobol.Codegen.Actions.Action> {methodName}(TypeCobol.Compiler.Nodes.Node @Self, TypeCobol.Codegen.GeneratorActions @SelfContext)");
+                        codeWriter.Indent();
                         codeWriter.WriteLine("{");
                         codeWriter.Indent();
                         codeWriter.WriteLine("List<TypeCobol.Codegen.Actions.Action> @SelfActions = new List<TypeCobol.Codegen.Actions.Action>();");
@@ -115,12 +135,22 @@ namespace TypeCobol.TemplateCore.Model
                             //Get the Skeleton's Model name
                             string modelName = skeleton.SkeletonModelName;
 
-                            //Create the Model variable
-                            codeWriter.WriteLine($"{modelName} @Model = new {modelName}(@Self);");
-                            string condExpr = GetConditionsPatternExpression(conditions, pattern);
+                            //Check for a condition
+                            string condExpr = GetConditionsPatternExpression(conditions, pattern, modelName);
                             if (condExpr.Length > 0)
                             {
                                 codeWriter.WriteLine($"if ({condExpr})");
+                                codeWriter.WriteLine("{");
+                                codeWriter.Indent();
+                            }
+
+                            //Create the Model variable
+                            codeWriter.WriteLine($"{modelName} @Model = new {modelName}(@Self);");
+
+                            string boolExpr = GetBooleanProprtyExpression(pattern);
+                            if (boolExpr.Length > 0)
+                            {
+                                codeWriter.WriteLine($"if ({boolExpr})");
                                 codeWriter.WriteLine("{");
                                 codeWriter.Indent();
                             }
@@ -153,6 +183,12 @@ namespace TypeCobol.TemplateCore.Model
                             codeWriter.WriteLine("@SelfActions.Add(@SelfAction);");
                             codeWriter.Outdent();
                             codeWriter.WriteLine("}");
+
+                            if (boolExpr.Length > 0)
+                            {
+                                codeWriter.Outdent();
+                                codeWriter.WriteLine("}");
+                            }
 
 
                             if (condExpr.Length > 0)

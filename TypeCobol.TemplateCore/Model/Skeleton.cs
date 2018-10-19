@@ -59,6 +59,7 @@ namespace TypeCobol.TemplateCore.Model
                     string name = SkeletonModelName;
                     codeWriter.Indent();
                     codeWriter.WriteLine($"struct {name}");
+                    codeWriter.Indent();
                     codeWriter.WriteLine("{");
                     codeWriter.Indent();
                     if (this.Attributes.ContainsKey(AttributeNames.Var))

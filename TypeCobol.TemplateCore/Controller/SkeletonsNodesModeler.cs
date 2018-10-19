@@ -75,7 +75,7 @@ namespace TypeCobol.TemplateCore.Controller
             CurrentSkeleton = that;
             if (that.Conditions == null)
             {
-                System.Console.Error.WriteLine(string.Format(Resource.SkeletonwithNoConditionsIgnored, that.Attributes[AttributeNames.Name]));
+                System.Console.Error.WriteLine(string.Format(Resource.SkeletonwithNoConditionsIgnored, that.Attributes[AttributeNames.Name].Value));
                 return null;
             }
             //For each pattern we must visit all conditions.
