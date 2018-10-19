@@ -31,7 +31,7 @@ namespace TypeCobol.TemplateCore.Controller
             get;
             private set;
         }
-
+        
         /// <summary>
         /// Emit static Declaartions of teh Skeleton file.
         /// </summary>
@@ -39,21 +39,52 @@ namespace TypeCobol.TemplateCore.Controller
         private void EmitStaticDeclarations(TextCodeWriter codeWriter)
         {
             //1) Emit the Node GetAction provider methods Map
-            codeWriter.WriteLine("private static Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> NodeActionsProviderMap;");
+            codeWriter.WriteLine("private static Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;");
             //2) Emit the Static Constructor
             codeWriter.WriteLine($"static {SkeletonClassName}()");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
-            codeWriter.WriteLine("NodeActionsProviderMap = new Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>();");
+            codeWriter.WriteLine("NodeActionsProviderMap = new Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();");
             foreach(var node in Nodes)
             {
                 codeWriter.WriteLine($@"NodeActionsProviderMap[""{node.Key}""]={node.Key.Replace('.', '_')};");
             }
+
             codeWriter.Outdent();
             codeWriter.WriteLine("}");
-            //3) Output Skeleton Model declarations.
+
+            //3) Emit Empty constructor
+            codeWriter.WriteLine($"public {SkeletonClassName}()");
+            codeWriter.WriteLine("{");
+            codeWriter.WriteLine("}");
+
+            //4) Output Skeleton Model declarations.
             string skeletonsCode = SkeletonsList.TranspiledCode;
             codeWriter.WriteLine(skeletonsCode);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="codeWriter"></param>
+        /// <returns></returns>
+        public void EmitGetActionsMethod(TextCodeWriter codeWriter)
+        {
+            codeWriter.WriteLine($"public List<TypeCobol.Codegen.Actions.Action> GetActions(TypeCobol.Compiler.Nodes.Node @Self, TypeCobol.Codegen.GeneratorActions @SelfContext)");
+            codeWriter.WriteLine("{");            
+            codeWriter.Indent();
+            codeWriter.WriteLine("if (@Self == null) return null;");
+            codeWriter.WriteLine("string node = @Self.GetType().FullName.Replace('.', '_');");
+            codeWriter.WriteLine("if (NodeActionsProviderMap.ContainsKey(node))");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> provider = NodeActionsProviderMap[node];");
+            codeWriter.WriteLine("return provider(@Self, @SelfContext);");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.WriteLine("return null;");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
         }
 
         private string SkeletonClassName = "Skeletons";
@@ -67,18 +98,32 @@ namespace TypeCobol.TemplateCore.Controller
                     CreateNodesModel();
                     System.IO.StringWriter stringWriter = new System.IO.StringWriter();
                     TextCodeWriter codeWriter = new TextCodeWriter(stringWriter);
+                    //0) Emit usings
+                    codeWriter.WriteLine("using System;");
+                    codeWriter.WriteLine("using System.Text;");
+                    codeWriter.WriteLine("using System.Collections.Generic;");
+                    codeWriter.WriteLine("");
+
+                    codeWriter.WriteLine("namespace TypeCobol.Codegen.Actions");
+                    codeWriter.WriteLine("{");
+                    codeWriter.Indent();
+
                     //1) Emit the class header
                     codeWriter.WriteLine($"public partial class {SkeletonClassName}");
                     codeWriter.WriteLine("{");
                     codeWriter.Indent();
                     //2) Emit the static Constructor
                     EmitStaticDeclarations(codeWriter);
-                    //3) Node Actions providers
+                    //3) Emit the GetActions(...) method call
+                    EmitGetActionsMethod(codeWriter);
+                    //4) Node Actions providers
                     foreach (var node in Nodes)
                     {
                         string nodeCode = node.Value.TranspiledCode;
                         codeWriter.WriteLine(nodeCode);
                     }
+                    codeWriter.Outdent();
+                    codeWriter.WriteLine("}");
                     codeWriter.Outdent();
                     codeWriter.WriteLine("}");
                     codeWriter.Flush();

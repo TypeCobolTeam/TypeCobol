@@ -73,10 +73,10 @@ namespace TypeCobol.TemplateCore.Model
                     {
                         string condition = this[i].TranspiledCode;
                         codeWriter.WriteLine($"private static Tuple<string,string>[] __ConditionsAttributes_{i} = {condition};");
-                        codeWriter.WriteLine($"public bool Conditions_{i}(TypeCobol.Compiler.Nodes.Node node)");
+                        codeWriter.WriteLine($"public bool Conditions_{i}(TypeCobol.Compiler.Nodes.Node @Self)");
                         codeWriter.WriteLine("{");
                         codeWriter.Indent();
-                        codeWriter.WriteLine($"return CheckConditions(node, __ConditionsAttributes_{i});");
+                        codeWriter.WriteLine($"return CheckConditions(@Self, __ConditionsAttributes_{i});");
                         codeWriter.Outdent();
                         codeWriter.WriteLine("}");
                     }

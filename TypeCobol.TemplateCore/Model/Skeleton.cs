@@ -71,34 +71,42 @@ namespace TypeCobol.TemplateCore.Model
                         string[] var_items = vars.Split(',');
                         for (int i = 0; i < var_items.Length; i++)
                         {
-                            codeWriter.WriteLine($"public dynamic {var_items[i]};");
+                            codeWriter.WriteLine($"public dynamic {var_items[i].Trim()};");
                         }
 
                         codeWriter.WriteLine();
                         //-------------------------------------------------
                         //Now Ouput the constructor with a Node parameters
                         //-------------------------------------------------
-                        codeWriter.WriteLine($"public {name}(TypeCobol.Compiler.Nodes.Node node)");
+                        codeWriter.WriteLine($"public {name}(TypeCobol.Compiler.Nodes.Node @Self)");
                         codeWriter.WriteLine("{");
                         codeWriter.Indent();
                         for (int i = 0; i < var_items.Length; i++)
                         {
-                            codeWriter.WriteLine($@"{var_items[i]} = node[""{var_items[i]}""];");
+                            codeWriter.WriteLine($@"{var_items[i].Trim()} = @Self[""{var_items[i].Trim()}""];");
                         }
                         codeWriter.Outdent();
                         codeWriter.WriteLine("}");
-                        //----------------------------
-                        //Now Output conditions code.
-                        //----------------------------
-                        if (Conditions != null)
+                    }
+                    else
+                    {//No variable ==> emit empty constructor
+                        codeWriter.WriteLine($"public {name}(TypeCobol.Compiler.Nodes.Node @Self)");
+                        codeWriter.WriteLine("{");
+                        codeWriter.Indent();
+                        codeWriter.Outdent();
+                        codeWriter.WriteLine("}");
+                    }
+                    //----------------------------
+                    //Now Output conditions code.
+                    //----------------------------
+                    if (Conditions != null)
+                    {
+                        string conditions = Conditions.TranspiledCode;
+                        if (conditions != null)
                         {
-                            string conditions = Conditions.TranspiledCode;
-                            if (conditions != null)
-                            {
-                                codeWriter.WriteLine(conditions);
-                            }
+                            codeWriter.WriteLine(conditions);
                         }
-                    }                    
+                    }
                     codeWriter.Outdent();
                     codeWriter.WriteLine("}");
                     codeWriter.Flush();

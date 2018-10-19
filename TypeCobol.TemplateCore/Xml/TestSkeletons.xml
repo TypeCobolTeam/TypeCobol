@@ -309,7 +309,7 @@
   </skeleton>
 
   <!-- replace procedure-style invocation by a standard COBOL CALL -->
-  <skeleton name="TYPE">
+  <skeleton name="PROC.STYLE.CALL.TO.COBOL">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.ProcedureStyleCall" />
     </conditions>

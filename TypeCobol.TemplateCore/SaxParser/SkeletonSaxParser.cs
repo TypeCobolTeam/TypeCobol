@@ -98,7 +98,7 @@ namespace TypeCobol.TemplateCore.SaxParser
                 {
                     Model.Attribute attr = new Model.Attribute();
                     attr.Name = e.Key.ToLower();
-                    attr.Value = e.Value;
+                    attr.Value = e.Value.Trim();
                     entity.Attributes[e.Key] = attr;
                 }
             }

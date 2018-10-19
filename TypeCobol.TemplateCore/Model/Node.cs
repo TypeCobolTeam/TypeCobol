@@ -116,7 +116,7 @@ namespace TypeCobol.TemplateCore.Model
                             string modelName = skeleton.SkeletonModelName;
 
                             //Create the Model variable
-                            codeWriter.WriteLine($"{modelName} $@Model = new {modelName}(@Self);");
+                            codeWriter.WriteLine($"{modelName} @Model = new {modelName}(@Self);");
                             string condExpr = GetConditionsPatternExpression(conditions, pattern);
                             if (condExpr.Length > 0)
                             {

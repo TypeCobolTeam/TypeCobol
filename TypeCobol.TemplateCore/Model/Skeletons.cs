@@ -106,26 +106,26 @@ namespace TypeCobol.TemplateCore.Model
             codeWriter.WriteLine("{");
             codeWriter.Indent();
 
-            codeWriter.WriteLine("System.Diagnostics.Debug.Assert(System.Reflection.IsTypeOf(node.GetType(), conditions[0].Item1));");
+            codeWriter.WriteLine("System.Diagnostics.Debug.Assert(typeof(TypeCobol.Compiler.Nodes.Node).IsAssignableFrom(node.GetType()));");
             codeWriter.WriteLine("foreach(var x in conditions)");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
 
             codeWriter.WriteLine("var property = node[x.Item1];");
-            codeWriter.WriteLine(@"if ("" + "".Equals(x.Value))");
+            codeWriter.WriteLine(@"if ("" + "".Equals(x.Item2))");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
             codeWriter.WriteLine("var values = property as System.Collections.ICollection;");
             codeWriter.WriteLine("return values != null && values.Count > 0;");
             codeWriter.Outdent();
             codeWriter.WriteLine("}");
-            codeWriter.WriteLine(@"else if ("" * "".Equals(x.Value))");
+            codeWriter.WriteLine(@"else if ("" * "".Equals(x.Item2))");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
-            codeWriter.WriteLine("return ToString(property) != null;");
+            codeWriter.WriteLine("return (property == null ? null : property.ToString()) != null;");
             codeWriter.Outdent();
             codeWriter.WriteLine("}");
-            codeWriter.WriteLine(@"else if (!x.Item2.Equals(ToString(property), System.StringComparison.InvariantCultureIgnoreCase))");
+            codeWriter.WriteLine(@"else if (!x.Item2.Equals(property == null ? null : property.ToString(), System.StringComparison.InvariantCultureIgnoreCase))");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
             codeWriter.WriteLine("return false;");
