@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.TemplateCore.Model;
+using TypeCobol.TemplateCore.SaxParser;
+using TypeCobol.TemplateCore.Transpiler;
 using TypeCobol.TemplateCore.Util;
 
 namespace TypeCobol.TemplateCore.Controller
@@ -87,7 +90,20 @@ namespace TypeCobol.TemplateCore.Controller
             codeWriter.WriteLine("}");
         }
 
-        private string SkeletonClassName = "Skeletons";
+        private static string DefaultOutputClassName = "Skeletons";
+        private string _SkeletonClassName = DefaultOutputClassName;
+        public string SkeletonClassName
+        {
+            get
+            {
+                return _SkeletonClassName ?? DefaultOutputClassName;
+            }
+            set
+            {
+                _SkeletonClassName = value;
+            }
+        }
+
         private string _TranspiledCode;
         public string TranspiledCode
         {
@@ -141,6 +157,56 @@ namespace TypeCobol.TemplateCore.Controller
         public SkeletonsController() : this(null)
         {
 
+        }
+
+        /// <summary>
+        /// Transpile the given input file in the given output file
+        /// </summary>
+        /// <param name="input">The input file</param>
+        /// <param name="output">The output file</param>
+        /// <param name="output">The output file</param>
+        /// <param name=className">The defautl class name to use</param>
+        /// <returns></returns>
+        public static bool Transpile(string input, string output, string className = null)
+        {
+            string currentDir = System.IO.Directory.GetCurrentDirectory();            
+            string xsdFile = System.IO.Path.Combine(System.IO.Path.Combine(currentDir, "Xml"), "Skeleton.xsd");
+            System.IO.FileInfo fi = new System.IO.FileInfo(xsdFile);
+
+            SkeletonSaxParser parser = fi.Exists ? new SkeletonSaxParser(input, xsdFile) : new SkeletonSaxParser(input);
+            try
+            {
+                parser.Parse();
+                bool bValidate = parser.ValidationErrorCount == 0 && parser.ValidationWarningCount == 0;
+                if (!bValidate)
+                {
+                    System.Console.Error.WriteLine(parser.ValidationMessage.ToString());
+                    return false;
+                }                
+            }
+            catch (Exception e)
+            {
+                System.Console.Error.WriteLine(e.Message);
+                return false;
+            }
+            SkeletonsController controller = new SkeletonsController(parser.Skeletons);
+            if (className != null)
+                controller.SkeletonClassName = className;
+            string code = controller.TranspiledCode;
+            try
+            {                
+                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(new FileStream(output, FileMode.Create), Encoding.UTF8))
+                {
+                    sw.Write(code);
+                    sw.Flush();
+                }
+            }
+            catch(Exception e)
+            {
+                System.Console.Error.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
