@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. TestDefBool.
       
        ENVIRONMENT DIVISION.
@@ -171,6 +171,10 @@
                       .
        data division.
        local-storage section.
+      *TestDefBool.LoopTraceback - Params :
+      *		input(startingDsa: pointer)
+      *		output(errCode: ErrorCode)
+                             
       *01 LoopControl typedef strict private.
       *  05 loop          pic S9(5) COMP-5.
       *  05 sta           type bool value true.
@@ -200,6 +204,10 @@
                              'U' thru X'FF'.
                                       
        linkage section.
+      *TestDefBool.LoopTraceback - Params :
+      *		input(startingDsa: pointer)
+      *		output(errCode: ErrorCode)
+                       
             
        01 startingDsa pointer.
        01 errCode.
@@ -208,6 +216,9 @@
              USING BY REFERENCE startingDsa
                    BY REFERENCE errCode
            .
+      *TestDefBool.LoopTraceback - Params :
+      *		input(startingDsa: pointer)
+      *		output(errCode: ErrorCode)
            goback
            .
        END PROGRAM ae4b6d10LoopTraceback.

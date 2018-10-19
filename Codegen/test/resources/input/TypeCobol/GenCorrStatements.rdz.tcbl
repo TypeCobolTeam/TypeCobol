@@ -45,5 +45,5 @@
       *    SUBTRACT CORR myDate::YYYY TO groupB-1::groupB-2::varB::YYYY.
 
            MOVE CORR SharedData::TechnicalContext::SystemTime to 
-               ED-Titre::TimeDB2.                                                      
+               ED-Titre::TimeDB2.
        END PROGRAM MOVECORR.

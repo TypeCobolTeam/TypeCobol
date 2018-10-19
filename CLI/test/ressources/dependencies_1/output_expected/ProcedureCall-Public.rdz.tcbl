@@ -204,6 +204,8 @@
        PROGRAM-ID. a0508f35check.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -211,6 +213,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
            CONTINUE.
        END PROGRAM a0508f35check.
       *
@@ -225,6 +229,9 @@
        PROGRAM-ID. fde394fbPgm1PrivateValidateDat.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.Pgm1PrivateValidateDateFormat - Params :
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
        01 mydate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -242,5 +249,8 @@
                    BY REFERENCE okay-value
                    BY REFERENCE actual-format
            .
+      *PGM1.Pgm1PrivateValidateDateFormat - Params :
+      *		input(mydate: DATE, format: pic X(08))
+      *		output(okay: BOOL, actual-format: pic X(08))
            CONTINUE.
        END PROGRAM fde394fbPgm1PrivateValidateDat.
