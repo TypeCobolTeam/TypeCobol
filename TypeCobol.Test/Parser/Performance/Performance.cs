@@ -55,7 +55,7 @@ namespace TypeCobol.Test.Parser.Performance
             ExecuteInceremental(compiler, stats);
 
             // Display a performance report
-            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name + "-Incremental", compiler.CompilationResultsForProgram, stats);
+            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name + "-Incremental", stats, compiler.CompilationResultsForProgram);
         }
 
         public static void ExecuteInceremental(FileCompiler compiler, TestUtils.CompilationStats stats)
@@ -63,8 +63,8 @@ namespace TypeCobol.Test.Parser.Performance
             // Execute a first (complete) compilation
             compiler.CompileOnce();
             //Iterate multiple times over an incremental change
-            int incrementalIterationNumber = 20;
-            for (int i = 0; i < incrementalIterationNumber; i++)
+            stats.IterationNumber= 20;
+            for (int i = 0; i < stats.IterationNumber; i++)
             {
                 // Append one line in the middle of the program
                 ITextLine newLine = new TextLineSnapshot(9211, "094215D    DISPLAY '-ICLAUA      = ' ICLAUA.                            0000000", null);
@@ -83,12 +83,12 @@ namespace TypeCobol.Test.Parser.Performance
                 stats.AverageCrossCheckerParserTime         += compiler.CompilationResultsForProgram.PerfStatsForProgramCrossCheck.LastRefreshTime;
             }
             //Compute average time needed for each phase
-            stats.AverageTextUpdateTime                 = (int) stats.AverageTextUpdateTime / incrementalIterationNumber;
-            stats.AverageScannerTime                    = (int) stats.AverageScannerTime / incrementalIterationNumber;
-            stats.AveragePreprocessorTime               = (int) stats.AveragePreprocessorTime / incrementalIterationNumber;
-            stats.AverageCodeElementParserTime          = (int) stats.AverageCodeElementParserTime / incrementalIterationNumber;
-            stats.AverateTemporarySemanticsParserTime   = (int) stats.AverateTemporarySemanticsParserTime / incrementalIterationNumber;
-            stats.AverageCrossCheckerParserTime         = (int) stats.AverageCrossCheckerParserTime / incrementalIterationNumber;
+            stats.AverageTextUpdateTime                 = (int) stats.AverageTextUpdateTime / stats.IterationNumber;
+            stats.AverageScannerTime                    = (int) stats.AverageScannerTime / stats.IterationNumber;
+            stats.AveragePreprocessorTime               = (int) stats.AveragePreprocessorTime / stats.IterationNumber;
+            stats.AverageCodeElementParserTime          = (int) stats.AverageCodeElementParserTime / stats.IterationNumber;
+            stats.AverateTemporarySemanticsParserTime   = (int) stats.AverateTemporarySemanticsParserTime / stats.IterationNumber;
+            stats.AverageCrossCheckerParserTime         = (int) stats.AverageCrossCheckerParserTime / stats.IterationNumber;
             stats.AverageTotalProcessingTime = stats.AverageCodeElementParserTime +
                                                stats.AverageCrossCheckerParserTime +
                                                stats.AveragePreprocessorTime +
@@ -115,7 +115,7 @@ namespace TypeCobol.Test.Parser.Performance
             string path = Path.Combine(rootFolder, filename);
 
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
-            int iterationNumber = 20;
+            stats.IterationNumber = 20;
             //Warmup before measurement
             var documentWarmup = new TypeCobol.Parser();
             var optionsWarmup = new TypeCobolOptions
@@ -128,7 +128,7 @@ namespace TypeCobol.Test.Parser.Performance
             documentWarmup.Init(path, optionsWarmup, format, copiesFolder);
             documentWarmup.Parse(path);
 
-            for (int i = 0; i < iterationNumber; i++)
+            for (int i = 0; i < stats.IterationNumber; i++)
             {
                 var document = new TypeCobol.Parser();
                 var options = new TypeCobolOptions
@@ -150,12 +150,12 @@ namespace TypeCobol.Test.Parser.Performance
             }
 
             //Compute average time needed for each phase
-            stats.AverageTextUpdateTime = (int)stats.AverageTextUpdateTime / iterationNumber;
-            stats.AverageScannerTime = (int)stats.AverageScannerTime / iterationNumber;
-            stats.AveragePreprocessorTime = (int)stats.AveragePreprocessorTime / iterationNumber;
-            stats.AverageCodeElementParserTime = (int)stats.AverageCodeElementParserTime / iterationNumber;
-            stats.AverateTemporarySemanticsParserTime = (int)stats.AverateTemporarySemanticsParserTime / iterationNumber;
-            stats.AverageCrossCheckerParserTime = (int)stats.AverageCrossCheckerParserTime / iterationNumber;
+            stats.AverageTextUpdateTime = (int)stats.AverageTextUpdateTime / stats.IterationNumber;
+            stats.AverageScannerTime = (int)stats.AverageScannerTime / stats.IterationNumber;
+            stats.AveragePreprocessorTime = (int)stats.AveragePreprocessorTime / stats.IterationNumber;
+            stats.AverageCodeElementParserTime = (int)stats.AverageCodeElementParserTime / stats.IterationNumber;
+            stats.AverateTemporarySemanticsParserTime = (int)stats.AverateTemporarySemanticsParserTime / stats.IterationNumber;
+            stats.AverageCrossCheckerParserTime = (int)stats.AverageCrossCheckerParserTime / stats.IterationNumber;
 
             stats.AverageTotalProcessingTime = stats.AverageCodeElementParserTime +
                                                stats.AverageCrossCheckerParserTime +
@@ -166,7 +166,7 @@ namespace TypeCobol.Test.Parser.Performance
             stats.Line = documentWarmup.Results.CobolTextLines.Count;
             stats.TotalCodeElements = documentWarmup.Results.CodeElementsDocumentSnapshot.CodeElements.Count();
 
-            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), filename + "-FullParsing", null, stats);
+            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), filename + "-FullParsing", stats, null);
         }
     }
 }
