@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -819,12 +819,12 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex += 8;
                         return new Token(TokenType.ASTERISK_CONTROL, startIndex, startIndex + 7, tokensLine);
                     }
-                    // Multilines Comments or Formalized Comments start should begin on column 7
+                    // Multiline Comments or Formalized Comments start should begin on column 7
                     else if (line.Length > currentIndex + 2 && line[currentIndex + 1] == '<' && line[currentIndex + 2] == '<')
                     {
                         if (line.Length > currentIndex + 3 && line[currentIndex + 3] == '<')
                         { 
-                            // It is a Formalized Comment start that is not well positionned
+                            // It is a Formalized Comment start that is not well positioned
                             tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
                                 startIndex,
                                 startIndex + 3);
@@ -834,11 +834,11 @@ namespace TypeCobol.Compiler.Scanner
                         }
                         else
                         {
-                            // It is a Multilines Comment start that is not well positionned
+                            // It is a Multiline Comment start that is not well positioned
                             tokensLine.AddDiagnostic(MessageCode.WrongMultilineCommentMarckupPosition,
                                 startIndex,
                                 startIndex + 2);
-                            // We are in the case of a Multilines Comment start
+                            // We are in the case of a Multiline Comment start
                             // consume the * char and the two < chars
                             currentIndex += 3;
                             return new Token(TokenType.MultilinesCommentsStart, startIndex, startIndex + 2, tokensLine);
@@ -956,7 +956,7 @@ namespace TypeCobol.Compiler.Scanner
                         }
                         else
                         {
-                            // We are in the case of a Multilines comments start
+                            // We are in the case of a Multiline comments start
                             currentIndex += 2;
                             return new Token(TokenType.MultilinesCommentsStart, startIndex-1, startIndex + 1, tokensLine);
                         }

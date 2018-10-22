@@ -14,7 +14,7 @@ using TypeCobol.Compiler.Scanner;
 namespace TypeCobol.Compiler.CodeElements
 {
     /// <summary>
-    /// Is implemented on CodeElements that can have a Formalized COmment
+    /// Is implemented on CodeElements that can have a Formalized Comment
     /// </summary>
     public interface IFormalizedCommentable
     {
@@ -150,14 +150,13 @@ namespace TypeCobol.Compiler.CodeElements
         /// <summary>
         /// Add a value to the current parameter
         /// </summary>
-        /// <param name="parameter">The current parameter that will recieve the value</param>
+        /// <param name="parameter">The current parameter that will receive the value</param>
         /// <param name="symbol"></param>
-        /// <param name="value">The string to store</param>
-        /// <param name="isContinuation">if set to true it mean that the value is juste the otherf part of the previous value and have to be concated</param>
+        /// <param name="isContinuation">if set to true it means that the value is just the other part of the previous value and have to be concatenated</param>
         public void Add(Fields parameter, IToken symbol = null, bool isContinuation = false)
         {
             string value = symbol?.Text;
-            value = value == null ? "" : cleanValue(value);
+            value = value == null ? "" : value.Trim();
             if (!value.IsNullOrEmpty())
             {
                 switch (parameter)
@@ -196,7 +195,7 @@ namespace TypeCobol.Compiler.CodeElements
                     {
                         Token token = symbol as Token;
                         TokensLine tokensLine = token?.TokensLine as TokensLine;
-                        tokensLine?.AddDiagnostic(MessageCode.Warning, token, "Parameters formalizedCommentDocumentation field only accepte key value pair");
+                        tokensLine?.AddDiagnostic(MessageCode.Warning, token, "Parameters formalizedCommentDocumentation field only accept key value pair");
                     }
                     break;
                 }
@@ -211,38 +210,26 @@ namespace TypeCobol.Compiler.CodeElements
         /// Add a key value pair to a parameter (only for Parameters)
         /// </summary>
         /// <param name="parameter">The parameter to add to (have to be Parameters for now)</param>
-        /// <param name="key">The key is coresponding to the parameter name</param>
+        /// <param name="key">The key is corresponding to the parameter name</param>
         /// <param name="value">The description associated to the key</param>
         public void Add(Fields parameter, string key,  string value)
         { 
             if (parameter == Fields.Parameters)
             {
                 if (!key.IsNullOrEmpty() && !value.IsNullOrEmpty())
-                    Parameters.Add(cleanValue(key), cleanValue(value));
-                _lastParameterRegistered = cleanValue(key);
+                    Parameters.Add(key.Trim(), value.Trim());
+                _lastParameterRegistered = key.Trim();
             }
         }
 
         /// <summary>
-        /// Is a mirror of the Add methode that add a key value pair to a parameter (only for Parameters)
+        /// Is a mirror of the Add method that add a key value pair to a parameter (only for Parameters)
         /// </summary>
         /// <param name="parameter">The parameter to add to (have to be Parameters for now)</param>
         /// <param name="item">The key-value pair with the parameter name as key and its description as value</param>
         public void Add(Fields parameter, KeyValuePair<string, string> item)
         {
             Add(parameter, item.Key, item.Value);
-        }
-
-
-        /// <summary>
-        /// Clean the value of the whitespaces before and after a string and remove the ':' character at the begining of the string if any.
-        /// </summary>
-        /// <param name="value">The string to clean</param>
-        /// <returns>The string cleaned</returns>
-        private string cleanValue(string value)
-        {
-            var cuttedValue = value.StartsWith(":") ? value.Substring(1, value.Length - 1) : value;
-            return cuttedValue.Trim();
         }
     }
 }

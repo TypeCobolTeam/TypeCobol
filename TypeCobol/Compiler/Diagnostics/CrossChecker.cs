@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             CurrentNode = node;
             //Build node StorageAreaWritesDataDefinition and StorageAreaReadsDataDefinition dictionaries
-            //from CodelElement StorageAreaReads and StorageAreaWrites
+            //from CodeElement StorageAreaReads and StorageAreaWrites
             CodeElement codeElement = node.CodeElement;
             if (codeElement?.StorageAreaReads != null)
             {

@@ -27,14 +27,14 @@ namespace TypeCobol.Compiler.Nodes
     /// <param name="FormCom">The Formalized Comment Code Element</param>
     /// <param name="Name">The Name of the current Node</param>
     /// <param name="Description">Description field value inside the Formalized Comment</param>
-    /// <param name="Visibility">AccesModifier of the current Node</param>
+    /// <param name="Visibility">AccessModifier of the current Node</param>
     /// <param name="Namespace">Namespace of the current Node</param>
     /// <param name="IsTypeDef">Is true if the current Node is a Type Definition</param>
-    /// <param name="IsFunction">Is true if the current Node is a Functionn</param>
+    /// <param name="IsFunction">Is true if the current Node is a Function</param>
     /// <param name="IsProgram">Is true if the current Node is a Program</param>
-    /// <param name="Needs">Needs list coresponding to the Needs field inside the Formalized Comment</param>
-    /// <param name="ToDo">ToDo list coresponding to the ToDo field inside the Formalized Comment</param>
-    /// <param name="IsDeprecated">Is true if the Deprecated field is present, with or withour further informations</param>
+    /// <param name="Needs">Needs list corresponding to the Needs field inside the Formalized Comment</param>
+    /// <param name="ToDo">ToDo list corresponding to the ToDo field inside the Formalized Comment</param>
+    /// <param name="IsDeprecated">Is true if the Deprecated field is present, with or without further information</param>
     /// <param name="Deprecated">Deprecated field value inside the Formalized Comment</param>
     /// <param name="ReplacedBy">ReplacedBy field value inside the Formalized Comment</param>
     /// <param name="Restriction">Restriction field value inside the Formalized Comment</param>
@@ -103,7 +103,7 @@ namespace TypeCobol.Compiler.Nodes
         public virtual bool IsProgram => false;
 
         /// <summary>
-        /// Constructor that initialize the propertys with a generic Node
+        /// Constructor that initialize the properties with a generic Node
         /// </summary>
         /// <param name="node">generic Node, have to be TypeDefinition, FunctionDeclaration, or Program</param>
         protected Documentation(Node node)
@@ -219,7 +219,7 @@ namespace TypeCobol.Compiler.Nodes
         public override bool IsTypeDef => true;
 
         [DataMember(EmitDefaultValue = false)]
-        public bool IsBlankWheneZero { get; set; }
+        public bool IsBlankWhenZero { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public bool Justified { get; set; }
@@ -237,12 +237,12 @@ namespace TypeCobol.Compiler.Nodes
             DataTypeDescriptionEntry ce = typeDefinition.CodeElement as DataTypeDescriptionEntry;
             if (ce != null)
             {
-                IsBlankWheneZero = ce.IsBlankWhenZero?.Value ?? false;
+                IsBlankWhenZero = ce.IsBlankWhenZero?.Value ?? false;
                 Justified = ce.IsJustified?.Value ?? false;
                 Visibility = ce.Visibility;
             }
 
-            // Build the TypeDef DataType in case of the type itself have data informations (Usage, Occurs, Value, PIC ...)
+            // Build the TypeDef DataType in case of the type itself have data information (Usage, Occurs, Value, PIC ...)
             DocDataType = new DocumentationDataType(typeDefinition);
 
             // Build the Type definition children Tree 
@@ -261,7 +261,7 @@ namespace TypeCobol.Compiler.Nodes
         }
 
         /// <summary>
-        /// Default constructor needed for serialisation. Do not use it.
+        /// Default constructor needed for serialization. Do not use it.
         /// </summary>
         private DocumentationForType() { }
     }
@@ -316,7 +316,7 @@ namespace TypeCobol.Compiler.Nodes
         public string Name { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public bool IsBlankWheneZero { get; set; }
+        public bool IsBlankWhenZero { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public bool Justified { get; set; }
@@ -337,7 +337,7 @@ namespace TypeCobol.Compiler.Nodes
         /// <param name="dataDef"></param>
         public DocumentationTypeChildren(DataDefinition dataDef)
         {
-            // Get the informations of the Code Element
+            // Get the information of the Code Element
             DataDefinitionEntry ce = dataDef.CodeElement as DataDefinitionEntry;
             if (ce != null)
             {
@@ -360,7 +360,7 @@ namespace TypeCobol.Compiler.Nodes
                         dataDef.CodeElement as CommonDataDescriptionAndDataRedefines;
                     if (ceDescAndRedif != null)
                     {
-                        IsBlankWheneZero = ceDescAndRedif.IsBlankWhenZero?.Value ?? false;
+                        IsBlankWhenZero = ceDescAndRedif.IsBlankWhenZero?.Value ?? false;
                         Justified = ceDescAndRedif.IsJustified?.Value ?? false;
                     }
                 }
@@ -384,7 +384,7 @@ namespace TypeCobol.Compiler.Nodes
         }
 
         /// <summary>
-        /// Default constructor needed for serialisation. Do not use it.
+        /// Default constructor needed for serialization. Do not use it.
         /// </summary>
         public DocumentationTypeChildren() { }
 
@@ -392,7 +392,7 @@ namespace TypeCobol.Compiler.Nodes
 
 
     /// <summary>
-    /// DocumentationForFunction contains the documentation information relative to a Function Declaraton
+    /// DocumentationForFunction contains the documentation information relative to a Function Declaration
     /// </summary>
     /// <param name="Parameters">Parameters list corresponding to the Parameters field inside the Formalized Comment and completed with the function signature</param>
     [Serializable]
@@ -430,7 +430,7 @@ namespace TypeCobol.Compiler.Nodes
         }
 
         /// <summary>
-        /// Default constructor needed for serialisation. Do not use it.
+        /// Default constructor needed for serialization. Do not use it.
         /// </summary>
         private DocumentationForFunction() { }
 
@@ -494,7 +494,7 @@ namespace TypeCobol.Compiler.Nodes
         }
 
         /// <summary>
-        /// Default constructor needed for serialisation. Do not use it.
+        /// Default constructor needed for serialization. Do not use it.
         /// </summary>
         private DocumentationForProgram() { }
     }
@@ -584,7 +584,7 @@ namespace TypeCobol.Compiler.Nodes
         
 
         /// <summary>
-        /// Default constructor needed for serialisation. Do not use it.
+        /// Default constructor needed for serialization. Do not use it.
         /// </summary>
         private DocumentationParameter() { }
 
@@ -627,13 +627,13 @@ namespace TypeCobol.Compiler.Nodes
     
 
     /// <summary>
-    /// The DataType usefull for the documentation generation
+    /// The DataType useful for the documentation generation
     /// </summary>
     /// <param name="TypeName">If the Data is a Type implementation, this is the Type Name otherwise this is null</param>
     /// <param name="Picture">If the Data is a Picture it contain the Picture Type (ex. S9(5)V(2)) </param>
     /// <param name="Usage">Contain the Data Usage if any </param>
     /// <param name="MaxOccurence">Contain the Data Usage if any </param>
-    /// <param name="DefaultValue">Contain the Data Value if any (Does not work for now for other Types than BOOL but may serve for futur implementation)</param>
+    /// <param name="DefaultValue">Contain the Data Value if any (Does not work for now for other Types than BOOL but may serve for future implementation)</param>
     [Serializable]
     [DataContract]
     public class DocumentationDataType
@@ -677,7 +677,7 @@ namespace TypeCobol.Compiler.Nodes
         }
 
         /// <summary>
-        /// Constructor used as Default constructor wich is needed for serialisation
+        /// Constructor used as Default constructor which is needed for serialization
         /// </summary>
         public DocumentationDataType(DataUsage? usage = null, long maxOccurence = 1,
             string defaultValue = null, string typeName = null, string picture = null)
@@ -690,7 +690,7 @@ namespace TypeCobol.Compiler.Nodes
         }
 
         /// <summary>
-        /// Default constructor needed for serialisation. Do not use it.
+        /// Default constructor needed for serialization. Do not use it.
         /// </summary>
         public DocumentationDataType()
         {

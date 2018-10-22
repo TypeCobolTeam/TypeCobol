@@ -37,7 +37,7 @@ Restriction : Do not Use BOOL var
 See : 
 Needs : 
 ToDo : 
-IsBlankWheneZero : False
+IsBlankWhenZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
 DataType : 
@@ -61,7 +61,7 @@ Restriction :
 See : 
 Needs : 
 ToDo : 
-IsBlankWheneZero : False
+IsBlankWhenZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
 DataType : 
@@ -72,7 +72,7 @@ DataType :
     Picture : 
 TypeDefChild : 
     Name : Coord2d
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -86,7 +86,7 @@ TypeDefChild :
         Picture : 
     TypeDefChild : 
         Name : X
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : False
@@ -100,7 +100,7 @@ TypeDefChild :
             Picture : 9(4)
     TypeDefChild : 
         Name : Y
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : False

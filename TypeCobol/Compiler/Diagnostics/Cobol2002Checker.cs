@@ -103,12 +103,16 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
             // Add a warning if a parameters field is set inside the formalized comment
-            if (typeDefinition.CodeElement().FormalizedCommentDocumentation != null && !typeDefinition.CodeElement().FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
+            if (typeDefinition.CodeElement().FormalizedCommentDocumentation != null &&
+                !typeDefinition.CodeElement().FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
             {
-                var token = typeDefinition.CodeElement().ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.FormComsParameters);
+                var token = typeDefinition.CodeElement().ConsumedTokens
+                    .FirstOrDefault(t => t.TokenType == TokenType.FormComsParameters);
                 if (token != null)
                 {
-                    DiagnosticUtils.AddError(typeDefinition.CodeElement, "Type Definition does not support Parameters field", token, code: MessageCode.Warning);
+                    DiagnosticUtils.AddError(typeDefinition.CodeElement,
+                        "Type Definition does not support Parameters field",
+                        token, code: MessageCode.Warning);
                 }
             }
         }

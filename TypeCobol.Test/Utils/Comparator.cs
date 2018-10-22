@@ -699,11 +699,11 @@ namespace TypeCobol.Test.Utils
             DocumentationForType typeDoc = doc as DocumentationForType;
             if (typeDoc != null)
             {
-                sb.AppendLine("IsBlankWheneZero : " + typeDoc.IsBlankWheneZero);
+                sb.AppendLine("IsBlankWhenZero : " + typeDoc.IsBlankWhenZero);
                 sb.AppendLine("Justified : " + typeDoc.Justified);
                 sb.AppendLine("DocDataType : " + typeDoc.DocDataType);
                 WriteDocDataType(sb, typeDoc.DocDataType);
-                // Childrens is not initialised with an ampty list to prevent the documentation export flooding
+                // Childrens is not initialized with an empty list to prevent the documentation export flooding
                 if (typeDoc.Childrens != null)
                 {
                     foreach (var child in typeDoc.Childrens)
@@ -778,7 +778,7 @@ namespace TypeCobol.Test.Utils
         {
             sb.AppendLine(new string(' ', level * 4) + "TypeDefChild : ");
             sb.AppendLine(new string(' ', (level + 1) * 4) + "Name : " + child.Name);
-            sb.AppendLine(new string(' ', (level + 1) * 4) + "IsBlankWheneZero : " + child.IsBlankWheneZero);
+            sb.AppendLine(new string(' ', (level + 1) * 4) + "IsBlankWhenZero : " + child.IsBlankWhenZero);
             sb.AppendLine(new string(' ', (level + 1) * 4) + "Justified : " + child.Justified);
             sb.AppendLine(new string(' ', (level + 1) * 4) + "IsLevel77 : " + child.IsLevel77);
             sb.AppendLine(new string(' ', (level + 1) * 4) + "IsLevel88 : " + child.IsLevel88);

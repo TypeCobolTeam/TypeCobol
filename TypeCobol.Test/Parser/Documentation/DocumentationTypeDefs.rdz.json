@@ -59,7 +59,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
         "MaxOccurence": 1,
         "Picture": "x(8)"
       },
-      "IsBlankWheneZero": true,
+      "IsBlankWhenZero": true,
       "Name": "Member1"
     },
     {
@@ -150,7 +150,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
         "MaxOccurence": 1,
         "Picture": "x(8)"
       },
-      "IsBlankWheneZero": true,
+      "IsBlankWhenZero": true,
       "Name": "Member1"
     },
     {
@@ -245,7 +245,7 @@ Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not suppor
         "MaxOccurence": 1,
         "Picture": "x(8)"
       },
-      "IsBlankWheneZero": true,
+      "IsBlankWhenZero": true,
       "Name": "Member1"
     },
     {

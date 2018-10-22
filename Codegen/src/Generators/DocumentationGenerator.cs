@@ -41,6 +41,7 @@ namespace TypeCobol.Codegen.Generators
             {
                 Destination.Append(doc.SerializeToJson());
             }
+            // this.Destination contains now the Json Documentation
         }
 
         public List<Diagnostic> Diagnostics { get; set; }

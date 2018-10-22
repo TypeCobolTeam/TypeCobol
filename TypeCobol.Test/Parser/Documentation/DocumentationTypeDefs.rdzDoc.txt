@@ -29,7 +29,7 @@ Restriction :
 See : 
 Needs : 
 ToDo : 
-IsBlankWheneZero : False
+IsBlankWhenZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
 DataType : 
@@ -53,7 +53,7 @@ Restriction :
 See : 
 Needs : 
 ToDo : 
-IsBlankWheneZero : False
+IsBlankWhenZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
 DataType : 
@@ -77,7 +77,7 @@ Restriction :
 See : 
 Needs : 
 ToDo : 
-IsBlankWheneZero : False
+IsBlankWhenZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
 DataType : 
@@ -101,7 +101,7 @@ Restriction :
 See : 
 Needs : 
 ToDo : 
-IsBlankWheneZero : False
+IsBlankWhenZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
 DataType : 
@@ -112,7 +112,7 @@ DataType :
     Picture : 
 TypeDefChild : 
     Name : Member1
-    IsBlankWheneZero : True
+    IsBlankWhenZero : True
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -126,7 +126,7 @@ TypeDefChild :
         Picture : x(8)
 TypeDefChild : 
     Name : Member2
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -140,7 +140,7 @@ TypeDefChild :
         Picture : 
     TypeDefChild : 
         Name : Member21
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : False
@@ -154,7 +154,7 @@ TypeDefChild :
             Picture : PPP999PPP
     TypeDefChild : 
         Name : Member22
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : False
@@ -168,7 +168,7 @@ TypeDefChild :
             Picture : 
     TypeDefChild : 
         Name : Member23
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : True
         IsLevel77 : False
         IsLevel88 : False
@@ -182,7 +182,7 @@ TypeDefChild :
             Picture : x(10)
 TypeDefChild : 
     Name : Member3
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -196,7 +196,7 @@ TypeDefChild :
         Picture : 
 TypeDefChild : 
     Name : Member4
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -210,7 +210,7 @@ TypeDefChild :
         Picture : 
 TypeDefChild : 
     Name : Member5
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -224,7 +224,7 @@ TypeDefChild :
         Picture : S9(4)
     TypeDefChild : 
         Name : TestMember5
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : True
@@ -252,7 +252,7 @@ Restriction :
 See : 
 Needs : 
 ToDo : 
-IsBlankWheneZero : False
+IsBlankWhenZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
 DataType : 
@@ -263,7 +263,7 @@ DataType :
     Picture : 
 TypeDefChild : 
     Name : Member1
-    IsBlankWheneZero : True
+    IsBlankWhenZero : True
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -277,7 +277,7 @@ TypeDefChild :
         Picture : x(8)
 TypeDefChild : 
     Name : Member2
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -291,7 +291,7 @@ TypeDefChild :
         Picture : 
     TypeDefChild : 
         Name : Member21
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : False
@@ -305,7 +305,7 @@ TypeDefChild :
             Picture : PPP999PPP
     TypeDefChild : 
         Name : Member22
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : False
@@ -319,7 +319,7 @@ TypeDefChild :
             Picture : 
     TypeDefChild : 
         Name : Member23
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : True
         IsLevel77 : False
         IsLevel88 : False
@@ -333,7 +333,7 @@ TypeDefChild :
             Picture : x(10)
 TypeDefChild : 
     Name : Member3
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -347,7 +347,7 @@ TypeDefChild :
         Picture : 
 TypeDefChild : 
     Name : Member4
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -361,7 +361,7 @@ TypeDefChild :
         Picture : 
 TypeDefChild : 
     Name : Member5
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -375,7 +375,7 @@ TypeDefChild :
         Picture : S9(4)
     TypeDefChild : 
         Name : TestMember5
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : True
@@ -404,7 +404,7 @@ See :
 Needs : 
     see here what is needed
 ToDo : 
-IsBlankWheneZero : False
+IsBlankWhenZero : False
 Justified : False
 DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
 DataType : 
@@ -415,7 +415,7 @@ DataType :
     Picture : 
 TypeDefChild : 
     Name : Member1
-    IsBlankWheneZero : True
+    IsBlankWhenZero : True
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -429,7 +429,7 @@ TypeDefChild :
         Picture : x(8)
 TypeDefChild : 
     Name : Member2
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -443,7 +443,7 @@ TypeDefChild :
         Picture : 
     TypeDefChild : 
         Name : Member21
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : False
@@ -457,7 +457,7 @@ TypeDefChild :
             Picture : PPP999PPP
     TypeDefChild : 
         Name : Member22
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : False
@@ -471,7 +471,7 @@ TypeDefChild :
             Picture : 
     TypeDefChild : 
         Name : Member23
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : True
         IsLevel77 : False
         IsLevel88 : False
@@ -485,7 +485,7 @@ TypeDefChild :
             Picture : x(10)
 TypeDefChild : 
     Name : Member3
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -499,7 +499,7 @@ TypeDefChild :
         Picture : 
 TypeDefChild : 
     Name : Member4
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -513,7 +513,7 @@ TypeDefChild :
         Picture : 
 TypeDefChild : 
     Name : Member5
-    IsBlankWheneZero : False
+    IsBlankWhenZero : False
     Justified : False
     IsLevel77 : False
     IsLevel88 : False
@@ -527,7 +527,7 @@ TypeDefChild :
         Picture : S9(4)
     TypeDefChild : 
         Name : TestMember5
-        IsBlankWheneZero : False
+        IsBlankWhenZero : False
         Justified : False
         IsLevel77 : False
         IsLevel88 : True
