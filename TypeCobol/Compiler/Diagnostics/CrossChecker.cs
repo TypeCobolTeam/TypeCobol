@@ -419,26 +419,23 @@ namespace TypeCobol.Compiler.Diagnostics
             if (area.SymbolReference == null) return null;
             //Do not handle TCFunctionName, it'll be done by TypeCobolChecker
             if (area.SymbolReference.IsOrCanBeOfType(SymbolType.TCFunctionName)) return null;
-           
-            var isPartOfTypeDef = (node as DataDefinition) != null && ((DataDefinition)node).IsPartOfATypeDef;
+
+            var parentTypeDefinition = (node as DataDefinition)?.ParentTypeDefinition;
             var foundQualified =
                 node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference != null
-                    ? area.SymbolReference.URI
-                    : new URI(area.ToString()),
-                    isPartOfTypeDef ? ((DataDefinition) node).ParentTypeDefinition
-                    :null);
+                        ? area.SymbolReference.URI
+                        : new URI(area.ToString()),
+                    parentTypeDefinition);
             var found = foundQualified.Select(v => v.Value);
-            
-            if (found.Count() == 1 && foundQualified.Count == 1)
-            {
-                string completeQualifiedName = foundQualified.First().Key;
-                IndexAndFlagDataDefiniton(completeQualifiedName, found.First(), node, area,storageArea);
-            }
 
-            if (!found.Any())
+            var foundCount = found.Count();
+
+            if (foundCount == 0)
+            {
                 if (node.SymbolTable.GetFunction(area).Count < 1)
                     DiagnosticUtils.AddError(node, "Symbol " + area + " is not referenced", area.SymbolReference);
-            if (found.Count() > 1)
+            }
+            else if (foundCount > 1)
             {
                 bool isFirst = true;
                 string errorMessage = "Ambiguous reference to symbol " + area + " " + Environment.NewLine +
@@ -453,9 +450,15 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
                 DiagnosticUtils.AddError(node, errorMessage, area.SymbolReference);
             }
-
-            if (found.Count() == 1)
+            else if (foundCount == 1)
             {
+                var dataDefinitionFound = found.First();
+                string completeQualifiedName = foundQualified.First().Key;
+
+                if (foundQualified.Count == 1)
+                {
+                    IndexAndFlagDataDefiniton(completeQualifiedName, dataDefinitionFound, node, area, storageArea);
+                }
                 //add the found DataDefinition to a dictionary depending on the storage area type
                 if (isReadStorageArea)
                 {
@@ -464,8 +467,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
                     }
-                    string completeQualifiedName = foundQualified.First().Key;
-                    node.StorageAreaReadsDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,found.First()));
+                    node.StorageAreaReadsDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,dataDefinitionFound));
                 }
                 else
                 {
@@ -474,11 +476,10 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
                     }
-                    string completeQualifiedName = foundQualified.First().Key;
-                    node.StorageAreaWritesDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,found.First()));
+                    node.StorageAreaWritesDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,dataDefinitionFound));
                 }
 
-                return found.First();
+                return dataDefinitionFound;
             }
 
             return null;

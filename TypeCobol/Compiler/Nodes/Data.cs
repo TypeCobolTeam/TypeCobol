@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Nodes {
 
@@ -91,9 +92,32 @@ namespace TypeCobol.Compiler.Nodes {
 
 
     public class WorkingStorageSection: DataSection, CodeElementHolder<WorkingStorageSectionHeader>, Parent<DataDefinition>
+    {
+        public WorkingStorageSection(WorkingStorageSectionHeader header) : base(header) { }
+
+        public override IEnumerable<ITextLine> Lines
         {
-	    public WorkingStorageSection(WorkingStorageSectionHeader header): base(header) { }
-	    public override string ID { get { return "working-storage"; } }
+            get
+            {
+                List<ITextLine> lines = new List<ITextLine>();
+                lines.Add(new TextLineSnapshot(-1, CodeElement.SourceText, null));
+
+                if (IsFlagSet(Flag.InsideProcedure))
+                {
+                    var declare = Parent?.Parent as FunctionDeclaration;
+                    if (declare != null)
+                    {
+                        lines.Add(new TextLineSnapshot(-1,
+                            string.Format("*{0}.{1} {2}", declare.Root.MainProgram.Name, declare.Name,
+                                declare.Profile.Parameters.Count != 0 ? "- Params :" : " - No Params"), null));
+                        lines.AddRange(declare.Profile.GetSignatureForComment());
+                    }
+                }
+
+                return lines;
+            }
+        }
+        public override string ID { get { return "working-storage"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
@@ -102,7 +126,30 @@ namespace TypeCobol.Compiler.Nodes {
     public class LocalStorageSection: DataSection, CodeElementHolder<LocalStorageSectionHeader>, Parent<DataDefinition>
         {
 	    public LocalStorageSection(LocalStorageSectionHeader header): base(header) { }
-	    public override string ID { get { return "local-storage"; } }
+
+        public override IEnumerable<ITextLine> Lines
+        {
+            get
+            {
+                List<ITextLine> lines = new List<ITextLine>();
+                lines.Add(new TextLineSnapshot(-1, CodeElement.SourceText, null));
+
+                if (IsFlagSet(Flag.InsideProcedure))
+                {
+                    var declare = Parent?.Parent as FunctionDeclaration;
+                    if (declare != null)
+                    {
+                        lines.Add(new TextLineSnapshot(-1,
+                            string.Format("*{0}.{1} {2}", declare.Root.MainProgram.Name, declare.Name,
+                                declare.Profile.Parameters.Count != 0 ? "- Params :" : " - No Params"), null));
+                        lines.AddRange(declare.Profile.GetSignatureForComment());
+                    }
+                }
+
+                return lines;
+            }
+        }
+        public override string ID { get { return "local-storage"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
@@ -111,7 +158,30 @@ namespace TypeCobol.Compiler.Nodes {
     public class LinkageSection: DataSection, CodeElementHolder<LinkageSectionHeader>, Parent<DataDefinition>
     {
 	    public LinkageSection(LinkageSectionHeader header): base(header) { }
-	    public override string ID { get { return "linkage"; } }
+
+        public override IEnumerable<ITextLine> Lines
+        {
+            get
+            {
+                List<ITextLine> lines = new List<ITextLine>();
+                lines.Add(new TextLineSnapshot(-1, CodeElement.SourceText, null));
+
+                if (IsFlagSet(Flag.InsideProcedure))
+                {
+                    var declare = Parent?.Parent as FunctionDeclaration;
+                    if (declare != null)
+                    {
+                        lines.Add(new TextLineSnapshot(-1,
+                            string.Format("*{0}.{1} {2}", declare.Root.MainProgram.Name, declare.Name,
+                                declare.Profile.Parameters.Count != 0 ? "- Params :" : " - No Params"), null));
+                        lines.AddRange(declare.Profile.GetSignatureForComment());
+                    }
+                }
+
+                return lines;
+            }
+        }
+        public override string ID { get { return "linkage"; } }
 	    public override bool IsShared { get { return true; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {

@@ -1,0 +1,11 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ProcCall.
+      
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 varA          TYPE BOOL.
+       01 varB          TYPE BOOL GLOBAL.
+       01 varC          TYPE BOOL global.
+       
+      
+       END PROGRAM ProcCall.

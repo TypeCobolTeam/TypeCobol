@@ -69,6 +69,19 @@ namespace TypeCobol.Compiler.Nodes {
                 if (!bPeriodSeen)
                     sb.Append(use);
                 lines.Add(new TypeCobol.Compiler.Text.TextLineSnapshot(-1, sb.ToString(), null));
+
+                if (IsFlagSet(Flag.InsideProcedure))
+                {
+                    var declare = Parent?.Parent as FunctionDeclaration;
+                    if (declare != null)
+                    {
+                        lines.Add(new Text.TextLineSnapshot(-1,
+                            string.Format("*{0}.{1} {2}", declare.Root.MainProgram.Name, declare.Name,
+                                declare.Profile.Parameters.Count != 0 ? "- Params :" : " - No Params"), null));
+                        lines.AddRange(declare.Profile.GetSignatureForComment());
+                    }
+                }
+
                 return lines;
             }
         }

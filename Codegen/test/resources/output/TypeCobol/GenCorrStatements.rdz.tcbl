@@ -75,5 +75,5 @@
       *    MOVE CORR SharedData::TechnicalContext::SystemTime to
       *        ED-Titre::TimeDB2.
            MOVE CORR SystemTime OF TechnicalContext OF SharedData to 
-               TimeDB2 OF ED-Titre.                                        
+               TimeDB2 OF ED-Titre.
        END PROGRAM MOVECORR.

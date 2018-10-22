@@ -135,8 +135,14 @@ namespace TypeCobol.Compiler.Scanner
                     tokensLine.AddToken(whitespaceToken);
                 }
                 return;
-            }            
-            
+            }
+
+            if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
+            {
+                tokensLine.AddDiagnostic(MessageCode.Warning,
+                    tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Line exceed 80 chars");
+            }
+
             // Create a stateful line scanner, and iterate over the tokens
             Scanner scanner = new Scanner(line, startIndex, lastIndex, tokensLine, compilerOptions);
             Token nextToken = null;
