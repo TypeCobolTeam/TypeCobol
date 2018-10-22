@@ -1,17 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
+using System.Runtime.Serialization.Json;
 using Castle.Core.Internal;
-using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
-using TypeCobol.Compiler.Diagnostics;
-using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Nodes
 {
@@ -46,33 +43,63 @@ namespace TypeCobol.Compiler.Nodes
     [XmlInclude(typeof(DocumentationForType))]
     [XmlInclude(typeof(DocumentationForFunction))]
     [XmlInclude(typeof(DocumentationForProgram))]
+    [DataContract]
+    [KnownType(typeof(DocumentationForType))]
+    [KnownType(typeof(DocumentationForFunction))]
+    [KnownType(typeof(DocumentationForProgram))]
     public abstract class Documentation
     {
         [XmlIgnore]
+        [IgnoreDataMember]
         public FormalizedCommentDocumentation FormCom { get; set; }
 
         // Data from Formalized comment 
         [XmlArray("Needs")]
         [XmlArrayItem("Need", typeof(string))]
+        [DataMember(EmitDefaultValue = false)]
         public List<string> Needs { get; set; }
 
         [XmlArray("ToDos")]
         [XmlArrayItem("ToDo", typeof(string))]
+        [DataMember(Name = "ToDos", EmitDefaultValue = false)]
         public List<string> ToDo { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
         public string Description { get; set; }
+
+        [IgnoreDataMember]
         public bool IsDeprecated => Deprecated != null;
+
+        [DataMember(EmitDefaultValue = false)]
         public string Deprecated { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public string ReplacedBy { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public string Restriction { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public string See { get; set; }
 
+
         // Data from Node
+        [DataMember]
         public string Name { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public AccessModifier? Visibility { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public string Namespace { get; set; }
+
+        [IgnoreDataMember]
         public virtual bool IsTypeDef => false;
+
+        [IgnoreDataMember]
         public virtual bool IsFunction => false;
+
+        [IgnoreDataMember]
         public virtual bool IsProgram => false;
 
         /// <summary>
@@ -91,7 +118,7 @@ namespace TypeCobol.Compiler.Nodes
                 if (ce?.FormalizedCommentDocumentation != null)
                 {
                     FormCom     = ce.FormalizedCommentDocumentation;
-                    // Avoid set empty string or list to have less data to transfert
+                    // Avoid set empty string or list to have less data to transfer
                     Needs       = FormCom.Needs.IsNullOrEmpty()       ? null : FormCom.Needs;
                     ToDo        = FormCom.ToDo.IsNullOrEmpty()        ? null : FormCom.ToDo;
                     Description = FormCom.Description.IsNullOrEmpty() ? null : FormCom.Description;
@@ -112,9 +139,9 @@ namespace TypeCobol.Compiler.Nodes
         {
             StringBuilder sb = new StringBuilder();
             Type documentationType = IsTypeDef ? typeof(DocumentationForType) :
-                                    IsFunction ? typeof(DocumentationForFunction) :
-                                    IsProgram  ? typeof(DocumentationForProgram) :
-                                    null;
+                IsFunction ? typeof(DocumentationForFunction) :
+                IsProgram ? typeof(DocumentationForProgram) :
+                null;
             if (documentationType != null)
             {
                 XmlSerializer serializer = new XmlSerializer(documentationType);
@@ -126,29 +153,32 @@ namespace TypeCobol.Compiler.Nodes
             }
             return sb;
         }
-        public StringBuilder SerializeToJSON(bool isDebug = false)
+
+        /// <summary>
+        /// Serialize the object (this) into Json
+        /// </summary>
+        /// <param name="isDebug">If true then format the Json to be "Human readable"</param>
+        public StringBuilder SerializeToJson(bool isDebug = false)
         {
             StringBuilder sb = new StringBuilder();
-            Type documentationType = IsTypeDef ? typeof(DocumentationForType) :
-                IsFunction ? typeof(DocumentationForFunction) :
-                IsProgram ? typeof(DocumentationForProgram) :
-                null;
-            if (documentationType != null)
+            MemoryStream memStream = new MemoryStream();
+            var settings = new DataContractJsonSerializerSettings()
+            { EmitTypeInformation = EmitTypeInformation.AsNeeded };
+
+            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(
+                memStream, Encoding.UTF8, false, isDebug, "  "))
             {
-                JsonSerializer serializer = new JsonSerializer
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    Formatting = isDebug ? Formatting.Indented : Formatting.None
-                };
-                using (StringWriter textWriter = new StringWriter())
-                {
-                    serializer.Serialize(textWriter, this, documentationType);
-                    sb.Append(textWriter);
-                }
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Documentation), settings);
+                serializer.WriteObject(writer, this);
+                writer.Flush();
             }
+
+            memStream.Position = 0;
+            StreamReader sr = new StreamReader(memStream);
+            sb.Append(sr.ReadToEnd());
             return sb;
         }
-
+        
         public static Documentation CreateAppropriateDocumentation(IDocumentable node)
         {
             if (node is Program)
@@ -177,15 +207,24 @@ namespace TypeCobol.Compiler.Nodes
     /// <param name="Justified">Is set to true if the Type have the option "JUSTIFIED RIGHT"</param>
     /// <param name="DocDataType">Contains the information relative to the type data type(Usage, Occurs, Value, PIC ...)</param>
     [Serializable]
+    [DataContract]
     public class DocumentationForType : Documentation
     {
         [XmlArray("Childrens")]
         [XmlArrayItem("Children", typeof(DocumentationTypeChildren))]
+        [DataMember(EmitDefaultValue = false)]
         public List<DocumentationTypeChildren> Childrens { get; set; }
 
+        [IgnoreDataMember]
         public override bool IsTypeDef => true;
+
+        [DataMember(EmitDefaultValue = false)]
         public bool IsBlankWheneZero { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public bool Justified { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public DocumentationDataType DocDataType { get; set; }
 
         /// <summary>
@@ -241,6 +280,7 @@ namespace TypeCobol.Compiler.Nodes
     /// <param name="ConditionValuesRanges">(only for level 88 data) contains an array of the interval conditions defined</param>
     /// <param name="DocDataType">Contains the information relative to the type data type(Usage, Occurs, Value, PIC ...)</param>
     [Serializable]
+    [DataContract]
     public class DocumentationTypeChildren
     {
         // simple struct to store the value of a DataCondition if this data is a range ("88 dataName VALUE 'MinValue' THRU 'MaxValue')
@@ -255,24 +295,39 @@ namespace TypeCobol.Compiler.Nodes
             }
         }
         [XmlIgnore]
+        [IgnoreDataMember]
         public bool IsSubGroup => !Childrens.IsNullOrEmpty();
 
         [XmlArray("Childrens")]
         [XmlArrayItem("Children", typeof(DocumentationTypeChildren))]
+        [DataMember(Name = "Childrens", EmitDefaultValue = false)]
         public List<DocumentationTypeChildren> Childrens { get; set; }
 
         [XmlArray("ConditionValues")]
+        [DataMember(Name = "ConditionValues", EmitDefaultValue = false)]
         public string[] ConditionValues { get; set; }
 
         [XmlArray("ConditionValuesRanges")]
         [XmlArrayItem("ConditionValuesRange", typeof(ConditionValuesRange))]
+        [DataMember(Name = "ConditionValuesRanges", EmitDefaultValue = false)]
         public ConditionValuesRange[] ConditionValuesRanges { get; set; }
 
+        [DataMember]
         public string Name { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public bool IsBlankWheneZero { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public bool Justified { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public bool IsLevel77 { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public bool IsLevel88 { get; set; }
+
+        [DataMember]
         public DocumentationDataType DocDataType { get; set; }
 
 
@@ -301,7 +356,8 @@ namespace TypeCobol.Compiler.Nodes
                 }
                 else
                 {
-                    CommonDataDescriptionAndDataRedefines ceDescAndRedif = dataDef.CodeElement as CommonDataDescriptionAndDataRedefines;
+                    CommonDataDescriptionAndDataRedefines ceDescAndRedif =
+                        dataDef.CodeElement as CommonDataDescriptionAndDataRedefines;
                     if (ceDescAndRedif != null)
                     {
                         IsBlankWheneZero = ceDescAndRedif.IsBlankWhenZero?.Value ?? false;
@@ -340,12 +396,15 @@ namespace TypeCobol.Compiler.Nodes
     /// </summary>
     /// <param name="Parameters">Parameters list corresponding to the Parameters field inside the Formalized Comment and completed with the function signature</param>
     [Serializable]
+    [DataContract]
     public class DocumentationForFunction : Documentation
     {
         [XmlArray("Parameters")]
         [XmlArrayItem("Parameter", typeof(DocumentationParameter))]
+        [DataMember(Name = "Parameters", EmitDefaultValue = false)]
         public List<DocumentationParameter> Parameters { get; set; }
 
+        [IgnoreDataMember]
         public override bool IsFunction => true;
 
         /// <summary>
@@ -383,12 +442,15 @@ namespace TypeCobol.Compiler.Nodes
     /// </summary>
     /// <param name="Parameters">Parameters list corresponding to the Parameters field inside the Formalized Comment and completed with the program signature</param>
     [Serializable]
+    [DataContract]
     public class DocumentationForProgram : Documentation
     {
         [XmlArrayItem("Parameter", typeof(DocumentationParameter))]
         [XmlArray("Parameters")]
+        [DataMember(Name = "Parameters", EmitDefaultValue = false)]
         public List<DocumentationParameter> Parameters { get; set; }
 
+        [IgnoreDataMember]
         public override bool IsProgram => true;
 
         /// <summary>
@@ -446,6 +508,7 @@ namespace TypeCobol.Compiler.Nodes
     /// <param name="Info">The Description of the parameter given inside the Formalized Comment</param>
     /// <param name="DocDataType">   </param>
     [Serializable]
+    [DataContract]
     public class DocumentationParameter
     {
         public enum PassingTypes
@@ -457,15 +520,27 @@ namespace TypeCobol.Compiler.Nodes
         }
 
         [XmlIgnore]
+        [IgnoreDataMember]
         public bool IsInput => PassingType == PassingTypes.Input;
+
         [XmlIgnore]
+        [IgnoreDataMember]
         public bool IsOutput => PassingType == PassingTypes.Output;
+
         [XmlIgnore]
+        [IgnoreDataMember]
         public bool IsInOut => PassingType == PassingTypes.InOut;
 
+        [DataMember]
         public string Name { get; set; }
+
+        [DataMember]
         public PassingTypes PassingType { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public string Info { get; set; }
+
+        [DataMember]
         public DocumentationDataType DocDataType { get; set; }
 
         /// <summary>
@@ -560,17 +635,30 @@ namespace TypeCobol.Compiler.Nodes
     /// <param name="MaxOccurence">Contain the Data Usage if any </param>
     /// <param name="DefaultValue">Contain the Data Value if any (Does not work for now for other Types than BOOL but may serve for futur implementation)</param>
     [Serializable]
+    [DataContract]
     public class DocumentationDataType
     {
         [XmlIgnore]
+        [IgnoreDataMember]
         public bool IsArray => MaxOccurence > 1;
+
         [XmlIgnore]
+        [IgnoreDataMember]
         public bool IsType => TypeName != null;
 
+        [DataMember(EmitDefaultValue = false)]
         public DataUsage? Usage { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public long MaxOccurence { get; set; }
+        
+        [DataMember(EmitDefaultValue = false)]
         public string DefaultValue { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public string TypeName { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
         public string Picture { get; set; }
 
         /// <summary>
@@ -591,7 +679,8 @@ namespace TypeCobol.Compiler.Nodes
         /// <summary>
         /// Constructor used as Default constructor wich is needed for serialisation
         /// </summary>
-        public DocumentationDataType(DataUsage? usage=null, long maxOccurence=1, string defaultValue=null, string typeName=null, string picture=null)
+        public DocumentationDataType(DataUsage? usage = null, long maxOccurence = 1,
+            string defaultValue = null, string typeName = null, string picture = null)
         {
             Usage        = usage;
             MaxOccurence = maxOccurence;

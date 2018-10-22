@@ -39,7 +39,7 @@ namespace TypeCobol.Codegen.Generators
             // For now serialize as JSON
             foreach (var doc in docBuilder.DTOs)
             {
-                Destination.Append(doc.SerializeToJSON());
+                Destination.Append(doc.SerializeToJson());
             }
         }
 

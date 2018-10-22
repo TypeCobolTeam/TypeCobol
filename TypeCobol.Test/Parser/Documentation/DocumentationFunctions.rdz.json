@@ -4,80 +4,74 @@ Line 28[21,26] <37, Warning, General> - Warning: Parameter does not have any des
 Line 29[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
 ======================== Documentation ========================
 {
-  "IsProgram": true,
-  "IsDeprecated": false,
+  "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
   "Name": "DocForFunctions",
-  "Namespace": "DocForFunctions",
-  "IsTypeDef": false,
-  "IsFunction": false
+  "Namespace": "DocForFunctions"
 }
 ---------------------
 
 {
-  "Parameters": [
-    {
-      "Name": "myDate",
-      "PassingType": 0,
-      "Info": "sell date",
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "DATE"
-      }
-    },
-    {
-      "Name": "name",
-      "PassingType": 0,
-      "Info": "product name",
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "Picture": "X(50)"
-      }
-    },
-    {
-      "Name": "myBool",
-      "PassingType": 2,
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "BOOL"
-      }
-    },
-    {
-      "Name": "price",
-      "PassingType": 1,
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "Picture": "S9(5)V9(2)"
-      }
-    },
-    {
-      "Name": "desc",
-      "PassingType": 1,
-      "Info": "this is not a description",
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "Picture": "X(200)"
-      }
-    }
-  ],
-  "IsFunction": true,
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "MyProc1 description ",
+  "Name": "MyProc1",
+  "Namespace": "DocForFunctions",
   "Needs": [
     "first need",
     "second need"
   ],
-  "ToDos": [
-    "implement a call to MyProc8 in case of discount code"
-  ],
-  "Description": "MyProc1 description ",
-  "IsDeprecated": true,
-  "Deprecated": "",
   "ReplacedBy": "ReplacedBy MyProc8 ",
   "Restriction": "Do not support discount code ",
   "See": "you later ",
-  "Name": "MyProc1",
+  "ToDos": [
+    "implement a call to MyProc8 in case of discount code"
+  ],
   "Visibility": 1,
-  "Namespace": "DocForFunctions",
-  "IsTypeDef": false,
-  "IsProgram": false
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Info": "sell date",
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(50)"
+      },
+      "Info": "product name",
+      "Name": "name",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "myBool",
+      "PassingType": 2
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "S9(5)V9(2)"
+      },
+      "Name": "price",
+      "PassingType": 1
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(200)"
+      },
+      "Info": "this is not a description",
+      "Name": "desc",
+      "PassingType": 1
+    }
+  ]
 }
 ---------------------
 

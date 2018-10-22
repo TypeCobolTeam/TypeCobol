@@ -3,103 +3,94 @@ Line 63[34,39] <37, Warning, General> - Warning: Parameter does not have any des
 Line 64[34,39] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: param3
 ======================== Documentation ========================
 {
-  "IsProgram": true,
+  "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
+  "Description": "Main Program ",
+  "Name": "DocForPrograms",
+  "Namespace": "DocForPrograms",
   "Needs": [
     "This is my first need This is also my first need",
     "This is my second need"
   ],
-  "Description": "Main Program ",
-  "IsDeprecated": false,
   "Restriction": "restriction value ",
-  "See": "Thank you for your attention ",
-  "Name": "DocForPrograms",
-  "Namespace": "DocForPrograms",
-  "IsTypeDef": false,
-  "IsFunction": false
+  "See": "Thank you for your attention "
 }
 ---------------------
 
 {
-  "Parameters": [
-    {
-      "Name": "param1",
-      "PassingType": 3,
-      "Info": "This is my first param",
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "Picture": "X(8)"
-      }
-    },
-    {
-      "Name": "param2",
-      "PassingType": 1,
-      "Info": "this is an output param",
-      "DocDataType": {
-        "Usage": 2,
-        "MaxOccurence": 1,
-        "Picture": "S9(5)"
-      }
-    },
-    {
-      "Name": "param3",
-      "PassingType": 2,
-      "Info": "this is an inout param",
-      "DocDataType": {
-        "Usage": 12,
-        "MaxOccurence": 1
-      }
-    },
-    {
-      "Name": "param4",
-      "PassingType": 3,
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "BOOL"
-      }
-    }
-  ],
-  "IsProgram": true,
+  "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
+  "Description": "Nested Program ",
+  "Name": "NestedPgm",
+  "Namespace": "DocForPrograms",
   "Needs": [
     "This is my only need"
   ],
   "ToDos": [
     "slap car roof"
   ],
-  "Description": "Nested Program ",
-  "IsDeprecated": false,
-  "Name": "NestedPgm",
-  "Namespace": "DocForPrograms",
-  "IsTypeDef": false,
-  "IsFunction": false
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(8)"
+      },
+      "Info": "This is my first param",
+      "Name": "param1",
+      "PassingType": 3
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "S9(5)",
+        "Usage": 2
+      },
+      "Info": "this is an output param",
+      "Name": "param2",
+      "PassingType": 1
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Usage": 12
+      },
+      "Info": "this is an inout param",
+      "Name": "param3",
+      "PassingType": 2
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "param4",
+      "PassingType": 3
+    }
+  ]
 }
 ---------------------
 
 {
+  "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
+  "Description": "Stacked Program ",
+  "Name": "StackedPgm",
+  "Namespace": "DocForPrograms",
   "Parameters": [
     {
-      "Name": "param1",
-      "PassingType": 3,
       "DocDataType": {
         "MaxOccurence": 1,
         "Picture": "X(8)"
-      }
+      },
+      "Name": "param1",
+      "PassingType": 3
     },
     {
-      "Name": "param3",
-      "PassingType": 3,
       "DocDataType": {
-        "Usage": 12,
-        "MaxOccurence": 1
-      }
+        "MaxOccurence": 1,
+        "Usage": 12
+      },
+      "Name": "param3",
+      "PassingType": 3
     }
-  ],
-  "IsProgram": true,
-  "Description": "Stacked Program ",
-  "IsDeprecated": false,
-  "Name": "StackedPgm",
-  "Namespace": "DocForPrograms",
-  "IsTypeDef": false,
-  "IsFunction": false
+  ]
 }
 ---------------------
 

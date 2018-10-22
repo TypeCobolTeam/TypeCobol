@@ -618,7 +618,7 @@ namespace TypeCobol.Test.Utils
             foreach (var node in documentedNodes)
             {
                 var doc = Documentation.CreateAppropriateDocumentation(node);
-                sb.Append(doc.SerializeToJSON(true));
+                sb.Append(doc.SerializeToJson(true));
                 sb.AppendLine();
                 sb.AppendLine("---------------------");
                 sb.AppendLine();

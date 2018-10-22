@@ -6,151 +6,82 @@ Line 66[21,26] <37, Warning, General> - Warning: Parameter does not have any des
 Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: toto
 ======================== Documentation ========================
 {
-  "IsProgram": true,
+  "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "My program description ",
+  "Name": "DocCombined",
+  "Namespace": "DocCombined",
   "Needs": [
     "some needs",
     "description"
   ],
-  "ToDos": [
-    "Add BOOL support",
-    "implement a call counter"
-  ],
-  "Description": "My program description ",
-  "IsDeprecated": true,
-  "Deprecated": "",
   "ReplacedBy": "MyFonction2 ",
   "Restriction": "Do not Use BOOL var ",
   "See": "Thank you for your attention ",
-  "Name": "DocCombined",
-  "Namespace": "DocCombined",
-  "IsTypeDef": false,
-  "IsFunction": false
+  "ToDos": [
+    "Add BOOL support",
+    "implement a call counter"
+  ]
 }
 ---------------------
 
 {
-  "IsTypeDef": true,
-  "IsBlankWheneZero": false,
-  "Justified": false,
+  "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "inline typedef ",
+  "Name": "myType",
+  "Namespace": "DocCombined",
+  "Restriction": "Do not Use BOOL var ",
+  "Visibility": 0,
   "DocDataType": {
     "MaxOccurence": 1,
     "Picture": "X(01)"
-  },
-  "Description": "inline typedef ",
-  "IsDeprecated": true,
-  "Deprecated": "",
-  "Restriction": "Do not Use BOOL var ",
-  "Name": "myType",
-  "Visibility": 0,
-  "Namespace": "DocCombined",
-  "IsFunction": false,
-  "IsProgram": false
+  }
 }
 ---------------------
 
 {
+  "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
+  "Description": "Vect2D ",
+  "Name": "Vect2D",
+  "Namespace": "DocCombined",
+  "Visibility": 1,
   "Childrens": [
     {
-      "IsSubGroup": true,
       "Childrens": [
         {
-          "IsSubGroup": false,
-          "Name": "X",
-          "IsBlankWheneZero": false,
-          "Justified": false,
-          "IsLevel77": false,
-          "IsLevel88": false,
           "DocDataType": {
             "MaxOccurence": 1,
             "Picture": "9(4)"
-          }
+          },
+          "Name": "X"
         },
         {
-          "IsSubGroup": false,
-          "Name": "Y",
-          "IsBlankWheneZero": false,
-          "Justified": false,
-          "IsLevel77": false,
-          "IsLevel88": false,
           "DocDataType": {
             "MaxOccurence": 1,
             "Picture": "9(4)"
-          }
+          },
+          "Name": "Y"
         }
       ],
-      "Name": "Coord2d",
-      "IsBlankWheneZero": false,
-      "Justified": false,
-      "IsLevel77": false,
-      "IsLevel88": false,
       "DocDataType": {
         "MaxOccurence": 1
-      }
+      },
+      "Name": "Coord2d"
     }
   ],
-  "IsTypeDef": true,
-  "IsBlankWheneZero": false,
-  "Justified": false,
   "DocDataType": {
     "MaxOccurence": 1
-  },
-  "Description": "Vect2D ",
-  "IsDeprecated": false,
-  "Name": "Vect2D",
-  "Visibility": 1,
-  "Namespace": "DocCombined",
-  "IsFunction": false,
-  "IsProgram": false
+  }
 }
 ---------------------
 
 {
-  "Parameters": [
-    {
-      "Name": "myDate",
-      "PassingType": 0,
-      "Info": "just a date",
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "DATE"
-      }
-    },
-    {
-      "Name": "bla",
-      "PassingType": 0,
-      "Info": "bla < 2",
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "Picture": "S9(1)V9(12)"
-      }
-    },
-    {
-      "Name": "myBool",
-      "PassingType": 2,
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "BOOL"
-      }
-    },
-    {
-      "Name": "toto",
-      "PassingType": 1,
-      "Info": "toto",
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "BOOL"
-      }
-    },
-    {
-      "Name": "bli",
-      "PassingType": 1,
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "Picture": "PPP999PPP"
-      }
-    }
-  ],
-  "IsFunction": true,
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "It is deprecated ",
+  "Description": "MyProc info ",
+  "Name": "MyProc",
+  "Namespace": "DocCombined",
   "Needs": [
     "long need"
   ],
@@ -158,48 +89,83 @@ Line 67[21,24] <37, Warning, General> - Warning: Parameter does not have any des
     "todo1",
     "todo 2"
   ],
-  "Description": "MyProc info ",
-  "IsDeprecated": true,
-  "Deprecated": "It is deprecated ",
-  "Name": "MyProc",
   "Visibility": 0,
-  "Namespace": "DocCombined",
-  "IsTypeDef": false,
-  "IsProgram": false
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Info": "just a date",
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "S9(1)V9(12)"
+      },
+      "Info": "bla < 2",
+      "Name": "bla",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "myBool",
+      "PassingType": 2
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Info": "toto",
+      "Name": "toto",
+      "PassingType": 1
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "PPP999PPP"
+      },
+      "Name": "bli",
+      "PassingType": 1
+    }
+  ]
 }
 ---------------------
 
 {
-  "Parameters": [
-    {
-      "Name": "myDate",
-      "PassingType": 0,
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "DATE"
-      }
-    },
-    {
-      "Name": "toto",
-      "PassingType": 1,
-      "DocDataType": {
-        "MaxOccurence": 1,
-        "TypeName": "BOOL"
-      }
-    }
-  ],
-  "IsFunction": true,
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "MyPivateProc is a Proc but Pivate ",
+  "Name": "MyPivateProc",
+  "Namespace": "DocCombined",
   "ToDos": [
     "Add a body"
   ],
-  "Description": "MyPivateProc is a Proc but Pivate ",
-  "IsDeprecated": true,
-  "Deprecated": "",
-  "Name": "MyPivateProc",
   "Visibility": 1,
-  "Namespace": "DocCombined",
-  "IsTypeDef": false,
-  "IsProgram": false
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "toto",
+      "PassingType": 1
+    }
+  ]
 }
 ---------------------
 
