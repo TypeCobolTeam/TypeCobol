@@ -85,6 +85,8 @@
        PROGRAM-ID. acc4f1bfFUN.
        DATA DIVISION.
        LINKAGE SECTION.
+      *MultilinesCommentsCodeGen.FUN - Params :
+      *		input(x: myType, y: pic 9(03))
        01 x.
            02 var0 PIC 9.
            02 var1 PIC 9(3).
@@ -100,6 +102,8 @@
              USING BY REFERENCE x
                    BY REFERENCE y
            .
+      *MultilinesCommentsCodeGen.FUN - Params :
+      *		input(x: myType, y: pic 9(03))
       *<< 
       *   Multiline Comment 15 here
       *>>

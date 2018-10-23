@@ -50,7 +50,9 @@ namespace TypeCobol.Codegen.Generators
             bool insideMultilineComment = false;
             foreach (var textLine in lines)
             {
-                string text = textLine.Text;
+                string text = textLine is TextLineSnapshot ?
+                    CobolTextLine.Create(textLine.Text, ColumnsLayout.CobolReferenceFormat).First().Text :
+                    textLine.Text;
 
                 ITokensLine tokensLine = textLine as ITokensLine;
                 if (tokensLine != null)
