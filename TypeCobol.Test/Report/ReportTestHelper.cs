@@ -32,10 +32,11 @@ namespace TypeCobol.Test.Report
         public static void ParseWithNodeListenerReportCompare<TCtx>(string fileName, string reportFileName, System.Type reportType) where TCtx : class
         {
             Assert.IsTrue(Tools.Reflection.IsTypeOf(reportType, typeof(IReport)));
-            IReport report = null;//Variable to receive the created report instance.            
+            IReport report = null;//Variable to receive the created report instance.     
+            
             TypeCobol.Compiler.Parser.NodeListenerFactory<TCtx> factory = () =>
             {
-                object obj = System.Activator.CreateInstance(reportType);
+                object obj = System.Activator.CreateInstance(reportType, args: Path.GetFullPath(reportFileName));
                 Assert.IsTrue(obj is NodeListener<TCtx>);
                 TypeCobol.Compiler.Parser.NodeListener<TCtx> nodeListener = (TypeCobol.Compiler.Parser.NodeListener<TCtx>)obj;
                 Assert.IsNotNull(nodeListener);

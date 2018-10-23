@@ -33,10 +33,11 @@ namespace TypeCobol.Compiler.Report
         }
 
         /// <summary>
-        /// Empty constructor
+        /// Empty constructor with filepath
         /// </summary>
-        public CopyMoveInitializeReport()
+        public CopyMoveInitializeReport(string filepath)
         {
+            Filepath = filepath;
             MoveInitializeNodes = new List<Node>();
         }
         /// <summary>
@@ -61,25 +62,35 @@ namespace TypeCobol.Compiler.Report
 
         public override void Report(TextWriter writer)
         {
-            Writer = writer;
-            foreach (Node node in MoveInitializeNodes)
+            try
             {
-                switch (node.CodeElement.Type)
+                Writer = writer;
+                foreach (Node node in MoveInitializeNodes)
                 {
-                    case CodeElements.CodeElementType.MoveStatement:
-                        {
-                            Move move = node as Move;
-                            ReportVariablesWritten(move);
-                        }
-                        break;
-                    case CodeElements.CodeElementType.InitializeStatement:
-                        {
-                            Initialize initialize = node as Initialize;
-                            ReportVariablesWritten(initialize);
-                        }
-                        break;
+                    switch (node.CodeElement.Type)
+                    {
+                        case CodeElements.CodeElementType.MoveStatement:
+                            {
+                                Move move = node as Move;
+                                ReportVariablesWritten(move);
+                            }
+                            break;
+                        case CodeElements.CodeElementType.InitializeStatement:
+                            {
+                                Initialize initialize = node as Initialize;
+                                ReportVariablesWritten(initialize);
+                            }
+                            break;
+                    }
                 }
             }
+            catch(Exception e)
+            {
+                throw new Exception(string.Format(
+                                    "Failed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs! : {1}",
+                                    ((writer as StreamWriter).BaseStream as FileStream).Name, e.Message));
+            }
+            
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ using TypeCobol.Codegen;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.Compiler.CodeModel;
+using TypeCobol.Compiler.Report;
 
 namespace TypeCobol.Server
 {
@@ -150,7 +151,7 @@ namespace TypeCobol.Server
 
             ReturnCode returnCode = ReturnCode.Success;
             List<Parser> parsers = new List<Parser>();
-            Compiler.Report.AbstractReport cmrReport = null;
+            List<Compiler.Report.AbstractReport> reports = new List<AbstractReport>();
             bool copyAreMissing = false;
             List<Diagnostic> diagnostics = new List<Diagnostic>();
 
@@ -174,24 +175,45 @@ namespace TypeCobol.Server
 
                 #region Copy Report Init
 
-                if (config.ExecToStep >= ExecutionStep.CrossCheck && !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath))
+                if (config.ExecToStep >= ExecutionStep.CrossCheck)
                 {
-                    //Register Copy Move Initialize Reporter
-                    if (config.UseAntlrProgramParsing)
+                    if (!string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath))
                     {
-                        Compiler.Parser.NodeDispatcher<Antlr4.Runtime.ParserRuleContext>.RegisterStaticNodeListenerFactory(
-                            () => {
-                                var report = new Compiler.Report.CopyMoveInitializeReport<Antlr4.Runtime.ParserRuleContext>();
-                                cmrReport = report; return report;
-                            });
+                        if (config.UseAntlrProgramParsing)
+                        {
+                            Compiler.Parser.NodeDispatcher<Antlr4.Runtime.ParserRuleContext>.RegisterStaticNodeListenerFactory(
+                                () => {
+                                    var report = new Compiler.Report.CopyMoveInitializeReport<Antlr4.Runtime.ParserRuleContext>(config.ReportCopyMoveInitializeFilePath);
+                                    reports.Add(report); return report;
+                                });
+                        }
+                        else
+                        {
+                            Compiler.Parser.NodeDispatcher<Compiler.CodeElements.CodeElement>.RegisterStaticNodeListenerFactory(
+                                () => {
+                                    var report = new Compiler.Report.CopyMoveInitializeReport<Compiler.CodeElements.CodeElement>(config.ReportCopyMoveInitializeFilePath);
+                                    reports.Add(report); return report;
+                                });
+                        }
                     }
-                    else
+                    if (!string.IsNullOrEmpty(config.ReportZCallFilePath))
                     {
-                        Compiler.Parser.NodeDispatcher<Compiler.CodeElements.CodeElement>.RegisterStaticNodeListenerFactory(
-                            () => {
-                                var report = new Compiler.Report.CopyMoveInitializeReport<Compiler.CodeElements.CodeElement>();
-                                cmrReport = report; return report;
-                            });
+                        if (config.UseAntlrProgramParsing)
+                        {
+                            Compiler.Parser.NodeDispatcher<Antlr4.Runtime.ParserRuleContext>.RegisterStaticNodeListenerFactory(
+                                () => {
+                                    var report = new Compiler.Report.ZCallPgmReport<Antlr4.Runtime.ParserRuleContext>(config.ReportZCallFilePath);
+                                    reports.Add(report); return report;
+                                });
+                        }
+                        else
+                        {
+                            Compiler.Parser.NodeDispatcher<Compiler.CodeElements.CodeElement>.RegisterStaticNodeListenerFactory(
+                                () => {
+                                    var report = new Compiler.Report.ZCallPgmReport<Compiler.CodeElements.CodeElement>(config.ReportZCallFilePath);
+                                    reports.Add(report); return report;
+                                });
+                        }
                     }
                 }
                 #endregion
@@ -324,26 +346,25 @@ namespace TypeCobol.Server
 
                     if (diagnostics.Count == 0)
                     {
-                        if (config.ExecToStep >= ExecutionStep.CrossCheck &&
-                            !string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath) && cmrReport != null)
+                        if (config.ExecToStep >= ExecutionStep.CrossCheck && reports != null && reports.Count > 0)
                         {
-                            //Emit any COPY MOVE/INITIALIZE Report.
-                            try
+                            foreach (var report in reports)
                             {
-                                cmrReport.Report(config.ReportCopyMoveInitializeFilePath);
-                                string msg = string.Format(
-                                    "Succeed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs.",
-                                    config.ReportCopyMoveInitializeFilePath);
-                                Console.WriteLine(msg);
+                                try
+                                {
+                                    report.Report();
+                                    string msg = string.Format(
+                                        "Succeed to emit report '{0}'",
+                                        report.Filepath);
+                                    Console.WriteLine(msg);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.Error.WriteLine(e.Message);
+                                    throw new GenerationException(e.Message, report.Filepath, e);
+                                }
                             }
-                            catch (Exception e)
-                            {
-                                string msg = string.Format(
-                                    "Failed to emit report '{0}' on MOVE and INITIALIZE statements that target COPYs! : {1}",
-                                    config.ReportCopyMoveInitializeFilePath, e.Message);
-                                Console.Error.WriteLine(msg);
-                                throw new GenerationException(msg, config.ReportCopyMoveInitializeFilePath, e);
-                            }
+                            
                         }
                     }
 
