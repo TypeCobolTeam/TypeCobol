@@ -42,15 +42,15 @@ namespace TypeCobol.TemplateCore.Controller
         private void EmitStaticDeclarations(TextCodeWriter codeWriter)
         {
             //1) Emit the Node GetAction provider methods Map
-            codeWriter.WriteLine("private static Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;");
+            codeWriter.WriteLine("private static Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;");
             //2) Emit the Static Constructor
             codeWriter.WriteLine($"static {SkeletonClassName}()");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
-            codeWriter.WriteLine("NodeActionsProviderMap = new Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();");
+            codeWriter.WriteLine("NodeActionsProviderMap = new Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();");
             foreach(var node in Nodes)
             {
-                codeWriter.WriteLine($@"NodeActionsProviderMap[""{node.Key}""]={node.Key.Replace('.', '_')};");
+                codeWriter.WriteLine($@"NodeActionsProviderMap[typeof({node.Key})]={node.Key.Replace('.', '_')};");
             }
 
             codeWriter.Outdent();
@@ -77,11 +77,17 @@ namespace TypeCobol.TemplateCore.Controller
             codeWriter.WriteLine("{");            
             codeWriter.Indent();
             codeWriter.WriteLine("if (@Self == null) return null;");
-            codeWriter.WriteLine("string node = @Self.GetType().FullName.Replace('.', '_');");
-            codeWriter.WriteLine("if (NodeActionsProviderMap.ContainsKey(node))");
+            codeWriter.WriteLine("System.Type curType = @Self.GetType();");
+            codeWriter.WriteLine("while (curType != null && !NodeActionsProviderMap.ContainsKey(curType))");
             codeWriter.WriteLine("{");
             codeWriter.Indent();
-            codeWriter.WriteLine("Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> provider = NodeActionsProviderMap[node];");
+            codeWriter.WriteLine("curType = curType.BaseType;");
+            codeWriter.Outdent();
+            codeWriter.WriteLine("}");
+            codeWriter.WriteLine("if (curType != null)");
+            codeWriter.WriteLine("{");
+            codeWriter.Indent();
+            codeWriter.WriteLine("Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> provider = NodeActionsProviderMap[curType];");
             codeWriter.WriteLine("return provider(@Self, @SelfContext);");
             codeWriter.Outdent();
             codeWriter.WriteLine("}");
@@ -125,7 +131,7 @@ namespace TypeCobol.TemplateCore.Controller
                     codeWriter.Indent();
 
                     //1) Emit the class header
-                    codeWriter.WriteLine($"public partial class {SkeletonClassName}");
+                    codeWriter.WriteLine($"public partial class {SkeletonClassName} : TypeCobol.Codegen.Actions.IActionsProvider");
                     codeWriter.WriteLine("{");
                     codeWriter.Indent();
                     //2) Emit the static Constructor

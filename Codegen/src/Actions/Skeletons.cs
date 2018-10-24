@@ -4,20 +4,20 @@ using System.Collections.Generic;
 
 namespace TypeCobol.Codegen.Actions
 {
-    public partial class Skeletons
+    public partial class Skeletons : TypeCobol.Codegen.Actions.IActionsProvider
     {
-        private static Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;
+        private static Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;
         static Skeletons()
         {
-            NodeActionsProviderMap = new Dictionary<string, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();
-            NodeActionsProviderMap["TypeCobol.Compiler.Nodes.TypeDefinition"] = TypeCobol_Compiler_Nodes_TypeDefinition;
-            NodeActionsProviderMap["TypeCobol.Compiler.Nodes.DataDescription"] = TypeCobol_Compiler_Nodes_DataDescription;
-            NodeActionsProviderMap["TypeCobol.Compiler.Nodes.Set"] = TypeCobol_Compiler_Nodes_Set;
-            NodeActionsProviderMap["TypeCobol.Compiler.CodeElements.VariableWriter"] = TypeCobol_Compiler_CodeElements_VariableWriter;
-            NodeActionsProviderMap["TypeCobol.Compiler.Nodes.LibraryCopy"] = TypeCobol_Compiler_Nodes_LibraryCopy;
-            NodeActionsProviderMap["TypeCobol.Compiler.Nodes.FunctionDeclaration"] = TypeCobol_Compiler_Nodes_FunctionDeclaration;
-            NodeActionsProviderMap["TypeCobol.Compiler.Nodes.ProcedureStyleCall"] = TypeCobol_Compiler_Nodes_ProcedureStyleCall;
-            NodeActionsProviderMap["TypeCobol.Compiler.CodeModel.Program"] = TypeCobol_Compiler_CodeModel_Program;
+            NodeActionsProviderMap = new Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();
+            NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.TypeDefinition)] = TypeCobol_Compiler_Nodes_TypeDefinition;
+            NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.DataDescription)] = TypeCobol_Compiler_Nodes_DataDescription;
+            NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.Set)] = TypeCobol_Compiler_Nodes_Set;
+            NodeActionsProviderMap[typeof(TypeCobol.Compiler.CodeElements.VariableWriter)] = TypeCobol_Compiler_CodeElements_VariableWriter;
+            NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.LibraryCopy)] = TypeCobol_Compiler_Nodes_LibraryCopy;
+            NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.FunctionDeclaration)] = TypeCobol_Compiler_Nodes_FunctionDeclaration;
+            NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.ProcedureStyleCall)] = TypeCobol_Compiler_Nodes_ProcedureStyleCall;
+            NodeActionsProviderMap[typeof(TypeCobol.Compiler.CodeModel.Program)] = TypeCobol_Compiler_CodeModel_Program;
         }
         public Skeletons()
         {
@@ -25,15 +25,16 @@ namespace TypeCobol.Codegen.Actions
         public static bool CheckConditions(TypeCobol.Compiler.Nodes.Node node, Tuple<string, string>[] conditions)
         {
             System.Diagnostics.Debug.Assert(typeof(TypeCobol.Compiler.Nodes.Node).IsAssignableFrom(node.GetType()));
-            foreach (var x in conditions)
+            for (int i = 1; i < conditions.Length; i++)
             {
+                var x = conditions[i];
                 var property = node[x.Item1];
-                if (" + ".Equals(x.Item2))
+                if ("+".Equals(x.Item2))
                 {
                     var values = property as System.Collections.ICollection;
                     return values != null && values.Count > 0;
                 }
-                else if (" * ".Equals(x.Item2))
+                else if ("*".Equals(x.Item2))
                 {
                     return (property == null ? null : property.ToString()) != null;
                 }
@@ -62,12 +63,14 @@ namespace TypeCobol.Codegen.Actions
             public dynamic level;
             public dynamic name;
             public dynamic value;
+            public dynamic global;
 
             public SkeleTonBOOL_DECLAREModel(TypeCobol.Compiler.Nodes.Node @Self)
             {
                 level = @Self["level"];
                 name = @Self["name"];
                 value = @Self["value"];
+                global = @Self["global"];
             }
             private static Tuple<string, string>[] __ConditionsAttributes_0 = new Tuple<string, string>[] { new Tuple<string, string>("node", "TypeCobol.Compiler.Nodes.DataDescription"), new Tuple<string, string>("type", "BOOL") };
             public bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
@@ -265,10 +268,14 @@ namespace TypeCobol.Codegen.Actions
         public List<TypeCobol.Codegen.Actions.Action> GetActions(TypeCobol.Compiler.Nodes.Node @Self, TypeCobol.Codegen.GeneratorActions @SelfContext)
         {
             if (@Self == null) return null;
-            string node = @Self.GetType().FullName.Replace('.', '_');
-            if (NodeActionsProviderMap.ContainsKey(node))
+            System.Type curType = @Self.GetType();
+            while (curType != null && !NodeActionsProviderMap.ContainsKey(curType))
             {
-                Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> provider = NodeActionsProviderMap[node];
+                curType = curType.BaseType;
+            }
+            if (curType != null)
+            {
+                Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>> provider = NodeActionsProviderMap[curType];
                 return provider(@Self, @SelfContext);
             }
             return null;
@@ -282,7 +289,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "comment", null, "NODE", null);
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "comment", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -300,25 +307,23 @@ namespace TypeCobol.Codegen.Actions
                 if ((@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-");
+                    @SelfResult.Append(@"");
                     var items = "";
                     if (@Model.value.Length == 0)
                     {
-                        items = @Model.level + "  " + @Model.name + "-value PIC X VALUE LOW-VALUE.";
+                        items = @Model.level + "  " + @Model.name + "-value PIC X VALUE LOW-VALUE" + @Model.global + ".";
                     }
                     else
                     {
-                        items = @Model.level + "  " + @Model.name + "-value PIC X VALUE " + @Model.value + ".";
+                        items = @Model.level + "  " + @Model.name + "-value PIC X VALUE " + @Model.value + @Model.global + ".";
                     }
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-        88  "); @SelfResult.Append($@"{@Model.name}"); @SelfResult.Append(@"       VALUE 'T'.
-        88  "); @SelfResult.Append($@"{@Model.name}"); @SelfResult.Append(@"-false VALUE 'F'
-        X'00' thru 'S'
-        'U' thru X'FF'.
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "replace", null, "NODE", null);
+"); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
+    88  "); @SelfResult.Append($@"{@Model.name}"); @SelfResult.Append(@"       VALUE 'T'.
+    88  "); @SelfResult.Append($@"{@Model.name}"); @SelfResult.Append(@"-false VALUE 'F'
+                    X'00' thru 'S'
+                    'U' thru X'FF'.");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "replace", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -330,17 +335,15 @@ namespace TypeCobol.Codegen.Actions
                 if ((@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-");
+                    @SelfResult.Append(@"");
                     var items = "";
                     items = @Model.level + "  " + @Model.name + " POINTER.\n" +
                     @Model.level + " redefines " + @Model.name + ".\n" +
                     "    " + (Int32.Parse(@Model.level) + 1).ToString("00") + " " +
                     (@Model.name.Length.CompareTo(22) != 1 ? @Model.name : @Model.name.Substring(0, 22)) + @Model.hash + " pic S9(05) comp-5.";
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "replace", null, "NODE", null);
+"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "replace", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -353,7 +356,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "expand", null, "NODE", null);
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "expand", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -372,7 +375,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"SET "); @SelfResult.Append($@"{@Model.receiver}"); @SelfResult.Append(@"-false TO TRUE");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "replace", null, "NODE", null);
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "BOOL.SET", @SelfResult.ToString(), "replace", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -384,8 +387,7 @@ namespace TypeCobol.Codegen.Actions
                 if ((@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-");
+                    @SelfResult.Append(@"");
                     var item = "";
                     if (@Model.needCompute)
                     {
@@ -402,9 +404,8 @@ namespace TypeCobol.Codegen.Actions
                     }
                     item = item.Remove(item.Length - 2);
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@item}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "replace", null, "NODE", null);
+"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@item}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "POINTER.INCREMENT", @SelfResult.ToString(), "replace", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -423,7 +424,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"UNSAFE");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "erase", null, "NODE", null);
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "erase", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -442,7 +443,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "comment", null, "NODE", null);
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "comment", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -454,10 +455,8 @@ namespace TypeCobol.Codegen.Actions
                 if ((@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-        COPY "); @SelfResult.Append($@"{@Model.copyname}"); @SelfResult.Append(@" REPLACING ==:"); @SelfResult.Append($@"{@Model.copyname}"); @SelfResult.Append(@":== BY ==FCT==.
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_LIBRARY_COPY", "program.data-division.linkage", null);
+                    @SelfResult.Append(@"COPY "); @SelfResult.Append($@"{@Model.copyname}"); @SelfResult.Append(@" REPLACING ==:"); @SelfResult.Append($@"{@Model.copyname}"); @SelfResult.Append(@":== BY ==FCT==.");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_LIBRARY_COPY", "program.data-division.linkage", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -469,12 +468,10 @@ namespace TypeCobol.Codegen.Actions
                 if ((@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-        01  CallData.
+                    @SelfResult.Append(@"01  CallData.
         05  DescriptionId PIC X(08).
-        88 CallIsCopy VALUE '"); @SelfResult.Append($@"{@Model.copyname}"); @SelfResult.Append(@"'.
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_CALL_MODE", "program.data-division.linkage", null);
+        88 CallIsCopy VALUE '"); @SelfResult.Append($@"{@Model.copyname}"); @SelfResult.Append(@"'.");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_CALL_MODE", "program.data-division.linkage", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -492,11 +489,9 @@ namespace TypeCobol.Codegen.Actions
                 if ((@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-        01  TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-Loaded PIC X(02).
-        88 TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-IsLoaded      VALUE 'OK'.
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_IS_LOADED", "program.data-division.working-storage", null);
+                    @SelfResult.Append(@"01  TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-Loaded PIC X(02).
+    88 TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-IsLoaded      VALUE 'OK'.");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_IS_LOADED", "program.data-division.working-storage", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -505,31 +500,10 @@ namespace TypeCobol.Codegen.Actions
             }
             {
                 SkeleTonFUN_DECLARE_PUBLICModel @Model = new SkeleTonFUN_DECLARE_PUBLICModel(@Self);
-                StringBuilder @SelfResult = new StringBuilder();
-                @SelfResult.Append(@"
-");
-                var items = "";
-                foreach (var f in @Model.definitions.functions.Public)
-                {
-                    items += "*" + @Model.programName8 + "::" + f.Name + '\n';
-                    items += " 01 TC-" + @Model.programName8 + "-" + f.Hash + " PROCEDURE-POINTER EXTERNAL.\n";
-                }
-                @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-      ");
-                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_ARRAY", "program.data-division.working-storage", null);
-                if (@SelfAction != null)
-                {
-                    @SelfActions.Add(@SelfAction);
-                }
-            }
-            {
-                SkeleTonFUN_DECLARE_PUBLICModel @Model = new SkeleTonFUN_DECLARE_PUBLICModel(@Self);
                 if ((@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-");
+                    @SelfResult.Append(@"");
                     var items = "";
                     if (@Model.definitions.functions.Public.Count > 0)
                     {
@@ -543,31 +517,8 @@ namespace TypeCobol.Codegen.Actions
                         items += "    05 TC-" + @Model.programName8 + "-" + f.Hash + " PROCEDURE-POINTER.\n";
                     }
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_ARRAY", "program.data-division.working-storage", null);
-                    if (@SelfAction != null)
-                    {
-                        @SelfActions.Add(@SelfAction);
-                    }
-                }
-            }
-            {
-                SkeleTonFUN_DECLARE_PUBLICModel @Model = new SkeleTonFUN_DECLARE_PUBLICModel(@Self);
-                if ((@Model.Conditions_0(@Self)))
-                {
-                    StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-");
-                    var items = "";
-                    if (@Model.definitions.functions.Public.Count > 0)
-                    {
-                        items += "01 PntTab-Pnt POINTER.\n";
-                    }
-                    @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_LINKAGE", "program.data-division.linkage", null);
+"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_ARRAY", "program.data-division.working-storage", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -580,7 +531,14 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "expand", null, "program.end", null);
+                    var items = "";
+                    if (@Model.definitions.functions.Public.Count > 0)
+                    {
+                        items += "01 PntTab-Pnt POINTER.\n";
+                    }
+                    @SelfResult.Append(@"
+"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_LINKAGE", "program.data-division.linkage", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -589,37 +547,15 @@ namespace TypeCobol.Codegen.Actions
             }
             {
                 SkeleTonFUN_DECLARE_PUBLICModel @Model = new SkeleTonFUN_DECLARE_PUBLICModel(@Self);
-                StringBuilder @SelfResult = new StringBuilder();
-                @SelfResult.Append(@"
-        *
-        *    IF CallIsCopy
-        *      PERFORM Copy-Process-Mode
-        *    ELSE
-        PERFORM FctList-Process-Mode
-        perform INIT-LIBRARY
-        *    END-IF
-
-        GOBACK.
-");
-                var entries = "";
-                int c = 0;
-                foreach (var f in @Model.definitions.functions.Public)
+                if ((@Model.Conditions_0(@Self)))
                 {
-                    entries += "       SET TC-" + @Model.programName8 + "-" + f.Hash + "   TO ENTRY \'" + f.Hash + "\'\n";
-                }
-                @SelfResult.Append(@"
-        FctList-Process-Mode.
-        IF NOT TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-IsLoaded
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@entries}"); @SelfResult.Append(@"
-        SET TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-IsLoaded TO TRUE
-        END-IF
-        .
-
-      ");
-                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-0.begin", null);
-                if (@SelfAction != null)
-                {
-                    @SelfActions.Add(@SelfAction);
+                    StringBuilder @SelfResult = new StringBuilder();
+                    @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "expand", null, "program.end", null, false);
+                    if (@SelfAction != null)
+                    {
+                        @SelfActions.Add(@SelfAction);
+                    }
                 }
             }
             {
@@ -627,16 +563,15 @@ namespace TypeCobol.Codegen.Actions
                 if ((@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-        *
-        *    IF CallIsCopy
-        *      PERFORM Copy-Process-Mode
-        *    ELSE
-        PERFORM FctList-Process-Mode
-        perform INIT-LIBRARY
-        *    END-IF
+                    @SelfResult.Append(@"*
+*    IF CallIsCopy
+*      PERFORM Copy-Process-Mode
+*    ELSE
+    PERFORM FctList-Process-Mode
+    perform INIT-LIBRARY
+*    END-IF
 
-        GOBACK.
+    GOBACK.
 ");
                     var entries = "";
                     int c = 0;
@@ -645,11 +580,11 @@ namespace TypeCobol.Codegen.Actions
                         entries += "       SET TC-" + @Model.programName8 + "-" + f.Hash + "   TO ENTRY \'" + f.Hash + "\'\n";
                     }
                     @SelfResult.Append(@"
-        FctList-Process-Mode.
-        IF NOT TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-IsLoaded
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@entries}"); @SelfResult.Append(@"
-        SET TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-IsLoaded TO TRUE
-        END-IF
+ FctList-Process-Mode.
+     IF NOT TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-IsLoaded
+"); @SelfResult.Append($@"{@entries}"); @SelfResult.Append(@"
+       SET TC-"); @SelfResult.Append($@"{@Model.programName8}"); @SelfResult.Append(@"-FctList-IsLoaded TO TRUE
+     END-IF
         .
 ");
                     var items = "";
@@ -658,9 +593,8 @@ namespace TypeCobol.Codegen.Actions
                         items += "     set PntTab-Pnt TO ADDRESS OF TC-" + @Model.programName8 + "-PntTab\n";
                     }
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null);
+"); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, true);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -673,7 +607,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "expand", null, "program.end", null);
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "expand", null, "program.end", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -692,7 +626,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "expand", null, "NODE", null);
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "expand", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -711,7 +645,7 @@ namespace TypeCobol.Codegen.Actions
                 {
                     StringBuilder @SelfResult = new StringBuilder();
                     @SelfResult.Append(@"");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "remarks", null, "NODE", null);
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "remarks", null, "NODE", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -720,37 +654,10 @@ namespace TypeCobol.Codegen.Actions
             }
             {
                 SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel @Model = new SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(@Self);
-                StringBuilder @SelfResult = new StringBuilder();
-                @SelfResult.Append(@"
-");
-                var items = "";
-                foreach (var pgm in @Model.imports.Programs.Values)
-                {
-                    items += "01 TC-" + pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
-                    items += "01 TC-" + pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
-                    items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
-                    foreach (var proc in pgm.Procedures.Values)
-                    {
-                        items += "*" + pgm.Name + "::" + proc.Name + '\n';
-                        items += " 01 TC-" + pgm.Name + "-" + proc.Hash + " PROCEDURE-POINTER EXTERNAL.\n";
-                    }
-                }
-                @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-      ");
-                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", null, "program.data-division.working-storage", null);
-                if (@SelfAction != null)
-                {
-                    @SelfActions.Add(@SelfAction);
-                }
-            }
-            {
-                SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel @Model = new SkeleTonPROGRAM_IMPORT_FUN_PUBLICModel(@Self);
                 if (@Model.imports.IsNotEmpty && (@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-");
+                    @SelfResult.Append(@"");
                     var items = "";
                     foreach (var pgm in @Model.imports.Programs.Values)
                     {
@@ -765,9 +672,8 @@ namespace TypeCobol.Codegen.Actions
                         items += "                     'U' thru X'FF'.\n";
                     }
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", null, "program.data-division.working-storage.begin", null);
+"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", null, "program.data-division.working-storage.begin", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -779,15 +685,14 @@ namespace TypeCobol.Codegen.Actions
                 if (@Model.imports.IsNotEmpty && (@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-        *Common to all librairies used by the program.
-        01 TC-Library-PntTab.
-        05 TC-Library-PntNbr          PIC S9(04) COMP.
-        05 TC-Library-Item OCCURS 1000
-        DEPENDING ON TC-Library-PntNbr
-        INDEXED   BY TC-Library-Idx.
-        10 TC-Library-Item-Idt      PIC X(08).
-        10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+                    @SelfResult.Append(@"*Common to all librairies used by the program.
+01 TC-Library-PntTab.
+   05 TC-Library-PntNbr          PIC S9(04) COMP.
+   05 TC-Library-Item OCCURS 1000
+                        DEPENDING ON TC-Library-PntNbr
+                        INDEXED   BY TC-Library-Idx.
+       10 TC-Library-Item-Idt      PIC X(08).
+       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 ");
                     var items = "";
                     foreach (var pgm in @Model.imports.Programs.Values)
@@ -802,9 +707,8 @@ namespace TypeCobol.Codegen.Actions
                         }
                     }
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", null, "program.data-division.linkage.begin", null);
+"); @SelfResult.Append($@"{@items}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", null, "program.data-division.linkage.begin", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -816,8 +720,7 @@ namespace TypeCobol.Codegen.Actions
                 if (@Model.imports.HasPublicProcedures && (@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-");
+                    @SelfResult.Append(@"");
                     var clause = "";
                     if (@Model.imports.HasPublicProcedures)
                     {
@@ -825,9 +728,8 @@ namespace TypeCobol.Codegen.Actions
                         clause += "    PERFORM TC-INITIALIZATIONS\n";
                     }
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@clause}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", null, "program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin", null);
+"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@clause}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", null, "program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);
@@ -839,8 +741,7 @@ namespace TypeCobol.Codegen.Actions
                 if (@Model.imports.IsNotEmpty && (@Model.Conditions_0(@Self)))
                 {
                     StringBuilder @SelfResult = new StringBuilder();
-                    @SelfResult.Append(@"
-");
+                    @SelfResult.Append(@"");
                     var clause = "";
                     if (@Model.imports.HasPublicProcedures)
                     {
@@ -887,9 +788,8 @@ namespace TypeCobol.Codegen.Actions
                         }
                     }
                     @SelfResult.Append(@"
-"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@clause}"); @SelfResult.Append(@"
-      ");
-                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), "create", null, "program.procedure-division.end", null);
+"); @SelfResult.Append(@"        "); @SelfResult.Append($@"{@clause}"); @SelfResult.Append(@"");
+                    TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", null, "program.procedure-division.end", null, false);
                     if (@SelfAction != null)
                     {
                         @SelfActions.Add(@SelfAction);

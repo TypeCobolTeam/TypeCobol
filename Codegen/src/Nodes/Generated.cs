@@ -82,9 +82,21 @@
 
     internal class GeneratedNode2 : Compiler.Nodes.Node, Generated
     {
+        /// <summary>
+        /// Code Element to appy to this Generated Node
+        /// </summary>
+        private CodeElement ApplyCodeElement;
+
         public GeneratedNode2(string text, bool isLeaf) : base(null) {
             this.Text = text;
             this.IsLeaf = isLeaf;
+        }
+
+        public GeneratedNode2(string text, bool isLeaf, CodeElement codelement) : base(null)
+        {
+            this.Text = text;
+            this.IsLeaf = isLeaf;
+            ApplyCodeElement = codelement;
         }
 
         public bool IsLeaf { get; internal set; }
@@ -107,6 +119,17 @@
                     }
                 }
                 return _cache;
+            }
+        }
+
+        /// <summary>
+        /// Get Associated Code Element
+        /// </summary>
+        public override CodeElement CodeElement
+        {
+            get
+            {
+                return ApplyCodeElement != null ? ApplyCodeElement : base.CodeElement;
             }
         }
 
