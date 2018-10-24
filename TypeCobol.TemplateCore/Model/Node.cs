@@ -125,13 +125,23 @@ namespace TypeCobol.TemplateCore.Model
                         codeWriter.WriteLine("List<TypeCobol.Codegen.Actions.Action> @SelfActions = new List<TypeCobol.Codegen.Actions.Action>();");
 
                         foreach (var guards in Guards)
-                        {//For each pattern
-                            codeWriter.WriteLine("{");
-                            codeWriter.Indent();
-                            
+                        {//For each pattern                            
                             var conditions = guards.Item1;
                             var pattern = guards.Item2;
                             var skeleton = guards.Item3;
+                            //Check for the deprecated attribute.
+                            bool isDeprecated = false;
+                            if (pattern.Attributes.ContainsKey(AttributeNames.Deprecated))
+                            {
+                                var attr = pattern.Attributes[AttributeNames.Deprecated];
+                                isDeprecated = attr.Value.Equals("true");
+                            }
+                            if (isDeprecated)
+                                continue;
+
+                            codeWriter.WriteLine("{");
+                            codeWriter.Indent();
+
                             //Get the Skeleton's Model name
                             string modelName = skeleton.SkeletonModelName;
 
@@ -163,7 +173,7 @@ namespace TypeCobol.TemplateCore.Model
                             {
                                 CSharpHtmlRazorInterpolation interpolator = new CSharpHtmlRazorInterpolation();
                                 RazorTranspiler transpiler = new CSharpHtmlRazorTranspiler(interpolator);
-                                bool bResult = transpiler.Parse(pattern.Code);
+                                bool bResult = transpiler.Parse(pattern.Code.Trim());
                                 if (!bResult)
                                 {//Transpilation error ==> generate a message
                                     interpolator.WriteErrors();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TypeCobol.TemplateCore.Model
 {
     /// <summary>
-    /// Interface of an entity that can be transpilated to siource code.
+    /// Interface of an entity that can be transpilated to source code.
     /// </summary>
     public interface ITranspilable
     {        
