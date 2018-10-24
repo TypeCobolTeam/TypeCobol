@@ -15,7 +15,7 @@ namespace TypeCobol.TemplateCore.Controller
         /// <summary>
         /// The Current Pattern
         /// </summary>
-        Pattern CurretPattern
+        Pattern CurrentPattern
         {
             get;
             set;
@@ -46,7 +46,7 @@ namespace TypeCobol.TemplateCore.Controller
             {
                 targeNode = data[node];
             }
-            targeNode.AddPatternWithGuard(CurretPattern, that, CurrentSkeleton);
+            targeNode.AddPatternWithGuard(CurrentPattern, that, CurrentSkeleton);
             return targeNode;
         }
 
@@ -61,7 +61,7 @@ namespace TypeCobol.TemplateCore.Controller
 
         public Node Visit(Pattern that, Dictionary<string, Node> data)
         {
-            CurretPattern = that;
+            CurrentPattern = that;
             return null;
         }
 
