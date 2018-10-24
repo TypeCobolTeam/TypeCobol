@@ -11,7 +11,7 @@
   </skeleton>
 
   <!-- replace TYPE BOOL declarations -->
-  <skeleton name="BOOL.DECLARE" var="level,name,value">
+  <skeleton name="BOOL.DECLARE" var="level,name,value,global">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="BOOL"/>
     </conditions>
@@ -20,17 +20,17 @@
         @{
         var items = "";
         if (@Model.value.Length == 0) {
-        items = @Model.level +"  "+@Model.name+"-value PIC X VALUE LOW-VALUE.";
+        items = @Model.level +"  "+@Model.name+"-value PIC X VALUE LOW-VALUE" + @Model.global + ".";
         }
         else {
-        items = @Model.level + "  " + @Model.name + "-value PIC X VALUE " +  @Model.value  + ".";
+        items = @Model.level + "  " + @Model.name + "-value PIC X VALUE " +  @Model.value + @Model.global + ".";
         }
         }
-        @items
-        88  @Model.name       VALUE 'T'.
-        88  @Model.name-false VALUE 'F'
-        X'00' thru 'S'
-        'U' thru X'FF'.
+@items
+    88  @Model.name       VALUE 'T'.
+    88  @Model.name-false VALUE 'F'
+                    X'00' thru 'S'
+                    'U' thru X'FF'.
       </pattern>
     </patterns>
   </skeleton>

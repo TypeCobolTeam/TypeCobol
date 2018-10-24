@@ -11,7 +11,7 @@
   </skeleton>
 
   <!-- replace TYPE BOOL declarations -->
-  <skeleton name="BOOL.DECLARE" var="level,name,value">
+  <skeleton name="BOOL.DECLARE" var="level,name,value,global">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="BOOL"/>
     </conditions>
@@ -20,10 +20,10 @@
         @{
         var items = "";
         if (@Model.value.Length == 0) {
-        items = @Model.level +"  "+@Model.name+"-value PIC X VALUE LOW-VALUE.";
+        items = @Model.level +"  "+@Model.name+"-value PIC X VALUE LOW-VALUE" + @Model.global + ".";
         }
         else {
-        items = @Model.level + "  " + @Model.name + "-value PIC X VALUE " +  @Model.value  + ".";
+        items = @Model.level + "  " + @Model.name + "-value PIC X VALUE " +  @Model.value + @Model.global + ".";
         }
         }
 @items
@@ -70,7 +70,7 @@
       <condition node="TypeCobol.Compiler.Nodes.Set" sender.type="BOOL" sender="FALSE"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace">SET @Model.receiver-false TO TRUE</pattern>
+      <pattern name = "BOOL.SET" location="NODE" action="replace">SET @Model.receiver-false TO TRUE</pattern>
     </patterns>
   </skeleton>
 
@@ -80,7 +80,7 @@
       <condition node="TypeCobol.Compiler.Nodes.Set" receiverUsage="Pointer"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace">
+      <pattern name="POINTER.INCREMENT" location="NODE" action="replace">
         @{
           var item = "";
           if (@Model.needCompute)

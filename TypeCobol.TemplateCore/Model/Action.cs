@@ -30,6 +30,9 @@ namespace TypeCobol.TemplateCore.Model
         }
 
         private string _TranspiledCode;
+        /// <summary>
+        /// Code Transpilé d'une Action.
+        /// </summary>
         public string TranspiledCode
         {
             get
@@ -38,11 +41,13 @@ namespace TypeCobol.TemplateCore.Model
                 {
                     if (Attributes.ContainsKey(AttributeNames.Action))
                     {
+                        string name = Attributes.ContainsKey(AttributeNames.Name) ? $@"""{(string)Attributes[AttributeNames.Name].Value}""" : "null";
                         string action = $@"""{(string)Attributes[AttributeNames.Action].Value}""";
                         string group = Attributes.ContainsKey(AttributeNames.Group) ? $@"""{(string)Attributes[AttributeNames.Group].Value}""" : "null";
                         string location = Attributes.ContainsKey(AttributeNames.Location) ? $@"""{(string)Attributes[AttributeNames.Location].Value}""" : "null";
                         string position = Attributes.ContainsKey(AttributeNames.Position) ? $@"""{(string)Attributes[AttributeNames.Position].Value}""" : "null";
-                        _TranspiledCode = $@"TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, @SelfResult.ToString(), {action}, {group}, {location}, {position});";
+                        string newline = Attributes.ContainsKey(AttributeNames.NewLine) ? ("true".Equals((string)Attributes[AttributeNames.NewLine].Value) ? "true" : "false") : "false";
+                        _TranspiledCode = $@"TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, {name}, @SelfResult.ToString(), {action}, {group}, {location}, {position}, {newline});";
                     }
                 }
                 return _TranspiledCode;
