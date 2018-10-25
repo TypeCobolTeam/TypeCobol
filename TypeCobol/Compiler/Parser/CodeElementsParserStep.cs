@@ -251,25 +251,25 @@ namespace TypeCobol.Compiler.Parser
                         CodeElement codeElement = codeElementBuilder.CodeElement;
                         if (codeElement != null)
                         {
-                            // Add the multilines comments Token to the consumed Tokens in order to comment them in CodeGen
+                            // Add the multiline comments Token to the consumed Tokens in order to comment them in CodeGen
                             if (!codeElement.IsInsideCopy() && codeElement.ConsumedTokens.Count >= 2)
                             {
                                 bool tokenHasBeenInjected = false;
 
-                                // Do not iterate on a list that will be modified ☺
+                                // Do not iterate on a list that will be modified ☻
                                 int stopLine = codeElement.ConsumedTokens.Last().Line - 1;
 
                                 for (int lineIndex = codeElement.ConsumedTokens[0].Line -1 ;
                                     lineIndex < stopLine && lineIndex < documentLines.Count;
                                     lineIndex++)
                                 {
-                                    var multinilesTokens = documentLines[lineIndex].SourceTokens.Where(t =>
+                                    var multilineTokens = documentLines[lineIndex].SourceTokens.Where(t =>
                                         t.TokenType == TokenType.MultilinesCommentsStart ||
                                         t.TokenType == TokenType.MultilinesCommentsStop ||
                                         t.TokenType == TokenType.CommentLine);
 
 
-                                    foreach (var multilineToken in multinilesTokens)
+                                    foreach (var multilineToken in multilineTokens)
                                     {
                                         tokenHasBeenInjected = true;
                                         codeElement.ConsumedTokens.Add(multilineToken);

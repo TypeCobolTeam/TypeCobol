@@ -1305,16 +1305,8 @@ namespace TypeCobol.Codegen.Generators
                 var delimiterTokens = GetEnclosingTokensIfAny(node, startTokenType, stopTokenType)?.ToArray();
                 if (delimiterTokens != null && delimiterTokens.Any())
                 {
-
-                    // Split the Buffer to get an array of string representing the lines
-                    string content = new string(nodeData.Buffer.ToArray());
-                    string[] lines = content.Split(
-                        new[] { "\r\n", "\r", "\n" },
-                        StringSplitOptions.None
-                    );
                     int[,] bufferLines = nodeData.Buffer.ComputeLinePositions(0, nodeData.Buffer.Size); 
                     var positionList = nodeData.Buffer.GetPositionList();
-                    lines = lines.Take(bufferLines.Length).ToArray();
                     foreach (var delimiterToken in delimiterTokens)
                     {
 
