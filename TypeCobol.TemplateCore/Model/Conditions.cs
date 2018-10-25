@@ -69,11 +69,12 @@ namespace TypeCobol.TemplateCore.Model
                     TextCodeWriter codeWriter = new TextCodeWriter(stringWriter);
                     codeWriter.Indent();
                     codeWriter.Indent();
+                    codeWriter.Indent();
                     for (int i = 0; i < Count; i++)
                     {
                         string condition = this[i].TranspiledCode;
                         codeWriter.WriteLine($"private static Tuple<string,string>[] __ConditionsAttributes_{i} = {condition};");
-                        codeWriter.WriteLine($"public bool Conditions_{i}(TypeCobol.Compiler.Nodes.Node @Self)");
+                        codeWriter.WriteLine($"public static bool Conditions_{i}(TypeCobol.Compiler.Nodes.Node @Self)");
                         codeWriter.WriteLine("{");
                         codeWriter.Indent();
                         codeWriter.WriteLine($"return CheckConditions(@Self, __ConditionsAttributes_{i});");
