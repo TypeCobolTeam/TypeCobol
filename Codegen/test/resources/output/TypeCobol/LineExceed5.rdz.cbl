@@ -7,7 +7,9 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *PGM1::StartCheckpoint
+      *To call program f1c0385cStartCheckpoint
+      *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file LineExceed5.rdz.cbl
            05 TC-PGM1-f1c0385c-Idt   PIC X(08) VALUE 'f1c0385c'.
            05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
 
@@ -53,7 +55,9 @@
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM2-PntTab.
            05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *PGM2::CheckContract
+      *To call program f73481e6CheckContract
+      *Which is generated code for PGM2.CheckContract
+      *Declared in source file LineExceed5.rdz.cbl
            05 TC-PGM2-f73481e6-Idt   PIC X(08) VALUE 'f73481e6'.
            05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
 
@@ -131,7 +135,8 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *PGM1::StartCheckpoint
+      *To call program f1c0385cStartCheckpoint in module PGM1
+      *Which is generated code for PGM1.StartCheckpoint
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
@@ -148,6 +153,7 @@
              OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
+      *    Equivalent to call f1c0385cStartCheckpoint in module PGM1
            CALL TC-PGM1-f1c0385c USING
                                  param1
            end-call
@@ -208,7 +214,8 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *PGM1::StartCheckpoint
+      *To call program f1c0385cStartCheckpoint in module PGM1
+      *Which is generated code for PGM1.StartCheckpoint
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
@@ -222,6 +229,7 @@
              OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
+      *    Equivalent to call f1c0385cStartCheckpoint in module PGM1
            CALL TC-PGM1-f1c0385c USING
                                  param1
            end-call

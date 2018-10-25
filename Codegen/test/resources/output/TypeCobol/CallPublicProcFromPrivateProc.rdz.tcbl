@@ -37,7 +37,9 @@
            88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PersonSe-PntTab.
            05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
-      *PersonSe::GetPersonById
+      *To call program cd991005GetPersonById
+      *Which is generated code for PersonService.GetPersonById
+      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
            05 TC-PersonSe-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
            05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
 
@@ -129,7 +131,8 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *PersonSe::GetPersonById
+      *To call program cd991005GetPersonById in module PersonService
+      *Which is generated code for PersonService.GetPersonById
        01 TC-PersonSe-cd991005-Item.
           05 TC-PersonSe-cd991005-Idt PIC X(08).
           05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
@@ -149,6 +152,8 @@
              OR TC-PersonSe-cd991005-Idt not = 'cd991005'
                PERFORM TC-LOAD-POINTERS-PersonSe
            END-IF
+      *    Equivalent to call cd991005GetPersonById in module PersonServ
+      *ice
            CALL TC-PersonSe-cd991005 USING
                                  mydate
            end-call

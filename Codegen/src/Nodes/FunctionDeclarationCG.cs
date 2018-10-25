@@ -132,7 +132,8 @@ namespace TypeCobol.Codegen.Nodes {
                 foreach (var proc in pgm.Procedures.Values) {
                     proc.IsNotByExternalPointer = true;
                     toAddRange.Add(new GeneratedNode2(" ", true));
-                    toAddRange.Add(new GeneratedNode2("*" + pgm.Name + "::" + proc.Name, true));
+                    toAddRange.Add(new GeneratedNode2("*To call program " + proc.Hash + proc.Name + " in module " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail, false));
+                    toAddRange.Add(new GeneratedNode2("*Which is generated code for " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName, false));
                     toAddRange.Add(new GeneratedNode2("01 TC-" + pgm.Name + "-" + proc.Hash + "-Item.", false));
                     toAddRange.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + "-Idt PIC X(08).", true));
                     toAddRange.Add(new GeneratedNode2("   05 TC-" + pgm.Name + "-" + proc.Hash + " PROCEDURE-POINTER.",
