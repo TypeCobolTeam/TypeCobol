@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 
 namespace TypeCobol.Test
@@ -29,6 +30,16 @@ namespace TypeCobol.Test
         {
             StringBuilder errors = new StringBuilder();
 
+            //Set to true to automaticaly replace content in ExpectedResult File
+            bool autoReplace = false;
+
+            if (testName == string.Empty && result == string.Empty && expectedResult == string.Empty &&
+                expectedResultPath == string.Empty)
+            {
+                if (autoReplace)
+                    Assert.Fail("Set AutoReplace to false in TestUtils.compareLines()\n\n");
+            }
+
             result = Regex.Replace(result, "(?<!\r)\n", "\r\n");
             expectedResult = Regex.Replace(expectedResult, "(?<!\r)\n", "\r\n");
 
@@ -43,8 +54,6 @@ namespace TypeCobol.Test
 
             if (result != expectedResult)
             {
-                //Set to true to automaticaly replace content in ExpectedResult File
-                bool autoReplace = false;
                 if (autoReplace && expectedResultPath != null)
                 {
                     replaceLines(result, expectedResultPath);
