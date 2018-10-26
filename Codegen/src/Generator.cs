@@ -118,7 +118,7 @@ namespace TypeCobol.Codegen
             if (!string.IsNullOrEmpty(TypeCobolVersion))
                 Destination.AppendLine("      *TypeCobol_Version:" + TypeCobolVersion);
 
-            Actions = new GeneratorActions(this, skeletons, document, new TypeCobol.Codegen.Actions.Skeletons());
+            Actions = new GeneratorActions(this, skeletons, document, skeletons != null ? null : new TypeCobol.Codegen.Actions.Skeletons());
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
             //The After Action Listener

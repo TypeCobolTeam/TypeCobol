@@ -206,8 +206,8 @@ namespace TypeCobol.Tools.Options_Config
                     errorStack.Add(ReturnCode.OutputFileError, TypeCobolConfiguration.ErrorMessages[ReturnCode.OutputFileError]);
             }
             //SkeletonMissing
-            if (config.ExecToStep == ExecutionStep.Generate && config.skeletonPath.IsNullOrEmpty() && !errorStack.ContainsKey(ReturnCode.ExecToStepError))
-                errorStack.Add(ReturnCode.SkeletonMissing, TypeCobolConfiguration.ErrorMessages[ReturnCode.SkeletonMissing]);
+            //if (config.ExecToStep == ExecutionStep.Generate && config.skeletonPath.IsNullOrEmpty() && !errorStack.ContainsKey(ReturnCode.ExecToStepError))
+            //    errorStack.Add(ReturnCode.SkeletonMissing, TypeCobolConfiguration.ErrorMessages[ReturnCode.SkeletonMissing]);
 
 
             //// Check unexpected token
