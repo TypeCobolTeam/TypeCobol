@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
@@ -303,6 +304,31 @@ namespace TypeCobol.Codegen.Generators
                         }
                         previousBuffer = curSourceText;
                     }
+                    else if (mapper.Generator.CompilationResults.CompilerOptions.GenerateAsNested &&
+                             mapper.Nodes[node_index].node.CodeElement is Compiler.CodeElements.ProgramEnd)
+                    {
+                        //Get procedure division from parent
+                        Node procedureDivision = mapper.Nodes[node_index].node.Parent.Children
+                            .FirstOrDefault(c => c is Compiler.Nodes.ProcedureDivision);
+
+                        if (procedureDivision != null)
+                        {
+                            //for each typecobol procedure declaration in procedure division
+                            foreach (var functionDeclaration in procedureDivision.Children.Where(c => c is FunctionDeclaration))
+                            {
+                                //for each procedure generated in pgm
+                                foreach (var functionIndex in mapper.FunctionDeclarationNodeIndices)
+                                {
+                                    LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[functionIndex] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                                    if (funData.node.QualifiedName.Matches(functionDeclaration.QualifiedName))
+                                    {
+                                        AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                                    }
+                                }
+                            }
+                        }
+                        previousBuffer = curSourceText;
+                    }
                     else
                     {
                         previousBuffer = curSourceText;
@@ -319,10 +345,13 @@ namespace TypeCobol.Codegen.Generators
             }
             //--------------------------------------------------------------------------------------------------------------
             //4)//Flush of Function declation body
-            foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
+            if (!mapper.Generator.CompilationResults.CompilerOptions.GenerateAsNested)
             {
-                LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
+                {
+                    LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;
+                    AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
+                }
             }
             //5)//Generate Line Exceed Diagnostics
             GenerateExceedLineDiagnostics();

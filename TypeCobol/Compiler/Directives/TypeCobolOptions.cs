@@ -30,6 +30,10 @@ namespace TypeCobol.Compiler.Directives
         /// </summary>
         public bool UseAntlrProgramParsing { get; set; }
         /// <summary>
+        /// Generate procedure as nested program instead of stacked
+        /// </summary>
+        public bool GenerateAsNested { get; set; }
+        /// <summary>
         /// Shall we use EUROINFO_LEGACY_REPLACING_SYNTAX snippets for Parsing the Program.
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax
@@ -49,6 +53,7 @@ namespace TypeCobol.Compiler.Directives
             HaltOnMissingCopy = config.HaltOnMissingCopyFilePath != null;
             ExecToStep = config.ExecToStep;
             UseAntlrProgramParsing = config.UseAntlrProgramParsing;
+            GenerateAsNested = config.GenerateAsNested;
             UseEuroInformationLegacyReplacingSyntax = config.UseEuroInformationLegacyReplacingSyntax;
         }
 

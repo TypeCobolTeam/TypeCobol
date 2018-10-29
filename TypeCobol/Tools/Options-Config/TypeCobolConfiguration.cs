@@ -19,6 +19,7 @@ namespace TypeCobol.Tools.Options_Config
         public string ExpandingCopyFilePath;
         public string ExtractedCopiesFilePath;
         public bool UseAntlrProgramParsing;
+        public bool GenerateAsNested;
         public string ReportCopyMoveInitializeFilePath;
         public List<string> CopyFolders = new List<string>();
         public List<string> InputFiles = new List<string>();
@@ -168,7 +169,8 @@ namespace TypeCobol.Tools.Options_Config
                 { "exc|extractusedcopy=", "Generate a file with all COPIES detected by the parser", v => typeCobolConfig.ExtractedCopiesFilePath = v },
                 { "antlrp|antlrprogparse", "Use ANTLR to parse a program", v => typeCobolConfig.UseAntlrProgramParsing = true},
                 { "cmr|copymovereport=", "{PATH} to Report all Move and Initialize statements that target a COPY.", v => typeCobolConfig.ReportCopyMoveInitializeFilePath = v },
-                { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false }
+                { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false },
+                { "n|nestedprocedure", "Generate procedure as nested program instead of stacked", v => typeCobolConfig.GenerateAsNested = true }
             };
             return commonOptions;
         }

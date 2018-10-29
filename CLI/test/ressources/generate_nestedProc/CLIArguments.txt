@@ -1,0 +1,1 @@
+﻿-1 -i input\PGM1.rdz.tcbl -o output\PGM1.rdz.tcbl -d output\error.txt -e rdz -s ..\skeletons.xml -n

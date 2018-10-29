@@ -130,6 +130,11 @@ namespace TypeCobol.LanguageServer
         public bool UseAntlrProgramParsing { get; set; }
 
         /// <summary>
+        /// True to generate procedure as nested program
+        /// </summary>
+        public bool GenerateAsNested { get; set; }
+
+        /// <summary>
         /// True to use Euro-Information replacement rules
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
@@ -154,6 +159,9 @@ namespace TypeCobol.LanguageServer
                 new TypeCobolOptions()); //Initialize a default CompilationProject - has to be recreated after ConfigurationChange Notification
             this.CompilationProject.CompilationOptions.UseAntlrProgramParsing =
                 this.CompilationProject.CompilationOptions.UseAntlrProgramParsing || UseAntlrProgramParsing;
+
+            this.CompilationProject.CompilationOptions.GenerateAsNested =
+                this.CompilationProject.CompilationOptions.GenerateAsNested || GenerateAsNested;
 
             this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax =
                 this.CompilationProject.CompilationOptions.UseEuroInformationLegacyReplacingSyntax ||
@@ -406,6 +414,9 @@ namespace TypeCobol.LanguageServer
 
             if (TypeCobolConfiguration.UseAntlrProgramParsing)
                 UseAntlrProgramParsing = true;
+
+            if (TypeCobolConfiguration.GenerateAsNested)
+                GenerateAsNested = true;
 
             if (TypeCobolConfiguration.UseEuroInformationLegacyReplacingSyntax)
                 UseEuroInformationLegacyReplacingSyntax = true;

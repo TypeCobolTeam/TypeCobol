@@ -49,6 +49,11 @@ namespace TypeCobol.LanguageServer
         public bool UseAntlrProgramParsing { get; set; }
 
         /// <summary>
+        /// True to generate procedure as nested program
+        /// </summary>
+        public bool GenerateAsNested { get; set; }
+
+        /// <summary>
         /// true to use Euro-Information replacement rules
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
@@ -102,6 +107,7 @@ namespace TypeCobol.LanguageServer
             if (LsrSemanticTesting) typeCobolWorkspace.IsLsrSemanticTesting = LsrSemanticTesting;
 
             typeCobolWorkspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
+            typeCobolWorkspace.GenerateAsNested = GenerateAsNested;
             typeCobolWorkspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
             typeCobolWorkspace.TimerDisabledOption = TimerDisabledOption;
             typeCobolWorkspace.LoadingIssueEvent += LoadingIssueDetected;
