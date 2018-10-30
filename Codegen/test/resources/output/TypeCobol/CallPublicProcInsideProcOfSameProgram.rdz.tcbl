@@ -14,7 +14,10 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *PGM1::GetPersonById
+      *To call program efe09aceGetPersonById
+      *Which is generated code for PGM1.GetPersonById
+      *Declared in source file CallPublicProcInsideProcOfSameProgram.rdz
+      *.tcbl
            05 TC-PGM1-efe09ace-Idt   PIC X(08) VALUE 'efe09ace'.
            05 TC-PGM1-efe09ace PROCEDURE-POINTER.
 

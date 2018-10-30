@@ -108,7 +108,7 @@ namespace TypeCobol.Codegen.Nodes {
                         _cache.Add(ptrCheckGuardTextLine);
                         genIndent++;
 
-                            ptrCheckGuard = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), func_lib_name);
+                        ptrCheckGuard = string.Format("{0}PERFORM TC-LOAD-POINTERS-{1}", new string(' ', genIndent * 4), func_lib_name);
                         ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
                         _cache.Add(ptrCheckGuardTextLine);
                         genIndent--;
@@ -117,22 +117,33 @@ namespace TypeCobol.Codegen.Nodes {
                         ptrCheckGuardTextLine = new TextLineSnapshot(-1, ptrCheckGuard, null);
                         _cache.Add(ptrCheckGuardTextLine);
 
-                        callString = string.Format("{0}CALL TC-{1}-{2}{3}", new string(' ', genIndent * 4), func_lib_name, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                        callString = string.Format("*{0}Equivalent to call {1} in module {2}", new string(' ', genIndent * 4), hash + originalProcName, fun_decl.Library);
                         var callTextLine = new TextLineSnapshot(-1, callString, null);
+                        _cache.Add(callTextLine);
+
+                        callString = string.Format("{0}CALL TC-{1}-{2}{3}", new string(' ', genIndent * 4), func_lib_name, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                        callTextLine = new TextLineSnapshot(-1, callString, null);
                         _cache.Add(callTextLine);
                     }
                     else
                     {
+                        var callTextLine = new TextLineSnapshot(-1, "", null);
+                        _cache.Add(callTextLine);
+
+                        callString = string.Format("*Equivalent to call {0} in module {1}", hash + originalProcName, fun_decl.Library);
+                        callTextLine = new TextLineSnapshot(-1, callString, null);
+                        _cache.Add(callTextLine);
+
                         callString = string.Format("CALL TC-{0}-{1}{2}", func_lib_name, hash, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
-                        var callTextLine = new TextLineSnapshot(-1, callString, null);
+                        callTextLine = new TextLineSnapshot(-1, callString, null);
                         _cache.Add(callTextLine);
                     }
                 }
                 else
                 {
-                     callString = string.Format("CALL '{0}{1}'{2}", hash, originalProcName, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
-                     var callTextLine = new TextLineSnapshot(-1, callString, null);
-                     _cache.Add(callTextLine);
+                    callString = string.Format("CALL '{0}{1}'{2}", hash, originalProcName, Node.FunctionCall.Arguments.Length == 0 ? "" : " USING");
+                    var callTextLine = new TextLineSnapshot(-1, callString, null);
+                    _cache.Add(callTextLine);
 
                 }
                 //Rule: TCCODEGEN_FIXFOR_ALIGN_FUNCALL_PARAMS
