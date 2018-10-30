@@ -1,5 +1,7 @@
 ﻿
+using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Text;
 
@@ -433,9 +435,9 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
     // [COBOL 2002]
-    public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>
+    public class TypeDefinition: DataDefinition, CodeElementHolder<DataTypeDescriptionEntry>, Parent<DataDescription>, IDocumentable
     {
-        public TypeDefinition(DataTypeDescriptionEntry entry): base(entry) { }
+        public TypeDefinition(DataTypeDescriptionEntry entry) : base(entry) { }
         public RestrictionLevel RestrictionLevel { get { return this.CodeElement().RestrictionLevel; } }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -482,12 +484,25 @@ namespace TypeCobol.Compiler.Nodes {
             return base.VisitNode(astVisitor) && astVisitor.Visit(this);
         }
 
+        public new DataType DataType {
+            get
+            {
+                return _CodeElement.DataType;
+            }
+        }
+
+        public PassingTypes PassingType { get; set; }
         public IntegerValue LevelNumber { get { return _CodeElement.LevelNumber; } }
         public SymbolDefinition DataName { get { return _CodeElement.DataName; } }
 
         public bool IsOmittable { get { return _CodeElement.IsOmittable; } }
 
-
+        public enum PassingTypes
+        {
+            Input,
+            Output,
+            InOut
+        }
     }
     // [/TYPECOBOL]
 

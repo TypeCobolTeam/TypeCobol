@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
@@ -26,7 +28,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public class Program : Node, CodeElementHolder<ProgramIdentification>, IProcCaller
+    public class Program : Node, CodeElementHolder<ProgramIdentification>, IProcCaller, IDocumentable
     {
         public Program(CodeElement codeElement) : base(codeElement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
