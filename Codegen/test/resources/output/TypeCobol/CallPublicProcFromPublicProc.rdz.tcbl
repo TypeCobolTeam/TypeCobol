@@ -137,6 +137,7 @@
 
       *To call program f1c0385cStartCheckpoint in module PGM1
       *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
@@ -218,12 +219,14 @@
 
       *To call program f1c0385cStartCheckpoint in module PGM1
       *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
 
       *To call program f73481e6CheckContract in module PGM2
       *Which is generated code for PGM2.CheckContract
+      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
        01 TC-PGM2-f73481e6-Item.
           05 TC-PGM2-f73481e6-Idt PIC X(08).
           05 TC-PGM2-f73481e6 PROCEDURE-POINTER.

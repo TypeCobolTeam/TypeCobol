@@ -137,6 +137,7 @@
 
       *To call program f1c0385cStartCheckpoint in module PGM1
       *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file LineExceed5.rdz.cbl
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
@@ -216,6 +217,7 @@
 
       *To call program f1c0385cStartCheckpoint in module PGM1
       *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file LineExceed5.rdz.cbl
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.

@@ -88,6 +88,7 @@
 
       *To call program b179d81bStartCheckpoint in module TCOZCHKP
       *Which is generated code for TCOZCHKP.StartCheckpoint
+      *Declared in source file CallPublicProcFromPrivateProc3.rdz.tcbl
        01 TC-TCOZCHKP-b179d81b-Item.
           05 TC-TCOZCHKP-b179d81b-Idt PIC X(08).
           05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.

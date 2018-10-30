@@ -133,6 +133,7 @@
 
       *To call program cd991005GetPersonById in module PersonService
       *Which is generated code for PersonService.GetPersonById
+      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
        01 TC-PersonSe-cd991005-Item.
           05 TC-PersonSe-cd991005-Idt PIC X(08).
           05 TC-PersonSe-cd991005 PROCEDURE-POINTER.

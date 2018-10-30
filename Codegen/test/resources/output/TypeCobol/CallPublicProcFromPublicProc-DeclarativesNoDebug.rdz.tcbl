@@ -145,6 +145,8 @@
 
       *To call program e3685b69StartCheckpoint in module PGM1
       *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file CallPublicProcFromPublicProc-Declaratives
+      *NoDebug.rdz.tcbl
        01 TC-PGM1-e3685b69-Item.
           05 TC-PGM1-e3685b69-Idt PIC X(08).
           05 TC-PGM1-e3685b69 PROCEDURE-POINTER.
