@@ -131,7 +131,18 @@ namespace CLI.Test
         [TestMethod]
         public void TestOutputFormat()
         {
-            CLITestHelper.Test("outputSignature_1", ReturnCode.Success);
+            CLITestHelper.Test("outputSignature_1", ReturnCode.Warning);
+        }
+
+
+        /// <summary>
+        /// Try parsing with Documentation Generation as output format.
+        /// Should return success.
+        /// </summary>
+        [TestMethod]
+        public void TestDocGen()
+        {
+            CLITestHelper.Test("documentation", ReturnCode.Warning);
         }
 
         /// <summary>
