@@ -29,10 +29,11 @@ namespace TypeCobol.Codegen
         static GeneratorFactoryManager()
         {
             Singleton = new GeneratorFactoryManager();
-            Instance.RegisterFactory(OutputFormat.Cobol85.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new DefaultGenerator(document, destination, skeletons, typeCobolVersion));
+            Instance.RegisterFactory(OutputFormat.Cobol85.ToString(),          (id, document, destination, skeletons, typeCobolVersion) => new DefaultGenerator(document, destination, skeletons, typeCobolVersion));
             Instance.RegisterFactory(OutputFormat.PublicSignatures.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new SignaturesGenerator(destination, typeCobolVersion));
-            Instance.RegisterFactory(OutputFormat.ExpandingCopy.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new ExpandingCopyGenerator(document, destination));
-            Instance.RegisterFactory(OutputFormat.Cobol85Mixed.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new MixedTransformGenerator(document, destination, skeletons, new DefaultGenerator(document, destination, skeletons, typeCobolVersion)));
+            Instance.RegisterFactory(OutputFormat.ExpandingCopy.ToString(),    (id, document, destination, skeletons, typeCobolVersion) => new ExpandingCopyGenerator(document, destination));
+            Instance.RegisterFactory(OutputFormat.Cobol85Mixed.ToString(),     (id, document, destination, skeletons, typeCobolVersion) => new MixedTransformGenerator(document, destination, skeletons, new DefaultGenerator(document, destination, skeletons, typeCobolVersion)));
+            Instance.RegisterFactory(OutputFormat.Documentation.ToString(),    (id, document, destination, skeletons, typeCobolVersion) => new DocumentationGenerator(destination, typeCobolVersion));
         }
 
         /// <summary>
