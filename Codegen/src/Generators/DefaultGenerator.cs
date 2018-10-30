@@ -106,6 +106,7 @@ namespace TypeCobol.Codegen.Generators
             Lines_73_80_Flags = new HashSet<int>();
             //The previous line generation buffer 
             StringSourceText previousBuffer = null;
+            bool insideMultilineComments = false;
             for (int i = 0; i < mapper.LineData.Length; i++)
             {
                 if (i == TypeCobolVersionLineNumber && this.TypeCobolVersion != null)
@@ -128,6 +129,19 @@ namespace TypeCobol.Codegen.Generators
                             previousBuffer = null;
                         }
                         string text = Input[i].Text;
+
+                        // Comment the multilines comments
+
+                        if (text.Trim().StartsWith("*<<"))
+                        {
+                            insideMultilineComments = true;
+                        }
+
+                        if (text.Length >= 7 && insideMultilineComments)
+                        {
+                            text = text.Substring(0, 6) + '*' + text.Substring(7, text.Length - 7);
+                        }
+
                         if (mapper.LineData[i].Buffer != null)
                         {
                             //This line has been assigned a target Buffer
@@ -139,6 +153,11 @@ namespace TypeCobol.Codegen.Generators
                         {
                             targetSourceText.Insert(text, targetSourceText.Size, targetSourceText.Size);
                             targetSourceText.Insert(Environment.NewLine, targetSourceText.Size, targetSourceText.Size);
+                        }
+
+                        if (text.Trim().EndsWith("*>>"))
+                        {
+                            insideMultilineComments = false;
                         }
                     }
                     continue;
