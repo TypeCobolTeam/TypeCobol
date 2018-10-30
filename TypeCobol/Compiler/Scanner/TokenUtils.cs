@@ -84,6 +84,51 @@ namespace TypeCobol.Compiler.Scanner
                 return TokenType.UserDefinedWord;
             }
         }
+        
+        // Formalized Comments only to avoid Formalized Comments tokens detection in Cobol and Cobol tokens in Formalized Comments
+        internal static TokenType GetFormalComTokenTypeFromTokenString(string tokenString)
+        {
+            // The usual token detection method can not be applied because of the two possible keywords per tokenTypes
+            TokenType tokenType;
+
+            switch (tokenString.ToUpper())
+            {
+                case "DESCRIPTION":
+                case "DESC":
+                    tokenType = TokenType.FormComsDescription;
+                    break;
+                case "PARAMETERS":
+                case "PARAMS":
+                    tokenType = TokenType.FormComsParameters;
+                    break;
+                case "DEPRECATED":
+                case "DEPREC":
+                    tokenType = TokenType.FormComsDeprecated;
+                    break;
+                case "REPLACEDBY":
+                case "REPLBY":
+                    tokenType = TokenType.FormComsReplacedBy;
+                    break;
+                case "RESTRICTION":
+                case "RSTRIC":
+                    tokenType = TokenType.FormComsRestriction;
+                    break;
+                case "NEED":
+                    tokenType = TokenType.FormComsNeed;
+                    break;
+                case "SEE":
+                    tokenType = TokenType.FormComsSee;
+                    break;
+                case "TODO":
+                    tokenType = TokenType.FormComsToDo;
+                    break;
+                default:
+                    tokenType = TokenType.UserDefinedWord;
+                    break;
+            }
+
+            return tokenType;
+        }
 
         public static Regex COBOL_INTRINSIC_FUNCTIONS = new Regex("^(ACOS|ANNUITY|ASIN|ATAN|CHAR|COS|CURRENT-DATE|DATE-OF-INTEGER|DATE-TO-YYYYMMDD|DAY-OF-INTEGER|DAY-TO-YYYYDDD|DISPLAY-OF|FACTORIAL|INTEGER|INTEGER-OF-DATE|INTEGER-OF-DAY|INTEGER-PART|LENGTH|LOG|LOG10|LOWER-CASE|MAX|MEAN|MEDIAN|MIDRANGE|MIN|MOD|NATIONAL-OF|NUMVAL|NUMVAL-C|ORD|ORD-MAX|ORD-MIN|PRESENT-VALUE|RANDOM|RANGE|REM|REVERSE|SIN|SQRT|STANDARD-DEVIATION|SUM|TAN|ULENGTH|UPOS|UPPER-CASE|USUBSTR|USUPPLEMENTARY|UVALID|UWIDTH|VARIANCE|WHEN-COMPILED|YEAR-TO-YYYY)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -127,6 +172,8 @@ namespace TypeCobol.Compiler.Scanner
                     return "TypeCobol keyword";
                 case TokenFamily.TypeCobolOperators:
                     return "TypeCobol Operators";
+                case TokenFamily.FormalizedCommentsFamily:
+                    return "Formalized Comments elements";  // Can be keyword or open/close markup
                 default:
                     return "...";
             }
