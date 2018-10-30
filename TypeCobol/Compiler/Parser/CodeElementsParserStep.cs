@@ -251,6 +251,39 @@ namespace TypeCobol.Compiler.Parser
                         CodeElement codeElement = codeElementBuilder.CodeElement;
                         if (codeElement != null)
                         {
+                            // Add the multiline comments Token to the consumed Tokens in order to comment them in CodeGen
+                            if (!codeElement.IsInsideCopy() && codeElement.ConsumedTokens.Count >= 2)
+                            {
+                                bool tokenHasBeenInjected = false;
+
+                                // Do not iterate on a list that will be modified ☻
+                                int stopLine = codeElement.ConsumedTokens.Last().Line - 1;
+
+                                for (int lineIndex = codeElement.ConsumedTokens[0].Line -1 ;
+                                    lineIndex < stopLine && lineIndex < documentLines.Count;
+                                    lineIndex++)
+                                {
+                                    var multilineTokens = documentLines[lineIndex].SourceTokens.Where(t =>
+                                        t.TokenType == TokenType.MultilinesCommentsStart ||
+                                        t.TokenType == TokenType.MultilinesCommentsStop ||
+                                        t.TokenType == TokenType.CommentLine);
+
+
+                                    foreach (var multilineToken in multilineTokens)
+                                    {
+                                        tokenHasBeenInjected = true;
+                                        codeElement.ConsumedTokens.Add(multilineToken);
+                                    }
+                                }
+
+                                if (tokenHasBeenInjected)
+                                {
+                                    codeElement.ConsumedTokens = codeElement.ConsumedTokens.OrderBy(t => t.Line)
+                                        .ThenBy(t => t.Column).ToList();
+                                }
+                            }
+
+
                             // Attach consumed tokens and main document line numbers information to the code element
                             if (codeElement.ConsumedTokens.Count == 0)
                             {
