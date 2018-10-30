@@ -38,3 +38,7 @@ Category;Code;Severity;MessageTemplate;Document;PageNumber;ReferenceText
 7;37;2;Warning: {0};0;0;
 5;38;1;Error during Cobol generation: generated line is after column 72 in fixed format or line exceed 80 columns;0;0;Page
 2;39;1;QuestionMark should be followed by a space;0;0;Page
+2;40;2;Wrong keyword given for formalized comment;0;0;Page
+2;41;1;Formalized comment marckups should start on column 7;0;0;Page
+2;42;1;Multilines comment marckups should start on column 7;0;0;Page
+5;43;1;Formalized Comment missplaced;0;0;Page
