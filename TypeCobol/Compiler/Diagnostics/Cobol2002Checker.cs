@@ -9,6 +9,8 @@ using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
 using Analytics;
+using Castle.Core.Internal;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -98,6 +100,19 @@ namespace TypeCobol.Compiler.Diagnostics
                 foreach (var sub in typeDefinition.Children)
                 {
                     CheckForValueClause(sub, typeDefinition.QualifiedName);
+                }
+            }
+            // Add a warning if a parameters field is set inside the formalized comment
+            if (typeDefinition.CodeElement().FormalizedCommentDocumentation != null &&
+                !typeDefinition.CodeElement().FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
+            {
+                var token = typeDefinition.CodeElement().ConsumedTokens
+                    .FirstOrDefault(t => t.TokenType == TokenType.FormComsParameters);
+                if (token != null)
+                {
+                    DiagnosticUtils.AddError(typeDefinition.CodeElement,
+                        "Type Definition does not support Parameters field",
+                        token, code: MessageCode.Warning);
                 }
             }
         }
