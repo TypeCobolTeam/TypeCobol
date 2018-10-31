@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 
 namespace TypeCobol.Test
@@ -17,15 +18,27 @@ namespace TypeCobol.Test
 
         /// <summary>
         /// Compare result and expectedResult line by line.
-        /// If there is at least one difference, throw an exception for the test named by the parameter testName
+        /// If there is at least one difference, throw an exception for the test named by the parameter testName or 
+        /// Replace ExpectedResult content if content is different and boolean "autoReplace" is true
         /// </summary>
         /// <param name="testName">Name of the test</param>
         /// <param name="result"></param>
         /// <param name="expectedResult"></param>
+        /// <param name="expectedResultPath"></param>
         /// <returns></returns>
-        public static void compareLines(string testName, string result, string expectedResult)
+        public static void compareLines(string testName, string result, string expectedResult, string expectedResultPath)
         {
             StringBuilder errors = new StringBuilder();
+
+            //Set to true to automaticaly replace content in ExpectedResult File
+            bool autoReplace = false;
+
+            if (testName == string.Empty && result == string.Empty && expectedResult == string.Empty &&
+                expectedResultPath == string.Empty)
+            {
+                if (autoReplace)
+                    Assert.Fail("Set AutoReplace to false in TestUtils.compareLines()\n\n");
+            }
 
             result = Regex.Replace(result, "(?<!\r)\n", "\r\n");
             expectedResult = Regex.Replace(expectedResult, "(?<!\r)\n", "\r\n");
@@ -41,11 +54,33 @@ namespace TypeCobol.Test
 
             if (result != expectedResult)
             {
-                errors.Append("result != expectedResult  In test:" + testName)
-                      .AppendLine(" at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
-                errors.Append("=== RESULT ==========\n" + result + "====================");
+                if (autoReplace && expectedResultPath != null)
+                {
+                    replaceLines(result, expectedResultPath);
+                    errors.AppendLine("result != expectedResult  In test:" + testName);
+                    errors.AppendLine("at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
+                    errors.AppendLine("Output file has been modified\n");
+                    errors.AppendLine("Please rerun unit test\n");
+                }
+                else
+                {
+                    errors.Append("result != expectedResult  In test:" + testName)
+                        .AppendLine(" at line" + (linefaults.Count > 1 ? "s" : "") + ": " + string.Join(",", linefaults));
+                    errors.AppendLine("See TestUtils.cs compareLines method to autoreplace ExpectedResult");
+                    errors.Append("=== RESULT ==========\n" + result + "====================");
+                }
                 throw new Exception(errors.ToString());
+
             }
+        }
+
+        private static void replaceLines(string result, string expectedResultPath)
+        {
+            using (StreamWriter writer = new StreamWriter(expectedResultPath))
+            {
+                writer.Write(result);
+            }
+
         }
 
         public static string GetReportDirectoryPath()

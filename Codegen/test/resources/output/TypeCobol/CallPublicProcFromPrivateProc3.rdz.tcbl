@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. TCOZCHKP.
        DATA DIVISION.
                                                              
@@ -7,7 +7,9 @@
            88 TC-TCOZCHKP-FctList-IsLoaded      VALUE 'OK'.
        01 TC-TCOZCHKP-PntTab.
            05 TC-TCOZCHKP-PntNbr         PIC S9(04) COMP VALUE 1.
-      *TCOZCHKP::StartCheckpoint
+      *To call program b179d81bStartCheckpoint
+      *Which is generated code for TCOZCHKP.StartCheckpoint
+      *Declared in source file CallPublicProcFromPrivateProc3.rdz.tcbl
            05 TC-TCOZCHKP-b179d81b-Idt   PIC X(08) VALUE 'b179d81b'.
            05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
 
@@ -63,6 +65,8 @@
        PROGRAM-ID. d58351d5testos.
        data division.
        working-storage section.
+      *TCOZCHKP.testos  - No Params
+                               
        01 TC-TCOZCHKP pic X(08) value 'TCOZCHKP'.
 
        01 TC-Call          PIC X     VALUE 'T'.
@@ -72,6 +76,7 @@
                             'U' thru X'FF'.
        01 var1 pic X.
        LINKAGE SECTION.
+      *TCOZCHKP.testos  - No Params
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -81,12 +86,15 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *TCOZCHKP::StartCheckpoint
+      *To call program b179d81bStartCheckpoint in module TCOZCHKP
+      *Which is generated code for TCOZCHKP.StartCheckpoint
+      *Declared in source file CallPublicProcFromPrivateProc3.rdz.tcbl
        01 TC-TCOZCHKP-b179d81b-Item.
           05 TC-TCOZCHKP-b179d81b-Idt PIC X(08).
           05 TC-TCOZCHKP-b179d81b PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
+      *TCOZCHKP.testos  - No Params
            PERFORM TC-INITIALIZATIONS
       *    call TCOZCHKP::StartCheckpoint input var1
            
@@ -94,6 +102,7 @@
              OR TC-TCOZCHKP-b179d81b-Idt not = 'b179d81b'
                PERFORM TC-LOAD-POINTERS-TCOZCHKP
            END-IF
+      *    Equivalent to call b179d81bStartCheckpoint in module TCOZCHKP
            CALL TC-TCOZCHKP-b179d81b USING
                                  var1
            end-call

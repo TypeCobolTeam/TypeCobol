@@ -206,6 +206,17 @@ namespace TypeCobol.Test {
             Assert.IsTrue(nbOfTests > 0, "No tests found");
         }
 
+        /// <summary>
+        /// Check only files with *.tcbl extensions
+        /// </summary>
+        [TestMethod]
+        [TestCategory("Parsing")]
+        [TestProperty("Time", "fast")]
+        public void TCBLAutoReplaceSecurityTest()
+        {
+            TestUtils.compareLines(string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
 
 #if EUROINFO_RULES
         [TestMethod]

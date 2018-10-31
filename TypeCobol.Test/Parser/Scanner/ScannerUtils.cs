@@ -103,12 +103,12 @@ namespace TypeCobol.Test.Parser.Scanner
 
         public static void CheckWithResultFile(string result, string testName)
         {
+            string expectedResult;
             using (StreamReader reader = new StreamReader(PlatformUtils.GetStreamForProjectFile(@"Parser\Scanner\ResultFiles\" + testName + ".txt")))
             {
-                string expectedResult = reader.ReadToEnd();
-                
-                TestUtils.compareLines(testName, result, expectedResult); 
+                expectedResult = reader.ReadToEnd();
             }
+            TestUtils.compareLines(testName, result, expectedResult, PlatformUtils.GetPathForProjectFile(@"Parser\Scanner\ResultFiles\" + testName + ".txt"));
         }
     }
 }

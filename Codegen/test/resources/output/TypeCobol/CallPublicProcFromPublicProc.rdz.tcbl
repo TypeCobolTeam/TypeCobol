@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
        DATA DIVISION.
                                                          
@@ -7,7 +7,9 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *PGM1::StartCheckpoint
+      *To call program f1c0385cStartCheckpoint
+      *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
            05 TC-PGM1-f1c0385c-Idt   PIC X(08) VALUE 'f1c0385c'.
            05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
 
@@ -53,7 +55,9 @@
            88 TC-PGM2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM2-PntTab.
            05 TC-PGM2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *PGM2::CheckContract
+      *To call program f73481e6CheckContract
+      *Which is generated code for PGM2.CheckContract
+      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
            05 TC-PGM2-f73481e6-Idt   PIC X(08) VALUE 'f73481e6'.
            05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
 
@@ -110,6 +114,8 @@
        PROGRAM-ID. f73481e6CheckContract.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+      *PGM1.CheckContract - Params :
+      *		input(param1: pic X)
        01 TC-PGM1 pic X(08) value 'PGM1'.
 
        01 TC-Call          PIC X     VALUE 'T'.
@@ -118,6 +124,8 @@
                             X'00' thru 'S'
                             'U' thru X'FF'.
        LINKAGE SECTION.
+      *PGM1.CheckContract - Params :
+      *		input(param1: pic X)
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -127,7 +135,9 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *PGM1::StartCheckpoint
+      *To call program f1c0385cStartCheckpoint in module PGM1
+      *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
@@ -135,6 +145,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE param1
            .
+      *PGM1.CheckContract - Params :
+      *		input(param1: pic X)
            PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input param1
            
@@ -142,6 +154,7 @@
              OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
+      *    Equivalent to call f1c0385cStartCheckpoint in module PGM1
            CALL TC-PGM1-f1c0385c USING
                                  param1
            end-call
@@ -181,6 +194,8 @@
        PROGRAM-ID. bfc74757testos.
        data division.
        working-storage section.
+      *PGM1.testos  - No Params
+                               
        01 TC-PGM2 pic X(08) value 'PGM2'.
 
        01 TC-PGM1 pic X(08) value 'PGM1'.
@@ -192,6 +207,7 @@
                             'U' thru X'FF'.
        01 var1 pic X.
        LINKAGE SECTION.
+      *PGM1.testos  - No Params
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -201,17 +217,22 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *PGM1::StartCheckpoint
+      *To call program f1c0385cStartCheckpoint in module PGM1
+      *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
        01 TC-PGM1-f1c0385c-Item.
           05 TC-PGM1-f1c0385c-Idt PIC X(08).
           05 TC-PGM1-f1c0385c PROCEDURE-POINTER.
 
-      *PGM2::CheckContract
+      *To call program f73481e6CheckContract in module PGM2
+      *Which is generated code for PGM2.CheckContract
+      *Declared in source file CallPublicProcFromPublicProc.rdz.tcbl
        01 TC-PGM2-f73481e6-Item.
           05 TC-PGM2-f73481e6-Idt PIC X(08).
           05 TC-PGM2-f73481e6 PROCEDURE-POINTER.
        PROCEDURE DIVISION
            .
+      *PGM1.testos  - No Params
            PERFORM TC-INITIALIZATIONS
       *    call PGM1::StartCheckpoint input var1
            
@@ -219,6 +240,7 @@
              OR TC-PGM1-f1c0385c-Idt not = 'f1c0385c'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
+      *    Equivalent to call f1c0385cStartCheckpoint in module PGM1
            CALL TC-PGM1-f1c0385c USING
                                  var1
            end-call
@@ -230,6 +252,7 @@
              OR TC-PGM2-f73481e6-Idt not = 'f73481e6'
                PERFORM TC-LOAD-POINTERS-PGM2
            END-IF
+      *    Equivalent to call f73481e6CheckContract in module PGM2
            CALL TC-PGM2-f73481e6 USING
                                  var1
            end-call

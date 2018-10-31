@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. TestMe.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
@@ -9,7 +9,9 @@
            88 TC-TestMe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-TestMe-PntTab.
            05 TC-TestMe-PntNbr         PIC S9(04) COMP VALUE 1.
-      *TestMe::StartCheckpoint
+      *To call program f18df3d0StartCheckpoint
+      *Which is generated code for TestMe.StartCheckpoint
+      *Declared in source file ProcPublicWithoutDataDivision.rdz.tcbl
            05 TC-TestMe-f18df3d0-Idt   PIC X(08) VALUE 'f18df3d0'.
            05 TC-TestMe-f18df3d0 PROCEDURE-POINTER.
 
