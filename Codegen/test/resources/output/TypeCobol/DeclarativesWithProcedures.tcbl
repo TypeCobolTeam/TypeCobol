@@ -24,7 +24,9 @@
            88 TC-DVZF0OSM-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZF0OSM-PntTab.
            05 TC-DVZF0OSM-PntNbr         PIC S9(04) COMP VALUE 1.
-      *DVZF0OSM::Titi
+      *To call program d6385c17Titi
+      *Which is generated code for DVZF0OSM.Titi
+      *Declared in source file DeclarativesWithProcedures.tcbl
            05 TC-DVZF0OSM-d6385c17-Idt   PIC X(08) VALUE 'd6385c17'.
            05 TC-DVZF0OSM-d6385c17 PROCEDURE-POINTER.
 

@@ -37,19 +37,29 @@
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 5.
-      *DVZZDATE::currentDate
+      *To call program db42865ccurrentDate
+      *Which is generated code for DVZZDATE.currentDate
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-db42865c-Idt   PIC X(08) VALUE 'db42865c'.
            05 TC-DVZZDATE-db42865c PROCEDURE-POINTER.
-      *DVZZDATE::currentDateDB2
+      *To call program fa5ee5e9currentDateDB2
+      *Which is generated code for DVZZDATE.currentDateDB2
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-fa5ee5e9-Idt   PIC X(08) VALUE 'fa5ee5e9'.
            05 TC-DVZZDATE-fa5ee5e9 PROCEDURE-POINTER.
-      *DVZZDATE::currentDateJulian
+      *To call program cf63e86fcurrentDateJulian
+      *Which is generated code for DVZZDATE.currentDateJulian
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-cf63e86f-Idt   PIC X(08) VALUE 'cf63e86f'.
            05 TC-DVZZDATE-cf63e86f PROCEDURE-POINTER.
-      *DVZZDATE::currentDateFreeFormat
+      *To call program cfc290cecurrentDateFreeFormat
+      *Which is generated code for DVZZDATE.currentDateFreeFormat
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-cfc290ce-Idt   PIC X(08) VALUE 'cfc290ce'.
            05 TC-DVZZDATE-cfc290ce PROCEDURE-POINTER.
-      *DVZZDATE::currentDateString
+      *To call program b8721d20currentDateString
+      *Which is generated code for DVZZDATE.currentDateString
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
            05 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER.
 

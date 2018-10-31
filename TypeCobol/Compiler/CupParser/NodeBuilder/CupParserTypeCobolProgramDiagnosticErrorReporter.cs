@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSCupRuntime;
 using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
@@ -78,7 +79,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             if (curToken.value != null)
                 return curToken;
             //lookback in the stack to find a Symbol having a valid value.
-            System.Collections.Stack stack = ((TypeCobolProgramParser)parser).getParserStack();
+            StackList<Symbol> stack = ((TypeCobolProgramParser)parser).getParserStack();
             Symbol lastValid = null;
             foreach (Symbol s in stack)
             {
@@ -104,14 +105,12 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             CupParserDiagnostic diagnostic = new CupParserDiagnostic(msg, validSymbol, null);
             AddDiagnostic(diagnostic);
             //Try to add the last encountered statement in the stack if it is not already entered. 
-            System.Collections.Stack stack = tcpParser.getParserStack();
-            object[] items = stack.ToArray();
-            foreach (var item in items)
+            StackList<Symbol> stack = tcpParser.getParserStack();
+            foreach (var symbol in stack)
             {
-                Symbol symbol = item as Symbol;
                 if (symbol.value is StatementElement)
                 {
-                    lr_parser stmtParser = CloneParser(parser, (int)TypeCobolProgramSymbols.StatementEntryPoint,
+                    lr_parser stmtParser = CloneParser(parser, TypeCobolProgramSymbols.StatementEntryPoint,
                         symbol.value as CodeElement, true);
                     stmtParser.parse();
                     break;

@@ -6,7 +6,9 @@
            88 TC-DVZZOSM7-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZOSM7-PntTab.
            05 TC-DVZZOSM7-PntNbr         PIC S9(04) COMP VALUE 1.
-      *DVZZOSM7::StartCheckpoint
+      *To call program a711ebb5StartCheckpoint
+      *Which is generated code for DVZZOSM7.StartCheckpoint
+      *Declared in source file QualifReferenceModifierProc.rdz.cbl
            05 TC-DVZZOSM7-a711ebb5-Idt   PIC X(08) VALUE 'a711ebb5'.
            05 TC-DVZZOSM7-a711ebb5 PROCEDURE-POINTER.
 
