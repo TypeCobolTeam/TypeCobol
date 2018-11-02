@@ -51,6 +51,7 @@ namespace TypeCobol.Compiler.Nodes {
 	        attributes["incrementDirection"] = new incrementDirectionAttribute();
 	        attributes["needCompute"] = new NeedComputeAttribute();
 	        attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
+            attributes["global"] = new GlobalAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
@@ -205,6 +206,22 @@ namespace TypeCobol.Compiler.Nodes {
 	    }
     }
 
+    internal class GlobalAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var dataDef = o as DataDefinition;
+            var data = dataDef?.CodeElement as DataDescriptionEntry;
+
+            if (data == null) return null;
+            if (data.Global != null && data.Global.Value)
+            {
+                return " " + data.Global.Token.Text;
+            }
+            else
+                return "";
+        }
+    }
 
     internal class TypeCobolAttribute: Attribute
     {

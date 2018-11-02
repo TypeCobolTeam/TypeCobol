@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
+using CSCupRuntime;
 using TUVienna.CS_CUP.Runtime;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
@@ -37,12 +38,12 @@ namespace TypeCobol.Compiler.CupCommon
             Diagnostics.Add(diag);
         }
 
-        public virtual bool ReportFatalError(lr_parser parser, Stack stack, string message, object info)
+        public virtual bool ReportFatalError(lr_parser parser, StackList<Symbol> stack, string message, object info)
         {
             return true;
         }
 
-        public virtual bool ReportError(lr_parser parser, Stack stack, string message, object info)
+        public virtual bool ReportError(lr_parser parser, StackList<Symbol> stack, string message, object info)
         {
             return true;
         }
@@ -53,7 +54,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// <param name="parser">The parser stack</param>
         /// <param name="curToken">The current Symbol</param>
         /// <returns>The first valid symbol if any, null otherwise</returns>
-        protected virtual Symbol GetParserValidStackSymbol(lr_parser parser, Stack stack, Symbol curToken)
+        protected virtual Symbol GetParserValidStackSymbol(lr_parser parser, StackList<Symbol> stack, Symbol curToken)
         {
             if (curToken != null && curToken.value != null)
                 return curToken;
@@ -78,7 +79,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// <param name="stack">The parser stack</param>
         /// <param name="curToken">The Token to check</param>
         /// <returns>true if the token is consumed, false otherwise</returns>
-        public bool IsTokenConsumed(lr_parser parser, Stack stack, Symbol curToken)
+        public bool IsTokenConsumed(lr_parser parser, StackList<Symbol> stack, Symbol curToken)
         {
             if (curToken?.value == null)
                 return false;
@@ -93,7 +94,7 @@ namespace TypeCobol.Compiler.CupCommon
             get; set;
         }
 
-        public virtual bool SyntaxError(lr_parser parser, Stack stack, Symbol curToken)
+        public virtual bool SyntaxError(lr_parser parser, StackList<Symbol> stack, Symbol curToken)
         {
             curToken = GetParserValidStackSymbol(parser, stack, curToken);
             string input = "<unknown input>";
@@ -131,7 +132,7 @@ namespace TypeCobol.Compiler.CupCommon
             return true;
         }
 
-        public virtual bool UnrecoveredSyntaxError(lr_parser parser, Stack stack, Symbol curToken)
+        public virtual bool UnrecoveredSyntaxError(lr_parser parser, StackList<Symbol> stack, Symbol curToken)
         {
             return true;
         }
@@ -165,7 +166,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// <param name="parser">The parser</param>
         /// <param name="curToken">The Symbol</param>
         /// <returns>The array of expected symbols</returns>
-        protected internal static List<string> ExpectedSymbols(lr_parser parser, Stack stack, Symbol curToken)
+        protected internal static List<string> ExpectedSymbols(lr_parser parser, StackList<Symbol> stack, Symbol curToken)
         {
             var actionTab = parser.action_table();
             int state = ((Symbol)stack.Peek()).parse_state;

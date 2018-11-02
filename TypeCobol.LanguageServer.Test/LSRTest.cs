@@ -292,5 +292,14 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
         }
+
+        [TestMethod]
+        public void LSRAutoReplaceSecurityTest()
+        {
+            if (CLI.Test.UnitTestHelper.CompareDirectory(null, null, "TypeCobol.LanguageServer.Test\\LSRTests"))
+            {
+                Assert.Fail("Set AutoReplace to false in UnitTestHelper.CompareDirectory()\n\n");
+            }
+        }
     }
 }

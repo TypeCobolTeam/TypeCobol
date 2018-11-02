@@ -4,7 +4,6 @@ namespace TypeCobol.Compiler.CupParser;
 
 using TUVienna.CS_CUP.Runtime;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CupParser.NodeBuilder;
@@ -40,11 +39,11 @@ parser code {:
   // get the current state of the parser.
   public int getParserState() 
   {
-	return ((Symbol)stack.Peek()).parse_state;	
+	return stack.Peek().parse_state;	
   }
 
   //get the parser stack.
-  public Stack getParserStack() 
+  public StackList<Symbol> getParserStack() 
   {
 	return stack;	
   }

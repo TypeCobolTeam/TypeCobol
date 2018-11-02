@@ -44,11 +44,15 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *Callee::MyPublicProcedure
+      *To call program ebb060eaMyPublicProcedure in module Callee
+      *Which is generated code for Callee.MyPublicProcedure
+      *Declared in source file Callee.rdz.tcbl
        01 TC-Callee-ebb060ea-Item.
           05 TC-Callee-ebb060ea-Idt PIC X(08).
           05 TC-Callee-ebb060ea PROCEDURE-POINTER.
-      *Callee::check
+      *To call program ca0ab46ccheck in module Callee
+      *Which is generated code for Callee.check
+      *Declared in source file Callee.rdz.tcbl
        01 TC-Callee-ca0ab46c-Item.
           05 TC-Callee-ca0ab46c-Idt PIC X(08).
           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
@@ -86,6 +90,7 @@
              OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
+      *    Equivalent to call ebb060eaMyPublicProcedure in module Callee
            CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
@@ -102,6 +107,7 @@
              OR TC-Callee-ebb060ea-Idt not = 'ebb060ea'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
+      *    Equivalent to call ebb060eaMyPublicProcedure in module Callee
            CALL TC-Callee-ebb060ea USING
                                  somedate
                                  someformat
@@ -155,6 +161,7 @@
              OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
+      *    Equivalent to call ca0ab46ccheck in module Callee
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call

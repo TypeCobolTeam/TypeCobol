@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
        data division.
@@ -21,7 +21,10 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *DVZF0OS2::Foo
+      *To call program bdb3e928Foo in module DVZF0OS2
+      *Which is generated code for DVZF0OS2.Foo
+      *Declared in source file MisPlaceCopyInstrWithProcMetaData2.rdz.tc
+      *bl
        01 TC-DVZF0OS2-bdb3e928-Item.
           05 TC-DVZF0OS2-bdb3e928-Idt PIC X(08).
           05 TC-DVZF0OS2-bdb3e928 PROCEDURE-POINTER.
@@ -40,6 +43,7 @@
              OR TC-DVZF0OS2-bdb3e928-Idt not = 'bdb3e928'
                PERFORM TC-LOAD-POINTERS-DVZF0OS2
            END-IF
+      *    Equivalent to call bdb3e928Foo in module DVZF0OS2
            CALL TC-DVZF0OS2-bdb3e928
            end-call
                              
@@ -84,7 +88,10 @@
            88 TC-DVZF0OS2-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZF0OS2-PntTab.
            05 TC-DVZF0OS2-PntNbr         PIC S9(04) COMP VALUE 1.
-      *DVZF0OS2::Foo
+      *To call program bdb3e928Foo
+      *Which is generated code for DVZF0OS2.Foo
+      *Declared in source file MisPlaceCopyInstrWithProcMetaData2.rdz.tc
+      *bl
            05 TC-DVZF0OS2-bdb3e928-Idt   PIC X(08) VALUE 'bdb3e928'.
            05 TC-DVZF0OS2-bdb3e928 PROCEDURE-POINTER.
 

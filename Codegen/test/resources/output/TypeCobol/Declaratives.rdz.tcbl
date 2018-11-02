@@ -13,7 +13,9 @@
            88 TC-Declarat-FctList-IsLoaded      VALUE 'OK'.
        01 TC-Declarat-PntTab.
            05 TC-Declarat-PntNbr         PIC S9(04) COMP VALUE 1.
-      *Declarat::MyProc
+      *To call program da2f236eMyProc
+      *Which is generated code for DeclarativesTest.MyProc
+      *Declared in source file Declaratives.rdz.tcbl
            05 TC-Declarat-da2f236e-Idt   PIC X(08) VALUE 'da2f236e'.
            05 TC-Declarat-da2f236e PROCEDURE-POINTER.
 

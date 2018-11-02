@@ -1,4 +1,4 @@
-﻿      *Declaratives and no paragraph under procedure division
+      *Declaratives and no paragraph under procedure division
       *Debug is active
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
@@ -32,7 +32,10 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *Callee::check
+      *To call program ca0ab46ccheck in module Callee
+      *Which is generated code for Callee.check
+      *Declared in source file ProcedureCall-PublicAndDeclaratives4.rdz.
+      *tcbl
        01 TC-Callee-ca0ab46c-Item.
           05 TC-Callee-ca0ab46c-Idt PIC X(08).
           05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
@@ -58,6 +61,7 @@
              OR TC-Callee-ca0ab46c-Idt not = 'ca0ab46c'
                PERFORM TC-LOAD-POINTERS-Callee
            END-IF
+      *    Equivalent to call ca0ab46ccheck in module Callee
            CALL TC-Callee-ca0ab46c USING
                                  somedate
            end-call
@@ -102,7 +106,10 @@
            88 TC-Callee-FctList-IsLoaded      VALUE 'OK'.
        01 TC-Callee-PntTab.
            05 TC-Callee-PntNbr         PIC S9(04) COMP VALUE 1.
-      *Callee::check
+      *To call program ca0ab46ccheck
+      *Which is generated code for Callee.check
+      *Declared in source file ProcedureCall-PublicAndDeclaratives4.rdz.
+      *tcbl
            05 TC-Callee-ca0ab46c-Idt   PIC X(08) VALUE 'ca0ab46c'.
            05 TC-Callee-ca0ab46c PROCEDURE-POINTER.
 

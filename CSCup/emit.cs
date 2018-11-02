@@ -355,7 +355,7 @@ public class emit {
 		     pre("do_action") + "(");
       cout.WriteLine("    int                        " + pre("act_num,"));
       cout.WriteLine("    TUVienna.CS_CUP.Runtime.lr_parser " + pre("parser,"));
-      cout.WriteLine("    System.Collections.Stack            xstack1,");
+      cout.WriteLine("    StackList<Symbol>            xstack1,");
       cout.WriteLine("    int                        " + pre("top)"));
     //  cout.WriteLine("    throws java.lang.Exception");
       cout.WriteLine("    {");
@@ -364,7 +364,7 @@ public class emit {
       /* New declaration!! now return Symbol
 	 6/13/96 frankf */
       cout.WriteLine("      /* Symbol object for return from actions */");
-      cout.WriteLine("      mStack "+pre("stack")+" =new mStack(xstack1);");
+      cout.WriteLine("      StackList<Symbol> " + pre("stack") + " =  xstack1;");
       cout.WriteLine("      TUVienna.CS_CUP.Runtime.Symbol " + pre("result") + ";");
       cout.WriteLine();
 
@@ -410,13 +410,23 @@ public class emit {
 	    int index = prod.rhs_length() - i - 1; // last rhs is on top.
 	    cout.WriteLine("              " + "// propagate RESULT from " +
 			s.name());
+
+                    string indexDecals;
+                    if (index != 0)
+                    {
+                        indexDecals = "-" + index;
+                    } else
+                    {
+                        indexDecals = "";
+                    }
+
 	    cout.WriteLine("              " + "if ( " +
-	      "((TUVienna.CS_CUP.Runtime.Symbol) " + emit.pre("stack") + ".elementAt("
-              + emit.pre("top") + "-" + index + ")).value != null )");
+	      "(" + emit.pre("stack") + ".ElementAtFromBottom("
+              + emit.pre("top") + indexDecals + ")).value != null )");
 	    cout.WriteLine("                " + "RESULT = " +
 	      "(" + prod.lhs().the_symbol().stack_type() + ") " +
-	      "((TUVienna.CS_CUP.Runtime.Symbol) " + emit.pre("stack") + ".elementAt("
-              + emit.pre("top") + "-" + index + ")).value;");
+	      "( " + emit.pre("stack") + ".ElementAtFromBottom("
+              + emit.pre("top") + indexDecals + ")).value;");
 	  }
 
         /* if there is an action string, emit it */
@@ -433,15 +443,24 @@ public class emit {
 	  if (emit.lr_values()) {	    
 	    int loffset;
 	    string leftstring, rightstring;
-	    int roffset = 0;
-	    rightstring = "((TUVienna.CS_CUP.Runtime.Symbol)" + emit.pre("stack") + ".elementAt(" + 
-	      emit.pre("top") + "-" + roffset + ")).right";	  
+
+	    rightstring = "(" + emit.pre("stack") + ".ElementAtFromBottom(" +
+	      emit.pre("top") + ")).right";	  
 	    if (prod.rhs_length() == 0) 
 	      leftstring = rightstring;
 	    else {
 	      loffset = prod.rhs_length() - 1;
-	      leftstring = "((TUVienna.CS_CUP.Runtime.Symbol)" + emit.pre("stack") + ".elementAt(" + 
-		emit.pre("top") + "-" + loffset + ")).left";	  
+            string loffsetText;
+            if (loffset != 0)
+            {
+                loffsetText = "-" + loffset;
+            } else
+            {
+                loffsetText = "";
+            }
+
+	      leftstring = "(" + emit.pre("stack") + ".ElementAtFromBottom(" +
+		emit.pre("top") + loffsetText + ")).left";	  
 	    }
 	    cout.WriteLine("              " + pre("result") + " = new TUVienna.CS_CUP.Runtime.Symbol(" + 
 			prod.lhs().the_symbol().index() + "/*" +
@@ -866,6 +885,8 @@ public class emit {
       while (myEnum.MoveNext())
 	cout.WriteLine("using " + myEnum.Current.ToString() + ";");
 
+    cout.WriteLine("using CSCupRuntime;"); //For StackList
+
       /* class header */
       cout.WriteLine();
       cout.WriteLine("/** "+version.title_str+" generated parser.");
@@ -911,10 +932,9 @@ public class emit {
       cout.WriteLine("  public override TUVienna.CS_CUP.Runtime.Symbol do_action(");
       cout.WriteLine("    int                        act_num,");
       cout.WriteLine("    TUVienna.CS_CUP.Runtime.lr_parser parser,");
-      cout.WriteLine("    System.Collections.Stack            xstack1,");
+      cout.WriteLine("    StackList<Symbol>            CUP_parser_stack,");
       cout.WriteLine("    int                        top)");
       cout.WriteLine("  {");
-      cout.WriteLine("  mStack CUP_parser_stack= new mStack(xstack1);");
       cout.WriteLine("    /* call code in generated class */");
       cout.WriteLine("    return action_obj." + pre("do_action(") +
                   "act_num, parser, stack, top);");
