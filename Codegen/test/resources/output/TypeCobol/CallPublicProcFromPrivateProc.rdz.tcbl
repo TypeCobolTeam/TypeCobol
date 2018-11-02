@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. PGM1.
 
        DATA DIVISION.
@@ -37,7 +37,9 @@
            88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PersonSe-PntTab.
            05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
-      *PersonSe::GetPersonById
+      *To call program cd991005GetPersonById
+      *Which is generated code for PersonService.GetPersonById
+      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
            05 TC-PersonSe-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
            05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
 
@@ -84,6 +86,8 @@
        PROGRAM-ID. cd991005GetPersonById.
        DATA DIVISION.
        LINKAGE SECTION.
+      *PGM1.GetPersonById - Params :
+      *		input(personId: DATE)
        01 personId.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -91,6 +95,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE personId
            .
+      *PGM1.GetPersonById - Params :
+      *		input(personId: DATE)
            CONTINUE.
        END PROGRAM cd991005GetPersonById.
       *
@@ -102,6 +108,9 @@
        PROGRAM-ID. a0508f35check.
        data division.
        working-storage section.
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
+                               
        01 TC-PersonSe pic X(08) value 'PERSONSE'.
 
        01 TC-Call          PIC X     VALUE 'T'.
@@ -110,6 +119,9 @@
                             X'00' thru 'S'
                             'U' thru X'FF'.
        linkage section.
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
+                       
       *Common to all librairies used by the program.
        01 TC-Library-PntTab.
            05 TC-Library-PntNbr          PIC S9(04) COMP.
@@ -119,7 +131,9 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *PersonSe::GetPersonById
+      *To call program cd991005GetPersonById in module PersonService
+      *Which is generated code for PersonService.GetPersonById
+      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
        01 TC-PersonSe-cd991005-Item.
           05 TC-PersonSe-cd991005-Idt PIC X(08).
           05 TC-PersonSe-cd991005 PROCEDURE-POINTER.
@@ -130,6 +144,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE mydate
            .
+      *PGM1.check - Params :
+      *		input(mydate: DATE)
            PERFORM TC-INITIALIZATIONS
       *    Call PersonService::GetPersonById input mydate
            
@@ -137,6 +153,8 @@
              OR TC-PersonSe-cd991005-Idt not = 'cd991005'
                PERFORM TC-LOAD-POINTERS-PersonSe
            END-IF
+      *    Equivalent to call cd991005GetPersonById in module PersonServ
+      *ice
            CALL TC-PersonSe-cd991005 USING
                                  mydate
            end-call

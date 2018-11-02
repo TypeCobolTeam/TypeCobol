@@ -308,6 +308,11 @@ namespace CLI.Test
         /// <returns></returns>
         public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir, string testSourcePath = null)
         {
+            bool autoReplace = false;
+
+            if (targetDir == null && actualDir == null && testSourcePath.Contains("LSRTests"))
+                return autoReplace;
+
             if (!targetDir.Exists)
             {
                 Console.WriteLine("No Output folders comparison");
@@ -354,8 +359,6 @@ namespace CLI.Test
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!targetFileContent.SequenceEqual(actualFileContent))
                 {
-                    bool autoReplace = false;
-
                     //Replacement logic only works for LSR tests
                     if (autoReplace && testSourcePath != null && testSourcePath.Contains("LSRTests"))
                     {

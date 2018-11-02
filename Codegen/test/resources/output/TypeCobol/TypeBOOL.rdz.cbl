@@ -9,34 +9,44 @@
       * Booleans declaration
       *01  Identifier TYPE BOOL.
        01  Identifier-value PIC X VALUE LOW-VALUE.
-         88  Identifier       VALUE 'T'.
-         88  Identifier-false VALUE 'F'.
+           88  Identifier       VALUE 'T'.
+           88  Identifier-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                 
       *01  AnotherOne TYPE BOOL.
        01  AnotherOne-value PIC X VALUE LOW-VALUE.
-         88  AnotherOne       VALUE 'T'.
-         88  AnotherOne-false VALUE 'F'.
+           88  AnotherOne       VALUE 'T'.
+           88  AnotherOne-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                 
        01  AGroup.
            05  a.
              10  c PIC X.
       *      10  b TYPE BOOL.
              10  b-value PIC X VALUE LOW-VALUE.
-         88  b       VALUE 'T'.
-         88  b-false VALUE 'F'.
+           88  b       VALUE 'T'.
+           88  b-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                              
       *    05  d TYPE BOOL.
            05  d-value PIC X VALUE LOW-VALUE.
-         88  d       VALUE 'T'.
-         88  d-false VALUE 'F'.
+           88  d       VALUE 'T'.
+           88  d-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                            
 
 000000 01 mygroup.
 000000    05 array occurs 5.
       *      10 checkToDo type bool.
 000000       10  checkToDo-value PIC X VALUE LOW-VALUE.
-         88  checkToDo       VALUE 'T'.
-         88  checkToDo-false VALUE 'F'.
+           88  checkToDo       VALUE 'T'.
+           88  checkToDo-false VALUE 'F'
+                           X'00' thru 'S'
+                           'U' thru X'FF'.
                                     
 
        PROCEDURE DIVISION.
@@ -44,7 +54,7 @@
        TRAITEMENT.
            SET Identifier  TO TRUE
       *    SET Identifier  TO FALSE
-           SET Identifier-false TO TRUE.
+           SET Identifier-false TO TRUE
                                    
       * OK
       *    MOVE TRUE         TO Identifier
@@ -70,7 +80,7 @@
       * OK: with occurs
            set checkToDo(1) to true
       *    set checkToDo(1) to false
-           SET checkToDo(1)-false TO TRUE.
+           SET checkToDo(1)-false TO TRUE
                                     
            .
 

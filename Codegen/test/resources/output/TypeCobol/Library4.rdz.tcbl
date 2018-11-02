@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        DATA DIVISION.
                                                              
@@ -7,7 +7,9 @@
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 1.
-      *DVZZDATE::currentDateString
+      *To call program b173dd7bcurrentDateString
+      *Which is generated code for DVZZDATE.currentDateString
+      *Declared in source file Library4.rdz.tcbl
            05 TC-DVZZDATE-b173dd7b-Idt   PIC X(08) VALUE 'b173dd7b'.
            05 TC-DVZZDATE-b173dd7b PROCEDURE-POINTER.
 
@@ -53,10 +55,14 @@
        PROGRAM-ID. b173dd7bcurrentDateString.
        DATA DIVISION.
        LINKAGE SECTION.
+      *DVZZDATE.currentDateString  - No Params
+      *		returns(Result: pic 9(08))
        01 Result PIC 9(08).
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
+      *DVZZDATE.currentDateString  - No Params
+      *		returns(Result: pic 9(08))
            display "toto"
            .
        END PROGRAM b173dd7bcurrentDateString.

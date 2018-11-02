@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
        ENVIRONMENT DIVISION.
@@ -24,7 +24,9 @@
            88 TC-DVZF0OSM-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZF0OSM-PntTab.
            05 TC-DVZF0OSM-PntNbr         PIC S9(04) COMP VALUE 1.
-      *DVZF0OSM::Titi
+      *To call program d6385c17Titi
+      *Which is generated code for DVZF0OSM.Titi
+      *Declared in source file DeclarativesWithProcedures.tcbl
            05 TC-DVZF0OSM-d6385c17-Idt   PIC X(08) VALUE 'd6385c17'.
            05 TC-DVZF0OSM-d6385c17 PROCEDURE-POINTER.
 
@@ -86,6 +88,8 @@
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        data division.
        working-storage section.
+      *DVZF0OSM.Titi  - No Params
+                               
        01 Table-Tax.
       *  05 Tax TYPE TaxElm
       *    OCCURS 200
@@ -97,6 +101,7 @@
                                        
        PROCEDURE DIVISION
            .
+      *DVZF0OSM.Titi  - No Params
 
       DDECLARATIVES.
       DDECLARATION SECTION.
@@ -124,6 +129,8 @@
        SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
        data division.
        working-storage section.
+      *DVZF0OSM.Toto  - No Params
+                               
        01 Table-Tax.
       *  05 Tax TYPE TaxElm
       *    OCCURS 200
@@ -135,6 +142,7 @@
                                        
        PROCEDURE DIVISION
            .
+      *DVZF0OSM.Toto  - No Params
 
       *     set Table-Tax::Tax::Idx-TaxElm to 1
             set ac7b6441Idx-TaxElm to 1

@@ -1,4 +1,4 @@
-﻿      *TypeCobol_Version:TestTypeCobolVersion
+      *TypeCobol_Version:TestTypeCobolVersion
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZF0OSM.
        PROCEDURE DIVISION.
@@ -13,6 +13,9 @@
        PROGRAM-ID. da82b615toto.
        DATA DIVISION.
        linkage section.
+      *DVZF0OSM.toto - Params :
+      *		input(IsOk: BOOL)
+                       
       *01 tzer type Date.
        01 tzer.
            02 YYYY PIC 9(4).
@@ -30,5 +33,7 @@
        PROCEDURE DIVISION
              USING BY REFERENCE IsOk-value
            .
+      *DVZF0OSM.toto - Params :
+      *		input(IsOk: BOOL)
            .
        END PROGRAM da82b615toto.
