@@ -323,7 +323,7 @@ namespace CLI.Test
         {
             bool autoReplace = false;
 
-            if (targetDir == null && actualDir == null && testSourcePath.Contains("LSRTests"))
+            if (targetDir == null && actualDir == null && testPlaylistDirectory.Contains("LSRTests"))
                 return autoReplace;
 
             if (!targetDir.Exists)
