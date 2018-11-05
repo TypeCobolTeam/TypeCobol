@@ -74,7 +74,8 @@
       *    MOVE d IN AGroup   TO b OF a IN AGroup
            MOVE AGroup.d-value IN AGroup   TO AGroup.a.b-value
                                                OF a IN AGroup
-      * OK: copying chunks of memories of different layouts is standard COBOL practice
+      * OK: copying chunks of memories of different layouts
+      *     is standard COBOL practice
            MOVE x   TO      AGroup
            MOVE x   TO a IN AGroup
       * OK: with occurs

@@ -101,6 +101,12 @@ namespace TypeCobol.Compiler.Scanner
             if (textLine.Type == CobolTextLineType.Comment ||
                (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
+                if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
+                {
+                    tokensLine.AddDiagnostic(MessageCode.Warning,
+                        tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Line exceed 80 chars");
+                }
+
                 Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
                 tokensLine.AddToken(commentToken);
                 return;
@@ -129,7 +135,7 @@ namespace TypeCobol.Compiler.Scanner
 
             if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
             {
-                tokensLine.AddDiagnostic(MessageCode.Warning,
+                tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
                     tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Line exceed 80 chars");
             }
 

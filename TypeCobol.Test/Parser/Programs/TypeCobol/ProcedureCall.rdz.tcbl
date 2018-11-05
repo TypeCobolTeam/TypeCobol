@@ -222,19 +222,23 @@
                     OUTPUT     flag someformat
 
       * __________________________________________________
-      * OK : procedure invocation without INPUT, IN-OUT, OUTPUT (TCRFUN_EMPTY_CALL) 
+      * OK : procedure invocation without 
+      *      INPUT, IN-OUT, OUTPUT (TCRFUN_EMPTY_CALL) 
       * Recognize an empty call of an empty procedure
            CALL EmptyProc
 
-      * KO : procedure invocation with INPUT, IN-OUT, OUTPUT (TCRFUN_EMPTY_CALL) 
+      * KO : procedure invocation with 
+      *      INPUT, IN-OUT, OUTPUT (TCRFUN_EMPTY_CALL) 
       * Recognize an empty call to an non empty procedure
            CALL ValidateDateFormat
   
-      * OK : function ivocation witout INPUT or RETURNING (TCRFUN_EMPTY_CALL) 
+      * OK : function ivocation witout 
+      *      INPUT or RETURNING (TCRFUN_EMPTY_CALL) 
       *      Recognize an empty call of an empty function
            CALL DoesNothingFunc
 
-      * KO : function ivocation with INPUT and RETURNING (TCRFUN_EMPTY_CALL) 
+      * KO : function ivocation with 
+      *      INPUT and RETURNING (TCRFUN_EMPTY_CALL) 
       * Recognize an empty call to non empty function
            CALL StrangelyReturnsItsInput
 
@@ -247,7 +251,8 @@
       * KO : varC is ambiguous (var C is a variable or procedure)
            CALL varC
 
-      * KO : varD is definied multiple times but always with a signature different to call
+      * KO : varD is definied multiple times but always 
+      *      with a signature different to call
            CALL varD
                     INPUT      somedate
            .
