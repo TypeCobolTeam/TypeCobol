@@ -1,8 +1,11 @@
 				    
+using CSCupRuntime;
+
 namespace TUVienna.CS_CUP.Runtime
 {
 
-using System.Collections;
+
+    using System.Collections.Generic;
 
     /** This class implements a skeleton table driven LR parser.  In general,
      *  LR parsers are a form of bottom up shift-reduce parsers.  Shift-reduce
@@ -123,20 +126,6 @@ using System.Collections;
      * https://github.com/TypeCobolTeam/TypeCobol/issues/929
      */
 
-    public class mStack
-    {
-        object[] array;
-        int count;
-        public mStack(Stack origin)
-        {
-            this.array = origin.ToArray();
-            count = origin.Count;
-        }
-        public object elementAt(int index)
-        {
-            return array[count - index - 1];
-        }
-    }
 
     public abstract class lr_parser {
 
@@ -274,7 +263,7 @@ using System.Collections;
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** The parse stack itself. */
-  protected Stack stack = new Stack();
+  protected StackList<Symbol> stack = new StackList<Symbol>();
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
@@ -324,7 +313,7 @@ using System.Collections;
   public abstract Symbol do_action(
     int       act_num, 
     lr_parser parser, 
-    Stack     stack, 
+    StackList<Symbol>     stack, 
     int       top);
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -574,7 +563,7 @@ using System.Collections;
 	  /* current state is always on the top of the stack */
 
 	  /* look up action out of the current state with the current input */
-	  act = get_action(((Symbol)stack.Peek()).parse_state, cur_token.sym);
+	  act = get_action(stack.Peek().parse_state, cur_token.sym);
 
 	  /* decode the action -- > 0 encodes shift */
 	  if (act > 0)
@@ -606,7 +595,7 @@ using System.Collections;
 		}
 	      
 	      /* look up the state to go to from the one popped back to */
-	      act = get_reduce(((Symbol)stack.Peek()).parse_state, lhs_sym_num);
+	      act = get_reduce(stack.Peek().parse_state, lhs_sym_num);
 
 	      /* shift to that state */
 	      lhs_sym.parse_state = act;
@@ -629,7 +618,7 @@ using System.Collections;
 		  /* just in case that wasn't fatal enough, end parse */
 		  done_parsing();
 		} else {
-		  lhs_sym = (Symbol)stack.Peek();
+		  lhs_sym = stack.Peek();
 		}
 	    }
 	}
@@ -662,11 +651,11 @@ using System.Collections;
       debug_message("============ Parse Stack Dump ============");
 
       /* dump the stack */
-	  IEnumerator myEnum=stack.GetEnumerator();
+	  IEnumerator<Symbol> myEnum=stack.GetEnumerator();
       while (myEnum.MoveNext())
 	{
-	  debug_message("Symbol: " + ((Symbol)myEnum.Current).sym +
-			" State: " + ((Symbol)myEnum.Current).parse_state);
+	  debug_message("Symbol: " + myEnum.Current.sym +
+			" State: " + myEnum.Current.parse_state);
 	}
       debug_message("==========================================");
     }
@@ -703,11 +692,11 @@ using System.Collections;
    */
   public void debug_stack() {
       System.Text.StringBuilder sb=new System.Text.StringBuilder("## STACK:");
-	  IEnumerator e= stack.GetEnumerator();
+	  IEnumerator<Symbol> e= stack.GetEnumerator();
 	  int i=0;
       while (e.MoveNext()) {
 	  i++;
-	  Symbol s = (Symbol)e.Current;
+	  Symbol s = e.Current;
 	  sb.Append(" <state "+s.parse_state+", sym "+s.sym+">");
 	  if ((i%3)==2 || (i==(stack.Count-1))) {
 	      debug_message(sb.ToString());
@@ -769,7 +758,7 @@ using System.Collections;
 	  //debug_stack();
 
 	  /* look up action out of the current state with the current input */
-	  act = get_action(((Symbol)stack.Peek()).parse_state, cur_token.sym);
+	  act = get_action(stack.Peek().parse_state, cur_token.sym);
 
 	  /* decode the action -- > 0 encodes shift */
 	  if (act > 0)
@@ -805,9 +794,9 @@ using System.Collections;
 		}
 	      
 	      /* look up the state to go to from the one popped back to */
-	      act = get_reduce(((Symbol)stack.Peek()).parse_state, lhs_sym_num);
+	      act = get_reduce(stack.Peek().parse_state, lhs_sym_num);
 	      debug_message("# Reduce rule: top state " +
-			     ((Symbol)stack.Peek()).parse_state +
+			     stack.Peek().parse_state +
 			     ", lhs sym " + lhs_sym_num + " -> state " + act); 
 
 	      /* shift to that state */
@@ -833,7 +822,7 @@ using System.Collections;
 		  /* just in case that wasn't fatal enough, end parse */
 		  done_parsing();
 		} else {
-		  lhs_sym = (Symbol)stack.Peek();
+		  lhs_sym = stack.Peek();
 		}
 	    }
 	}
@@ -928,7 +917,7 @@ using System.Collections;
   protected bool shift_under_error()
     {
       /* is there a shift under error Symbol */
-      return get_action(((Symbol)stack.Peek()).parse_state, error_sym()) > 0;
+      return get_action(stack.Peek().parse_state, error_sym()) > 0;
     }
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -948,8 +937,8 @@ using System.Collections;
       if (debug) debug_message("# Finding recovery state on stack");
 
       /* Remember the right-position of the top symbol on the stack */
-      int right_pos = ((Symbol)stack.Peek()).right;
-      int left_pos  = ((Symbol)stack.Peek()).left;
+      int right_pos = stack.Peek().right;
+      int left_pos  = stack.Peek().left;
 
       /* pop down until we can shift under error Symbol */
       while (!shift_under_error())
@@ -957,8 +946,8 @@ using System.Collections;
 	  /* pop the stack */
 	  if (debug) 
 	    debug_message("# Pop stack by one, state was # " +
-	                  ((Symbol)stack.Peek()).parse_state);
-          left_pos = ((Symbol)stack.Pop()).left;	
+	                  stack.Peek().parse_state);
+          left_pos = stack.Pop().left;	
 	  tos--;
 
 	  /* if we have hit bottom, we fail */
@@ -970,11 +959,11 @@ using System.Collections;
 	}
 
       /* state on top of the stack can shift under error, find the shift */
-      act = get_action(((Symbol)stack.Peek()).parse_state, error_sym());
+      act = get_action(stack.Peek().parse_state, error_sym());
       if (debug) 
 	{
 	  debug_message("# Recover state found (#" + 
-			((Symbol)stack.Peek()).parse_state + ")");
+			stack.Peek().parse_state + ")");
 	  debug_message("# Shifting on error to state #" + (act-1));
 	}
 
@@ -1161,7 +1150,7 @@ using System.Collections;
 	  debug_message("# Reparsing saved input with actions");
 	  debug_message("# Current Symbol is #" + cur_err_token().sym);
 	  debug_message("# Current state is #" + 
-			((Symbol)stack.Peek()).parse_state);
+			stack.Peek().parse_state);
 	}
 
       /* continue until we accept or have read all lookahead input */
@@ -1171,7 +1160,7 @@ using System.Collections;
 
 	  /* look up action out of the current state with the current input */
 	  act = 
-	    get_action(((Symbol)stack.Peek()).parse_state, cur_err_token().sym);
+	    get_action(stack.Peek().parse_state, cur_err_token().sym);
 
 	  /* decode the action -- > 0 encodes shift */
 	  if (act > 0)
@@ -1221,7 +1210,7 @@ using System.Collections;
 		}
 	      
 	      /* look up the state to go to from the one popped back to */
-	      act = get_reduce(((Symbol)stack.Peek()).parse_state, lhs_sym_num);
+	      act = get_reduce(stack.Peek().parse_state, lhs_sym_num);
 
 	      /* shift to that state */
 	      lhs_sym.parse_state = act;

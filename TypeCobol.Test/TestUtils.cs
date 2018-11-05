@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Antlr4.Runtime.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeCobol.Compiler;
 
@@ -89,15 +90,18 @@ namespace TypeCobol.Test
         }
 
         public static void CreateRunReport(string localDirectoryFullName, string cobolFileName,
-            CompilationUnit compiler = null, CompilationStats stats = null)
+            [NotNull] CompilationStats stats, CompilationUnit compiler = null)
         {
 
             // Display a performance report
             StringBuilder report = new StringBuilder();
             report.AppendLine("Program properties :");
 
-            report.AppendLine("- " + (compiler?.CobolTextLines.Count ?? stats?.Line) + " lines");
-            report.AppendLine("- " + (compiler?.CodeElementsDocumentSnapshot.CodeElements.Count() ?? stats?.TotalCodeElements) + " code elements");
+            report.AppendLine("- " + (compiler?.CobolTextLines.Count ?? stats.Line) + " lines");
+            report.AppendLine("- " + (compiler?.CodeElementsDocumentSnapshot.CodeElements.Count() ?? stats.TotalCodeElements) + " code elements");
+
+            report.AppendLine(" Iteration : " + stats.IterationNumber); 
+
             if (compiler != null)
             {
                 var totalTime = compiler.PerfStatsForText.FirstCompilationTime +
@@ -131,34 +135,30 @@ namespace TypeCobol.Test
                 report.AppendLine("*TAT - Total average time");
             }
 
-            if (stats != null)
-            {
-
-                report.AppendLine("");
-                report.AppendLine(compiler != null
-                    ? "Incremental compilation performance (average time)"
-                    : "Full compilation performance (average time)");
-                report.AppendLine("- " + stats.AverageTextUpdateTime + " ms " +
-                                  FormatPrecentage(stats.AverageTextUpdateTime, stats.AverageTotalProcessingTime) +
-                                  " : text update");
-                report.AppendLine("- " + stats.AverageScannerTime + " ms " +
-                                  FormatPrecentage(stats.AverageScannerTime, stats.AverageTotalProcessingTime) +
-                                  " : scanner");
-                report.AppendLine("- " + stats.AveragePreprocessorTime + " ms" +
-                                  FormatPrecentage(stats.AveragePreprocessorTime, stats.AverageTotalProcessingTime) +
-                                  " : preprocessor");
-                report.AppendLine("- " + stats.AverageCodeElementParserTime + " ms" +
-                                  FormatPrecentage(stats.AverageCodeElementParserTime,
-                                      stats.AverageTotalProcessingTime) + " : code elements parser");
-                report.AppendLine("- " + stats.AverateTemporarySemanticsParserTime + " ms " +
-                                  FormatPrecentage(stats.AverateTemporarySemanticsParserTime,
-                                      stats.AverageTotalProcessingTime) + " : temporary semantic class parser");
-                report.AppendLine("- " + stats.AverageCrossCheckerParserTime + " ms " +
-                                  FormatPrecentage(stats.AverageCrossCheckerParserTime,
-                                      stats.AverageTotalProcessingTime) + " : cross check class parser");
-                report.AppendLine("TAT " + stats.AverageTotalProcessingTime + " - ms");
-                report.AppendLine("*TAT - Total average time");
-            }
+            report.AppendLine("");
+            report.AppendLine(compiler != null
+                ? "Incremental compilation performance (average time)"
+                : "Full compilation performance (average time)");
+            report.AppendLine("- " + stats.AverageTextUpdateTime + " ms " +
+                              FormatPrecentage(stats.AverageTextUpdateTime, stats.AverageTotalProcessingTime) +
+                              " : text update");
+            report.AppendLine("- " + stats.AverageScannerTime + " ms " +
+                              FormatPrecentage(stats.AverageScannerTime, stats.AverageTotalProcessingTime) +
+                              " : scanner");
+            report.AppendLine("- " + stats.AveragePreprocessorTime + " ms" +
+                              FormatPrecentage(stats.AveragePreprocessorTime, stats.AverageTotalProcessingTime) +
+                              " : preprocessor");
+            report.AppendLine("- " + stats.AverageCodeElementParserTime + " ms" +
+                              FormatPrecentage(stats.AverageCodeElementParserTime,
+                                  stats.AverageTotalProcessingTime) + " : code elements parser");
+            report.AppendLine("- " + stats.AverateTemporarySemanticsParserTime + " ms " +
+                              FormatPrecentage(stats.AverateTemporarySemanticsParserTime,
+                                  stats.AverageTotalProcessingTime) + " : temporary semantic class parser");
+            report.AppendLine("- " + stats.AverageCrossCheckerParserTime + " ms " +
+                              FormatPrecentage(stats.AverageCrossCheckerParserTime,
+                                  stats.AverageTotalProcessingTime) + " : cross check class parser");
+            report.AppendLine("TAT " + stats.AverageTotalProcessingTime + " - ms");
+            report.AppendLine("*TAT - Total average time");
 
             var reportFile = "Report_" + cobolFileName.Split('.')[0] + "_" +
                                 DateTime.Now.ToString("dd_MM_yyyy_H_mm_ss_fff") + ".txt";
@@ -182,6 +182,7 @@ namespace TypeCobol.Test
         {
             public CompilationStats()
             {
+                IterationNumber = 0;
                 AverageCodeElementParserTime = 0;
                 AverageCrossCheckerParserTime = 0;
                 AveragePreprocessorTime = 0;
@@ -192,6 +193,7 @@ namespace TypeCobol.Test
                 Line = 0;
                 TotalCodeElements = 0;
             }
+            public float IterationNumber { get; set; }
             public float AverageTextUpdateTime { get; set; }
             public float AverageScannerTime { get; set; }
             public float AveragePreprocessorTime { get; set; }

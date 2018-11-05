@@ -9,7 +9,10 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
        01 TC-PGM1-PntTab.
            05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 1.
-      *PGM1::StartCheckpoint
+      *To call program e3685b69StartCheckpoint
+      *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file CallPublicProcFromPublicProc-Declaratives
+      *WithDebug.rdz.tcbl
            05 TC-PGM1-e3685b69-Idt   PIC X(08) VALUE 'e3685b69'.
            05 TC-PGM1-e3685b69 PROCEDURE-POINTER.
 
@@ -63,7 +66,10 @@
            88 TC-MyPGM-FctList-IsLoaded      VALUE 'OK'.
        01 TC-MyPGM-PntTab.
            05 TC-MyPGM-PntNbr         PIC S9(04) COMP VALUE 1.
-      *MyPGM::testos
+      *To call program bfc74757testos
+      *Which is generated code for MyPGM.testos
+      *Declared in source file CallPublicProcFromPublicProc-Declaratives
+      *WithDebug.rdz.tcbl
            05 TC-MyPGM-bfc74757-Idt   PIC X(08) VALUE 'bfc74757'.
            05 TC-MyPGM-bfc74757 PROCEDURE-POINTER.
 
@@ -145,7 +151,10 @@
               10 TC-Library-Item-Idt      PIC X(08).
               10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
 
-      *PGM1::StartCheckpoint
+      *To call program e3685b69StartCheckpoint in module PGM1
+      *Which is generated code for PGM1.StartCheckpoint
+      *Declared in source file CallPublicProcFromPublicProc-Declaratives
+      *WithDebug.rdz.tcbl
        01 TC-PGM1-e3685b69-Item.
           05 TC-PGM1-e3685b69-Idt PIC X(08).
           05 TC-PGM1-e3685b69 PROCEDURE-POINTER.
@@ -159,6 +168,7 @@
              OR TC-PGM1-e3685b69-Idt not = 'e3685b69'
                PERFORM TC-LOAD-POINTERS-PGM1
            END-IF
+      *    Equivalent to call e3685b69StartCheckpoint in module PGM1
            CALL TC-PGM1-e3685b69
            end-call
                                      

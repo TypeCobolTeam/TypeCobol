@@ -544,7 +544,9 @@ namespace TypeCobol.Codegen.Actions
                     }
                     foreach (var f in @Model.definitions.functions.Public)
                     {
-                        items += "*" + @Model.programName8 + "::" + f.Name + '\n';
+                        items += "*To call program " + f.Hash + f.Name + '\n';
+                        items += "*Which is generated code for " + f.QualifiedName + '\n';
+                        items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
                         items += "    05 TC-" + @Model.programName8 + "-" + f.Hash + "-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
                         items += "    05 TC-" + @Model.programName8 + "-" + f.Hash + " PROCEDURE-POINTER.\n";
                     }
@@ -737,7 +739,9 @@ namespace TypeCobol.Codegen.Actions
                             foreach (var proc in pgm.Procedures.Values)
                             {
                                 proc.IsNotByExternalPointer = true;
-                                items += "*" + pgm.Name + "::" + proc.Name + '\n';
+                                items += "*To call program " + proc.Hash + proc.Name + " in module " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail + '\n';
+                                items += "*Which is generated code for " + proc.ProcStyleCall.FunctionDeclaration.QualifiedName + '\n';
+                                items += "*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName + '\n';
                                 items += "01 TC-" + pgm.Name + "-" + proc.Hash + "-Item.\n";
                                 items += "   05 TC-" + pgm.Name + "-" + proc.Hash + "-Idt PIC X(08).\n";
                                 items += "   05 TC-" + pgm.Name + "-" + proc.Hash + " PROCEDURE-POINTER.\n";
