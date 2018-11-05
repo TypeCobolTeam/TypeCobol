@@ -13,7 +13,7 @@ namespace TypeCobol.Codegen.Actions
     public interface IActionsProvider
     {
         /// <summary>
-        /// Metthod for getting actions associated toa given node.
+        /// Metthod for getting actions associated to a given node.
         /// </summary>
         /// <param name="Self">The Given node</param>
         /// <param name="SelfContext">The Generator Context</param>

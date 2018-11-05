@@ -30,6 +30,9 @@ namespace TypeCobol.TemplateCore.Model
         }
 
         private string _TranspiledCode;
+        /// <summary>
+        /// Code Transpilé d'une Action.
+        /// </summary>
         public string TranspiledCode
         {
             get
