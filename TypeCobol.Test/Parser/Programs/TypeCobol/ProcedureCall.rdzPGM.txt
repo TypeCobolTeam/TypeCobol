@@ -33,16 +33,16 @@ Line 201[12,46] <27, Error, Syntax> - Syntax error : No suitable function signat
 Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'BOOL' of type BOOL and received 'somedate' of type DATE 
 Line 201[12,46] <27, Error, Syntax> - Syntax error : Function 'MyProc1' expected parameter 'actual-format' of type Alphanumeric and received 'flag' of type BOOL 
 Line 203[21,25] <27, Error, Syntax> - Syntax error : Symbol INOUT is not referenced OffendingSymbol=[21,25:INOUT]<UserDefinedWord>
-Line 231[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 
-Line 231[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
-Line 231[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
-Line 231[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
-Line 231[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Numeric and length 1
-Line 239[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'StrangelyReturnsItsInput' 
-Line 239[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
-Line 248[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
-Line 251[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD' input(DATE)
-Line 260[8,42] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not referenced
+Line 233[12,34] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'ValidateDateFormat' 
+Line 233[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'mydate' of type DATE and length 1
+Line 233[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'format' of type Alphanumeric and length 8
+Line 233[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'okay' of type BOOL and length 1
+Line 233[12,34] <27, Error, Syntax> - Syntax error : Function 'ValidateDateFormat' is missing parameter 'actual-format' of type Numeric and length 1
+Line 243[12,40] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'StrangelyReturnsItsInput' 
+Line 243[12,40] <27, Error, Syntax> - Syntax error : Function 'StrangelyReturnsItsInput' is missing parameter 'x' of type Numeric and length 4
+Line 252[12,20] <27, Error, Syntax> - Syntax error : Warning: Risk of confusion in call of 'varC'
+Line 256[12,39] <27, Error, Syntax> - Syntax error : No suitable function signature found for 'varD' input(DATE)
+Line 265[8,42] <30, Error, Semantics> - Semantic error: TYPE 'Date2' is not referenced
 
 --- Program ---
 PROGRAM: ProcedureCall common:False initial:False recursive:False

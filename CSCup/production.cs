@@ -389,11 +389,11 @@ public class production {
 	  emit.pre("stack") + ".elementAt(" + emit.pre("top") +
 	  "-" + offset + ")).right;\n";
       else ret = "";
-
+            string offsetText = offset == 0 ? "" : "-" + offset;
       /* otherwise, just declare label. */
 	return ret + "\t\t" + stack_type + " " + labelname + " = (" + stack_type + 
-	  ")((" + "TUVienna.CS_CUP.Runtime.Symbol) " + emit.pre("stack") + ".elementAt(" + emit.pre("top") 
-	  + "-" + offset + ")).value;\n";
+                   ")( " + emit.pre("stack") + ".ElementAtFromBottom(" + emit.pre("top")
+                   + offsetText + ")).value;\n";
 
     }
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/

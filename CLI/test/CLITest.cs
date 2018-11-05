@@ -257,7 +257,7 @@ namespace CLI.Test
             Console.WriteLine("Return Code=" + process.ExitCode);
             //Compare outputDir with expectedOutputDir
             DirectoryInfo expectedOutputDir = new DirectoryInfo(workingDirectory + Path.DirectorySeparatorChar + "output_expected");
-            bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, outputDir);
+            bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, outputDir, "CLI\\test");
 
             string consoleOutput = (process.StandardOutput.ReadToEnd());
 
@@ -299,18 +299,31 @@ namespace CLI.Test
 
     public static class UnitTestHelper
     {
+        //Looks for the begining of the message array in the input file, 
+        //symbolized by a succession of white space from the beginning of the line and ending with a "{" e.g. "    {"
+        private static readonly Regex RxStartUseActual = new Regex(@"^\s+{$");
+
+        //Looks for the ending of the message array in the expected input file,
+        //symbolized by a succession of white space from the beginning of the line and ending with a "]" e.g. "  ],"
+        private static readonly Regex RxStopUseExpected = new Regex(@"^\s+],$");
+
+        //Looks for the ending of the result_message array,
+        //symbolized by a succession of white space from the beginning of the line and ending with a "]" e.g. "  ]"
+        private static readonly Regex RxStopUseActual = new Regex(@"^\s+]$");
+
         /// <summary>
         /// Compare results of LSR tests
         /// Or replace automatically the input content of the test if autoReplace is true
         /// </summary>
         /// <param name="targetDir"></param>
         /// <param name="actualDir"></param>
+        /// <param name="testPlaylistDirectory"></param>
         /// <returns></returns>
-        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir, string testSourcePath = null)
+        public static bool CompareDirectory(DirectoryInfo targetDir, DirectoryInfo actualDir, string testPlaylistDirectory = null)
         {
             bool autoReplace = false;
 
-            if (targetDir == null && actualDir == null && testSourcePath.Contains("LSRTests"))
+            if (targetDir == null && actualDir == null && testPlaylistDirectory.Contains("LSRTests"))
                 return autoReplace;
 
             if (!targetDir.Exists)
@@ -359,39 +372,21 @@ namespace CLI.Test
                 var actualFileContent = File.ReadAllLines(commonActualFiles[i].FullName);
                 if (!targetFileContent.SequenceEqual(actualFileContent))
                 {
-                    //Replacement logic only works for LSR tests
-                    if (autoReplace && testSourcePath != null && testSourcePath.Contains("LSRTests"))
+                    if (autoReplace && testPlaylistDirectory != null)
                     {
-                        string path = commonTargetFiles[i].FullName.Replace("bin\\EI_Debug\\LSRTests",
-                            testSourcePath);
-                        path = path.Replace("output_expected", "input");
-                        path = path.Replace(".rlsp", ".tlsp");
+                        string path = string.Empty;
 
-                        var inputFileContent = File.ReadAllLines(path);
-                        //Looks for the begining of the message array in the input file, 
-                        //symbolized by a succession of white space from the bebinning of the line and ending with a "{" e.g. "    {"
-                        Regex rxStartUseActual = new Regex(@"^\s+{$");
-                        //Looks for the ending of the message array in the input file,
-                        //symbolized by a succession of white space from the bebinning of the line and ending with a "]" e.g. "  ]"
-                        Regex rxStopUseActual = new Regex(@"^\s+],$");
-                        using (StreamWriter writer = new StreamWriter(new FileStream(path, FileMode.Truncate)))
-                        {
-                            for (var index = 0; index < inputFileContent.Length; index++)
-                            {
-                                //if regex string is true and line is followed by the begining of a message. (a message will always start with a "category" item)
-                                if (rxStartUseActual.IsMatch(inputFileContent[index]) && inputFileContent[index+1].Contains("\"category\""))
-                                {
-                                    ReplaceResultLines(actualFileContent, writer);
-                                    while (!rxStopUseActual.IsMatch(inputFileContent[index]))
-                                    {
-                                        index++;
-                                    }
-                                }
+                        //Convert path from generated test files to orignal
+                        string projectPath = commonTargetFiles[i].FullName.Split(new[] {"bin"}, StringSplitOptions.None)[0];
+                        string testRelativePath = commonTargetFiles[i].FullName.Split(new[] { "Debug" }, StringSplitOptions.None)[1];
 
-                                //Writes any lines that isn't a message
-                                writer.WriteLine(inputFileContent[index]);
-                            }
-                        }
+                        path = projectPath + testPlaylistDirectory + testRelativePath;
+
+                        if (testPlaylistDirectory.Contains("LanguageServer") && path != String.Empty)
+                            ReplaceLSRTestFile(path, actualFileContent);
+
+                        else if (testPlaylistDirectory.Contains("CLI") && path != String.Empty)
+                            ReplaceCliTestFile(path, actualFileContent);
 
                         Console.WriteLine("File not equals: " + commonTargetFiles[i]);
                         Console.WriteLine("Input file has been modified\n");
@@ -447,6 +442,55 @@ namespace CLI.Test
 
             return dirIdentical;
         }
+        /// <summary>
+        /// Replacement logic for cli tests
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="actualFileContent"></param>
+        private static void ReplaceCliTestFile(string path, string[] actualFileContent)
+        {
+            using (StreamWriter writer = new StreamWriter(new FileStream(path, FileMode.Truncate)))
+            {
+                foreach (var line in actualFileContent)
+                {
+                    writer.WriteLine(line);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Replacement logic for LSR Tests
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="actualFileContent"></param>
+        private static void ReplaceLSRTestFile(string path, string[] actualFileContent)
+        {
+            path = path.Replace("output_expected", "input");
+            path = path.Replace(".rlsp", ".tlsp");
+
+            var inputFileContent = File.ReadAllLines(path);
+
+
+            using (StreamWriter writer = new StreamWriter(new FileStream(path, FileMode.Truncate)))
+            {
+                for (var index = 0; index < inputFileContent.Length; index++)
+                {
+                    //if regex string is true and line is followed by the begining of a message. (a message will always start with a "category" item)
+                    if (RxStartUseActual.IsMatch(inputFileContent[index]) && inputFileContent[index + 1].Contains("\"category\""))
+                    {
+                        ReplaceResultLines(actualFileContent, writer);
+                        while (!RxStopUseExpected.IsMatch(inputFileContent[index]))
+                        {
+                            index++;
+                        }
+                    }
+
+                    //Writes any lines that isn't a message
+                    writer.WriteLine(inputFileContent[index]);
+                }
+            }
+            
+        }
 
         /// <summary>
         /// Replaces messages in LSR test inputs by ActualResult messages
@@ -456,13 +500,6 @@ namespace CLI.Test
         /// <returns></returns>
         private static int ReplaceResultLines(string[] replacingText, StreamWriter writer)
         {
-            //Looks for the begining of the result_message array, 
-            //symbolized by a succession of white space from the bebinning of the line and ending with a "{" e.g. "    {"
-            Regex rxStartUseActual = new Regex(@"^\s+{$");
-            //Looks for the ending of the result_message array,
-            //symbolized by a succession of white space from the bebinning of the line and ending with a "]" e.g. "  ]"
-            Regex rxStopUseActual = new Regex(@"^\s+]$");
-
             int writenLines = 0;
 
             bool write = false;
@@ -470,12 +507,12 @@ namespace CLI.Test
             for (int i = 0; i < replacingText.Length; i++)
             {
                 //if regex string is true and line is followed by the begining of a message. (a message will always start with a "category" item)
-                if (rxStartUseActual.IsMatch(replacingText[i]) && replacingText[i + 1].Contains("\"category\""))
+                if (RxStartUseActual.IsMatch(replacingText[i]) && replacingText[i + 1].Contains("\"category\""))
                 {
                     write = true;
                 }
 
-                if (rxStopUseActual.IsMatch(replacingText[i]))
+                if (RxStopUseActual.IsMatch(replacingText[i]))
                 {
                     write = false;
                 }

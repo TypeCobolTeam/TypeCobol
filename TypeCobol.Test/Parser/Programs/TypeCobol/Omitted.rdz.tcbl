@@ -75,7 +75,8 @@
            call TestMe input  omitted
                        output var1
 
-      *KO, ambiguous, because both signature of TestMe2 have the same 1st parameter and accept omitted as 2nd parameter
+      *KO, ambiguous, because both signature of TestMe2 have the same 
+      *    1st parameter and accept omitted as 2nd parameter
            call TestMe2 input  bool1
                         output omitted
 

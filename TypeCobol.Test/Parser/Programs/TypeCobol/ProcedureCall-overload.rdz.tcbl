@@ -227,7 +227,8 @@
            CALL case2 INPUT      myDate fakeDate
                       OUTPUT     result
 
-      *KO: case3 doesn't match signature: add 1st and 4th argument as extra arguments
+      *KO: case3 doesn't match signature: 
+      *    add 1st and 4th argument as extra arguments
       *1 error + 1 error per wrong argument
            CALL case3 INPUT      fakeDate myDate fakeDate
                       OUTPUT     fakeDate result
@@ -265,7 +266,8 @@
            CALL case10 INPUT      fakeDate myDate fakeDate
                       OUTPUT     fakeDate result
 
-      *Warning: case11 is a variable but a function with a different signature exists
+      *Warning: case11 is a variable but a function 
+      *         with a different signature exists
            CALL case11      
 
       *Ko: case12 is defined 2 times
@@ -274,7 +276,8 @@
       *Ko: case13 is defined 2 times but with mandatory arguments
            CALL case13
 
-      **Warning: case14 is a variable but 2 functions with a different signature exists
+      **Warning: case14 is a variable but 2 functions 
+      **         with a different signature exists
            CALL case14
 
       **Ko: case15 is defined 2 times
