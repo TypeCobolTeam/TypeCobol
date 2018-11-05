@@ -8,6 +8,7 @@ using System.Text;
 using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Source;
@@ -640,6 +641,17 @@ namespace TypeCobol.Codegen.Generators
                                 return false;
                             }                                
                         }
+                    }
+
+                    //Special case if the program contains a nested program
+                    //If the program node contains a generated node after a Nested, the corresponding text will be generated after him
+                    if (node.Parent.Children.Count > 1 && node.Parent.Children.Any(c => c is NestedProgram))
+                    {
+                        Node lastSibling = node.Parent.Children[index - 1].Children.Last();
+                        if (lastSibling != null && (lastSibling.NodeIndex < 0 || Nodes[lastSibling.NodeIndex].Positions == null))
+                            lastSibling = lastSibling.Parent;
+                        if (InsertNodeAfterNode(node, lastSibling ?? node.Parent))
+                            return true;
                     }
                     if (node.Parent.Children.Count > 1 && index == (node.Parent.Children.Count - 1))
                     {

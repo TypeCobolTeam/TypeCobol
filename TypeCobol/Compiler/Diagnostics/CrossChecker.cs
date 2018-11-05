@@ -65,6 +65,11 @@ namespace TypeCobol.Compiler.Diagnostics
             FunctionDeclarationChecker.OnNode(functionDeclaration);
             return true;
         }
+        public override bool Visit(Program program)
+        {
+            ProgramChecker.OnNode(program);
+            return true;
+        }
 
         public override bool Visit(DataRedefines dataRedefines)
         {

@@ -1,4 +1,6 @@
-﻿000000 IDENTIFICATION DIVISION.
+      * 1 errors
+      * Line 1[8,33] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+000000 IDENTIFICATION DIVISION.
 000000 PROGRAM-ID.   FileControl.
 000000 ENVIRONMENT DIVISION.                      
 000000 CONFIGURATION SECTION.                      

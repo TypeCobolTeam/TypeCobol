@@ -86,11 +86,17 @@
     <None Include="resources\input\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="resources\input\TypeCobol\GenEndStackedProgram.rdz.tcbl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="resources\output\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="..\..\CLI\src\config\skeletons.xml">
       <Link>resources\config\TypeCobol\skeletons.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="resources\output\TypeCobol\GenEndStackedProgram.rdz.tcbl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

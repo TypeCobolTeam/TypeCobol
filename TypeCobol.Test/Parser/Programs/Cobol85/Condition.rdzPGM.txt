@@ -1,4 +1,7 @@
-﻿--- Program ---
+--- Diagnostics ---
+Line 2[8,29] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+
+--- Program ---
 PROGRAM: MyPGM common:False initial:False recursive:False
  author: ? written: ? compiled: ? installation: ? security: ?
 --- Intrinsic:Namespace:GlobalStorage:Global:Declarations:Program
