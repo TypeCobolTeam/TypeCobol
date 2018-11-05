@@ -28,6 +28,7 @@
        PROGRAM-ID. fb2e1a03Foo.
        PROCEDURE DIVISION
            .
+      *EnclosingPgm.Foo  - No Params
            display "Hey"
                .
        END PROGRAM fb2e1a03Foo.
