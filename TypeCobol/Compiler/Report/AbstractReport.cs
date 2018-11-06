@@ -12,6 +12,15 @@ namespace TypeCobol.Compiler.Report
     /// </summary>
     public abstract class AbstractReport : IReport
     {
+        private string _filepath;
+
+        public string Filepath
+        {
+            get { return _filepath; }
+
+            set { _filepath = value; }
+        }
+
         /// <summary>
         /// Emit the Report in the given TextWriter
         /// </summary>
@@ -23,9 +32,12 @@ namespace TypeCobol.Compiler.Report
         /// </summary>
         /// <param name="filepath">The File path</param>
         /// <exception cref="Exception">Any exception that occured</exception>
-        public virtual void Report(String filepath)
+        public virtual void Report()
         {
-            using (FileStream fs = new FileStream(filepath, FileMode.Create))
+            if (string.IsNullOrEmpty(_filepath))
+                throw new FileLoadException($"Cannot find file at path: {_filepath}");
+
+            using (FileStream fs = new FileStream(_filepath, FileMode.Create))
             {
                 Report(fs);
             }

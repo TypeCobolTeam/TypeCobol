@@ -317,6 +317,7 @@
     <Compile Include="Compiler\Report\AbstractReport.cs" />
     <Compile Include="Compiler\Report\CopyMoveInitializeReport.cs" />
     <Compile Include="Compiler\Report\IReport.cs" />
+    <Compile Include="Compiler\Report\ZCallPgmReport.cs" />
     <Compile Include="Compiler\Scanner\CompilerDirectiveToken.cs" />
     <Compile Include="Compiler\Scanner\ContinuationToken.cs" />
     <Compile Include="Compiler\Scanner\ContinuationTokensGroup.cs" />
