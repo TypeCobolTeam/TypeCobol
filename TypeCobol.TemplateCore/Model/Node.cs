@@ -168,14 +168,6 @@ namespace TypeCobol.TemplateCore.Model
                             //Now emit the Action Pattern code.
                             //1) Create the result variable of the emitted code
                             codeWriter.WriteLine("StringBuilder @SelfResult = new StringBuilder();");
-                            //Special case flag NewLine ==> add NewLine in the Buffer
-                            /*
-                            string newline = pattern.Attributes.ContainsKey(AttributeNames.NewLine) ? (string)pattern.Attributes[AttributeNames.NewLine].Value : null;
-                            if (newline != null && newline.Equals("true"))
-                            {
-                                codeWriter.WriteLine("@SelfResult.Append(\"\\n\");");                                
-                            }
-                            */
                             //2)  Create the interpolation mixed code, if we have some code.
                             if (pattern.Code != null)
                             {

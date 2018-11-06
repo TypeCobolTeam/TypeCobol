@@ -103,13 +103,6 @@ namespace TypeCobol.Codegen
             {
                 CurrentProgram = node as Program;
                 ProgramGroupPrefix = CurrentProgram.Identification.Text;
-                if (CurrentProgram.Root.IsFlagSet(Node.Flag.ContainsProcedure) && CurrentProgram.IsFlagSet(Node.Flag.MissingEndProgram))
-                {
-                    var endProgramNode = new Codegen.Nodes.ProgramEnd(CurrentProgram.Name);
-                    node.Add(endProgramNode);
-                    endProgramNode.SetFlag(Node.Flag.FactoryGeneratedNode, true);
-                    endProgramNode.SetFlag(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex, true);
-                }
             }
 
             var actions = GetActions(node);
