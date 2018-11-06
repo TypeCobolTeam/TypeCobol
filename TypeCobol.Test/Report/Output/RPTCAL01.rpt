@@ -1,0 +1,4 @@
+﻿ObjectName=PGM00001;Line=12;Column=8;SourceText=call 'zcallpgm' using PROGRAM_NAME PARAMETER_1 PARAMETER_2
+ObjectName=PGM00001;Line=16;Column=8;SourceText=call 'ZCALLPGM' using by content PROGRAM_NAME PARAMETER_1
+ObjectName=PGM00001;Line=19;Column=8;SourceText=call 'zCaLlpgm' using by reference PROGRAM_NAME
+ObjectName=PGM00001;Line=21;Column=13;SourceText=call 'zCaLlpgm' using by value PROGRAM_NAME

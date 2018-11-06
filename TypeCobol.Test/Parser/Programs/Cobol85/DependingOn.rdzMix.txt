@@ -1,4 +1,4 @@
-﻿000000 IDENTIFICATION DIVISION.
+000000 IDENTIFICATION DIVISION.
 000000 PROGRAM-ID. StringStatement.
 000000 ENVIRONMENT DIVISION.
 000000 CONFIGURATION SECTION.
@@ -26,7 +26,7 @@ Symbols found: StringStatement::MyAmbiguousGroup::MyAmbiguousCounter | StringSta
        01 MyGroup3.
           05 MyCounter3  pic 999 comp-5.
       *KO depending on clause cannot be a numeric
-Line 27[48,50] <27, Error, Syntax> - Syntax error : no viable alternative at input '999'
+Line 27[48,50] <27, Error, Syntax> - Syntax error : mismatched input '999' expecting {symbol, special register, keyword}
           05 MyTab3     occurs 99 depending on 999.
  
        01 MyGroup4.

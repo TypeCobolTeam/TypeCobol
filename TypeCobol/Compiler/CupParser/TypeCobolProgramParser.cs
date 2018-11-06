@@ -9,9 +9,9 @@ namespace TypeCobol.Compiler.CupParser
 using TypeCobol.Compiler.CupParser.NodeBuilder;
 using TypeCobol.Compiler.CodeElements;
 using System.Collections.Generic;
-using System.Collections;
 using System;
 using TUVienna.CS_CUP.Runtime;
+using CSCupRuntime;
 
 /** C# CUP v0.1 generated parser.
   */
@@ -1383,10 +1383,9 @@ new short[457][] {
   public override TUVienna.CS_CUP.Runtime.Symbol do_action(
     int                        act_num,
     TUVienna.CS_CUP.Runtime.lr_parser parser,
-    System.Collections.Stack            xstack1,
+    StackList<Symbol>            CUP_parser_stack,
     int                        top)
   {
-  mStack CUP_parser_stack= new mStack(xstack1);
     /* call code in generated class */
     return action_obj.CUP_TypeCobolProgramParser_do_action(act_num, parser, stack, top);
   }
@@ -1427,11 +1426,11 @@ new short[457][] {
   // get the current state of the parser.
   public int getParserState() 
   {
-	return ((Symbol)stack.Peek()).parse_state;	
+	return stack.Peek().parse_state;	
   }
 
   //get the parser stack.
-  public Stack getParserStack() 
+  public StackList<Symbol> getParserStack() 
   {
 	return stack;	
   }
@@ -1504,11 +1503,11 @@ public class CUP_TypeCobolProgramParser_actions {
   public   TUVienna.CS_CUP.Runtime.Symbol CUP_TypeCobolProgramParser_do_action(
     int                        CUP_TypeCobolProgramParser_act_num,
     TUVienna.CS_CUP.Runtime.lr_parser CUP_TypeCobolProgramParser_parser,
-    System.Collections.Stack            xstack1,
+    StackList<Symbol>            xstack1,
     int                        CUP_TypeCobolProgramParser_top)
     {
       /* Symbol object for return from actions */
-      mStack CUP_TypeCobolProgramParser_stack =new mStack(xstack1);
+      StackList<Symbol> CUP_TypeCobolProgramParser_stack =  xstack1;
       TUVienna.CS_CUP.Runtime.Symbol CUP_TypeCobolProgramParser_result;
 
       /* select the action based on the action number */
@@ -1554,7 +1553,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 404: // notOnSizeErrorCondition ::= NotOnSizeErrorCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition cond = (TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition cond = (TypeCobol.Compiler.CodeElements.NotOnSizeErrorCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartNoSizeError(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(169/*notOnSizeErrorCondition*/, RESULT);
             }
@@ -1573,7 +1572,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 402: // onSizeErrorCondition ::= OnSizeErrorCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.OnSizeErrorCondition cond = (TypeCobol.Compiler.CodeElements.OnSizeErrorCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.OnSizeErrorCondition cond = (TypeCobol.Compiler.CodeElements.OnSizeErrorCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartOnSizeError(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(168/*onSizeErrorCondition*/, RESULT);
             }
@@ -1628,7 +1627,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 396: // notOnOverflowCondition ::= NotOnOverflowCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.NotOnOverflowCondition cond = (TypeCobol.Compiler.CodeElements.NotOnOverflowCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.NotOnOverflowCondition cond = (TypeCobol.Compiler.CodeElements.NotOnOverflowCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartNoOverflow(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(167/*notOnOverflowCondition*/, RESULT);
             }
@@ -1647,7 +1646,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 394: // onOverflowCondition ::= OnOverflowCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.OnOverflowCondition cond = (TypeCobol.Compiler.CodeElements.OnOverflowCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.OnOverflowCondition cond = (TypeCobol.Compiler.CodeElements.OnOverflowCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartOnOverflow(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(166/*onOverflowCondition*/, RESULT);
             }
@@ -1702,7 +1701,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 388: // notInvalidKeyCondition ::= NotInvalidKeyCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.NotInvalidKeyCondition cond = (TypeCobol.Compiler.CodeElements.NotInvalidKeyCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.NotInvalidKeyCondition cond = (TypeCobol.Compiler.CodeElements.NotInvalidKeyCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartNoInvalidKey(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(165/*notInvalidKeyCondition*/, RESULT);
             }
@@ -1721,7 +1720,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 386: // invalidKeyCondition ::= InvalidKeyCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.InvalidKeyCondition cond = (TypeCobol.Compiler.CodeElements.InvalidKeyCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.InvalidKeyCondition cond = (TypeCobol.Compiler.CodeElements.InvalidKeyCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartOnInvalidKey(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(164/*invalidKeyCondition*/, RESULT);
             }
@@ -1776,7 +1775,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 380: // notOnExceptionCondition ::= NotOnExceptionCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.NotOnExceptionCondition cond = (TypeCobol.Compiler.CodeElements.NotOnExceptionCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.NotOnExceptionCondition cond = (TypeCobol.Compiler.CodeElements.NotOnExceptionCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartNoException(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(163/*notOnExceptionCondition*/, RESULT);
             }
@@ -1795,7 +1794,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 378: // onExceptionCondition ::= OnExceptionCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.OnExceptionCondition cond = (TypeCobol.Compiler.CodeElements.OnExceptionCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.OnExceptionCondition cond = (TypeCobol.Compiler.CodeElements.OnExceptionCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartOnException(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(162/*onExceptionCondition*/, RESULT);
             }
@@ -1850,7 +1849,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 372: // notAtEndCondition ::= NotAtEndCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.NotAtEndCondition cond = (TypeCobol.Compiler.CodeElements.NotAtEndCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.NotAtEndCondition cond = (TypeCobol.Compiler.CodeElements.NotAtEndCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartNoAtEnd(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(161/*notAtEndCondition*/, RESULT);
             }
@@ -1869,7 +1868,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 370: // atEndCondition ::= AtEndCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.AtEndCondition cond = (TypeCobol.Compiler.CodeElements.AtEndCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.AtEndCondition cond = (TypeCobol.Compiler.CodeElements.AtEndCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartOnAtEnd(cond); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(160/*atEndCondition*/, RESULT);
             }
@@ -1888,7 +1887,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 368: // xmlParseStatement ::= XmlParseStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.XmlParseStatement stmt = (TypeCobol.Compiler.CodeElements.XmlParseStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.XmlParseStatement stmt = (TypeCobol.Compiler.CodeElements.XmlParseStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartXmlParseStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(159/*xmlParseStatement*/, RESULT);
             }
@@ -1898,7 +1897,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 367: // xmlParseStatementConditional ::= xmlParseStatement exceptionConditions XmlStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndXmlParseStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(129/*xmlParseStatementConditional*/, RESULT);
             }
@@ -1917,7 +1916,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 365: // xmlParseStatementConditional ::= xmlParseStatement XmlStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndXmlParseStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(129/*xmlParseStatementConditional*/, RESULT);
             }
@@ -1936,7 +1935,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 363: // xmlGenerateStatement ::= XmlGenerateStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.XmlGenerateStatement stmt = (TypeCobol.Compiler.CodeElements.XmlGenerateStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.XmlGenerateStatement stmt = (TypeCobol.Compiler.CodeElements.XmlGenerateStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartXmlGenerateStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(158/*xmlGenerateStatement*/, RESULT);
             }
@@ -1946,7 +1945,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 362: // xmlGenerateStatementConditional ::= xmlGenerateStatement exceptionConditions XmlStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndXmlGenerateStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(128/*xmlGenerateStatementConditional*/, RESULT);
             }
@@ -1965,7 +1964,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 360: // xmlGenerateStatementConditional ::= xmlGenerateStatement XmlStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.XmlStatementEnd end = (TypeCobol.Compiler.CodeElements.XmlStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndXmlGenerateStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(128/*xmlGenerateStatementConditional*/, RESULT);
             }
@@ -1984,7 +1983,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 358: // writeStatement ::= WriteStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.WriteStatement stmt = (TypeCobol.Compiler.CodeElements.WriteStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.WriteStatement stmt = (TypeCobol.Compiler.CodeElements.WriteStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartWriteStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(157/*writeStatement*/, RESULT);
             }
@@ -1994,7 +1993,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 357: // writeStatementConditional ::= writeStatement rwStatementConditions WriteStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.WriteStatementEnd end = (TypeCobol.Compiler.CodeElements.WriteStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.WriteStatementEnd end = (TypeCobol.Compiler.CodeElements.WriteStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndWriteStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(127/*writeStatementConditional*/, RESULT);
             }
@@ -2013,7 +2012,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 355: // writeStatementConditional ::= writeStatement WriteStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.WriteStatementEnd end = (TypeCobol.Compiler.CodeElements.WriteStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.WriteStatementEnd end = (TypeCobol.Compiler.CodeElements.WriteStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndWriteStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(127/*writeStatementConditional*/, RESULT);
             }
@@ -2032,7 +2031,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 353: // unstringStatement ::= UnstringStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.UnstringStatement stmt = (TypeCobol.Compiler.CodeElements.UnstringStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.UnstringStatement stmt = (TypeCobol.Compiler.CodeElements.UnstringStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartUnstringStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(156/*unstringStatement*/, RESULT);
             }
@@ -2042,7 +2041,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 352: // unstringStatementConditional ::= unstringStatement overflowConditions UnstringStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.UnstringStatementEnd end = (TypeCobol.Compiler.CodeElements.UnstringStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.UnstringStatementEnd end = (TypeCobol.Compiler.CodeElements.UnstringStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndUnstringStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(125/*unstringStatementConditional*/, RESULT);
             }
@@ -2061,7 +2060,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 350: // unstringStatementConditional ::= unstringStatement UnstringStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.UnstringStatementEnd end = (TypeCobol.Compiler.CodeElements.UnstringStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.UnstringStatementEnd end = (TypeCobol.Compiler.CodeElements.UnstringStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndUnstringStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(125/*unstringStatementConditional*/, RESULT);
             }
@@ -2080,7 +2079,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 348: // subtractStatement ::= SubtractStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SubtractStatement stmt = (TypeCobol.Compiler.CodeElements.SubtractStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SubtractStatement stmt = (TypeCobol.Compiler.CodeElements.SubtractStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartSubtractStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(155/*subtractStatement*/, RESULT);
             }
@@ -2090,7 +2089,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 347: // subtractStatementConditional ::= subtractStatement sizeErrorConditions SubtractStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SubtractStatementEnd end = (TypeCobol.Compiler.CodeElements.SubtractStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SubtractStatementEnd end = (TypeCobol.Compiler.CodeElements.SubtractStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndSubtractStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(124/*subtractStatementConditional*/, RESULT);
             }
@@ -2109,7 +2108,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 345: // subtractStatementConditional ::= subtractStatement SubtractStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SubtractStatementEnd end = (TypeCobol.Compiler.CodeElements.SubtractStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SubtractStatementEnd end = (TypeCobol.Compiler.CodeElements.SubtractStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndSubtractStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(124/*subtractStatementConditional*/, RESULT);
             }
@@ -2128,7 +2127,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 343: // stringStatement ::= StringStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.StringStatement stmt = (TypeCobol.Compiler.CodeElements.StringStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.StringStatement stmt = (TypeCobol.Compiler.CodeElements.StringStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartStringStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(154/*stringStatement*/, RESULT);
             }
@@ -2138,7 +2137,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 342: // stringStatementConditional ::= stringStatement overflowConditions StringStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.StringStatementEnd end = (TypeCobol.Compiler.CodeElements.StringStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.StringStatementEnd end = (TypeCobol.Compiler.CodeElements.StringStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndStringStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(123/*stringStatementConditional*/, RESULT);
             }
@@ -2157,7 +2156,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 340: // stringStatementConditional ::= stringStatement StringStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.StringStatementEnd end = (TypeCobol.Compiler.CodeElements.StringStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.StringStatementEnd end = (TypeCobol.Compiler.CodeElements.StringStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndStringStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(123/*stringStatementConditional*/, RESULT);
             }
@@ -2176,7 +2175,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 338: // startStatement ::= StartStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.StartStatement stmt = (TypeCobol.Compiler.CodeElements.StartStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.StartStatement stmt = (TypeCobol.Compiler.CodeElements.StartStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartStartStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(153/*startStatement*/, RESULT);
             }
@@ -2186,7 +2185,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 337: // startStatementConditional ::= startStatement keyConditions StartStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.StartStatementEnd end = (TypeCobol.Compiler.CodeElements.StartStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.StartStatementEnd end = (TypeCobol.Compiler.CodeElements.StartStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndStartStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(122/*startStatementConditional*/, RESULT);
             }
@@ -2205,7 +2204,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 335: // startStatementConditional ::= startStatement StartStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.StartStatementEnd end = (TypeCobol.Compiler.CodeElements.StartStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.StartStatementEnd end = (TypeCobol.Compiler.CodeElements.StartStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndStartStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(122/*startStatementConditional*/, RESULT);
             }
@@ -2242,7 +2241,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 331: // whenSearchCondition ::= WhenSearchCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.WhenSearchCondition wsc = (TypeCobol.Compiler.CodeElements.WhenSearchCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.WhenSearchCondition wsc = (TypeCobol.Compiler.CodeElements.WhenSearchCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartWhenSearchConditionClause(wsc); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(150/*whenSearchCondition*/, RESULT);
             }
@@ -2270,7 +2269,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 328: // searchStatement ::= SearchStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SearchStatement stmt = (TypeCobol.Compiler.CodeElements.SearchStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SearchStatement stmt = (TypeCobol.Compiler.CodeElements.SearchStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartSearchStatementWithBody(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(149/*searchStatement*/, RESULT);
             }
@@ -2280,7 +2279,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 327: // searchStatementWithBody ::= searchStatement onAtEnd whenSearchConditionClauses SearchStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SearchStatementEnd end = (TypeCobol.Compiler.CodeElements.SearchStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SearchStatementEnd end = (TypeCobol.Compiler.CodeElements.SearchStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndSearchStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(126/*searchStatementWithBody*/, RESULT);
             }
@@ -2290,7 +2289,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 326: // searchStatementWithBody ::= searchStatement onAtEnd whenSearchConditionClauses 
             {
               object RESULT = null;
-		object wsccs = (object)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		object wsccs = (object)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndSearchStatementWithBody(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(126/*searchStatementWithBody*/, RESULT);
             }
@@ -2300,7 +2299,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 325: // searchStatementWithBody ::= searchStatement whenSearchConditionClauses SearchStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SearchStatementEnd end = (TypeCobol.Compiler.CodeElements.SearchStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SearchStatementEnd end = (TypeCobol.Compiler.CodeElements.SearchStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndSearchStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(126/*searchStatementWithBody*/, RESULT);
             }
@@ -2319,7 +2318,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 323: // rewriteStatement ::= RewriteStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.RewriteStatement stmt = (TypeCobol.Compiler.CodeElements.RewriteStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.RewriteStatement stmt = (TypeCobol.Compiler.CodeElements.RewriteStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartRewriteStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(148/*rewriteStatement*/, RESULT);
             }
@@ -2329,7 +2328,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 322: // rewriteStatementConditional ::= rewriteStatement keyConditions RewriteStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.RewriteStatementEnd end = (TypeCobol.Compiler.CodeElements.RewriteStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.RewriteStatementEnd end = (TypeCobol.Compiler.CodeElements.RewriteStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndRewriteStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(121/*rewriteStatementConditional*/, RESULT);
             }
@@ -2348,7 +2347,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 320: // rewriteStatementConditional ::= rewriteStatement RewriteStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.RewriteStatementEnd end = (TypeCobol.Compiler.CodeElements.RewriteStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.RewriteStatementEnd end = (TypeCobol.Compiler.CodeElements.RewriteStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndRewriteStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(121/*rewriteStatementConditional*/, RESULT);
             }
@@ -2367,7 +2366,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 318: // returnStatement ::= ReturnStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ReturnStatement stmt = (TypeCobol.Compiler.CodeElements.ReturnStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ReturnStatement stmt = (TypeCobol.Compiler.CodeElements.ReturnStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EnterReturnStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(147/*returnStatement*/, RESULT);
             }
@@ -2377,7 +2376,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 317: // returnStatementConditional ::= returnStatement endConditions ReturnStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ReturnStatementEnd end = (TypeCobol.Compiler.CodeElements.ReturnStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ReturnStatementEnd end = (TypeCobol.Compiler.CodeElements.ReturnStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndReturnStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(120/*returnStatementConditional*/, RESULT);
             }
@@ -2396,7 +2395,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 315: // returnStatementConditional ::= returnStatement ReturnStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ReturnStatementEnd end = (TypeCobol.Compiler.CodeElements.ReturnStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ReturnStatementEnd end = (TypeCobol.Compiler.CodeElements.ReturnStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndReturnStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(120/*returnStatementConditional*/, RESULT);
             }
@@ -2469,7 +2468,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 307: // readStatement ::= ReadStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ReadStatement stmt = (TypeCobol.Compiler.CodeElements.ReadStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ReadStatement stmt = (TypeCobol.Compiler.CodeElements.ReadStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EnterReadStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(146/*readStatement*/, RESULT);
             }
@@ -2479,7 +2478,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 306: // readStatementConditional ::= readStatement rwStatementConditions ReadStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ReadStatementEnd end = (TypeCobol.Compiler.CodeElements.ReadStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ReadStatementEnd end = (TypeCobol.Compiler.CodeElements.ReadStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndReadStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(117/*readStatementConditional*/, RESULT);
             }
@@ -2498,7 +2497,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 304: // readStatementConditional ::= readStatement ReadStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ReadStatementEnd end = (TypeCobol.Compiler.CodeElements.ReadStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ReadStatementEnd end = (TypeCobol.Compiler.CodeElements.ReadStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndReadStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(117/*readStatementConditional*/, RESULT);
             }
@@ -2517,7 +2516,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 302: // performStatement ::= PerformStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.PerformStatement stmt = (TypeCobol.Compiler.CodeElements.PerformStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.PerformStatement stmt = (TypeCobol.Compiler.CodeElements.PerformStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartPerformStatementWithBody(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(145/*performStatement*/, RESULT);
             }
@@ -2527,7 +2526,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 301: // performStatementWithBody ::= performStatement statements PerformStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.PerformStatementEnd end = (TypeCobol.Compiler.CodeElements.PerformStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.PerformStatementEnd end = (TypeCobol.Compiler.CodeElements.PerformStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndPerformStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(116/*performStatementWithBody*/, RESULT);
             }
@@ -2546,7 +2545,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 299: // performStatementWithBody ::= performStatement PerformStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.PerformStatementEnd end = (TypeCobol.Compiler.CodeElements.PerformStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.PerformStatementEnd end = (TypeCobol.Compiler.CodeElements.PerformStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndPerformStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(116/*performStatementWithBody*/, RESULT);
             }
@@ -2565,7 +2564,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 297: // multiplyStatement ::= MultiplyStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.MultiplyStatement stmt = (TypeCobol.Compiler.CodeElements.MultiplyStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.MultiplyStatement stmt = (TypeCobol.Compiler.CodeElements.MultiplyStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartMultiplyStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(144/*multiplyStatement*/, RESULT);
             }
@@ -2575,7 +2574,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 296: // multiplyStatementConditional ::= multiplyStatement sizeErrorConditions MultiplyStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.MultiplyStatementEnd end = (TypeCobol.Compiler.CodeElements.MultiplyStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.MultiplyStatementEnd end = (TypeCobol.Compiler.CodeElements.MultiplyStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndMultiplyStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(115/*multiplyStatementConditional*/, RESULT);
             }
@@ -2594,7 +2593,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 294: // multiplyStatementConditional ::= multiplyStatement MultiplyStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.MultiplyStatementEnd end = (TypeCobol.Compiler.CodeElements.MultiplyStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.MultiplyStatementEnd end = (TypeCobol.Compiler.CodeElements.MultiplyStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndMultiplyStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(115/*multiplyStatementConditional*/, RESULT);
             }
@@ -2613,7 +2612,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 292: // invokeStatement ::= InvokeStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.InvokeStatement stmt = (TypeCobol.Compiler.CodeElements.InvokeStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.InvokeStatement stmt = (TypeCobol.Compiler.CodeElements.InvokeStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartInvokeStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(143/*invokeStatement*/, RESULT);
             }
@@ -2623,7 +2622,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 291: // invokeStatementConditional ::= invokeStatement exceptionConditions InvokeStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.InvokeStatementEnd end = (TypeCobol.Compiler.CodeElements.InvokeStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.InvokeStatementEnd end = (TypeCobol.Compiler.CodeElements.InvokeStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndInvokeStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(114/*invokeStatementConditional*/, RESULT);
             }
@@ -2642,7 +2641,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 289: // invokeStatementConditional ::= invokeStatement InvokeStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.InvokeStatementEnd end = (TypeCobol.Compiler.CodeElements.InvokeStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.InvokeStatementEnd end = (TypeCobol.Compiler.CodeElements.InvokeStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndInvokeStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(114/*invokeStatementConditional*/, RESULT);
             }
@@ -2661,7 +2660,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 287: // nextSentenceStatement ::= NextSentenceStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.NextSentenceStatement next = (TypeCobol.Compiler.CodeElements.NextSentenceStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.NextSentenceStatement next = (TypeCobol.Compiler.CodeElements.NextSentenceStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.AddNextSentenceStatement(next); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(136/*nextSentenceStatement*/, RESULT);
             }
@@ -2671,7 +2670,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 286: // elseCondition ::= ElseCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ElseCondition ec = (TypeCobol.Compiler.CodeElements.ElseCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ElseCondition ec = (TypeCobol.Compiler.CodeElements.ElseCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EnterElseClause(ec); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(135/*elseCondition*/, RESULT);
             }
@@ -2681,7 +2680,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 285: // ifstatement ::= IfStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.IfStatement ifs = (TypeCobol.Compiler.CodeElements.IfStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.IfStatement ifs = (TypeCobol.Compiler.CodeElements.IfStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartIfStatementWithBody(ifs); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(134/*ifstatement*/, RESULT);
             }
@@ -2691,7 +2690,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 284: // ifStatementWithBody ::= ifstatement nextSentenceStatement elseCondition nextSentenceStatement IfStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndIfStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(113/*ifStatementWithBody*/, RESULT);
             }
@@ -2701,7 +2700,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 283: // ifStatementWithBody ::= ifstatement nextSentenceStatement elseCondition statements IfStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndIfStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(113/*ifStatementWithBody*/, RESULT);
             }
@@ -2729,7 +2728,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 280: // ifStatementWithBody ::= ifstatement statements elseCondition nextSentenceStatement IfStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndIfStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(113/*ifStatementWithBody*/, RESULT);
             }
@@ -2739,7 +2738,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 279: // ifStatementWithBody ::= ifstatement statements elseCondition statements IfStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndIfStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(113/*ifStatementWithBody*/, RESULT);
             }
@@ -2767,7 +2766,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 276: // ifStatementWithBody ::= ifstatement nextSentenceStatement IfStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndIfStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(113/*ifStatementWithBody*/, RESULT);
             }
@@ -2786,7 +2785,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 274: // ifStatementWithBody ::= ifstatement statements IfStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.IfStatementEnd end = (TypeCobol.Compiler.CodeElements.IfStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndIfStatementWithBody(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(113/*ifStatementWithBody*/, RESULT);
             }
@@ -2805,7 +2804,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 272: // whenOtherCondition ::= WhenOtherCondition 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.WhenOtherCondition woc = (TypeCobol.Compiler.CodeElements.WhenOtherCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.WhenOtherCondition woc = (TypeCobol.Compiler.CodeElements.WhenOtherCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartWhenOtherClause(woc); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(152/*whenOtherCondition*/, RESULT);
             }
@@ -2815,7 +2814,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 271: // whenOtherClause ::= whenOtherCondition statements 
             {
               object RESULT = null;
-		object woc = (object)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
+		object woc = (object)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
 		 my_parser.Builder.EndWhenOtherClause(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(108/*whenOtherClause*/, RESULT);
             }
@@ -2825,7 +2824,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 270: // whenEvaluateConditionsStart ::= whenEvaluateConditions 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList wecs = (TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList wecs = (TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartWhenConditionClause(wecs); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(151/*whenEvaluateConditionsStart*/, RESULT);
             }
@@ -2835,8 +2834,8 @@ public class CUP_TypeCobolProgramParser_actions {
           case 269: // whenEvaluateConditions ::= whenEvaluateConditions whenEvaluateCondition 
             {
               TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList RESULT = null;
-		TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList wecs = (TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.CodeElement wec = (TypeCobol.Compiler.CodeElements.CodeElement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList wecs = (TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.CodeElement wec = (TypeCobol.Compiler.CodeElements.CodeElement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 wecs.Add(wec); RESULT = wecs; 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(111/*whenEvaluateConditions*/, RESULT);
             }
@@ -2846,7 +2845,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 268: // whenEvaluateConditions ::= whenEvaluateCondition 
             {
               TypeCobol.Compiler.CupParser.NodeBuilder.CodeElementList RESULT = null;
-		TypeCobol.Compiler.CodeElements.CodeElement wec = (TypeCobol.Compiler.CodeElements.CodeElement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.CodeElement wec = (TypeCobol.Compiler.CodeElements.CodeElement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 RESULT = new CodeElementList(){wec}; 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(111/*whenEvaluateConditions*/, RESULT);
             }
@@ -2856,7 +2855,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 267: // whenEvaluateCondition ::= WhenCondition 
             {
               TypeCobol.Compiler.CodeElements.CodeElement RESULT = null;
-		TypeCobol.Compiler.CodeElements.WhenCondition wec = (TypeCobol.Compiler.CodeElements.WhenCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.WhenCondition wec = (TypeCobol.Compiler.CodeElements.WhenCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 RESULT = wec; 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(110/*whenEvaluateCondition*/, RESULT);
             }
@@ -2866,7 +2865,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 266: // whenEvaluateCondition ::= WhenSearchCondition 
             {
               TypeCobol.Compiler.CodeElements.CodeElement RESULT = null;
-		TypeCobol.Compiler.CodeElements.WhenSearchCondition wec = (TypeCobol.Compiler.CodeElements.WhenSearchCondition)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.WhenSearchCondition wec = (TypeCobol.Compiler.CodeElements.WhenSearchCondition)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 RESULT = wec; 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(110/*whenEvaluateCondition*/, RESULT);
             }
@@ -2921,7 +2920,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 260: // evaluateStatement ::= EvaluateStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.EvaluateStatement est = (TypeCobol.Compiler.CodeElements.EvaluateStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EvaluateStatement est = (TypeCobol.Compiler.CodeElements.EvaluateStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartEvaluateStatementWithBody(est); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(142/*evaluateStatement*/, RESULT);
             }
@@ -2931,7 +2930,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 259: // evaluateStatementWithBody ::= evaluateStatement whenConditionClauses error whenOtherClause EvaluateStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndEvaluateStatementWithBody(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(112/*evaluateStatementWithBody*/, RESULT);
             }
@@ -2950,7 +2949,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 257: // evaluateStatementWithBody ::= evaluateStatement whenConditionClauses error EvaluateStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndEvaluateStatementWithBody(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(112/*evaluateStatementWithBody*/, RESULT);
             }
@@ -2960,7 +2959,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 256: // evaluateStatementWithBody ::= evaluateStatement whenConditionClauses whenOtherClause EvaluateStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndEvaluateStatementWithBody(ese); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(112/*evaluateStatementWithBody*/, RESULT);
             }
@@ -2979,7 +2978,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 254: // evaluateStatementWithBody ::= evaluateStatement whenOtherClause EvaluateStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndEvaluateStatementWithBody(ese); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(112/*evaluateStatementWithBody*/, RESULT);
             }
@@ -2998,7 +2997,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 252: // evaluateStatementWithBody ::= evaluateStatement whenConditionClauses EvaluateStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndEvaluateStatementWithBody(ese); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(112/*evaluateStatementWithBody*/, RESULT);
             }
@@ -3017,7 +3016,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 250: // evaluateStatementWithBody ::= evaluateStatement EvaluateStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EvaluateStatementEnd ese = (TypeCobol.Compiler.CodeElements.EvaluateStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndEvaluateStatementWithBody(ese); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(112/*evaluateStatementWithBody*/, RESULT);
             }
@@ -3036,7 +3035,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 248: // divideStatement ::= DivideStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DivideStatement stmt = (TypeCobol.Compiler.CodeElements.DivideStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DivideStatement stmt = (TypeCobol.Compiler.CodeElements.DivideStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartDivideStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(141/*divideStatement*/, RESULT);
             }
@@ -3046,7 +3045,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 247: // divideStatementConditional ::= divideStatement sizeErrorConditions DivideStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DivideStatementEnd end = (TypeCobol.Compiler.CodeElements.DivideStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DivideStatementEnd end = (TypeCobol.Compiler.CodeElements.DivideStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndDivideStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(104/*divideStatementConditional*/, RESULT);
             }
@@ -3065,7 +3064,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 245: // divideStatementConditional ::= divideStatement DivideStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DivideStatementEnd end = (TypeCobol.Compiler.CodeElements.DivideStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DivideStatementEnd end = (TypeCobol.Compiler.CodeElements.DivideStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndDivideStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(104/*divideStatementConditional*/, RESULT);
             }
@@ -3084,7 +3083,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 243: // deleteStatement ::= DeleteStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DeleteStatement stmt = (TypeCobol.Compiler.CodeElements.DeleteStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DeleteStatement stmt = (TypeCobol.Compiler.CodeElements.DeleteStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartDeleteStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(140/*deleteStatement*/, RESULT);
             }
@@ -3094,7 +3093,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 242: // deleteStatementConditional ::= deleteStatement keyConditions DeleteStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DeleteStatementEnd end = (TypeCobol.Compiler.CodeElements.DeleteStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DeleteStatementEnd end = (TypeCobol.Compiler.CodeElements.DeleteStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndDeleteStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(103/*deleteStatementConditional*/, RESULT);
             }
@@ -3113,7 +3112,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 240: // deleteStatementConditional ::= deleteStatement DeleteStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DeleteStatementEnd end = (TypeCobol.Compiler.CodeElements.DeleteStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DeleteStatementEnd end = (TypeCobol.Compiler.CodeElements.DeleteStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndDeleteStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(103/*deleteStatementConditional*/, RESULT);
             }
@@ -3132,7 +3131,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 238: // computeStatement ::= ComputeStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ComputeStatement stmt = (TypeCobol.Compiler.CodeElements.ComputeStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ComputeStatement stmt = (TypeCobol.Compiler.CodeElements.ComputeStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartComputeStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(139/*computeStatement*/, RESULT);
             }
@@ -3142,7 +3141,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 237: // computeStatementConditional ::= computeStatement sizeErrorConditions ComputeStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ComputeStatementEnd end = (TypeCobol.Compiler.CodeElements.ComputeStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ComputeStatementEnd end = (TypeCobol.Compiler.CodeElements.ComputeStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndComputeStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(102/*computeStatementConditional*/, RESULT);
             }
@@ -3161,7 +3160,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 235: // computeStatementConditional ::= computeStatement ComputeStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ComputeStatementEnd end = (TypeCobol.Compiler.CodeElements.ComputeStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ComputeStatementEnd end = (TypeCobol.Compiler.CodeElements.ComputeStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndComputeStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(102/*computeStatementConditional*/, RESULT);
             }
@@ -3207,7 +3206,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 230: // callStatement ::= CallStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.CallStatement stmt = (TypeCobol.Compiler.CodeElements.CallStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.CallStatement stmt = (TypeCobol.Compiler.CodeElements.CallStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartCallStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(138/*callStatement*/, RESULT);
             }
@@ -3217,7 +3216,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 229: // callStatementConditional ::= callStatement callStatementConditions CallStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.CallStatementEnd end = (TypeCobol.Compiler.CodeElements.CallStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.CallStatementEnd end = (TypeCobol.Compiler.CodeElements.CallStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		  my_parser.Builder.EndCallStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(101/*callStatementConditional*/, RESULT);
             }
@@ -3236,7 +3235,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 227: // callStatementConditional ::= callStatement CallStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.CallStatementEnd end = (TypeCobol.Compiler.CodeElements.CallStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.CallStatementEnd end = (TypeCobol.Compiler.CodeElements.CallStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndCallStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(101/*callStatementConditional*/, RESULT);
             }
@@ -3255,7 +3254,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 225: // addStatement ::= AddStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.AddStatement stmt = (TypeCobol.Compiler.CodeElements.AddStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.AddStatement stmt = (TypeCobol.Compiler.CodeElements.AddStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartAddStatementConditional(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(137/*addStatement*/, RESULT);
             }
@@ -3265,7 +3264,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 224: // addStatementConditional ::= addStatement sizeErrorConditions AddStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.AddStatementEnd end = (TypeCobol.Compiler.CodeElements.AddStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.AddStatementEnd end = (TypeCobol.Compiler.CodeElements.AddStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		  my_parser.Builder.EndAddStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(99/*addStatementConditional*/, RESULT);
             }
@@ -3284,7 +3283,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 222: // addStatementConditional ::= addStatement AddStatementEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.AddStatementEnd end = (TypeCobol.Compiler.CodeElements.AddStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.AddStatementEnd end = (TypeCobol.Compiler.CodeElements.AddStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndAddStatementConditional(end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(99/*addStatementConditional*/, RESULT);
             }
@@ -3492,7 +3491,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 199: // singleStatement ::= ExecStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.ExecStatement stmt = (TypeCobol.Compiler.CodeElements.ExecStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ExecStatement stmt = (TypeCobol.Compiler.CodeElements.ExecStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnExecStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3502,7 +3501,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 198: // singleStatement ::= CancelStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.CancelStatement stmt = (TypeCobol.Compiler.CodeElements.CancelStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.CancelStatement stmt = (TypeCobol.Compiler.CodeElements.CancelStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnCancelStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3512,8 +3511,8 @@ public class CUP_TypeCobolProgramParser_actions {
           case 197: // singleStatement ::= ProcedureStyleCall CallStatementEnd 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement stmt = (TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.CallStatementEnd end = (TypeCobol.Compiler.CodeElements.CallStatementEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement stmt = (TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.CallStatementEnd end = (TypeCobol.Compiler.CodeElements.CallStatementEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnProcedureStyleCall(stmt, end); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3523,7 +3522,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 196: // singleStatement ::= ProcedureStyleCall 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement stmt = (TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement stmt = (TypeCobol.Compiler.CodeElements.ProcedureStyleCallStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnProcedureStyleCall(stmt, null); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3533,7 +3532,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 195: // singleStatement ::= PerformProcedureStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.PerformProcedureStatement stmt = (TypeCobol.Compiler.CodeElements.PerformProcedureStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.PerformProcedureStatement stmt = (TypeCobol.Compiler.CodeElements.PerformProcedureStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnPerformProcedureStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3543,7 +3542,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 194: // singleStatement ::= GotoStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.GotoStatement stmt = (TypeCobol.Compiler.CodeElements.GotoStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.GotoStatement stmt = (TypeCobol.Compiler.CodeElements.GotoStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnGotoStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3553,7 +3552,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 193: // singleStatement ::= ExitStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.ExitStatement stmt = (TypeCobol.Compiler.CodeElements.ExitStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ExitStatement stmt = (TypeCobol.Compiler.CodeElements.ExitStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnExitStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3563,7 +3562,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 192: // singleStatement ::= AlterStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.AlterStatement stmt = (TypeCobol.Compiler.CodeElements.AlterStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.AlterStatement stmt = (TypeCobol.Compiler.CodeElements.AlterStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnAlterStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3573,7 +3572,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 191: // singleStatement ::= SortStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.SortStatement stmt = (TypeCobol.Compiler.CodeElements.SortStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SortStatement stmt = (TypeCobol.Compiler.CodeElements.SortStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnSortStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3583,7 +3582,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 190: // singleStatement ::= ReleaseStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.ReleaseStatement stmt = (TypeCobol.Compiler.CodeElements.ReleaseStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ReleaseStatement stmt = (TypeCobol.Compiler.CodeElements.ReleaseStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnReleaseStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3593,7 +3592,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 189: // singleStatement ::= MergeStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.MergeStatement stmt = (TypeCobol.Compiler.CodeElements.MergeStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.MergeStatement stmt = (TypeCobol.Compiler.CodeElements.MergeStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnMergeStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3603,7 +3602,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 188: // singleStatement ::= OpenStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.OpenStatement stmt = (TypeCobol.Compiler.CodeElements.OpenStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.OpenStatement stmt = (TypeCobol.Compiler.CodeElements.OpenStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnOpenStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3613,7 +3612,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 187: // singleStatement ::= DisplayStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.DisplayStatement stmt = (TypeCobol.Compiler.CodeElements.DisplayStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DisplayStatement stmt = (TypeCobol.Compiler.CodeElements.DisplayStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnDisplayStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3623,7 +3622,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 186: // singleStatement ::= CloseStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.CloseStatement stmt = (TypeCobol.Compiler.CodeElements.CloseStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.CloseStatement stmt = (TypeCobol.Compiler.CodeElements.CloseStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnCloseStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3633,7 +3632,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 185: // singleStatement ::= GobackStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.GobackStatement stmt = (TypeCobol.Compiler.CodeElements.GobackStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.GobackStatement stmt = (TypeCobol.Compiler.CodeElements.GobackStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnGobackStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3643,7 +3642,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 184: // singleStatement ::= ExitProgramStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.ExitProgramStatement stmt = (TypeCobol.Compiler.CodeElements.ExitProgramStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ExitProgramStatement stmt = (TypeCobol.Compiler.CodeElements.ExitProgramStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnExitProgramStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3653,7 +3652,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 183: // singleStatement ::= ExitMethodStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.ExitMethodStatement stmt = (TypeCobol.Compiler.CodeElements.ExitMethodStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ExitMethodStatement stmt = (TypeCobol.Compiler.CodeElements.ExitMethodStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnExitMethodStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3663,7 +3662,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 182: // singleStatement ::= StopStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.StopStatement stmt = (TypeCobol.Compiler.CodeElements.StopStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.StopStatement stmt = (TypeCobol.Compiler.CodeElements.StopStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnStopStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3673,7 +3672,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 181: // singleStatement ::= SetStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.SetStatement stmt = (TypeCobol.Compiler.CodeElements.SetStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SetStatement stmt = (TypeCobol.Compiler.CodeElements.SetStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnSetStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3683,7 +3682,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 180: // singleStatement ::= MoveStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.MoveStatement stmt = (TypeCobol.Compiler.CodeElements.MoveStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.MoveStatement stmt = (TypeCobol.Compiler.CodeElements.MoveStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnMoveStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3693,7 +3692,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 179: // singleStatement ::= InspectStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.InspectStatement stmt = (TypeCobol.Compiler.CodeElements.InspectStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.InspectStatement stmt = (TypeCobol.Compiler.CodeElements.InspectStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnInspectStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3703,7 +3702,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 178: // singleStatement ::= InitializeStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.InitializeStatement stmt = (TypeCobol.Compiler.CodeElements.InitializeStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.InitializeStatement stmt = (TypeCobol.Compiler.CodeElements.InitializeStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnInitializeStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3713,7 +3712,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 177: // singleStatement ::= AcceptStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.AcceptStatement stmt = (TypeCobol.Compiler.CodeElements.AcceptStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.AcceptStatement stmt = (TypeCobol.Compiler.CodeElements.AcceptStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnAcceptStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3723,7 +3722,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 176: // singleStatement ::= EntryStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.EntryStatement stmt = (TypeCobol.Compiler.CodeElements.EntryStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EntryStatement stmt = (TypeCobol.Compiler.CodeElements.EntryStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnEntryStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3733,7 +3732,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 175: // singleStatement ::= ContinueStatement 
             {
               TypeCobol.Compiler.Nodes.Node RESULT = null;
-		TypeCobol.Compiler.CodeElements.ContinueStatement stmt = (TypeCobol.Compiler.CodeElements.ContinueStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ContinueStatement stmt = (TypeCobol.Compiler.CodeElements.ContinueStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.OnContinueStatement(stmt); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(64/*singleStatement*/, RESULT);
             }
@@ -3806,7 +3805,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 167: // sentence ::= error statements SentenceEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SentenceEnd send = (TypeCobol.Compiler.CodeElements.SentenceEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SentenceEnd send = (TypeCobol.Compiler.CodeElements.SentenceEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndSentence(send, true); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(67/*sentence*/, RESULT);
             }
@@ -3816,7 +3815,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 166: // sentence ::= error SentenceEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SentenceEnd send = (TypeCobol.Compiler.CodeElements.SentenceEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SentenceEnd send = (TypeCobol.Compiler.CodeElements.SentenceEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndSentence(send, true); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(67/*sentence*/, RESULT);
             }
@@ -3826,7 +3825,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 165: // sentence ::= ExecStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ExecStatement stmt = (TypeCobol.Compiler.CodeElements.ExecStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ExecStatement stmt = (TypeCobol.Compiler.CodeElements.ExecStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartExecStatement(stmt); my_parser.Builder.EndExecStatement(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(67/*sentence*/, RESULT);
             }
@@ -3836,7 +3835,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 164: // sentence ::= statements SentenceEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SentenceEnd send = (TypeCobol.Compiler.CodeElements.SentenceEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SentenceEnd send = (TypeCobol.Compiler.CodeElements.SentenceEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndSentence(send, true); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(67/*sentence*/, RESULT);
             }
@@ -3846,7 +3845,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 163: // sentence ::= SentenceEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SentenceEnd send = (TypeCobol.Compiler.CodeElements.SentenceEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SentenceEnd send = (TypeCobol.Compiler.CodeElements.SentenceEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartSentence(); my_parser.Builder.EndSentence(send); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(67/*sentence*/, RESULT);
             }
@@ -3919,7 +3918,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 155: // paragraphHeader ::= ParagraphHeader 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ParagraphHeader ph = (TypeCobol.Compiler.CodeElements.ParagraphHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ParagraphHeader ph = (TypeCobol.Compiler.CodeElements.ParagraphHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartParagraph(ph); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(133/*paragraphHeader*/, RESULT);
             }
@@ -3929,7 +3928,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 154: // sectionHeader ::= SectionHeader 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SectionHeader sh = (TypeCobol.Compiler.CodeElements.SectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SectionHeader sh = (TypeCobol.Compiler.CodeElements.SectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartSection(sh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(132/*sectionHeader*/, RESULT);
             }
@@ -3994,9 +3993,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$16
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.UseStatement us = (TypeCobol.Compiler.CodeElements.UseStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.UseStatement us = (TypeCobol.Compiler.CodeElements.UseStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		 my_parser.Builder.EndSection(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(75/*declarativesSection*/, RESULT);
             }
@@ -4006,7 +4005,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 146: // NT$16 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.UseStatement us = (TypeCobol.Compiler.CodeElements.UseStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.UseStatement us = (TypeCobol.Compiler.CodeElements.UseStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.EnterUseStatement(us); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(186/*NT$16*/, RESULT);
             }
@@ -4016,7 +4015,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 145: // declarativesSection ::= sectionHeader UseStatement 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.UseStatement us = (TypeCobol.Compiler.CodeElements.UseStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.UseStatement us = (TypeCobol.Compiler.CodeElements.UseStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EnterUseStatement(us);
 	  my_parser.Builder.EndSection(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(75/*declarativesSection*/, RESULT);
@@ -4046,10 +4045,10 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$15
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
-		TypeCobol.Compiler.CodeElements.DeclarativesHeader dh = (TypeCobol.Compiler.CodeElements.DeclarativesHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-3)).value;
-		TypeCobol.Compiler.CodeElements.DeclarativesEnd de = (TypeCobol.Compiler.CodeElements.DeclarativesEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
+		TypeCobol.Compiler.CodeElements.DeclarativesHeader dh = (TypeCobol.Compiler.CodeElements.DeclarativesHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-3)).value;
+		TypeCobol.Compiler.CodeElements.DeclarativesEnd de = (TypeCobol.Compiler.CodeElements.DeclarativesEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndDeclaratives(de); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(76/*declaratives*/, RESULT);
             }
@@ -4059,7 +4058,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 141: // NT$15 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DeclarativesHeader dh = (TypeCobol.Compiler.CodeElements.DeclarativesHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DeclarativesHeader dh = (TypeCobol.Compiler.CodeElements.DeclarativesHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartDeclaratives(dh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(185/*NT$15*/, RESULT);
             }
@@ -4088,9 +4087,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$14
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader pdh = (TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader pdh = (TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(131/*functionProcedureDivisionHeader*/, RESULT);
             }
@@ -4100,7 +4099,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 137: // NT$14 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader pdh = (TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader pdh = (TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartFunctionProcedureDivision(pdh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(184/*NT$14*/, RESULT);
             }
@@ -4147,10 +4146,10 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$13
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-3)).value;
-		TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader fdh = (TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-4)).value;
-		TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd fe = (TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-3)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-3)).value;
+		TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader fdh = (TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-4)).value;
+		TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd fe = (TypeCobol.Compiler.CodeElements.FunctionDeclarationEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndFunctionDeclaration(fe); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(78/*functionDeclaration*/, RESULT);
             }
@@ -4160,7 +4159,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 131: // NT$13 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader fdh = (TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader fdh = (TypeCobol.Compiler.CodeElements.FunctionDeclarationHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartFunctionDeclaration(fdh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(183/*NT$13*/, RESULT);
             }
@@ -4206,7 +4205,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 126: // procedureDivisionHeader ::= ProcedureDivisionHeader 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader pdh = (TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader pdh = (TypeCobol.Compiler.CodeElements.ProcedureDivisionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartProcedureDivision(pdh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(130/*procedureDivisionHeader*/, RESULT);
             }
@@ -4244,9 +4243,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$12
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.LinkageSectionHeader lsh = (TypeCobol.Compiler.CodeElements.LinkageSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.LinkageSectionHeader lsh = (TypeCobol.Compiler.CodeElements.LinkageSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		 my_parser.Builder.EndLinkageSection(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(58/*linkageSection*/, RESULT);
             }
@@ -4256,7 +4255,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 121: // NT$12 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.LinkageSectionHeader lsh = (TypeCobol.Compiler.CodeElements.LinkageSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.LinkageSectionHeader lsh = (TypeCobol.Compiler.CodeElements.LinkageSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartLinkageSection(lsh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(182/*NT$12*/, RESULT);
             }
@@ -4275,7 +4274,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 119: // dataDefinitionEntry ::= DataConditionEntry 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DataConditionEntry dce = (TypeCobol.Compiler.CodeElements.DataConditionEntry)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DataConditionEntry dce = (TypeCobol.Compiler.CodeElements.DataConditionEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartDataConditionEntry(dce); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(45/*dataDefinitionEntry*/, RESULT);
             }
@@ -4285,7 +4284,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 118: // dataDefinitionEntry ::= DataRenamesEntry 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DataRenamesEntry dre = (TypeCobol.Compiler.CodeElements.DataRenamesEntry)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DataRenamesEntry dre = (TypeCobol.Compiler.CodeElements.DataRenamesEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartDataRenamesEntry(dre); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(45/*dataDefinitionEntry*/, RESULT);
             }
@@ -4295,7 +4294,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 117: // dataDefinitionEntry ::= DataRedefinesEntry 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DataRedefinesEntry dre = (TypeCobol.Compiler.CodeElements.DataRedefinesEntry)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DataRedefinesEntry dre = (TypeCobol.Compiler.CodeElements.DataRedefinesEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartDataRedefinesEntry(dre); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(45/*dataDefinitionEntry*/, RESULT);
             }
@@ -4305,7 +4304,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 116: // dataDefinitionEntry ::= DataDescriptionEntry 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DataDescriptionEntry dde = (TypeCobol.Compiler.CodeElements.DataDescriptionEntry)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DataDescriptionEntry dde = (TypeCobol.Compiler.CodeElements.DataDescriptionEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartDataDescriptionEntry(dde); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(45/*dataDefinitionEntry*/, RESULT);
             }
@@ -4352,9 +4351,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$11
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader lsh = (TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader lsh = (TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		 my_parser.Builder.EndLocalStorageSection(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(57/*localStorageSection*/, RESULT);
             }
@@ -4364,7 +4363,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 110: // NT$11 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader lsh = (TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader lsh = (TypeCobol.Compiler.CodeElements.LocalStorageSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartLocalStorageSection(lsh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(181/*NT$11*/, RESULT);
             }
@@ -4384,9 +4383,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$10
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.ExecStatement stmt = (TypeCobol.Compiler.CodeElements.ExecStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.ExecStatement stmt = (TypeCobol.Compiler.CodeElements.ExecStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		  
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(48/*execSqlStatement*/, RESULT);
             }
@@ -4396,7 +4395,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 107: // NT$10 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ExecStatement stmt = (TypeCobol.Compiler.CodeElements.ExecStatement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ExecStatement stmt = (TypeCobol.Compiler.CodeElements.ExecStatement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartExecStatement(stmt); my_parser.Builder.EndExecStatement(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(180/*NT$10*/, RESULT);
             }
@@ -4452,9 +4451,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$9
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader gssh = (TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader gssh = (TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		 my_parser.Builder.EndGlobalStorageSection(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(55/*globalStorageSection*/, RESULT);
             }
@@ -4464,7 +4463,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 100: // NT$9 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader gssh = (TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader gssh = (TypeCobol.Compiler.CodeElements.GlobalStorageSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartGlobalStorageSection(gssh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(179/*NT$9*/, RESULT);
             }
@@ -4484,9 +4483,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$8
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader wssh = (TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader wssh = (TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		 my_parser.Builder.EndWorkingStorageSection(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(56/*workingStorageSection*/, RESULT);
             }
@@ -4496,7 +4495,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 97: // NT$8 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader wssh = (TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader wssh = (TypeCobol.Compiler.CodeElements.WorkingStorageSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartWorkingStorageSection(wssh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(178/*NT$8*/, RESULT);
             }
@@ -4516,9 +4515,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$7
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.FileDescriptionEntry fde = (TypeCobol.Compiler.CodeElements.FileDescriptionEntry)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.FileDescriptionEntry fde = (TypeCobol.Compiler.CodeElements.FileDescriptionEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		  
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(51/*fileDescriptionEntry*/, RESULT);
             }
@@ -4528,7 +4527,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 94: // NT$7 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.FileDescriptionEntry fde = (TypeCobol.Compiler.CodeElements.FileDescriptionEntry)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.FileDescriptionEntry fde = (TypeCobol.Compiler.CodeElements.FileDescriptionEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartFileDescriptionEntry(fde); my_parser.Builder.EndFileDescriptionEntry(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(177/*NT$7*/, RESULT);
             }
@@ -4584,9 +4583,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$6
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.FileSectionHeader feh = (TypeCobol.Compiler.CodeElements.FileSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.FileSectionHeader feh = (TypeCobol.Compiler.CodeElements.FileSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		 my_parser.Builder.EndFileSection(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(54/*fileSection*/, RESULT);
             }
@@ -4596,7 +4595,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 87: // NT$6 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.FileSectionHeader feh = (TypeCobol.Compiler.CodeElements.FileSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.FileSectionHeader feh = (TypeCobol.Compiler.CodeElements.FileSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartFileSection(feh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(176/*NT$6*/, RESULT);
             }
@@ -4616,9 +4615,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$5
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-5)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-5)).value;
-		TypeCobol.Compiler.CodeElements.DataDivisionHeader ddh = (TypeCobol.Compiler.CodeElements.DataDivisionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-6)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-5)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-5)).value;
+		TypeCobol.Compiler.CodeElements.DataDivisionHeader ddh = (TypeCobol.Compiler.CodeElements.DataDivisionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-6)).value;
 		 my_parser.Builder.EndDataDivision(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(60/*dataDivision*/, RESULT);
             }
@@ -4628,7 +4627,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 84: // NT$5 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.DataDivisionHeader ddh = (TypeCobol.Compiler.CodeElements.DataDivisionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.DataDivisionHeader ddh = (TypeCobol.Compiler.CodeElements.DataDivisionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartDataDivision(ddh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(175/*NT$5*/, RESULT);
             }
@@ -4719,8 +4718,8 @@ public class CUP_TypeCobolProgramParser_actions {
           case 74: // fileControlEntries ::= fileControlEntries FileControlEntry 
             {
               object RESULT = null;
-		object fces = (object)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.FileControlEntry fce = (TypeCobol.Compiler.CodeElements.FileControlEntry)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		object fces = (object)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.FileControlEntry fce = (TypeCobol.Compiler.CodeElements.FileControlEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartFileControlEntry(fce); my_parser.Builder.EndFileControlEntry(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(40/*fileControlEntries*/, RESULT);
             }
@@ -4730,7 +4729,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 73: // fileControlEntries ::= FileControlEntry 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.FileControlEntry fce = (TypeCobol.Compiler.CodeElements.FileControlEntry)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.FileControlEntry fce = (TypeCobol.Compiler.CodeElements.FileControlEntry)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartFileControlEntry(fce); my_parser.Builder.EndFileControlEntry(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(40/*fileControlEntries*/, RESULT);
             }
@@ -4759,9 +4758,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$4
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.FileControlParagraphHeader fcph = (TypeCobol.Compiler.CodeElements.FileControlParagraphHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.FileControlParagraphHeader fcph = (TypeCobol.Compiler.CodeElements.FileControlParagraphHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
 		 my_parser.Builder.EndFileControlParagraph(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(38/*fileControlParagraph*/, RESULT);
             }
@@ -4771,7 +4770,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 69: // NT$4 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.FileControlParagraphHeader fcph = (TypeCobol.Compiler.CodeElements.FileControlParagraphHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.FileControlParagraphHeader fcph = (TypeCobol.Compiler.CodeElements.FileControlParagraphHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartFileControlParagraph(fcph); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(174/*NT$4*/, RESULT);
             }
@@ -4800,9 +4799,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$3
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
-		TypeCobol.Compiler.CodeElements.InputOutputSectionHeader iosh = (TypeCobol.Compiler.CodeElements.InputOutputSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-3)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
+		TypeCobol.Compiler.CodeElements.InputOutputSectionHeader iosh = (TypeCobol.Compiler.CodeElements.InputOutputSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-3)).value;
 		 my_parser.Builder.EndInputOutputSection(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(34/*inputOutputSection*/, RESULT);
             }
@@ -4812,7 +4811,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 65: // NT$3 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.InputOutputSectionHeader iosh = (TypeCobol.Compiler.CodeElements.InputOutputSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.InputOutputSectionHeader iosh = (TypeCobol.Compiler.CodeElements.InputOutputSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartInputOutputSection(iosh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(173/*NT$3*/, RESULT);
             }
@@ -4840,7 +4839,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 62: // configurationParagraph ::= RepositoryParagraph 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.RepositoryParagraph rp = (TypeCobol.Compiler.CodeElements.RepositoryParagraph)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.RepositoryParagraph rp = (TypeCobol.Compiler.CodeElements.RepositoryParagraph)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartRepositoryParagraph(rp); my_parser.Builder.EndRepositoryParagraph(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(36/*configurationParagraph*/, RESULT);
             }
@@ -4850,7 +4849,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 61: // configurationParagraph ::= SpecialNamesParagraph 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SpecialNamesParagraph snp = (TypeCobol.Compiler.CodeElements.SpecialNamesParagraph)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SpecialNamesParagraph snp = (TypeCobol.Compiler.CodeElements.SpecialNamesParagraph)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartSpecialNamesParagraph(snp); my_parser.Builder.EndSpecialNamesParagraph(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(36/*configurationParagraph*/, RESULT);
             }
@@ -4860,7 +4859,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 60: // configurationParagraph ::= ObjectComputerParagraph 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ObjectComputerParagraph ocp = (TypeCobol.Compiler.CodeElements.ObjectComputerParagraph)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ObjectComputerParagraph ocp = (TypeCobol.Compiler.CodeElements.ObjectComputerParagraph)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartObjectComputerParagraph(ocp); my_parser.Builder.EndObjectComputerParagraph(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(36/*configurationParagraph*/, RESULT);
             }
@@ -4870,7 +4869,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 59: // configurationParagraph ::= SourceComputerParagraph 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.SourceComputerParagraph scp = (TypeCobol.Compiler.CodeElements.SourceComputerParagraph)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.SourceComputerParagraph scp = (TypeCobol.Compiler.CodeElements.SourceComputerParagraph)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartSourceComputerParagraph(scp); my_parser.Builder.EndSourceComputerParagraph(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(36/*configurationParagraph*/, RESULT);
             }
@@ -4898,7 +4897,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 56: // configurationSectionHeader ::= ConfigurationSectionHeader 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ConfigurationSectionHeader csh = (TypeCobol.Compiler.CodeElements.ConfigurationSectionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ConfigurationSectionHeader csh = (TypeCobol.Compiler.CodeElements.ConfigurationSectionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.StartConfigurationSection(csh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(83/*configurationSectionHeader*/, RESULT);
             }
@@ -4945,9 +4944,9 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader RESULT = null;
               // propagate RESULT from NT$2
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value != null )
-                RESULT = (TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-2)).value;
-		TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader edh = (TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-3)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value != null )
+                RESULT = (TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-2)).value;
+		TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader edh = (TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-3)).value;
 		 my_parser.Builder.EndEnvironmentDivision(); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(30/*environmentDivision*/, RESULT);
             }
@@ -4957,7 +4956,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 50: // NT$2 ::= 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader edh = (TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader edh = (TypeCobol.Compiler.CodeElements.EnvironmentDivisionHeader)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
  my_parser.Builder.StartEnvironmentDivision(edh); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(172/*NT$2*/, RESULT);
             }
@@ -5003,7 +5002,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 45: // nestedProgram ::= cobolProgramBase nestedProgramOpt ProgramEnd 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ProgramEnd pe = (TypeCobol.Compiler.CodeElements.ProgramEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ProgramEnd pe = (TypeCobol.Compiler.CodeElements.ProgramEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndCobolProgram(pe); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(8/*nestedProgram*/, RESULT);
             }
@@ -5013,7 +5012,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 44: // programEndOpt ::= ProgramEnd 
             {
               TypeCobol.Compiler.CodeElements.ProgramEnd RESULT = null;
-		TypeCobol.Compiler.CodeElements.ProgramEnd pe = (TypeCobol.Compiler.CodeElements.ProgramEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ProgramEnd pe = (TypeCobol.Compiler.CodeElements.ProgramEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		  RESULT = pe; 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(27/*programEndOpt*/, RESULT);
             }
@@ -5032,7 +5031,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 42: // libraryCopyOpt ::= LibraryCopy 
             {
               TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement RESULT = null;
-		TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement lc = (TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement lc = (TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		  RESULT = lc; 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(26/*libraryCopyOpt*/, RESULT);
             }
@@ -5051,8 +5050,8 @@ public class CUP_TypeCobolProgramParser_actions {
           case 40: // programAttributes ::= ProgramIdentification libraryCopyOpt 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ProgramIdentification pid = (TypeCobol.Compiler.CodeElements.ProgramIdentification)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
-		TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement lc = (TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ProgramIdentification pid = (TypeCobol.Compiler.CodeElements.ProgramIdentification)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
+		TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement lc = (TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		  programIdentification = pid; libraryCopy = lc; 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(25/*programAttributes*/, RESULT);
             }
@@ -5306,8 +5305,8 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$1
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-3)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-3)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-3)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-3)).value;
 		  
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(7/*cobolProgramBase*/, RESULT);
             }
@@ -5326,7 +5325,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 10: // cobolProgram ::= cobolProgramBase nestedProgramOpt programEndOpt 
             {
               object RESULT = null;
-		TypeCobol.Compiler.CodeElements.ProgramEnd pe = (TypeCobol.Compiler.CodeElements.ProgramEnd)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-0)).value;
+		TypeCobol.Compiler.CodeElements.ProgramEnd pe = (TypeCobol.Compiler.CodeElements.ProgramEnd)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top)).value;
 		 my_parser.Builder.EndCobolProgram(pe); 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(5/*cobolProgram*/, RESULT);
             }
@@ -5382,8 +5381,8 @@ public class CUP_TypeCobolProgramParser_actions {
             {
               object RESULT = null;
               // propagate RESULT from NT$0
-              if ( ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value != null )
-                RESULT = (object) ((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
+              if ( (CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value != null )
+                RESULT = (object) ( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
 
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(3/*compilationUnit*/, RESULT);
             }
@@ -5420,7 +5419,7 @@ public class CUP_TypeCobolProgramParser_actions {
           case 0: // $START ::= starts EOF 
             {
               object RESULT = null;
-		object start_val = (object)((TUVienna.CS_CUP.Runtime.Symbol) CUP_TypeCobolProgramParser_stack.elementAt(CUP_TypeCobolProgramParser_top-1)).value;
+		object start_val = (object)( CUP_TypeCobolProgramParser_stack.ElementAtFromBottom(CUP_TypeCobolProgramParser_top-1)).value;
 		RESULT = start_val;
               CUP_TypeCobolProgramParser_result = new TUVienna.CS_CUP.Runtime.Symbol(0/*$START*/, RESULT);
             }

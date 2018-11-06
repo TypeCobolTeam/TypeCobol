@@ -582,6 +582,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var header = functionDeclaration?.CodeElement as FunctionDeclarationHeader;
             if (header == null) return; //not my job
+
             var filesection = functionDeclaration.Get<FileSection>("file");
             if (filesection != null) // TCRFUN_DECLARATION_NO_FILE_SECTION
             {
@@ -910,6 +911,21 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
             }
+        }
+    }
+
+    public class ProgramChecker
+    {
+        public static void OnNode(Program node)
+        {
+            node.SetFlag(Node.Flag.MissingEndProgram, !(node.Children.LastOrDefault() is End));
+
+            if (node.IsFlagSet(Node.Flag.MissingEndProgram))
+            {
+                DiagnosticUtils.AddError(node,
+                    "\"END PROGRAM\" is missing.", MessageCode.Warning);
+            }
+
         }
     }
 

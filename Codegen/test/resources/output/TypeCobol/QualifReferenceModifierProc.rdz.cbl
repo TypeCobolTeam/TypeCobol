@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZOSM7.
        DATA DIVISION .
        WORKING-STORAGE SECTION.
@@ -6,7 +6,9 @@
            88 TC-DVZZOSM7-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZOSM7-PntTab.
            05 TC-DVZZOSM7-PntNbr         PIC S9(04) COMP VALUE 1.
-      *DVZZOSM7::StartCheckpoint
+      *To call program a711ebb5StartCheckpoint
+      *Which is generated code for DVZZOSM7.StartCheckpoint
+      *Declared in source file QualifReferenceModifierProc.rdz.cbl
            05 TC-DVZZOSM7-a711ebb5-Idt   PIC X(08) VALUE 'a711ebb5'.
            05 TC-DVZZOSM7-a711ebb5 PROCEDURE-POINTER.
 
@@ -58,6 +60,8 @@
        PROGRAM-ID. a711ebb5StartCheckpoint.
        data division.
        working-storage section.
+      *DVZZOSM7.StartCheckpoint  - No Params
+                               
       
        01 Var2.
            05 JobName pic X(08).
@@ -67,6 +71,7 @@
       
        PROCEDURE DIVISION
            .
+      *DVZZOSM7.StartCheckpoint  - No Params
       *    if Var2::JobName(1:2) = 'ET'
       *       or Var2::JobName(1:4) = 'PSAT'
            if JobName OF Var2(1:2) = 'ET'

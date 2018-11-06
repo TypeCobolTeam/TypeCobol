@@ -77,7 +77,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         {
             string path = Path.Combine(Root, "DirectiveResultFiles", testName + ".txt");
             string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected);
+            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
 
         private static string ProcessTokensDocument(string testName, ProcessedTokensDocument processedDoc)
@@ -140,7 +140,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         {
             string path = Path.Combine(Root, "CopyResultFiles", testName + ".txt");
             string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected);
+            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
 
         public static string ProcessReplaceDirectives(string name)
@@ -153,7 +153,7 @@ namespace TypeCobol.Test.Parser.Preprocessor
         {
             string path = Path.Combine(Root, "ReplaceResultFiles", testName + ".txt");
             string expected = System.IO.File.ReadAllText(PlatformUtils.GetPathForProjectFile(path));
-            TypeCobol.Test.TestUtils.compareLines(path, result, expected);
+            TypeCobol.Test.TestUtils.compareLines(path, result, expected, PlatformUtils.GetPathForProjectFile(path));
         }
 
     }

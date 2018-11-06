@@ -1,4 +1,5 @@
-﻿--- Diagnostics ---
+--- Diagnostics ---
+Line 1[1,22] <37, Warning, General> - Warning: "END PROGRAM" is missing.
 Line 34[16,19] <27, Error, Syntax> - Syntax error : Symbol GROUP-DOUBLE.GROUP-DOUBLE.V1A2 is not referenced OffendingSymbol=[16,19:V1A2]<UserDefinedWord>
 Line 37[13,13] <27, Error, Syntax> - Syntax error : Symbol Y is not referenced OffendingSymbol=[13,13:Y]<UserDefinedWord>
 Line 38[13,20] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol I-DOUBLE 

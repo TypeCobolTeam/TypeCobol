@@ -9,6 +9,7 @@ namespace TUVienna.CS_CUP
 
 	using Runtime;
 	using System.Collections;
+	using CSCupRuntime;
 
 
     /** C# CUP v0.1 generated parser.
@@ -342,7 +343,7 @@ namespace TUVienna.CS_CUP
     	public override Symbol do_action(
         	int                        act_num,
         	lr_parser parser,
-        	Stack            stack,
+	        StackList<Symbol>            stack,
         	int                        top)
  
         {
@@ -508,12 +509,13 @@ namespace TUVienna.CS_CUP
     	public  Symbol CUP_parser_do_action(
                                   int                        CUP_parser_act_num,
                                   lr_parser CUP_parser_parser,
-                                  Stack            CUP_parser_stack1,
+                                  StackList<Symbol> CUP_parser_stack,
                                   int                        CUP_parser_top)
                               {
+            
                                   /* Symbol object for return from actions */
                                   Symbol CUP_parser_result;
-                                  mStack CUP_parser_stack= new mStack(CUP_parser_stack1);
+                                  
 
                                   /* select the action based on the action number */
                                   switch (CUP_parser_act_num)
@@ -523,7 +525,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(29/*empty*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(29/*empty*/, (CUP_parser_stack.ElementAtFromBottom(CUP_parser_top)).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -532,7 +534,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(7/*opt_semi*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(7/*opt_semi*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top - 0).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -541,7 +543,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(7/*opt_semi*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(7/*opt_semi*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -550,7 +552,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(8/*non_terminal*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(8/*non_terminal*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -559,7 +561,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(8/*non_terminal*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(8/*non_terminal*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -571,7 +573,7 @@ namespace TUVienna.CS_CUP
                                           lexer.emit_error("Illegal use of reserved word");
                                           RESULT="ILLEGAL";
     
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -580,7 +582,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "nonassoc"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -589,7 +591,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "right"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -598,7 +600,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "left"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -607,7 +609,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "precedence"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -616,7 +618,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "start"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -625,7 +627,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "with"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -634,7 +636,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "scan"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -643,7 +645,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "init"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -652,7 +654,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "nonterminal"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -661,7 +663,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "non"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -670,7 +672,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "terminal"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -679,7 +681,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "parser"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -688,7 +690,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "action"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -697,7 +699,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = "code"; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -705,11 +707,11 @@ namespace TUVienna.CS_CUP
                                       case 86: // robust_id ::= ID 
                                       {
                                           string RESULT = null;
-                                          int the_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int the_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string the_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int the_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int the_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string the_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
                                           RESULT = the_id; 
-                                          CUP_parser_result = new Symbol(42/*robust_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(42/*robust_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -717,11 +719,11 @@ namespace TUVienna.CS_CUP
                                       case 85: // label_id ::= robust_id 
                                       {
                                           string RESULT = null;
-                                          int the_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int the_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string the_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int the_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int the_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string the_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
                                           RESULT = the_id; 
-                                          CUP_parser_result = new Symbol(38/*label_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(38/*label_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -733,7 +735,7 @@ namespace TUVienna.CS_CUP
                                           lexer.emit_error("Illegal use of reserved word");
                                           RESULT="ILLEGAL";
     
-                                          CUP_parser_result = new Symbol(37/*symbol_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(37/*symbol_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -741,11 +743,11 @@ namespace TUVienna.CS_CUP
                                       case 83: // symbol_id ::= ID 
                                       {
                                           string RESULT = null;
-                                          int the_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int the_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string the_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int the_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int the_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string the_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
                                           RESULT = the_id; 
-                                          CUP_parser_result = new Symbol(37/*symbol_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(37/*symbol_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -757,7 +759,7 @@ namespace TUVienna.CS_CUP
                                           lexer.emit_error("Illegal use of reserved word");
                                           RESULT="ILLEGAL";
     
-                                          CUP_parser_result = new Symbol(36/*nt_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(36/*nt_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -765,11 +767,11 @@ namespace TUVienna.CS_CUP
                                       case 81: // nt_id ::= ID 
                                       {
                                           string RESULT = null;
-                                          int the_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int the_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string the_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int the_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int the_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string the_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
                                           RESULT = the_id; 
-                                          CUP_parser_result = new Symbol(36/*nt_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(36/*nt_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -777,9 +779,9 @@ namespace TUVienna.CS_CUP
                                       case 80: // new_non_term_id ::= ID 
                                       {
                                           object RESULT = null;
-                                          int non_term_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int non_term_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string non_term_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int non_term_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int non_term_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string non_term_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
          
                                           /* see if this non terminal has been declared before */
                                           if (symbols[non_term_id] != null)
@@ -805,7 +807,7 @@ namespace TUVienna.CS_CUP
                                               symbols.Add(non_term_id, new symbol_part(this_nt));
                                           }
     
-                                          CUP_parser_result = new Symbol(26/*new_non_term_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(26/*new_non_term_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -813,9 +815,9 @@ namespace TUVienna.CS_CUP
                                       case 79: // new_term_id ::= ID 
                                       {
                                           object RESULT = null;
-                                          int term_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int term_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string term_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int term_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int term_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string term_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
          
                                           /* see if this terminal has been declared before */
                                           if (symbols[term_id] != null)
@@ -836,7 +838,7 @@ namespace TUVienna.CS_CUP
                                                   new symbol_part(new terminal(term_id, multipart_name)));
                                           }
     
-                                          CUP_parser_result = new Symbol(25/*new_term_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(25/*new_term_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -845,7 +847,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           multipart_name = multipart_name+"[]"; 
-                                          CUP_parser_result = new Symbol(19/*type_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(19/*type_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -854,7 +856,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(19/*type_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(19/*type_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -863,7 +865,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(15/*import_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(15/*import_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -872,7 +874,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           append_multipart("*"); 
-                                          CUP_parser_result = new Symbol(15/*import_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(15/*import_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -880,11 +882,11 @@ namespace TUVienna.CS_CUP
                                       case 74: // multipart_id ::= robust_id 
                                       {
                                           object RESULT = null;
-                                          int an_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int an_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string an_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int an_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int an_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string an_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
                                           append_multipart(an_id); 
-                                          CUP_parser_result = new Symbol(13/*multipart_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(13/*multipart_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -892,11 +894,11 @@ namespace TUVienna.CS_CUP
                                       case 73: // multipart_id ::= multipart_id DOT robust_id 
                                       {
                                           object RESULT = null;
-                                          int another_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int another_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string another_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int another_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int another_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string another_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
                                           append_multipart(another_id); 
-                                          CUP_parser_result = new Symbol(13/*multipart_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(13/*multipart_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -905,7 +907,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           string RESULT = null;
                                           RESULT = null; 
-                                          CUP_parser_result = new Symbol(39/*opt_label*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(39/*opt_label*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -913,11 +915,11 @@ namespace TUVienna.CS_CUP
                                       case 71: // opt_label ::= COLON label_id 
                                       {
                                           string RESULT = null;
-                                          int labidleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int labidright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string labid = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int labidleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int labidright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string labid = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
                                           RESULT = labid; 
-                                          CUP_parser_result = new Symbol(39/*opt_label*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(39/*opt_label*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -925,14 +927,14 @@ namespace TUVienna.CS_CUP
                                       case 70: // prod_part ::= CODE_string 
                                       {
                                           object RESULT = null;
-                                          int code_strleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int code_strright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string code_str = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int code_strleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int code_strright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string code_str = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
          
                                           /* add a new production part */
                                           add_rhs_part(new action_part(code_str));
     
-                                          CUP_parser_result = new Symbol(24/*prod_part*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(24/*prod_part*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -940,12 +942,12 @@ namespace TUVienna.CS_CUP
                                       case 69: // prod_part ::= symbol_id opt_label 
                                       {
                                           object RESULT = null;
-                                          int symidleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left;
-                                          int symidright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).right;
-                                          string symid = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
-                                          int labidleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int labidright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string labid = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int symidleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left;
+                                          int symidright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).right;
+                                          string symid = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
+                                          int labidleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int labidright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string labid = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
          
                                           /* try to look up the id */
                                           production_part symb = (production_part)symbols[symid];
@@ -963,7 +965,7 @@ namespace TUVienna.CS_CUP
                                               add_rhs_part(add_lab(symb, labid));
                                           }
     
-                                          CUP_parser_result = new Symbol(24/*prod_part*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(24/*prod_part*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -972,7 +974,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(23/*prod_part_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(23/*prod_part_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -981,7 +983,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(23/*prod_part_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(23/*prod_part_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1017,7 +1019,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the rhs accumulation in any case */
                                           new_rhs();
     
-                                          CUP_parser_result = new Symbol(28/*rhs*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(28/*rhs*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1025,9 +1027,9 @@ namespace TUVienna.CS_CUP
                                       case 65: // rhs ::= prod_part_list PERCENT_PREC term_id 
                                       {
                                           object RESULT = null;
-                                          int term_nameleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int term_nameright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string term_name = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int term_nameleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int term_nameright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string term_name = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
         
                                           symbol sym = null;
                                           if (lhs_nt != null) 
@@ -1089,7 +1091,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the rhs accumulation in any case */
                                           new_rhs();
     
-                                          CUP_parser_result = new Symbol(28/*rhs*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(28/*rhs*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1098,7 +1100,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(27/*rhs_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(27/*rhs_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1107,7 +1109,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(27/*rhs_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(27/*rhs_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1116,10 +1118,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$13
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
 
-                                          CUP_parser_result = new Symbol(22/*production*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(22/*production*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1128,7 +1130,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           lexer.emit_error("Syntax Error"); 
-                                          CUP_parser_result = new Symbol(56/*NT$13*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(56/*NT$13*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1137,16 +1139,16 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$11
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-4)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-4)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-4).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-4).value;
                                           // propagate RESULT from NT$12
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value;
-                                          int lhs_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-5)).left;
-                                          int lhs_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-5)).right;
-                                          string lhs_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-5)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value;
+                                          int lhs_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-5).left;
+                                          int lhs_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-5).right;
+                                          string lhs_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-5).value;
 
-                                          CUP_parser_result = new Symbol(22/*production*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-5)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(22/*production*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-5).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1154,11 +1156,11 @@ namespace TUVienna.CS_CUP
                                       case 59: // NT$12 ::= 
                                       {
                                           object RESULT = null;
-                                          int lhs_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left;
-                                          int lhs_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).right;
-                                          string lhs_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value;
+                                          int lhs_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left;
+                                          int lhs_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).right;
+                                          string lhs_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value;
  
-                                          CUP_parser_result = new Symbol(55/*NT$12*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(55/*NT$12*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1166,9 +1168,9 @@ namespace TUVienna.CS_CUP
                                       case 58: // NT$11 ::= 
                                       {
                                           object RESULT = null;
-                                          int lhs_idleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int lhs_idright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string lhs_id = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int lhs_idleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int lhs_idright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string lhs_id = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
 
                                           /* lookup the lhs nt */
                                           lhs_nt = (non_terminal)non_terms[lhs_id];
@@ -1184,7 +1186,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the rhs accumulation */
                                           new_rhs();
     
-                                          CUP_parser_result = new Symbol(54/*NT$11*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(54/*NT$11*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1193,7 +1195,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(12/*production_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(12/*production_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1202,7 +1204,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(12/*production_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(12/*production_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1211,7 +1213,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(11/*start_spec*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(11/*start_spec*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1220,13 +1222,13 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$10
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
-                                          int start_nameleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left;
-                                          int start_nameright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).right;
-                                          string start_name = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
+                                          int start_nameleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left;
+                                          int start_nameright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).right;
+                                          string start_name = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value;
 
-                                          CUP_parser_result = new Symbol(11/*start_spec*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-4)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(11/*start_spec*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-4).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1234,9 +1236,9 @@ namespace TUVienna.CS_CUP
                                       case 53: // NT$10 ::= 
                                       {
                                           object RESULT = null;
-                                          int start_nameleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int start_nameright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string start_name = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int start_nameleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int start_nameright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string start_name = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
  
                                           /* verify that the name has been declared as a non terminal */
                                           non_terminal nt = (non_terminal)non_terms[start_name];
@@ -1260,7 +1262,7 @@ namespace TUVienna.CS_CUP
                                               new_rhs();
                                           }
     
-                                          CUP_parser_result = new Symbol(53/*NT$10*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(53/*NT$10*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1268,9 +1270,9 @@ namespace TUVienna.CS_CUP
                                       case 52: // term_id ::= symbol_id 
                                       {
                                           string RESULT = null;
-                                          int symleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int symright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string sym = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int symleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int symright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string sym = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
         
                                           /* check that the symbol_id is a terminal */
                                           if (symbols[sym] == null)
@@ -1281,7 +1283,7 @@ namespace TUVienna.CS_CUP
                                           }
                                           RESULT = sym;
          
-                                          CUP_parser_result = new Symbol(41/*term_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(41/*term_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1289,14 +1291,14 @@ namespace TUVienna.CS_CUP
                                       case 51: // terminal_id ::= term_id 
                                       {
                                           string RESULT = null;
-                                          int symleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left;
-                                          int symright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right;
-                                          string sym = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-0)).value;
+                                          int symleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left;
+                                          int symright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right;
+                                          string sym = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).value;
             
                                           add_precedence(sym);
                                           RESULT = sym;
     
-                                          CUP_parser_result = new Symbol(40/*terminal_id*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(40/*terminal_id*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1305,7 +1307,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(32/*terminal_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(32/*terminal_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1314,7 +1316,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(32/*terminal_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(32/*terminal_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1323,10 +1325,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$9
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value;
 
-                                          CUP_parser_result = new Symbol(31/*preced*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-4)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(31/*preced*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-4).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1337,7 +1339,7 @@ namespace TUVienna.CS_CUP
 
                                           update_precedence(assoc.nonassoc);
     
-                                          CUP_parser_result = new Symbol(52/*NT$9*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(52/*NT$9*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1346,10 +1348,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$8
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value;
 
-                                          CUP_parser_result = new Symbol(31/*preced*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-4)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(31/*preced*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-4).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1360,7 +1362,7 @@ namespace TUVienna.CS_CUP
 
                                           update_precedence(assoc.right);
     
-                                          CUP_parser_result = new Symbol(51/*NT$8*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(51/*NT$8*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1369,10 +1371,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$7
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-2)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).value;
 
-                                          CUP_parser_result = new Symbol(31/*preced*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-4)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(31/*preced*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-4).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1383,7 +1385,7 @@ namespace TUVienna.CS_CUP
 
                                           update_precedence(assoc.left);
     
-                                          CUP_parser_result = new Symbol(50/*NT$7*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(50/*NT$7*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1392,7 +1394,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(33/*precedence_l*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(33/*precedence_l*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1401,7 +1403,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(33/*precedence_l*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(33/*precedence_l*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1410,7 +1412,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(30/*precedence_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(30/*precedence_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1419,7 +1421,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(30/*precedence_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(30/*precedence_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1428,7 +1430,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(21/*non_term_name_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(21/*non_term_name_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1437,7 +1439,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(21/*non_term_name_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(21/*non_term_name_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1446,7 +1448,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(20/*term_name_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(20/*term_name_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1455,7 +1457,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(20/*term_name_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(20/*term_name_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1464,10 +1466,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$6
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
 
-                                          CUP_parser_result = new Symbol(35/*declares_non_term*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(35/*declares_non_term*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1479,7 +1481,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the accumulated multipart name */
                                           multipart_name = "";
     
-                                          CUP_parser_result = new Symbol(49/*NT$6*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(49/*NT$6*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1488,10 +1490,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$5
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
 
-                                          CUP_parser_result = new Symbol(34/*declares_term*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(34/*declares_term*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1503,7 +1505,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the accumulated multipart name */
                                           multipart_name = "";
     
-                                          CUP_parser_result = new Symbol(48/*NT$5*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(48/*NT$5*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1512,10 +1514,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$4
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
 
-                                          CUP_parser_result = new Symbol(18/*symbol*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-3)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(18/*symbol*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-3).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1527,7 +1529,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the accumulated multipart name */
                                           multipart_name = "";
     
-                                          CUP_parser_result = new Symbol(47/*NT$4*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(47/*NT$4*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1536,10 +1538,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$3
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
 
-                                          CUP_parser_result = new Symbol(18/*symbol*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-3)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(18/*symbol*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-3).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1551,7 +1553,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the accumulated multipart name */
                                           multipart_name = "";
     
-                                          CUP_parser_result = new Symbol(46/*NT$3*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(46/*NT$3*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1560,7 +1562,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(18/*symbol*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(18/*symbol*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1569,7 +1571,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(18/*symbol*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(18/*symbol*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1578,7 +1580,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(18/*symbol*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(18/*symbol*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1587,7 +1589,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(18/*symbol*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-2)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(18/*symbol*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-2).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1596,7 +1598,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(10/*symbol_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(10/*symbol_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1605,7 +1607,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(10/*symbol_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(10/*symbol_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1613,16 +1615,16 @@ namespace TUVienna.CS_CUP
                                       case 20: // scan_code ::= SCAN WITH CODE_string opt_semi 
                                       {
                                           object RESULT = null;
-                                          int user_codeleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left;
-                                          int user_coderight = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).right;
-                                          string user_code = ((string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value);
+                                          int user_codeleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left;
+                                          int user_coderight = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).right;
+                                          string user_code = ((string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value);
          
                                           if (emit.scan_code!=null)
                                               lexer.emit_error("Redundant scan code (skipping)");
                                           else /* save the user code */
                                               emit.scan_code = user_code;
     
-                                          CUP_parser_result = new Symbol(17/*scan_code*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-3)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(17/*scan_code*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-3).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1630,16 +1632,16 @@ namespace TUVienna.CS_CUP
                                       case 19: // init_code ::= INIT WITH CODE_string opt_semi 
                                       {
                                           object RESULT = null;
-                                          int user_codeleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left;
-                                          int user_coderight = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).right;
-                                          string user_code = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          int user_codeleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left;
+                                          int user_coderight = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).right;
+                                          string user_code = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
          
                                           if (emit.init_code!=null)
                                               lexer.emit_error("Redundant init code (skipping)");
                                           else /* save the user code */
                                               emit.init_code = user_code;
     
-                                          CUP_parser_result = new Symbol(16/*init_code*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-3)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(16/*init_code*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-3).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1647,16 +1649,16 @@ namespace TUVienna.CS_CUP
                                       case 18: // parser_code_part ::= PARSER CODE CODE_string opt_semi 
                                       {
                                           object RESULT = null;
-                                          int user_codeleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left;
-                                          int user_coderight = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).right;
-                                          string user_code = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          int user_codeleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left;
+                                          int user_coderight = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).right;
+                                          string user_code = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
         
                                           if (emit.parser_code!=null)
                                               lexer.emit_error("Redundant parser code (skipping)");
                                           else /* save the user included code string */
                                               emit.parser_code = user_code;
     
-                                          CUP_parser_result = new Symbol(9/*parser_code_part*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-3)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(9/*parser_code_part*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-3).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1664,16 +1666,16 @@ namespace TUVienna.CS_CUP
                                       case 17: // action_code_part ::= ACTION CODE CODE_string opt_semi 
                                       {
                                           object RESULT = null;
-                                          int user_codeleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left;
-                                          int user_coderight = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).right;
-                                          string user_code = (string)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          int user_codeleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left;
+                                          int user_coderight = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).right;
+                                          string user_code = (string)CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
         
                                           if (emit.action_code!=null)
                                               lexer.emit_error("Redundant action code (skipping)");
                                           else /* save the user included code string */
                                               emit.action_code = user_code;
     
-                                          CUP_parser_result = new Symbol(4/*action_code_part*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-3)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(4/*action_code_part*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-3).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1682,7 +1684,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(5/*code_parts*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(5/*code_parts*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1691,7 +1693,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(5/*code_parts*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(5/*code_parts*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1700,7 +1702,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(6/*code_part*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(6/*code_part*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1709,7 +1711,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(6/*code_part*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(6/*code_part*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1718,7 +1720,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(6/*code_part*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(6/*code_part*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1727,7 +1729,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(6/*code_part*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(6/*code_part*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1736,10 +1738,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$2
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
 
-                                          CUP_parser_result = new Symbol(14/*import_spec*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-3)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(14/*import_spec*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-3).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1754,7 +1756,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the accumulated multipart name */
                                           multipart_name = "";
     
-                                          CUP_parser_result = new Symbol(45/*NT$2*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(45/*NT$2*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1763,7 +1765,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(3/*import_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(3/*import_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1772,7 +1774,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(3/*import_list*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(3/*import_list*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1781,7 +1783,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(2/*package_spec*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(2/*package_spec*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1790,10 +1792,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$1
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
 
-                                          CUP_parser_result = new Symbol(2/*package_spec*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-3)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(2/*package_spec*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-3).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1808,7 +1810,7 @@ namespace TUVienna.CS_CUP
                                           /* reset the accumulated multipart name */
                                           multipart_name = "";
     
-                                          CUP_parser_result = new Symbol(44/*NT$1*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(44/*NT$1*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1817,7 +1819,7 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
 
-                                          CUP_parser_result = new Symbol(1/*spec*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-4)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(1/*spec*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-4).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1826,10 +1828,10 @@ namespace TUVienna.CS_CUP
                                       {
                                           object RESULT = null;
                                           // propagate RESULT from NT$0
-                                          if ( ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-7)).value != null )
-                                              RESULT = (object) ((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-7)).value;
+                                          if ( CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-7).value != null )
+                                              RESULT = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-7).value;
 
-                                          CUP_parser_result = new Symbol(1/*spec*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-7)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(1/*spec*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-7).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1844,7 +1846,7 @@ namespace TUVienna.CS_CUP
                                           /* declare start non terminal */
                                           non_terms.Add("$START", non_terminal.START_nt);
     
-                                          CUP_parser_result = new Symbol(43/*NT$0*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(43/*NT$0*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           return CUP_parser_result;
 
@@ -1852,11 +1854,11 @@ namespace TUVienna.CS_CUP
                                       case 0: // $START ::= spec EOF 
                                       {
                                           object RESULT = null;
-                                          int start_valleft = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left;
-                                          int start_valright = ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).right;
-                                          object start_val = (object)((Symbol) CUP_parser_stack.elementAt(CUP_parser_top-1)).value;
+                                          int start_valleft = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left;
+                                          int start_valright = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).right;
+                                          object start_val = CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).value;
                                           RESULT = start_val;
-                                          CUP_parser_result = new Symbol(0/*$START*/, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-1)).left, ((Symbol)CUP_parser_stack.elementAt(CUP_parser_top-0)).right, RESULT);
+                                          CUP_parser_result = new Symbol(0/*$START*/, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top-1).left, CUP_parser_stack.ElementAtFromBottom(CUP_parser_top).right, RESULT);
                                       }
                                           /* ACCEPT */
                                           CUP_parser_parser.done_parsing();

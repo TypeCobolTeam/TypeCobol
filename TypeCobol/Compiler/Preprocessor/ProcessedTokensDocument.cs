@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 
@@ -12,13 +13,16 @@ namespace TypeCobol.Compiler.Preprocessor
     /// </summary>
     public class ProcessedTokensDocument : ICompilerStepDocumentSnapshot<ITokensLine, IProcessedTokensLine>
     {
-        public ProcessedTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<IProcessedTokensLine> processedTokensLines)
+        public ProcessedTokensDocument(TokensDocument previousStepSnapshot, DocumentVersion<IProcessedTokensLine> processedTokensLinesVersion, ISearchableReadOnlyList<IProcessedTokensLine> processedTokensLines, TypeCobolOptions compilerOptions)
         {
             TextSourceInfo = previousStepSnapshot.TextSourceInfo;
             PreviousStepSnapshot = previousStepSnapshot;
             CurrentVersion = processedTokensLinesVersion;
             Lines = processedTokensLines;
+            CompilerOptions = compilerOptions;
         }
+
+        private TypeCobolOptions CompilerOptions;
 
         /// <summary>
         /// Informations on the source file on disk, or the buffer in memory
@@ -50,7 +54,7 @@ namespace TypeCobol.Compiler.Preprocessor
         {
             get
             {
-                return GetProcessedTokensIterator(TextSourceInfo, Lines);
+                return GetProcessedTokensIterator(TextSourceInfo, Lines,  CompilerOptions);
             }
         }
 
@@ -73,10 +77,10 @@ namespace TypeCobol.Compiler.Preprocessor
         /// - COPY directives text imports
         /// - REPLACE directive token remplacements
         /// </summary>
-        public static ITokensLinesIterator GetProcessedTokensIterator(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<IProcessedTokensLine> lines)
+        public static ITokensLinesIterator GetProcessedTokensIterator(TextSourceInfo textSourceInfo, ISearchableReadOnlyList<IProcessedTokensLine> lines, TypeCobolOptions compilerOptions)
         {
             ITokensLinesIterator copyIterator = new CopyTokensLinesIterator(textSourceInfo.Name, lines, Token.CHANNEL_SourceTokens);
-            ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(copyIterator);
+            ITokensLinesIterator replaceIterator = new ReplaceTokensLinesIterator(copyIterator, compilerOptions);
             return replaceIterator;
         }
 

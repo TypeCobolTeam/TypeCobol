@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSCupRuntime;
+using TUVienna.CS_CUP.Runtime;
 
 namespace TypeCobol.Compiler.CupCommon
 {
@@ -24,7 +26,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// if false is returned then a very simple implementation 
         /// is provided which reports the error then throws an exception. 
         /// </returns>
-        bool ReportFatalError(TUVienna.CS_CUP.Runtime.lr_parser parser, Stack stack, string message, object info);
+        bool ReportFatalError(TUVienna.CS_CUP.Runtime.lr_parser parser, StackList<Symbol> stack, string message, object info);
 
         /// <summary>
         /// Report a non fatal error (or warning).  This method takes a message 
@@ -39,7 +41,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// if false is returned then a very simple 
         /// implementation is provided which simply prints the message to System.err. 
         /// </returns>
-        bool ReportError(TUVienna.CS_CUP.Runtime.lr_parser parser, Stack stack, string message, object info);
+        bool ReportError(TUVienna.CS_CUP.Runtime.lr_parser parser, StackList<Symbol> stack, string message, object info);
 
         /// <summary>
         /// This method is called when a syntax error has been detected and recovery 
@@ -52,7 +54,7 @@ namespace TypeCobol.Compiler.CupCommon
         /// <returns>true if the error has been handle, false otherwise.
         /// if false is returned then we just emit a "Syntax error" error message.  
         /// </returns>
-        bool SyntaxError(TUVienna.CS_CUP.Runtime.lr_parser parser, Stack stack, TUVienna.CS_CUP.Runtime.Symbol curToken);
+        bool SyntaxError(TUVienna.CS_CUP.Runtime.lr_parser parser, StackList<Symbol> stack, TUVienna.CS_CUP.Runtime.Symbol curToken);
 
         /// <summary>
         /// This method is called if it is determined that syntax error recovery 
@@ -64,6 +66,6 @@ namespace TypeCobol.Compiler.CupCommon
         /// <returns>true if the error has been handle, false otherwise.
         /// if false is returned then we report a fatal error.   
         /// </returns>
-        bool UnrecoveredSyntaxError(TUVienna.CS_CUP.Runtime.lr_parser parser, Stack stack, TUVienna.CS_CUP.Runtime.Symbol curToken);
+        bool UnrecoveredSyntaxError(TUVienna.CS_CUP.Runtime.lr_parser parser, StackList<Symbol> stack, TUVienna.CS_CUP.Runtime.Symbol curToken);
     }
 }

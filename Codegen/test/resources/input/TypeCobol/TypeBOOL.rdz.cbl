@@ -34,7 +34,8 @@
            MOVE Identifier    TO d      IN AGroup
            MOVE Identifier    TO b OF a IN AGroup
            MOVE d IN AGroup   TO b OF a IN AGroup
-      * OK: copying chunks of memories of different layouts is standard COBOL practice
+      * OK: copying chunks of memories of different layouts
+      *     is standard COBOL practice
            MOVE x   TO      AGroup
            MOVE x   TO a IN AGroup
       * OK: with occurs

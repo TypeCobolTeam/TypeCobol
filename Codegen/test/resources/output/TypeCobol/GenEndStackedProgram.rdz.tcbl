@@ -1,0 +1,51 @@
+﻿      * 1 errors
+      * Line 33[8,31] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. EnclosingPgm.
+       DATA DIVISION.
+       PROCEDURE DIVISION.
+         
+      *  declare procedure Foo.
+              .
+       
+         IDENTIFICATION DIVISION.
+         PROGRAM-ID. NestedPgm IS COMMON.
+         DATA DIVISION.
+         LINKAGE SECTION.
+           01 x PIC X.
+          PROCEDURE DIVISION.
+           GOBACK.
+         END PROGRAM NestedPgm.
+         
+       END PROGRAM EnclosingPgm.
+         
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. StackedPgm.
+       DATA DIVISION.
+       LINKAGE SECTION.
+         01 x PIC X.
+        PROCEDURE DIVISION.
+         GOBACK.
+       END PROGRAM StackedPgm.
+         
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. StackedPgrm.
+       DATA DIVISION.
+       LINKAGE SECTION.
+         01 x PIC X.
+        PROCEDURE DIVISION.
+         GOBACK.
+
+       END PROGRAM StackedPgrm.
+      *
+      *  declare procedure Foo.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. fb2e1a03Foo.
+       PROCEDURE DIVISION
+           .
+      *EnclosingPgm.Foo  - No Params
+           display "Hey"
+               .
+       END PROGRAM fb2e1a03Foo.

@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DVZZDATE.
        AUTHOR. REYDELPA.
        
@@ -37,19 +37,29 @@
            88 TC-DVZZDATE-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DVZZDATE-PntTab.
            05 TC-DVZZDATE-PntNbr         PIC S9(04) COMP VALUE 5.
-      *DVZZDATE::currentDate
+      *To call program db42865ccurrentDate
+      *Which is generated code for DVZZDATE.currentDate
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-db42865c-Idt   PIC X(08) VALUE 'db42865c'.
            05 TC-DVZZDATE-db42865c PROCEDURE-POINTER.
-      *DVZZDATE::currentDateDB2
+      *To call program fa5ee5e9currentDateDB2
+      *Which is generated code for DVZZDATE.currentDateDB2
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-fa5ee5e9-Idt   PIC X(08) VALUE 'fa5ee5e9'.
            05 TC-DVZZDATE-fa5ee5e9 PROCEDURE-POINTER.
-      *DVZZDATE::currentDateJulian
+      *To call program cf63e86fcurrentDateJulian
+      *Which is generated code for DVZZDATE.currentDateJulian
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-cf63e86f-Idt   PIC X(08) VALUE 'cf63e86f'.
            05 TC-DVZZDATE-cf63e86f PROCEDURE-POINTER.
-      *DVZZDATE::currentDateFreeFormat
+      *To call program cfc290cecurrentDateFreeFormat
+      *Which is generated code for DVZZDATE.currentDateFreeFormat
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-cfc290ce-Idt   PIC X(08) VALUE 'cfc290ce'.
            05 TC-DVZZDATE-cfc290ce PROCEDURE-POINTER.
-      *DVZZDATE::currentDateString
+      *To call program b8721d20currentDateString
+      *Which is generated code for DVZZDATE.currentDateString
+      *Declared in source file Library.rdz.cbl
            05 TC-DVZZDATE-b8721d20-Idt   PIC X(08) VALUE 'b8721d20'.
            05 TC-DVZZDATE-b8721d20 PROCEDURE-POINTER.
 
@@ -125,6 +135,8 @@
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        LINKAGE SECTION.
+      *DVZZDATE.currentDate  - No Params
+      *		returns(Result: DATE)
        01 Result.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -132,6 +144,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
+      *DVZZDATE.currentDate  - No Params
+      *		returns(Result: DATE)
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM db42865ccurrentDate.
@@ -146,6 +160,9 @@
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+      *DVZZDATE.currentDateDB2  - No Params
+      *		returns(Result: dateDB2)
+                               
       *01  W-Dat       TYPE date.
        01 W-Dat.
            02 YYYY PIC 9(4).
@@ -154,6 +171,8 @@
                                  
 
        LINKAGE SECTION.
+      *DVZZDATE.currentDateDB2  - No Params
+      *		returns(Result: dateDB2)
        01 Result.
            02 YYYY PIC 9(04).
            02 PIC X(01).
@@ -163,6 +182,8 @@
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
+      *DVZZDATE.currentDateDB2  - No Params
+      *		returns(Result: dateDB2)
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
       *    move W-Dat :: YYYY       to Result :: YYYY
@@ -188,6 +209,9 @@
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+      *DVZZDATE.currentDateJulian  - No Params
+      *		returns(Result: dateJulian)
+                               
       *01  W-Dat       TYPE date.
        01 W-Dat.
            02 YYYY PIC 9(4).
@@ -196,12 +220,16 @@
                                  
 
        LINKAGE SECTION.
+      *DVZZDATE.currentDateJulian  - No Params
+      *		returns(Result: dateJulian)
        01 Result.
            02 YYYY PIC 9(04).
            02 DDD PIC 9(03).
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
+      *DVZZDATE.currentDateJulian  - No Params
+      *		returns(Result: dateJulian)
 
            ACCEPT W-Dat             FROM DATE YYYYMMDD
       *    move unsafe W-Dat to Result
@@ -225,6 +253,11 @@
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
+      *DVZZDATE.currentDateFreeFormat - Params :
+      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
+      * X(01), culture: culture, returnCode: pic 9(04))
+      *		returns(Result: pic X(40))
+                               
       *01  W-Dat       TYPE date.
        01 W-Dat.
            02 YYYY PIC 9(4).
@@ -233,6 +266,10 @@
                                  
 
        LINKAGE SECTION.
+      *DVZZDATE.currentDateFreeFormat - Params :
+      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
+      * X(01), culture: culture, returnCode: pic 9(04))
+      *		returns(Result: pic X(40))
        01 dateType PIC X(01).
        01 direction PIC X(01).
        01 separator PIC X(01).
@@ -249,6 +286,10 @@
                    BY REFERENCE returnCode
                    BY REFERENCE Result
            .
+      *DVZZDATE.currentDateFreeFormat - Params :
+      *		input(dateType: pic X(01), direction: pic X(01), separator: pic
+      * X(01), culture: culture, returnCode: pic 9(04))
+      *		returns(Result: pic X(40))
 
            continue
            .
@@ -264,10 +305,14 @@
        SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
        DATA DIVISION.
        LINKAGE SECTION.
+      *DVZZDATE.currentDateString  - No Params
+      *		returns(Result: dateString)
        01 Result PIC 9(08).
        PROCEDURE DIVISION
              USING BY REFERENCE Result
            .
+      *DVZZDATE.currentDateString  - No Params
+      *		returns(Result: dateString)
            ACCEPT Result FROM DATE YYYYMMDD
            .
        END PROGRAM b8721d20currentDateString.

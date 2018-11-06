@@ -57,32 +57,39 @@ namespace TypeCobol.Compiler.Scanner
             int startIndex = textLine.Source.StartIndex;
             int lastIndex = textLine.Source.EndIndex;
 
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
-            if(tokensLine.ScanState.LeavingRemarksDirective) //If last scanned line was the end of a remarksDirective then mark scanstate as outside of remarksDirective for this new line
-                tokensLine.ScanState.InsideRemarksDirective = tokensLine.ScanState.LeavingRemarksDirective = false;
+#if EUROINFO_RULES
+            if (compilerOptions.UseEuroInformationLegacyReplacingSyntax)
+            {
+                if (tokensLine.ScanState.LeavingRemarksDirective) //If last scanned line was the end of a remarksDirective then mark scanstate as outside of remarksDirective for this new line
+                    tokensLine.ScanState.InsideRemarksDirective = tokensLine.ScanState.LeavingRemarksDirective = false;
 
-            if (IsInsideRemarks(textLine.Type, tokensLine.SourceText)) tokensLine.ScanState.InsideRemarksDirective = true;
-            else if (textLine.Type == CobolTextLineType.Source) tokensLine.ScanState.InsideRemarksDirective = false;
-            // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
-            if (tokensLine.ScanState.InsideRemarksDirective) {
-                string remarksLine = textLine.SourceText;
+                if (IsInsideRemarks(textLine.Type, tokensLine.SourceText)) tokensLine.ScanState.InsideRemarksDirective = true;
+                else if (textLine.Type == CobolTextLineType.Source) tokensLine.ScanState.InsideRemarksDirective = false;
+                // Try to scan REMARKS compiler directive parameters inside the comment or non-comment line
+                if (tokensLine.ScanState.InsideRemarksDirective)
+                {
+                    string remarksLine = textLine.SourceText;
 
-                if(remarksLine != null) { 
-                    int startIndexForSignificantPart = GetStartIndexOfSignificantPart(remarksLine, tokensLine.ScanState);
-                    int firstPeriodIndex = remarksLine.IndexOf('.', startIndexForSignificantPart);
-                    int endIndexForSignificantPart = GetEndIndexOfSignificantPart(remarksLine, tokensLine.ScanState, firstPeriodIndex);
-                    string significantPart = remarksLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
+                    if (remarksLine != null)
+                    {
+                        int startIndexForSignificantPart = GetStartIndexOfSignificantPart(remarksLine, tokensLine.ScanState);
+                        int firstPeriodIndex = remarksLine.IndexOf('.', startIndexForSignificantPart);
+                        int endIndexForSignificantPart = GetEndIndexOfSignificantPart(remarksLine, tokensLine.ScanState, firstPeriodIndex);
+                        string significantPart = remarksLine.Substring(startIndexForSignificantPart, endIndexForSignificantPart - startIndexForSignificantPart + 1).Trim();
 
-        
-                    if (tokensLine.ScanState.InsideRemarksDirective && (remarksLine.Contains(").") || remarksLine.Contains(")"))) {
-                        tokensLine.ScanState.LeavingRemarksDirective = true; // indicates the end of the REMARKS compiler directive
-                    }
 
-                    RemarksDirective remarksDirective = CreateRemarksDirective(significantPart, tokensLine.ScanState);
-                    if (remarksDirective != null && remarksDirective.CopyTextNamesVariations.Count > 0) {
-                        // A non empty remarks directive will replace the comment line
-                        tokensLine.AddToken(CreateCompilerDirectiveToken(remarksDirective, tokensLine, startIndex, lastIndex, copyTextNameVariations));
-                        return;
+                        if (tokensLine.ScanState.InsideRemarksDirective && (remarksLine.Contains(").") || remarksLine.Contains(")")))
+                        {
+                            tokensLine.ScanState.LeavingRemarksDirective = true; // indicates the end of the REMARKS compiler directive
+                        }
+
+                        RemarksDirective remarksDirective = CreateRemarksDirective(significantPart, tokensLine.ScanState);
+                        if (remarksDirective != null && remarksDirective.CopyTextNamesVariations.Count > 0)
+                        {
+                            // A non empty remarks directive will replace the comment line
+                            tokensLine.AddToken(CreateCompilerDirectiveToken(remarksDirective, tokensLine, startIndex, lastIndex, copyTextNameVariations));
+                            return;
+                        }
                     }
                 }
             }
@@ -94,6 +101,12 @@ namespace TypeCobol.Compiler.Scanner
             if (textLine.Type == CobolTextLineType.Comment ||
                (textLine.Type == CobolTextLineType.Debug && !tokensLine.InitialScanState.WithDebuggingMode))
             {
+                if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
+                {
+                    tokensLine.AddDiagnostic(MessageCode.Warning,
+                        tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Line exceed 80 chars");
+                }
+
                 Token commentToken = new Token(TokenType.CommentLine, startIndex, lastIndex, tokensLine);
                 tokensLine.AddToken(commentToken);
                 return;
@@ -118,8 +131,14 @@ namespace TypeCobol.Compiler.Scanner
                     tokensLine.AddToken(whitespaceToken);
                 }
                 return;
-            }            
-            
+            }
+
+            if (tokensLine.ColumnsLayout == ColumnsLayout.CobolReferenceFormat && tokensLine.Text.Length > 80)
+            {
+                tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser,
+                    tokensLine.Indicator.StartIndex, tokensLine.Indicator.EndIndex, "Line exceed 80 chars");
+            }
+
             // Create a stateful line scanner, and iterate over the tokens
             Scanner scanner = new Scanner(line, startIndex, lastIndex, tokensLine, compilerOptions);
             Token nextToken = null;
@@ -129,7 +148,7 @@ namespace TypeCobol.Compiler.Scanner
             }    
         }
 
-#if EUROINFO_LEGACY_REPLACING_SYNTAX
+#if EUROINFO_RULES
 		private static bool IsInsideRemarks(CobolTextLineType type, string line) {
 			if (type != CobolTextLineType.Comment || line == null) return false;
 			return line.StartsWith("REMARKS.", StringComparison.InvariantCultureIgnoreCase);

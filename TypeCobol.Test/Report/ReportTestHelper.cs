@@ -32,10 +32,11 @@ namespace TypeCobol.Test.Report
         public static void ParseWithNodeListenerReportCompare<TCtx>(string fileName, string reportFileName, System.Type reportType) where TCtx : class
         {
             Assert.IsTrue(Tools.Reflection.IsTypeOf(reportType, typeof(IReport)));
-            IReport report = null;//Variable to receive the created report instance.            
+            IReport report = null;//Variable to receive the created report instance.     
+            
             TypeCobol.Compiler.Parser.NodeListenerFactory<TCtx> factory = () =>
             {
-                object obj = System.Activator.CreateInstance(reportType);
+                object obj = System.Activator.CreateInstance(reportType, args: Path.GetFullPath(reportFileName));
                 Assert.IsTrue(obj is NodeListener<TCtx>);
                 TypeCobol.Compiler.Parser.NodeListener<TCtx> nodeListener = (TypeCobol.Compiler.Parser.NodeListener<TCtx>)obj;
                 Assert.IsNotNull(nodeListener);
@@ -54,8 +55,7 @@ namespace TypeCobol.Test.Report
                 var parser = new TypeCobol.Parser();
                 var typeCobolOption = new TypeCobolOptions { ExecToStep = ExecutionStep.CrossCheck };
 #if EUROINFO_RULES
-                bool autoRemarks = false;
-                typeCobolOption.AutoRemarksEnable = autoRemarks;
+                typeCobolOption.AutoRemarksEnable = false;
 #endif
                 String copyFolder = Path.Combine(Directory.GetCurrentDirectory(), ROOT_COPY);
                 parser.Init(input, typeCobolOption, format, new List<string>() { copyFolder });
@@ -72,7 +72,7 @@ namespace TypeCobol.Test.Report
                             // compare with expected result
                             string result = sw.ToString();
                             string expected = File.ReadAllText(output, format.Encoding);
-                            TypeCobol.Test.TestUtils.compareLines(input, result, expected);
+                            TypeCobol.Test.TestUtils.compareLines(input, result, expected, PlatformUtils.GetPathForProjectFile(output));
                         }
                     }
                 }

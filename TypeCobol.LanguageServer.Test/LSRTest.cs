@@ -270,6 +270,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
         }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ReplacingSyntaxOff()
+        {
+            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+        }
 #endif
 
         [TestMethod]
@@ -284,6 +291,15 @@ namespace TypeCobol.LanguageServer.Test
         public void GoToDefinition()
         {
             LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+        }
+
+        [TestMethod]
+        public void LSRAutoReplaceSecurityTest()
+        {
+            if (CLI.Test.UnitTestHelper.CompareDirectory(null, null, "TypeCobol.LanguageServer.Test\\LSRTests"))
+            {
+                Assert.Fail("Set AutoReplace to false in UnitTestHelper.CompareDirectory()\n\n");
+            }
         }
     }
 }

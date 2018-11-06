@@ -1,8 +1,10 @@
 
+using CSCupRuntime;
+
 namespace TUVienna.CS_CUP.Runtime
 {
 
-	using System.Collections;
+	using System.Collections.Generic;
 
 	/** This class implements a temporary or "virtual" parse stack that 
 	 *  replaces the top portion of the actual parse stack (the part that 
@@ -28,7 +30,7 @@ namespace TUVienna.CS_CUP.Runtime
 		/*-----------------------------------------------------------*/
 
 		/** Constructor to build a virtual stack out of a real stack. */
-		public virtual_parse_stack(Stack shadowing_stack) 
+		public virtual_parse_stack(StackList<Symbol> shadowing_stack) 
 														  {
 															  /* sanity check */
 															  if (shadowing_stack == null)
@@ -37,7 +39,7 @@ namespace TUVienna.CS_CUP.Runtime
 
 		/* Set up our internals */
 		real_stack = shadowing_stack;
-		vstack     = new Stack();
+		vstack     = new Stack<int>();
 		real_next  = 0;
 
 		/* get one element onto the virtual portion of the stack */
@@ -52,7 +54,7 @@ namespace TUVienna.CS_CUP.Runtime
 	 *  the bottom of the virtual portion of the stack, but is always left
 	 *  unmodified.
 	 */
-	protected Stack real_stack;
+	protected StackList<Symbol> real_stack;
 
 	/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
@@ -70,7 +72,7 @@ namespace TUVienna.CS_CUP.Runtime
 	 *  on the virtual stack).  When this portion of the stack becomes empty we 
 	 *  transfer elements from the underlying stack onto this stack. 
 	 */
-	protected Stack vstack;
+	protected Stack<int> vstack;
 
 	/*-----------------------------------------------------------*/
 	/*--- General Methods ---------------------------------------*/
@@ -90,10 +92,10 @@ namespace TUVienna.CS_CUP.Runtime
     //CSCupRuntime: Error Recovery mechanism has a Bug, it does not work.  #926
     //https://github.com/TypeCobolTeam/TypeCobol/issues/926
     //stack_sym = (Symbol)real_stack.ToArray()[real_stack.Count-1-real_next]; 
-    stack_sym = (Symbol)real_stack.ToArray()[real_next];
+    stack_sym = real_stack.ElementAtFromTop(real_next);
 
-	/* record the transfer */
-	real_next++;
+            /* record the transfer */
+            real_next++;
 
 	/* put the state number from the Symbol onto the virtual stack */
 	vstack.Push(stack_sym.parse_state);
@@ -118,7 +120,7 @@ namespace TUVienna.CS_CUP.Runtime
 	throw new System.Exception(
 	"Internal parser error: top() called on empty virtual stack");
 
-	return (System.Int32)vstack.Peek();
+	return vstack.Peek();
 }
 
 	/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/

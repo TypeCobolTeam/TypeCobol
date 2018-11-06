@@ -20,12 +20,20 @@ namespace TypeCobol.Tools.Options_Config
         public string ExtractedCopiesFilePath;
         public bool UseAntlrProgramParsing;
         public string ReportCopyMoveInitializeFilePath;
+        public string ReportZCallFilePath;
         public List<string> CopyFolders = new List<string>();
         public List<string> InputFiles = new List<string>();
         public List<string> OutputFiles = new List<string>();
         public ExecutionStep ExecToStep = ExecutionStep.Generate; //Default value is Generate
         public string ErrorFile = null;
         public string skeletonPath = "";
+
+#if EUROINFO_RULES
+        public bool UseEuroInformationLegacyReplacingSyntax = true;
+#else
+        public bool UseEuroInformationLegacyReplacingSyntax = false;
+#endif
+
         public bool IsErrorXML
         {
             get { return ErrorFile != null && ErrorFile.ToLower().EndsWith(".xml"); }
@@ -160,7 +168,9 @@ namespace TypeCobol.Tools.Options_Config
                 { "ec|expandingcopy=", "Generate a file with all COPY directives expanded in the source code. This option will be executed if the Preprocessor step is enabled.", v => typeCobolConfig.ExpandingCopyFilePath = v },
                 { "exc|extractusedcopy=", "Generate a file with all COPIES detected by the parser", v => typeCobolConfig.ExtractedCopiesFilePath = v },
                 { "antlrp|antlrprogparse", "Use ANTLR to parse a program", v => typeCobolConfig.UseAntlrProgramParsing = true},
-                { "cmr|copymovereport=", "{PATH} to Report all Move and Initialize statements that target a COPY.", v => typeCobolConfig.ReportCopyMoveInitializeFilePath = v }
+                { "cmr|copymovereport=", "{PATH} to Report all Move and Initialize statements that target a COPY.", v => typeCobolConfig.ReportCopyMoveInitializeFilePath = v },
+                { "zcr|zcallreport=", "{PATH} to report of all program called by zcallpgm.", v => typeCobolConfig.ReportZCallFilePath = v },
+                { "dcs|disablecopysuffixing", "Deactivate Euro-Information suffixing", v => typeCobolConfig.UseEuroInformationLegacyReplacingSyntax = false }
             };
             return commonOptions;
         }

@@ -13,6 +13,11 @@ namespace TypeCobol.Compiler.Report
     public interface IReport
     {
         /// <summary>
+        /// The file where the report should be emited
+        /// </summary>
+        string Filepath { get; set; }
+
+        /// <summary>
         /// Emit the Report in the given TextWriter
         /// </summary>
         /// <param name="writer"></param>

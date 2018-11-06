@@ -608,7 +608,7 @@ namespace TypeCobol.Compiler
                         PreprocessorStep.ProcessDocument(TextSourceInfo, ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions, processedTokensDocumentProvider, CopyTextNamesVariations, perfStatsForParserInvocation, this.MissingCopies);
 
                         // Create the first processed tokens document snapshot
-                        ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines));
+                        ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, new DocumentVersion<IProcessedTokensLine>(this), ((ImmutableList<CodeElementsLine>)tokensDocument.Lines), CompilerOptions);
                     }
                 }
                 else
@@ -626,7 +626,7 @@ namespace TypeCobol.Compiler
                     currentProcessedTokensLineVersion = currentProcessedTokensLineVersion.next;
 
                     // Update the processed tokens document snapshot
-                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable());
+                    ProcessedTokensDocumentSnapshot = new ProcessedTokensDocument(tokensDocument, currentProcessedTokensLineVersion, processedTokensDocumentLines.ToImmutable(), CompilerOptions);
                 }
 
                 // Stop perf measurement

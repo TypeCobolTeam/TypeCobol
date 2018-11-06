@@ -4,6 +4,8 @@ using System.Text;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Diagnostics;
+using TypeCobol.Test;
+
 // DocumentFormat
 using TypeCobol.Tools; // CodeElementDiagnostics
 
@@ -53,7 +55,7 @@ namespace TypeCobol.Codegen {
 
             // compare with expected result
             string expected = File.ReadAllText(Path.Combine(ROOT, OUTPUT, path), format.Encoding);
-            TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected);
+            TypeCobol.Test.TestUtils.compareLines(path, writer.ToString(), expected, PlatformUtils.GetPathForProjectFile(Path.Combine(ROOT, OUTPUT, path), "Codegen\\Test"));
         }
 
         private static void WriteErrors(TextWriter writer, ICollection<Diagnostic> errors,
