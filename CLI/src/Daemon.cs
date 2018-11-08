@@ -39,7 +39,7 @@ namespace TypeCobol.Server {
             var pipename = "TypeCobol.Server";
 
 
-            var p = TypeCobolOptionSet.GetCommonTypeCobolOptions(config);
+            var p = new OptionSet();
 
             //Add custom options for CLI
             p.Add(string.Format("USAGE\n {0} [OPTIONS]... [PIPENAME]\n VERSION:\n {1} \n DESCRIPTION: \n Run the TypeCObol parser server", PROGNAME, PROGVERSION));
@@ -61,6 +61,7 @@ namespace TypeCobol.Server {
             p.Add("h|help", "Output a usage message and exit.", v => help = (v != null));
             p.Add("V|version", "Output the version number of " + PROGNAME + " and exit.", v => version = (v != null));
 
+            p.AddRange(TypeCobolOptionSet.GetCommonTypeCobolOptions(config));
 
             //Add DefaultCopies to running session
             var folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -70,14 +71,14 @@ namespace TypeCobol.Server {
             {
                 var errors = TypeCobolOptionSet.InitializeCobolOptions(config, argv, p);
 
-                if (!errors.IsNullOrEmpty())
-                    return exit(errors);
-
                 if (help)
                 {
                     p.WriteOptionDescriptions(Console.Out);
                     return 0;
                 }
+
+                if (!errors.IsNullOrEmpty())
+                    return exit(errors);
 
                 if (version)
                 {
