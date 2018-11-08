@@ -845,7 +845,18 @@ namespace Mono.Options
 			return Add (prototype, description, action, false);
 		}
 
-		public OptionSet Add (string prototype, string description, Action<string> action, bool hidden)
+        public OptionSet AddRange(OptionSet optionList)
+        {
+            foreach (var option in optionList)
+            {
+                base.Add(option);
+
+            }
+            
+            return this;
+        }
+
+        public OptionSet Add (string prototype, string description, Action<string> action, bool hidden)
 		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
@@ -1244,7 +1255,7 @@ namespace Mono.Options
 			if (i == names.Length)
 				return false;
 
-			if (names [i].Length == 1) {
+			if (names [i].Length <= 3) {
 				Write (o, ref written, "  -");
 				Write (o, ref written, names [0]);
 			}
