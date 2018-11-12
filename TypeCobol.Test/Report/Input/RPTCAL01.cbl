@@ -19,5 +19,22 @@
        call 'zCaLlpgm' using by reference PROGRAM_NAME.
        
             call 'zCaLlpgm' using by value PROGRAM_NAME.
+            
+            call 'test' using by value PROGRAM_NAME.
+            
+       call 'zCaLlpgF' using PROGRAM_NAME.
+       
+            call 'ZCALLPGG' using by content PROGRAM_NAME
+                                PARAMETER_1.
+            
+            call 'zcallpgr' using PROGRAM_NAME
+                                PARAMETER_1
+                                PARAMETER_2.
+                                
+       call 'zCaLlpgt' using by reference PROGRAM_NAME.
+       
+       call 'zCaLlpgx' using by reference PROGRAM_NAME.
+       
+            call 'zCaLlsrv' using by reference PROGRAM_NAME.
       
        END PROGRAM ProcCall.
