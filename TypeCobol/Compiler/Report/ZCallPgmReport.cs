@@ -15,6 +15,19 @@ namespace TypeCobol.Compiler.Report
     public class ZCallPgmReport<TCtx> : AbstractReport, NodeListener<TCtx> where TCtx : class
     {
         /// <summary>
+        /// The list of all ZCALLXXX we need to detect
+        /// </summary>
+        public List<string> AlternativeCallList = new List<string>()
+        {
+            "zcallpgm",
+            "zcallpgf",
+            "zcallpgg",
+            "zcallpgr",
+            "zcallpgt",
+            "zcallpgx",
+            "zcallsrv",
+        };
+        /// <summary>
         /// The list of all CallStatement Nodes
         /// </summary>
         public List<Call> CallNodes { get; private set; }
@@ -38,8 +51,12 @@ namespace TypeCobol.Compiler.Report
                 {
                     case CodeElements.CodeElementType.CallStatement:
                         var target = node.CodeElement.CallSites.First().CallTarget;
-                        if (target != null && target.ToString().Equals("zcallpgm", StringComparison.OrdinalIgnoreCase))
-                            CallNodes.Add(node as Call);
+                        foreach (var callStyle in AlternativeCallList)
+                        {
+                            if (target != null && target.ToString().Equals(callStyle, StringComparison.OrdinalIgnoreCase))
+                                CallNodes.Add(node as Call);
+                        }
+                        
                         break;
                 }
             }
