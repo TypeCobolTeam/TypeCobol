@@ -90,7 +90,7 @@ namespace TypeCobol.Codegen.Actions
             //Add all Erased Tokens
             foreach (Qualifier.GenerateToken token in ErasedTokens)
             {
-                this.Node.Add(token);
+                Qualifier.AddGenerateTokenAtSortedLocationIndex(token, this.Node);
             }
             // comment out original "line" (=~ non expanded node)
             this.Node.Comment = true;

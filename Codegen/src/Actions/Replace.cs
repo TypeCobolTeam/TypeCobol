@@ -103,7 +103,7 @@ namespace TypeCobol.Codegen.Actions
                         TypeCobol.Codegen.Actions.Qualifier.GenerateToken trueToken =
                             new TypeCobol.Codegen.Actions.Qualifier.GenerateToken(
                                 new TypeCobol.Codegen.Actions.Qualifier.TokenCodeElement(consumed_token), "TRUE", null);
-                        node.Add(trueToken);
+                        Qualifier.AddGenerateTokenAtSortedLocationIndex(trueToken, node);
                         break;
                     }
                 }

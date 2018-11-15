@@ -753,6 +753,55 @@ namespace TypeCobol.Codegen.Actions
             }
         }
 
+
+        /// <summary>
+        /// Add the given GenerateToken in the given node at the right position in the
+        /// node's children sorted by other GenerateToken instances locations.
+        /// </summary>
+        /// <param name="token">The token to add as child</param>
+        /// <param name="node">The parent node</param>
+        internal static void AddGenerateTokenAtSortedLocationIndex(GenerateToken token, Node node)
+        {
+            if (node.ChildrenCount == 0)
+            {
+                node.Add(token);
+                return;
+            }
+
+            int currentIndex = -1;//curent child index 
+            int insertIndex = -1;//Prefered position index
+            int lastIndex = -1;//Last index of a GenerateToken child
+            int line = token.CodeElement.ConsumedTokens[0].Line;
+            int column = token.CodeElement.ConsumedTokens[0].Column;
+            Node target = node.Children.FirstOrDefault(n =>
+                {
+                    bool istoken = n is GenerateToken;
+                    bool bResult =  istoken &&
+                                   (line <= n.CodeElement.ConsumedTokens[0].Line &&
+                                    column <= n.CodeElement.ConsumedTokens[0].Column);
+                    currentIndex++;
+                    if (bResult)
+                    {
+                        insertIndex = currentIndex;
+                    }
+
+                    if (istoken)
+                    {
+                        lastIndex = currentIndex;
+                    }
+                    return bResult;
+                }
+            );
+            if (target == null)
+            {//No Match
+                node.Add(token, lastIndex != -1 ? lastIndex + 1 : -1);
+            }
+            else
+            {
+                node.Add(token, insertIndex);
+            }            
+        }
+
         /// <summary>
         /// The Source of the Qualifation
         /// </summary>

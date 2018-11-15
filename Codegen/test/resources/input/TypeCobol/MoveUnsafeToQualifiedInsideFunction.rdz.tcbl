@@ -1,0 +1,30 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Functions.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 RECCTR-DPO-DAT-FIN-CTR-CAT PIC 9.
+       PROCEDURE DIVISION.
+       DECLARE PROCEDURE InitFrom PRIVATE
+           INPUT arg PIC 9.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 RECCTR-DPO-DAT-FIN-CTR-CAT PIC 9.
+       01 RECCTR-DAT-ECH-FIN PIC 9.
+       01 TypeOutputAccount TYPEDEF STRICT.
+                05 DueDate PIC 9.
+       01 OutputAccount TYPE TypeOutputAccount.
+           PROCEDURE DIVISION.
+           EVALUATE TRUE
+           WHEN NOT ( RECCTR-DPO-DAT-FIN-CTR-CAT = 0 )
+              MOVE UNSAFE RECCTR-DPO-DAT-FIN-CTR-CAT
+                                             TO OutputAccount::DueDate
+           WHEN NOT ( RECCTR-DAT-ECH-FIN = ZERO )
+              MOVE UNSAFE RECCTR-DAT-ECH-FIN TO OutputAccount::DueDate
+           WHEN OTHER
+              MOVE SPACE               TO OutputAccount::DueDate
+           END-EVALUATE
+           .
+       END-DECLARE.
+       CALL InitFrom INPUT RECCTR-DPO-DAT-FIN-CTR-CAT.
+       END PROGRAM Functions.

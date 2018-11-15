@@ -1,0 +1,59 @@
+﻿      *TypeCobol_Version:TestTypeCobolVersion
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Functions.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 RECCTR-DPO-DAT-FIN-CTR-CAT PIC 9.
+       PROCEDURE DIVISION.
+      *DECLARE PROCEDURE InitFrom PRIVATE
+      *    INPUT arg PIC 9.
+      *CALL InitFrom INPUT RECCTR-DPO-DAT-FIN-CTR-CAT.
+       CALL 'd1dd0726InitFrom' USING
+                                 RECCTR-DPO-DAT-FIN-CTR-CAT
+           end-call
+                                                     .
+       END PROGRAM Functions.
+      *
+      *DECLARE PROCEDURE InitFrom PRIVATE
+      *    INPUT arg PIC 9.
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. d1dd0726InitFrom.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      *Functions.InitFrom - Params :
+      *		input(arg: pic 9)
+                               
+       01 RECCTR-DPO-DAT-FIN-CTR-CAT PIC 9.
+       01 RECCTR-DAT-ECH-FIN PIC 9.
+      *01 TypeOutputAccount TYPEDEF STRICT.
+      *         05 DueDate PIC 9.
+      *01 OutputAccount TYPE TypeOutputAccount.
+       01 OutputAccount.
+           02 DueDate PIC 9.
+                                               
+       LINKAGE SECTION.
+      *Functions.InitFrom - Params :
+      *		input(arg: pic 9)
+       01 arg PIC 9.
+       PROCEDURE DIVISION
+             USING BY REFERENCE arg
+           .
+      *Functions.InitFrom - Params :
+      *		input(arg: pic 9)
+           EVALUATE TRUE
+           WHEN NOT ( RECCTR-DPO-DAT-FIN-CTR-CAT = 0 )
+      *       MOVE UNSAFE RECCTR-DPO-DAT-FIN-CTR-CAT
+      *                                      TO OutputAccount::DueDate
+              MOVE        RECCTR-DPO-DAT-FIN-CTR-CAT
+                                             TO DueDate OF OutputAccount
+           WHEN NOT ( RECCTR-DAT-ECH-FIN = ZERO )
+      *       MOVE UNSAFE RECCTR-DAT-ECH-FIN TO OutputAccount::DueDate
+              MOVE        RECCTR-DAT-ECH-FIN TO DueDate OF OutputAccount
+           WHEN OTHER
+      *       MOVE SPACE               TO OutputAccount::DueDate
+              MOVE SPACE               TO DueDate OF OutputAccount
+           END-EVALUATE
+           .
+       END PROGRAM d1dd0726InitFrom.
