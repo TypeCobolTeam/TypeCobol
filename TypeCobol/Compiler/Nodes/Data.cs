@@ -1,4 +1,4 @@
-
+﻿
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
@@ -302,7 +302,7 @@ namespace TypeCobol.Compiler.Nodes {
 
                 if (children != null)
                 {
-                    if(Picture != null)
+                    if(Picture != null || (Usage != null && Usage != DataUsage.None))
                     {
                         _physicalLength = ((DataDefinitionEntry) CodeElement).PhysicalLength;
                     }

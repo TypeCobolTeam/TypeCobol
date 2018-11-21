@@ -108,6 +108,30 @@ namespace TypeCobol.Compiler.CodeElements {
         /// - LogicalLengthWithChildren
         /// </summary>
         public abstract int PhysicalLength { get;}
+
+	    public int DefaultLengthOfDataUsage(DataUsage usage)
+	    {
+	        switch (usage)
+	        {
+	            case DataUsage.Binary:
+                case DataUsage.NativeBinary:
+	            case DataUsage.National:
+	                return 2;
+	            case DataUsage.FloatingPoint:
+	            case DataUsage.FunctionPointer:
+	            case DataUsage.Index:
+	            case DataUsage.ObjectReference:
+	            case DataUsage.Pointer:
+	                return 4;
+	            case DataUsage.LongFloatingPoint:
+	            case DataUsage.ProcedurePointer:
+	                return 8;
+	            case DataUsage.Display:
+	            case DataUsage.PackedDecimal:
+	                return 1;
+            }
+	        return 0;
+	    }
     }
 
 
@@ -181,7 +205,14 @@ namespace TypeCobol.Compiler.CodeElements {
         {
             get
             {
-                if (Picture == null) return 1;
+                if (Picture == null)
+                {
+                    if (Usage != null && Usage.Value != DataUsage.None)
+                    {
+                        return DefaultLengthOfDataUsage(Usage.Value);
+                    }
+                    return 1;
+                }
                 PictureValidator pv = new PictureValidator(Picture.Value, SignIsSeparate?.Value ?? false);
                 if (pv.IsValid())
                 {
