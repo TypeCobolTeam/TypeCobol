@@ -1,9 +1,10 @@
-﻿
-using System.IO;
+
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Nodes {
 
@@ -284,30 +285,197 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-
-        private int? _length = null;
-        /// <summary>
-        /// TODO This method should be split like this:
-        /// - PhysicalLength 
-        /// - PhysicalLengthWithChildren
-        /// - LogicalLength
-        /// - LogicalLengthWithChildren
-        /// </summary>
-        public virtual int Length
+        private PictureValidator _pictureValidator;
+        public PictureValidator PictureValidator
         {
             get
             {
-                if (_length != null) return _length.Value;
-                if (this.CodeElement != null)
-                {
-                    _length = ((DataDefinitionEntry) this.CodeElement).Length;
-                }
-                else
-                    return 0;
+                if (_pictureValidator != null) return _pictureValidator;
 
-                return _length.Value;
+                _pictureValidator = new PictureValidator(Picture.Value, SignIsSeparate);
+
+                return _pictureValidator;
             }
         }
+
+        /// <summary>
+        /// PhysicalLength is the size taken by a DataDefinition and its children in memory
+        /// </summary>
+        private long _physicalLength = 0;
+        public virtual long PhysicalLength
+        {
+            get
+            {
+                if (_physicalLength > 0)
+                {
+                    return _physicalLength;
+                }
+
+                if (children != null)
+                {
+                    if(Picture != null || (Usage != null && Usage != DataUsage.None && Children.Count == 0))
+                    {
+                        _physicalLength = GetPhysicalLength();
+                    }
+                    else
+                    {
+                        foreach (var node in children)
+                        {
+                            var dataDefinition = (DataDefinition)node;
+                            if (dataDefinition != null)
+                            {
+                                _physicalLength += dataDefinition.PhysicalLength;
+                            }
+
+                            if (dataDefinition is DataRedefines)
+                            {
+                                SymbolReference redefined = ((DataRedefinesEntry)dataDefinition.CodeElement)?.RedefinesDataName;
+                                var result = SymbolTable.GetRedefinedVariable((DataRedefines) dataDefinition, redefined);
+
+                                _physicalLength -= result.PhysicalLength > dataDefinition.PhysicalLength ? dataDefinition.PhysicalLength : result.PhysicalLength;
+                            }
+                        }
+                    }
+                    
+                }
+
+                if (MaxOccurencesCount > 1)
+                {
+                    _physicalLength = _physicalLength * MaxOccurencesCount;
+                }
+
+                return _physicalLength > 0 ? _physicalLength : 1;
+            }
+        }
+
+        /// <summary>
+        /// Gets the actual size of one DataDefinition
+        /// </summary>
+        /// <returns></returns>
+        private long GetPhysicalLength()
+        {
+            TypeCobolType.UsageFormat usage = TypeCobolType.UsageFormat.None;
+            if (Usage != null)
+            {
+                switch (Usage.Value)
+                {
+                    case DataUsage.Binary:
+                    case DataUsage.NativeBinary:
+                        usage = TypeCobolType.UsageFormat.Binary;
+                        break;
+                    case DataUsage.FloatingPoint:
+                        usage = TypeCobolType.UsageFormat.Comp1;
+                        break;
+                    case DataUsage.Display:
+                        usage = TypeCobolType.UsageFormat.Display;
+                        break;
+                    case DataUsage.FunctionPointer:
+                        usage = TypeCobolType.UsageFormat.FunctionPointer;
+                        break;
+                    case DataUsage.Index:
+                        usage = TypeCobolType.UsageFormat.Index;
+                        break;
+                    case DataUsage.National:
+                        usage = TypeCobolType.UsageFormat.National;
+                        break;
+                    case DataUsage.None:
+                        usage = TypeCobolType.UsageFormat.None;
+                        break;
+                    case DataUsage.ObjectReference:
+                        usage = TypeCobolType.UsageFormat.ObjectReference;
+                        break;
+                    case DataUsage.PackedDecimal:
+                        usage = TypeCobolType.UsageFormat.PackedDecimal;
+                        break;
+                    case DataUsage.Pointer:
+                        usage = TypeCobolType.UsageFormat.Pointer;
+                        break;
+                    case DataUsage.ProcedurePointer:
+                        usage = TypeCobolType.UsageFormat.ProcedurePointer;
+                        break;
+                    case DataUsage.LongFloatingPoint:
+                        usage = TypeCobolType.UsageFormat.Comp2;
+                        break;
+                    case DataUsage.DBCS:
+                        usage = TypeCobolType.UsageFormat.Display1;
+                        break;
+                }
+            }
+            
+            if (Picture == null)
+            {
+                if (Usage != null && Usage.Value != DataUsage.None)
+                {
+                    return new TypeCobolType(TypeCobolType.Tags.Usage, usage).Length;
+                }
+                return 1;
+            }
+            if (PictureValidator.IsValid())
+            {
+                PictureType type = new PictureType(PictureValidator);
+                type.Usage = usage;
+                return type.Length;
+            }
+            else
+                return 1;
+        }
+
+       
+
+        private long? _startPosition = null;
+        public virtual long StartPosition
+        {
+            get
+            {
+                if (_startPosition.HasValue)
+                {
+                    return _startPosition.Value;
+                }
+
+                var node = this as DataRedefines;
+                if (node != null)
+                {
+                    SymbolReference redefined = ((DataRedefinesEntry)CodeElement).RedefinesDataName;
+                    var result = SymbolTable.GetRedefinedVariable(node, redefined);
+
+                        _startPosition = result.StartPosition;
+                        return _startPosition.Value;
+                    
+                }
+
+                if (Parent is DataSection)
+                {
+                    _startPosition = 1;
+                }
+                else
+                {
+                    for (int i = 0; i < Parent.Children.Count; i++)
+                    {
+                        Node sibling = Parent.Children[i];
+                        
+                        if (i == Parent.ChildIndex(this) - 1)
+                        {
+                            while(sibling is DataRedefines)
+                                sibling = Parent.Children[i - 1];
+
+                            //Add 1 for the next free Byte in memory
+                            _startPosition = ((DataDefinition)sibling).PhysicalPosition + 1;
+                        }
+                            
+                    }
+                    if (_startPosition == null)
+                    {
+                        _startPosition = (Parent as DataDefinition)?.StartPosition;
+                    }
+                }
+
+                return _startPosition ?? 0;
+            }
+        }
+
+        /// PhysicalPosition is the position of the last Byte used by a DataDefinition in memory
+        /// Minus 1 is due to PhysicalLength, which is calculated from 0. 
+        public virtual long PhysicalPosition => StartPosition + PhysicalLength - 1;
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
         public virtual bool IsPartOfATypeDef { get { return _ParentTypeDefinition != null; } }

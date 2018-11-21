@@ -7,7 +7,7 @@ WORKING-STORAGE SECTION.
 * TEST 1: group with variable-length table
 01  TEST1-GROUP1.
     05  TEST1-SGROUP1.
-        10  TEST1-ELT1           PIC 9(04).
+        10  TEST1-ELT1           PIC 9(06) COMP-3.
         10  TEST1-ELT2           PIC X(350).
     05  TEST1-SGROUP2.
         10  TEST1-ELT3           PIC X(200).

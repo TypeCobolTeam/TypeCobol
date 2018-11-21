@@ -116,24 +116,31 @@ namespace TypeCobol.Compiler.Types
             {
                 switch (Usage)
                 {
+                    case UsageFormat.Comp:
+                    case UsageFormat.Comp4:
+                    case UsageFormat.Comp5:
+                    case UsageFormat.Display1:
+                    case UsageFormat.National:
+                    case UsageFormat.Binary:
+                        return 2;
                     //Floating-point: Specifies for internal floating -point items (single precision)
                     //(i.e float in java, or C)
                     case UsageFormat.Comp1:
+                    case UsageFormat.FunctionPointer:
+                    case UsageFormat.ObjectReference:
+                    case UsageFormat.Index:
+                    case UsageFormat.Pointer:
                         return 4;
                     //Long floating-point: Specifies for internal  floating point items(double precision)
                     //(i.e double in java or C)
                     case UsageFormat.Comp2:
-                        return 8;
-                    case UsageFormat.ObjectReference:
-                        return 4;
-                    case UsageFormat.FunctionPointer:
-                        return 4;
-                    case UsageFormat.Pointer:
-                        return 4;
                     case UsageFormat.ProcedurePointer:
                         return 8;
-                    case UsageFormat.Index:
-                        return 4;
+                    case UsageFormat.Comp3:
+                    case UsageFormat.Display:
+                    case UsageFormat.PackedDecimal:
+                        return 1;
+
                     default:
                         throw new ArgumentException("Invalid Usage for type length calculation : " + Usage.ToString());
                 }
