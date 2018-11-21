@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.CodeElements {
 
@@ -106,7 +107,7 @@ namespace TypeCobol.Compiler.CodeElements {
         /// - LogicalLength
         /// - LogicalLengthWithChildren
         /// </summary>
-        public abstract int Length{get;}
+        public abstract int PhysicalLength { get;}
     }
 
 
@@ -176,11 +177,56 @@ namespace TypeCobol.Compiler.CodeElements {
         public SymbolReference UserDefinedDataType { get; internal set; }
 // [/COBOL 2002]
 
-        public override int Length {
-            get {
+        public override int PhysicalLength
+        {
+            get
+            {
                 if (Picture == null) return 1;
-                var parts = Picture.Value.Split('(',')');
-                return parts.Length == 3 ? int.Parse(parts[1]) : 1;
+                PictureValidator pv = new PictureValidator(Picture.Value, SignIsSeparate?.Value ?? false);
+                if (pv.IsValid())
+                {
+                    PictureType type = new PictureType(pv);
+                    if (Usage != null)
+                    {
+                        switch (Usage.Value)
+                        {
+                            case DataUsage.Binary:
+                            case DataUsage.NativeBinary:
+                                type.Usage = TypeCobolType.UsageFormat.Binary;
+                                break;
+                            case DataUsage.Display:
+                                type.Usage = TypeCobolType.UsageFormat.Display;
+                                break;
+                            case DataUsage.FunctionPointer:
+                                type.Usage = TypeCobolType.UsageFormat.FunctionPointer;
+                                break;
+                            case DataUsage.Index:
+                                type.Usage = TypeCobolType.UsageFormat.Index;
+                                break;
+                            case DataUsage.National:
+                                type.Usage = TypeCobolType.UsageFormat.National;
+                                break;
+                            case DataUsage.None:
+                                type.Usage = TypeCobolType.UsageFormat.None;
+                                break;
+                            case DataUsage.ObjectReference:
+                                type.Usage = TypeCobolType.UsageFormat.ObjectReference;
+                                break;
+                            case DataUsage.PackedDecimal:
+                                type.Usage = TypeCobolType.UsageFormat.PackedDecimal;
+                                break;
+                            case DataUsage.Pointer:
+                                type.Usage = TypeCobolType.UsageFormat.Pointer;
+                                break;
+                            case DataUsage.ProcedurePointer:
+                                type.Usage = TypeCobolType.UsageFormat.ProcedurePointer;
+                                break;
+                        }
+                    }
+                    return type.Length;
+                }
+                else
+                    return 1;
             }
         }
 
@@ -1055,7 +1101,7 @@ namespace TypeCobol.Compiler.CodeElements {
                 && this.ContinueVisitToChildren(astVisitor, RenamesFromDataName, RenamesToDataName);
         }
 
-        public override int Length { get { return 1; } }
+	    public override int PhysicalLength { get { return 1; } }
     }
     
     /// <summary>
@@ -1097,9 +1143,9 @@ namespace TypeCobol.Compiler.CodeElements {
 		public ValuesRange[] ConditionValuesRanges { get; set; }
 
 		public override DataType DataType { get { return DataType.Boolean; } }
-		public override int Length { get { return 1; } }
+		public override int PhysicalLength { get { return 1; } }
 
-        public override bool VisitCodeElement(IASTVisitor astVisitor) {
+	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, ConditionName, DataType)
                    && this.ContinueVisitToChildren(astVisitor, ConditionValues, ConditionValuesRanges);

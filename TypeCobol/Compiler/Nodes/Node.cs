@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -781,7 +781,9 @@ namespace TypeCobol.Compiler.Nodes {
 
     public interface ITypedNode {
         DataType DataType { get; }
-        int Length { get; }
+        long PhysicalLength { get; }
+        long StartPosition { get; }
+        long PhysicalPosition { get; }
     }
 
     /// <summary>Implementation of the GoF Visitor pattern.</summary>

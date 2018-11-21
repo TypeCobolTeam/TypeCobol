@@ -1,4 +1,5 @@
-﻿
+
+using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Text;
@@ -282,8 +283,6 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-
-        private int? _length = null;
         /// <summary>
         /// TODO This method should be split like this:
         /// - PhysicalLength 
@@ -291,19 +290,115 @@ namespace TypeCobol.Compiler.Nodes {
         /// - LogicalLength
         /// - LogicalLengthWithChildren
         /// </summary>
-        public virtual int Length
+        private long _physicalLength = 0;
+        public virtual long PhysicalLength
         {
             get
             {
-                if (_length != null) return _length.Value;
-                if (this.CodeElement != null)
+                if (_physicalLength > 0)
                 {
-                    _length = ((DataDefinitionEntry) this.CodeElement).Length;
+                    return _physicalLength;
+                }
+
+                if (children != null)
+                {
+                    if(Picture != null)
+                    {
+                        _physicalLength = ((DataDefinitionEntry) CodeElement).PhysicalLength;
+                    }
+                    else
+                    {
+                        foreach (var node in children)
+                        {
+                            var dataDefinition = (DataDefinition)node;
+                            if (dataDefinition != null)
+                            {
+                                _physicalLength += dataDefinition.PhysicalLength;
+                            }
+
+                            if (dataDefinition is DataRedefines)
+                            {
+                                SymbolReference redefined = (dataDefinition.CodeElement as DataRedefinesEntry)?.RedefinesDataName;
+                                var results = SymbolTable.DataEntries.First(de => de.Key == redefined?.Name).Value;
+
+                                if (results.Count == 1)
+                                {
+                                    _physicalLength -= results.First().PhysicalLength > dataDefinition.PhysicalLength ? dataDefinition.PhysicalLength : results.First().PhysicalLength;
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+
+                if (MaxOccurencesCount > 1)
+                {
+                    _physicalLength = _physicalLength * MaxOccurencesCount;
+                }
+
+                return _physicalLength > 0 ? _physicalLength : 1;
+            }
+        }
+
+        private long? _startPosition = null;
+        public virtual long StartPosition
+        {
+            get
+            {
+                if (_startPosition.HasValue)
+                {
+                    return _startPosition.Value;
+                }
+
+                if (this is DataRedefines)
+                {
+                    SymbolReference redefined = (CodeElement as DataRedefinesEntry)?.RedefinesDataName;
+                    var results = SymbolTable.DataEntries.First(de => de.Key == redefined?.Name).Value;
+
+                    if (results.Count == 1)
+                    {
+                        _startPosition = results.First().StartPosition;
+                        return _startPosition.Value;
+                    }
+                    
+                }
+
+                if (Parent is DataSection)
+                {
+                    _startPosition = 1;
                 }
                 else
-                    return 0;
+                {
+                    for (int i = 0; i < Parent.Children.Count; i++)
+                    {
+                        DataDefinition sibling = (DataDefinition)Parent.Children[i];
+                        
+                        if (sibling != null && i == Parent.ChildIndex(this) - 1)
+                        {
+                            if (sibling is DataRedefines)
+                            {
+                                while(sibling is DataRedefines)
+                                    sibling = (DataDefinition)Parent.Children[i - 1];
+                            }
+                            _startPosition = sibling.PhysicalPosition + 1;
+                        }
+                            
+                    }
+                    if (_startPosition == null)
+                    {
+                        _startPosition = (Parent as DataDefinition)?.StartPosition;
+                    }
+                }
 
-                return _length.Value;
+                return _startPosition ?? 0;
+            }
+        }
+
+        public virtual long PhysicalPosition
+        {
+            get
+            {
+                return StartPosition + PhysicalLength - 1;
             }
         }
 
