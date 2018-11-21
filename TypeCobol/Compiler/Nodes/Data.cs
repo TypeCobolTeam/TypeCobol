@@ -314,6 +314,7 @@ namespace TypeCobol.Compiler.Nodes {
                             if (dataDefinition != null)
                             {
                                 _physicalLength += dataDefinition.PhysicalLength;
+                                _physicalLength += dataDefinition.SlackBytes;
                             }
 
                             if (dataDefinition is DataRedefines)
@@ -337,6 +338,79 @@ namespace TypeCobol.Compiler.Nodes {
                 }
 
                 return _physicalLength > 0 ? _physicalLength : 1;
+            }
+        }
+
+        private long? _slackBytes = null;
+        public long SlackBytes
+        {
+            get
+            {
+                if (_slackBytes != null)
+                {
+                    return _slackBytes.Value;
+                }
+
+                int index = Parent.ChildIndex(this);
+                long occupiedMemory = 0;
+                DataDefinition parent = Parent as DataDefinition;
+                _slackBytes = 0;
+
+                if (IsSynchronized && Usage != null && Usage != DataUsage.None && parent != null)
+                {
+                    while (parent != null && parent.Type != CodeElementType.SectionHeader)
+                    {
+
+                        for (int i = 0; i < index; i++)
+                        {
+                            occupiedMemory += ((DataDefinition)parent.Children[i]).PhysicalLength;
+                            occupiedMemory += ((DataDefinition)parent.Children[i]).SlackBytes;
+                        }
+
+                        index = parent.Parent.ChildIndex(parent);
+                        parent = parent.Parent as DataDefinition;
+                    }
+
+                    
+                    int m = 1;
+
+                    switch (Usage.Value)
+                    {
+                        case DataUsage.Binary:
+                            Types.PictureValidator pv = new Types.PictureValidator(this.Picture.Value, SignIsSeparate);
+                            pv.IsValid();
+                            if (pv.ValidationContext.Digits <= 4)
+                            {
+                                m = 2;
+                            }
+                            else
+                            {
+                                m = 4;
+                            }
+                            break;
+                        case DataUsage.Index:
+                        case DataUsage.Pointer:
+                        case DataUsage.ProcedurePointer:
+                        case DataUsage.ObjectReference:
+                        case DataUsage.FunctionPointer:
+                        case DataUsage.PackedDecimal:
+                            m = 4; 
+                            break;
+                        case DataUsage.FloatingPoint:
+                            m = 8;
+                            break;
+                    }
+
+                    if (occupiedMemory % m > 0)
+                    {
+                        _slackBytes = m - (occupiedMemory % m);
+                    }
+
+
+                }
+
+                return _slackBytes.Value;
+
             }
         }
 
@@ -380,7 +454,7 @@ namespace TypeCobol.Compiler.Nodes {
                                 while(sibling is DataRedefines)
                                     sibling = (DataDefinition)Parent.Children[i - 1];
                             }
-                            _startPosition = sibling.PhysicalPosition + 1;
+                            _startPosition = sibling.PhysicalPosition + 1 + SlackBytes;
                         }
                             
                     }
@@ -394,13 +468,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public virtual long PhysicalPosition
-        {
-            get
-            {
-                return StartPosition + PhysicalLength - 1;
-            }
-        }
+        public virtual long PhysicalPosition => StartPosition + PhysicalLength - 1 + SlackBytes;
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
         public virtual bool IsPartOfATypeDef { get { return _ParentTypeDefinition != null; } }
