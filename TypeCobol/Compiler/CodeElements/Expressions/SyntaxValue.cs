@@ -376,6 +376,7 @@ namespace TypeCobol.Compiler.CodeElements
                     case TokenType.ZEROES:
                         return "0";
                     case TokenType.PictureCharacterString:
+                        return ApplyDecimalPointIsComma(Token.Text);
                     case TokenType.CommentEntry:
                     case TokenType.ExecStatementText:
                     case TokenType.IntrinsicFunctionName:
@@ -403,7 +404,7 @@ namespace TypeCobol.Compiler.CodeElements
                     switch (Token.TokenType)
                     {
                         case TokenType.PictureCharacterString:
-                            return NormalizePictureText(Token.Text);
+                            return NormalizePictureText(ApplyDecimalPointIsComma(Token.Text));
                         default:
                             return Value;
                     }
@@ -428,6 +429,29 @@ namespace TypeCobol.Compiler.CodeElements
             return picText.ToUpper();
         }
 
+        private string ApplyDecimalPointIsComma(string picText)
+        {
+            if (picText.Contains(",") || picText.Contains("."))
+            {
+                var tokensLine = Token.TokensLine as TokensLine;
+                if (tokensLine != null && tokensLine.InitialScanState.DecimalPointIsComma)
+                {
+                    System.Text.StringBuilder parsedPicture = new System.Text.StringBuilder();
+                    foreach (char c in picText)
+                    {
+                        if (c == '.')
+                            parsedPicture.Append(',');
+                        else if (c == ',')
+                            parsedPicture.Append('.');
+                        else
+                            parsedPicture.Append(c);
+                    }
+                    return parsedPicture.ToString();
+                }
+            }
+
+            return picText;
+        }
 
         public override bool AcceptASTVisitor(IASTVisitor astVisitor) {
             return base.AcceptASTVisitor(astVisitor) && astVisitor.Visit(this);
