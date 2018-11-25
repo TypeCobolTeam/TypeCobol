@@ -67,10 +67,10 @@ namespace TypeCobol.Tools.APIHelpers
             //   02 YxxxFAL-LGMAX-LTNV
             var variablesLTNV = program.SymbolTable.GetVariablesExplicit(new URI("FILX0000"));
             foreach (var ltnvVar in variablesLTNV) {
-                if(!ltnvVar.IsInsideCopy() || ((DataDefinitionEntry) ltnvVar.CodeElement)?.LevelNumber?.Value != 05) 
+                if(!ltnvVar.IsInsideCopy() || (ltnvVar.CodeElement)?.LevelNumber?.Value != 05) 
                     continue; //A developer who use "FILX0000" as a variable name? Weird but ignore it
                 var parent02_DD = ltnvVar.Parent as DataDefinition;
-                if (((DataDefinitionEntry)parent02_DD?.CodeElement)?.LevelNumber?.Value != 02)
+                if ((parent02_DD?.CodeElement)?.LevelNumber?.Value != 02)
                     continue; //Not a valid LTNV structure
 
 

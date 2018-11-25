@@ -48,7 +48,7 @@ namespace TypeCobol.Codegen.Nodes {
 	public ProcedureStyleCall(Compiler.Nodes.ProcedureStyleCall node)
 		: base(node.CodeElement) {
 		this.Node = node;
-		Statement = (ProcedureStyleCallStatement)Node.CodeElement;       
+		Statement = Node.CodeElement;       
 		call = new CallStatement();
         call.ProgramOrProgramEntryOrProcedureOrFunction = new SymbolReferenceVariable(StorageDataType.ProgramName, Statement.ProcedureCall.ProcedureName);
         call.InputParameters = new List<CallSiteParameter>(Statement.ProcedureCall.Arguments);
@@ -83,7 +83,7 @@ namespace TypeCobol.Codegen.Nodes {
                 //We don't need end-if anymore, but I let it for now. Because this generated code still need to be tested on production
                 bool bNeedEndIf = false;
 			    string func_lib_name = Hash.CalculateCobolProgramNameShortcut(fun_decl.Library);
-                if (((FunctionDeclarationHeader)fun_decl.CodeElement).Visibility == AccessModifier.Public && fun_decl.GetProgramNode() != this.GetProgramNode())
+                if ((fun_decl.CodeElement).Visibility == AccessModifier.Public && fun_decl.GetProgramNode() != this.GetProgramNode())
                 {
                     if (this.Node.IsNotByExternalPointer || IsNotByExternalPointer)
                     {

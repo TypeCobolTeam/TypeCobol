@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -484,7 +484,7 @@ namespace TypeCobol.LanguageServer
                                 da =>
                                     da.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase) &&
                                     ((da.CodeElement != null &&
-                                      (da.CodeElement as DataDefinitionEntry).LevelNumber.Value < 88)
+                                      da.CodeElement.LevelNumber.Value < 88)
                                      || (da.CodeElement == null && da is IndexDefinition))));
                             //Ignore 88 level variable
                             break;
@@ -499,7 +499,7 @@ namespace TypeCobol.LanguageServer
                         {
                             items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                 v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
-                                     && ((v.CodeElement as DataDefinitionEntry) != null &&
+                                     && (v.CodeElement != null &&
                                          v.DataType == DataType.Alphabetic
                                          || v.DataType == DataType.Alphanumeric
                                          || v.DataType == DataType.AlphanumericEdited)
@@ -511,8 +511,8 @@ namespace TypeCobol.LanguageServer
                             items.AddRange(CompletionFactory.GetCompletionForVariable(docContext.FileCompiler, matchingCodeElement,
                                 v => v.Name.StartsWith(userFilterText, StringComparison.CurrentCultureIgnoreCase)
                                      &&
-                                     (((v.CodeElement as DataDefinitionEntry) != null &&
-                                       (v.CodeElement as DataDefinitionEntry).LevelNumber.Value == 88)
+                                     ((v.CodeElement != null &&
+                                       v.CodeElement.LevelNumber.Value == 88)
                                       //Level 88 Variable
                                       || v.DataType == DataType.Numeric //Numeric Integer Variable
                                       || v.Usage == DataUsage.Pointer) //Or usage is pointer 

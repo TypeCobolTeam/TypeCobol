@@ -98,7 +98,7 @@ namespace TypeCobol.Compiler.Report
         /// <param name="initialize">The Initialize statement</param>
         private void ReportVariablesWritten(Initialize initialize)
         {
-            ReceivingStorageArea[] receivings = (initialize.CodeElement as InitializeStatement).ReceivingStorageAreas;
+            ReceivingStorageArea[] receivings = initialize.CodeElement.ReceivingStorageAreas;
             if (receivings != null)
             {
                 foreach (ReceivingStorageArea receiving in receivings)

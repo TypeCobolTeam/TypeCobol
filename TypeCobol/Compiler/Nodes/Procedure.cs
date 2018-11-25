@@ -110,7 +110,7 @@ namespace TypeCobol.Compiler.Nodes {
 	    public string Label { get; internal set; }
 
 	    public override string Name { get { return QualifiedName.Head; } }
-	    public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement().Name); } }
+	    public override CodeElements.Expressions.QualifiedName QualifiedName { get { return new CodeElements.Expressions.URI(this.CodeElement.Name); } }
 
 	    public string Library { get; internal set; }
 	    public string Copy { get { return Library+"cpy"; } }
@@ -171,7 +171,7 @@ namespace TypeCobol.Compiler.Nodes {
     public class Section: GenericNode<SectionHeader>, CodeElementHolder<SectionHeader> {
 	    public Section(SectionHeader header): base(header) { }
 	    public override string ID { get { return "section"; } }
-        public override string Name { get { return this.CodeElement().SectionName.Name; } }
+        public override string Name { get { return this.CodeElement.SectionName.Name; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
@@ -184,7 +184,7 @@ namespace TypeCobol.Compiler.Nodes {
         private string _Name;
         public override string Name { get {
             if (_Name == null)
-                _Name = this.CodeElement().ParagraphName.Name;
+                _Name = this.CodeElement.ParagraphName.Name;
             return _Name;
         } }
 

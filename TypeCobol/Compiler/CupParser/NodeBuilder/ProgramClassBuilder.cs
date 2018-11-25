@@ -184,14 +184,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private void AddToSymbolTable(DataDescription node)
         {
             var table = node.SymbolTable;
-            if (node.CodeElement().IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
+            if (node.CodeElement.IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
                 table = table.GetTableFromScope(SymbolTable.Scope.Global);
             else
             {
                 var parent = node.Parent as DataDescription;
                 while (parent != null)
                 {
-                    if (parent.CodeElement().IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
+                    if (parent.CodeElement.IsGlobal && table.CurrentScope != SymbolTable.Scope.GlobalStorage)
                         table = table.GetTableFromScope(SymbolTable.Scope.Global);
                     parent = parent.Parent as DataDescription;
                 }
@@ -427,7 +427,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                     var table = node.SymbolTable;
                     foreach (var index in entry.Indexes)
                     {
-                        if (node.CodeElement().IsGlobal)
+                        if (node.CodeElement.IsGlobal)
                             table = table.GetTableFromScope(SymbolTable.Scope.Global);
 
                         var indexNode = new IndexDefinition(index);
@@ -497,7 +497,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             var node = new TypeDefinition(typedef);
             Enter(node);
             // TCTYPE_GLOBAL_TYPEDEF
-            var table = node.SymbolTable.GetTableFromScope(node.CodeElement().IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
+            var table = node.SymbolTable.GetTableFromScope(node.CodeElement.IsGlobal ? SymbolTable.Scope.Global : SymbolTable.Scope.Declarations);
             table.AddType(node);
 
             _CurrentTypeDefinition = node;
@@ -604,8 +604,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             declarationSymbolTable.AddFunction(node);
             Enter(node, header, new SymbolTable(declarationSymbolTable, SymbolTable.Scope.Function));
 
-            var declaration = (FunctionDeclarationHeader)CurrentNode.CodeElement;
-            var funcProfile = ((FunctionDeclaration)CurrentNode).Profile; //Get functionprofile to set parameters
+            var declaration = node.CodeElement;
+            var funcProfile = node.Profile; //Get functionprofile to set parameters
 
             foreach (var parameter in declaration.Profile.InputParameters) //Set Input Parameters
             {
@@ -646,7 +646,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 var paramNode = new ParameterDescription(declaration.Profile.ReturningParameter);
                 paramNode.SymbolTable = CurrentNode.SymbolTable;
                 paramNode.SetFlag(Node.Flag.LinkageSectionNode, true);
-                ((FunctionDeclaration)CurrentNode).Profile.ReturningParameter = paramNode;
+                node.Profile.ReturningParameter = paramNode;
 
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);

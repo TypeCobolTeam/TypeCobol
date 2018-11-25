@@ -189,7 +189,7 @@ namespace TypeCobol.Compiler.CodeElements {
 
             //Use the Token.Text of usage instead of the DataUsage enum. 
             //Because Cobol developers won't understand enum value (eg for "comp-3" in Token.Text you get "PackedDecimal" in the enum).
-            var usageToken = ((ParameterDescriptionEntry) parameter.CodeElement).Usage?.Token;
+            var usageToken = parameter.CodeElement.Usage?.Token;
             if (usageToken != null)
             {
                 if (addSpaceSeparatorBeforeUsage)
