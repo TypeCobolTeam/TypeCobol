@@ -10,7 +10,7 @@
 
 
 
-    public class Accept: Node, CodeElementHolder<AcceptStatement>, Statement {
+    public class Accept: GenericNode<AcceptStatement>, CodeElementHolder<AcceptStatement>, Statement {
 	    public Accept(AcceptStatement statement): base(statement) { }
 
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -19,7 +19,7 @@
         }
     }
 
-    public class Alter: Node, CodeElementHolder<AlterStatement>, Statement {
+    public class Alter: GenericNode<AlterStatement>, CodeElementHolder<AlterStatement>, Statement {
 	    public Alter(AlterStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -27,14 +27,14 @@
         }
     }
 
-    public class Call: Node, CodeElementHolder<CallStatement>, Statement {
+    public class Call: GenericNode<CallStatement>, CodeElementHolder<CallStatement>, Statement {
 	    public Call(CallStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
-    public class ProcedureStyleCall : Node, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller {
+    public class ProcedureStyleCall : GenericNode<ProcedureStyleCallStatement>, CodeElementHolder<ProcedureStyleCallStatement>, Statement, FunctionCaller {
         public ProcedureStyleCall(ProcedureStyleCallStatement statement) : base(statement) { }
 
         public FunctionCall FunctionCall
@@ -60,7 +60,7 @@
         }
     }
 
-    public class Cancel: Node, CodeElementHolder<CancelStatement>, Statement {
+    public class Cancel: GenericNode<CancelStatement>, CodeElementHolder<CancelStatement>, Statement {
 	    public Cancel(CancelStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -68,7 +68,7 @@
         }
     }
 
-    public class Continue: Node, CodeElementHolder<ContinueStatement>, Statement {
+    public class Continue: GenericNode<ContinueStatement>, CodeElementHolder<ContinueStatement>, Statement {
 	    public Continue(ContinueStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -76,7 +76,7 @@
         }
     }
 
-    public class Delete: Node, CodeElementHolder<DeleteStatement>, Statement {
+    public class Delete: GenericNode<DeleteStatement>, CodeElementHolder<DeleteStatement>, Statement {
 	    public Delete(DeleteStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -84,7 +84,7 @@
         }
     }
 
-    public class Display: Node, CodeElementHolder<DisplayStatement>, Statement {
+    public class Display: GenericNode<DisplayStatement>, CodeElementHolder<DisplayStatement>, Statement {
 	    public Display(DisplayStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -92,7 +92,7 @@
         }
     }
 
-    public class Entry: Node, CodeElementHolder<EntryStatement>, Statement {
+    public class Entry: GenericNode<EntryStatement>, CodeElementHolder<EntryStatement>, Statement {
 	    public Entry(EntryStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -100,7 +100,7 @@
         }
     }
 
-    public class Exec: Node, CodeElementHolder<ExecStatement>, Statement {
+    public class Exec: GenericNode<ExecStatement>, CodeElementHolder<ExecStatement>, Statement {
 	    public Exec(ExecStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -108,7 +108,7 @@
         }
     }
 
-    public class Exit: Node, CodeElementHolder<ExitStatement>, Statement {
+    public class Exit: GenericNode<ExitStatement>, CodeElementHolder<ExitStatement>, Statement {
 	    public Exit(ExitStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -116,7 +116,7 @@
         }
     }
 
-    public class ExitMethod: Node, CodeElementHolder<ExitMethodStatement>, Statement {
+    public class ExitMethod: GenericNode<ExitMethodStatement>, CodeElementHolder<ExitMethodStatement>, Statement {
 	    public ExitMethod(ExitMethodStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -124,7 +124,7 @@
         }
     }
 
-    public class ExitProgram: Node, CodeElementHolder<ExitProgramStatement>, Statement {
+    public class ExitProgram: GenericNode<ExitProgramStatement>, CodeElementHolder<ExitProgramStatement>, Statement {
 	    public ExitProgram(ExitProgramStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -132,7 +132,7 @@
         }
     }
 
-    public class Goback: Node, CodeElementHolder<GobackStatement>, Statement {
+    public class Goback: GenericNode<GobackStatement>, CodeElementHolder<GobackStatement>, Statement {
 	    public Goback(GobackStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -140,7 +140,7 @@
         }
     }
 
-    public class Goto: Node, CodeElementHolder<GotoStatement>, Statement {
+    public class Goto: GenericNode<GotoStatement>, CodeElementHolder<GotoStatement>, Statement {
 	    public Goto(GotoStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -148,7 +148,7 @@
         }
     }
 
-    public class Initialize: Node, CodeElementHolder<InitializeStatement>, Statement {
+    public class Initialize: GenericNode<InitializeStatement>, CodeElementHolder<InitializeStatement>, Statement {
 	    public Initialize(InitializeStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -156,7 +156,7 @@
         }
     }
 
-    public class Inspect: Node, CodeElementHolder<InspectStatement>, Statement, VariableWriter {
+    public class Inspect: GenericNode<InspectStatement>, CodeElementHolder<InspectStatement>, Statement, VariableWriter {
 	    public Inspect(InspectStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -166,7 +166,7 @@
         }
     }
 
-    public class Invoke: Node, CodeElementHolder<InvokeStatement>, Statement {
+    public class Invoke: GenericNode<InvokeStatement>, CodeElementHolder<InvokeStatement>, Statement {
 	    public Invoke(InvokeStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -174,7 +174,7 @@
         }
     }
 
-    public class Merge: Node, CodeElementHolder<MergeStatement>, Statement {
+    public class Merge: GenericNode<MergeStatement>, CodeElementHolder<MergeStatement>, Statement {
 	    public Merge(MergeStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -182,7 +182,7 @@
         }
     }
 
-    public class Move: Node, CodeElementHolder<MoveStatement>, Statement, VariableWriter,FunctionCaller {
+    public class Move: GenericNode<MoveStatement>, CodeElementHolder<MoveStatement>, Statement, VariableWriter,FunctionCaller {
 	    public Move(MoveStatement statement): base(statement) { }
 	    public FunctionCall FunctionCall { get { return this.CodeElement().FunctionCall; } }
 	   
@@ -197,7 +197,7 @@
         }
     }
 
-    public class Release: Node, CodeElementHolder<ReleaseStatement>, Statement {
+    public class Release: GenericNode<ReleaseStatement>, CodeElementHolder<ReleaseStatement>, Statement {
 	    public Release(ReleaseStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -205,7 +205,7 @@
         }
     }
 
-    public class Return: Node, CodeElementHolder<ReturnStatement>, Statement {
+    public class Return: GenericNode<ReturnStatement>, CodeElementHolder<ReturnStatement>, Statement {
 	    public Return(ReturnStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -213,7 +213,7 @@
         }
     }
 
-    public class Set: Node, CodeElementHolder<SetStatement>, Statement, VariableWriter {
+    public class Set: GenericNode<SetStatement>, CodeElementHolder<SetStatement>, Statement, VariableWriter {
 	    public Set(SetStatement statement): base(statement) { }
 	    public IDictionary<StorageArea, object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -223,7 +223,7 @@
         }
     }
 
-    public class Sort: Node, CodeElementHolder<SortStatement>, Statement {
+    public class Sort: GenericNode<SortStatement>, CodeElementHolder<SortStatement>, Statement {
 	    public Sort(SortStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -231,7 +231,7 @@
         }
     }
 
-    public class Start: Node, CodeElementHolder<StartStatement>, Statement {
+    public class Start: GenericNode<StartStatement>, CodeElementHolder<StartStatement>, Statement {
 	    public Start(StartStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -239,7 +239,7 @@
         }
     }
 
-    public class Stop: Node, CodeElementHolder<StopStatement>, Statement {
+    public class Stop: GenericNode<StopStatement>, CodeElementHolder<StopStatement>, Statement {
 	    public Stop(StopStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -247,7 +247,7 @@
         }
     }
 
-    public class String: Node, CodeElementHolder<StringStatement>, Statement, VariableWriter {
+    public class String: GenericNode<StringStatement>, CodeElementHolder<StringStatement>, Statement, VariableWriter {
 	    public String(StringStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -257,7 +257,7 @@
         }
     }
 
-    public class Unstring: Node, CodeElementHolder<UnstringStatement>, Statement, VariableWriter {
+    public class Unstring: GenericNode<UnstringStatement>, CodeElementHolder<UnstringStatement>, Statement, VariableWriter {
 	    public Unstring(UnstringStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -267,7 +267,7 @@
         }
     }
 
-    public class XmlGenerate: Node, CodeElementHolder<XmlGenerateStatement>, Statement {
+    public class XmlGenerate: GenericNode<XmlGenerateStatement>, CodeElementHolder<XmlGenerateStatement>, Statement {
 	    public XmlGenerate(XmlGenerateStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -275,7 +275,7 @@
         }
     }
 
-    public class XmlParse: Node, CodeElementHolder<XmlParseStatement>, Statement {
+    public class XmlParse: GenericNode<XmlParseStatement>, CodeElementHolder<XmlParseStatement>, Statement {
 	    public XmlParse(XmlParseStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -287,7 +287,7 @@
 
     // --- ARITHMETIC STATEMENTS ---
 
-    public class Add: Node, CodeElementHolder<AddStatement>, Statement, VariableWriter {
+    public class Add: GenericNode<AddStatement>, CodeElementHolder<AddStatement>, Statement, VariableWriter {
 	    public Add(AddStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -297,7 +297,7 @@
         }
     }
 
-    public class Use : Node, CodeElementHolder<UseStatement>, Statement
+    public class Use : GenericNode<UseStatement>, CodeElementHolder<UseStatement>, Statement
     {
         public Use(UseStatement statement) : base(statement) { }
 
@@ -307,7 +307,7 @@
         }
     }
 
-    public class Subtract: Node, CodeElementHolder<SubtractStatement>, Statement, VariableWriter {
+    public class Subtract: GenericNode<SubtractStatement>, CodeElementHolder<SubtractStatement>, Statement, VariableWriter {
 	    public Subtract(SubtractStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -317,7 +317,7 @@
         }
     }
 
-    public class Multiply: Node, CodeElementHolder<MultiplyStatement>, Statement, VariableWriter {
+    public class Multiply: GenericNode<MultiplyStatement>, CodeElementHolder<MultiplyStatement>, Statement, VariableWriter {
 	    public Multiply(MultiplyStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -327,7 +327,7 @@
         }
     }
 
-    public class Divide: Node, CodeElementHolder<DivideStatement>, Statement, VariableWriter {
+    public class Divide: GenericNode<DivideStatement>, CodeElementHolder<DivideStatement>, Statement, VariableWriter {
 	    public Divide(DivideStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -337,7 +337,7 @@
         }
     }
 
-    public class Compute: Node, CodeElementHolder<ComputeStatement>, Statement, VariableWriter {
+    public class Compute: GenericNode<ComputeStatement>, CodeElementHolder<ComputeStatement>, Statement, VariableWriter {
 	    public Compute(ComputeStatement statement): base(statement) { }
 	    public IDictionary<StorageArea,object> VariablesWritten { get { return this.CodeElement().VariablesWritten; } }
 	    public bool IsUnsafe { get { return this.CodeElement().IsUnsafe; } }
@@ -351,7 +351,7 @@
 
     // --- FILE STATEMENTS ---
 
-    public class Open: Node, CodeElementHolder<OpenStatement>, Statement {
+    public class Open: GenericNode<OpenStatement>, CodeElementHolder<OpenStatement>, Statement {
 	    public Open(OpenStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -359,7 +359,7 @@
         }
     }
 
-    public class Close: Node, CodeElementHolder<CloseStatement>, Statement {
+    public class Close: GenericNode<CloseStatement>, CodeElementHolder<CloseStatement>, Statement {
 	    public Close(CloseStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -367,7 +367,7 @@
         }
     }
 
-    public class Read: Node, CodeElementHolder<ReadStatement>, Statement {
+    public class Read: GenericNode<ReadStatement>, CodeElementHolder<ReadStatement>, Statement {
 	    public Read(ReadStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -375,7 +375,7 @@
         }
     }
 
-    public class Write: Node, CodeElementHolder<WriteStatement>, Statement {
+    public class Write: GenericNode<WriteStatement>, CodeElementHolder<WriteStatement>, Statement {
 	    public Write(WriteStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -383,7 +383,7 @@
         }
     }
 
-    public class Rewrite: Node, CodeElementHolder<RewriteStatement>, Statement {
+    public class Rewrite: GenericNode<RewriteStatement>, CodeElementHolder<RewriteStatement>, Statement {
 	    public Rewrite(RewriteStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -404,7 +404,7 @@
     //  \---> ELSE
     //         \--> statements
 
-    public class If: Node, CodeElementHolder<IfStatement>, Statement {
+    public class If: GenericNode<IfStatement>, CodeElementHolder<IfStatement>, Statement {
 	    public If(IfStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -412,23 +412,26 @@
         }
     }
     public class Then: Node, CodeElementHolder<CodeElement>, StatementCondition {
-	    public Then(): base(null) 
+	    public Then()
         {
             SetFlag(Node.Flag.GeneratorCanIgnoreIt, true);
         }
+
+        protected override CodeElement InternalCodeElement => null;
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
-    public class Else: Node, CodeElementHolder<ElseCondition>, StatementCondition {
+    public class Else: GenericNode<ElseCondition>, CodeElementHolder<ElseCondition>, StatementCondition {
 	    public Else(ElseCondition statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
-    public class NextSentence: Node, CodeElementHolder<NextSentenceStatement>, Statement {
+    public class NextSentence: GenericNode<NextSentenceStatement>, CodeElementHolder<NextSentenceStatement>, Statement {
 	    public NextSentence(NextSentenceStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -464,7 +467,7 @@
     //  \---> WHEN-OTHER
     //         \--> statements
 
-    public class Evaluate: Node, CodeElementHolder<EvaluateStatement>, Statement {
+    public class Evaluate: GenericNode<EvaluateStatement>, CodeElementHolder<EvaluateStatement>, Statement {
 	    public Evaluate(EvaluateStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -472,20 +475,22 @@
         }
     }
     public class WhenGroup: Node, CodeElementHolder<CodeElement>, StatementCondition {
-	    public WhenGroup(): base(null) { }
+	    public WhenGroup() { }
+
+        protected override CodeElement InternalCodeElement => null;
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
-    public class When: Node, CodeElementHolder<WhenCondition>, StatementCondition {
+    public class When: GenericNode<WhenCondition>, CodeElementHolder<WhenCondition>, StatementCondition {
 	    public When(WhenCondition statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
-    public class WhenOther: Node, CodeElementHolder<WhenOtherCondition>, StatementCondition {
+    public class WhenOther: GenericNode<WhenOtherCondition>, CodeElementHolder<WhenOtherCondition>, StatementCondition {
 	    public WhenOther(WhenOtherCondition statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
@@ -497,14 +502,14 @@
     // PERFORM
     //  \---> statements
 
-        public class Perform: Node, CodeElementHolder<PerformStatement>, Statement {
+        public class Perform: GenericNode<PerformStatement>, CodeElementHolder<PerformStatement>, Statement {
 	        public Perform(PerformStatement statement): base(statement) { }
 
             public override bool VisitNode(IASTVisitor astVisitor) {
                 return astVisitor.Visit(this);
             }
         }
-    public class PerformProcedure: Node, CodeElementHolder<PerformProcedureStatement>, Statement {
+    public class PerformProcedure: GenericNode<PerformProcedureStatement>, CodeElementHolder<PerformProcedureStatement>, Statement {
 	    public PerformProcedure(PerformProcedureStatement statement): base(statement) { }
 
             public override bool VisitNode(IASTVisitor astVisitor)
@@ -534,14 +539,14 @@
     //         |--> conditions
     //         \--> THEN
     //               \--> statements
-    public class Search: Node, CodeElementHolder<SearchStatement>, Statement {
+    public class Search: GenericNode<SearchStatement>, CodeElementHolder<SearchStatement>, Statement {
 	    public Search(SearchStatement statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
         }
     }
-    public class WhenSearch: Node, CodeElementHolder<WhenSearchCondition>, StatementCondition {
+    public class WhenSearch: GenericNode<WhenSearchCondition>, CodeElementHolder<WhenSearchCondition>, StatementCondition {
 	    public WhenSearch(WhenSearchCondition statement): base(statement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {

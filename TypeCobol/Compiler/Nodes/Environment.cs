@@ -2,8 +2,8 @@
 
 using TypeCobol.Compiler.CodeElements;
 
-    public class EnvironmentDivision: Node, CodeElementHolder<EnvironmentDivisionHeader> {
-	    public EnvironmentDivision(EnvironmentDivisionHeader header): base(header) { }
+    public class EnvironmentDivision: GenericNode<EnvironmentDivisionHeader>, CodeElementHolder<EnvironmentDivisionHeader> {
+        public EnvironmentDivision(EnvironmentDivisionHeader header): base(header) { }
 	    public override string ID { get { return "environment-division"; } }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
@@ -13,7 +13,7 @@ using TypeCobol.Compiler.CodeElements;
 
     public interface EnvironmentSection { }
 
-    public class ConfigurationSection: Node, CodeElementHolder<ConfigurationSectionHeader>, EnvironmentSection {
+    public class ConfigurationSection: GenericNode<ConfigurationSectionHeader>, CodeElementHolder<ConfigurationSectionHeader>, EnvironmentSection {
 	    public ConfigurationSection(ConfigurationSectionHeader header): base(header) { }
 	    public override string ID { get { return "configuration"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -22,7 +22,7 @@ using TypeCobol.Compiler.CodeElements;
         }
     }
 
-    public class SourceComputer: Node, CodeElementHolder<SourceComputerParagraph> {
+    public class SourceComputer: GenericNode<SourceComputerParagraph>, CodeElementHolder<SourceComputerParagraph> {
 	    public SourceComputer(SourceComputerParagraph paragraph): base(paragraph) { }
 	    public override string ID { get { return "source-computer"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -31,7 +31,7 @@ using TypeCobol.Compiler.CodeElements;
         }
     }
 
-    public class ObjectComputer: Node, CodeElementHolder<ObjectComputerParagraph> {
+    public class ObjectComputer: GenericNode<ObjectComputerParagraph>, CodeElementHolder<ObjectComputerParagraph> {
 	    public ObjectComputer(ObjectComputerParagraph paragraph): base(paragraph) { }
 	    public override string ID { get { return "object-computer"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -40,7 +40,7 @@ using TypeCobol.Compiler.CodeElements;
         }
     }
 
-    public class SpecialNames: Node, CodeElementHolder<SpecialNamesParagraph> {
+    public class SpecialNames: GenericNode<SpecialNamesParagraph>, CodeElementHolder<SpecialNamesParagraph> {
 	    public SpecialNames(SpecialNamesParagraph paragraph): base(paragraph) { }
 	    public override string ID { get { return "special-names"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -49,7 +49,7 @@ using TypeCobol.Compiler.CodeElements;
         }
     }
 
-    public class Repository: Node, CodeElementHolder<RepositoryParagraph> {
+    public class Repository: GenericNode<RepositoryParagraph>, CodeElementHolder<RepositoryParagraph> {
 	    public Repository(RepositoryParagraph paragraph): base(paragraph) { }
 	    public override string ID { get { return "repository"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -58,7 +58,7 @@ using TypeCobol.Compiler.CodeElements;
         }
     }
 
-    public class InputOutputSection: Node, CodeElementHolder<InputOutputSectionHeader>, EnvironmentSection {
+    public class InputOutputSection: GenericNode<InputOutputSectionHeader>, CodeElementHolder<InputOutputSectionHeader>, EnvironmentSection {
 	    public InputOutputSection(InputOutputSectionHeader header): base(header) { }
 	    public override string ID { get { return "input-output"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -68,7 +68,7 @@ using TypeCobol.Compiler.CodeElements;
     }
 
 
-    public class FileControlParagraphHeaderNode: Node, CodeElementHolder<FileControlParagraphHeader>, EnvironmentSection {
+    public class FileControlParagraphHeaderNode: GenericNode<FileControlParagraphHeader>, CodeElementHolder<FileControlParagraphHeader>, EnvironmentSection {
 	    public FileControlParagraphHeaderNode(FileControlParagraphHeader header): base(header) { }
 	    public override string ID { get { return "file-control"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -77,7 +77,7 @@ using TypeCobol.Compiler.CodeElements;
         }
     }
 
-    public class FileControlEntryNode: Node, CodeElementHolder<FileControlEntry>, EnvironmentSection {
+    public class FileControlEntryNode: GenericNode<FileControlEntry>, CodeElementHolder<FileControlEntry>, EnvironmentSection {
 	    public FileControlEntryNode(FileControlEntry entry): base(entry) { }
 	    public override string ID { get { return "file-control"; } }
         public override bool VisitNode(IASTVisitor astVisitor)

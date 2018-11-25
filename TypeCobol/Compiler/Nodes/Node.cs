@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,12 +23,26 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>TODO: Codegen should do its stuff without polluting this class.</summary>
         public bool? Comment = null;
 
-        protected Node(CodeElement CodeElement) {
-            this.CodeElement = CodeElement;
+        protected Node() {
         }
 
-        /// <summary>CodeElement data (weakly-typed)</summary>
-        public virtual CodeElement CodeElement { get; private set; }
+
+
+        /// <summary>
+        /// Return the CodeElement associated with this Node.
+        /// 
+        /// Subclass of Node can re-declare this method with "new" to return the correct class of CodeElement.
+        /// public SubClassOfCodeElement CodeElement => ...
+        /// 
+        /// Note : you cannot override and change the return type.
+        /// For implementation details see InternalCodeElement property and GenericNode
+        /// </summary>
+        /// <see cref="InternalCodeElement"/>
+        [CanBeNull]
+        public CodeElement CodeElement => InternalCodeElement;
+
+        [CanBeNull]
+        protected abstract CodeElement InternalCodeElement {  get;}
 
         /// <summary>Parent node (weakly-typed)</summary>
         public Node Parent { get; private set; }
@@ -784,6 +799,36 @@ namespace TypeCobol.Compiler.Nodes {
         int Length { get; }
     }
 
+    /// <summary>
+    /// <![CDATA[
+    /// This class provide generics support for CodeElement property.
+    /// 
+    /// 
+    /// Note: Generics cannot be used directly on Node class for CodeElement property.
+    /// If you try to use generics with Node<CE> where CE : CodeElement.
+    /// then the property Children have to use generic Node as well.
+    /// Children<Node<CE>> is wrong because not all children use the same class for the CodeElement.
+    /// ]]>
+    /// </summary>
+    /// <typeparam name="CE">The type of CodeElement associated with this Node</typeparam>
+    public abstract class GenericNode<CE> : Node where CE : CodeElement {
+
+
+        protected GenericNode([NotNull] CE codeElement)
+        {
+            this.CodeElement = codeElement;
+        }
+
+        [NotNull]
+        protected override CodeElement InternalCodeElement => CodeElement;
+
+        /// <summary>
+        /// Use "new" keyword so we can change the return type.
+        /// </summary>
+        [NotNull]
+        public new CE CodeElement {get; }
+    }
+
     /// <summary>Implementation of the GoF Visitor pattern.</summary>
     public interface NodeVisitor {
         void Visit(Node node);
@@ -856,7 +901,7 @@ namespace TypeCobol.Compiler.Nodes {
 
 
     /// <summary>SourceFile of any Node tree, with null CodeElement.</summary>
-    public class SourceFile : Node, CodeElementHolder<CodeElement> {
+    public class SourceFile : GenericNode<CodeElement>, CodeElementHolder<CodeElement> {
         public SourceFile() : base(null)
         {
             GeneratedCobolHashes = new Dictionary<string, string>();
@@ -901,7 +946,7 @@ namespace TypeCobol.Compiler.Nodes {
 
     }
 
-    public class LibraryCopy : Node, CodeElementHolder<LibraryCopyCodeElement>, Child<Program> {
+    public class LibraryCopy : GenericNode<LibraryCopyCodeElement>, CodeElementHolder<LibraryCopyCodeElement>, Child<Program> {
         public LibraryCopy(LibraryCopyCodeElement ce) : base(ce) {}
 
         public override string ID {
@@ -914,7 +959,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Class : Node, CodeElementHolder<ClassIdentification> {
+    public class Class : GenericNode<ClassIdentification>, CodeElementHolder<ClassIdentification> {
         public Class(ClassIdentification identification) : base(identification) {}
 
         public override string ID {
@@ -927,7 +972,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Factory : Node, CodeElementHolder<FactoryIdentification> {
+    public class Factory : GenericNode<FactoryIdentification>, CodeElementHolder<FactoryIdentification> {
         public Factory(FactoryIdentification identification) : base(identification) {}
 
         public override string ID {
@@ -940,7 +985,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Method : Node, CodeElementHolder<MethodIdentification> {
+    public class Method : GenericNode<MethodIdentification>, CodeElementHolder<MethodIdentification> {
         public Method(MethodIdentification identification) : base(identification) {}
 
         public override string ID {
@@ -955,7 +1000,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Object : Node, CodeElementHolder<ObjectIdentification> {
+    public class Object : GenericNode<ObjectIdentification>, CodeElementHolder<ObjectIdentification> {
         public Object(ObjectIdentification identification) : base(identification) {}
 
         public override string ID {
@@ -968,7 +1013,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class End : Node, CodeElementHolder<CodeElementEnd> {
+    public class End : GenericNode<CodeElementEnd>, CodeElementHolder<CodeElementEnd> {
         public End(CodeElementEnd end) : base(end) {}
 
         public override string ID {

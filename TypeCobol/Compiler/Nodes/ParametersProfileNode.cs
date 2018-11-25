@@ -8,7 +8,7 @@ using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Nodes
 {
-    public class ParametersProfileNode : Node, ParameterList
+    public class ParametersProfileNode : GenericNode<ParametersProfile>, ParameterList
     {
         public IList<ParameterDescription> InputParameters { get; set; }
         public IList<ParameterDescription> InoutParameters { get; set; }

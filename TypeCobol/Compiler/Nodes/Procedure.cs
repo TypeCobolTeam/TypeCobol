@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.Nodes {
     using TypeCobol.Compiler.CodeElements;
     using CodeElements.Expressions;
 
-    public class ProcedureDivision: Node, CodeElementHolder<ProcedureDivisionHeader> {
+    public class ProcedureDivision: GenericNode<ProcedureDivisionHeader>, CodeElementHolder<ProcedureDivisionHeader> {
 	    public ProcedureDivision(ProcedureDivisionHeader header): base(header) { }
 	    public override string ID { get { return "procedure-division"; } }
         public override bool VisitNode(IASTVisitor astVisitor)
@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Declaratives : Node, CodeElementHolder<DeclarativesHeader>
+    public class Declaratives : GenericNode<DeclarativesHeader>, CodeElementHolder<DeclarativesHeader>
     {
         public Declaratives(DeclarativesHeader header) : base(header) { }
 
@@ -100,7 +100,7 @@ namespace TypeCobol.Compiler.Nodes {
 
     // [TYPECOBOL]
 
-    public class FunctionDeclaration: Node, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller, IDocumentable
+    public class FunctionDeclaration: GenericNode<FunctionDeclarationHeader>, CodeElementHolder<FunctionDeclarationHeader>, Tools.Hashable, IProcCaller, IDocumentable
     {
         public FunctionDeclaration(FunctionDeclarationHeader header) : base(header)
         {
@@ -156,7 +156,7 @@ namespace TypeCobol.Compiler.Nodes {
         public Dictionary<string, Tuple<IList<SymbolReference>, ProcedureStyleCall>> ProcStyleCalls { get; set; }
     }
 
-    public class FunctionEnd: Node, CodeElementHolder<FunctionDeclarationEnd> {
+    public class FunctionEnd: GenericNode<FunctionDeclarationEnd>, CodeElementHolder<FunctionDeclarationEnd> {
 	    public FunctionEnd(FunctionDeclarationEnd end): base(end) { }
 	    public override string ID { get { return "function-end"; } }
 
@@ -168,7 +168,7 @@ namespace TypeCobol.Compiler.Nodes {
 
 // [/TYPECOBOL]
 
-    public class Section: Node, CodeElementHolder<SectionHeader> {
+    public class Section: GenericNode<SectionHeader>, CodeElementHolder<SectionHeader> {
 	    public Section(SectionHeader header): base(header) { }
 	    public override string ID { get { return "section"; } }
         public override string Name { get { return this.CodeElement().SectionName.Name; } }
@@ -178,7 +178,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    public class Paragraph: Node, CodeElementHolder<ParagraphHeader> {
+    public class Paragraph: GenericNode<ParagraphHeader>, CodeElementHolder<ParagraphHeader> {
 	    public Paragraph(ParagraphHeader header): base(header) { }
 	    public override string ID { get { return "paragraph"; } }
         private string _Name;
@@ -194,7 +194,7 @@ namespace TypeCobol.Compiler.Nodes {
     }
 
     public class Sentence: Node, CodeElementHolder<CodeElement> {
-	    public Sentence(): base(null) { }
+	    public Sentence() { }
 	    public override string ID {
 		    get {
 			    string id = "sentence-";
@@ -203,6 +203,9 @@ namespace TypeCobol.Compiler.Nodes {
 			    return id;
 		    }
 	    }
+
+        protected override CodeElement InternalCodeElement => null;
+
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);

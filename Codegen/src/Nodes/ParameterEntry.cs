@@ -16,7 +16,7 @@ namespace TypeCobol.Codegen.Nodes {
 /// Instead, grammar should be refactored so INPUT/OUTPUT/INOUT/RETURNING _AND_ USING parameters
 /// are created as CodeElements and put in procedure header OR function profile node only in semantic phase.
 /// </summary>
-internal class ParameterEntry: Node, CodeElementHolder<ParameterDescriptionEntry>, Generated {
+internal class ParameterEntry: GenericNode<ParameterDescriptionEntry>, CodeElementHolder<ParameterDescriptionEntry>, Generated {
 	public ParameterDescription Description { get; private set; }
     public ParameterEntry(ParameterDescriptionEntry entry, SymbolTable table) : base(entry)
     {

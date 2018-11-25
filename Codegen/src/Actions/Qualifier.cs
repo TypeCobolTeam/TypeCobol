@@ -711,7 +711,7 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// A Node to just generate Qualifier tokens.
         /// </summary>
-        internal class GenerateToken : Compiler.Nodes.Node, GeneratedAndReplace
+        internal class GenerateToken : GenericNode<CodeElement>, GeneratedAndReplace
         {
             /// <summary>
             /// 

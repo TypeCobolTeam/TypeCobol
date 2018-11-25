@@ -28,9 +28,9 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public class Program : Node, CodeElementHolder<ProgramIdentification>, IProcCaller, IDocumentable
+    public class Program : GenericNode<ProgramIdentification>, CodeElementHolder<ProgramIdentification>, IProcCaller, IDocumentable
     {
-        public Program(CodeElement codeElement) : base(codeElement) { }
+        public Program(ProgramIdentification codeElement) : base(codeElement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
@@ -136,7 +136,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// </summary>
     public class SourceProgram: Program {
 
-		public SourceProgram(SymbolTable EnclosingScope, CodeElement codeElement) : base(codeElement)
+		public SourceProgram(SymbolTable EnclosingScope, ProgramIdentification codeElement) : base(codeElement)
 		{
 			SymbolTable = new SymbolTable(new SymbolTable(EnclosingScope, SymbolTable.Scope.Declarations), SymbolTable.Scope.Program);
         }
@@ -191,7 +191,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// Nested programs are not supported for programs compiled with the THREAD option
     /// </summary>
 	public class NestedProgram: Program {
-		public NestedProgram(Program containingProgram, CodeElement codeElement) : base(codeElement) {
+		public NestedProgram(Program containingProgram, ProgramIdentification codeElement) : base(codeElement) {
 			ContainingProgram = containingProgram;
             SymbolTable globalTable = containingProgram.SymbolTable.GetTableFromScope(SymbolTable.Scope.Global); //Get Parent Global Table
             var globalNestedSymbolTable = new SymbolTable(globalTable, SymbolTable.Scope.Global); //Create a new Global symbol table for this nested program and his childrens programs
@@ -214,7 +214,7 @@ namespace TypeCobol.Compiler.CodeModel
     }
 
     public class StackedProgram: SourceProgram {
-        public StackedProgram(SymbolTable EnclosingScope, CodeElement codeElement) : base(EnclosingScope, codeElement)
+        public StackedProgram(SymbolTable EnclosingScope, ProgramIdentification codeElement) : base(EnclosingScope, codeElement)
         {
         }
 
