@@ -36,5 +36,10 @@
        call 'zCaLlpgx' using by reference PROGRAM_NAME.
        
             call 'zCaLlsrv' using by reference PROGRAM_NAME.
+
+        evaluate true
+            when "1" = "1"
+                continue
+        end-evaluate.
       
        END PROGRAM ProcCall.
