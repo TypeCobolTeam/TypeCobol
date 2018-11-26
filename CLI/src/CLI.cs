@@ -344,7 +344,7 @@ namespace TypeCobol.Server
 
                     }
 
-                    if (diagnostics.Count == 0)
+                    if (diagnostics.Any(d => d.Message.ToUpper().Contains("WARNING")))
                     {
                         if (config.ExecToStep >= ExecutionStep.CrossCheck && reports != null && reports.Count > 0)
                         {
