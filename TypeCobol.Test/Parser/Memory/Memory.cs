@@ -45,5 +45,20 @@ namespace TypeCobol.Test.Parser.Memory
 
             unit.Compare();
         }
+
+        /// <summary>
+        /// Check variable size and position in memory
+        /// Test with all variable types and usages possible
+        /// </summary>
+        [TestMethod]
+        public void CheckMemoryNational()
+        {
+            Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryNational.pgm", new MemoryName());
+            TestUnit unit = new TestUnit(new MemoryComparator(paths));
+            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            unit.Parse();
+
+            unit.Compare();
+        }
     }
 }

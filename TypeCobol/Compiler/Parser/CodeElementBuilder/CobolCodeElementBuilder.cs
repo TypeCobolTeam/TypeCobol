@@ -1164,7 +1164,7 @@ namespace TypeCobol.Compiler.Parser
             if (context.groupUsageClause() != null && context.groupUsageClause().Length > 0)
             {
                 var groupUsageClauseContext = context.groupUsageClause()[0];
-                entry.IsJustified = new SyntaxProperty<bool>(true,
+                entry.IsGroupUsageNational = new SyntaxProperty<bool>(true,
                     ParseTreeUtils.GetFirstToken(groupUsageClauseContext.NATIONAL()));
             }
             if (context.occursClause() != null && context.occursClause().Length > 0)

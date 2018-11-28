@@ -113,6 +113,25 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             if (node.CodeElement != null)
                 NodeCodeElementLinkers.Add(node.CodeElement, node);
+
+            DataDefinition parent = node.Parent as DataDefinition;
+            DataDescriptionEntry dataEntry = node.CodeElement as DataDescriptionEntry;
+
+            if (parent != null && parent.IsGroupUsageNational && dataEntry != null)
+            {
+                DataDescriptionEntry codeElement = parent.CodeElement as DataDescriptionEntry;
+                if (codeElement != null)
+                {
+                    if (dataEntry.Picture != null && !dataEntry.Picture.Value.ToUpper().Contains("N") || dataEntry.Usage != null)
+                    {
+                        dataEntry.Usage = new SyntaxProperty<DataUsage>(DataUsage.National, codeElement.IsGroupUsageNational.Token);
+                    }
+                    else
+                    {
+                        dataEntry.IsGroupUsageNational = new SyntaxProperty<bool>(true, codeElement.IsGroupUsageNational.Token);
+                    }
+                }
+            }
         }
 
         private void Exit()
