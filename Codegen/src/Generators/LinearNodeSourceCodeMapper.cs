@@ -1317,8 +1317,16 @@ namespace TypeCobol.Codegen.Generators
                 var delimiterTokens = GetEnclosingTokensIfAny(node, startTokenType, stopTokenType)?.ToArray();
                 if (delimiterTokens != null && delimiterTokens.Any())
                 {
-                    int[,] bufferLines = nodeData.Buffer.ComputeLinePositions(0, nodeData.Buffer.Size);
+
+                    // Split the Buffer to get an array of string representing the lines
+                    string content = new string(nodeData.Buffer.ToArray());
+                    string[] lines = content.Split(
+                        new[] { "\r\n", "\r", "\n" },
+                        StringSplitOptions.None
+                    );
+                    int[,] bufferLines = nodeData.Buffer.ComputeLinePositions(0, nodeData.Buffer.Size); 
                     var positionList = nodeData.Buffer.GetPositionList();
+                    lines = lines.Take(bufferLines.Length).ToArray();
                     foreach (var delimiterToken in delimiterTokens)
                     {
 
@@ -1333,7 +1341,7 @@ namespace TypeCobol.Codegen.Generators
                                 {
                                     positionList[0].SetFlag(Position.Flags.InclStart);
                                 }
-                                nodeData.Buffer.Insert("*", bufferLines[i, 0] + 6, bufferLines[i, 0] + 7);
+                                nodeData.Buffer.Insert("*", bufferLines[i,0]+6, bufferLines[i,0] + 7);
                             }
                         }
                     }
@@ -1346,11 +1354,11 @@ namespace TypeCobol.Codegen.Generators
             // Formalised Comments of Programs (Formalized Comments of Typedef and Functions is already commented)
             if (node is Compiler.Nodes.ProcedureDivision && node.Parent is Compiler.CodeModel.Program)
             {
-                CommentBetweenTokens(node, TokenType.FORMALIZED_COMMENTS_START, TokenType.FORMALIZED_COMMENTS_STOP);
+                CommentBetweenTokens(node, TokenType.FormalizedCommentsStart, TokenType.FormalizedCommentsStop);
             }
 
             // Multilines Comments
-            CommentBetweenTokens(node, TokenType.MULTILINES_COMMENTS_START, TokenType.MULTILINES_COMMENTS_STOP);
+            CommentBetweenTokens(node, TokenType.MultilinesCommentsStart, TokenType.MultilinesCommentsStop);
 
             foreach (var child in node.Children)
             {
