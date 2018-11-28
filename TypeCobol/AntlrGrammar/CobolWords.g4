@@ -563,7 +563,24 @@ tokens
     PRIVATE,
     IN_OUT,
 	STRICT,
-	QuestionMark
+	QuestionMark,
+	CompilerDirective,
+	CopyImportDirective,
+	ReplaceDirective,
+	ContinuationTokenGroup,
+	// Formalised Comments
+	FormalizedCommentsStart,
+	FormalizedCommentsStop,
+	FormComsDescription,
+	FormComsParameters,
+	FormComsDeprecated,
+	FormComsReplacedBy,
+	FormComsRestriction,
+	FormComsNeed,
+	FormComsSee,
+	FormComsToDo,
+	FormComsValue,
+	AtSign
 }
 
 
@@ -2086,7 +2103,7 @@ literalOrUserDefinedWordOReservedWordExceptCopy: (
     PRIVATE |
     IN_OUT | 
 	STRICT  |
-	QuestionMark
+	QUESTIONMARK
 );
 
 

@@ -93,7 +93,7 @@ userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparato
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
 functionDeclarationHeader:
-	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
+	formalizedComment? DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  parameterDescription+;
@@ -176,26 +176,58 @@ valueClauseWithBoolean:
 	VALUE (value2 | booleanValue);
 
 
+	
 dataDescriptionEntry:
-	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
+	formalizedComment?
+	(
+		( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
+			levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
+			( pictureClause
+			| blankWhenZeroClause
+			| externalClause
+			| globalClause
+			| justifiedClause
+			| groupUsageClause
+			| occursClause
+			| signClause
+			| synchronizedClause
+			| usageClause
+			| valueClause
+			| (cobol2002TypeClause valueClauseWithBoolean?)
+			)* PeriodSeparator
+		)
+		| dataRenamesEntry
+		| dataConditionEntry
+	);
 
-		levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
-		( pictureClause
-		| blankWhenZeroClause
-		| externalClause
-		| globalClause
-		| justifiedClause
-		| groupUsageClause
-		| occursClause
-		| signClause
-		| synchronizedClause
-		| usageClause
-		| valueClause
-		| (cobol2002TypeClause valueClauseWithBoolean?)
-		)* PeriodSeparator
-	)
-	| dataRenamesEntry
-	| dataConditionEntry;
-
- setStatementForIndexes:
+setStatementForIndexes:
 	SET indexStorageArea+ (UP | DOWN) BY variableOrExpression2;
+
+// ------ Formalized Comment specific ------ 
+ 
+formalizedCommentParam: 
+      FormComsDescription 
+    | FormComsParameters 
+    | FormComsDeprecated 
+    | FormComsReplacedBy 
+    | FormComsRestriction 
+    | FormComsNeed 
+    | FormComsSee 
+    | FormComsToDo; 
+ 
+formalizedCommentOuterLevel:
+	AtSign (formalizedCommentParam ColonSeparator? FormComsValue?);
+
+formalizedCommentInnerLevel:
+	MinusOperator ((UserDefinedWord ColonSeparator? FormComsValue) | listItemValue=FormComsValue);
+
+formalizedCommentLine: 
+    formalizedCommentOuterLevel | formalizedCommentInnerLevel | FormComsValue; 
+ 
+formalizedComment: 
+    FormalizedCommentsStart formalizedCommentLine* FormalizedCommentsStop; 
+
+
+
+procedureDivisionHeader: 
+	formalizedComment? PROCEDURE DIVISION usingPhrase? returningPhrase? PeriodSeparator;

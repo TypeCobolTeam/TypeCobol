@@ -47,5 +47,9 @@ namespace TypeCobol.Compiler.Diagnostics
         Warning = 37,
         GenerationErrorLineExceed = 38,
         QuestionMarkShouldBeFollowedBySpace = 39,
+        WrongFormalizedCommentKeyword = 40,
+        WrongFormalizedCommentMarckupPosition = 41,
+        WrongMultilineCommentMarckupPosition = 42,
+        ErrorFormalizedCommentMissplaced = 43,
     }
 }
