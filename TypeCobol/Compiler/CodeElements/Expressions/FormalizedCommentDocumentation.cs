@@ -75,17 +75,17 @@ namespace TypeCobol.Compiler.CodeElements
 
                         // Description keyword
                         if (comLine.formalizedCommentOuterLevel().formalizedCommentParam()
-                                     .FormComsDescription() != null)
+                                     .FORMCOMSDESCRIPTION() != null)
                             currentParameter = FormalizedCommentDocumentation.Fields.Description;
 
                         // Parameters keyword
                         else if (comLine.formalizedCommentOuterLevel().formalizedCommentParam()
-                                     .FormComsParameters() != null)
+                                     .FORMCOMSPARAMETERS() != null)
                             currentParameter = FormalizedCommentDocumentation.Fields.Parameters;
 
                         // Deprecated keyword
                         else if (comLine.formalizedCommentOuterLevel().formalizedCommentParam()
-                                     .FormComsDeprecated() != null)
+                                     .FORMCOMSDEPRECATED() != null)
                         { 
                             currentParameter = FormalizedCommentDocumentation.Fields.Deprecated;
                                 Deprecated += "";
@@ -98,29 +98,29 @@ namespace TypeCobol.Compiler.CodeElements
 
                         // Restriction keyword
                         else if (comLine.formalizedCommentOuterLevel().formalizedCommentParam()
-                                     .FormComsRestriction() != null)
+                                     .FORMCOMSRESTRICTION() != null)
                             currentParameter = FormalizedCommentDocumentation.Fields.Restriction;
 
                         // Needs keyword
                         else if (comLine.formalizedCommentOuterLevel().formalizedCommentParam()
-                                     .FormComsNeed() != null)
+                                     .FORMCOMSNEED() != null)
                             currentParameter = FormalizedCommentDocumentation.Fields.Needs;
 
                         // See keyword
                         else if (comLine.formalizedCommentOuterLevel().formalizedCommentParam()
-                                     .FormComsSee() != null)
+                                     .FORMCOMSSEE() != null)
                             currentParameter = FormalizedCommentDocumentation.Fields.See;
 
                         // ToDo keyword
                         else if (comLine.formalizedCommentOuterLevel().formalizedCommentParam()
-                                     .FormComsToDo() != null)
+                                     .FORMCOMSTODO() != null)
                             currentParameter = FormalizedCommentDocumentation.Fields.ToDo;
                         
 
                         // finally ad the value to the right parameter if any value is given
-                        if (comLine.formalizedCommentOuterLevel().FormComsValue() != null)
+                        if (comLine.formalizedCommentOuterLevel().FORMCOMSVALUE() != null)
                         {
-                            Add(currentParameter, comLine.formalizedCommentOuterLevel().FormComsValue().Symbol);
+                            Add(currentParameter, comLine.formalizedCommentOuterLevel().FORMCOMSVALUE().Symbol);
                         }
 
                     }
@@ -131,7 +131,7 @@ namespace TypeCobol.Compiler.CodeElements
                         { // this is a key-value pair (only for Params field)
                             Add(currentParameter,
                                 comLine.formalizedCommentInnerLevel().UserDefinedWord().GetText(),
-                                comLine.formalizedCommentInnerLevel().FormComsValue().GetText());
+                                comLine.formalizedCommentInnerLevel().FORMCOMSVALUE().GetText());
                         }
                         else if (comLine.formalizedCommentInnerLevel().listItemValue != null)
                         { // this is a list item
@@ -139,9 +139,9 @@ namespace TypeCobol.Compiler.CodeElements
                                 comLine.formalizedCommentInnerLevel().listItemValue);
                         }
                     }
-                    else if (comLine.FormComsValue() != null)
+                    else if (comLine.FORMCOMSVALUE() != null)
                     { // The line is a string continuation
-                        Add(currentParameter, comLine.FormComsValue().Symbol, true);
+                        Add(currentParameter, comLine.FORMCOMSVALUE().Symbol, true);
                     }
                 }
             }

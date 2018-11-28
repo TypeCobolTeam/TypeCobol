@@ -107,7 +107,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 !typeDefinition.CodeElement().FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
             {
                 var token = typeDefinition.CodeElement().ConsumedTokens
-                    .FirstOrDefault(t => t.TokenType == TokenType.FormComsParameters);
+                    .FirstOrDefault(t => t.TokenType == TokenType.FORMCOMSPARAMETERS);
                 if (token != null)
                 {
                     DiagnosticUtils.AddError(typeDefinition.CodeElement,

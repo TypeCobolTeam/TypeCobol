@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 *** DIRECTIVE READY_TRACE ([8,12:READY]<READY>[13,13: ]<SpaceSeparator>[14,18:TRACE]<TRACE>[19,19+:.]<PeriodSeparator>) ***
 
 -- Line 2 --
@@ -35,8 +35,8 @@ Line 10[8,12] <27, Error, Syntax> - Syntax error : mismatched input 'ready' expe
 Line 10[14,18] <27, Error, Syntax> - Syntax error : mismatched input 'reset' expecting TRACE
 
 -- Line 11 --
-+++ CONTINUATION OF CompilerDirective ([8,12:trace]<TRACE>) +++
++++ CONTINUATION OF COMPILERDIRECTIVE ([8,12:trace]<TRACE>) +++
 
 -- Line 12 --
-+++ CONTINUATION OF ContinuationTokenGroup ([8,8+:.]<PeriodSeparator>) +++
++++ CONTINUATION OF CONTINUATIONTOKENGROUP ([8,8+:.]<PeriodSeparator>) +++
 

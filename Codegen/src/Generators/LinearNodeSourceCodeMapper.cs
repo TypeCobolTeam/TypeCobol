@@ -1354,11 +1354,11 @@ namespace TypeCobol.Codegen.Generators
             // Formalised Comments of Programs (Formalized Comments of Typedef and Functions is already commented)
             if (node is Compiler.Nodes.ProcedureDivision && node.Parent is Compiler.CodeModel.Program)
             {
-                CommentBetweenTokens(node, TokenType.FormalizedCommentsStart, TokenType.FormalizedCommentsStop);
+                CommentBetweenTokens(node, TokenType.FORMALIZEDCOMMENTSSTART, TokenType.FORMALIZEDCOMMENTSSTOP);
             }
 
             // Multilines Comments
-            CommentBetweenTokens(node, TokenType.MultilinesCommentsStart, TokenType.MultilinesCommentsStop);
+            CommentBetweenTokens(node, TokenType.MULTILINESCOMMENTSSTART, TokenType.MULTILINESCOMMENTSSTOP);
 
             foreach (var child in node.Children)
             {

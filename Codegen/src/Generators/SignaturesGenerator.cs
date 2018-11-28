@@ -57,17 +57,17 @@ namespace TypeCobol.Codegen.Generators
                 ITokensLine tokensLine = textLine as ITokensLine;
                 if (tokensLine != null)
                 {
-                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FormalizedCommentsStart))
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZEDCOMMENTSSTART))
                         insideFormalizedComment = true;
-                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MultilinesCommentsStart))
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINESCOMMENTSSTART))
                         insideMultilineComment = true;
 
                     if (insideFormalizedComment || insideMultilineComment)
                         text = text.Substring(0, 6) + '*' + text.Substring(7, text.Length - 7);
 
-                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FormalizedCommentsStop))
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.FORMALIZEDCOMMENTSSTOP))
                         insideFormalizedComment = false;
-                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MultilinesCommentsStop))
+                    if (tokensLine.SourceTokens.Any(t => t.TokenType == TokenType.MULTILINESCOMMENTSSTOP))
                         insideMultilineComment = false;
                 }
 

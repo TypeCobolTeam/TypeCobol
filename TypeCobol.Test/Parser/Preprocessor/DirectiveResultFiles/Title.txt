@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 *** DIRECTIVE TITLE "A title" ([8,12:TITLE]<TITLE>[13,13: ]<SpaceSeparator>[14,22+:"A title"]<AlphanumericLiteral>(",Y,Y){A title}) ***
 
 -- Line 2 --
@@ -24,7 +24,7 @@
 *** DIRECTIVE TITLE "Another title" ([24,28:TITLE]<TITLE>[29,29: ]<SpaceSeparator>) ***
 
 -- Line 9 --
-+++ CONTINUATION OF CompilerDirective ([8,22+:"Another title"]<AlphanumericLiteral>(",Y,Y){Another title}) +++
++++ CONTINUATION OF COMPILERDIRECTIVE ([8,22+:"Another title"]<AlphanumericLiteral>(",Y,Y){Another title}) +++
 
 -- Line 10 --
 [8,8+:.]<PeriodSeparator>

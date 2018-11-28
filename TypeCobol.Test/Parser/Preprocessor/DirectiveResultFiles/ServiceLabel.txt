@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 *** DIRECTIVE SERVICE_LABEL ([8,14:SERVICE]<SERVICE_CD>[15,15: ]<SpaceSeparator>[16,20:LABEL]<LABEL>) ***
 
 -- Line 2 --
@@ -16,7 +16,7 @@
 *** DIRECTIVE SERVICE_LABEL ([12,18:service]<SERVICE_CD>[19,19: ]<SpaceSeparator>) ***
 
 -- Line 6 --
-+++ CONTINUATION OF CompilerDirective ([8,12:LABEL]<LABEL>) +++
++++ CONTINUATION OF COMPILERDIRECTIVE ([8,12:LABEL]<LABEL>) +++
 
 -- Line 7 --
 [8,16:ICE LABEL]<InvalidToken>

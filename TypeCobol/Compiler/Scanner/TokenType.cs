@@ -574,25 +574,25 @@ namespace TypeCobol.Compiler.Scanner
         PRIVATE=503,
         IN_OUT=504,
         STRICT=505,
-        QuestionMark=506,
-        CompilerDirective=507,
-        CopyImportDirective=508,
-        ReplaceDirective=509,
-        ContinuationTokenGroup=510,
-        FormalizedCommentsStart = 511,
-        FormalizedCommentsStop = 512,
-        FormComsDescription = 513,
-        FormComsParameters = 514,
-        FormComsDeprecated = 515,
-        FormComsReplacedBy = 516,
-        FormComsRestriction = 517,
-        FormComsNeed = 518,
-        FormComsSee = 519,
-        FormComsToDo = 520,
-        FormComsValue = 521,
-        AtSign = 522,
-        MultilinesCommentsStart = 523,
-        MultilinesCommentsStop = 524,
+        QUESTIONMARK=506,
+        COMPILERDIRECTIVE=507,
+        COPYIMPORTDIRECTIVE=508,
+        REPLACEDIRECTIVE=509,
+        CONTINUATIONTOKENGROUP=510,
+        FORMALIZEDCOMMENTSSTART = 511,
+        FORMALIZEDCOMMENTSSTOP = 512,
+        FORMCOMSDESCRIPTION = 513,
+        FORMCOMSPARAMETERS = 514,
+        FORMCOMSDEPRECATED = 515,
+        FORMCOMSREPLACEDBY = 516,
+        FORMCOMSRESTRICTION = 517,
+        FORMCOMSNEED = 518,
+        FORMCOMSSEE = 519,
+        FORMCOMSTODO = 520,
+        FORMCOMSVALUE = 521,
+        ATSIGN = 522,
+        MULTILINESCOMMENTSSTART = 523,
+        MULTILINESCOMMENTSSTOP = 524,
 
 
 
@@ -602,7 +602,7 @@ namespace TypeCobol.Compiler.Scanner
         private static readonly TokenType[] TypeCobolTokenType =
         {
             TokenType.DECLARE, TokenType.END_DECLARE, TokenType.PUBLIC, TokenType.PRIVATE, TokenType.IN_OUT,
-            TokenType.UNSAFE, TokenType.STRICT, TokenType.QuestionMark
+            TokenType.UNSAFE, TokenType.STRICT, TokenType.QUESTIONMARK
         };
 
         private static readonly TokenType[] Cobol2002TokenType = {TokenType.STRONG, TokenType.TYPEDEF};

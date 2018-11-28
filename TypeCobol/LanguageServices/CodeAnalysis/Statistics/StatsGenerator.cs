@@ -306,7 +306,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
                             }
                             else if (processedToken is ReplacedTokenGroup)
                             {
-                                replacedTokensCounter.OnElement((int)TokenType.ContinuationTokenGroup);
+                                replacedTokensCounter.OnElement((int)TokenType.CONTINUATIONTOKENGROUP);
                             }
                         }
 

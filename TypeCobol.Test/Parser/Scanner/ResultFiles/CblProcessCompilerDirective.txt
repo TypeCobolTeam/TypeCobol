@@ -1,41 +1,41 @@
-﻿-- Line 1 --
-*** DIRECTIVE CBL|NOADATA|AFP=VOLATILE|ARCH=6|CODEPAGE=1140|BUFSIZE=1K ([1,60:CBL NOADATA AFP(VOLATILE) ARCH(6) CODEPAGE(1140) BUFSIZE(1K)]<CompilerDirective>) ***
+-- Line 1 --
+*** DIRECTIVE CBL|NOADATA|AFP=VOLATILE|ARCH=6|CODEPAGE=1140|BUFSIZE=1K ([1,60:CBL NOADATA AFP(VOLATILE) ARCH(6) CODEPAGE(1140) BUFSIZE(1K)]<COMPILERDIRECTIVE>) ***
 
 -- Line 2 --
 [1,2:  ]<SpaceSeparator>
-*** DIRECTIVE CBL|CICS=’string2’|CICS="string3"|CURRENCY=X"0AB2"|BLOCK0 ([3,64:CBL CICS(’string2’),CICS("string3"),CURRENCY(X"0AB2"),  BLOCK0]<CompilerDirective>) ***
+*** DIRECTIVE CBL|CICS=’string2’|CICS="string3"|CURRENCY=X"0AB2"|BLOCK0 ([3,64:CBL CICS(’string2’),CICS("string3"),CURRENCY(X"0AB2"),  BLOCK0]<COMPILERDIRECTIVE>) ***
 
 -- Line 3 --
 [1,4:    ]<SpaceSeparator>
-*** DIRECTIVE PROCESS|EXIT= INEXIT([’str1’,]mod1) ,LIBEXIT([’str2’,]mod2)  ([5,65:PROCESS EXIT( INEXIT([’str1’,]mod1) ,LIBEXIT([’str2’,]mod2) )]<CompilerDirective>) ***
+*** DIRECTIVE PROCESS|EXIT= INEXIT([’str1’,]mod1) ,LIBEXIT([’str2’,]mod2)  ([5,65:PROCESS EXIT( INEXIT([’str1’,]mod1) ,LIBEXIT([’str2’,]mod2) )]<COMPILERDIRECTIVE>) ***
 
 -- Line 4 --
-*** DIRECTIVE PROCESS|FLAG=I,I|FLAGSTD=x[yy][,0] ([1,37:PROCESS FLAG(I,I) FLAGSTD(x[yy][,0]) ]<CompilerDirective>) ***
+*** DIRECTIVE PROCESS|FLAG=I,I|FLAGSTD=x[yy][,0] ([1,37:PROCESS FLAG(I,I) FLAGSTD(x[yy][,0]) ]<COMPILERDIRECTIVE>) ***
 
 -- Line 5 --
-*** DIRECTIVE INVALID SYNTAX -> CBL|TOTO ([1,8:CBL TOTO]<CompilerDirective>) ***
+*** DIRECTIVE INVALID SYNTAX -> CBL|TOTO ([1,8:CBL TOTO]<COMPILERDIRECTIVE>) ***
 Line 0[1,8] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
 -- Line 6 --
-*** DIRECTIVE INVALID SYNTAX -> CBL ([1,9:CBL ARCH.]<CompilerDirective>) ***
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,9:CBL ARCH.]<COMPILERDIRECTIVE>) ***
 Line 0[1,9] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
 -- Line 7 --
-*** DIRECTIVE INVALID SYNTAX -> CBL ([1,9:CBL ARCH(]<CompilerDirective>) ***
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,9:CBL ARCH(]<COMPILERDIRECTIVE>) ***
 Line 0[1,9] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
 -- Line 8 --
-*** DIRECTIVE INVALID SYNTAX -> CBL ([1,5:CBL (]<CompilerDirective>) ***
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,5:CBL (]<COMPILERDIRECTIVE>) ***
 Line 0[1,5] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
 -- Line 9 --
-*** DIRECTIVE INVALID SYNTAX -> CBL ([1,10:CBL ARCH(5]<CompilerDirective>) ***
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,10:CBL ARCH(5]<COMPILERDIRECTIVE>) ***
 Line 0[1,10] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
 -- Line 10 --
-*** DIRECTIVE INVALID SYNTAX -> CBL ([1,14:CBL ARCH(5 B()]<CompilerDirective>) ***
+*** DIRECTIVE INVALID SYNTAX -> CBL ([1,14:CBL ARCH(5 B()]<COMPILERDIRECTIVE>) ***
 Line 0[1,14] <25, Error, Directives> - Invalid syntax for a CBL or PROCESS compiler directive : each option should be separated by space or comma, and option parameters should be enclosed in parentheses
 
 -- Line 11 --
-*** DIRECTIVE PROCESS|CP=1147|NOADV|C ([1,24:PROCESS CP(1147) NOADV C]<CompilerDirective>) ***
+*** DIRECTIVE PROCESS|CP=1147|NOADV|C ([1,24:PROCESS CP(1147) NOADV C]<COMPILERDIRECTIVE>) ***
 

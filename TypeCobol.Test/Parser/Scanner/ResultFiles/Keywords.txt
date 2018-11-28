@@ -29,5 +29,5 @@
 
 -- Line 5 --
 [1,1: ]<SpaceSeparator>
-*** DIRECTIVE CBL|ARCH=6 ([2,12:CBL ARCH(6)]<CompilerDirective>) ***
+*** DIRECTIVE CBL|ARCH=6 ([2,12:CBL ARCH(6)]<COMPILERDIRECTIVE>) ***
 

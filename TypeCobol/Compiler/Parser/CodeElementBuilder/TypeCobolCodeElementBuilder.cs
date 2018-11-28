@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TypeCobol.Compiler.Diagnostics;
 
 namespace TypeCobol.Compiler.Parser
@@ -322,9 +322,9 @@ namespace TypeCobol.Compiler.Parser
                 parameter.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
             }
 
-            if (context.QuestionMark() != null)
+            if (context.QUESTIONMARK() != null)
             {
-                parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QuestionMark()));
+                parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QUESTIONMARK()));
             }
 
             return parameter;

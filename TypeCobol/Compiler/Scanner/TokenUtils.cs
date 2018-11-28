@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Scanner
             }
             // Register the token strings corresponding to each token type (for keywords only)
             int keywordBegin = (int)TokenType.UserDefinedWord + 1;
-            int keywordEnd = (int)TokenType.QuestionMark - 1;
+            int keywordEnd = (int)TokenType.QUESTIONMARK - 1;
             tokenStringFromTokenType = new string[types.Length];
             for (int c = keywordBegin; c < types.Length; c++)
             {
@@ -95,32 +95,32 @@ namespace TypeCobol.Compiler.Scanner
             {
                 case "DESCRIPTION":
                 case "DESC":
-                    tokenType = TokenType.FormComsDescription;
+                    tokenType = TokenType.FORMCOMSDESCRIPTION;
                     break;
                 case "PARAMETERS":
                 case "PARAMS":
-                    tokenType = TokenType.FormComsParameters;
+                    tokenType = TokenType.FORMCOMSPARAMETERS;
                     break;
                 case "DEPRECATED":
                 case "DEPREC":
-                    tokenType = TokenType.FormComsDeprecated;
+                    tokenType = TokenType.FORMCOMSDEPRECATED;
                     break;
                 case "REPLACEDBY":
                 case "REPLBY":
-                    tokenType = TokenType.FormComsReplacedBy;
+                    tokenType = TokenType.FORMCOMSREPLACEDBY;
                     break;
                 case "RESTRICTION":
                 case "RSTRIC":
-                    tokenType = TokenType.FormComsRestriction;
+                    tokenType = TokenType.FORMCOMSRESTRICTION;
                     break;
                 case "NEED":
-                    tokenType = TokenType.FormComsNeed;
+                    tokenType = TokenType.FORMCOMSNEED;
                     break;
                 case "SEE":
-                    tokenType = TokenType.FormComsSee;
+                    tokenType = TokenType.FORMCOMSSEE;
                     break;
                 case "TODO":
-                    tokenType = TokenType.FormComsToDo;
+                    tokenType = TokenType.FORMCOMSTODO;
                     break;
                 default:
                     tokenType = TokenType.UserDefinedWord;
@@ -267,7 +267,7 @@ namespace TypeCobol.Compiler.Scanner
                         return "user defined word";
                     case TokenType.SymbolicCharacter:
                         return "symbolic character";
-                    case TokenType.QuestionMark:
+                    case TokenType.QUESTIONMARK:
                         return "?";
                     default:
                         return "...";

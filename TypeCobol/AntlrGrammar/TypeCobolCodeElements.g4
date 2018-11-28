@@ -107,7 +107,7 @@ functionReturningPhrase: RETURNING parameterDescription;
 parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
 
 functionDataParameter:
-	dataNameDefinition QuestionMark? (pictureClause | POINTER | cobol2002TypeClause | FUNCTION_POINTER | PROCEDURE_POINTER)
+	dataNameDefinition QUESTIONMARK? (pictureClause | POINTER | cobol2002TypeClause | FUNCTION_POINTER | PROCEDURE_POINTER)
 		blankWhenZeroClause?
 		justifiedClause?
 		synchronizedClause?
@@ -206,26 +206,26 @@ setStatementForIndexes:
 // ------ Formalized Comment specific ------ 
  
 formalizedCommentParam: 
-      FormComsDescription 
-    | FormComsParameters 
-    | FormComsDeprecated 
+      FORMCOMSDESCRIPTION 
+    | FORMCOMSPARAMETERS 
+    | FORMCOMSDEPRECATED 
     | FormComsReplacedBy 
-    | FormComsRestriction 
-    | FormComsNeed 
-    | FormComsSee 
-    | FormComsToDo; 
+    | FORMCOMSRESTRICTION 
+    | FORMCOMSNEED 
+    | FORMCOMSSEE 
+    | FORMCOMSTODO; 
  
 formalizedCommentOuterLevel:
-	AtSign (formalizedCommentParam ColonSeparator? FormComsValue?);
+	ATSIGN (formalizedCommentParam ColonSeparator? FORMCOMSVALUE?);
 
 formalizedCommentInnerLevel:
-	MinusOperator ((UserDefinedWord ColonSeparator? FormComsValue) | listItemValue=FormComsValue);
+	MinusOperator ((UserDefinedWord ColonSeparator? FORMCOMSVALUE) | listItemValue=FORMCOMSVALUE);
 
 formalizedCommentLine: 
-    formalizedCommentOuterLevel | formalizedCommentInnerLevel | FormComsValue; 
+    formalizedCommentOuterLevel | formalizedCommentInnerLevel | FORMCOMSVALUE; 
  
 formalizedComment: 
-    FormalizedCommentsStart formalizedCommentLine* FormalizedCommentsStop; 
+    FORMALIZEDCOMMENTSSTART formalizedCommentLine* FORMALIZEDCOMMENTSSTOP; 
 
 
 

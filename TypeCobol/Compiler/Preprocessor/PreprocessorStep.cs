@@ -311,7 +311,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             Token failedDirectiveToken = tokensLineWithCopyDirective.TokensWithCompilerDirectives
                                 .First(
                                     token =>
-                                        token.TokenType == TokenType.CopyImportDirective &&
+                                        token.TokenType == TokenType.COPYIMPORTDIRECTIVE &&
                                         ((CompilerDirectiveToken)token).CompilerDirective == copyDirective);
 
                             Diagnostic diag = new Diagnostic(
@@ -628,7 +628,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             Token failedDirectiveToken = tokensLineWithCopyDirective.TokensWithCompilerDirectives
                                 .First(
                                     token =>
-                                        token.TokenType == TokenType.CopyImportDirective &&
+                                        token.TokenType == TokenType.COPYIMPORTDIRECTIVE &&
                                         ((CompilerDirectiveToken) token).CompilerDirective == copyDirective);
 
                             Diagnostic diag = new Diagnostic(
