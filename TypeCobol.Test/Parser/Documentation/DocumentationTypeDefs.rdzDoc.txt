@@ -1,0 +1,616 @@
+Line 19[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+======================== Nodes properties ========================
+Name : DocForTypeDefs
+Description : 
+Visibility : 
+Namespace : DocForTypeDefs
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+Name : Type10
+Description : 
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+IsBlankWhenZero : False
+Justified : False
+DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
+DataType : 
+    Usage : 
+    MaxOccurence : 1
+    DefaultValue : 
+    TypeName : 
+    Picture : X(8)
+
+---------------------
+
+Name : Type11
+Description : Description for Type11 
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+IsBlankWhenZero : False
+Justified : False
+DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
+DataType : 
+    Usage : 
+    MaxOccurence : 1
+    DefaultValue : 
+    TypeName : 
+    Picture : X(8)
+
+---------------------
+
+Name : Type12
+Description : Description for Type12 
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+IsDeprecated : True
+Deprecated : 
+ReplacedBy : Type42 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+IsBlankWhenZero : False
+Justified : False
+DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
+DataType : 
+    Usage : 
+    MaxOccurence : 1
+    DefaultValue : 
+    TypeName : 
+    Picture : X(8)
+
+---------------------
+
+Name : Type20
+Description : 
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+IsBlankWhenZero : False
+Justified : False
+DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
+DataType : 
+    Usage : 
+    MaxOccurence : 1
+    DefaultValue : 
+    TypeName : 
+    Picture : 
+TypeDefChild : 
+    Name : Member1
+    IsBlankWhenZero : True
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : x(8)
+TypeDefChild : 
+    Name : Member2
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : 
+    TypeDefChild : 
+        Name : Member21
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : 
+            Picture : PPP999PPP
+    TypeDefChild : 
+        Name : Member22
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : DATE
+            Picture : 
+    TypeDefChild : 
+        Name : Member23
+        IsBlankWhenZero : False
+        Justified : True
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : 
+            Picture : x(10)
+TypeDefChild : 
+    Name : Member3
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : Type10
+        Picture : 
+TypeDefChild : 
+    Name : Member4
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : FALSE
+        TypeName : BOOL
+        Picture : 
+TypeDefChild : 
+    Name : Member5
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 2018
+        TypeName : 
+        Picture : S9(4)
+    TypeDefChild : 
+        Name : TestMember5
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : True
+        ConditionValues : 
+        ConditionValuesRanges : 
+            ConditionRanges0 : 1999 -> 2050
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : BOOL
+            Picture : 
+
+---------------------
+
+Name : Type21
+Description : Description for Type21 
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+IsBlankWhenZero : False
+Justified : False
+DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
+DataType : 
+    Usage : 
+    MaxOccurence : 1
+    DefaultValue : 
+    TypeName : 
+    Picture : 
+TypeDefChild : 
+    Name : Member1
+    IsBlankWhenZero : True
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : x(8)
+TypeDefChild : 
+    Name : Member2
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : 
+    TypeDefChild : 
+        Name : Member21
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : 
+            Picture : PPP999PPP
+    TypeDefChild : 
+        Name : Member22
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : DATE
+            Picture : 
+    TypeDefChild : 
+        Name : Member23
+        IsBlankWhenZero : False
+        Justified : True
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : 
+            Picture : x(10)
+TypeDefChild : 
+    Name : Member3
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : Type11
+        Picture : 
+TypeDefChild : 
+    Name : Member4
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : FALSE
+        TypeName : BOOL
+        Picture : 
+TypeDefChild : 
+    Name : Member5
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 2018
+        TypeName : 
+        Picture : S9(4)
+    TypeDefChild : 
+        Name : TestMember5
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : True
+        ConditionValues : 
+        ConditionValuesRanges : 
+            ConditionRanges0 : 1999 -> 2050
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : BOOL
+            Picture : 
+
+---------------------
+
+Name : Type22
+Description : Description for Type22 
+Visibility : Private
+Namespace : DocForTypeDefs
+NodeType : TypeDef
+IsDeprecated : True
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+    see here what is needed
+ToDo : 
+IsBlankWhenZero : False
+Justified : False
+DocDataType : TypeCobol.Compiler.Nodes.DocumentationDataType
+DataType : 
+    Usage : 
+    MaxOccurence : 1
+    DefaultValue : 
+    TypeName : 
+    Picture : 
+TypeDefChild : 
+    Name : Member1
+    IsBlankWhenZero : True
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : x(8)
+TypeDefChild : 
+    Name : Member2
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : 
+    TypeDefChild : 
+        Name : Member21
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : 
+            Picture : PPP999PPP
+    TypeDefChild : 
+        Name : Member22
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : DATE
+            Picture : 
+    TypeDefChild : 
+        Name : Member23
+        IsBlankWhenZero : False
+        Justified : True
+        IsLevel77 : False
+        IsLevel88 : False
+        ConditionValues : 
+        ConditionValuesRanges : 
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : 
+            Picture : x(10)
+TypeDefChild : 
+    Name : Member3
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : Type12
+        Picture : 
+TypeDefChild : 
+    Name : Member4
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : FALSE
+        TypeName : BOOL
+        Picture : 
+TypeDefChild : 
+    Name : Member5
+    IsBlankWhenZero : False
+    Justified : False
+    IsLevel77 : False
+    IsLevel88 : False
+    ConditionValues : 
+    ConditionValuesRanges : 
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 2018
+        TypeName : 
+        Picture : S9(4)
+    TypeDefChild : 
+        Name : TestMember5
+        IsBlankWhenZero : False
+        Justified : False
+        IsLevel77 : False
+        IsLevel88 : True
+        ConditionValues : 
+        ConditionValuesRanges : 
+            ConditionRanges0 : 1999 -> 2050
+        DataType : 
+            Usage : 
+            MaxOccurence : 1
+            DefaultValue : 
+            TypeName : BOOL
+            Picture : 
+
+---------------------
+
+======================== Code Element properties ========================
+== DocForTypeDefs ==
+No formalized comment found
+
+---------------------
+
+== Type10 ==
+No formalized comment found
+
+---------------------
+
+== Type11 ==
+Description : Description for Type11 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+== Type12 ==
+Description : Description for Type12 
+Deprecated : *is present*
+ReplacedBy : Type42 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+    param1 : TYPEDEF do not have any param
+    param2 : This informations should be truncated
+
+---------------------
+
+== Type20 ==
+No formalized comment found
+
+---------------------
+
+== Type21 ==
+Description : Description for Type21 
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+== Type22 ==
+Description : Description for Type22 
+Deprecated : *is present*
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+    see here what is needed
+ToDo : 
+Parameters : 
+    Member1 : BirthDate
+    Member2 : Today Date and Era
+    Member3 : self implementation attempt
+    Mamber42 : this would be truncated
+
+---------------------
+
