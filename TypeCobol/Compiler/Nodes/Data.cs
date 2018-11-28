@@ -626,8 +626,40 @@ namespace TypeCobol.Compiler.Nodes {
         #region TypeProperties
         public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
         public bool IsJustified { get {  if(_ComonDataDesc != null && _ComonDataDesc.IsJustified != null) return _ComonDataDesc.IsJustified.Value; else return false; } }
-        public DataUsage? Usage { get { if (_ComonDataDesc != null && _ComonDataDesc.Usage != null) return _ComonDataDesc.Usage.Value; else return null; } }
-        public bool IsGroupUsageNational { get { if (_ComonDataDesc != null && _ComonDataDesc.IsGroupUsageNational != null) return _ComonDataDesc.IsGroupUsageNational.Value; else return false; } }
+        public DataUsage? Usage
+        {
+            get
+            {
+                if (_ComonDataDesc != null && _ComonDataDesc.Usage != null)
+                    return _ComonDataDesc.Usage.Value;
+
+                DataDefinitionEntry dataEntry = CodeElement as DataDefinitionEntry; 
+                if (dataEntry != null && dataEntry.LevelNumber?.Value > 50)
+                {
+                    return null;
+                }
+
+                DataDefinition parent = Parent as DataDefinition;
+                if (parent != null && parent.IsGroupUsageNational)
+                    return DataUsage.National;
+
+                return parent?.Usage;
+            }
+        }
+
+        public bool IsGroupUsageNational
+        {
+            get
+            {
+                if (_ComonDataDesc != null && _ComonDataDesc.IsGroupUsageNational != null)
+                    return _ComonDataDesc.IsGroupUsageNational.Value;
+
+                else if (Parent is DataDefinition)
+                    return ((DataDefinition)Parent).IsGroupUsageNational;
+
+                else return false;
+            }
+        }
         public long MinOccurencesCount { get { if (_ComonDataDesc != null && _ComonDataDesc.MinOccurencesCount != null) return _ComonDataDesc.MinOccurencesCount.Value; else return 1; } }
         public long MaxOccurencesCount { get { return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1; } }
 
