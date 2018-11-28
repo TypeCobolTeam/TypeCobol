@@ -66,11 +66,6 @@ namespace TypeCobol.Compiler.Diagnostics
             CheckMultipleFormComParam(functionDeclaration.CodeElement);
             return true;
         }
-        public override bool Visit(Program program)
-        {
-            ProgramChecker.OnNode(program);
-            return true;
-        }
 
         public override bool Visit(DataRedefines dataRedefines)
         {
@@ -217,6 +212,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Program program)
         {
+            ProgramChecker.OnNode(program);
+
             //// Set a Warning if the FormCom parameter in unknown or if the program parameter have no description
 
             ProcedureDivisionHeader procedureDivision = program.Children.FirstOrDefault(c => c is ProcedureDivision)?.CodeElement as ProcedureDivisionHeader;
