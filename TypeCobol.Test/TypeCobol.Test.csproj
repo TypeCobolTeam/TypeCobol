@@ -132,7 +132,7 @@
       <Name>Codegen</Name>
     </ProjectReference>
     <ProjectReference Include="..\TypeCobol\TypeCobol.csproj">
-      <Project>{7ac7a3e5-91f2-44bf-955d-86cc61375742}</Project>
+      <Project>{7AC7A3E5-91F2-44BF-955D-86CC61375742}</Project>
       <Name>TypeCobol</Name>
     </ProjectReference>
   </ItemGroup>
@@ -141,9 +141,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Parser\Documentation\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

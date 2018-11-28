@@ -1127,6 +1127,9 @@ namespace TypeCobol.Codegen.Generators
             //Create All SourceTextBuffer Content associated to Nodes
             CreateNodeSourceTextBufferContents();
 
+            // Comment specific parts (Formalized Comments)
+            CommentSpecificParts(node);
+
             //Now Complete Function Declaration Lines relocation.
             CompleteFunctionDeclarationLinesRelocation();
 
