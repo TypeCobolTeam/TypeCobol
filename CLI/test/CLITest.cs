@@ -131,7 +131,7 @@ namespace CLI.Test
         [TestMethod]
         public void TestOutputFormat()
         {
-            CLITestHelper.Test("outputSignature_1", ReturnCode.Success);
+            CLITestHelper.Test("outputSignature_1", ReturnCode.Warning);
         }
 
         /// <summary>
