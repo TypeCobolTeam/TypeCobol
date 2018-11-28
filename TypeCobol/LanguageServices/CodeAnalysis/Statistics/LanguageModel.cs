@@ -128,7 +128,7 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
 
         internal static bool IsSignificantWord(TokenType tokenType, TokenFamily tokenFamily)
         {
-            return tokenFamily != TokenFamily.Whitespace && tokenFamily != TokenFamily.Comments && tokenType != TokenType.CompilerDirective &&
+            return tokenFamily != TokenFamily.Whitespace && tokenFamily != TokenFamily.Comments && tokenType != TokenType.COMPILER_DIRECTIVE &&
                    tokenType != TokenType.EJECT && tokenType != TokenType.SKIP1 && tokenType != TokenType.SKIP2 && tokenType != TokenType.SKIP3;
         }
         

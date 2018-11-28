@@ -15,12 +15,12 @@ namespace TypeCobol.Compiler.Scanner
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
         /// </summary>
-        private Token LastSignificantToken { get; set; }
+        public Token LastSignificantToken { get; set; }
 
         /// <summary>
         /// Last keyword or symbol token encountered in the text file
         /// </summary>
-        private Token BeforeLastSignificantToken { get; set; }
+        public Token BeforeLastSignificantToken { get; set; }
 
         /// <summary>
         /// True if we know from the keyword stream that we are inside a DATA DIVISION.
@@ -43,6 +43,22 @@ namespace TypeCobol.Compiler.Scanner
         /// True if we are inside the symbolicCharactersClause > symbolicCharacterDefinition+
         /// </summary>
         public bool InsideSymbolicCharacterDefinitions { get; private set; }
+
+        /// <summary>
+        /// True if we are between two formalizedComments markups
+        /// </summary>
+        public bool InsideFormalizedComment { get; private set; }
+
+        /// <summary>
+        /// True if we are inside the Params Field of a Formalized Comment
+        /// </summary>
+        public bool InsideParamsField { get; private set; }
+
+        /// <summary>
+        /// True if we are between two MultilineComments markups
+        /// </summary>
+        public bool InsideMultilineComments { get; private set; }
+        
 
         /// <summary>
         /// True as soon as the keyword DECIMAL-POINT has been encountered
@@ -96,17 +112,20 @@ namespace TypeCobol.Compiler.Scanner
         /// Initialize scanner state for the first line
         /// </summary>
         public MultilineScanState(bool insideDataDivision, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals) :
-            this(insideDataDivision, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
+            this(insideDataDivision, false, false, false, false, false, false, decimalPointIsComma, withDebuggingMode, encodingForAlphanumericLiterals)
         { }
 
         /// <summary>
         /// Initialize scanner state
         /// </summary>
-        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
+        public MultilineScanState(bool insideDataDivision, bool insideProcedureDivision, bool insidePseudoText, bool insideSymbolicCharacterDefinitions, bool insideFormalizedComment, bool insideMultilineComments, bool insideParamsField, bool decimalPointIsComma, bool withDebuggingMode, Encoding encodingForAlphanumericLiterals)
         {
             InsideDataDivision = insideDataDivision;
             InsideProcedureDivision = insideProcedureDivision;
             InsidePseudoText = insidePseudoText;
+            InsideFormalizedComment = insideFormalizedComment;
+            InsideMultilineComments = insideMultilineComments;
+            InsideParamsField = insideParamsField;
             InsideSymbolicCharacterDefinitions = insideSymbolicCharacterDefinitions;
             DecimalPointIsComma = decimalPointIsComma;
             WithDebuggingMode = withDebuggingMode;
@@ -118,7 +137,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public MultilineScanState Clone()
         {
-            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
+            MultilineScanState clone = new MultilineScanState(InsideDataDivision, InsideProcedureDivision, InsidePseudoText, InsideSymbolicCharacterDefinitions, InsideFormalizedComment, InsideMultilineComments, InsideParamsField, DecimalPointIsComma, WithDebuggingMode, EncodingForAlphanumericLiterals);
             if (LastSignificantToken != null) clone.LastSignificantToken = LastSignificantToken;
             if (BeforeLastSignificantToken != null) clone.BeforeLastSignificantToken = BeforeLastSignificantToken;
             if (SymbolicCharacters != null)
@@ -138,12 +157,14 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public void AdvanceToNextStateAndAdjustTokenProperties(Token newToken)
         {
-            // Ignore whitespace separators and comments to update scan state
+
+            // Ignore whitespace separators
             if (newToken.TokenFamily == TokenFamily.Whitespace ||
                 newToken.TokenFamily == TokenFamily.Comments)
-            {
+            { 
                 return;
             }
+            
             // Ignore pseudo-text tokens to update scan state
             if (InsidePseudoText && newToken.TokenType != TokenType.PseudoTextDelimiter && newToken.TokenType != TokenType.COPY)
             {
@@ -206,7 +227,42 @@ namespace TypeCobol.Compiler.Scanner
                     // Register the start of a SYMBOLIC CHARACTERS? clause
                     InsideSymbolicCharacterDefinitions = true;
                     break;
+                case TokenType.FORMALIZED_COMMENTS_START:
+                    // Register the begin of the formalized Comments
+                    InsideFormalizedComment = true;
+                    break;
+                case TokenType.FORMALIZED_COMMENTS_STOP:
+                    // Register the end of the formalized Comments
+                    InsideFormalizedComment = false;
+                    InsideParamsField = false;
+                    break;
+                case TokenType.FORMALIZED_COMMENTS_PARAMETERS:
+                    // Register the begin of the params field inside the formalized Comments
+                    InsideParamsField = true;
+                    break;
+                case TokenType.FORMALIZED_COMMENTS_DESCRIPTION:
+                case TokenType.FORMALIZED_COMMENTS_DEPRECATED:
+                case TokenType.FORMALIZED_COMMENTS_REPLACED_BY:
+                case TokenType.FORMALIZED_COMMENTS_RESTRICTION:
+                case TokenType.FORMALIZED_COMMENTS_NEED:
+                case TokenType.FORMALIZED_COMMENTS_SEE:
+                case TokenType.FORMALIZED_COMMENTS_TODO:
+                    // Register the end of the params field inside the formalized Comments
+                    InsideParamsField = false;
+                    break;
+                case TokenType.MULTILINES_COMMENTS_START:
+                    // Register the begin of the formalized Comments
+                    InsideMultilineComments = true;
+                    break;
+                case TokenType.MULTILINES_COMMENTS_STOP:
+                    // Register the end of the formalized Comments
+                    InsideMultilineComments = false;
+                    return;
             }
+            
+            // Avoid setting last significative token for multiline Comments
+            if (InsideMultilineComments) { return;}
+
             // Register the end of a SYMBOLIC CHARACTERS? clause
             if (InsideSymbolicCharacterDefinitions &&
                 newToken.TokenType != TokenType.SYMBOLIC && newToken.TokenType != TokenType.CHARACTERS &&
@@ -404,7 +460,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool AtBeginningOfSentence
         {
-            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC ||
+            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FORMALIZED_COMMENTS_STOP ||
                     // Special cases : compiler directives sometimes without a final PeriodSeparator
                     // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
                     //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.

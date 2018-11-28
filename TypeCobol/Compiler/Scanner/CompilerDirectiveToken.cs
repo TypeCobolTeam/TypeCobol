@@ -22,9 +22,9 @@ namespace TypeCobol.Compiler.Scanner
         /// Group all the tokens contributing to a compiler directive on the same line
         /// </summary>
         public CompilerDirectiveToken(CompilerDirective compilerDirective, IList<Token> originalTokens, bool hasError)
-            : base((compilerDirective.Type == CompilerDirectiveType.COPY || compilerDirective.Type == CompilerDirectiveType.EXEC_SQL_INCLUDE) ? TokenType.CopyImportDirective :
-                   (compilerDirective.Type == CompilerDirectiveType.REPLACE || compilerDirective.Type == CompilerDirectiveType.REPLACE_OFF) ? TokenType.ReplaceDirective :
-                    TokenType.CompilerDirective, originalTokens)
+            : base((compilerDirective.Type == CompilerDirectiveType.COPY || compilerDirective.Type == CompilerDirectiveType.EXEC_SQL_INCLUDE) ? TokenType.COPY_IMPORT_DIRECTIVE :
+                   (compilerDirective.Type == CompilerDirectiveType.REPLACE || compilerDirective.Type == CompilerDirectiveType.REPLACE_OFF) ? TokenType.REPLACE_DIRECTIVE :
+                    TokenType.COMPILER_DIRECTIVE, originalTokens)
         {
             CompilerDirective = compilerDirective;
             HasError = hasError;

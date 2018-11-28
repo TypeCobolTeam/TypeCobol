@@ -54,7 +54,11 @@ namespace TypeCobol.Compiler.Scanner
         // 507 -> 509 : Compiler directives
         CompilerDirective = 507,
         // 510 -> 510 : Internal token groups - used by the preprocessor only
-        InternalTokenGroup = 510
+        InternalTokenGroup = 510,
+        // 511 -> 522 : Formalized Comments Tokens
+        FormalizedCommentsFamily = 511,
+        // 523 -> 524 : Multilines Comments Tokens
+        MultilinesCommentsFamily = 523
     }
 
     // INFO : the list below is generated from the file Documentation/Studies/CobolLexer.tokens.xls
@@ -570,11 +574,26 @@ namespace TypeCobol.Compiler.Scanner
         PRIVATE=503,
         IN_OUT=504,
         STRICT=505,
-        QuestionMark=506,
-        CompilerDirective=507,
-        CopyImportDirective=508,
-        ReplaceDirective=509,
-        ContinuationTokenGroup=510,
+        QUESTION_MARK=506,
+        COMPILER_DIRECTIVE=507,
+        COPY_IMPORT_DIRECTIVE=508,
+        REPLACE_DIRECTIVE=509,
+        CONTINUATION_TOKEN_GROUP=510,
+        FORMALIZED_COMMENTS_START = 511,
+        FORMALIZED_COMMENTS_STOP = 512,
+        FORMALIZED_COMMENTS_DESCRIPTION = 513,
+        FORMALIZED_COMMENTS_PARAMETERS = 514,
+        FORMALIZED_COMMENTS_DEPRECATED = 515,
+        FORMALIZED_COMMENTS_REPLACED_BY = 516,
+        FORMALIZED_COMMENTS_RESTRICTION = 517,
+        FORMALIZED_COMMENTS_NEED = 518,
+        FORMALIZED_COMMENTS_SEE = 519,
+        FORMALIZED_COMMENTS_TODO = 520,
+        FORMALIZED_COMMENTS_VALUE = 521,
+        AT_SIGN = 522,
+        MULTILINES_COMMENTS_START = 523,
+        MULTILINES_COMMENTS_STOP = 524,
+
 
 
     }
@@ -583,7 +602,7 @@ namespace TypeCobol.Compiler.Scanner
         private static readonly TokenType[] TypeCobolTokenType =
         {
             TokenType.DECLARE, TokenType.END_DECLARE, TokenType.PUBLIC, TokenType.PRIVATE, TokenType.IN_OUT,
-            TokenType.UNSAFE, TokenType.STRICT, TokenType.QuestionMark
+            TokenType.UNSAFE, TokenType.STRICT, TokenType.QUESTION_MARK
         };
 
         private static readonly TokenType[] Cobol2002TokenType = {TokenType.STRONG, TokenType.TYPEDEF};

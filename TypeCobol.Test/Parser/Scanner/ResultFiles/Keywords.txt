@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 [1,4:*CBL]<ASTERISK_CBL>
 [5,5: ]<SpaceSeparator>
 [6,13:*CONTROL]<ASTERISK_CONTROL>
@@ -29,5 +29,5 @@
 
 -- Line 5 --
 [1,1: ]<SpaceSeparator>
-*** DIRECTIVE CBL|ARCH=6 ([2,12:CBL ARCH(6)]<CompilerDirective>) ***
+*** DIRECTIVE CBL|ARCH=6 ([2,12:CBL ARCH(6)]<COMPILER_DIRECTIVE>) ***
 
