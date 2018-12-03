@@ -12,7 +12,7 @@ using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.Report
 {
-    public class CopyMoveInitializeReport<TCtx> : AbstractReport, NodeListener<TCtx> where TCtx : class
+    public class CopyMoveInitializeReport : AbstractReport, NodeListener 
     {
         /// <summary>
         /// The list of all MoveStatement and InitializeStatement Nodes
@@ -44,9 +44,8 @@ namespace TypeCobol.Compiler.Report
         /// Collect Move and Initialize Nodes.
         /// </summary>
         /// <param name="node">The Node</param>
-        /// <param name="context">The parsing context</param>
         /// <param name="program">The underlying program.</param>
-        public void OnNode(Node node, TCtx context, Program program)
+        public void OnNode(Node node, Program program)
         {
             if (node.CodeElement != null)
             {
