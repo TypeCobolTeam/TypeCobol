@@ -59,7 +59,7 @@ namespace TypeCobol.Test.Parser.Performance
             ExecuteInceremental(compiler, stats, newLineIndex, newLineText);
 
             // Display a performance report
-            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name + "-Incremental", stats, compiler.CompilationResultsForProgram);
+            TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name, stats, compiler.CompilationResultsForProgram);
         }
 
         private static void ExecuteInceremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText )
@@ -174,7 +174,7 @@ namespace TypeCobol.Test.Parser.Performance
             stats.TotalCodeElements = documentWarmup.Results.CodeElementsDocumentSnapshot.CodeElements.Count();
 
 
-            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), Path.GetFileNameWithoutExtension(path) + "-FullParsing", stats, null);
+            TestUtils.CreateRunReport("FullParsing", TestUtils.GetReportDirectoryPath(), Path.GetFileNameWithoutExtension(path), stats);
         }
     }
 }
