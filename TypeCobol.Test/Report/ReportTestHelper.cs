@@ -29,23 +29,23 @@ namespace TypeCobol.Test.Report
         /// <param name="fileName">The file name to parse</param>
         /// <param name="reportFileName">The file that contains the expected report</param>
         /// <param name="reportType">The Type of the IReport instance to be instantiated.</param>
-        public static void ParseWithNodeListenerReportCompare<TCtx>(string fileName, string reportFileName, System.Type reportType) where TCtx : class
+        public static void ParseWithNodeListenerReportCompare(string fileName, string reportFileName, System.Type reportType)
         {
             Assert.IsTrue(Tools.Reflection.IsTypeOf(reportType, typeof(IReport)));
             IReport report = null;//Variable to receive the created report instance.     
             
-            TypeCobol.Compiler.Parser.NodeListenerFactory<TCtx> factory = () =>
+            TypeCobol.Compiler.Parser.NodeListenerFactory factory = () =>
             {
                 object obj = System.Activator.CreateInstance(reportType, args: Path.GetFullPath(reportFileName));
-                Assert.IsTrue(obj is NodeListener<TCtx>);
-                TypeCobol.Compiler.Parser.NodeListener<TCtx> nodeListener = (TypeCobol.Compiler.Parser.NodeListener<TCtx>)obj;
+                Assert.IsTrue(obj is NodeListener);
+                TypeCobol.Compiler.Parser.NodeListener nodeListener = (TypeCobol.Compiler.Parser.NodeListener)obj;
                 Assert.IsNotNull(nodeListener);
                 report = (IReport)nodeListener;
                 return nodeListener;
             };
 
             //Register the Node Listener Factory
-            TypeCobol.Compiler.Parser.NodeDispatcher<TCtx>.RegisterStaticNodeListenerFactory(factory);
+            TypeCobol.Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(factory);
 
             try
             {
@@ -79,7 +79,7 @@ namespace TypeCobol.Test.Report
             }
             finally
             {
-                TypeCobol.Compiler.Parser.NodeDispatcher<TCtx>.RemoveStaticNodeListenerFactory(factory);
+                TypeCobol.Compiler.Parser.NodeDispatcher.RemoveStaticNodeListenerFactory(factory);
             }
         }
     }

@@ -12,19 +12,19 @@ namespace TypeCobol.Test.Report
         [TestCategory("Report")]
         public void TestReportMoveInitializeInCopy()
         {
-            ReportTestHelper.ParseWithNodeListenerReportCompare<TypeCobol.Compiler.CodeElements.CodeElement>("RPTCPY01.cbl", "RPTCPY01.rpt",
-                typeof(TypeCobol.Compiler.Report.CopyMoveInitializeReport<TypeCobol.Compiler.CodeElements.CodeElement>));
+            ReportTestHelper.ParseWithNodeListenerReportCompare("RPTCPY01.cbl", "RPTCPY01.rpt",
+                typeof(TypeCobol.Compiler.Report.CopyMoveInitializeReport));
 
-            ReportTestHelper.ParseWithNodeListenerReportCompare<TypeCobol.Compiler.CodeElements.CodeElement>("RPTCPY02.cbl", "RPTCPY02.rpt",
-                typeof(TypeCobol.Compiler.Report.CopyMoveInitializeReport<TypeCobol.Compiler.CodeElements.CodeElement>));
+            ReportTestHelper.ParseWithNodeListenerReportCompare("RPTCPY02.cbl", "RPTCPY02.rpt",
+                typeof(TypeCobol.Compiler.Report.CopyMoveInitializeReport));
         }
 
         [TestMethod]
         [TestCategory("Report")]
         public void TestReportCall()
         {
-            ReportTestHelper.ParseWithNodeListenerReportCompare<TypeCobol.Compiler.CodeElements.CodeElement>("RPTCAL01.cbl", "RPTCAL01.rpt",
-                typeof(TypeCobol.Compiler.Report.ZCallPgmReport<TypeCobol.Compiler.CodeElements.CodeElement>));
+            ReportTestHelper.ParseWithNodeListenerReportCompare("RPTCAL01.cbl", "RPTCAL01.rpt",
+                typeof(TypeCobol.Compiler.Report.ZCallPgmReport));
         }
     }
 }

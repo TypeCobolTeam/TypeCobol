@@ -179,41 +179,21 @@ namespace TypeCobol.Server
                 {
                     if (!string.IsNullOrEmpty(config.ReportCopyMoveInitializeFilePath))
                     {
-                        if (config.UseAntlrProgramParsing)
-                        {
-                            Compiler.Parser.NodeDispatcher<Antlr4.Runtime.ParserRuleContext>.RegisterStaticNodeListenerFactory(
-                                () => {
-                                    var report = new Compiler.Report.CopyMoveInitializeReport<Antlr4.Runtime.ParserRuleContext>(config.ReportCopyMoveInitializeFilePath);
-                                    reports.Add(report); return report;
-                                });
-                        }
-                        else
-                        {
-                            Compiler.Parser.NodeDispatcher<Compiler.CodeElements.CodeElement>.RegisterStaticNodeListenerFactory(
-                                () => {
-                                    var report = new Compiler.Report.CopyMoveInitializeReport<Compiler.CodeElements.CodeElement>(config.ReportCopyMoveInitializeFilePath);
-                                    reports.Add(report); return report;
-                                });
-                        }
+                        Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
+                            () => {
+                                var report = new Compiler.Report.CopyMoveInitializeReport(config.ReportCopyMoveInitializeFilePath);
+                                reports.Add(report); return report;
+                            });
+                        
                     }
                     if (!string.IsNullOrEmpty(config.ReportZCallFilePath))
                     {
-                        if (config.UseAntlrProgramParsing)
-                        {
-                            Compiler.Parser.NodeDispatcher<Antlr4.Runtime.ParserRuleContext>.RegisterStaticNodeListenerFactory(
-                                () => {
-                                    var report = new Compiler.Report.ZCallPgmReport<Antlr4.Runtime.ParserRuleContext>(config.ReportZCallFilePath);
-                                    reports.Add(report); return report;
-                                });
-                        }
-                        else
-                        {
-                            Compiler.Parser.NodeDispatcher<Compiler.CodeElements.CodeElement>.RegisterStaticNodeListenerFactory(
-                                () => {
-                                    var report = new Compiler.Report.ZCallPgmReport<Compiler.CodeElements.CodeElement>(config.ReportZCallFilePath);
-                                    reports.Add(report); return report;
-                                });
-                        }
+                        Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
+                            () => {
+                                var report = new Compiler.Report.ZCallPgmReport(config.ReportZCallFilePath);
+                                reports.Add(report); return report;
+                            });
+                        
                     }
                 }
                 #endregion
