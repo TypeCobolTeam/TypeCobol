@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Nodes;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Castle.Core.Internal;
+using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -82,14 +83,13 @@ namespace TypeCobol.Compiler.CodeModel
         }
 
         private List<T> GetFromTableAndEnclosing<T>(string head,
-            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, SymbolTable symbolTable = null) where T : Node
+            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, Scope maxScope = Scope.Intrinsic) where T : Node
         {
-            symbolTable = symbolTable ?? this;
-            var table = getTableFunction.Invoke(symbolTable);
+            var table = getTableFunction.Invoke(this);
             var values = GetFromTable(head, table);
-            if (EnclosingScope != null)
+            if (EnclosingScope != null && EnclosingScope.CurrentScope >= maxScope)
             {
-                values.AddRange(EnclosingScope.GetFromTableAndEnclosing(head, getTableFunction));
+                values.AddRange(EnclosingScope.GetFromTableAndEnclosing(head, getTableFunction, maxScope));
             }
             return values;
         }
@@ -194,7 +194,7 @@ namespace TypeCobol.Compiler.CodeModel
         private IList<DataDefinition> GetVariables(string name)
         {
             //Try to get variable in the current program
-            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable);
+            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable, Scope.GlobalStorage);
            
             return found;
         }
@@ -512,12 +512,12 @@ namespace TypeCobol.Compiler.CodeModel
                 var dataType = GetAllEnclosingTypeReferences().FirstOrDefault(k => k.Key == currentTypeDef); //Let's get typereferences (built by TypeCobolLinker phase)
                 if (dataType.Key == null || dataType.Value == null)
                     return;
-                var references = dataType.Value;
+                IEnumerable<DataDefinition> references = dataType.Value;
 
                 //If typedefcontext is set : Ignore references of this typedefContext to avoid loop seeking
                 //                           Only takes variable references that are declared inside the typeDefContext
                 if (typeDefContext != null)
-                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext).ToList();
+                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
 
                 var primaryPath = completeQualifiedNames.Last().ToArray(); //PrmiaryPath that will be added in front of every reference's path found
                 foreach (var reference in references)
@@ -557,11 +557,11 @@ namespace TypeCobol.Compiler.CodeModel
             var dataType = GetAllEnclosingTypeReferences().FirstOrDefault(k => k.Key == currentDataDefinition);
             if (dataType.Key == null || dataType.Value == null)
                 return;
-            var references = dataType.Value;
+            IEnumerable<DataDefinition> references = dataType.Value;
             //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
             //                              + Only takes variable references that are declared inside the typeDefContext
             if (typeDefContext != null)
-                references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext).ToList();
+                references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
             var typePath = completeQualifiedNames.Last().ToArray();
             var referenceCounter = 0;
             foreach (var reference in references)
@@ -741,6 +741,8 @@ namespace TypeCobol.Compiler.CodeModel
         private IDictionary<string, List<Section>> Sections =
             new Dictionary<string, List<Section>>(StringComparer.OrdinalIgnoreCase);
 
+        private static IList<Section> EmptySectionList = new ImmutableList<Section>();
+
         internal void AddSection(Section section)
         {
             Add(Sections, section);
@@ -748,7 +750,10 @@ namespace TypeCobol.Compiler.CodeModel
 
         public IList<Section> GetSection(string name)
         {
-            return GetFromTableAndEnclosing(name, GetSectionTable);
+            Sections.TryGetValue(name, out var values);
+            if (values != null) return values.ToList();  //.ToList so the caller cannot modify our stored list
+
+            return EmptySectionList;
         }
 
         private IDictionary<string, List<Section>> GetSectionTable(SymbolTable symbolTable)
@@ -763,6 +768,8 @@ namespace TypeCobol.Compiler.CodeModel
         private IDictionary<string, List<Paragraph>> Paragraphs =
             new Dictionary<string, List<Paragraph>>(StringComparer.OrdinalIgnoreCase);
 
+        private static IList<Paragraph> EmptyParagraphList = new ImmutableList<Paragraph>();
+
         internal void AddParagraph(Paragraph paragraph)
         {
             Add(Paragraphs, paragraph);
@@ -770,7 +777,10 @@ namespace TypeCobol.Compiler.CodeModel
 
         public IList<Paragraph> GetParagraph(string name)
         {
-            return GetFromTableAndEnclosing(name, GetParagraphTable);
+            Paragraphs.TryGetValue(name, out var values);
+            if (values != null) return values.ToList();  //.ToList so the caller cannot modify our stored list
+
+            return EmptyParagraphList;
         }
 
         private IDictionary<string, List<Paragraph>> GetParagraphTable(SymbolTable symbolTable)
@@ -1127,7 +1137,7 @@ namespace TypeCobol.Compiler.CodeModel
         [NotNull]
         private List<Program> GetProgram(string name)
         {
-            return GetFromTableAndEnclosing(name, GetProgramsTable);
+            return GetFromTableAndEnclosing(name, GetProgramsTable, Scope.Namespace);
         }
 
         private IDictionary<string, List<Program>> GetProgramsTable(SymbolTable symbolTable)
