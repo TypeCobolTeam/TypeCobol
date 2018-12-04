@@ -147,7 +147,8 @@ namespace TypeCobol.Compiler.Diagnostics
                     var potentialVariables =
                         node.SymbolTable.GetVariablesExplicit(new URI(functionCaller.FunctionCall.FunctionName));
 
-                    if (functionDeclarations.Count == 1 && !potentialVariables.Any())
+                    var potentialVariablesCount = potentialVariables.Count();
+                    if (functionDeclarations.Count == 1 && potentialVariablesCount == 0)
                     {
                         functionCaller.FunctionDeclaration = functionDeclarations.First();
                         return; //Everything seems to be ok, lets continue on the next one
@@ -157,7 +158,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         node.SymbolTable.GetFunction(new URI(functionCaller.FunctionCall.FunctionName), null,
                             functionCaller.FunctionCall.Namespace);
 
-                    if (potentialVariables.Count() > 1)
+                    if (potentialVariablesCount > 1)
                     {
                         //If there is more than one variable with the same name, it's ambiguous
                         message = string.Format("Call to '{0}'(no arguments) is ambigous. '{0}' is defined {1} times",
@@ -167,7 +168,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return;
                     }
 
-                    if (functionDeclarations.Count > 1 && !potentialVariables.Any())
+                    if (functionDeclarations.Count > 1 && potentialVariablesCount == 0)
                     {
                         message = string.Format("No suitable function signature found for '{0}(no arguments)'",
                             functionCaller.FunctionCall.FunctionName);
@@ -175,7 +176,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return;
                     }
 
-                    if (functionDeclarations.Count >= 1 && potentialVariables.Count() == 1)
+                    if (functionDeclarations.Count >= 1 && potentialVariablesCount == 1)
                     {
                         message = string.Format("Warning: Risk of confusion in call of '{0}'",
                             functionCaller.FunctionCall.FunctionName);
@@ -183,7 +184,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return;
                     }
 
-                    if (functionDeclarations.Count == 0 && !potentialVariables.Any())
+                    if (functionDeclarations.Count == 0 && potentialVariablesCount == 0)
                     {
                         message = string.Format("No function or variable found for '{0}'(no arguments)",
                             functionCaller.FunctionCall.FunctionName);
@@ -191,7 +192,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         return; //Do not continue the function/procedure does not exists
                     }
 
-                    if (potentialVariables.Count() == 1)
+                    if (potentialVariablesCount == 1)
                         return; //Stop here, it's a standard Cobol call
                 }
 
