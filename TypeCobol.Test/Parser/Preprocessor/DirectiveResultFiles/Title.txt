@@ -24,7 +24,7 @@
 *** DIRECTIVE TITLE "Another title" ([24,28:TITLE]<TITLE>[29,29: ]<SpaceSeparator>) ***
 
 -- Line 9 --
-+++ CONTINUATION OF COMPILERDIRECTIVE ([8,22+:"Another title"]<AlphanumericLiteral>(",Y,Y){Another title}) +++
++++ CONTINUATION OF COMPILER_DIRECTIVE ([8,22+:"Another title"]<AlphanumericLiteral>(",Y,Y){Another title}) +++
 
 -- Line 10 --
 [8,8+:.]<PeriodSeparator>

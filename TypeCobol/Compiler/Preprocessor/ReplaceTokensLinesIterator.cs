@@ -215,7 +215,7 @@ namespace TypeCobol.Compiler.Preprocessor
 #endif
 
                 // If the next token is a REPLACE directive, update the current replace directive in effect
-                while (nextToken.TokenType == TokenType.REPLACEDIRECTIVE)
+                while (nextToken.TokenType == TokenType.REPLACE_DIRECTIVE)
                 {
                     // Reset previous replace operations
                     currentPosition.ReplaceOperation = null;

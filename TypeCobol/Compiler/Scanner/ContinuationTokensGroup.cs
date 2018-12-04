@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Scanner
     public class ContinuationTokensGroup : TokensGroup
     {
         public ContinuationTokensGroup(TokensGroup firstTokenGroup, IList<Token> originalTokens) :
-            base(TokenType.CONTINUATIONTOKENGROUP, originalTokens)
+            base(TokenType.CONTINUATION_TOKEN_GROUP, originalTokens)
         {
             FirstTokenGroup = firstTokenGroup;
         }

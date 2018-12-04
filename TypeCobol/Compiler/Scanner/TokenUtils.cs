@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Scanner
             }
             // Register the token strings corresponding to each token type (for keywords only)
             int keywordBegin = (int)TokenType.UserDefinedWord + 1;
-            int keywordEnd = (int)TokenType.QUESTIONMARK - 1;
+            int keywordEnd = (int)TokenType.QUESTION_MARK - 1;
             tokenStringFromTokenType = new string[types.Length];
             for (int c = keywordBegin; c < types.Length; c++)
             {
@@ -95,32 +95,32 @@ namespace TypeCobol.Compiler.Scanner
             {
                 case "DESCRIPTION":
                 case "DESC":
-                    tokenType = TokenType.FORMCOMSDESCRIPTION;
+                    tokenType = TokenType.FORMALIZED_COMMENTS_DESCRIPTION;
                     break;
                 case "PARAMETERS":
                 case "PARAMS":
-                    tokenType = TokenType.FORMCOMSPARAMETERS;
+                    tokenType = TokenType.FORMALIZED_COMMENTS_PARAMETERS;
                     break;
                 case "DEPRECATED":
                 case "DEPREC":
-                    tokenType = TokenType.FORMCOMSDEPRECATED;
+                    tokenType = TokenType.FORMALIZED_COMMENTS_DEPRECATED;
                     break;
                 case "REPLACEDBY":
                 case "REPLBY":
-                    tokenType = TokenType.FORMCOMSREPLACEDBY;
+                    tokenType = TokenType.FORMALIZED_COMMENTS_REPLACED_BY;
                     break;
                 case "RESTRICTION":
                 case "RSTRIC":
-                    tokenType = TokenType.FORMCOMSRESTRICTION;
+                    tokenType = TokenType.FORMALIZED_COMMENTS_RESTRICTION;
                     break;
                 case "NEED":
-                    tokenType = TokenType.FORMCOMSNEED;
+                    tokenType = TokenType.FORMALIZED_COMMENTS_NEED;
                     break;
                 case "SEE":
-                    tokenType = TokenType.FORMCOMSSEE;
+                    tokenType = TokenType.FORMALIZED_COMMENTS_SEE;
                     break;
                 case "TODO":
-                    tokenType = TokenType.FORMCOMSTODO;
+                    tokenType = TokenType.FORMALIZED_COMMENTS_TODO;
                     break;
                 default:
                     tokenType = TokenType.UserDefinedWord;
@@ -267,7 +267,7 @@ namespace TypeCobol.Compiler.Scanner
                         return "user defined word";
                     case TokenType.SymbolicCharacter:
                         return "symbolic character";
-                    case TokenType.QUESTIONMARK:
+                    case TokenType.QUESTION_MARK:
                         return "?";
                     default:
                         return "...";

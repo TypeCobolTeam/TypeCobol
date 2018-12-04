@@ -653,12 +653,12 @@ namespace TypeCobol.Compiler.Scanner
                         startIndex + 2);
                     // consume the * char and the three < chars
                     currentIndex += 3;
-                    return new Token(TokenType.MULTILINESCOMMENTSSTOP, startIndex, startIndex + 2, tokensLine);
+                    return new Token(TokenType.MULTILINES_COMMENTS_STOP, startIndex, startIndex + 2, tokensLine);
                 }
                 else if (line[currentIndex] == '>' && line[currentIndex - 1] == '*' && line.Length > currentIndex + 1 && line[currentIndex + 1] == '>')
                 {
                     currentIndex += 2;
-                    return new Token(TokenType.MULTILINESCOMMENTSSTOP, startIndex-1, startIndex + 1, tokensLine);
+                    return new Token(TokenType.MULTILINES_COMMENTS_STOP, startIndex-1, startIndex + 1, tokensLine);
                 }
                 else
                 {
@@ -679,7 +679,7 @@ namespace TypeCobol.Compiler.Scanner
                         return new Token(TokenType.MinusOperator, startIndex, currentIndex - 1, tokensLine);
                     case '@':
                         currentIndex++;
-                        return new Token(TokenType.ATSIGN, startIndex, currentIndex - 1, tokensLine); 
+                        return new Token(TokenType.AT_SIGN, startIndex, currentIndex - 1, tokensLine); 
                     case ':':
                         currentIndex++;
                         return new Token(TokenType.ColonSeparator, startIndex, currentIndex - 1, tokensLine);
@@ -692,7 +692,7 @@ namespace TypeCobol.Compiler.Scanner
                                 startIndex + 3);
                             // consume the * char and the three < chars
                             currentIndex += 4;
-                            return new Token(TokenType.FORMALIZEDCOMMENTSSTOP, startIndex, startIndex + 3, tokensLine);
+                            return new Token(TokenType.FORMALIZED_COMMENTS_STOP, startIndex, startIndex + 3, tokensLine);
                         }
                         currentIndex ++;
                         return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
@@ -702,19 +702,19 @@ namespace TypeCobol.Compiler.Scanner
                             // We are in the case of a Formalize Comment stop with the '*' on column 7
                             // consume the three > chars
                             currentIndex += 3;
-                            return new Token(TokenType.FORMALIZEDCOMMENTSSTOP, startIndex-1, startIndex + 2, tokensLine);
+                            return new Token(TokenType.FORMALIZED_COMMENTS_STOP, startIndex-1, startIndex + 2, tokensLine);
                         }
                         currentIndex++;
                         return new Token(TokenType.GreaterThanOperator, startIndex, currentIndex - 1, tokensLine);
                     default:
                         // If the previous significant Token is an At Sign then the following word have to be a field keyword
                         // If the previous significant Token is a Minus Operator then the following have to be a key in case of Params field
-                        if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.ATSIGN ||
+                        if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.AT_SIGN ||
                             (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.MinusOperator &&
                              tokensLine.ScanState.InsideParamsField))
                         {
                             Token token = ScanCharacterString(startIndex);
-                            if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.ATSIGN
+                            if (tokensLine.ScanState.LastSignificantToken.TokenType == TokenType.AT_SIGN
                                 && token.TokenFamily != TokenFamily.FormalizedCommentsFamily)
                             {
                                 tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentKeyword, token);
@@ -726,7 +726,7 @@ namespace TypeCobol.Compiler.Scanner
                             }
                             return token;
                         }
-                        return ScanUntilDelimiter(startIndex, TokenType.FORMCOMSVALUE, "*>>>");
+                        return ScanUntilDelimiter(startIndex, TokenType.FORMALIZED_COMMENTS_VALUE, "*>>>");
                 }
             }
 
@@ -754,9 +754,9 @@ namespace TypeCobol.Compiler.Scanner
                         return ScanOneCharFollowedBySpace(startIndex, TokenType.CommaSeparator, MessageCode.InvalidCharAfterComma, false);
                     }
                 case '?':
-                    //QuestionMark=460,
+                    //QUESTION_MARK=460,
                     //TypeCobol
-                    return ScanOneCharFollowedBySpace(startIndex, TokenType.QUESTIONMARK, MessageCode.QuestionMarkShouldBeFollowedBySpace);         
+                    return ScanOneCharFollowedBySpace(startIndex, TokenType.QUESTION_MARK, MessageCode.QuestionMarkShouldBeFollowedBySpace);         
                 case ';':
                     //SemicolonSeparator=3,
                     // p46: A separator semicolon is composed of a semicolon followed by a space.
@@ -841,7 +841,7 @@ namespace TypeCobol.Compiler.Scanner
                                 startIndex + 3);
                             // consume the * char and the three < chars
                             currentIndex += 4;
-                            return new Token(TokenType.FORMALIZEDCOMMENTSSTART, startIndex, startIndex + 3, tokensLine);
+                            return new Token(TokenType.FORMALIZED_COMMENTS_START, startIndex, startIndex + 3, tokensLine);
                         }
                         else
                         {
@@ -852,7 +852,7 @@ namespace TypeCobol.Compiler.Scanner
                             // We are in the case of a Multiline Comment start
                             // consume the * char and the two < chars
                             currentIndex += 3;
-                            return new Token(TokenType.MULTILINESCOMMENTSSTART, startIndex, startIndex + 2, tokensLine);
+                            return new Token(TokenType.MULTILINES_COMMENTS_START, startIndex, startIndex + 2, tokensLine);
                         }
                     }
                     else
@@ -963,13 +963,13 @@ namespace TypeCobol.Compiler.Scanner
                             // We are in the case of a Formalize Comment start
                             // consume the three < chars
                             currentIndex += 3;
-                            return new Token(TokenType.FORMALIZEDCOMMENTSSTART, startIndex-1, startIndex + 2, tokensLine);
+                            return new Token(TokenType.FORMALIZED_COMMENTS_START, startIndex-1, startIndex + 2, tokensLine);
                         }
                         else
                         {
                             // We are in the case of a Multiline comments start
                             currentIndex += 2;
-                            return new Token(TokenType.MULTILINESCOMMENTSSTART, startIndex-1, startIndex + 1, tokensLine);
+                            return new Token(TokenType.MULTILINES_COMMENTS_START, startIndex-1, startIndex + 1, tokensLine);
                         }
                     }
                     else
@@ -2127,7 +2127,7 @@ namespace TypeCobol.Compiler.Scanner
 
             // Create a single token including all the chars participating in the CBL/PROCESS directive 
             int stopIndex = currentIndex - 1;
-            Token sourceToken = new Token(TokenType.COMPILERDIRECTIVE, startIndex, stopIndex, tokensLine);
+            Token sourceToken = new Token(TokenType.COMPILER_DIRECTIVE, startIndex, stopIndex, tokensLine);
             
             // Wrap the source token in a CompilerDirectiveToken (which is a GroupToken by defaut)
             IList<Token> originalTokens = new List<Token>();

@@ -1,8 +1,8 @@
 -- Line 1 --
-*** DIRECTIVE CBL ([1,3:CBL]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL ([1,3:CBL]<COMPILER_DIRECTIVE>) ***
 
 -- Line 2 --
-*** DIRECTIVE PROCESS ([4,10:PROCESS]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE PROCESS ([4,10:PROCESS]<COMPILER_DIRECTIVE>) ***
 
 -- Line 3 --
 [8,15:CODEPAGE]<UserDefinedWord>
@@ -11,29 +11,29 @@
 [21,21:)]<RightParenthesisSeparator>
 
 -- Line 4 --
-*** DIRECTIVE CBL|NOADATA|AFP=VOLATILE|ARCH=6|BUFSIZE=1K ([8,53:CBL NOADATA,AFP(VOLATILE),ARCH(6), BUFSIZE(1K)]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|NOADATA|AFP=VOLATILE|ARCH=6|BUFSIZE=1K ([8,53:CBL NOADATA,AFP(VOLATILE),ARCH(6), BUFSIZE(1K)]<COMPILER_DIRECTIVE>) ***
 
 -- Line 5 --
-*** DIRECTIVE PROCESS|CICS=’string2’|CICS="string3"|CURRENCY='EUR' ([8,62:PROCESS CICS(’string2’),CICS("string3"),CURRENCY('EUR')]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE PROCESS|CICS=’string2’|CICS="string3"|CURRENCY='EUR' ([8,62:PROCESS CICS(’string2’),CICS("string3"),CURRENCY('EUR')]<COMPILER_DIRECTIVE>) ***
 
 -- Line 6 --
-*** DIRECTIVE CBL|EXIT= INEXIT([’str1’,]mod1) LIBEXIT([’str2’,]mod2)  ([4,59:CBL EXIT( INEXIT([’str1’,]mod1) LIBEXIT([’str2’,]mod2) )]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|EXIT= INEXIT([’str1’,]mod1) LIBEXIT([’str2’,]mod2)  ([4,59:CBL EXIT( INEXIT([’str1’,]mod1) LIBEXIT([’str2’,]mod2) )]<COMPILER_DIRECTIVE>) ***
 
 -- Line 7 --
-*** DIRECTIVE INVALID SYNTAX -> PROCESS ([1,35:PROCESS FLAG(I,I FLAGSTD(x[yy][,0])]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE INVALID SYNTAX -> PROCESS ([1,35:PROCESS FLAG(I,I FLAGSTD(x[yy][,0])]<COMPILER_DIRECTIVE>) ***
 
 -- Line 8 --
 
 -- Line 9 --
 [8,10:   ]<SpaceSeparator>
-*** DIRECTIVE CBL|DATA=31 ([11,72:CBL DATA(31)                                                  ]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|DATA=31 ([11,72:CBL DATA(31)                                                  ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 10 --
 [8,72:-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-  ]<CommentLine>
 
 -- Line 11 --
 [8,9:  ]<SpaceSeparator>
-*** DIRECTIVE CBL|OFFSET ([10,72:CBL OFFSET                                                     ]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|OFFSET ([10,72:CBL OFFSET                                                     ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 12 --
 [8,72:*****************************************************************]<CommentLine>
@@ -45,35 +45,35 @@
 [8,72:========================*                                        ]<CommentLine>
 
 -- Line 15 --
-*** DIRECTIVE CBL|ARITH=EXTEND ([8,72:CBL ARITH(EXTEND)                                                ]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|ARITH=EXTEND ([8,72:CBL ARITH(EXTEND)                                                ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 16 --
 [8,72: CST 26/01/2011 RU012046 DEB                                     ]<CommentLine>
 
 -- Line 17 --
-*** DIRECTIVE CBL|DATA=31 ([7,72:CBL DATA(31)                                                      ]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|DATA=31 ([7,72:CBL DATA(31)                                                      ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 18 --
-*** DIRECTIVE CBL|OPTIMIZE=FULL|TEST=NONE,SYM|SSRANGE|FLAG=I,E ([8,72:CBL OPTIMIZE(FULL),TEST(NONE,SYM),SSRANGE,FLAG(I,E)              ]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|OPTIMIZE=FULL|TEST=NONE,SYM|SSRANGE|FLAG=I,E ([8,72:CBL OPTIMIZE(FULL),TEST(NONE,SYM),SSRANGE,FLAG(I,E)              ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 19 --
 [8,72:-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-  ]<CommentLine>
 
 -- Line 20 --
 [8,8: ]<SpaceSeparator>
-*** DIRECTIVE CBL|OPT=FULL ([9,72:CBL OPT(FULL)                                                   ]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|OPT=FULL ([9,72:CBL OPT(FULL)                                                   ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 21 --
 [8,20:**           ]<CommentLine>
 
 -- Line 22 --
-*** DIRECTIVE CBL|DATA=31 ([7,72:CBL DATA(31)                                                      ]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE CBL|DATA=31 ([7,72:CBL DATA(31)                                                      ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 23 --
 [8,72:-----------------------------------------------------------------]<CommentLine>
 
 -- Line 24 --
-*** DIRECTIVE PROCESS|ARITH=EXTEND ([8,72:PROCESS ARITH(EXTEND)                                            ]<COMPILERDIRECTIVE>) ***
+*** DIRECTIVE PROCESS|ARITH=EXTEND ([8,72:PROCESS ARITH(EXTEND)                                            ]<COMPILER_DIRECTIVE>) ***
 
 -- Line 25 --
 [8,21:IDENTIFICATION]<IDENTIFICATION>

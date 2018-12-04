@@ -13,10 +13,10 @@
 *** DIRECTIVE SERVICE_RELOAD Test3 ([24,30:service]<SERVICE_CD>[31,38:        ]<SpaceSeparator>) ***
 
 -- Line 4 --
-+++ CONTINUATION OF COMPILERDIRECTIVE ([8,13:reload]<RELOAD>[14,14: ]<SpaceSeparator>) +++
++++ CONTINUATION OF COMPILER_DIRECTIVE ([8,13:reload]<RELOAD>[14,14: ]<SpaceSeparator>) +++
 
 -- Line 5 --
-+++ CONTINUATION OF CONTINUATIONTOKENGROUP ([8,12:Test3]<UserDefinedWord>) +++
++++ CONTINUATION OF CONTINUATION_TOKEN_GROUP ([8,12:Test3]<UserDefinedWord>) +++
 [13,13: ]<SpaceSeparator>
 [14,20:DISPLAY]<DISPLAY>
 [21,21: ]<SpaceSeparator>

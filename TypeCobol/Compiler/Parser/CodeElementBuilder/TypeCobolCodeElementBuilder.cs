@@ -322,9 +322,9 @@ namespace TypeCobol.Compiler.Parser
                 parameter.InitialValue = CobolWordsBuilder.CreateValue(valueClauseContext.value2());
             }
 
-            if (context.QUESTIONMARK() != null)
+            if (context.QUESTION_MARK() != null)
             {
-                parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QUESTIONMARK()));
+                parameter.Omittable = new SyntaxProperty<bool>(true, ParseTreeUtils.GetTokenFromTerminalNode(context.QUESTION_MARK()));
             }
 
             return parameter;

@@ -41,7 +41,7 @@ namespace TypeCobol.Compiler.Nodes {
                 int lastComputedLine = 0;
                 foreach (var token in CodeElement.ConsumedTokens)
                 {//JCM: Don't take in account imported token.
-                    if (token.TokenType == TokenType.FORMALIZEDCOMMENTSSTART)
+                    if (token.TokenType == TokenType.FORMALIZED_COMMENTS_START)
                         insideFormalizedComment = true;
                     if (insideFormalizedComment && lastComputedLine != token.TokensLine.LineIndex)
                     {
@@ -63,7 +63,7 @@ namespace TypeCobol.Compiler.Nodes {
                         }
                         sep = " ";
                     }
-                    if (token.TokenType == TokenType.FORMALIZEDCOMMENTSSTOP)
+                    if (token.TokenType == TokenType.FORMALIZED_COMMENTS_STOP)
                         insideFormalizedComment = false;
                 }
                 if (!bPeriodSeen)

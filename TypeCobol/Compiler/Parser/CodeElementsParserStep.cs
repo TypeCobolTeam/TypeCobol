@@ -264,8 +264,8 @@ namespace TypeCobol.Compiler.Parser
                                     lineIndex++)
                                 {
                                     var multilineTokens = documentLines[lineIndex].SourceTokens.Where(t =>
-                                        t.TokenType == TokenType.MULTILINESCOMMENTSSTART ||
-                                        t.TokenType == TokenType.MULTILINESCOMMENTSSTOP ||
+                                        t.TokenType == TokenType.MULTILINES_COMMENTS_START ||
+                                        t.TokenType == TokenType.MULTILINES_COMMENTS_STOP ||
                                         t.TokenType == TokenType.CommentLine);
 
 

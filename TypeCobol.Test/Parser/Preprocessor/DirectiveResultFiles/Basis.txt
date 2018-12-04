@@ -1,4 +1,4 @@
-﻿-- Line 1 --
+-- Line 1 --
 *** DIRECTIVE BASIS file1 ([1,5:BASIS]<BASIS>[6,6: ]<SpaceSeparator>[7,11:file1]<UserDefinedWord>) ***
 
 -- Line 2 --
@@ -11,7 +11,7 @@
 *** DIRECTIVE BASIS file2 ([1,5:BASIS]<BASIS>) ***
 
 -- Line 5 --
-+++ CONTINUATION OF COMPILERDIRECTIVE ([8,12:file2]<UserDefinedWord>) +++
++++ CONTINUATION OF COMPILER_DIRECTIVE ([8,12:file2]<UserDefinedWord>) +++
 
 -- Line 6 --
 *** DIRECTIVE INVALID SYNTAX -> BASIS  ([1,5:BASIS]<BASIS>[6,6+:.]<PeriodSeparator>) ***
@@ -56,14 +56,14 @@ Line 6[6,6] <27, Error, Syntax> - Syntax error : mismatched input '.' expecting 
 *** DIRECTIVE BASIS file8 ([13,17:BASIS]<BASIS>) ***
 
 -- Line 13 --
-+++ CONTINUATION OF COMPILERDIRECTIVE ([8,12:file8]<UserDefinedWord>) +++
++++ CONTINUATION OF COMPILER_DIRECTIVE ([8,12:file8]<UserDefinedWord>) +++
 [13,13: ]<SpaceSeparator>
 [14,17:TITI]<UserDefinedWord>
 [18,18: ]<SpaceSeparator>
 *** DIRECTIVE BASIS file9 ([19,23:BASIS]<BASIS>) ***
 
 -- Line 14 --
-+++ CONTINUATION OF COMPILERDIRECTIVE ([8,12:file9]<UserDefinedWord>) +++
++++ CONTINUATION OF COMPILER_DIRECTIVE ([8,12:file9]<UserDefinedWord>) +++
 [13,13: ]<SpaceSeparator>
 [14,17:TUTU]<UserDefinedWord>
 

@@ -227,34 +227,34 @@ namespace TypeCobol.Compiler.Scanner
                     // Register the start of a SYMBOLIC CHARACTERS? clause
                     InsideSymbolicCharacterDefinitions = true;
                     break;
-                case TokenType.FORMALIZEDCOMMENTSSTART:
+                case TokenType.FORMALIZED_COMMENTS_START:
                     // Register the begin of the formalized Comments
                     InsideFormalizedComment = true;
                     break;
-                case TokenType.FORMALIZEDCOMMENTSSTOP:
+                case TokenType.FORMALIZED_COMMENTS_STOP:
                     // Register the end of the formalized Comments
                     InsideFormalizedComment = false;
                     InsideParamsField = false;
                     break;
-                case TokenType.FORMCOMSPARAMETERS:
+                case TokenType.FORMALIZED_COMMENTS_PARAMETERS:
                     // Register the begin of the params field inside the formalized Comments
                     InsideParamsField = true;
                     break;
-                case TokenType.FORMCOMSDESCRIPTION:
-                case TokenType.FORMCOMSDEPRECATED:
-                case TokenType.FORMCOMSREPLACEDBY:
-                case TokenType.FORMCOMSRESTRICTION:
-                case TokenType.FORMCOMSNEED:
-                case TokenType.FORMCOMSSEE:
-                case TokenType.FORMCOMSTODO:
+                case TokenType.FORMALIZED_COMMENTS_DESCRIPTION:
+                case TokenType.FORMALIZED_COMMENTS_DEPRECATED:
+                case TokenType.FORMALIZED_COMMENTS_REPLACED_BY:
+                case TokenType.FORMALIZED_COMMENTS_RESTRICTION:
+                case TokenType.FORMALIZED_COMMENTS_NEED:
+                case TokenType.FORMALIZED_COMMENTS_SEE:
+                case TokenType.FORMALIZED_COMMENTS_TODO:
                     // Register the end of the params field inside the formalized Comments
                     InsideParamsField = false;
                     break;
-                case TokenType.MULTILINESCOMMENTSSTART:
+                case TokenType.MULTILINES_COMMENTS_START:
                     // Register the begin of the formalized Comments
                     InsideMultilineComments = true;
                     break;
-                case TokenType.MULTILINESCOMMENTSSTOP:
+                case TokenType.MULTILINES_COMMENTS_STOP:
                     // Register the end of the formalized Comments
                     InsideMultilineComments = false;
                     return;
@@ -460,7 +460,7 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public bool AtBeginningOfSentence
         {
-            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FORMALIZEDCOMMENTSSTOP ||
+            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FORMALIZED_COMMENTS_STOP ||
                     // Special cases : compiler directives sometimes without a final PeriodSeparator
                     // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
                     //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
