@@ -33,6 +33,7 @@ namespace TypeCobol.Codegen
             Instance.RegisterFactory(OutputFormat.PublicSignatures.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new SignaturesGenerator(destination, typeCobolVersion));
             Instance.RegisterFactory(OutputFormat.ExpandingCopy.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new ExpandingCopyGenerator(document, destination));
             Instance.RegisterFactory(OutputFormat.Cobol85Mixed.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new MixedTransformGenerator(document, destination, skeletons, new DefaultGenerator(document, destination, skeletons, typeCobolVersion)));
+            Instance.RegisterFactory(OutputFormat.Cobol85Nested.ToString(), (id, document, destination, skeletons, typeCobolVersion) => new NestedGenerator(document, destination, skeletons, typeCobolVersion));
         }
 
         /// <summary>

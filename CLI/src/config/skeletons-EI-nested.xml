@@ -1,0 +1,559 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<skeletons>
+  <!-- comment TYPEDEF -->
+  <skeleton name="TYPEDEF">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.TypeDefinition"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="comment"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace TYPE BOOL declarations -->
+  <skeleton name="BOOL.DECLARE" var="level,name,value,global">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="BOOL"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+        @{
+        var items = "";
+        if (%value.Length == 0) {
+        items = %level +"  "+%name+"-value PIC X VALUE LOW-VALUE" + %global + ".";
+        }
+        else {
+        items = %level + "  " + %name + "-value PIC X VALUE " +  %value + %global + ".";
+        }
+        }
+@items
+    88  %name       VALUE 'T'.
+    88  %name-false VALUE 'F'
+                    X'00' thru 'S'
+                    'U' thru X'FF'.
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- create redefines for pointers -->
+  <skeleton name="POINTER.REDEFINES" var="level,name,hash">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" Usage="Pointer" isPointerIncrementation="true"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+        @{
+        var items = "";
+        items = %level   + "  " + %name + " POINTER.\n" +
+        %level + " redefines " + %name + ".\n" +
+        "    " + (Int32.Parse(%level)+1).ToString("00") + " " +
+        (%name.Length.CompareTo(22) != 1 ? %name : %name.Substring(0,22)) + %hash + " pic S9(05) comp-5.";
+        }
+        @items
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- delete and replace TYPE -->
+  <skeleton name="TYPE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.DataDescription" type="*"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace SET <boolean> TO FALSE -->
+  <skeleton name="BOOL.SET" var="receiver">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.Set" sender.type="BOOL" sender="FALSE"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">SET %receiver-false TO TRUE</pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace SET <pointer> UP BY <integer> -->
+  <skeleton name="POINTER.INCREMENT" var="displayableReceivers, sender, incrementDirection, needCompute">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.Set" receiverUsage="Pointer"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="replace">
+        @{
+          var item = "";
+          if (%needCompute)
+          {
+            foreach (var receiver in %displayableReceivers)
+            {
+              item += "COMPUTE " + receiver + " = " + receiver + (%incrementDirection == "Down" ? " - " : " + ") + %sender.ToString() + ".\n";
+            }
+          }
+          else
+          {
+            item += "ADD " + (%incrementDirection == "Down" ? "-" : "") + %sender.ToString() + " to ";
+            foreach (var receiver in %displayableReceivers)
+              item += receiver + ", ";
+          }
+          item = item.Remove(item.Length - 2);
+        }
+        @item
+      </pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- delete UNSAFE -->
+  <skeleton name="UNSAFE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeElements.VariableWriter" unsafe="true"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="erase">UNSAFE</pattern>
+    </patterns>
+  </skeleton>
+
+  <skeleton name="TCRFUN_LIBRARY_COPY" var="copyname">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.LibraryCopy"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="comment"></pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_LIBRARY_COPY">
+        COPY %copyname REPLACING ==:%copyname:== BY ==FCT==.
+      </pattern>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_CALL_MODE">
+        01  CallData.
+        05  DescriptionId PIC X(08).
+        88 CallIsCopy VALUE '%copyname'.
+      </pattern>
+      <!--pattern location="program.begin" action="create" group="TCRFUN_CODEGEN_COPY">
+@{
+  var items = "";
+  foreach (var f in %definitions.functions.Public) {
+    items += "*      05 :"+%copyname+":-"+f.Label+"   PROCEDURE-POINTER VALUE NULL.\n";
+  }
+}
+*01  :%copyname:.
+*    02                         PIC X(08) VALUE '%copyname'.
+*    02                         PIC X(03) VALUE '000'.
+*    02 :%copyname:-FunctionPointers.
+@items*
+*      05 :%copyname:-Reserve   PIC X(361).
+      </pattern-->
+    </patterns>
+  </skeleton>
+
+  <!-- replace DECLARE FUNCTION PUBLIC by a stacked program -->
+  <skeleton name="FUN.DECLARE.PUBLIC" var="definitions,copyname,programName8">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" />
+    </conditions>
+    <patterns>      
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
+01  TC-%programName8-FctList-Loaded PIC X(02).
+    88 TC-%programName8-FctList-IsLoaded      VALUE 'OK'.
+      </pattern>
+      <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="true">
+        @{
+        var items = "";
+        foreach (var f in %definitions.functions.Public) {
+        items += "*"+%programName8 + "::" +f.Name+'\n';
+        items += " 01 TC-"+%programName8 + "-" + f.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
+        }
+        }
+        @items
+      </pattern>
+      <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL -->
+      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="false">
+        @{
+        var items = "";
+        if (%definitions.functions.Public.Count > 0) {
+        items += "01 TC-"+ %programName8 + "-PntTab.\n";
+        items += "    05 TC-" + %programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+%definitions.functions.Public.Count+".\n";
+        }
+        foreach (var f in %definitions.functions.Public) {
+        items += "*To call program " + f.Hash + f.Name + '\n';
+        items += "*Which is generated code for " + f.QualifiedName + '\n';
+        items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
+        items += "    05 TC-"+%programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
+        items += "    05 TC-"+%programName8 + "-" + f.Hash +" PROCEDURE-POINTER.\n";
+        }
+        }
+        @items
+      </pattern>
+      <!-- CALLEE LINKAGE SECTION WITHOUT EXTERNAL -->
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_POINTER_LINKAGE" deprecated="false">
+        @{
+        var items = "";
+        if (%definitions.functions.Public.Count > 0) {
+        items += "01 PntTab-Pnt POINTER.\n";
+        }
+        }
+        @items
+      </pattern>
+
+      <pattern action="expand" location="program.end"></pattern>
+      <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
+      <pattern location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="true">
+*
+*    IF CallIsCopy
+*      PERFORM Copy-Process-Mode
+*    ELSE
+    PERFORM FctList-Process-Mode
+    perform INIT-LIBRARY
+*    END-IF
+
+    GOBACK.
+        @{
+        var entries = "";
+        int c = 0;
+        foreach (var f in %definitions.functions.Public) {
+        entries += "       SET TC-"+%programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
+        }
+        }
+ FctList-Process-Mode.
+     IF NOT TC-%programName8-FctList-IsLoaded
+@entries
+       SET TC-%programName8-FctList-IsLoaded TO TRUE
+     END-IF
+        .
+        
+      </pattern>
+
+      <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
+      <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
+*
+*    IF CallIsCopy
+*      PERFORM Copy-Process-Mode
+*    ELSE
+    PERFORM FctList-Process-Mode
+    perform INIT-LIBRARY
+*    END-IF
+
+    GOBACK.
+        @{
+        var entries = "";
+        int c = 0;
+        foreach (var f in %definitions.functions.Public) {
+        entries += "       SET TC-"+%programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
+        }
+        }
+ FctList-Process-Mode.
+     IF NOT TC-%programName8-FctList-IsLoaded
+@entries
+       SET TC-%programName8-FctList-IsLoaded TO TRUE
+     END-IF
+        .
+        @{
+        var items = "";
+        if (%definitions.functions.Public.Count > 0) {
+        items += "     set PntTab-Pnt TO ADDRESS OF TC-"+%programName8+"-PntTab\n";
+        }
+        }
+@items
+      </pattern>
+    </patterns>
+   
+  </skeleton>
+  <!-- replace DECLARE FUNCTION PRIVATE by a stacked program -->
+  <skeleton name="FUN.DECLARE.PRIVATE" var="definitions">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="private" />
+    </conditions>
+    <patterns>
+      <pattern action="expand" location="program.end"></pattern>
+    </patterns>
+  </skeleton>
+
+  <!-- replace DECLARE FUNCTION PUBLIC by a stacked program -->
+  <skeleton name="FUN.DECLARE.NESTED" var="definitions">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeModel.SourceProgram" />
+    </conditions>
+    <patterns>
+      <pattern location="program.data-division.linkage" action="create" group="TCRFUN_CODEGEN_POINTER_LINKAGE" deprecated="false">
+        @{
+        var items = "";
+        if (%definitions.functions.Public.Count > 0) {
+        items += "01 PntTab-Pnt POINTER.\n";
+        }
+        int maxVarCount = 0;
+        foreach (var function in %definitions.functions.Public) {
+        if (function.Profile.Parameters.Count > maxVarCount) {
+        maxVarCount = function.Profile.Parameters.Count;
+        }
+        }
+        for (int i = 1; i &lt;= maxVarCount; i++) {
+        items += "01 TC-A" + i + " PIC X.\n";
+        }
+        }
+        @items
+      </pattern>
+
+      <pattern location="program.procedure-division.end" action="create" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
+        @{
+        var items = "";
+        if (%definitions.functions.Public.Count &gt; 0) {
+        items += "PA-ALL-ENTRIES.\n";
+        foreach (var functionNode in %definitions.functions.Public) {
+
+        TypeCobol.Compiler.Nodes.FunctionDeclaration function = (TypeCobol.Compiler.Nodes.FunctionDeclaration) functionNode;
+        string usingVariables = string.Empty;
+
+        for (int i = 1; i &lt;= function.Profile.Parameters.Count; i++) {
+        usingVariables += " TC-A" + i;
+        }
+
+        items += "    ENTRY '" + function.Hash + "' USING" + usingVariables + '\n';
+        items += "        CALL \"" + function.Hash + function.Name + "\" USING" + usingVariables + '\n';
+        items += "        GOBACK.\n\n";
+        }
+        }
+        }
+        @items
+      </pattern>
+    </patterns>
+  </skeleton>
+
+
+  <!-- replace function invocation by a CALL and create utility variables -->
+  <skeleton name="FUN.CALL" var=" function  ,receiver ">
+    
+    <patterns>
+      <pattern location="data-division.working-storage" action="create" group="%function.Library-VARS" var="function=$function">
+01 %function.Copy COPY %function.Copy.
+01 %function.Library PIC X(08) VALUE '%function.Library'.
+      </pattern>
+      <pattern location="data-division.working-storage" action="create" group="functions">
+01 ERROR-CODE PIC X(08).
+      </pattern>
+      <!--pattern location="data-division.working-storage" action="create" group="%function.Name" var="type=$function.Result.Definition">
+01 %function.Name-RESULT %function.Result.Definition.
+      </pattern-->
+      <pattern location="procedure-division.begin" action="create" group="%function.Library-CALL">
+    IF %function.Copy-POINTER-TABLE = LOW_VALUE
+        CALL %function.Library USING %function.Copy
+    END-IF
+      </pattern>
+      <pattern location="NODE" action="replace">
+@{
+  var funparams = "";
+  foreach (var p in %function.InputParameters) {
+    funparams += "        BY " + p.SendingMode + " " + p.Value + "\n";
+  }
+}
+    CALL %function.Name USING
+@funparams
+        BY REFERENCE %function.Name-RESULT
+        BY REFERENCE ERROR-CODE
+
+    IF ERROR-CODE = ZERO
+        MOVE %function.Name-RESULT TO %receiver
+    ELSE
+*    TODO: error management
+    END-IF
+      </pattern>
+    </patterns>
+  </skeleton>
+  
+  <!-- replace procedure-style invocation by a standard COBOL CALL -->
+  <skeleton name="TYPE">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.ProcedureStyleCall" />
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="expand"></pattern>
+    </patterns>
+  </skeleton>
+  
+  <!-- replace "::" qualification by "OF" inverse qualification -->
+  <skeleton name="QUALIFICATION">
+
+    <patterns>
+      <pattern action="expand" location="NODE"></pattern>
+    </patterns>
+  </skeleton>
+
+  <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports">
+    <conditions>
+      <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="remarks"></pattern> <!-- Remarks Directive -->
+      <!-- CALLER WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
+      <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty" deprecated="true">
+        @{
+          var items = "";
+          foreach (var pgm in %imports.Programs.Values) {
+            items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
+            items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
+            items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
+            foreach (var proc in pgm.Procedures.Values) {
+              items += "*"+ pgm.Name + "::" +proc.Name+'\n';
+              items += " 01 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
+            }
+          }
+        }
+        @items
+      </pattern>
+
+      <!-- CALLER WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
+      <pattern location="program.data-division.working-storage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
+        @{
+        var items = "";
+        foreach (var pgm in %imports.Programs.Values) {
+        items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
+        }
+        if (%imports.HasPublicProcedures) {
+        items += "01 TC-Call          PIC X VALUE 'T'.\n";
+        items += "    88 TC-FirstCall  VALUE 'T'.\n";
+        items += "    88 TC-NthCall    VALUE 'F'\n";
+        items += "                     X'00' thru 'S'\n";
+        items += "                     'U' thru X'FF'.\n";
+        }
+        }
+        @items
+      </pattern>
+
+      <!-- CALLER LINKAGE SECTION WITHOUT EXTERNAL-->
+      <pattern location="program.data-division.linkage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
+*Common to all librairies used by the program.
+01 TC-Library-PntTab.
+   05 TC-Library-PntNbr          PIC S9(04) COMP.
+   05 TC-Library-Item OCCURS 1000
+                        DEPENDING ON TC-Library-PntNbr
+                        INDEXED   BY TC-Library-Idx.
+       10 TC-Library-Item-Idt      PIC X(08).
+       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+        @{
+          var items = "";
+          foreach (var pgm in %imports.Programs.Values) {
+            foreach (var proc in pgm.Procedures.Values) {
+              proc.IsNotByExternalPointer=true;
+              items += "*To call program "+proc.Hash+proc.Name+" in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
+              items += "*Which is generated code for "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName+'\n';
+              items += "*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName + '\n';
+              items += "01 TC-"+pgm.Name + "-" + proc.Hash+"-Item.\n";
+              items += "   05 TC-"+pgm.Name + "-" + proc.Hash+"-Idt PIC X(08).\n";
+              items += "   05 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER.\n";
+            }
+          }
+        }
+@items
+      </pattern>
+      
+      <!--<pattern location="program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
+        <conditions>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+        </conditions>
+        @{
+        var clause = "";
+        if (!%imports.IsEmpty) {
+        clause = "*\n    PERFORM TC-Initializations\n";
+        }
+        }
+@clause
+      </pattern>-->
+
+      <!-- TC-Initializations-->
+      <!--<pattern location="program.procedure-division.end" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
+        <conditions>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+        </conditions>
+*=================================================================
+ TC-Initializations.
+*=================================================================
+     .
+      </pattern>-->
+      
+      <!-- CALLER PROCEDURE DIVISION WITH EXTERNAL-->
+      <!--<pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="true">
+        <conditions>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+        </conditions>
+        @{
+        var clause = "";
+        if (!%imports.IsEmpty) {
+        --><!--clause += "*=================================================================\n";
+        clause += " TC-Initializations.\n";
+        clause += "*=================================================================\n";--><!--
+        foreach (var pgm in %imports.Programs.Values) {
+        clause += "     IF NOT TC-" + pgm.Name + "-FctList-IsLoaded\n";
+        clause += "         CALL 'ZCALLPGM' USING TC-"+ pgm.Name +"\n";
+        clause += "     END-IF\n";
+        }
+        clause += "     .\n";
+        }
+        }
+        @clause
+      </pattern>-->
+
+      
+      <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
+      <pattern location="program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="false"  boolean_property="imports.HasPublicProcedures">
+        <conditions>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+        </conditions>
+        @{
+        var clause = "";
+        if (%imports.HasPublicProcedures) {
+        clause += "*\n";
+        clause += "    PERFORM TC-INITIALIZATIONS\n";
+        }
+        }
+        @clause
+      </pattern>
+
+      <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="false">
+        <conditions>
+          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
+        </conditions>
+        @{
+        var clause = "";
+        if (%imports.HasPublicProcedures) {
+        clause += "*=================================================================\n";
+        clause += "TC-INITIALIZATIONS.\n";
+        clause += "*=================================================================\n";
+        clause += "     IF TC-FirstCall\n";
+        clause += "          SET TC-NthCall TO TRUE\n";
+        foreach (var pgm in %imports.Programs.Values) {
+        foreach (var proc in pgm.Procedures.Values) {
+        clause += "          SET ADDRESS OF TC-"+pgm.Name + "-" + proc.Hash+"-Item  TO NULL\n";
+        }
+        }
+        clause += "     END-IF\n";
+        clause += "     .\n";
+        }
+        if (!%imports.IsEmpty) {
+        foreach (var pgm in %imports.Programs.Values) {
+        clause += "*=================================================================\n";
+        clause += " TC-LOAD-POINTERS-" + pgm.Name + ".\n";
+        clause += "*=================================================================\n";
+        clause += "     CALL 'ZCALLPGM' USING TC-"+pgm.Name+"\n";
+        clause += "     ADDRESS OF TC-Library-PntTab\n";
+        clause += "     PERFORM VARYING TC-Library-Idx FROM 1 BY 1\n";
+        clause += "     UNTIL TC-Library-Idx > TC-Library-PntNbr\n";
+        clause += "         EVALUATE TC-Library-Item-Idt (TC-Library-Idx)\n";
+        foreach (var proc in pgm.Procedures.Values) {
+        clause += "         WHEN '"+proc.Hash+"'\n";
+        clause += "              SET ADDRESS OF\n";
+        clause += "              TC-"+pgm.Name+"-"+proc.Hash+"-Item\n";
+        clause += "              TO ADDRESS OF\n";
+        clause += "              TC-Library-Item(TC-Library-Idx)\n";
+        }
+        clause += "         WHEN OTHER\n";
+        clause += "              CONTINUE\n";
+        clause += "         END-EVALUATE\n";
+        clause += "     END-PERFORM\n";
+        clause += "     .\n";
+        }
+        }
+        }
+        @clause
+      </pattern>
+
+    </patterns>
+    </skeleton>
+</skeletons>

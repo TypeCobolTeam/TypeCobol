@@ -51,6 +51,10 @@
     <Compile Include="**\*.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config\skeletons-EI-nested.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="DefaultCopies\SQLCA.cpy">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
