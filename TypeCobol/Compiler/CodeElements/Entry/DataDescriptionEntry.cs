@@ -101,14 +101,15 @@ namespace TypeCobol.Compiler.CodeElements {
         }
 
         /// <summary>
-        /// TODO This method should be split like this ?
-        /// - PhysicalLength (or length used when data is written to a file)
-        /// - PhysicalLengthWithChildren
-        /// - LogicalLength
-        /// - LogicalLengthWithChildren
+        /// Gets the length of a DataDefinitionEntry in Bytes 
         /// </summary>
         public abstract int PhysicalLength { get;}
 
+        /// <summary>
+        /// Gets the length of an usage when a Data is defined without a Picture
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <returns></returns>
 	    public int DefaultLengthOfDataUsage(DataUsage usage)
 	    {
 	        switch (usage)

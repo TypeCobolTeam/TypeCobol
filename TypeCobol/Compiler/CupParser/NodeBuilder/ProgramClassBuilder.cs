@@ -117,18 +117,34 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             DataDefinition parent = node.Parent as DataDefinition;
             DataDescriptionEntry dataEntry = node.CodeElement as DataDescriptionEntry;
 
-            if (parent != null && parent.IsGroupUsageNational && dataEntry != null)
+            if (parent != null && dataEntry != null)
             {
-                DataDescriptionEntry codeElement = parent.CodeElement as DataDescriptionEntry;
-                if (codeElement != null)
+                DataDescriptionEntry parentDataEntry = parent.CodeElement as DataDescriptionEntry;
+
+                if (parentDataEntry != null)
                 {
-                    if (dataEntry.Picture != null && !dataEntry.Picture.Value.ToUpper().Contains("N") || dataEntry.Usage != null)
+                    if (parent.IsSynchronized)
                     {
-                        dataEntry.Usage = new SyntaxProperty<DataUsage>(DataUsage.National, codeElement.IsGroupUsageNational.Token);
+                        dataEntry.IsSynchronized = parentDataEntry.IsSynchronized;
                     }
-                    else
+
+                    if (parent.IsGroupUsageNational)
                     {
-                        dataEntry.IsGroupUsageNational = new SyntaxProperty<bool>(true, codeElement.IsGroupUsageNational.Token);
+                        if (dataEntry.Picture != null && !dataEntry.Picture.Value.ToUpper().Contains("N") || dataEntry.Usage != null)
+                        {
+                            dataEntry.Usage = new SyntaxProperty<DataUsage>(DataUsage.National, parentDataEntry.IsGroupUsageNational.Token);
+                        }
+                        else if (dataEntry.Picture == null)
+                        {
+                            dataEntry.IsGroupUsageNational = parentDataEntry.IsGroupUsageNational;
+                        }
+                    }
+                    else if (parent.Usage.HasValue)
+                    {
+                        if (dataEntry.Usage == null)
+                        {
+                            dataEntry.Usage = parentDataEntry.Usage;
+                        }
                     }
                 }
             }

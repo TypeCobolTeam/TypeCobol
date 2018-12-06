@@ -287,8 +287,6 @@ namespace TypeCobol.Compiler.Nodes {
         /// TODO This method should be split like this:
         /// - PhysicalLength 
         /// - PhysicalLengthWithChildren
-        /// - LogicalLength
-        /// - LogicalLengthWithChildren
         /// </summary>
         private long _physicalLength = 0;
         public virtual long PhysicalLength
@@ -302,7 +300,7 @@ namespace TypeCobol.Compiler.Nodes {
 
                 if (children != null)
                 {
-                    if(Picture != null || (Usage != null && Usage != DataUsage.None))
+                    if(Picture != null || (Usage != null && Usage != DataUsage.None && Children.Count == 0))
                     {
                         _physicalLength = ((DataDefinitionEntry) CodeElement).PhysicalLength;
                     }
@@ -311,18 +309,16 @@ namespace TypeCobol.Compiler.Nodes {
                         foreach (var node in children)
                         {
                             var dataDefinition = (DataDefinition)node;
-                            if (dataDefinition != null)
-                            {
-                                _physicalLength += dataDefinition.PhysicalLength;
-                                _physicalLength += dataDefinition.SlackBytes;
-                            }
+
+                            _physicalLength += dataDefinition.PhysicalLength;
+                            _physicalLength += dataDefinition.SlackBytes;
 
                             if (dataDefinition is DataRedefines)
                             {
-                                SymbolReference redefined = (dataDefinition.CodeElement as DataRedefinesEntry)?.RedefinesDataName;
-                                var results = SymbolTable.DataEntries.First(de => de.Key == redefined?.Name).Value;
+                                SymbolReference redefined = ((DataRedefinesEntry)dataDefinition.CodeElement)?.RedefinesDataName;
+                                var results = SymbolTable.GetVariables(redefined);
 
-                                if (results.Count == 1)
+                                if (results.Count() == 1)
                                 {
                                     _physicalLength -= results.First().PhysicalLength > dataDefinition.PhysicalLength ? dataDefinition.PhysicalLength : results.First().PhysicalLength;
                                 }
@@ -426,10 +422,10 @@ namespace TypeCobol.Compiler.Nodes {
 
                 if (this is DataRedefines)
                 {
-                    SymbolReference redefined = (CodeElement as DataRedefinesEntry)?.RedefinesDataName;
-                    var results = SymbolTable.DataEntries.First(de => de.Key == redefined?.Name).Value;
+                    SymbolReference redefined = ((DataRedefinesEntry)CodeElement)?.RedefinesDataName;
+                    var results = SymbolTable.GetVariables(redefined);
 
-                    if (results.Count == 1)
+                    if (results.Count() == 1)
                     {
                         _startPosition = results.First().StartPosition;
                         return _startPosition.Value;
@@ -445,16 +441,14 @@ namespace TypeCobol.Compiler.Nodes {
                 {
                     for (int i = 0; i < Parent.Children.Count; i++)
                     {
-                        DataDefinition sibling = (DataDefinition)Parent.Children[i];
+                        Node sibling = Parent.Children[i];
                         
-                        if (sibling != null && i == Parent.ChildIndex(this) - 1)
+                        if (i == Parent.ChildIndex(this) - 1)
                         {
-                            if (sibling is DataRedefines)
-                            {
-                                while(sibling is DataRedefines)
-                                    sibling = (DataDefinition)Parent.Children[i - 1];
-                            }
-                            _startPosition = sibling.PhysicalPosition + 1 + SlackBytes;
+                            while(sibling is DataRedefines)
+                                sibling = Parent.Children[i - 1];
+
+                            _startPosition = ((DataDefinition)sibling).PhysicalPosition + 1 + SlackBytes;
                         }
                             
                     }
