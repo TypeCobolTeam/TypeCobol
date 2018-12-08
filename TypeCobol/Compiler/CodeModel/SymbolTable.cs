@@ -27,49 +27,39 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// Allow to get all the Type's references from any Enclosing Scope or Program
         /// </summary>
-        public Dictionary<Node, List<DataDefinition>> GetAllEnclosingTypeReferences()
+        public IEnumerable<DataDefinition> GetAllEnclosingTypeReferences(TypeDefinition currentTypeDef)
         {
-            var result = new Dictionary<Node, List<DataDefinition>>();
-            SymbolTable scope = this;//By default set this symboltable as the starting point
+            var result = new List<DataDefinition>();
+            SymbolTable symbolTable = this;//By default set this symboltable as the starting point
 
-            while (scope != null) //Loop on enclosing scope until null scope. 
+            while (symbolTable.CurrentScope >= Scope.Namespace) //Loop on enclosing scope until null scope. 
             {
-                foreach (var typeReference in scope.TypesReferences.Select(pt => new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
+                symbolTable.TypesReferences.TryGetValue(currentTypeDef, out var typeReferences);
+                if (typeReferences != null)
                 {
-                    if (!result.ContainsKey(typeReference.Key)) //Avoid duplicate key
-                        result.Add(typeReference.Key, typeReference.Value);
+                    result.AddRange(typeReferences);
                 }
 
-                if (scope.CurrentScope == Scope.Namespace && scope.Programs.Any())
+                if (symbolTable.CurrentScope == Scope.Namespace && symbolTable.Programs.Count > 0)
                     //Some TypeReferences are stored only in program's symbolTable, need to seek into them. 
                 {
-                    foreach (var program in scope.Programs.SelectMany(t => t.Value))
+                    foreach (var program in symbolTable.Programs.SelectMany(t => t.Value))
                     {
-                        if (program != null && program.SymbolTable != null &&
-                            !program.SymbolTable.TypesReferences.IsNullOrEmpty())
+                        if (!program.SymbolTable.TypesReferences.IsNullOrEmpty())
                         {
-                            foreach (var progTypeRef in program.SymbolTable.TypesReferences.Select(pt =>
-                                        new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
+
+                            program.SymbolTable.TypesReferences.TryGetValue(currentTypeDef, out var typeReferences2);
+                            if (typeReferences2 != null)
                             {
-                                if (!result.ContainsKey(progTypeRef.Key)) //Avoid duplicate key
-                                    result.Add(progTypeRef.Key, progTypeRef.Value);
-                                else
-                                {
-                                    foreach (var reference in progTypeRef.Value) //Add the reference values not already discovered
-                                    {
-                                        if (!result[progTypeRef.Key].Contains(reference))
-                                            result[progTypeRef.Key].Add(reference);
-                                    }
-                                }
-                                    
+                                result.AddRange(typeReferences2);
                             }
                         }
                     }
                 }
 
-                scope = scope.EnclosingScope; //Go to the next enclosing scope. 
+                symbolTable = symbolTable.EnclosingScope; //Go to the next enclosing scope. 
             }
-            return result;
+            return result.Distinct();
         }
 
 
@@ -565,10 +555,7 @@ namespace TypeCobol.Compiler.CodeModel
             
             if (currentTypeDef != null) //We've found that we are currently onto a typedef. 
             {
-                var dataType = GetAllEnclosingTypeReferences().FirstOrDefault(k => k.Key == currentTypeDef); //Let's get typereferences (built by TypeCobolLinker phase)
-                if (dataType.Key == null || dataType.Value == null)
-                    return;
-                IEnumerable<DataDefinition> references = dataType.Value;
+                IEnumerable<DataDefinition> references = GetAllEnclosingTypeReferences(currentTypeDef); //Let's get typeReferences (built by TypeCobolLinker phase)
 
                 //If typeDefContext is set : Ignore references of this typedefContext to avoid loop seeking
                 //                           Only takes variable references that are declared inside the typeDefContext
@@ -609,10 +596,8 @@ namespace TypeCobol.Compiler.CodeModel
         private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext)
         {
             completeQualifiedNames.Last().Add(currentDataDefinition.Name);
-            var dataType = GetAllEnclosingTypeReferences().FirstOrDefault(k => k.Key == currentDataDefinition);
-            if (dataType.Key == null || dataType.Value == null)
-                return;
-            IEnumerable<DataDefinition> references = dataType.Value;
+            IEnumerable<DataDefinition> references = GetAllEnclosingTypeReferences(currentDataDefinition);
+
             //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
             //                              + Only takes variable references that are declared inside the typeDefContext
             if (typeDefContext != null)
