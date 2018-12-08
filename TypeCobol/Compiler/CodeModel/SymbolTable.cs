@@ -892,20 +892,28 @@ namespace TypeCobol.Compiler.CodeModel
             }
         }
 
+        public IList<TypeDefinition> EmptyTypeDefinitionList = new List<TypeDefinition>();
+        [NotNull]
         public IList<TypeDefinition> GetType(DataDefinition symbol)
         {
             return GetType(symbol.DataType);
         }
 
+        [NotNull]
         public List<TypeDefinition> GetType(SymbolReference symbolReference)
         {
             return GetType(symbolReference.URI);
         }
 
       
-
-        public List<TypeDefinition> GetType(DataType dataType, string pgmName = null)
+        [NotNull]
+        public IList<TypeDefinition> GetType(DataType dataType, string pgmName = null)
         {
+            if (dataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
+            {
+                return EmptyTypeDefinitionList;
+            }
+
             var uri = new URI(dataType.Name);
             var types = GetType(uri);
             if (types.Count > 0)
