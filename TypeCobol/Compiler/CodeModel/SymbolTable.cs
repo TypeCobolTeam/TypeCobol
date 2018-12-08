@@ -72,27 +72,53 @@ namespace TypeCobol.Compiler.CodeModel
                 throw new InvalidOperationException("Only Table of INTRINSIC symbols don't have any enclosing scope.");
         }
 
+        /// <summary>
+        /// GetFromTableAndEnclosing 2 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="head"></param>
+        /// <param name="getTableFunction"></param>
+        /// <param name="maxScope"></param>
+        /// <returns></returns>
+        [NotNull]
         private List<T> GetFromTableAndEnclosing<T>(string head,
             Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, Scope maxScope = Scope.Intrinsic) where T : Node
         {
-            var table = getTableFunction.Invoke(this);
-            var values = GetFromTable(head, table);
-            if (EnclosingScope != null && EnclosingScope.CurrentScope >= maxScope)
-            {
-                values.AddRange(EnclosingScope.GetFromTableAndEnclosing(head, getTableFunction, maxScope));
-            }
-            return values;
+            System.Diagnostics.Debug.Assert(head != null);
+            var result = new List<T>();
+            this.GetFromTableAndEnclosing2(head, getTableFunction, result, maxScope);
+            
+            return result;
         }
 
+        private void GetFromTableAndEnclosing2<T>([NotNull] string head,
+           Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, List<T> result, Scope maxScope = Scope.Intrinsic) where T : Node
+        {
+            var table = getTableFunction.Invoke(this);
+            GetFromTable(head, table, result);
+            if (EnclosingScope != null && EnclosingScope.CurrentScope >= maxScope)
+            {
+                EnclosingScope.GetFromTableAndEnclosing2(head, getTableFunction, result, maxScope);
+            }
+        }
+
+
+
+        [NotNull]
         private List<T> GetFromTable<T>(string head, IDictionary<string, List<T>> table) where T : Node
         {
             if (head != null)
             {
-                List<T> values;
-                table.TryGetValue(head, out values);
+                table.TryGetValue(head, out List<T> values);
                 if (values != null) return values.ToList();
             }
             return new List<T>();
+        }
+
+        private void GetFromTable<T>(string head, IDictionary<string, List<T>> table, List<T> result) where T : Node
+        {
+            table.TryGetValue(head, out List<T> values);
+            if (values != null) result.AddRange(values);
         }
 
         #region DATA SYMBOLS
