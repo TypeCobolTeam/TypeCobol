@@ -401,15 +401,14 @@ namespace TypeCobol.Compiler.CodeModel
             TypeDefinition typeDefContext = null)
         {
             List<KeyValuePair<string, DataDefinition>> foundedVariables = new List<KeyValuePair<string, DataDefinition>>();
-            //Get variable name declared into typedef declaration
-            var candidates = GetCustomTypesSubordinatesNamed(name.Head);
-            //Get all variables that corresponds to the given head of QualifiedName    
-            candidates.AddRange(GetVariables(name.Head));
-            
+
+
+            #region Get variables declared under Type
             var found = new List<DataDefinition>();
-            int foundCount = 0;
             var completeQualifiedNames = new List<List<string>>();
-            foreach (var candidate in candidates.Distinct())
+            int foundCount = 0;
+            //Get all variables that corresponds to the given head of QualifiedName    
+            foreach (var candidate in GetCustomTypesSubordinatesNamed(name.Head))
             {
                 completeQualifiedNames.Add(new List<string>());
                 MatchVariable(found, candidate, name, name.Count - 1, candidate, completeQualifiedNames,
@@ -434,8 +433,66 @@ namespace TypeCobol.Compiler.CodeModel
                 if (completeQualifiedNames.Count == i)
                     break;
             }
+            #endregion
+
+
+            #region Get variables declared outside types
+            //If we are in the context of a typedef, it will be handled by "Get variables declared under Type"
+            if (typeDefContext == null)
+            {
+                var varOutsideTypes = GetVariables(name.Head);
+                //Get variable name declared outside typedef declaration
+                foreach (var candidate in varOutsideTypes)
+                {
+                    MatchVariableOutsideType(foundedVariables, candidate, name, name.Count - 1, candidate);
+                }
+            }
+            #endregion
 
             return foundedVariables;
+        }
+        
+
+        /// <summary>
+        /// Recursively try to find the path for the given QualifiedName name. 
+        /// Algorithm allows to browse every potential path to find where the variable QualifiedName is. 
+        /// It only browse DataDefinition (Var + Group) outside TypeDef. 
+        /// The algorithm will search as deep as possible in every direction until the path comes to an end. 
+        /// </summary>
+        /// <param name="found">List of compatible variable found regarding to the given name</param>
+        /// <param name="headDataDefinition">Given potential variable candidate</param>
+        /// <param name="name">QualifiedName of the symbol looked for</param>
+        /// <param name="nameIndex">Total count of the parts of the qualifiedName 'name' </param>
+        /// <param name="currentDataDefinition">Currently checked DataDefinition</param>
+        public void MatchVariableOutsideType(List<KeyValuePair<string, DataDefinition>> found, in DataDefinition headDataDefinition, in QualifiedName name,
+            int nameIndex, in DataDefinition currentDataDefinition)
+        {
+
+            //Name match ?
+            if (name[nameIndex].Equals(currentDataDefinition.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                nameIndex--;
+                if (nameIndex < 0)
+                { //We reached the end of the name : it's a complete match
+                    
+                    //we are on a variable
+                    found.Add(new KeyValuePair<string, DataDefinition>(headDataDefinition.QualifiedName.ToString(), headDataDefinition));
+
+                    //End here
+                    return;
+                }
+                //else it's not the end of name, let's continue with next part of QualifiedName
+            }
+
+            //Either we have a match or not, we need to continue to the parent
+            if (currentDataDefinition.Parent is DataDefinition parent)
+            {
+                //Go deeper to check the rest of the QualifiedName 'name'
+                MatchVariableOutsideType(found, headDataDefinition, name, nameIndex, parent);
+            }         
+
+            //If we reach here, it means we are on a DataDefinition with no parent
+            //==> End of treatment, there is no match
         }
 
         /// <summary>
@@ -451,8 +508,8 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="currentDataDefinition">Currently checked DataDefinition</param>
         /// <param name="completeQualifiedNames">List of list of string that allows to store all the different path for the founded possibilities</param>
         /// <param name="typeDefContext">TypeDefinition context to force the algorithm to only work inside the typedef scope</param>
-        public void MatchVariable(IList<DataDefinition> found, DataDefinition headDataDefinition, QualifiedName name,
-            int nameIndex, DataDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext) {
+        public void MatchVariable(IList<DataDefinition> found, in DataDefinition headDataDefinition, in QualifiedName name,
+            int nameIndex, in DataDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext) {
 
             completeQualifiedNames.Last().Add(currentDataDefinition.Name);
             var currentTypeDef = currentDataDefinition as TypeDefinition;
@@ -498,8 +555,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 
             //Either we have a match or not, we need to continue to the parent or DataDefinition that use this TypeDefinition
-            var parent = currentDataDefinition.Parent as DataDefinition;
-            if (parent != null)
+            if (currentDataDefinition.Parent is DataDefinition parent)
             {
                 //Go deeper to check the rest of the QualifiedName 'name'
                 MatchVariable(found, headDataDefinition, name, nameIndex, parent, completeQualifiedNames, typeDefContext); 
@@ -514,12 +570,12 @@ namespace TypeCobol.Compiler.CodeModel
                     return;
                 IEnumerable<DataDefinition> references = dataType.Value;
 
-                //If typedefcontext is set : Ignore references of this typedefContext to avoid loop seeking
+                //If typeDefContext is set : Ignore references of this typedefContext to avoid loop seeking
                 //                           Only takes variable references that are declared inside the typeDefContext
                 if (typeDefContext != null)
                     references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
 
-                var primaryPath = completeQualifiedNames.Last().ToArray(); //PrmiaryPath that will be added in front of every reference's path found
+                var primaryPath = completeQualifiedNames.Last().ToArray(); //PrimaryPath that will be added in front of every reference's path found
                 foreach (var reference in references)
                 {
                     //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
@@ -534,7 +590,6 @@ namespace TypeCobol.Compiler.CodeModel
                     }
                        
                 }
-                return;
             }
 
             //If we reach here, it means we are on a DataDefinition with no parent
