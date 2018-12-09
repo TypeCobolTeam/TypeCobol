@@ -1200,10 +1200,10 @@ namespace TypeCobol.Compiler.CodeModel
                 .Where(fd => fd.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
         }
 
-        public List<Program> GetPrograms()
+        public IEnumerable<Program> GetPrograms()
         {
             return this.GetTableFromScope(Scope.Namespace)
-                .Programs.Values.SelectMany(t => t).ToList();
+                .Programs.Values.SelectMany(t => t);
         }
 
 
