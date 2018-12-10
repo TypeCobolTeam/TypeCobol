@@ -115,6 +115,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\src\config\skeletons-EI-nested.xml">
+      <Link>ressources\skeletons-EI-nested.xml</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\src\config\skeletons.xml">
       <Link>ressources\skeletons.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

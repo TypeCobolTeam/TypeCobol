@@ -1,0 +1,1 @@
+﻿-1 -i input\CallPublicProcFromPrivateProc.rdz.tcbl -o output\CallPublicProcFromPrivateProc.cbl -d output\error.txt -s  ..\skeletons-EI-nested.xml -e rdz -f Cobol85Nested

@@ -47,6 +47,15 @@ namespace CLI.Test
         }
 
         /// <summary>
+        /// Perform a generation with procedure generated as nested programs
+        /// </summary>
+        [TestMethod]
+        public void TestGenerate_NestedProcedure()
+        {
+            CLITestHelper.Test("generate_nestedProc", ReturnCode.Success);
+        }
+
+        /// <summary>
         /// Test various case of usage of dependencies such as good usage, bad file, bad path.
         /// </summary>
         [TestMethod]
