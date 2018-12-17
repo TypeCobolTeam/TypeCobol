@@ -966,9 +966,9 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDescription != null)
             {
                 if (dataDescription.IsGlobal) // GLOBALSS_NO_GLOBAL_KEYWORD 
-                    DiagnosticUtils.AddError(dataDescription, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
+                    DiagnosticUtils.AddError(dataDefinition, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
                 if (dataDescription.IsExternal) //GLOBALSS_NO_EXTERNAL
-                    DiagnosticUtils.AddError(dataDescription, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
+                    DiagnosticUtils.AddError(dataDefinition, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
             }
 
 
