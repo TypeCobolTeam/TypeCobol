@@ -1127,6 +1127,9 @@ namespace TypeCobol.Codegen.Generators
             //Create All SourceTextBuffer Content associated to Nodes
             CreateNodeSourceTextBufferContents();
 
+            // Comment specific parts (Formalized Comments)
+            CommentSpecificParts(node);
+
             //Now Complete Function Declaration Lines relocation.
             CompleteFunctionDeclarationLinesRelocation();
 
@@ -1279,6 +1282,80 @@ namespace TypeCobol.Codegen.Generators
                     return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Return a Tuple of the two tokens specified by the TokenTypes in parameters if any
+        /// </summary>
+        public IEnumerable<Tuple<Token, Token>> GetEnclosingTokensIfAny(Node node, TokenType startTokenType, TokenType stopTokenType)
+        {
+            var startToken =
+                node.CodeElement?.ConsumedTokens.Where(t => t.TokenType == startTokenType).ToArray();
+            var stopToken =
+                node.CodeElement?.ConsumedTokens.Where(t => t.TokenType == stopTokenType).ToArray();
+            if (startToken != null && startToken.Any() &&
+                stopToken != null && stopToken.Any())
+            {
+                // Iterate on the smallest count of token in case of count inequality
+                for (int i = 0; i < (startToken.Count() < stopToken.Count() ? startToken.Count() : stopToken.Count()); i++)
+                {
+                    yield return new Tuple<Token, Token>(startToken[i], stopToken[i]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Comment a node buffer between two specified tokens
+        /// </summary>
+        public void CommentBetweenTokens(Node node, TokenType startTokenType, TokenType stopTokenType)
+        {
+            // get the NodeData to have the Buffer
+            NodeData nodeData = Nodes.FirstOrDefault(n => n.node == node);
+            if (nodeData != null)
+            {
+                // get the array delimiter consumed Tokens
+                var delimiterTokens = GetEnclosingTokensIfAny(node, startTokenType, stopTokenType)?.ToArray();
+                if (delimiterTokens != null && delimiterTokens.Any())
+                {
+                    int[,] bufferLines = nodeData.Buffer.ComputeLinePositions(0, nodeData.Buffer.Size);
+                    var positionList = nodeData.Buffer.GetPositionList();
+                    foreach (var delimiterToken in delimiterTokens)
+                    {
+
+                        // for each lines, if it is inside the formalized comment then comment them (replace the 7th character by a '*') 
+                        for (int i = 0; i < bufferLines.GetLength(0) - 1; i++)
+                        {
+                            if (nodeData.Positions.Item4[i] >= delimiterToken.Item1.Line &&
+                                nodeData.Positions.Item4[i] <= delimiterToken.Item2.Line &&
+                                bufferLines[i, 1] >= 7) // Avoid comment blank lines
+                            {
+                                if (positionList.Any() && positionList[0].Pos == bufferLines[i, 0] + 6)
+                                {
+                                    positionList[0].SetFlag(Position.Flags.InclStart);
+                                }
+                                nodeData.Buffer.Insert("*", bufferLines[i, 0] + 6, bufferLines[i, 0] + 7);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void CommentSpecificParts(Node node)
+        {
+            // Formalised Comments of Programs (Formalized Comments of Typedef and Functions is already commented)
+            if (node is Compiler.Nodes.ProcedureDivision && node.Parent is Compiler.CodeModel.Program)
+            {
+                CommentBetweenTokens(node, TokenType.FORMALIZED_COMMENTS_START, TokenType.FORMALIZED_COMMENTS_STOP);
+            }
+
+            // Multilines Comments
+            CommentBetweenTokens(node, TokenType.MULTILINES_COMMENTS_START, TokenType.MULTILINES_COMMENTS_STOP);
+
+            foreach (var child in node.Children)
+            {
+                CommentSpecificParts(child);
+            }
         }
 
         /// <summary>

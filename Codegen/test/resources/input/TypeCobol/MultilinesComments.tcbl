@@ -1,0 +1,81 @@
+      *<< 
+          Multiline Comment 1 here
+      *>>
+       IDENTIFICATION DIVISION.
+      *<< 
+          Multiline Comment 2 here
+      *>>
+       PROGRAM-ID. MultilinesCommentsCodeGen.
+      *<< 
+          Multiline Comment 3 here
+      *>>
+       DATA DIVISION.
+      *<< Multiline Comment 4 here
+      *>>
+       WORKING-STORAGE SECTION.
+      *<< 
+          Multiline Comment 5 here
+      *>>
+       01 myType TYPEDEF STRICT.
+      *<< 
+          Multiline Comment 6 here
+      *>>
+        02  var0 PIC 9.
+      *<< 
+          Multiline Comment 7 here
+      *>>
+        02  var1 PIC 9(3).
+      *<< 
+          Multiline Comment 8 here
+      *>>
+        02  myBool Type BOOL.
+      *<< 
+          Multiline Comment 9 here
+      *>>
+        02 subGroup.
+      *<< 
+          Multiline Comment 10 here
+      *>>
+         05 var2 Pic XXX.
+      *<< 
+          Multiline Comment 11 here
+      *>>
+
+       PROCEDURE DIVISION.
+      *<< 
+          Multiline Comment 12 here
+      *>>
+       
+         DECLARE function FUN
+      *<< 
+          Multiline Comment 13 here
+      *>>
+               INPUT x Type myType
+      *<< 
+          Multiline Comment 14 here
+      *>>
+                     y PIC 9(03).
+      *<< 
+          Multiline Comment 15 here
+      *>>
+
+           PROCEDURE DIVISION.
+      *<< 
+          Multiline Comment 16 here
+      *>>
+             CONTINUE.
+      *<< 
+          Multiline Comment 17 here
+      *>>
+         END-DECLARE.
+      *<< 
+          Multiline Comment 18 here
+      *>>
+
+      *<< 
+          Multiline Comment 19 here
+      *>>
+       END PROGRAM MultilinesCommentsCodeGen.
+      *<< 
+          Multiline Comment 20 here
+      *>>
