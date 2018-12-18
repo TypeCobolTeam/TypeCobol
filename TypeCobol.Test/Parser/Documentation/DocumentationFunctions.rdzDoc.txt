@@ -1,0 +1,115 @@
+Line 12[13,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
+Line 14[13,15] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: IDS
+Line 28[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 29[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
+======================== Nodes properties ========================
+Name : DocForFunctions
+Description : 
+Visibility : 
+Namespace : DocForFunctions
+NodeType : Program
+IsDeprecated : False
+Deprecated : 
+ReplacedBy : 
+Restriction : 
+See : 
+Needs : 
+ToDo : 
+Parameters : 
+
+---------------------
+
+Name : MyProc1
+Description : MyProc1 description 
+Visibility : Private
+Namespace : DocForFunctions
+NodeType : Function
+IsDeprecated : True
+Deprecated : 
+ReplacedBy : ReplacedBy MyProc8 
+Restriction : Do not support discount code 
+See : you later 
+Needs : 
+    first need
+    second need
+ToDo : 
+    implement a call to MyProc8 in case of discount code
+Parameters : 
+    Name : myDate
+    Info : sell date
+    PassingType : Input
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : DATE
+        Picture : 
+    --------
+    Name : name
+    Info : product name
+    PassingType : Input
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : X(50)
+    --------
+    Name : myBool
+    Info : 
+    PassingType : InOut
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : BOOL
+        Picture : 
+    --------
+    Name : price
+    Info : 
+    PassingType : Output
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : S9(5)V9(2)
+    --------
+    Name : desc
+    Info : this is not a description
+    PassingType : Output
+    DataType : 
+        Usage : 
+        MaxOccurence : 1
+        DefaultValue : 
+        TypeName : 
+        Picture : X(200)
+
+---------------------
+
+======================== Code Element properties ========================
+== DocForFunctions ==
+No formalized comment found
+
+---------------------
+
+== MyProc1 ==
+Description : MyProc1 description 
+Deprecated : *is present*
+ReplacedBy : ReplacedBy MyProc8 
+Restriction : Do not support discount code 
+See : you later 
+Needs : 
+    first need
+    second need
+ToDo : 
+    implement a call to MyProc8 in case of discount code
+Parameters : 
+    myDate : sell date
+    name : product name
+    ID : will be ignored
+    desc : this is not a description
+    IDS : this will be truncated
+
+---------------------
+

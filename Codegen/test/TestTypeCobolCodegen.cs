@@ -788,14 +788,32 @@ namespace TypeCobol.Codegen {
 	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithProcedures2") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
 	    }
 
-        [TestMethod]
-        [TestCategory("Codegen")]
-        [TestProperty("Time", "fast")]
-        public void DeclarativesWithInstructionsWithinTest()
-        {
-            var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithInstructionsWithin") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+	    [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void DeclarativesWithInstructionsWithinTest()
+	    {
+	        var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "DeclarativesWithInstructionsWithin") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
         }
+
+	    [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void FormalizedCommentsTest()
+	    {
+	        var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FormalizedComments") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
+	    }
+
+	    [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void MultilinesCommentsTest()
+	    {
+	        var skeletons = CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml");
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MultilinesComments") + ".tcbl", skeletons, false, "TestTypeCobolVersion");
+	    }
 
 	    [TestMethod]
 	    [TestCategory("Codegen")]

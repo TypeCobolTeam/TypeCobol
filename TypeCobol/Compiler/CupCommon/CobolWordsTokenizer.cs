@@ -1069,7 +1069,7 @@ namespace TypeCobol.Compiler.CupCommon
                 case TokenType.PRIVATE:
                 case TokenType.IN_OUT:
                 case TokenType.STRICT:
-                case TokenType.QuestionMark:
+                case TokenType.QUESTION_MARK:
                     return true;
                 default:
                     return false;

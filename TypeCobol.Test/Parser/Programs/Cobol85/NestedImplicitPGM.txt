@@ -1,8 +1,8 @@
 ﻿--- Diagnostics ---
-Line 9[6,16] <37, Warning, General> - Warning: "when other" is missing
 Line 9[15,16] <27, Error, Syntax> - Syntax error : Symbol AA is not referenced OffendingSymbol=[15,16:AA]<UserDefinedWord>
-Line 15[6,16] <37, Warning, General> - Warning: "when other" is missing
+Line 9[6,16] <37, Warning, General> - Warning: "when other" is missing
 Line 15[15,16] <27, Error, Syntax> - Syntax error : Symbol BB is not referenced OffendingSymbol=[15,16:BB]<UserDefinedWord>
+Line 15[6,16] <37, Warning, General> - Warning: "when other" is missing
 
 --- Program ---
 PROGRAM: MYPROGA common:False initial:False recursive:False

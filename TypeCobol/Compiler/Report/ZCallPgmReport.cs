@@ -12,7 +12,7 @@ using TypeCobol.Compiler.Parser;
 
 namespace TypeCobol.Compiler.Report
 {
-    public class ZCallPgmReport<TCtx> : AbstractReport, NodeListener<TCtx> where TCtx : class
+    public class ZCallPgmReport : AbstractReport, NodeListener
     {
         /// <summary>
         /// The list of all ZCALLXXX we need to detect
@@ -43,7 +43,7 @@ namespace TypeCobol.Compiler.Report
             CallNodes = new List<Call>();
         }
 
-        public void OnNode(Node node, TCtx context, Program program)
+        public void OnNode(Node node, Program program)
         {
             if (node.CodeElement != null)
             {

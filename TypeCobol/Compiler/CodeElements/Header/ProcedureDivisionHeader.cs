@@ -12,8 +12,13 @@ namespace TypeCobol.Compiler.CodeElements
 	/// The program procedure division consists of optional declaratives, and
 	/// procedures that contain sections, paragraphs, sentences, and statements.
 	/// </summary>
-	public class ProcedureDivisionHeader : StatementElement, Returning {
-		public ProcedureDivisionHeader() : base(CodeElementType.ProcedureDivisionHeader, StatementType.ProcedureDivisionHeader) { }
+	public class ProcedureDivisionHeader : StatementElement, Returning, IFormalizedCommentable
+	{
+	    public ProcedureDivisionHeader(FormalizedCommentDocumentation formalizedCommentDocumentation = null) : base(
+	        CodeElementType.ProcedureDivisionHeader, StatementType.ProcedureDivisionHeader)
+	    {
+	        this.FormalizedCommentDocumentation = formalizedCommentDocumentation;
+        }
 
 		/// <summary>
 		/// The USING phrase specifies the parameters that a program or method receives
@@ -31,8 +36,9 @@ namespace TypeCobol.Compiler.CodeElements
 		/// The RETURNING data item is an output-only parameter.
 		/// </summary>
 		public CallTargetParameter ReturningParameter { get; set; }
+	    public FormalizedCommentDocumentation FormalizedCommentDocumentation { get; set; }
 
-		public override string ToString() {
+        public override string ToString() {
 			if (UsingParameters == null && ReturningParameter == null) return base.ToString();
 
 			var str = new StringBuilder(base.ToString());
