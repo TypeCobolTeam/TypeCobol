@@ -13,7 +13,9 @@
            88 TC-DocCodeG-FctList-IsLoaded      VALUE 'OK'.
        01 TC-DocCodeG-PntTab.
            05 TC-DocCodeG-PntNbr         PIC S9(04) COMP VALUE 1.
-      *DocCodeG::MyProc
+      *To call program fd48569eMyProc
+      *Which is generated code for DocCodeGen.MyProc
+      *Declared in source file FormalizedComments.tcbl
            05 TC-DocCodeG-fd48569e-Idt   PIC X(08) VALUE 'fd48569e'.
            05 TC-DocCodeG-fd48569e PROCEDURE-POINTER.
 
@@ -122,6 +124,10 @@
        PROGRAM-ID. fd48569eMyProc.
        DATA DIVISION.
        LINKAGE SECTION.
+      *DocCodeGen.MyProc - Params :
+      *		input(myDate: DATE, bla: pic S9(1)V9(12))
+      *		in-out(myBool: BOOL)
+      *		output(toto: BOOL, bli: pic PPP999PPP)
        01 myDate.
            02 YYYY PIC 9(4).
            02 MM PIC 9(2).
@@ -145,5 +151,9 @@
                    BY REFERENCE toto-value
                    BY REFERENCE bli
            .
+      *DocCodeGen.MyProc - Params :
+      *		input(myDate: DATE, bla: pic S9(1)V9(12))
+      *		in-out(myBool: BOOL)
+      *		output(toto: BOOL, bli: pic PPP999PPP)
            CONTINUE.
        END PROGRAM fd48569eMyProc.
