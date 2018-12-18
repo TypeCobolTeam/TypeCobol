@@ -1,0 +1,326 @@
+﻿Line 19[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+Line 59[13,18] <37, Warning, General> - Warning: Type Definition does not support Parameters field
+======================== Documentation ========================
+{
+  "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
+  "Name": "DocForTypeDefs",
+  "Namespace": "DocForTypeDefs"
+}
+---------------------
+
+{
+  "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
+  "Name": "Type10",
+  "Namespace": "DocForTypeDefs",
+  "Visibility": 1,
+  "DocDataType": {
+    "MaxOccurence": 1,
+    "Picture": "X(8)"
+  }
+}
+---------------------
+
+{
+  "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
+  "Description": "Description for Type11 ",
+  "Name": "Type11",
+  "Namespace": "DocForTypeDefs",
+  "Visibility": 1,
+  "DocDataType": {
+    "MaxOccurence": 1,
+    "Picture": "X(8)"
+  }
+}
+---------------------
+
+{
+  "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "Description for Type12 ",
+  "Name": "Type12",
+  "Namespace": "DocForTypeDefs",
+  "ReplacedBy": "Type42 ",
+  "Visibility": 1,
+  "DocDataType": {
+    "MaxOccurence": 1,
+    "Picture": "X(8)"
+  }
+}
+---------------------
+
+{
+  "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
+  "Name": "Type20",
+  "Namespace": "DocForTypeDefs",
+  "Visibility": 1,
+  "Childrens": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "x(8)"
+      },
+      "IsBlankWhenZero": true,
+      "Name": "Member1"
+    },
+    {
+      "Childrens": [
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "PPP999PPP"
+          },
+          "Name": "Member21"
+        },
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "DATE"
+          },
+          "Name": "Member22"
+        },
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "x(10)"
+          },
+          "Justified": true,
+          "Name": "Member23"
+        }
+      ],
+      "DocDataType": {
+        "MaxOccurence": 1
+      },
+      "Name": "Member2"
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "Type10"
+      },
+      "Name": "Member3"
+    },
+    {
+      "DocDataType": {
+        "DefaultValue": "FALSE",
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "Member4"
+    },
+    {
+      "Childrens": [
+        {
+          "ConditionValuesRanges": [
+            {
+              "MaxValue": "2050",
+              "MinValue": "1999"
+            }
+          ],
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "BOOL"
+          },
+          "IsLevel88": true,
+          "Name": "TestMember5"
+        }
+      ],
+      "DocDataType": {
+        "DefaultValue": "2018",
+        "MaxOccurence": 1,
+        "Picture": "S9(4)"
+      },
+      "Name": "Member5"
+    }
+  ],
+  "DocDataType": {
+    "MaxOccurence": 1
+  }
+}
+---------------------
+
+{
+  "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
+  "Description": "Description for Type21 ",
+  "Name": "Type21",
+  "Namespace": "DocForTypeDefs",
+  "Visibility": 1,
+  "Childrens": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "x(8)"
+      },
+      "IsBlankWhenZero": true,
+      "Name": "Member1"
+    },
+    {
+      "Childrens": [
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "PPP999PPP"
+          },
+          "Name": "Member21"
+        },
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "DATE"
+          },
+          "Name": "Member22"
+        },
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "x(10)"
+          },
+          "Justified": true,
+          "Name": "Member23"
+        }
+      ],
+      "DocDataType": {
+        "MaxOccurence": 1
+      },
+      "Name": "Member2"
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "Type11"
+      },
+      "Name": "Member3"
+    },
+    {
+      "DocDataType": {
+        "DefaultValue": "FALSE",
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "Member4"
+    },
+    {
+      "Childrens": [
+        {
+          "ConditionValuesRanges": [
+            {
+              "MaxValue": "2050",
+              "MinValue": "1999"
+            }
+          ],
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "BOOL"
+          },
+          "IsLevel88": true,
+          "Name": "TestMember5"
+        }
+      ],
+      "DocDataType": {
+        "DefaultValue": "2018",
+        "MaxOccurence": 1,
+        "Picture": "S9(4)"
+      },
+      "Name": "Member5"
+    }
+  ],
+  "DocDataType": {
+    "MaxOccurence": 1
+  }
+}
+---------------------
+
+{
+  "__type": "DocumentationForType:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "Description for Type22 ",
+  "Name": "Type22",
+  "Namespace": "DocForTypeDefs",
+  "Needs": [
+    "see here what is needed"
+  ],
+  "Visibility": 1,
+  "Childrens": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "x(8)"
+      },
+      "IsBlankWhenZero": true,
+      "Name": "Member1"
+    },
+    {
+      "Childrens": [
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "PPP999PPP"
+          },
+          "Name": "Member21"
+        },
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "DATE"
+          },
+          "Name": "Member22"
+        },
+        {
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "Picture": "x(10)"
+          },
+          "Justified": true,
+          "Name": "Member23"
+        }
+      ],
+      "DocDataType": {
+        "MaxOccurence": 1
+      },
+      "Name": "Member2"
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "Type12"
+      },
+      "Name": "Member3"
+    },
+    {
+      "DocDataType": {
+        "DefaultValue": "FALSE",
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "Member4"
+    },
+    {
+      "Childrens": [
+        {
+          "ConditionValuesRanges": [
+            {
+              "MaxValue": "2050",
+              "MinValue": "1999"
+            }
+          ],
+          "DocDataType": {
+            "MaxOccurence": 1,
+            "TypeName": "BOOL"
+          },
+          "IsLevel88": true,
+          "Name": "TestMember5"
+        }
+      ],
+      "DocDataType": {
+        "DefaultValue": "2018",
+        "MaxOccurence": 1,
+        "Picture": "S9(4)"
+      },
+      "Name": "Member5"
+    }
+  ],
+  "DocDataType": {
+    "MaxOccurence": 1
+  }
+}
+---------------------
+
