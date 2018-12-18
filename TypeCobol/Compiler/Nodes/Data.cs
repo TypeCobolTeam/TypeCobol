@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using TypeCobol.Compiler.Text;
+using TypeCobol.Compiler.Types;
 
 namespace TypeCobol.Compiler.Nodes {
 
@@ -283,10 +284,21 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        private PictureValidator _pictureValidator;
+        public PictureValidator PictureValidator
+        {
+            get
+            {
+                if (_pictureValidator != null) return _pictureValidator;
+
+                _pictureValidator = new PictureValidator(Picture.Value, SignIsSeparate);
+
+                return _pictureValidator;
+            }
+        }
+
         /// <summary>
-        /// TODO This method should be split like this:
-        /// - PhysicalLength 
-        /// - PhysicalLengthWithChildren
+        /// PhysicalLength is the size taken by a DataDefinition and its children in memory
         /// </summary>
         private long _physicalLength = 0;
         public virtual long PhysicalLength
@@ -302,7 +314,7 @@ namespace TypeCobol.Compiler.Nodes {
                 {
                     if(Picture != null || (Usage != null && Usage != DataUsage.None && Children.Count == 0))
                     {
-                        _physicalLength = ((DataDefinitionEntry) CodeElement).PhysicalLength;
+                        _physicalLength = GetPhysicalLength();
                     }
                     else
                     {
@@ -316,12 +328,9 @@ namespace TypeCobol.Compiler.Nodes {
                             if (dataDefinition is DataRedefines)
                             {
                                 SymbolReference redefined = ((DataRedefinesEntry)dataDefinition.CodeElement)?.RedefinesDataName;
-                                var results = SymbolTable.GetVariables(redefined);
+                                var result = SymbolTable.GetRedefinedVariable((DataRedefines) dataDefinition, redefined);
 
-                                if (results.Count() == 1)
-                                {
-                                    _physicalLength -= results.First().PhysicalLength > dataDefinition.PhysicalLength ? dataDefinition.PhysicalLength : results.First().PhysicalLength;
-                                }
+                                _physicalLength -= result.PhysicalLength > dataDefinition.PhysicalLength ? dataDefinition.PhysicalLength : result.PhysicalLength;
                             }
                         }
                     }
@@ -337,6 +346,98 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        /// <summary>
+        /// Gets the actual size of one DataDefinition
+        /// </summary>
+        /// <returns></returns>
+        private long GetPhysicalLength()
+        {
+            if (Picture == null)
+            {
+                if (Usage != null && Usage.Value != DataUsage.None)
+                {
+                    return DefaultLengthOfDataUsage(Usage.Value);
+                }
+                return 1;
+            }
+            if (PictureValidator.IsValid())
+            {
+                PictureType type = new PictureType(PictureValidator);
+                if (Usage != null)
+                {
+                    switch (Usage.Value)
+                    {
+                        case DataUsage.Binary:
+                        case DataUsage.NativeBinary:
+                            type.Usage = TypeCobolType.UsageFormat.Binary;
+                            break;
+                        case DataUsage.Display:
+                            type.Usage = TypeCobolType.UsageFormat.Display;
+                            break;
+                        case DataUsage.FunctionPointer:
+                            type.Usage = TypeCobolType.UsageFormat.FunctionPointer;
+                            break;
+                        case DataUsage.Index:
+                            type.Usage = TypeCobolType.UsageFormat.Index;
+                            break;
+                        case DataUsage.National:
+                            type.Usage = TypeCobolType.UsageFormat.National;
+                            break;
+                        case DataUsage.None:
+                            type.Usage = TypeCobolType.UsageFormat.None;
+                            break;
+                        case DataUsage.ObjectReference:
+                            type.Usage = TypeCobolType.UsageFormat.ObjectReference;
+                            break;
+                        case DataUsage.PackedDecimal:
+                            type.Usage = TypeCobolType.UsageFormat.PackedDecimal;
+                            break;
+                        case DataUsage.Pointer:
+                            type.Usage = TypeCobolType.UsageFormat.Pointer;
+                            break;
+                        case DataUsage.ProcedurePointer:
+                            type.Usage = TypeCobolType.UsageFormat.ProcedurePointer;
+                            break;
+                    }
+                }
+                return type.Length;
+            }
+            else
+                return 1;
+        }
+
+        /// <summary>
+        /// Gets the length of an usage when a Data is defined without a Picture
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <returns></returns>
+        public int DefaultLengthOfDataUsage(DataUsage usage)
+        {
+            switch (usage)
+            {
+                case DataUsage.Binary:
+                case DataUsage.NativeBinary:
+                case DataUsage.National:
+                    return 2;
+                case DataUsage.FloatingPoint:
+                case DataUsage.FunctionPointer:
+                case DataUsage.Index:
+                case DataUsage.ObjectReference:
+                case DataUsage.Pointer:
+                    return 4;
+                case DataUsage.LongFloatingPoint:
+                case DataUsage.ProcedurePointer:
+                    return 8;
+                case DataUsage.Display:
+                case DataUsage.PackedDecimal:
+                    return 1;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// A SlackByte is a unit that is used to synchronize DataDefinitions in memory.
+        /// </summary>
         private long? _slackBytes = null;
         public long SlackBytes
         {
@@ -373,9 +474,7 @@ namespace TypeCobol.Compiler.Nodes {
                     switch (Usage.Value)
                     {
                         case DataUsage.Binary:
-                            Types.PictureValidator pv = new Types.PictureValidator(this.Picture.Value, SignIsSeparate);
-                            pv.IsValid();
-                            if (pv.ValidationContext.Digits <= 4)
+                            if (PictureValidator.ValidationContext.Digits <= 4)
                             {
                                 m = 2;
                             }
@@ -410,6 +509,9 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        /// <summary>
+        /// StartPosition is the position of the first Byte used by a DataDefinition in memory
+        /// </summary>
         private long? _startPosition = null;
         public virtual long StartPosition
         {
@@ -420,16 +522,14 @@ namespace TypeCobol.Compiler.Nodes {
                     return _startPosition.Value;
                 }
 
-                if (this is DataRedefines)
+                var node = this as DataRedefines;
+                if (node != null)
                 {
-                    SymbolReference redefined = ((DataRedefinesEntry)CodeElement)?.RedefinesDataName;
-                    var results = SymbolTable.GetVariables(redefined);
+                    SymbolReference redefined = ((DataRedefinesEntry)CodeElement).RedefinesDataName;
+                    var result = SymbolTable.GetRedefinedVariable(node, redefined);
 
-                    if (results.Count() == 1)
-                    {
-                        _startPosition = results.First().StartPosition;
+                        _startPosition = result.StartPosition;
                         return _startPosition.Value;
-                    }
                     
                 }
 
@@ -462,6 +562,7 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        /// PhysicalPosition is the position of the last Byte used by a DataDefinition in memory
         public virtual long PhysicalPosition => StartPosition + PhysicalLength - 1 + SlackBytes;
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
@@ -535,19 +636,64 @@ namespace TypeCobol.Compiler.Nodes {
         #region TypeProperties
         public AlphanumericValue Picture { get {return _ComonDataDesc != null ? _ComonDataDesc.Picture : null;}}
         public bool IsJustified { get {  if(_ComonDataDesc != null && _ComonDataDesc.IsJustified != null) return _ComonDataDesc.IsJustified.Value; else return false; } }
-        public DataUsage? Usage { get { if (_ComonDataDesc != null && _ComonDataDesc.Usage != null) return _ComonDataDesc.Usage.Value; else return null; } }
-        public bool IsGroupUsageNational { get { if (_ComonDataDesc != null && _ComonDataDesc.IsGroupUsageNational != null) return _ComonDataDesc.IsGroupUsageNational.Value; else return false; } }
+        public DataUsage? Usage
+        {
+            get
+            {
+                if (_ComonDataDesc != null && _ComonDataDesc.Usage != null)
+                    return _ComonDataDesc.Usage.Value;
+
+                DataDefinitionEntry dataEntry = CodeElement as DataDefinitionEntry; 
+                if (dataEntry != null && dataEntry.LevelNumber?.Value > 50)
+                {
+                    return null;
+                }
+
+                DataDefinition parent = Parent as DataDefinition;
+                if (parent != null && parent.IsGroupUsageNational)
+                    return DataUsage.National;
+
+                return parent?.Usage;
+            }
+        }
+
+        public bool IsGroupUsageNational
+        {
+            get
+            {
+                if (_ComonDataDesc != null && _ComonDataDesc.IsGroupUsageNational != null)
+                    return _ComonDataDesc.IsGroupUsageNational.Value;
+
+                else if (Parent is DataDefinition)
+                    return ((DataDefinition)Parent).IsGroupUsageNational;
+
+                else return false;
+            }
+        }
         public long MinOccurencesCount { get { if (_ComonDataDesc != null && _ComonDataDesc.MinOccurencesCount != null) return _ComonDataDesc.MinOccurencesCount.Value; else return 1; } }
-        public long MaxOccurencesCount { get {return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1;}}
+        public long MaxOccurencesCount { get { return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1; } }
 
 
-        public NumericVariable OccursDependingOn { get {return _ComonDataDesc != null ? _ComonDataDesc.OccursDependingOn : null;}}
+        public NumericVariable OccursDependingOn { get { return _ComonDataDesc != null ? _ComonDataDesc.OccursDependingOn : null; } }
         public bool HasUnboundedNumberOfOccurences { get { if (_ComonDataDesc != null && _ComonDataDesc.HasUnboundedNumberOfOccurences != null) return _ComonDataDesc.HasUnboundedNumberOfOccurences.Value; else return false; } }
         public bool IsTableOccurence { get { if (_ComonDataDesc != null) return _ComonDataDesc.IsTableOccurence; else return false; } }
         public CodeElementType? Type { get { if (_ComonDataDesc != null) return _ComonDataDesc.Type; else return null; } }
-        public bool SignIsSeparate { get { if (_ComonDataDesc != null && _ComonDataDesc.SignIsSeparate != null) return _ComonDataDesc.SignIsSeparate.Value; else return false;  } }
+        public bool SignIsSeparate { get { if (_ComonDataDesc != null && _ComonDataDesc.SignIsSeparate != null) return _ComonDataDesc.SignIsSeparate.Value; else return false; } }
         public SignPosition? SignPosition { get { if (_ComonDataDesc != null && _ComonDataDesc.SignPosition != null) return _ComonDataDesc.SignPosition.Value; else return null; } }
-        public bool IsSynchronized { get { if (_ComonDataDesc != null && _ComonDataDesc.IsSynchronized != null) return _ComonDataDesc.IsSynchronized.Value; else return false;  } }
+
+        public bool IsSynchronized
+        {
+            get
+            {
+                if (_ComonDataDesc != null && _ComonDataDesc.IsSynchronized != null)
+                    return _ComonDataDesc.IsSynchronized.Value;
+
+                else if (Parent is DataDefinition)
+                    return ((DataDefinition)Parent).IsSynchronized;
+
+                else return false;
+            }
+        }
         public SymbolReference ObjectReferenceClass { get { if (_ComonDataDesc != null) return _ComonDataDesc.ObjectReferenceClass; else return null; } }
         #endregion
     }

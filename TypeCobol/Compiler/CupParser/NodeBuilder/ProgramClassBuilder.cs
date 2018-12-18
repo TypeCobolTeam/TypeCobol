@@ -113,41 +113,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             if (node.CodeElement != null)
                 NodeCodeElementLinkers.Add(node.CodeElement, node);
-
-            DataDefinition parent = node.Parent as DataDefinition;
-            DataDescriptionEntry dataEntry = node.CodeElement as DataDescriptionEntry;
-
-            if (parent != null && dataEntry != null)
-            {
-                DataDescriptionEntry parentDataEntry = parent.CodeElement as DataDescriptionEntry;
-
-                if (parentDataEntry != null)
-                {
-                    if (parent.IsSynchronized)
-                    {
-                        dataEntry.IsSynchronized = parentDataEntry.IsSynchronized;
-                    }
-
-                    if (parent.IsGroupUsageNational)
-                    {
-                        if (dataEntry.Picture != null && !dataEntry.Picture.Value.ToUpper().Contains("N") || dataEntry.Usage != null)
-                        {
-                            dataEntry.Usage = new SyntaxProperty<DataUsage>(DataUsage.National, parentDataEntry.IsGroupUsageNational.Token);
-                        }
-                        else if (dataEntry.Picture == null)
-                        {
-                            dataEntry.IsGroupUsageNational = parentDataEntry.IsGroupUsageNational;
-                        }
-                    }
-                    else if (parent.Usage.HasValue)
-                    {
-                        if (dataEntry.Usage == null)
-                        {
-                            dataEntry.Usage = parentDataEntry.Usage;
-                        }
-                    }
-                }
-            }
         }
 
         private void Exit()

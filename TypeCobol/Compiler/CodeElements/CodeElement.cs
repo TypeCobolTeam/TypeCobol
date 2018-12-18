@@ -368,6 +368,5 @@ namespace TypeCobol.Compiler.CodeElements
     public interface ITypedCodeElement
     {
         DataType DataType { get; }
-        int PhysicalLength { get; }
     }
 }

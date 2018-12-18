@@ -99,40 +99,6 @@ namespace TypeCobol.Compiler.CodeElements {
                 }
             }
         }
-
-        /// <summary>
-        /// Gets the length of a DataDefinitionEntry in Bytes 
-        /// </summary>
-        public abstract int PhysicalLength { get;}
-
-        /// <summary>
-        /// Gets the length of an usage when a Data is defined without a Picture
-        /// </summary>
-        /// <param name="usage"></param>
-        /// <returns></returns>
-	    public int DefaultLengthOfDataUsage(DataUsage usage)
-	    {
-	        switch (usage)
-	        {
-	            case DataUsage.Binary:
-                case DataUsage.NativeBinary:
-	            case DataUsage.National:
-	                return 2;
-	            case DataUsage.FloatingPoint:
-	            case DataUsage.FunctionPointer:
-	            case DataUsage.Index:
-	            case DataUsage.ObjectReference:
-	            case DataUsage.Pointer:
-	                return 4;
-	            case DataUsage.LongFloatingPoint:
-	            case DataUsage.ProcedurePointer:
-	                return 8;
-	            case DataUsage.Display:
-	            case DataUsage.PackedDecimal:
-	                return 1;
-            }
-	        return 0;
-	    }
     }
 
 
@@ -202,65 +168,6 @@ namespace TypeCobol.Compiler.CodeElements {
         public SymbolReference UserDefinedDataType { get; internal set; }
 // [/COBOL 2002]
 
-        public override int PhysicalLength
-        {
-            get
-            {
-                if (Picture == null)
-                {
-                    if (Usage != null && Usage.Value != DataUsage.None)
-                    {
-                        return DefaultLengthOfDataUsage(Usage.Value);
-                    }
-                    return 1;
-                }
-                PictureValidator pv = new PictureValidator(Picture.Value, SignIsSeparate?.Value ?? false);
-                if (pv.IsValid())
-                {
-                    PictureType type = new PictureType(pv);
-                    if (Usage != null)
-                    {
-                        switch (Usage.Value)
-                        {
-                            case DataUsage.Binary:
-                            case DataUsage.NativeBinary:
-                                type.Usage = TypeCobolType.UsageFormat.Binary;
-                                break;
-                            case DataUsage.Display:
-                                type.Usage = TypeCobolType.UsageFormat.Display;
-                                break;
-                            case DataUsage.FunctionPointer:
-                                type.Usage = TypeCobolType.UsageFormat.FunctionPointer;
-                                break;
-                            case DataUsage.Index:
-                                type.Usage = TypeCobolType.UsageFormat.Index;
-                                break;
-                            case DataUsage.National:
-                                type.Usage = TypeCobolType.UsageFormat.National;
-                                break;
-                            case DataUsage.None:
-                                type.Usage = TypeCobolType.UsageFormat.None;
-                                break;
-                            case DataUsage.ObjectReference:
-                                type.Usage = TypeCobolType.UsageFormat.ObjectReference;
-                                break;
-                            case DataUsage.PackedDecimal:
-                                type.Usage = TypeCobolType.UsageFormat.PackedDecimal;
-                                break;
-                            case DataUsage.Pointer:
-                                type.Usage = TypeCobolType.UsageFormat.Pointer;
-                                break;
-                            case DataUsage.ProcedurePointer:
-                                type.Usage = TypeCobolType.UsageFormat.ProcedurePointer;
-                                break;
-                        }
-                    }
-                    return type.Length;
-                }
-                else
-                    return 1;
-            }
-        }
 
         /// <summary>
         /// p188:
@@ -1132,8 +1039,6 @@ namespace TypeCobol.Compiler.CodeElements {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                 && this.ContinueVisitToChildren(astVisitor, RenamesFromDataName, RenamesToDataName);
         }
-
-	    public override int PhysicalLength { get { return 1; } }
     }
     
     /// <summary>
@@ -1175,8 +1080,6 @@ namespace TypeCobol.Compiler.CodeElements {
 		public ValuesRange[] ConditionValuesRanges { get; set; }
 
 		public override DataType DataType { get { return DataType.Boolean; } }
-		public override int PhysicalLength { get { return 1; } }
-
 	    public override bool VisitCodeElement(IASTVisitor astVisitor) {
             return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
                    && this.ContinueVisitToChildren(astVisitor, ConditionName, DataType)
