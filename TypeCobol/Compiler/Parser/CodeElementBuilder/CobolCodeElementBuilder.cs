@@ -11,6 +11,7 @@ using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Diagnostics;
 using Antlr4.Runtime.Misc;
+using Castle.Core.Internal;
 
 namespace TypeCobol.Compiler.Parser
 {
@@ -129,7 +130,8 @@ namespace TypeCobol.Compiler.Parser
 				program.Recursive = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.RECURSIVE()));
 			}
 			program.AuthoringProperties = CreateAuthoringProperties(context.authoringProperties());
-			Context = context;
+            
+            Context = context;
 			CodeElement = program;
 		}
 
@@ -998,8 +1000,9 @@ namespace TypeCobol.Compiler.Parser
 			CodeElement = entry;
 		}
 
-		public override void EnterDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context) {
-			if (context.dataRenamesEntry() != null || context.dataConditionEntry() != null) {
+		public override void EnterDataDescriptionEntry(CodeElementsParser.DataDescriptionEntryContext context)
+		{
+            if (context.dataRenamesEntry() != null || context.dataConditionEntry() != null) {
 				// For levels 66 and 88, the DataDefinitionEntry is created by the following methods
 				// - EnterDataRenamesEntry
 				// - EnterDataConditionEntry
@@ -1031,9 +1034,18 @@ namespace TypeCobol.Compiler.Parser
                 var restrictionLevel = typedef.Strong.Value ? RestrictionLevel.STRONG 
                                         : typedef.Strict.Value ? RestrictionLevel.STRICT 
                                         : RestrictionLevel.WEAK;
+        
+        // [TypeCobol]
+                if (context.formalizedComment() != null)
+                {
+                    typedef.FormalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
+                    
+                }
+        // [/TypeCobol]
+        
                 entry = typedef;
                 entry.DataName = typedef.DataTypeName;
-                entry.DataType = new DataType(typedef.DataTypeName.Name, restrictionLevel, CobolLanguageLevel.Cobol2002);               
+                entry.DataType = new DataType(typedef.DataTypeName.Name, restrictionLevel, CobolLanguageLevel.Cobol2002); 
             }
 // [/COBOL 2002]
             else {               
@@ -1091,7 +1103,7 @@ namespace TypeCobol.Compiler.Parser
 
 		private void EnterDataRedefinesEntry(CodeElementsParser.DataDescriptionEntryContext context)
 		{
-			var entry = new DataRedefinesEntry();
+            var entry = new DataRedefinesEntry();
 			entry.DataName = CobolWordsBuilder.CreateDataNameDefinition(context.dataNameDefinition());
 			
 			if (context.redefinesClause() != null) {
@@ -1106,7 +1118,8 @@ namespace TypeCobol.Compiler.Parser
 		    TypeDefinitionEntryChecker.CheckRedefines(entry, context);
 		}
 
-	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context) {
+	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context)
+	    {
             if (context.levelNumber != null)
                 entry.LevelNumber = CobolWordsBuilder.CreateIntegerValue(context.levelNumber);
             if (context.FILLER() != null) entry.Filler = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.FILLER()));
@@ -1363,8 +1376,13 @@ namespace TypeCobol.Compiler.Parser
 		////////////////////////
 
 		public override void EnterProcedureDivisionHeader(CodeElementsParser.ProcedureDivisionHeaderContext context) {
+		    // [TypeCobol]
+		    FormalizedCommentDocumentation formalizedCommentDocumentation = null;
+		    if (context.formalizedComment() != null)
+		        formalizedCommentDocumentation = new FormalizedCommentDocumentation(context.formalizedComment().formalizedCommentLine());
+		    // [/TypeCobol]
             Context = context;
-            CodeElement = new ProcedureDivisionHeader();
+            CodeElement = new ProcedureDivisionHeader(formalizedCommentDocumentation);
 		}
 		public override void EnterUsingPhrase(CodeElementsParser.UsingPhraseContext context) {
 			var inputs = CobolStatementsBuilder.CreateInputParameters(context.programInputParameters());

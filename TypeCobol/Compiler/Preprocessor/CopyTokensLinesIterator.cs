@@ -303,14 +303,14 @@ namespace TypeCobol.Compiler.Preprocessor
                 }
                 // Check if the next token found matches the filter criteria or is a COPY compiler directive or is a REPLACE directive
                 Token nextTokenCandidate = currentLine.TokensWithCompilerDirectives[currentPosition.TokenIndexInLine];
-                if (nextTokenCandidate.Channel == channelFilter || nextTokenCandidate.TokenType == TokenType.CopyImportDirective || nextTokenCandidate.TokenType == TokenType.ReplaceDirective)
+                if (nextTokenCandidate.Channel == channelFilter || nextTokenCandidate.TokenType == TokenType.COPY_IMPORT_DIRECTIVE || nextTokenCandidate.TokenType == TokenType.REPLACE_DIRECTIVE)
                 {
                     currentTokenInMainDocument = nextTokenCandidate;
                 }
             }
 
             // Check if the next token is a COPY import compiler directive
-            if (currentTokenInMainDocument.TokenType == TokenType.CopyImportDirective)
+            if (currentTokenInMainDocument.TokenType == TokenType.COPY_IMPORT_DIRECTIVE)
             {
                 // Get next token in the imported document
                 var compilerDirective = (CopyDirective)((CompilerDirectiveToken)currentTokenInMainDocument).CompilerDirective;

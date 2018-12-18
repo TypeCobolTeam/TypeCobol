@@ -569,7 +569,7 @@ terminal TypeCobol.Compiler.Scanner.Token PUBLIC;
 terminal TypeCobol.Compiler.Scanner.Token PRIVATE;
 terminal TypeCobol.Compiler.Scanner.Token IN_OUT;
 terminal TypeCobol.Compiler.Scanner.Token STRICT;
-terminal TypeCobol.Compiler.Scanner.Token QuestionMark;
+terminal TypeCobol.Compiler.Scanner.Token QUESTION_MARK;
 
 // Non terminals
 non terminal TypeCobol.Compiler.Scanner.Token numericLiteralToken;
