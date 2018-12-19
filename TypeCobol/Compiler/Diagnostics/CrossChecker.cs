@@ -171,7 +171,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     var receiver = area.StorageArea;
                     if (receiver is FunctionCallResult)
-                        DiagnosticUtils.AddError(moveSimple, "MOVE: illegal <function call> after TO");
+                        DiagnosticUtils.AddError(move, "MOVE: illegal <function call> after TO");
                 }
             }
 
@@ -182,7 +182,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(Evaluate evaluate)
         {
             if(evaluate.GetChildren<WhenOther>().Count == 0)
-                DiagnosticUtils.AddError(evaluate.CodeElement,
+                DiagnosticUtils.AddError(evaluate,
                     "\"when other\" is missing", MessageCode.Warning);
             return true; 
         }
@@ -191,7 +191,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if(ifNode?.Children != null && !(ifNode.Children.Last() is End))
             {
-                DiagnosticUtils.AddError(ifNode.CodeElement,
+                DiagnosticUtils.AddError(ifNode,
                     "\"end-if\" is missing", MessageCode.Warning);
             }
             return true;
@@ -236,7 +236,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     //Check if DataDefinition is level 88 and declared under a Type BOOL variable
                     if (dataDefinitionParent.DataType == DataType.Boolean && levelNumberValue == 88)
                     {
-                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                        DiagnosticUtils.AddError(dataDefinition,
                             "The Level 88 symbol '" + dataDefinition.Name + "' cannot be declared under a BOOL typed symbol");
                     }
                 }
@@ -246,7 +246,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     //These top level DataDefinition can only be level 01 or 77
                     if (!(levelNumberValue == 01 || levelNumberValue == 77))
                     {
-                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                        DiagnosticUtils.AddError(dataDefinition,
                             "The variable '" + dataDefinition.Name + "' can only be of level 01 or 77", dataDefinitionEntry);
                     }
                 }
@@ -256,13 +256,13 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (dataDefinition.ChildrenCount != 0)
                     {
-                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                        DiagnosticUtils.AddError(dataDefinition,
                             "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot be group item.", dataDefinitionEntry);
                     }
 
                     if (dataDefinition.Usage != null)
                     {
-                        DiagnosticUtils.AddError(dataDefinition.CodeElement,
+                        DiagnosticUtils.AddError(dataDefinition,
                             "The variable '" + dataDefinition.Name + "' with level 88 and 66 cannot have USAGE.", dataDefinitionEntry);
                     }
                 }
@@ -316,7 +316,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (indexDefinition.ParentTypeDefinition != null) return true;
             if (found.Count > 1) //If multiple index with same name found, display a warning.
             {
-                DiagnosticUtils.AddError(indexDefinition.Parent.CodeElement,
+                DiagnosticUtils.AddError(indexDefinition.Parent,
                     "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
             }
             return true;
@@ -742,11 +742,11 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     entry = descriptionEntry;
                 }
-                else if (data.CodeElement as DataRedefinesEntry!=null)
+                else if (data.CodeElement is DataRedefinesEntry)
                 {
                     var redefines = (DataRedefinesEntry) data.CodeElement;
                     var searchedDataDefinition = node.GetDataDefinitionForQualifiedName(redefines.RedefinesDataName.URI, isReadDictionary);
-                    if (searchedDataDefinition as DataDescription != null)
+                    if (searchedDataDefinition is DataDescription)
                     {
                         entry = (DataDescriptionEntry) searchedDataDefinition.CodeElement;
                     }
