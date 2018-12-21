@@ -72,7 +72,14 @@ namespace TypeCobol.Codegen.Actions
 
             if ((Source as FunctionDeclaration)?.IsNested == true)
             {
-                Destination = Destination.Root.MainProgram.Children.First();
+                if (((FunctionDeclaration) Source).CodeElement().Visibility == AccessModifier.Public)
+                {
+                    Destination = Destination.Root.MainProgram.Children.First();
+                }
+                else
+                {
+                    Destination = Destination.Children.First();
+                }
                 index = this.Destination.Parent.Children.Count - 2;
             }
 

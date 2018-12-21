@@ -318,13 +318,13 @@ namespace TypeCobol.Compiler.Nodes {
             if (pgm == null) return false;
 
             if (pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
-                .Any(c => c is FunctionDeclaration && ((FunctionDeclaration)c).IsNested))
+                .Any(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).IsNested))
                 return true;
 
             foreach (var pgmNestedProgram in pgm.NestedPrograms)
             {
                 if (pgmNestedProgram.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
-                    .Any(c => c is FunctionDeclaration && ((FunctionDeclaration)c).IsNested))
+                    .Any(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).IsNested))
                     return true;
 
                 if (AnyNestedFunctions(pgmNestedProgram))
@@ -530,9 +530,9 @@ internal class DefinitionsAttribute: Attribute {
         if (pgm == null) return list;
 
         list.AddRange(pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
-            .Where(c => c is FunctionDeclaration && ((FunctionDeclaration)c).IsNested));
+            .Where(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).IsNested));
 
-        foreach (var pgmNestedProgram in pgm.NestedPrograms)
+            foreach (var pgmNestedProgram in pgm.NestedPrograms)
         {
             list.AddRange(GetNestedFunctions(pgmNestedProgram));
         }
