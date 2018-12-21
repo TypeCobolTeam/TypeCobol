@@ -750,6 +750,20 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndExecStatement()
         {
+            //procedures containing EXEC statements should be generated as nested
+            if (_IsInsideProcedure)
+            {
+                Node parent = CurrentNode.Parent;
+                while (parent is Program == false)
+                {
+                    if (parent is FunctionDeclaration)
+                    {
+                        parent.SetFlag(Node.Flag.GenerateAsNested, true);
+                        break;
+                    }
+                    parent = parent.Parent;
+                }
+            }
             Exit();
         }
 
