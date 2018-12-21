@@ -8,5 +8,8 @@
 -c2tc input\Part1Invalid-NoPart2.tcmc output\Part1Invalid-NoPart2.c2tc
 -c2tc input\Empty.tcmc output\Empty.c2tc
 -c2tc input\EncodedTypeCobol2.tcmc output\Result2.tcbl
+-c2tc input\NoDecodableWithCblOps.cbl output\NoDecodableWithCblOps.cbl
+-c2tc input\NoDecodableFile.cbl output\NoDecodableFile.cbl
+
 
 
