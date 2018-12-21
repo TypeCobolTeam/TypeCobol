@@ -392,7 +392,7 @@
         items += "     IF NOT TC-" + @Model.programName8 + "-FctList-IsLoaded\n";
         foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true))
         items += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
-        
+
         items += "       SET TC-" + @Model.programName8 + "-FctList-IsLoaded TO TRUE\n";
         items += "     END-IF\n";
         items += "        .\n\n";

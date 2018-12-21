@@ -722,11 +722,11 @@ namespace TypeCobol.Codegen.Actions
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
         var items = "";
-        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
         items += "01 PntTab-Pnt POINTER.\n";
         }
         int maxVarCount = 0;
-        foreach (var function in @Model.definitions.nestedFunctions.Public) {
+        foreach (var function in @Model.definitions.functionsGeneratedAsNested.Public) {
         if (function.Profile.Parameters.Count > maxVarCount) {
         maxVarCount = function.Profile.Parameters.Count;
         }
@@ -750,11 +750,11 @@ namespace TypeCobol.Codegen.Actions
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
         var items = "";
-        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
         items += "PA-ALL-ENTRIES.\n";
         string usingVariables;
 
-        foreach (var functionNode in @Model.definitions.nestedFunctions.Public) {
+        foreach (var functionNode in @Model.definitions.functionsGeneratedAsNested.Public) {
 
         TypeCobol.Compiler.Nodes.FunctionDeclaration function = (TypeCobol.Compiler.Nodes.FunctionDeclaration) functionNode;
         usingVariables = string.Empty;
@@ -784,7 +784,7 @@ namespace TypeCobol.Codegen.Actions
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
         var items = "";
-        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
         items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02).\n";
         items += "    88 TC-"+ @Model.programName8 + "-FctList-IsLoaded      VALUE 'OK'.\n";
         }
@@ -804,11 +804,11 @@ namespace TypeCobol.Codegen.Actions
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
         var items = "";
-        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
         items += "01 TC-"+ @Model.programName8 + "-PntTab.\n";
-        items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+(@Model.definitions.nestedFunctions.Public.Count + @Model.definitions.functions.Public.Count) +".\n";
+        items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+(@Model.definitions.functionsGeneratedAsNested.Public.Count + @Model.definitions.functions.Public.Count) +".\n";
         }
-        foreach (var f in @Model.definitions.nestedFunctions.Concat(@Model.definitions.functions.Public, true)) {
+        foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true)) {
         items += "*To call program " + f.Hash + f.Name + '\n';
         items += "*Which is generated code for " + f.QualifiedName + '\n';
         items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
@@ -831,7 +831,7 @@ namespace TypeCobol.Codegen.Actions
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
         var items = "";
-        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        if (@Model.definitions.functionsGeneratedAsNested.Public.Count > 0) {
         items += "*\n";
         items += "*    IF CallIsCopy\n";
         items += "*      PERFORM Copy-Process-Mode\n";
@@ -844,9 +844,9 @@ namespace TypeCobol.Codegen.Actions
 
         items += " FctList-Process-Mode.\n";
         items += "     IF NOT TC-" + @Model.programName8 + "-FctList-IsLoaded\n";
-        foreach (var f in @Model.definitions.nestedFunctions.Concat(@Model.definitions.functions.Public, true))
+        foreach (var f in @Model.definitions.functionsGeneratedAsNested.Concat(@Model.definitions.functions.Public, true))
         items += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
-        
+
         items += "       SET TC-" + @Model.programName8 + "-FctList-IsLoaded TO TRUE\n";
         items += "     END-IF\n";
         items += "        .\n\n";
