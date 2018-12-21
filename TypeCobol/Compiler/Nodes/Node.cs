@@ -188,6 +188,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// Mark a program that contains procedure declaration.
             /// </summary>
             ContainsProcedure = 0x01 << 26,
+            /// <summary>
+            /// Mark a program that should generate its procedure as nested pgm.
+            /// </summary>
+            GenerateAsNested = 0x01 << 27,
 
 
 

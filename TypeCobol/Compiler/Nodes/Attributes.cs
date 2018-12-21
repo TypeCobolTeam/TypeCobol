@@ -51,6 +51,8 @@ namespace TypeCobol.Compiler.Nodes {
 	        attributes["incrementDirection"] = new incrementDirectionAttribute();
 	        attributes["needCompute"] = new NeedComputeAttribute();
 	        attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
+	        attributes["isnested"] = new IsNestedAttribute();
+	        attributes["containnested"] = new ContainNestedAttribute();
             attributes["global"] = new GlobalAttribute();
             //not used?
             attributes["typecobol"] = new TypeCobolAttribute();
@@ -291,8 +293,46 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-    
+    internal class IsNestedAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var fun = o as FunctionDeclaration;
+            if (fun == null) return null;
+            return fun.IsNested.ToString();
+        }
+    }
 
+    internal class ContainNestedAttribute : Attribute
+    {
+        public object GetValue(object o, SymbolTable table)
+        {
+            var pgm = o as Program;
+            if (pgm == null) return false;
+
+            return AnyNestedFunctions(pgm);
+        }
+
+        private bool AnyNestedFunctions(Program pgm)
+        {
+            if (pgm == null) return false;
+
+            if (pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
+                .Any(c => c is FunctionDeclaration && ((FunctionDeclaration)c).IsNested))
+                return true;
+
+            foreach (var pgmNestedProgram in pgm.NestedPrograms)
+            {
+                if (pgmNestedProgram.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
+                    .Any(c => c is FunctionDeclaration && ((FunctionDeclaration)c).IsNested))
+                    return true;
+
+                if (AnyNestedFunctions(pgmNestedProgram))
+                    return true;
+            }
+            return false;
+        }
+    }
 
     internal class incrementDirectionAttribute : Attribute
     {
@@ -466,6 +506,7 @@ internal class DefinitionsAttribute: Attribute {
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);
 		definitions.functions = GetFunctions(table);
+		definitions.nestedFunctions = GetNestedFunctions(o as Program);
 		return definitions;
 	}
 	private Definitions.NList GetTypes(SymbolTable table) {
@@ -478,14 +519,31 @@ internal class DefinitionsAttribute: Attribute {
 	private Definitions.NList GetFunctions(SymbolTable table) {
 		var list = new Definitions.NList();
 		if (table == null) return list;
-		foreach(var items in table.Functions) list.AddRange(items.Value);
+		foreach(var items in table.Functions) list.AddRange(items.Value.Where(fd => !fd.IsNested));
 		list.AddRange(GetFunctions(table.EnclosingScope));
 		return list;
 	}
-}
-public class Definitions {
+
+    private Definitions.NList GetNestedFunctions(Program pgm)
+    {
+        var list = new Definitions.NList();
+        if (pgm == null) return list;
+
+        list.AddRange(pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
+            .Where(c => c is FunctionDeclaration && ((FunctionDeclaration)c).IsNested));
+
+        foreach (var pgmNestedProgram in pgm.NestedPrograms)
+        {
+            list.AddRange(GetNestedFunctions(pgmNestedProgram));
+        }
+        return list;
+    }
+
+    }
+    public class Definitions {
 	public NList types;
 	public NList functions;
+	public NList nestedFunctions;
 
 	public override string ToString() {
 		var str = new System.Text.StringBuilder();
@@ -503,17 +561,28 @@ public class Definitions {
 		internal NList(): base() { }
 		public List<Node> Public  { get { return retrieve(AccessModifier.Public); } }
         public bool PublicIsNotEmpty { get { return retrieve(AccessModifier.Public).Count > 0; } }
-		public List<Node> Private { get { return retrieve(AccessModifier.Private); } }
-		private List<Node> retrieve(AccessModifier visibility) {
-			var results = new List<Node>();
-			foreach(var node in this) {
-				var fun = node as FunctionDeclaration;
-				if (fun == null) continue;
-				if (fun.CodeElement().Visibility == visibility) results.Add(node);
-			}
-			return results;
-		}
-	}
+        public List<Node> Private { get { return retrieve(AccessModifier.Private); } }
+
+	    private List<Node> retrieve(AccessModifier visibility) {
+	        var results = new List<Node>();
+	        foreach(var node in this) {
+	            var fun = node as FunctionDeclaration;
+	            if (fun == null) continue;
+	            if (fun.CodeElement().Visibility == visibility) results.Add(node);
+	        }
+	        return results;
+	    }
+
+        public IEnumerable<Node> Concat(List<Node> list, bool publicVisibility)
+        {
+            if (publicVisibility)
+            {
+                return this.Public.Concat(list);
+            }
+
+            return this.Private.Concat(list);
+        }
+    }
 }
 
 internal class VisibilityAttribute: Attribute {

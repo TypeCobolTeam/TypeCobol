@@ -128,7 +128,9 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// A nested program is a program that is contained in another program.
         /// </summary>
-        public IList<NestedProgram> NestedPrograms { get; set; }
+        public IEnumerable<NestedProgram> NestedPrograms {
+            get { return this.children.OfType<NestedProgram>(); }
+        }
     }
 
     /// <summary>
