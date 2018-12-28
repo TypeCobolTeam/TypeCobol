@@ -16,7 +16,7 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
 
        01 TC-PGM1-PntTab.
-           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 3.
+           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 2.
       *To call program a0508f35check
       *Which is generated code for PGM1.check
       *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
@@ -27,11 +27,6 @@
       *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
            05 TC-PGM1-cd991005-Idt   PIC X(08) VALUE 'cd991005'.
            05 TC-PGM1-cd991005 PROCEDURE-POINTER.
-      *To call program f6b6da00GetPersonByName
-      *Which is generated code for PersonService.GetPersonByName
-      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
-           05 TC-PGM1-f6b6da00-Idt   PIC X(08) VALUE 'f6b6da00'.
-           05 TC-PGM1-f6b6da00 PROCEDURE-POINTER.
 
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
@@ -69,10 +64,6 @@
                CALL "cd991005GetPersonById" USING TC-A1
                GOBACK.
 
-           ENTRY 'f6b6da00' USING TC-A1
-               CALL "f6b6da00GetPersonByName" USING TC-A1
-               GOBACK.
-
 
 
       *PersonService contains public procedure
@@ -82,8 +73,26 @@
       *declare procedure GetPersonById public
       *   input  personId  type date.
        
-      *declare procedure GetPersonByName public
+      *declare procedure GetPersonByName private
       *   input  name  pic x(15).
+      *
+      *declare procedure GetPersonByName private
+      *   input  name  pic x(15).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. f6b6da00GetPersonByName.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.GetPersonByName - Params :
+      *		input(name: pic x(15))
+       01 name pic x(15).
+       PROCEDURE DIVISION
+             USING BY REFERENCE name
+           .
+      *PGM1.GetPersonByName - Params :
+      *		input(name: pic x(15))
+           CONTINUE.
+       END PROGRAM f6b6da00GetPersonByName.
        END PROGRAM PersonService.
 
 
@@ -187,78 +196,17 @@
       *PGM1.checkName - Params :
       *		input(myname: pic X(15))
                                
-       01 TC-PersonSe pic X(08) value 'PERSONSE'.
-
-       01 TC-Call          PIC X     VALUE 'T'.
-           88 TC-FirstCall  VALUE 'T'.
-           88 TC-NthCall    VALUE 'F'
-                            X'00' thru 'S'
-                            'U' thru X'FF'.
        linkage section.
       *PGM1.checkName - Params :
       *		input(myname: pic X(15))
                        
-      *Common to all librairies used by the program.
-       01 TC-Library-PntTab.
-           05 TC-Library-PntNbr          PIC S9(04) COMP.
-           05 TC-Library-Item OCCURS 1000
-                               DEPENDING ON TC-Library-PntNbr
-                               INDEXED   BY TC-Library-Idx.
-              10 TC-Library-Item-Idt      PIC X(08).
-              10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
-
-      *To call program f6b6da00GetPersonByName in module PersonService
-      *Which is generated code for PersonService.GetPersonByName
-      *Declared in source file CallPublicProcFromPrivateProc.rdz.tcbl
-       01 TC-PersonSe-f6b6da00-Item.
-          05 TC-PersonSe-f6b6da00-Idt PIC X(08).
-          05 TC-PersonSe-f6b6da00 PROCEDURE-POINTER.
        01 myname PIC X(15).
        PROCEDURE DIVISION
              USING BY REFERENCE myname
            .
       *PGM1.checkName - Params :
       *		input(myname: pic X(15))
-           PERFORM TC-INITIALIZATIONS
-      *    Call PersonService::GetPersonByName input myname
-           
-           IF ADDRESS OF TC-PersonSe-f6b6da00-Item = NULL
-             OR TC-PersonSe-f6b6da00-Idt not = 'f6b6da00'
-               PERFORM TC-LOAD-POINTERS-PersonSe
-           END-IF
-      *    Equivalent to call f6b6da00GetPersonByName in module PersonSe
-      *rvice
-           CALL TC-PersonSe-f6b6da00 USING
-                                 myname
-           end-call
-                                                           
-           .
-      *=================================================================
-       TC-INITIALIZATIONS.
-      *=================================================================
-            IF TC-FirstCall
-                 SET TC-NthCall TO TRUE
-                 SET ADDRESS OF TC-PersonSe-f6b6da00-Item  TO NULL
-            END-IF
-            .
-      *=================================================================
-       TC-LOAD-POINTERS-PersonSe.
-      *=================================================================
-            CALL 'ZCALLPGM' USING TC-PersonSe
-            ADDRESS OF TC-Library-PntTab
-            PERFORM VARYING TC-Library-Idx FROM 1 BY 1
-            UNTIL TC-Library-Idx > TC-Library-PntNbr
-                EVALUATE TC-Library-Item-Idt (TC-Library-Idx)
-                WHEN 'f6b6da00'
-                     SET ADDRESS OF
-                     TC-PersonSe-f6b6da00-Item
-                     TO ADDRESS OF
-                     TC-Library-Item(TC-Library-Idx)
-                WHEN OTHER
-                     CONTINUE
-                END-EVALUATE
-            END-PERFORM
-            .
+           CONTINUE.
        END PROGRAM a02a7aa5checkName.
       *
       *declare procedure GetPersonById public
@@ -281,23 +229,5 @@
       *		input(personId: DATE)
            CONTINUE.
        END PROGRAM cd991005GetPersonById.
-      *
-      *declare procedure GetPersonByName public
-      *   input  name  pic x(15).
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. f6b6da00GetPersonByName IS COMMON.
-       DATA DIVISION.
-       LINKAGE SECTION.
-      *PGM1.GetPersonByName - Params :
-      *		input(name: pic x(15))
-       01 name pic x(15).
-       PROCEDURE DIVISION
-             USING BY REFERENCE name
-           .
-      *PGM1.GetPersonByName - Params :
-      *		input(name: pic x(15))
-           CONTINUE.
-       END PROGRAM f6b6da00GetPersonByName.
        END PROGRAM PGM1.
 

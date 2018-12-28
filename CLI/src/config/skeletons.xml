@@ -278,8 +278,8 @@
     </patterns>
   </skeleton>
 
-  <!-- generate code going with the generation of a public nested program -->
-  <skeleton name="FUN.DECLARE.NESTED" var="definitions,programName8">
+  <!-- generate code going with the generation of a public nested program in the main program-->
+  <skeleton name="MAIN.DECLARE.NESTED" var="definitions,programName8">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeModel.SourceProgram" containnested="true"/>
     </conditions>

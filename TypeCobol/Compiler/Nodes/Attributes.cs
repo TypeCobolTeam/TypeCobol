@@ -307,30 +307,12 @@ namespace TypeCobol.Compiler.Nodes {
     {
         public object GetValue(object o, SymbolTable table)
         {
+            var nestedFunctions = DefinitionsAttribute.GetNestedFunctions(o as Program);
+
             var pgm = o as Program;
             if (pgm == null) return false;
 
-            return AnyNestedFunctions(pgm);
-        }
-
-        private bool AnyNestedFunctions(Program pgm)
-        {
-            if (pgm == null) return false;
-
-            if (pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
-                .Any(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).IsNested))
-                return true;
-
-            foreach (var pgmNestedProgram in pgm.NestedPrograms)
-            {
-                if (pgmNestedProgram.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
-                    .Any(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).IsNested))
-                    return true;
-
-                if (AnyNestedFunctions(pgmNestedProgram))
-                    return true;
-            }
-            return false;
+            return nestedFunctions.Public.Count > 0;
         }
     }
 
@@ -524,7 +506,7 @@ internal class DefinitionsAttribute: Attribute {
 		return list;
 	}
 
-    private Definitions.NList GetNestedFunctions(Program pgm)
+    internal static Definitions.NList GetNestedFunctions(Program pgm)
     {
         var list = new Definitions.NList();
         if (pgm == null) return list;
@@ -532,7 +514,7 @@ internal class DefinitionsAttribute: Attribute {
         list.AddRange(pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
             .Where(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).IsNested));
 
-            foreach (var pgmNestedProgram in pgm.NestedPrograms)
+        foreach (var pgmNestedProgram in pgm.NestedPrograms)
         {
             list.AddRange(GetNestedFunctions(pgmNestedProgram));
         }
