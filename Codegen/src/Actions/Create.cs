@@ -26,13 +26,12 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="pattern">The pattern to apply</param>
         /// <param name="variables">The Substitution variables</param>
         /// <param name="group">The Group ID</param>
-        /// <param name="delimiter">Substitution variable delimiter</param>
         /// <param name="position">The Insertion position (index) as child in the Parent node</param>
-        public Create(Node parent, TypeCobol.Codegen.Skeletons.Pattern pattern, Dictionary<string, object> variables, string group, string delimiter, int? position)
+        public Create(Node parent, TypeCobol.Codegen.Skeletons.Pattern pattern, Dictionary<string, object> variables, string group, int? position)
         {
             this.Parent = parent;
-            if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
-            var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(pattern.Template, variables, delimiter);
+            if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables);
+            var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(pattern.Template, variables);
             this.Child = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver);
             if (pattern.NewLine)
                 this.Child.SetFlag(Node.Flag.FactoryGeneratedNodeWithFirstNewLine, true);

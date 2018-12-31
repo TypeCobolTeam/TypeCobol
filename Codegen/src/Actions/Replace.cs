@@ -35,7 +35,7 @@ namespace TypeCobol.Codegen.Actions
         /// <returns>true if all parameters corresponds to a "replace SET <boolean> TO FALSE" pattern, false otherwise</returns>
         private static bool IsSetBoolVarTemplate(Node node, string template, Dictionary<string, object> variables)
         {
-            return (node is TypeCobol.Compiler.Nodes.Set) && template.Equals("SET %receiver-false TO TRUE") && variables != null &&
+            return (node is TypeCobol.Compiler.Nodes.Set) && template.Equals("SET @Model.receiver-false TO TRUE") && variables != null &&
                    variables.ContainsKey("receiver");
         }
 
@@ -77,9 +77,8 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="template">The template to apply</param>
         /// <param name="variables">The substitution Variable for the new GenerateNode based on the template</param>
         /// <param name="group"></param>
-        /// <param name="delimiter">Aragument variable delimiter</param>
         /// <returns>The new template to apply for a customization, or the same template otherwise</returns>
-        private string CheckCustomReplace(Node node, string template, Dictionary<string, object> variables, string group, string delimiter)
+        private string CheckCustomReplace(Node node, string template, Dictionary<string, object> variables, string group)
         {
             IsReplaceSetBool = IsSetBoolVarTemplate(node, template, variables) && IsQualifiedNodeReceiver(node);
             IsReplaceSetUpByPointer = IsSetPointerInrementVarTemplate(node, template, variables) && IsQualifiedNodeReceiver(node);
@@ -123,17 +122,16 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="template">The template to apply</param>
         /// <param name="variables">The substitution Variable for the new GenerateNode based on the template</param>
         /// <param name="group"></param>
-        /// <param name="delimiter">Aragument variable delimiter</param>
-        public Replace(Node node, string template, Dictionary<string, object> variables, string group, string delimiter)
+        public Replace(Node node, string template, Dictionary<string, object> variables, string group)
         {
             this.Old = node;
             UseRazor = true;
-            template = CheckCustomReplace(node, template, variables, group, delimiter);
+            template = CheckCustomReplace(node, template, variables, group);
             //Substitute any group code
             if (UseRazor)
             {
-                if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables, delimiter);
-                var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables, delimiter);
+                if (group != null) this.Group = new TypeCobol.Codegen.Skeletons.Templates.RazorEngine().Replace(group, variables);
+                var solver = TypeCobol.Codegen.Skeletons.Templates.RazorEngine.Create(template, variables);
                 //JCM Give to the replaced form the same Code element So that positions will be calculated correctly
                 this.New = new GeneratedNode((TypeCobol.Codegen.Skeletons.Templates.RazorEngine)solver, Old.CodeElement);
             }
