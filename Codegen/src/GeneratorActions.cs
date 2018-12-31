@@ -48,16 +48,18 @@ namespace TypeCobol.Codegen
 
         public Generator Generator { get; private set; }
 
+        public IActionsProvider ActionsProvider {get; private set;}
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="Skeletons">Skeletons pattern for actions</param>
-        public GeneratorActions(Generator generator, List<Skeleton> skeletons, CompilationDocument compilationDocument) {
+        public GeneratorActions(Generator generator, List<Skeleton> skeletons, CompilationDocument compilationDocument, IActionsProvider actionsProvider = null) {
             Generator = generator;
             Skeletons = skeletons ?? new List<Skeleton>();
             CompilationDocument = compilationDocument;
+            ActionsProvider = actionsProvider;
         }
-
 
 
         /// <summary>
@@ -67,19 +69,26 @@ namespace TypeCobol.Codegen
         /// <returns>The collection of actiosn.</returns>
         public ICollection<TypeCobol.Codegen.Actions.Action> GetActions(Node node)
         {
-            var actions = new List<TypeCobol.Codegen.Actions.Action>();
-            var skeleton = GetActiveSkeleton(node);
-            if (skeleton != null)
+            if (ActionsProvider != null)
             {
-                var properties = GetProperties(node, skeleton.Properties);
-                foreach (var pattern in skeleton)
-                {
-                    var action = GetAction(node, properties, pattern);
-                    if (action != null) 
-                        actions.Add(action);
-                }
+                return ActionsProvider.GetActions(node, this);
             }
-            return actions;
+            else
+            {
+                var actions = new List<TypeCobol.Codegen.Actions.Action>();
+                var skeleton = GetActiveSkeleton(node);
+                if (skeleton != null)
+                {
+                    var properties = GetProperties(node, skeleton.Properties);
+                    foreach (var pattern in skeleton)
+                    {
+                        var action = GetAction(node, properties, pattern);
+                        if (action != null)
+                            actions.Add(action);
+                    }
+                }
+                return actions;
+            }
         }
 
         /// <summary>
@@ -94,17 +103,11 @@ namespace TypeCobol.Codegen
             {
                 CurrentProgram = node as Program;
                 ProgramGroupPrefix = CurrentProgram.Identification.Text;
-                if (CurrentProgram.Root.IsFlagSet(Node.Flag.ContainsProcedure) && CurrentProgram.IsFlagSet(Node.Flag.MissingEndProgram))
-                {
-                    var endProgramNode = new Codegen.Nodes.ProgramEnd(CurrentProgram.Name);
-                    node.Add(endProgramNode);
-                    endProgramNode.SetFlag(Node.Flag.FactoryGeneratedNode, true);
-                    endProgramNode.SetFlag(Node.Flag.FactoryGeneratedNodeKeepInsertionIndex, true);
-                }
             }
 
             var actions = GetActions(node);
-            AddRange(actions);
+            if (actions != null)
+                AddRange(actions);
             foreach (var child in new List<Node>(node.Children)) 
                 child.Accept(this);
 
@@ -189,6 +192,59 @@ namespace TypeCobol.Codegen
                 throw new System.ArgumentException(errors.ToString());
             }
             return result;
+        }
+
+        /// <summary>
+        /// Create Codegen Action
+        /// </summary>
+        /// <param name="souce">The source node</param>
+        /// <param name="pattern">The pattern's name</param>
+        /// <param name="code">The code of the action</param>
+        /// <param name="action">The actions' name</param>
+        /// <param name="group">The action's group</param>
+        /// <param name="location">The node's location</param>
+        /// <param name="position">The node's insertion position</param>
+        /// <param name="newline">Shall we first emit a newline</param>
+        /// <returns>The action if any, null otherwise</returns>
+        public TypeCobol.Codegen.Actions.Action CreateAction(Node source, string pattern, string code, string action, string group, string location, string position, bool newline)
+        {
+            if (code != null)
+            {
+                code = code.TrimStart().Replace("\r\n", "\n");
+            }
+            int? index;
+            if (group != null && ProgramGroupPrefix != null)
+            {
+                group = ProgramGroupPrefix + group;
+            }
+            var destination = GetLocation(source, location, out index);
+            if ("create".Equals(action))
+            {
+                return new CreateCode(destination, pattern, code, group, index, newline);
+            }
+            if ("replace".Equals(action))
+            {
+                return new ReplaceCode(destination, pattern, code, group);
+            }
+            if ("comment".Equals(action))
+            {
+                return new Comment(destination);
+            }
+            if ("expand".Equals(action))
+            {
+                return new Expand(source, destination, location);
+            }
+            if ("erase".Equals(action))
+            {
+                return new Erase(destination, code);
+            }
+            if ("remarks".Equals(action))
+            {
+                return new Remarks(source, destination, location, CompilationDocument);
+            }
+            System.Console.WriteLine("Unknown action: \"" + action + "\"");
+            return null;
+
         }
 
         /// <summary>

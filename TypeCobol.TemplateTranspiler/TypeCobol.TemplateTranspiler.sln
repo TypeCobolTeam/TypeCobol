@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.TemplateTranspiler", "TypeCobol.TemplateTranspiler.csproj", "{AB8D29E1-9511-44C2-B5E3-28965323E87B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.TemplateCore", "..\TypeCobol.TemplateCore\TypeCobol.TemplateCore.csproj", "{FB927D1E-C8D1-48C6-BF13-25942BE5041B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeCobol.TemplateCore.Test", "..\TypeCobol.TemplateCore.Test\TypeCobol.TemplateCore.Test.csproj", "{E9386EE6-7B3B-4823-BEEF-1B6521CE5319}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB8D29E1-9511-44C2-B5E3-28965323E87B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB8D29E1-9511-44C2-B5E3-28965323E87B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB8D29E1-9511-44C2-B5E3-28965323E87B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB8D29E1-9511-44C2-B5E3-28965323E87B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB927D1E-C8D1-48C6-BF13-25942BE5041B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB927D1E-C8D1-48C6-BF13-25942BE5041B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB927D1E-C8D1-48C6-BF13-25942BE5041B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB927D1E-C8D1-48C6-BF13-25942BE5041B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9386EE6-7B3B-4823-BEEF-1B6521CE5319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9386EE6-7B3B-4823-BEEF-1B6521CE5319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9386EE6-7B3B-4823-BEEF-1B6521CE5319}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9386EE6-7B3B-4823-BEEF-1B6521CE5319}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D95470EF-9364-4E06-8A08-812238002D61}
+	EndGlobalSection
+EndGlobal
