@@ -1,0 +1,77 @@
+﻿Line 12[13,14] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: ID
+Line 14[13,15] <37, Warning, General> - Warning: Parameter name does not match to any function parameter: IDS
+Line 28[21,26] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myBool
+Line 29[21,25] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: price
+======================== Documentation ========================
+{
+  "__type": "DocumentationForProgram:#TypeCobol.Compiler.Nodes",
+  "Name": "DocForFunctions",
+  "Namespace": "DocForFunctions"
+}
+---------------------
+
+{
+  "__type": "DocumentationForFunction:#TypeCobol.Compiler.Nodes",
+  "Deprecated": "",
+  "Description": "MyProc1 description ",
+  "Name": "MyProc1",
+  "Namespace": "DocForFunctions",
+  "Needs": [
+    "first need",
+    "second need"
+  ],
+  "ReplacedBy": "ReplacedBy MyProc8 ",
+  "Restriction": "Do not support discount code ",
+  "See": "you later ",
+  "ToDos": [
+    "implement a call to MyProc8 in case of discount code"
+  ],
+  "Visibility": 1,
+  "Parameters": [
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "DATE"
+      },
+      "Info": "sell date",
+      "Name": "myDate",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(50)"
+      },
+      "Info": "product name",
+      "Name": "name",
+      "PassingType": 0
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "TypeName": "BOOL"
+      },
+      "Name": "myBool",
+      "PassingType": 2
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "S9(5)V9(2)"
+      },
+      "Name": "price",
+      "PassingType": 1
+    },
+    {
+      "DocDataType": {
+        "MaxOccurence": 1,
+        "Picture": "X(200)"
+      },
+      "Info": "this is not a description",
+      "Name": "desc",
+      "PassingType": 1
+    }
+  ]
+}
+---------------------
+

@@ -7,9 +7,9 @@
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
-%level  %name-value PIC X VALUE LOW-VALUE.
-    88  %name       VALUE 'T'.
-    88  %name-false VALUE 'F'
+@Model.level  @Model.name-value PIC X VALUE LOW-VALUE.
+    88  @Model.name       VALUE 'T'.
+    88  @Model.name-false VALUE 'F'
                     X'00' thru 'S'
                     'U' thru X'FF'.
       </pattern>
@@ -22,7 +22,7 @@
     </conditions>
     <patterns>
       <pattern location="NODE" action="replace">
-SET %receiver-false TO TRUE
+SET @Model.receiver-false TO TRUE
       </pattern>
     </patterns>
   </skeleton>

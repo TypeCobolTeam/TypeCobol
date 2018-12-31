@@ -15,7 +15,7 @@ public class Eraser: Solver {
 		this.words = words;
 		this.padded = padded;
 	}
-	public string Replace(string template, Dictionary<string,object> variables, string delimiter) {
+	public string Replace(string template, Dictionary<string,object> variables) {
 		return Replace();
 	}
 	public string Replace() {

@@ -21,7 +21,7 @@
       <HintPath>..\..\packages\JetBrains.Annotations.11.0.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
+	<Reference Include="Microsoft.CSharp" />
     <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\RazorEngine.3.10.0\lib\net45\RazorEngine.dll</HintPath>
       <Private>True</Private>
@@ -34,53 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actions\Action.cs" />
-    <Compile Include="Actions\Comment.cs" />
-    <Compile Include="Actions\Create.cs" />
-    <Compile Include="Actions\CreateCode.cs" />
-    <Compile Include="Actions\Erase.cs" />
-    <Compile Include="Actions\Expand.cs" />
-    <Compile Include="Actions\IEraseAction.cs" />
-    <Compile Include="Actions\IActionsProvider.cs" />
-    <Compile Include="Actions\Qualifier.cs" />
-    <Compile Include="Actions\Remarks.cs" />
-    <Compile Include="Actions\Replace.cs" />
-    <Compile Include="Actions\ReplaceCode.cs" />
-    <Compile Include="Actions\Skeletons.cs" />
-    <Compile Include="App.cs" />
-    <Compile Include="Config\Cheetah.cs" />
-    <Compile Include="Config\ConfigParser.cs" />
-    <Compile Include="Config\XmlParser.cs" />
-    <Compile Include="Extensions\Compiler\CodeElements\Expressions\StorageAndVariableExtensions.cs" />
-    <Compile Include="Generator.cs" />
-    <Compile Include="GeneratorActions.cs" />
-    <Compile Include="GeneratorFactory.cs" />
-    <Compile Include="GeneratorFactoryManager.cs" />
-    <Compile Include="GeneratorHelper.cs" />
-    <Compile Include="Generators\DefaultGenerator.cs" />
-    <Compile Include="Generators\ExpandingCopyGenerator.cs" />
-    <Compile Include="Generators\LinearNodeSourceCodeMapper.cs" />
-    <Compile Include="Generators\MixedTransformGenerator.cs" />
-    <Compile Include="Generators\SignaturesGenerator.cs" />
-    <Compile Include="Generators\TypeCobolGenerator.cs" />
-    <Compile Include="IGenerator.cs" />
-    <Compile Include="Nodes\DataDivision.cs" />
-    <Compile Include="Nodes\Factory.cs" />
-    <Compile Include="Nodes\FunctionDeclarationCG.cs" />
-    <Compile Include="Nodes\Generated.cs" />
-    <Compile Include="Nodes\ParagraphGen.cs" />
-    <Compile Include="Nodes\ParameterEntry.cs" />
-    <Compile Include="Nodes\ProcedureDivision.cs" />
-    <Compile Include="Nodes\ProcedureStyleCall.cs" />
-    <Compile Include="Nodes\ProgramEnd.cs" />
-    <Compile Include="Nodes\TypedDataNode.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Skeletons\Condition.cs" />
-    <Compile Include="Skeletons\Pattern.cs" />
-    <Compile Include="Skeletons\Skeleton.cs" />
-    <Compile Include="Skeletons\Templates\Eraser.cs" />
-    <Compile Include="Skeletons\Templates\RazorEngine.cs" />
-    <Compile Include="Skeletons\Templates\Solver.cs" />
+    <Compile Include="**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

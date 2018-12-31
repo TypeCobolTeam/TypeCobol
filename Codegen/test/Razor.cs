@@ -17,8 +17,7 @@ namespace TypeCobol.Codegen.Config {
 		public void ReplaceSingleLetterVariables() {
 			var variables = new Dictionary<string,object> { {"x","y"} };
 			var solver = new RazorEngine();
-			Assert.AreEqual("y", solver.Replace("%x", variables));
-			Assert.AreEqual("y", solver.Replace("$x", variables, "$"));
+			Assert.AreEqual("y", solver.Replace("@Model.x", variables));
 		}
 
 		[TestMethod]
@@ -27,8 +26,7 @@ namespace TypeCobol.Codegen.Config {
 		public void ReplaceWordVariables() {
 			var variables = new Dictionary<string,object> { {"bar","fooo"} };
 			var solver = new RazorEngine();
-			Assert.AreEqual("fooo", solver.Replace("%bar", variables));
-			Assert.AreEqual("fooo", solver.Replace("$bar", variables, "$"));
+			Assert.AreEqual("fooo", solver.Replace("@Model.bar", variables));
 		}
 
 		[TestMethod]
@@ -36,7 +34,7 @@ namespace TypeCobol.Codegen.Config {
 		[TestProperty("Time","fast")]
 		public void ReplaceTwoVariables() {
 			var variables = new Dictionary<string,object> { {"LEVEL","01"}, {"NAME","var"} };
-			string input = "%LEVEL  %NAME-value PIC X VALUE LOW-VALUE.\n  88  %NAME       VALUE 'T'.\n  88  %NAME-false VALUE 'F'.";
+			string input = "@Model.LEVEL  @Model.NAME-value PIC X VALUE LOW-VALUE.\n  88  @Model.NAME       VALUE 'T'.\n  88  @Model.NAME-false VALUE 'F'.";
 			string expected = "01  var-value PIC X VALUE LOW-VALUE.\n  88  var       VALUE 'T'.\n  88  var-false VALUE 'F'.";
 			Assert.AreEqual(expected, new RazorEngine().Replace(input, variables));
 		}
@@ -49,7 +47,7 @@ namespace TypeCobol.Codegen.Config {
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
             Dictionary<string,object> variables;
-			string input = "%LEVEL  %NAME-value PIC X VALUE LOW-VALUE.\n  88  %NAME       VALUE 'T'.\n  88  %NAME-false VALUE 'F'.";
+			string input = "@Model.LEVEL  @Model.NAME-value PIC X VALUE LOW-VALUE.\n  88  @Model.NAME       VALUE 'T'.\n  88  @Model.NAME-false VALUE 'F'.";
 			variables = new Dictionary<string,object> { {"NAME", "var"} };
 			try { new RazorEngine().Replace(input, variables); }
 			catch (System.ArgumentException ex) { Assert.AreEqual("Variable \"LEVEL\" undefined", ex.Message); }
@@ -65,10 +63,10 @@ namespace TypeCobol.Codegen.Config {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             string input;
-			input = "%LEVEL  %NAME-value PIC X VALUE LOW-VALUE.\n  88  %NAME       VALUE 'T'.\n  88  %NAME-false VALUE 'F'.";
+			input = "@Model.LEVEL  @Model.NAME-value PIC X VALUE LOW-VALUE.\n  88  @Model.NAME       VALUE 'T'.\n  88  @Model.NAME-false VALUE 'F'.";
 			try { new RazorEngine().Replace(input); }
 			catch (System.ArgumentException ex) { Assert.AreEqual("Variable \"LEVEL\" undefined", ex.Message); }
-			input = "LEVEL  %NAME-value PIC X VALUE LOW-VALUE.\n  88  %NAME       VALUE 'T'.\n  88  %NAME-false VALUE 'F'.";
+			input = "LEVEL  @Model.NAME-value PIC X VALUE LOW-VALUE.\n  88  @Model.NAME       VALUE 'T'.\n  88  @Model.NAME-false VALUE 'F'.";
 			try { new RazorEngine().Replace(input); }// there's only an error on the first undefined variable
 			catch (System.ArgumentException ex) { Assert.AreEqual("Variable \"NAME\" undefined", ex.Message); }
 		}
@@ -88,24 +86,24 @@ namespace TypeCobol.Codegen.Config {
 			expected =
 "01 mylibcpy COPY mylibcpy.\n"+
 "01 mylib PIC X(08) VALUE 'mylib'.\n";
-			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
+			Assert.AreEqual(expected, solver.Replace(input, variables));
 
 			input = skeleton.Patterns[1].Template;
 			expected =
 "01 ERROR-CODE PIC X(08).\n";
-			Assert.AreEqual(expected, solver.Replace(input, null, "%"));
+			Assert.AreEqual(expected, solver.Replace(input, null));
 
 			input = skeleton.Patterns[2].Template;
 //			expected =
 //"01 fun-RESULT PIC 9(8).\n";
-//			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
+//			Assert.AreEqual(expected, solver.Replace(input, variables));
 //
 //			input = skeleton.Patterns[3].Template;
 			expected =
 "    IF mylibcpy-POINTER-TABLE = LOW_VALUE\n"+
 "        CALL mylib USING mylibcpy\n"+
 "    END-IF\n";
-			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));
+			Assert.AreEqual(expected, solver.Replace(input, variables));
 
 			input = skeleton.Patterns[3].Template;
 //			input = skeleton.Patterns[4].Template;
@@ -123,7 +121,7 @@ namespace TypeCobol.Codegen.Config {
 "    ELSE\n"+
 "*        TODO: error management\n"+
 "    END-IF\n";
-			Assert.AreEqual(expected, solver.Replace(input, variables, "%"));//TODO#249: refactor parameters and make the objects specific to this test less ... specific
+			Assert.AreEqual(expected, solver.Replace(input, variables));//TODO#249: refactor parameters and make the objects specific to this test less ... specific
 		}
 */
 		private class RazorFactory {

@@ -603,6 +603,45 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(functionDeclaration,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
                     headerNameURI.Tail + "\".");
+
+
+            //// Set a Warning if the formalized comment parameter is unknown or if the function parameter have no description
+            if (header.FormalizedCommentDocumentation != null)
+            {
+                // Get the parameters inside the Formalized Comment that are not inside the function parameters
+                var formComParamOrphan = header.FormalizedCommentDocumentation.Parameters.Keys.Except(
+                    functionDeclaration.Profile.Parameters.Select(p => p.Name));
+
+                // For each of them, place a warning on the orphan parameter definition (UserDefinedWord Token inside the FormCom)
+                foreach (var orphan in formComParamOrphan)
+                {
+                    var tokens = header.ConsumedTokens.Where(t => t.TokenType == TokenType.UserDefinedWord && t.Text == orphan);
+                    foreach (var token in tokens)
+                    {
+                        DiagnosticUtils.AddError(header,
+                            "Parameter name does not match to any function parameter: " + orphan,
+                            token, code: MessageCode.Warning);
+                    }
+                }
+
+                // Get the parameters inside the function parameters that are not inside the Formalized Comment
+                var sameParameters = functionDeclaration.Profile.Parameters.Where(p =>
+                    header.FormalizedCommentDocumentation.Parameters.Keys.Contains(p.Name));
+
+                var functionParamWithoutDesc = functionDeclaration.Profile.Parameters.Except(sameParameters);
+
+                // For each of them, place a warning on the parameter definition
+                foreach (var param in functionParamWithoutDesc)
+                {
+                    var token = param.CodeElement.ConsumedTokens.FirstOrDefault(t => t.TokenType == TokenType.UserDefinedWord);
+                    if (token != null)
+                    {
+                        DiagnosticUtils.AddError(header,
+                            "Parameter does not have any description inside the formalized comments: " + param.Name,
+                            token, code: MessageCode.Warning);
+                    }
+                }
+            }
         }
 
         private static void CheckNoGlobalOrExternal(DataDivision node)
@@ -966,9 +1005,9 @@ namespace TypeCobol.Compiler.Diagnostics
             if (dataDescription != null)
             {
                 if (dataDescription.IsGlobal) // GLOBALSS_NO_GLOBAL_KEYWORD 
-                    DiagnosticUtils.AddError(dataDescription, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
+                    DiagnosticUtils.AddError(dataDefinition, "Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
                 if (dataDescription.IsExternal) //GLOBALSS_NO_EXTERNAL
-                    DiagnosticUtils.AddError(dataDescription, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
+                    DiagnosticUtils.AddError(dataDefinition, "Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.", dataDescription);
             }
 
 

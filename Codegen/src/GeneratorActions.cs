@@ -274,11 +274,11 @@ namespace TypeCobol.Codegen
             var destination = GetLocation(source, pattern.Location, out index);
             if ("create".Equals(pattern.Action))
             {
-                return new Create(destination, pattern, properties, group, pattern.Delimiter, index);
+                return new Create(destination, pattern, properties, group, index);
             }
             if ("replace".Equals(pattern.Action))
             {
-                return new Replace(destination, pattern.Template, properties, group, pattern.Delimiter);
+                return new Replace(destination, pattern.Template, properties, group);
             }
             if ("comment".Equals(pattern.Action))
             {

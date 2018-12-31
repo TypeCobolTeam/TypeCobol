@@ -93,7 +93,7 @@ userDefinedFunctionCall: FUNCTION functionNameReference (LeftParenthesisSeparato
 //   - returningPhrase only allows 1 parameter --> function
 // - TCRFUN_DECLARATION_NO_USING
 functionDeclarationHeader:
-	DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
+	formalizedComment? DECLARE (FUNCTION|PROCEDURE)? functionNameDefinition (PRIVATE | PUBLIC)? inputPhrase? inoutPhrase? outputPhrase? functionReturningPhrase? PeriodSeparator;
 
 // TCRFUN_0_TO_N_PARAMETERS (1..N parameters because of "+")
 inputPhrase:  INPUT  parameterDescription+;
@@ -107,7 +107,7 @@ functionReturningPhrase: RETURNING parameterDescription;
 parameterDescription: (functionDataParameter | functionConditionParameter) PeriodSeparator?;
 
 functionDataParameter:
-	dataNameDefinition QuestionMark? (pictureClause | POINTER | cobol2002TypeClause | FUNCTION_POINTER | PROCEDURE_POINTER)
+	dataNameDefinition QUESTION_MARK? (pictureClause | POINTER | cobol2002TypeClause | FUNCTION_POINTER | PROCEDURE_POINTER)
 		blankWhenZeroClause?
 		justifiedClause?
 		synchronizedClause?
@@ -176,26 +176,58 @@ valueClauseWithBoolean:
 	VALUE (value2 | booleanValue);
 
 
+	
 dataDescriptionEntry:
-	( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
+	formalizedComment?
+	(
+		( { CurrentToken.Text != "66" && CurrentToken.Text != "88" }? 
+			levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
+			( pictureClause
+			| blankWhenZeroClause
+			| externalClause
+			| globalClause
+			| justifiedClause
+			| groupUsageClause
+			| occursClause
+			| signClause
+			| synchronizedClause
+			| usageClause
+			| valueClause
+			| (cobol2002TypeClause valueClauseWithBoolean?)
+			)* PeriodSeparator
+		)
+		| dataRenamesEntry
+		| dataConditionEntry
+	);
 
-		levelNumber=integerValue2 (dataNameDefinition | FILLER)? redefinesClause? cobol2002TypedefClause?
-		( pictureClause
-		| blankWhenZeroClause
-		| externalClause
-		| globalClause
-		| justifiedClause
-		| groupUsageClause
-		| occursClause
-		| signClause
-		| synchronizedClause
-		| usageClause
-		| valueClause
-		| (cobol2002TypeClause valueClauseWithBoolean?)
-		)* PeriodSeparator
-	)
-	| dataRenamesEntry
-	| dataConditionEntry;
-
- setStatementForIndexes:
+setStatementForIndexes:
 	SET indexStorageArea+ (UP | DOWN) BY variableOrExpression2;
+
+// ------ Formalized Comment specific ------ 
+ 
+formalizedCommentParam: 
+      FORMALIZED_COMMENTS_DESCRIPTION 
+    | FORMALIZED_COMMENTS_PARAMETERS 
+    | FORMALIZED_COMMENTS_DEPRECATED 
+    | FORMALIZED_COMMENTS_REPLACED_BY 
+    | FORMALIZED_COMMENTS_RESTRICTION 
+    | FORMALIZED_COMMENTS_NEED 
+    | FORMALIZED_COMMENTS_SEE 
+    | FORMALIZED_COMMENTS_TODO; 
+ 
+formalizedCommentOuterLevel:
+	AT_SIGN (formalizedCommentParam ColonSeparator? FORMALIZED_COMMENTS_VALUE?);
+
+formalizedCommentInnerLevel:
+	MinusOperator ((UserDefinedWord ColonSeparator? FORMALIZED_COMMENTS_VALUE) | listItemValue=FORMALIZED_COMMENTS_VALUE);
+
+formalizedCommentLine: 
+    formalizedCommentOuterLevel | formalizedCommentInnerLevel | FORMALIZED_COMMENTS_VALUE; 
+ 
+formalizedComment: 
+    FORMALIZED_COMMENTS_START formalizedCommentLine* FORMALIZED_COMMENTS_STOP; 
+
+
+
+procedureDivisionHeader: 
+	formalizedComment? PROCEDURE DIVISION usingPhrase? returningPhrase? PeriodSeparator;

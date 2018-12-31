@@ -1,2 +1,6 @@
-﻿ReturnCode=Success_
-No error in "input\Callee.rdz.tcbl".
+﻿ReturnCode=Warning_
+4 errors in "input\Callee.rdz.tcbl":
+Line 78[17,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: mydate
+Line 79[17,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate2
+Line 90[17,22] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: mydate
+Line 91[17,23] <37, Warning, General> - Warning: Parameter does not have any description inside the formalized comments: myDate2

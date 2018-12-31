@@ -122,7 +122,6 @@ public class CobolCompilerDirectivesSymbols {
   public const int TERMINATE = 499;
   public const int COLLATING = 242;
   public const int KANJI = 319;
-  public const int QuestionMark = 511;
   public const int CH = 448;
   public const int DISABLE = 458;
   public const int OVERFLOW = 356;
@@ -430,6 +429,7 @@ public class CobolCompilerDirectivesSymbols {
   public const int SAME = 140;
   public const int COMPUTATIONAL = 252;
   public const int CODE = 240;
+  public const int QUESTION_MARK = 511;
   public const int INDEXED = 309;
   public const int DecimalLiteral = 35;
   public const int END_IF = 90;
