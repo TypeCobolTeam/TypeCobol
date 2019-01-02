@@ -311,7 +311,7 @@
   </skeleton>
   
   <!-- replace procedure-style invocation by a standard COBOL CALL -->
-  <skeleton name="TYPE">
+  <skeleton name="PROC.STYLE.CALL.TO.COBOL">
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.ProcedureStyleCall" />
     </conditions>
@@ -445,9 +445,6 @@
       
       <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
       <pattern location="program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="false"  boolean_property="imports.HasPublicProcedures">
-        <conditions>
-          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
-        </conditions>
         @{
         var clause = "";
         if (@Model.imports.HasPublicProcedures) {
@@ -459,9 +456,6 @@
       </pattern>
 
       <pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="false">
-        <conditions>
-          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
-        </conditions>
         @{
         var clause = "";
         if (@Model.imports.HasPublicProcedures) {
