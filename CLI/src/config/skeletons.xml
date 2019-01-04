@@ -70,7 +70,7 @@
       <condition node="TypeCobol.Compiler.Nodes.Set" sender.type="BOOL" sender="FALSE"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace">SET @Model.receiver-false TO TRUE</pattern>
+      <pattern name = "BOOL.SET" location="NODE" action="replace">SET @Model.receiver-false TO TRUE</pattern>
     </patterns>
   </skeleton>
 
@@ -80,7 +80,7 @@
       <condition node="TypeCobol.Compiler.Nodes.Set" receiverUsage="Pointer"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="replace">
+      <pattern name="POINTER.INCREMENT" location="NODE" action="replace">
         @{
           var item = "";
           if (@Model.needCompute)
