@@ -1,4 +1,4 @@
-﻿<?xml version='1.0'?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <skeletons>
   <!-- comment TYPEDEF -->
   <skeleton name="TYPEDEF">
@@ -26,11 +26,11 @@
         items = @Model.level + "  " + @Model.name + "-value PIC X VALUE " +  @Model.value + @Model.global + ".";
         }
         }
-        @items
-        88  @Model.name       VALUE 'T'.
-        88  @Model.name-false VALUE 'F'
-        X'00' thru 'S'
-        'U' thru X'FF'.
+@items
+    88  @Model.name       VALUE 'T'.
+    88  @Model.name-false VALUE 'F'
+                    X'00' thru 'S'
+                    'U' thru X'FF'.
       </pattern>
     </patterns>
   </skeleton>
@@ -82,21 +82,21 @@
     <patterns>
       <pattern name="POINTER.INCREMENT" location="NODE" action="replace">
         @{
-        var item = "";
-        if (@Model.needCompute)
-        {
-        foreach (var receiver in @Model.displayableReceivers)
-        {
-        item += "COMPUTE " + receiver + " = " + receiver + (@Model.incrementDirection == "Down" ? " - " : " + ") + @Model.sender.ToString() + ".\n";
-        }
-        }
-        else
-        {
-        item += "ADD " + (@Model.incrementDirection == "Down" ? "-" : "") + @Model.sender.ToString() + " to ";
-        foreach (var receiver in @Model.displayableReceivers)
-        item += receiver + ", ";
-        }
-        item = item.Remove(item.Length - 2);
+          var item = "";
+          if (@Model.needCompute)
+          {
+            foreach (var receiver in @Model.displayableReceivers)
+            {
+              item += "COMPUTE " + receiver + " = " + receiver + (@Model.incrementDirection == "Down" ? " - " : " + ") + @Model.sender.ToString() + ".\n";
+            }
+          }
+          else
+          {
+            item += "ADD " + (@Model.incrementDirection == "Down" ? "-" : "") + @Model.sender.ToString() + " to ";
+            foreach (var receiver in @Model.displayableReceivers)
+              item += receiver + ", ";
+          }
+          item = item.Remove(item.Length - 2);
         }
         @item
       </pattern>
@@ -149,10 +149,10 @@
     <conditions>
       <condition node="TypeCobol.Compiler.Nodes.FunctionDeclaration" visibility="public" />
     </conditions>
-    <patterns>
+    <patterns>      
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_IS_LOADED">
-        01  TC-@Model.programName8-FctList-Loaded PIC X(02).
-        88 TC-@Model.programName8-FctList-IsLoaded      VALUE 'OK'.
+01  TC-@Model.programName8-FctList-Loaded PIC X(02).
+    88 TC-@Model.programName8-FctList-IsLoaded      VALUE 'OK'.
       </pattern>
       <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="true">
@@ -197,15 +197,15 @@
       <pattern action="expand" location="program.end"></pattern>
       <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
       <pattern location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="true">
-        *
-        *    IF CallIsCopy
-        *      PERFORM Copy-Process-Mode
-        *    ELSE
-        PERFORM FctList-Process-Mode
-        perform INIT-LIBRARY
-        *    END-IF
+*
+*    IF CallIsCopy
+*      PERFORM Copy-Process-Mode
+*    ELSE
+    PERFORM FctList-Process-Mode
+    perform INIT-LIBRARY
+*    END-IF
 
-        GOBACK.
+    GOBACK.
         @{
         var entries = "";
         int c = 0;
@@ -213,26 +213,26 @@
         entries += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
         }
         }
-        FctList-Process-Mode.
-        IF NOT TC-@Model.programName8-FctList-IsLoaded
-        @entries
-        SET TC-@Model.programName8-FctList-IsLoaded TO TRUE
-        END-IF
+ FctList-Process-Mode.
+     IF NOT TC-@Model.programName8-FctList-IsLoaded
+@entries
+       SET TC-@Model.programName8-FctList-IsLoaded TO TRUE
+     END-IF
         .
-
+        
       </pattern>
 
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
       <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
-        *
-        *    IF CallIsCopy
-        *      PERFORM Copy-Process-Mode
-        *    ELSE
-        PERFORM FctList-Process-Mode
-        perform INIT-LIBRARY
-        *    END-IF
+*
+*    IF CallIsCopy
+*      PERFORM Copy-Process-Mode
+*    ELSE
+    PERFORM FctList-Process-Mode
+    perform INIT-LIBRARY
+*    END-IF
 
-        GOBACK.
+    GOBACK.
         @{
         var entries = "";
         int c = 0;
@@ -240,11 +240,11 @@
         entries += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
         }
         }
-        FctList-Process-Mode.
-        IF NOT TC-@Model.programName8-FctList-IsLoaded
-        @entries
-        SET TC-@Model.programName8-FctList-IsLoaded TO TRUE
-        END-IF
+ FctList-Process-Mode.
+     IF NOT TC-@Model.programName8-FctList-IsLoaded
+@entries
+       SET TC-@Model.programName8-FctList-IsLoaded TO TRUE
+     END-IF
         .
         @{
         var items = "";
@@ -252,11 +252,11 @@
         items += "     set PntTab-Pnt TO ADDRESS OF TC-"+@Model.programName8+"-PntTab\n";
         }
         }
-        @items
+@items
       </pattern>
 
     </patterns>
-
+   
   </skeleton>
   <!-- replace DECLARE FUNCTION PRIVATE by a stacked program -->
   <skeleton name="FUN.DECLARE.PRIVATE" var="definitions">
@@ -272,44 +272,44 @@
 
   <!-- replace function invocation by a CALL and create utility variables -->
   <skeleton name="FUN.CALL" var=" function  ,receiver ">
-
+    
     <patterns>
       <pattern location="data-division.working-storage" action="create" group="@Model.function.Library-VARS" var="function=$function">
-        01 @Model.function.Copy COPY @Model.function.Copy.
-        01 @Model.function.Library PIC X(08) VALUE '@Model.function.Library'.
+01 @Model.function.Copy COPY @Model.function.Copy.
+01 @Model.function.Library PIC X(08) VALUE '@Model.function.Library'.
       </pattern>
       <pattern location="data-division.working-storage" action="create" group="functions">
-        01 ERROR-CODE PIC X(08).
+01 ERROR-CODE PIC X(08).
       </pattern>
       <!--pattern location="data-division.working-storage" action="create" group="@Model.function.Name" var="type=$function.Result.Definition">
 01 @Model.function.Name-RESULT @Model.function.Result.Definition.
       </pattern-->
       <pattern location="procedure-division.begin" action="create" group="@Model.function.Library-CALL">
-        IF @Model.function.Copy-POINTER-TABLE = LOW_VALUE
+    IF @Model.function.Copy-POINTER-TABLE = LOW_VALUE
         CALL @Model.function.Library USING @Model.function.Copy
-        END-IF
+    END-IF
       </pattern>
       <pattern location="NODE" action="replace">
-        @{
-        var funparams = "";
-        foreach (var p in @Model.function.InputParameters) {
-        funparams += "        BY " + p.SendingMode + " " + p.Value + "\n";
-        }
-        }
-        CALL @Model.function.Name USING
-        @funparams
+@{
+  var funparams = "";
+  foreach (var p in @Model.function.InputParameters) {
+    funparams += "        BY " + p.SendingMode + " " + p.Value + "\n";
+  }
+}
+    CALL @Model.function.Name USING
+@funparams
         BY REFERENCE @Model.function.Name-RESULT
         BY REFERENCE ERROR-CODE
 
-        IF ERROR-CODE = ZERO
+    IF ERROR-CODE = ZERO
         MOVE @Model.function.Name-RESULT TO @Model.receiver
-        ELSE
-        *    TODO: error management
-        END-IF
+    ELSE
+*    TODO: error management
+    END-IF
       </pattern>
     </patterns>
   </skeleton>
-
+  
   <!-- replace procedure-style invocation by a standard COBOL CALL -->
   <skeleton name="PROC.STYLE.CALL.TO.COBOL">
     <conditions>
@@ -319,7 +319,7 @@
       <pattern location="NODE" action="expand"></pattern>
     </patterns>
   </skeleton>
-
+  
   <!-- replace "::" qualification by "OF" inverse qualification -->
   <skeleton name="QUALIFICATION">
 
@@ -333,21 +333,20 @@
       <condition node="TypeCobol.Compiler.CodeModel.Program"/>
     </conditions>
     <patterns>
-      <pattern location="NODE" action="remarks"></pattern>
-      <!-- Remarks Directive -->
+      <pattern location="NODE" action="remarks"></pattern> <!-- Remarks Directive -->
       <!-- CALLER WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
       <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty" deprecated="true">
         @{
-        var items = "";
-        foreach (var pgm in @Model.imports.Programs.Values) {
-        items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
-        items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
-        items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
-        foreach (var proc in pgm.Procedures.Values) {
-        items += "*"+ pgm.Name + "::" +proc.Name+'\n';
-        items += " 01 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
-        }
-        }
+          var items = "";
+          foreach (var pgm in @Model.imports.Programs.Values) {
+            items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
+            items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
+            items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
+            foreach (var proc in pgm.Procedures.Values) {
+              items += "*"+ pgm.Name + "::" +proc.Name+'\n';
+              items += " 01 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
+            }
+          }
         }
         @items
       </pattern>
@@ -372,31 +371,31 @@
 
       <!-- CALLER LINKAGE SECTION WITHOUT EXTERNAL-->
       <pattern location="program.data-division.linkage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
-        *Common to all librairies used by the program.
-        01 TC-Library-PntTab.
-        05 TC-Library-PntNbr          PIC S9(04) COMP.
-        05 TC-Library-Item OCCURS 1000
-        DEPENDING ON TC-Library-PntNbr
-        INDEXED   BY TC-Library-Idx.
-        10 TC-Library-Item-Idt      PIC X(08).
-        10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
+*Common to all librairies used by the program.
+01 TC-Library-PntTab.
+   05 TC-Library-PntNbr          PIC S9(04) COMP.
+   05 TC-Library-Item OCCURS 1000
+                        DEPENDING ON TC-Library-PntNbr
+                        INDEXED   BY TC-Library-Idx.
+       10 TC-Library-Item-Idt      PIC X(08).
+       10 TC-Library-Item-Pnt      PROCEDURE-POINTER.
         @{
-        var items = "";
-        foreach (var pgm in @Model.imports.Programs.Values) {
-        foreach (var proc in pgm.Procedures.Values) {
-        proc.IsNotByExternalPointer=true;
-        items += "*To call program "+proc.Hash+proc.Name+" in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
-        items += "*Which is generated code for "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName+'\n';
-        items += "*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName + '\n';
-        items += "01 TC-"+pgm.Name + "-" + proc.Hash+"-Item.\n";
-        items += "   05 TC-"+pgm.Name + "-" + proc.Hash+"-Idt PIC X(08).\n";
-        items += "   05 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER.\n";
+          var items = "";
+          foreach (var pgm in @Model.imports.Programs.Values) {
+            foreach (var proc in pgm.Procedures.Values) {
+              proc.IsNotByExternalPointer=true;
+              items += "*To call program "+proc.Hash+proc.Name+" in module "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName.Tail+'\n';
+              items += "*Which is generated code for "+proc.ProcStyleCall.FunctionDeclaration.QualifiedName+'\n';
+              items += "*Declared in source file " + proc.ProcStyleCall.FunctionDeclaration.CodeElement.TokenSource.SourceName + '\n';
+              items += "01 TC-"+pgm.Name + "-" + proc.Hash+"-Item.\n";
+              items += "   05 TC-"+pgm.Name + "-" + proc.Hash+"-Idt PIC X(08).\n";
+              items += "   05 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER.\n";
+            }
+          }
         }
-        }
-        }
-        @items
+@items
       </pattern>
-
+      
       <!--<pattern location="program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="true"  boolean_property="imports.IsNotEmpty">
         <conditions>
           <condition node="TypeCobol.Compiler.CodeModel.Program"/>
@@ -420,7 +419,7 @@
 *=================================================================
      .
       </pattern>-->
-
+      
       <!-- CALLER PROCEDURE DIVISION WITH EXTERNAL-->
       <!--<pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="true">
         <conditions>
@@ -429,11 +428,9 @@
         @{
         var clause = "";
         if (!@Model.imports.IsEmpty) {
-        -->
-      <!--clause += "*=================================================================\n";
+        --><!--clause += "*=================================================================\n";
         clause += " TC-Initializations.\n";
-        clause += "*=================================================================\n";-->
-      <!--
+        clause += "*=================================================================\n";--><!--
         foreach (var pgm in @Model.imports.Programs.Values) {
         clause += "     IF NOT TC-" + pgm.Name + "-FctList-IsLoaded\n";
         clause += "         CALL 'ZCALLPGM' USING TC-"+ pgm.Name +"\n";
@@ -445,7 +442,7 @@
         @clause
       </pattern>-->
 
-
+      
       <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
       <pattern location="program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="false"  boolean_property="imports.HasPublicProcedures">
         @{
@@ -504,5 +501,5 @@
       </pattern>
 
     </patterns>
-  </skeleton>
+    </skeleton>
 </skeletons>
