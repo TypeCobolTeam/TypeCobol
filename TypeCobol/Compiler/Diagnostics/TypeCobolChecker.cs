@@ -712,6 +712,14 @@ namespace TypeCobol.Compiler.Diagnostics
                 CrossCompleteChecker.CheckPicture(node, parameter);
             }
 
+            if (parameter.Usage != null &&
+                (parameter.Usage.Value == DataUsage.FloatingPoint || parameter.Usage.Value == DataUsage.LongFloatingPoint) && 
+                parameter.Picture != null)
+            {
+                DiagnosticUtils.AddError(node,
+                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", parameter);
+            }
+
             var type = parameter.DataType;
             TypeDefinition foundedType;
             TypeDefinitionHelper.Check(node, type, out foundedType); //Check if the type exists and is not ambiguous
