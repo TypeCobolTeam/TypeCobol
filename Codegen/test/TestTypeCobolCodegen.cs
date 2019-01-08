@@ -389,6 +389,15 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifBoolSetOverCol72") + ".rdz.tcbl", skeletons);
         }
 
+	    [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void TypedefQualifMultipleBoolSet()
+	    {
+	        var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifMultipleBoolSet") + ".rdz.tcbl", skeletons);
+	    }
+
         [TestMethod]
         [TestCategory("Codegen")]
         [TestProperty("Time", "fast")]
