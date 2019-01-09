@@ -353,54 +353,66 @@ namespace TypeCobol.Compiler.Nodes {
         /// <returns></returns>
         private long GetPhysicalLength()
         {
+            TypeCobolType.UsageFormat usage = TypeCobolType.UsageFormat.None;
+            if (Usage != null)
+            {
+                switch (Usage.Value)
+                {
+                    case DataUsage.Binary:
+                    case DataUsage.NativeBinary:
+                        usage = TypeCobolType.UsageFormat.Binary;
+                        break;
+                    case DataUsage.FloatingPoint:
+                        usage = TypeCobolType.UsageFormat.Comp1;
+                        break;
+                    case DataUsage.Display:
+                        usage = TypeCobolType.UsageFormat.Display;
+                        break;
+                    case DataUsage.FunctionPointer:
+                        usage = TypeCobolType.UsageFormat.FunctionPointer;
+                        break;
+                    case DataUsage.Index:
+                        usage = TypeCobolType.UsageFormat.Index;
+                        break;
+                    case DataUsage.National:
+                        usage = TypeCobolType.UsageFormat.National;
+                        break;
+                    case DataUsage.None:
+                        usage = TypeCobolType.UsageFormat.None;
+                        break;
+                    case DataUsage.ObjectReference:
+                        usage = TypeCobolType.UsageFormat.ObjectReference;
+                        break;
+                    case DataUsage.PackedDecimal:
+                        usage = TypeCobolType.UsageFormat.PackedDecimal;
+                        break;
+                    case DataUsage.Pointer:
+                        usage = TypeCobolType.UsageFormat.Pointer;
+                        break;
+                    case DataUsage.ProcedurePointer:
+                        usage = TypeCobolType.UsageFormat.ProcedurePointer;
+                        break;
+                    case DataUsage.LongFloatingPoint:
+                        usage = TypeCobolType.UsageFormat.Comp2;
+                        break;
+                    case DataUsage.DBCS:
+                        usage = TypeCobolType.UsageFormat.Display1;
+                        break;
+                }
+            }
+            
             if (Picture == null)
             {
                 if (Usage != null && Usage.Value != DataUsage.None)
                 {
-                    return DefaultLengthOfDataUsage(Usage.Value);
+                    return new TypeCobolType(TypeCobolType.Tags.Usage, usage).Length;
                 }
                 return 1;
             }
             if (PictureValidator.IsValid())
             {
                 PictureType type = new PictureType(PictureValidator);
-                if (Usage != null)
-                {
-                    switch (Usage.Value)
-                    {
-                        case DataUsage.Binary:
-                        case DataUsage.NativeBinary:
-                            type.Usage = TypeCobolType.UsageFormat.Binary;
-                            break;
-                        case DataUsage.Display:
-                            type.Usage = TypeCobolType.UsageFormat.Display;
-                            break;
-                        case DataUsage.FunctionPointer:
-                            type.Usage = TypeCobolType.UsageFormat.FunctionPointer;
-                            break;
-                        case DataUsage.Index:
-                            type.Usage = TypeCobolType.UsageFormat.Index;
-                            break;
-                        case DataUsage.National:
-                            type.Usage = TypeCobolType.UsageFormat.National;
-                            break;
-                        case DataUsage.None:
-                            type.Usage = TypeCobolType.UsageFormat.None;
-                            break;
-                        case DataUsage.ObjectReference:
-                            type.Usage = TypeCobolType.UsageFormat.ObjectReference;
-                            break;
-                        case DataUsage.PackedDecimal:
-                            type.Usage = TypeCobolType.UsageFormat.PackedDecimal;
-                            break;
-                        case DataUsage.Pointer:
-                            type.Usage = TypeCobolType.UsageFormat.Pointer;
-                            break;
-                        case DataUsage.ProcedurePointer:
-                            type.Usage = TypeCobolType.UsageFormat.ProcedurePointer;
-                            break;
-                    }
-                }
+                type.Usage = usage;
                 return type.Length;
             }
             else
@@ -408,36 +420,12 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// <summary>
-        /// Gets the length of an usage when a Data is defined without a Picture
-        /// </summary>
-        /// <param name="usage"></param>
-        /// <returns></returns>
-        public int DefaultLengthOfDataUsage(DataUsage usage)
-        {
-            switch (usage)
-            {
-                case DataUsage.Binary:
-                case DataUsage.NativeBinary:
-                case DataUsage.National:
-                    return 2;
-                case DataUsage.FloatingPoint:
-                case DataUsage.FunctionPointer:
-                case DataUsage.Index:
-                case DataUsage.ObjectReference:
-                case DataUsage.Pointer:
-                    return 4;
-                case DataUsage.LongFloatingPoint:
-                case DataUsage.ProcedurePointer:
-                    return 8;
-                case DataUsage.Display:
-                case DataUsage.PackedDecimal:
-                    return 1;
-            }
-            return 0;
-        }
-
-        /// <summary>
         /// A SlackByte is a unit that is used to synchronize DataDefinitions in memory.
+        /// One or more will be present only if the keyword SYNC is placed on a DataDefinition
+        /// To calculated the number of slackbytes present :
+        /// - Calculate the size of all previous DataDefinitions to the current one
+        /// - The number of SlackBytes inserted will be determined by the formula m - (occupiedMemory % m) where m is determined by the usage of the DataDefinition
+        /// - Whether it will be put before or after the size of the DataDefinition is determined by the keyword LEFT or RIGHT after the keyword SYNC (not implemented yet)
         /// </summary>
         private long? _slackBytes = null;
         public long SlackBytes
@@ -549,6 +537,7 @@ namespace TypeCobol.Compiler.Nodes {
                             while(sibling is DataRedefines)
                                 sibling = Parent.Children[i - 1];
 
+                            //Add 1 for the next free Byte in memory
                             _startPosition = ((DataDefinition)sibling).PhysicalPosition + 1 + SlackBytes;
                         }
                             
@@ -564,6 +553,7 @@ namespace TypeCobol.Compiler.Nodes {
         }
 
         /// PhysicalPosition is the position of the last Byte used by a DataDefinition in memory
+        /// Minus 1 is due to PhysicalLength, which is calculated from 0. 
         public virtual long PhysicalPosition => StartPosition + PhysicalLength - 1 + SlackBytes;
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
