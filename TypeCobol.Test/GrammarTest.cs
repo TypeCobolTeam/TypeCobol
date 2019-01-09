@@ -138,7 +138,7 @@ namespace TypeCobol.Test {
 
                     var writer = new StringWriter();
                     //Retrieve skeletons
-                    var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : null;
+                    var skeletons = !string.IsNullOrEmpty(skelPath) ? Config.Parse(skelPath) : new List<Codegen.Skeletons.Skeleton>();
 
                     var generatedCobolStringBuilder = new StringBuilder();
 			        var generator = new TypeCobol.Codegen.Generators.DefaultGenerator(document.Results, generatedCobolStringBuilder, skeletons, null);

@@ -1,5 +1,4 @@
 ﻿Code: 1001 TypeCobol.CLI.exe: The number of output files must be equal to the number of input files.
-Code: 1012 TypeCobol.CLI.exe: Skeleton file is required in execution to generate step.
 Code: 1020 TypeCobol.CLI.exe: Input files given are unreachable.
 Code: 1022 TypeCobol.CLI.exe: Error diagnostics path is unreachable.
 Code: 1024 TypeCobol.CLI.exe: Missing copy path given is unreachable.

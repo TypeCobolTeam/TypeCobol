@@ -20,6 +20,8 @@
       <xs:enumeration value="expand"/>
       <!-- Action to replace a Node by a new Generated one -->
       <xs:enumeration value="replace"/>
+      <!-- Action to add REMARK clause -->
+      <xs:enumeration value="remarks"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -41,8 +43,8 @@
                         <xs:attribute name="name" type="xs:string"/>
                         <xs:attribute name="level" type="xs:string"/>
                         <xs:attribute name="type" type="xs:string"/>
-                        <xs:attribute name="sender" type=
-                                      "xs:string"/>
+                        <xs:attribute name="sender" type="xs:string"/>
+                        <xs:attribute name="sender.type" type="xs:string"/>
                         <xs:attribute name="receiver" type="xs:string"/>
                         <xs:attribute name="unsafe" type="xs:string"/>
                         <xs:attribute name="function" type="xs:string"/>
@@ -51,6 +53,9 @@
                         <xs:attribute name="typecobol" type="xs:string"/>
                         <xs:attribute name="visibility" type="xs:string"/>
                         <xs:attribute name="copyname" type="xs:string"/>
+                        <xs:attribute name="Usage" type="xs:string"/>
+                        <xs:attribute name="isPointerIncrementation" type="xs:boolean"/>
+                        <xs:attribute name="receiverUsage" type="xs:string"/>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
@@ -77,6 +82,12 @@
                             <xs:attribute name="var" type="xs:string"/>
                             <!-- Insertion position in a parent node -->
                             <xs:attribute name="position" type="xs:int"/>
+                            <!-- Is this pattern deprecated? -->
+                            <xs:attribute name="deprecated" type="xs:boolean"/>
+                            <!-- Is this pattern requires a new line as first generated line? -->
+                            <xs:attribute name="newline" type="xs:boolean"/>
+                            <!-- A C# qualified name expression represents a boolean property to be applied to activate the pattern-->
+                            <xs:attribute name="boolean_property" type="xs:string"/>
                           </xs:extension>
                         </xs:simpleContent>
                       </xs:complexType>                      
@@ -85,6 +96,10 @@
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
+            <!-- Skeleton's name-->
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <!-- Meta variables used by the skeleton -->
+            <xs:attribute name="var" type="xs:string"/>
           </xs:complexType>
          </xs:element>
       </xs:sequence>

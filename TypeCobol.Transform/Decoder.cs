@@ -322,15 +322,16 @@ namespace TypeCobol.Transform
         }
 
         /// <summary>
-        /// he decoder method which extract the original TypeCobol source code froma mixed source code.
+        /// The decoder method which extract the original TypeCobol source code from a mixed source code.
         /// </summary>
         /// <param name="concatenatedFilePath">The path to the concatened source file</param>
         /// <param name="typeCobolOutputFilePath">The output file which will contains the original TypeCobol source codde</param>
-        /// <returns>True if the decoding is successfull, false otherwise</returns>
+        /// <returns>The Delta of the beginning of PART3 line and the expected PART3 beginning line if ok -1 otherwise</returns>
         public static int decode(string concatenatedFilePath, string typeCobolOutputFilePath)
         {
             Stream outputStream = File.OpenWrite(typeCobolOutputFilePath);
             var outputWriter = new StreamWriter(outputStream);
+            bool bOverwrite = false;//Set to true to overwite the output file.
             try
             {
                 var tcLines = new List<string>();
@@ -339,7 +340,7 @@ namespace TypeCobol.Transform
                 int part3Length = 0;
                 int part3StartFromLine1 = 0;
                 int realPart3LineNumber = 0;
-                var CBLDirectiveLines = new List<string>();
+                var CBLDirectiveLines = new List<string>();                
 
                 bool stopMaybeOptions = false;
                 foreach (var line in File.ReadLines(concatenatedFilePath))
@@ -398,10 +399,10 @@ namespace TypeCobol.Transform
                         }
                     }
                 }
-
+                
                 foreach (var CBLDirectiveLine in CBLDirectiveLines)
                 {
-                    outputWriter.WriteLine(CBLDirectiveLine);
+                    outputWriter.WriteLine(CBLDirectiveLine);                    
                 }
 
                 //Write
@@ -418,17 +419,30 @@ namespace TypeCobol.Transform
                         outputWriter.Write(line);
                 }
 
-                return Math.Abs(realPart3LineNumber - part3StartFromLine1);
+                bOverwrite = part3Length == 0;
+                return !bOverwrite ? Math.Abs(realPart3LineNumber - part3StartFromLine1) : -1;
             }
             catch (Exception e)
             {//Any exception lead to an error --> This may not be a Generated Cobol file from a TypeCobol File.                
                 Console.WriteLine(String.Format("{0} : {1}", PROGNAME, string.Format(Resource.Exception_error, e.Message)));
+                bOverwrite = true;
                 return -1; //In case of error
             }
             finally
             {
                 outputWriter.Flush();
                 outputWriter.Close();
+                if (bOverwrite)
+                {
+                    try
+                    {//Copy the original input file as output.
+                        File.Copy(concatenatedFilePath, typeCobolOutputFilePath, true);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(String.Format("{0} : {1}", PROGNAME, string.Format(Resource.Exception_error, e.Message)));
+                    }                 
+                }
             }
         }
     }

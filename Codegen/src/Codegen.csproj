@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\TypeCobol.TemplateTask.1.1.0\lib\net46\TypeCobol.TemplateTask.props" Condition="Exists('..\..\packages\TypeCobol.TemplateTask.1.1.0\lib\net46\TypeCobol.TemplateTask.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="..\..\TypeCobol\Common.props" />
   <PropertyGroup>
@@ -21,6 +22,7 @@
       <HintPath>..\..\packages\JetBrains.Annotations.11.0.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\RazorEngine.3.10.0\lib\net45\RazorEngine.dll</HintPath>
       <Private>True</Private>
@@ -59,8 +61,17 @@
       <Name>TypeCobol</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <TCTemplate Include="..\..\CLI\src\config\skeletons.xml">
+      <Link>Actions\skeletons.xml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>..\..\..\Codegen\src\Actions\Skeletons.cs</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </TCTemplate>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="..\..\packages\TypeCobol.TemplateTask.1.1.0\lib\net46\TypeCobol.TemplateTask.targets" Condition="Exists('..\..\packages\TypeCobol.TemplateTask.1.1.0\lib\net46\TypeCobol.TemplateTask.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

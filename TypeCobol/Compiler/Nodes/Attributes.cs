@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Nodes {
 		    try {
 			    foreach(var attr in attribute.Split('.')) {
 				    if (value == null) break;
-				    value = attributes[attr].GetValue(value, table);
+				    value = attributes[attr.ToLower()].GetValue(value, table);
 			    }
 			    return value;
 		    } catch (KeyNotFoundException) {
@@ -45,11 +45,11 @@ namespace TypeCobol.Compiler.Nodes {
 		    attributes["definitions"] = new DefinitionsAttribute();
 	        attributes["usage"] = new UsageAttribute();
 	        attributes["hash"] = new HashAttribute();
-	        attributes["displayableReceivers"] = new PointerDisplayableReceiversAttribute();
+	        attributes["displayablereceivers"] = new PointerDisplayableReceiversAttribute();
 	        attributes["receivers"] = new PointerReceiversAttribute();
             attributes["receiverusage"] = new ReceiverUsageAttribute();
-	        attributes["incrementDirection"] = new incrementDirectionAttribute();
-	        attributes["needCompute"] = new NeedComputeAttribute();
+	        attributes["incrementdirection"] = new incrementDirectionAttribute();
+	        attributes["needcompute"] = new NeedComputeAttribute();
 	        attributes["ispointerincrementation"] = new IsPointerIncrementationAttribute();
 	        attributes["isnested"] = new IsNestedAttribute();
 	        attributes["containnested"] = new ContainNestedAttribute();
@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Nodes {
             attributes["typecobol"] = new TypeCobolAttribute();
 		    attributes["visibility"] = new VisibilityAttribute();
 		    attributes["copyname"] = new LibraryCopyAttribute();
-		    attributes["programName8"] = new ProgramName8Attribute();
+		    attributes["programname8"] = new ProgramName8Attribute();
             attributes["imports"] = new ProgramImportsAttribute();
 	    }
 	    private static ContainerAttribute DEFAULT = new ContainerAttribute();
@@ -338,7 +338,7 @@ namespace TypeCobol.Compiler.Nodes {
             if (variablesWritten == null) return null;
             if (variablesWritten.Count == 0) return null;
             if (variablesWritten.Count == 1) return new URI(variablesWritten[0].ToString());
-            throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");
+            throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");            
         }
     }
     internal class PointerDisplayableReceiversAttribute : Attribute
