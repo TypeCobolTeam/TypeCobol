@@ -34,7 +34,28 @@
 
 
        PROCEDURE DIVISiON USING PntTab-Pnt.
-                              .
+                          
+      *
+      *    IF CallIsCopy
+      *      PERFORM Copy-Process-Mode
+      *    ELSE
+           PERFORM FctList-Process-Mode
+           perform INIT-LIBRARY
+      *    END-IF
+
+           GOBACK.
+
+        FctList-Process-Mode.
+            IF NOT TC-PGM1-FctList-IsLoaded
+              SET TC-PGM1-a0508f35   TO ENTRY 'a0508f35'
+              SET TC-PGM1-cd991005   TO ENTRY 'cd991005'
+              SET TC-PGM1-FctList-IsLoaded TO TRUE
+            END-IF
+               .
+
+            set PntTab-Pnt TO ADDRESS OF TC-PGM1-PntTab
+
+           .
                           
 
       *declare procedure check public

@@ -332,7 +332,9 @@ namespace TypeCobol.Codegen.Generators
                             foreach (var functionIndex in mapper.FunctionDeclarationNodeIndices)
                             {
                                 LinearNodeSourceCodeMapper.NodeFunctionData funData = mapper.Nodes[functionIndex] as LinearNodeSourceCodeMapper.NodeFunctionData;
-                                if (funData.node.QualifiedName.Matches(functionDeclaration.QualifiedName))
+                                FunctionDeclarationCG function = funData.node as FunctionDeclarationCG;
+                                if (funData.node.QualifiedName.Matches(functionDeclaration.QualifiedName) && 
+                                    function?.OriginalHash != null && function.OriginalHash == functionDeclaration.OriginalHash)
                                 {
                                     AppendBufferContent(targetSourceText, funData.FunctionDeclBuffer);
                                 }

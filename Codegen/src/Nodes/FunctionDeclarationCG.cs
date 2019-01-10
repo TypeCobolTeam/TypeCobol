@@ -10,7 +10,6 @@ namespace TypeCobol.Codegen.Nodes {
     using TypeCobol.Compiler.Text;
 
     internal class FunctionDeclarationCG : Compiler.Nodes.FunctionDeclaration, Generated {
-        private string ProgramHashName = null;
         private string OriginalProcName = string.Empty; //Limited to 22 characters
         FunctionDeclaration OriginalNode = null;
 
@@ -23,7 +22,6 @@ namespace TypeCobol.Codegen.Nodes {
             //we'll generate things for public call
             var containsPublicCall = originalNode.ProcStyleCalls != null && originalNode.ProcStyleCalls.Count > 0;
 
-            ProgramHashName = originalNode.Hash;
             //Get procedure original name and truncate it to 22 chars if over. 
             OriginalProcName = originalNode.Name.Substring(0,Math.Min(originalNode.Name.Length, 22));
 
@@ -72,7 +70,7 @@ namespace TypeCobol.Codegen.Nodes {
                     }
                 } else {
                     if (child.CodeElement is FunctionDeclarationEnd) {
-                        children.Add(new ProgramEnd(new URI(ProgramHashName), OriginalProcName));
+                        children.Add(new ProgramEnd(new URI(OriginalHash), OriginalProcName));
                     } else {
                         // TCRFUN_CODEGEN_NO_ADDITIONAL_DATA_SECTION
                         // TCRFUN_CODEGEN_DATA_SECTION_AS_IS
@@ -287,15 +285,15 @@ namespace TypeCobol.Codegen.Nodes {
                     _cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
                     if (OriginalNode.IsNested && OriginalNode.CodeElement().Visibility == AccessModifier.Public)
                     {
-                        _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + ProgramHashName + OriginalProcName + " IS COMMON.", null));
+                        _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + OriginalHash + OriginalProcName + " IS COMMON.", null));
                     }
                     else
                     {
-                        _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + ProgramHashName + OriginalProcName + '.', null));
+                        _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + OriginalHash + OriginalProcName + '.', null));
                     }
 
                     var envDiv = OriginalNode.GetProgramNode().GetChildren<EnvironmentDivision>();
-                    if (envDiv != null && envDiv.Count == 1) {
+                    if (!IsNested && envDiv != null && envDiv.Count == 1) {
                         _cache.Add(new TextLineSnapshot(-1, "ENVIRONMENT DIVISION. ", null));
 
                         var configSections = envDiv.First().GetChildren<ConfigurationSection>();
@@ -312,6 +310,8 @@ namespace TypeCobol.Codegen.Nodes {
         }
 
         public new bool IsNested => OriginalNode.IsNested;
+
+        public string OriginalHash => OriginalNode.Hash;
 
         public bool IsLeaf {
             get { return false; }

@@ -9,7 +9,7 @@
 
        PROCEDURE DIVISiON.
 
-        declare procedure check public
+       declare procedure check public
           input mydate        TYPE Date
          .
        data division.
@@ -21,19 +21,46 @@
            EXEC SQL
              SELECT
                LOT_SOC              
-
-      
+       
+       
              INTO
                :LOT-SOC             
-      
+       
              FROM TERILOT
-      
+       
              WHERE LOT_SOC             = :ERIM04-LOT-SOC
-
+       
            END-EXEC  
            CONTINUE.
        END-DECLARE.
 
+       declare procedure check public
+          input mydate        TYPE Date
+          output r1           PIC X(5)
+         .
+       data division.
+       working-storage section.
+       LINKAGE SECTION.
+       01 ERIM04-LOT-SOC                 PIC X(5).
+       01 LOT-SOC                 PIC X(5).
+       PROCEDURE DIVISION.
+           DISPLAY "P1"
+           EXEC SQL
+             SELECT
+               LOT_SOC              
+       
+       
+             INTO
+               :LOT-SOC             
+       
+             FROM TERILOT
+       
+             WHERE LOT_SOC             = :ERIM04-LOT-SOC
+       
+           END-EXEC  
+           CONTINUE.
+       END-DECLARE.
+       
        declare procedure checkName public
           input myname        PIC X(15)
          .
@@ -44,7 +71,7 @@
            Call PersonService::GetPersonByName input myname
            .
        END-DECLARE.
-
+           
        INIT-LIBRARY.
             EXIT.
        
@@ -70,15 +97,15 @@
            EXEC SQL
              SELECT
                LOT_SOC              
-
-      
+       
+       
              INTO
                :LOT-SOC             
-      
+       
              FROM TERILOT
-      
+       
              WHERE LOT_SOC             = :ERIM04-LOT-SOC
-
+       
            END-EXEC  
            CONTINUE.
        END-DECLARE.
