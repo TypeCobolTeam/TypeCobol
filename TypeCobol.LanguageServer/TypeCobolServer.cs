@@ -137,8 +137,11 @@ namespace TypeCobol.LanguageServer
                 typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
 
+                //Create a ILanguageServer instance for the document.
+                TypeCobolLanguageServer languageServer = new TypeCobolLanguageServer(this.rpcServer, parameters.textDocument);
+
                 typeCobolWorkspace.OpenSourceFile(objUri,
-                    parameters.text != null ? parameters.text : parameters.textDocument.text, Workspace.LsrTestOptions);
+                    parameters.text != null ? parameters.text : parameters.textDocument.text, Workspace.LsrTestOptions, languageServer);
                 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + objUri.LocalPath);
