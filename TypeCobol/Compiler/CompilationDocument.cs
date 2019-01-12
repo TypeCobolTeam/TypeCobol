@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.Compiler
 {
@@ -58,6 +59,11 @@ namespace TypeCobol.Compiler
         /// Issue #315
         /// </summary>
         private MultilineScanState initialScanStateForCopy;
+
+        /// <summary>
+        /// Any connection to a Language Server instance.
+        /// </summary>
+        public ILanguageServer LanguageServer {get;set;}
 
         /// <summary>
         /// Informations used to track the performance of each compilation step
@@ -476,6 +482,8 @@ namespace TypeCobol.Compiler
                 if (scanAllDocumentLines)
                 {
                     ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
+                    //Notify any Language Server listener that the whole document has been rescanned
+                    this.LanguageServer?.UpdateTokensLines(null, this);
                 }
                 else
                 {
@@ -490,6 +498,19 @@ namespace TypeCobol.Compiler
                     currentTokensLinesVersion = currentTokensLinesVersion.next;
                     if (onVersion != null)
                         onVersion();
+
+                    //JCM: #1229 - So all incremental changes must have their code element reset to NULL to make Code Element Incremental Parsing invalidate them.
+                    foreach (var change in documentChanges)
+                    {
+                        if (change.NewLine is TypeCobol.Compiler.Parser.CodeElementsLine)
+                        {
+                            TypeCobol.Compiler.Parser.CodeElementsLine ceLine =
+                                (TypeCobol.Compiler.Parser.CodeElementsLine) change.NewLine;
+                            ceLine.ResetCodeElements();
+                        }
+                    }
+                    //Notify any Language Server listener
+                    this.LanguageServer?.UpdateTokensLines(documentChanges, this);
                 }
 
                 // Register that the tokens lines were synchronized with the current text lines version

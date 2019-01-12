@@ -498,7 +498,7 @@ namespace TypeCobol.LanguageServer
                     foreach (var line in fileParser.Value.TextDocument.Lines)
                         sourceText.AppendLine(line.Text);
 
-                    OpenSourceFile(fileParser.Key, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
+                    OpenSourceFile(fileParser.Key, sourceText.ToString(), LsrTestingOptions.NoLsrTesting, fileParser.Value.LanguageServer);
                 }
             }
         }

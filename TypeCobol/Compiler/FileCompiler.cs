@@ -11,6 +11,7 @@ using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
+using TypeCobol.LanguageServices.Editor;
 using TypeCobol.Tools;
 
 namespace TypeCobol.Compiler
@@ -79,6 +80,18 @@ namespace TypeCobol.Compiler
 
         public EventHandler<ExecutionStepEventArgs> ExecutionStepEventHandler { get; set; }
 
+        /// <summary>
+        /// Any connection to a Language Server instance.
+        /// </summary>
+        public ILanguageServer LanguageServer
+        {
+            get { return CompilationResultsForProgram?.LanguageServer; }
+            set
+            {
+                if (CompilationResultsForProgram != null)
+                    CompilationResultsForProgram.LanguageServer = value;
+            }
+        }
 
         /// <summary>
         /// Load a Cobol source file in memory

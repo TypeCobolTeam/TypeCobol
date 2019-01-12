@@ -488,12 +488,16 @@ namespace TypeCobol.Compiler.Scanner
                        InsideProcedureDivision == otherScanState.InsideProcedureDivision &&
                        InsidePseudoText == otherScanState.InsidePseudoText &&
                        InsideSymbolicCharacterDefinitions == otherScanState.InsideSymbolicCharacterDefinitions &&
+                       InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
+                       InsideParamsField == otherScanState.InsideParamsField &&
+                       InsideMultilineComments == otherScanState.InsideMultilineComments &&
+
 #if EUROINFO_RULES
                 InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
                     //((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
                     // (CopyTextNamesVariations != null && otherScanState.CopyTextNamesVariations != null && CopyTextNamesVariations.Count == otherScanState.CopyTextNamesVariations.Count)) &&
 #endif
-                    DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
+        			DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
                     WithDebuggingMode == otherScanState.WithDebuggingMode &&
                     EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
                     ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) || 
@@ -514,6 +518,10 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideProcedureDivision.GetHashCode();
                 hash = hash * 23 + InsidePseudoText.GetHashCode();
                 hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
+                hash = hash * 23 + InsideFormalizedComment.GetHashCode();
+                hash = hash * 23 + InsideParamsField.GetHashCode();
+                hash = hash * 23 + InsideMultilineComments.GetHashCode();
+
 #if EUROINFO_RULES
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();
 #endif

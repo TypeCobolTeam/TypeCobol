@@ -33,44 +33,118 @@ namespace TypeCobol.LanguageServer
         public ITextDocument TextDocument { get; set; }
 
         /// <summary>
-        /// The range of the current formalized token.
+        /// Internal map of collected token ranges.
         /// </summary>
-        private Range currentFormaCommentTokenRange;
+        private Dictionary<int, List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>> _tokenRangeMap;
+
+        /// <summary>
+        /// Add a token associated to a line.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="token"></param>
+        /// <returns>The added token</returns>
+        private TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token AddToken(int line,
+            TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token token)
+        {
+            if (!_tokenRangeMap.ContainsKey(line))
+            {
+                _tokenRangeMap[line] = new List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>();
+            }
+
+            switch (token.Type)
+            {
+                case TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment:
+                    _tokenRangeMap[line].Add((token));
+                    break;
+            }
+
+            return token;
+        }
+
+        /// <summary>
+        /// Remove a line
+        /// </summary>
+        /// <param name="line">The line to remove</param>
+        private void RemoveLine(int line)
+        {
+            if (_tokenRangeMap != null && _tokenRangeMap.ContainsKey(line))
+            {
+                _tokenRangeMap.Remove(line);
+            }
+        }
+
+        /// <summary>
+        /// A line has been inserted
+        /// </summary>
+        /// <param name="line">The line number inserted</param>
+        private void LineInserted(int line)
+        {
+            //So update any line in the document ggreater than the line number
+        }
+
+        /// <summary>
+        /// Called when the document has been cleared
+        /// </summary>
+        private void DocumentCleared()
+        {
+            _tokenRangeMap?.Clear();
+        }
+
+        /// <summary>
+        /// Checks if the model contains the given line number
+        /// </summary>
+        /// <param name="line">The line number to check.</param>
+        /// <returns></returns>
+        private bool HasLine(int line)
+        {
+            return _tokenRangeMap != null ? _tokenRangeMap.ContainsKey(line) : false;
+        }
+        /// <summary>
+        /// Collect tokens to be notified.
+        /// </summary>
+        /// <returns></returns>
+        private List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>
+            CollectNotificationTokens()
+        {
+            List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>
+            tokens = new List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>();
+
+            if (_tokenRangeMap != null)
+            {
+                foreach (var lines in _tokenRangeMap.Values)
+                {
+                    tokens.AddRange(lines);
+                }
+            }
+
+            return tokens;
+        }
 
         /// <summary>
         /// Collect all interesting token from a line.
         /// </summary>
         /// <param name="line"></param>
         /// <param name="tokens"></param>
-        private void CollectTokens(ITokensLine line, List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token> tokens)
-        {            
-            foreach (TypeCobol.Compiler.Scanner.Token token in line.SourceTokens)
+        private void CollectTokens(ITokensLine line)
+        {
+            if (line is TokensLine)
             {
-                switch (token.TokenType)
-                {
-                    case TokenType.FORMALIZED_COMMENTS_START:
-                    {//This a potential start of a formal comment.
+                TokensLine tlines = (TokensLine) line;
+                if (tlines.ScanState != null &&
+                    (tlines.ScanState.InsideFormalizedComment || tlines.ScanState.InsideMultilineComments))
+                {//Collect all token inside multi line comments.
+                    foreach (TypeCobol.Compiler.Scanner.Token token in line.SourceTokens)
+                    {
                         int tline = token.Line;
                         int tcolumn = token.Column;
-
-                        currentFormaCommentTokenRange = new Range();
+                        int tcolumnEnd = token.EndColumn;
+                        Range currentFormaCommentTokenRange = new Range();
                         currentFormaCommentTokenRange.start = new Position(tline - 1, tcolumn - 1);
+                        currentFormaCommentTokenRange.end = new Position(tline - 1, tcolumnEnd - 1);
+                        AddToken(tline - 1, new TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token(
+                            TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment,
+                            currentFormaCommentTokenRange));
                     }
-                        break;
-                    case TokenType.FORMALIZED_COMMENTS_STOP:
-                        if (currentFormaCommentTokenRange != null)
-                        {//We had a formal comment, then this is its end.
-                            int tline = token.Line;
-                            int tcolumnEnd = token.EndColumn;
-                            currentFormaCommentTokenRange.end = new Position(tline - 1, tcolumnEnd - 1);
-                            tokens.Add(new TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token(
-                                TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.TokenType.FormalComment,
-                                currentFormaCommentTokenRange));
-                            currentFormaCommentTokenRange = null;
-                        }                        
-                        break;
-                    default:
-                        break;
                 }
             }
         }
@@ -83,29 +157,44 @@ namespace TypeCobol.LanguageServer
             {
                 if (changes.Count == 0)
                     return;
-                //Determines the document's range.
-                var firstChange = changes[0];
-                var lastChange = changes[changes.Count - 1];
-                Position firstPos = new Position(firstChange.LineIndex - 1, 0);
-                Position lastPos = new Position(lastChange.LineIndex - 1, lastChange.NewLine.Length - 1);
-                docRange  = new Range(firstPos, lastPos);
 
-                tokens = new List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>();
+                //Compute the update range so that client can optimize its rescanning
+                DocumentChange<ITokensLine> minChange = null;
+                DocumentChange<ITokensLine> maxChange = null;
+                int minLine = Int32.MaxValue;
+                int maxLine = Int32.MinValue;
+                               
                 foreach (var change in changes)
                 {
-                    CollectTokens(change.NewLine, tokens);
+                    minLine = Math.Min(minLine, change.LineIndex);
+                    if (minLine == change.LineIndex)
+                        minChange = change;
+                    maxLine = Math.Max(maxLine, change.LineIndex);
+                    if (maxLine == change.LineIndex)
+                        maxChange = change;
                 }
-            }
-            else
-            {
-                //Rescan the entire document
-                tokens = new List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>();
-                var lines = compilationDocument.CobolTextLines;
-                foreach (var line in lines)
+
+                //Determines the document's range.
+                if (minChange != null && maxChange != null)
                 {
-                    CollectTokens((ITokensLine)line, tokens);
+                    var firstChange = minChange;
+                    var lastChange = maxChange;
+                    Position firstPos = new Position(firstChange.LineIndex, 0);
+                    Position lastPos = new Position(lastChange.LineIndex, lastChange.NewLine.Length - 1);
+                    docRange = new Range(firstPos, lastPos);
                 }
             }
+            //Compute all interesting token
+            if (_tokenRangeMap == null)
+                _tokenRangeMap = new Dictionary<int, List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>>();
+            _tokenRangeMap.Clear();
+            tokens = new List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>();
+            var lines = compilationDocument.CobolTextLines;
+            foreach (var line in lines)
+            {
+                CollectTokens((ITokensLine)line);
+            }
+            tokens = CollectNotificationTokens();
             SyntaxColoringParams scParams = new SyntaxColoringParams(this.LspTextDocument, docRange, tokens);
             //Now send the notification.
             this.RpcServer.SendNotification(SyntaxColoringNotification.Type, scParams);

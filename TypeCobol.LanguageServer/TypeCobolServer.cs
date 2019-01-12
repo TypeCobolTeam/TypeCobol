@@ -184,7 +184,7 @@ namespace TypeCobol.LanguageServer
                     //To avoid crashes.
                     try
                     {
-                        typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text, this.Workspace.LsrTestOptions);
+                        typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text, this.Workspace.LsrTestOptions, fileCompiler.LanguageServer);
                         return;
                     }
                     catch (Exception e)
