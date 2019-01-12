@@ -490,6 +490,17 @@ namespace TypeCobol.Compiler
                     currentTokensLinesVersion = currentTokensLinesVersion.next;
                     if (onVersion != null)
                         onVersion();
+
+                    //JCM: #1229 - So all incremental changes must have their code element reset to NULL to make Code Element Incremental Parsing invalidate them.
+                    foreach (var change in documentChanges)
+                    {
+                        if (change.NewLine is TypeCobol.Compiler.Parser.CodeElementsLine)
+                        {
+                            TypeCobol.Compiler.Parser.CodeElementsLine ceLine =
+                                (TypeCobol.Compiler.Parser.CodeElementsLine) change.NewLine;
+                            ceLine.ResetCodeElements();
+                        }
+                    }
                 }
 
                 // Register that the tokens lines were synchronized with the current text lines version
