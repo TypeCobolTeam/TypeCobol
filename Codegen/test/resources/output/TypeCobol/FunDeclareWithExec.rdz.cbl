@@ -15,7 +15,7 @@
            88 TC-PGM1-FctList-IsLoaded      VALUE 'OK'.
 
        01 TC-PGM1-PntTab.
-           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 3.
+           05 TC-PGM1-PntNbr         PIC S9(04) COMP VALUE 4.
       *To call program a0508f35check
       *Which is generated code for PGM1.check
       *Declared in source file FunDeclareWithExec.rdz.cbl
@@ -31,6 +31,11 @@
       *Declared in source file FunDeclareWithExec.rdz.cbl
            05 TC-PGM1-a02a7aa5-Idt   PIC X(08) VALUE 'a02a7aa5'.
            05 TC-PGM1-a02a7aa5 PROCEDURE-POINTER.
+      *To call program f6b6da00GetPersonByName
+      *Which is generated code for PersonService.GetPersonByName
+      *Declared in source file FunDeclareWithExec.rdz.cbl
+           05 TC-PGM1-f6b6da00-Idt   PIC X(08) VALUE 'f6b6da00'.
+           05 TC-PGM1-f6b6da00 PROCEDURE-POINTER.
 
        LINKAGE SECTION.
        01 PntTab-Pnt POINTER.
@@ -55,6 +60,7 @@
               SET TC-PGM1-a0508f35   TO ENTRY 'a0508f35'
               SET TC-PGM1-efd9419f   TO ENTRY 'efd9419f'
               SET TC-PGM1-a02a7aa5   TO ENTRY 'a02a7aa5'
+              SET TC-PGM1-f6b6da00   TO ENTRY 'f6b6da00'
               SET TC-PGM1-FctList-IsLoaded TO TRUE
             END-IF
                .
@@ -90,6 +96,14 @@
                CALL "efd9419fcheck" USING TC-A1 TC-A2
                GOBACK.
 
+           ENTRY 'a02a7aa5' USING TC-A1
+               CALL "a02a7aa5checkName" USING TC-A1
+               GOBACK.
+
+           ENTRY 'f6b6da00' USING TC-A1
+               CALL "f6b6da00GetPersonByName" USING TC-A1
+               GOBACK.
+
 
       *OK  call check of PGM1
       *   call check input mydate1
@@ -98,49 +112,9 @@
       *PersonService contains public procedure
        IDENTIFICATION DIVISION.
        PROGRAM-ID. PersonService.
-       DATA DIVISION.
-                                                                  
-       WORKING-STORAGE SECTION.
-       01  TC-PersonSe-FctList-Loaded PIC X(02).
-           88 TC-PersonSe-FctList-IsLoaded      VALUE 'OK'.
-       01 TC-PersonSe-PntTab.
-           05 TC-PersonSe-PntNbr         PIC S9(04) COMP VALUE 1.
-      *To call program f6b6da00GetPersonByName
-      *Which is generated code for PersonService.GetPersonByName
-      *Declared in source file FunDeclareWithExec.rdz.cbl
-           05 TC-PersonSe-f6b6da00-Idt   PIC X(08) VALUE 'f6b6da00'.
-           05 TC-PersonSe-f6b6da00 PROCEDURE-POINTER.
-
-       
-       LINKAGE SECTION.
-       01 PntTab-Pnt POINTER.
-
        
        
-       PROCEDURE DIVISION USING PntTab-Pnt.
-                           
-      *
-      *    IF CallIsCopy
-      *      PERFORM Copy-Process-Mode
-      *    ELSE
-           PERFORM FctList-Process-Mode
-           perform INIT-LIBRARY
-      *    END-IF
-
-           GOBACK.
-
-        FctList-Process-Mode.
-            IF NOT TC-PersonSe-FctList-IsLoaded
-              SET TC-PersonSe-f6b6da00   TO ENTRY 'f6b6da00'
-
-              SET TC-PersonSe-FctList-IsLoaded TO TRUE
-            END-IF
-               .
-
-            set PntTab-Pnt TO ADDRESS OF TC-PersonSe-PntTab
-
-           .
-                                 
+       PROCEDURE DIVISION.       
       *declare procedure GetPersonById private
       *   input  personId  type date.
        
@@ -282,33 +256,13 @@
            END-EXEC  
            CONTINUE.
        END PROGRAM efd9419fcheck.
-       END PROGRAM PGM1.
-
-      *
-      *declare procedure GetPersonByName public
-      *   input  name  pic x(15).
-      *_________________________________________________________________
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. f6b6da00GetPersonByName.
-       DATA DIVISION.
-       LINKAGE SECTION.
-      *PGM1.GetPersonByName - Params :
-      *		input(name: pic x(15))
-       01 name pic x(15).
-       PROCEDURE DIVISION
-             USING BY REFERENCE name
-           .
-      *PGM1.GetPersonByName - Params :
-      *		input(name: pic x(15))
-           CONTINUE.
-       END PROGRAM f6b6da00GetPersonByName.
       *
       *declare procedure checkName public
       *   input myname        PIC X(15)
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a02a7aa5checkName.
+       PROGRAM-ID. a02a7aa5checkName IS COMMON.
        data division.
        working-storage section.
       *PGM1.checkName - Params :
@@ -387,3 +341,23 @@
             END-PERFORM
             .
        END PROGRAM a02a7aa5checkName.
+      *
+      *declare procedure GetPersonByName public
+      *   input  name  pic x(15).
+      *_________________________________________________________________
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. f6b6da00GetPersonByName IS COMMON.
+       DATA DIVISION.
+       LINKAGE SECTION.
+      *PGM1.GetPersonByName - Params :
+      *		input(name: pic x(15))
+       01 name pic x(15).
+       PROCEDURE DIVISION
+             USING BY REFERENCE name
+           .
+      *PGM1.GetPersonByName - Params :
+      *		input(name: pic x(15))
+           CONTINUE.
+       END PROGRAM f6b6da00GetPersonByName.
+       END PROGRAM PGM1.
+

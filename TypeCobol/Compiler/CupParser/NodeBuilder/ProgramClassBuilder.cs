@@ -758,7 +758,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 {
                     if (parent is FunctionDeclaration)
                     {
-                        parent.SetFlag(Node.Flag.GenerateAsNested, true);
+                        //For specific FunctionDeclaration generation as nested, set flag on FunctionDeclaration node
+                        parent.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
                         break;
                     }
                     parent = parent.Parent;
@@ -918,7 +919,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 {
                     if (parent is FunctionDeclaration)
                     {
-                        parent.SetFlag(Node.Flag.GenerateAsNested, true);
+                        //For specific FunctionDeclaration generation as nested, set flag on FunctionDeclaration node
+                        parent.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
                         break;
                     }
                     parent = parent.Parent;
