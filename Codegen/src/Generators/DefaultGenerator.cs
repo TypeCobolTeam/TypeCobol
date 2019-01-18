@@ -326,7 +326,7 @@ namespace TypeCobol.Codegen.Generators
                     else if (mapper.Nodes[node_index].node.CodeElement is Compiler.CodeElements.ProgramEnd)
                     {
                         //for each typecobol nested procedure declaration in procedure division
-                        foreach (var functionDeclaration in mapper.Nodes[node_index].node.Parent.Children.OfType<FunctionDeclarationCG>().Where(c => c.IsNested))
+                        foreach (var functionDeclaration in mapper.Nodes[node_index].node.Parent.Children.OfType<FunctionDeclarationCG>().Where(c => c.GenerateAsNested))
                         {
                             //for each procedure generated in pgm
                             foreach (var functionIndex in mapper.FunctionDeclarationNodeIndices)
@@ -362,7 +362,7 @@ namespace TypeCobol.Codegen.Generators
             foreach (int fun_index in mapper.FunctionDeclarationNodeIndices)
             {
                 FunctionDeclarationCG functionDeclaration = mapper.Nodes[fun_index].node as FunctionDeclarationCG;
-                if (functionDeclaration != null && !functionDeclaration.IsNested)
+                if (functionDeclaration != null && !functionDeclaration.GenerateAsNested)
                 {
                     LinearNodeSourceCodeMapper.NodeFunctionData funData =
                         mapper.Nodes[fun_index] as LinearNodeSourceCodeMapper.NodeFunctionData;

@@ -299,7 +299,7 @@ namespace TypeCobol.Compiler.Nodes {
         {
             var fun = o as FunctionDeclaration;
             if (fun == null) return null;
-            return fun.IsNested.ToString();
+            return fun.GenerateAsNested.ToString();
         }
     }
 
@@ -307,12 +307,10 @@ namespace TypeCobol.Compiler.Nodes {
     {
         public object GetValue(object o, SymbolTable table)
         {
-            var nestedFunctions = DefinitionsAttribute.GetNestedFunctions(o as Program);
-
             var pgm = o as Program;
             if (pgm == null) return false;
 
-            return nestedFunctions.Public.Count > 0;
+            return DefinitionsAttribute.GetFunctionsGeneratedAsNested(pgm).Public.Count > 0;
         }
     }
 
@@ -488,7 +486,7 @@ internal class DefinitionsAttribute: Attribute {
 		var definitions = new Definitions();
 		definitions.types = GetTypes(table);
 		definitions.functions = GetFunctions(table);
-		definitions.nestedFunctions = GetNestedFunctions(o as Program);
+		definitions.functionsGeneratedAsNested = GetFunctionsGeneratedAsNested(o as Program);
 		return definitions;
 	}
 	private Definitions.NList GetTypes(SymbolTable table) {
@@ -501,22 +499,22 @@ internal class DefinitionsAttribute: Attribute {
 	private Definitions.NList GetFunctions(SymbolTable table) {
 		var list = new Definitions.NList();
 		if (table == null) return list;
-		foreach(var items in table.Functions) list.AddRange(items.Value.Where(fd => !fd.IsNested));
+		foreach(var items in table.Functions) list.AddRange(items.Value.Where(fd => !fd.GenerateAsNested));
 		list.AddRange(GetFunctions(table.EnclosingScope));
 		return list;
 	}
 
-    internal static Definitions.NList GetNestedFunctions(Program pgm)
+    internal static Definitions.NList GetFunctionsGeneratedAsNested(Program pgm)
     {
         var list = new Definitions.NList();
         if (pgm == null) return list;
 
         list.AddRange(pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
-            .Where(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).IsNested));
+            .Where(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).GenerateAsNested));
 
         foreach (var pgmNestedProgram in pgm.NestedPrograms)
         {
-            list.AddRange(GetNestedFunctions(pgmNestedProgram));
+            list.AddRange(GetFunctionsGeneratedAsNested(pgmNestedProgram));
         }
         return list;
     }
@@ -525,7 +523,7 @@ internal class DefinitionsAttribute: Attribute {
     public class Definitions {
 	public NList types;
 	public NList functions;
-	public NList nestedFunctions;
+	public NList functionsGeneratedAsNested;
 
 	public override string ToString() {
 		var str = new System.Text.StringBuilder();

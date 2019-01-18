@@ -283,7 +283,7 @@ namespace TypeCobol.Codegen.Nodes {
                     _cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________",
                         null));
                     _cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
-                    if (OriginalNode.IsNested && OriginalNode.CodeElement().Visibility == AccessModifier.Public)
+                    if (OriginalNode.GenerateAsNested && OriginalNode.CodeElement().Visibility == AccessModifier.Public)
                     {
                         _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + OriginalHash + OriginalProcName + " IS COMMON.", null));
                     }
@@ -293,7 +293,7 @@ namespace TypeCobol.Codegen.Nodes {
                     }
 
                     var envDiv = OriginalNode.GetProgramNode().GetChildren<EnvironmentDivision>();
-                    if (!IsNested && envDiv != null && envDiv.Count == 1) {
+                    if (!GenerateAsNested && envDiv != null && envDiv.Count == 1) {
                         _cache.Add(new TextLineSnapshot(-1, "ENVIRONMENT DIVISION. ", null));
 
                         var configSections = envDiv.First().GetChildren<ConfigurationSection>();
@@ -309,7 +309,7 @@ namespace TypeCobol.Codegen.Nodes {
             }
         }
 
-        public new bool IsNested => OriginalNode.IsNested;
+        public new bool GenerateAsNested => OriginalNode.GenerateAsNested;
 
         public string OriginalHash => OriginalNode.Hash;
 

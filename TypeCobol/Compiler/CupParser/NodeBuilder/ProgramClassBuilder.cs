@@ -29,8 +29,8 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private bool _IsInsideLinkageSectionContext;
         private bool _IsInsideLocalStorageSectionContext;
         private bool _IsInsideFileSectionContext;
-        private bool _IsInsideProcedure;
         private bool _IsInsideGlobalStorageSection;
+        private FunctionDeclaration _ProcedureDeclaration;
 
         // Programs can be nested => track current programs being analyzed
         private Stack<Program> programsStack = null;
@@ -105,7 +105,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         private void Enter(Node node, CodeElement context = null, SymbolTable table = null)
         {
             node.SymbolTable = table ?? SyntaxTree.CurrentNode.SymbolTable;
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 node.SetFlag(Node.Flag.InsideProcedure, true);      //Set flag to know that this node belongs a Procedure or Function
             }
@@ -509,7 +509,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new WorkingStorageSection(header), header);
             _IsInsideWorkingStorageContext = true;
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
@@ -526,7 +526,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new LocalStorageSection(header), header);
             _IsInsideLocalStorageSectionContext = true;
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
@@ -543,7 +543,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new LinkageSection(header), header);
             _IsInsideLinkageSectionContext = true;
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
@@ -559,7 +559,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         public virtual void StartProcedureDivision(ProcedureDivisionHeader header)
         {
             Enter(new ProcedureDivision(header), header);
-            if (_IsInsideProcedure)
+            if (_ProcedureDeclaration != null)
             {
                 CurrentNode.SetFlag(Node.Flag.ForceGetGeneratedLines, true);
             }
@@ -596,7 +596,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 Label = uidfactory.FromOriginal(header?.FunctionName.Name),
                 Library = CurrentProgram.Identification.ProgramName.Name
             };
-            _IsInsideProcedure = true;
+            _ProcedureDeclaration = node;
             CurrentProgram.Root.SetFlag(Node.Flag.ContainsProcedure, true);
             //DO NOT change this without checking all references of Library. 
             // (SymbolTable - function, type finding could be impacted) 
@@ -662,7 +662,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Enter(new FunctionEnd(end), end);
             Exit();
             Exit();// exit DECLARE FUNCTION
-            _IsInsideProcedure = false;
+            _ProcedureDeclaration = null;
         }
 
         public virtual void StartFunctionProcedureDivision(ProcedureDivisionHeader header)
@@ -750,20 +750,22 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndExecStatement()
         {
-            //procedures containing EXEC statements should be generated as nested
-            if (_IsInsideProcedure)
+            //Code duplicated in OnExecStatement
+            //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
+            //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
+
+            //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
+            //This might be helpful for later
+            //if (_ProcedureDeclaration != null)
+            //{
+            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
+            //}
+
+            //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
+            //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
+            if (_ProcedureDeclaration != null)
             {
-                Node parent = CurrentNode.Parent;
-                while (parent is Program == false)
-                {
-                    if (parent is FunctionDeclaration)
-                    {
-                        //For specific FunctionDeclaration generation as nested, set flag on FunctionDeclaration node
-                        parent.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
-                        break;
-                    }
-                    parent = parent.Parent;
-                }
+                CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
             }
             Exit();
         }
@@ -911,21 +913,24 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new Exec(stmt), stmt);
 
-            //procedures containing EXEC statements should be generated as nested
-            if (_IsInsideProcedure)
+            //Code duplicated in OnExecStatement
+            //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
+            //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
+
+            //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
+            //This might be helpful for later
+            //if (_ProcedureDeclaration != null)
+            //{
+            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
+            //}
+
+            //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
+            //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
+            if (_ProcedureDeclaration != null)
             {
-                Node parent = CurrentNode.Parent;
-                while (parent is Program == false)
-                {
-                    if (parent is FunctionDeclaration)
-                    {
-                        //For specific FunctionDeclaration generation as nested, set flag on FunctionDeclaration node
-                        parent.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
-                        break;
-                    }
-                    parent = parent.Parent;
-                }
+                CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
             }
+            Exit();
 
             Exit();
         }

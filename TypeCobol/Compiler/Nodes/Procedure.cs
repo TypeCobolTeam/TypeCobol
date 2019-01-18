@@ -118,7 +118,7 @@ namespace TypeCobol.Compiler.Nodes {
         public ParametersProfileNode Profile{ get; set; }
         //For specific FunctionDeclaration generation as nested, check flag on FunctionDeclaration node
         //Don't forget to set the flag on the right node in ProgramClassBuilder
-        public bool IsNested => this.Root.MainProgram.IsFlagSet(Flag.GenerateAsNested);
+        public bool GenerateAsNested => this.Root.MainProgram.IsFlagSet(Flag.GenerateAsNested);
 
 
         private string _hash;
