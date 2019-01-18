@@ -348,15 +348,17 @@ namespace TypeCobol.LanguageServer
 
         public override Hover OnHover(TextDocumentPosition parameters)
         {
+            Hover resultHover = new Hover();
+
             //Commented because it's too slow
             //AnalyticsWrapper.Telemetry.TrackEvent(EventType.Hover, "Hover event", LogType.Completion);
             var fileCompiler = GetFileCompilerFromStringUri(parameters.uri);
             if (fileCompiler == null)
-                return null;
+                return resultHover;
 
             var wrappedCodeElements = CodeElementFinder(fileCompiler, parameters.position);
             if (wrappedCodeElements == null)
-                return null;
+                return resultHover;
 
             Token userFilterToken = null;
             Token lastSignificantToken = null;
@@ -366,7 +368,7 @@ namespace TypeCobol.LanguageServer
                 out userFilterToken, out lastSignificantToken); //Magic happens here
             if (matchingCodeElement == null)
             {
-                return null;
+                return resultHover;
             }
                 
             var matchingNode = fileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot.NodeCodeElementLinkers[((CodeElementWrapper)matchingCodeElement).CodeElement];
@@ -377,18 +379,16 @@ namespace TypeCobol.LanguageServer
             var dataDefinition = matchingNode as DataDefinition;
             if (dataDefinition?.TypeDefinition != null)
             {
-                return new Hover()
-                {
-					range =
-					  new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex, matchingCodeElement.Line,
-						matchingCodeElement.StopIndex + 1),
-                    contents =
-                            new MarkedString[] { new MarkedString() { language = "Cobol", value = string.Join("", dataDefinition.TypeDefinition.SelfAndChildrenLines.Select(e => e.Text + "\r\n")) } }
-                };
+                resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
+                    matchingCodeElement.Line,
+                    matchingCodeElement.StopIndex + 1);
+                resultHover.contents =
+                    new MarkedString[] { new MarkedString() { language = "Cobol", value = string.Join("", dataDefinition.TypeDefinition.SelfAndChildrenLines.Select(e => e.Text + "\r\n")) }};
+                return resultHover;
             }
 
             
-            return null;
+            return resultHover;
 
         }
 
