@@ -56,6 +56,27 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
+    class DataDefinitionChecker
+    {
+        public static void OnNode(Node node, DataDescriptionEntry dataEntry = null)
+        {
+            if (dataEntry == null && node is DataDefinition)
+            {
+                dataEntry = node.CodeElement as DataDescriptionEntry;
+            }
+
+
+            if (dataEntry?.Usage != null &&
+                (dataEntry.Usage.Value == DataUsage.FloatingPoint || dataEntry.Usage.Value == DataUsage.LongFloatingPoint) &&
+                dataEntry.Picture != null)
+            {
+                DiagnosticUtils.AddError(node,
+                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", dataEntry);
+            }
+        }
+
+    }
+
     class FunctionCallChecker
     {
         public static void OnNode(Node node)
@@ -568,12 +589,13 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static string ToString(FunctionType type)
         {
-		if (type == FunctionType.Undefined) return "symbol";
-		if (type == FunctionType.Function) return "function";
-		if (type == FunctionType.Procedure) return "procedure";
-		return "function or procedure";
-	}
-}
+		    if (type == FunctionType.Undefined) return "symbol";
+		    if (type == FunctionType.Function) return "function";
+		    if (type == FunctionType.Procedure) return "procedure";
+		    return "function or procedure";
+	    }
+    }
+    
 
     class FunctionDeclarationChecker
     {
@@ -712,13 +734,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 CrossCompleteChecker.CheckPicture(node, parameter);
             }
 
-            if (parameter.Usage != null &&
-                (parameter.Usage.Value == DataUsage.FloatingPoint || parameter.Usage.Value == DataUsage.LongFloatingPoint) && 
-                parameter.Picture != null)
-            {
-                DiagnosticUtils.AddError(node,
-                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", parameter);
-            }
+            DataDefinitionChecker.OnNode(node, parameter);
 
             var type = parameter.DataType;
             TypeDefinition foundedType;

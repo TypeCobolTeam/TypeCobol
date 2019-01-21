@@ -349,13 +349,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 return true;
             }
 
-            if (dataDefinition.Usage.HasValue &&
-                (dataDefinition.Usage.Value == DataUsage.FloatingPoint || dataDefinition.Usage.Value == DataUsage.LongFloatingPoint) && 
-                dataDefinition.Picture != null)
-            {
-                DiagnosticUtils.AddError(dataDefinition,
-                    "Variable with usage COMP-1 and COMP-2 cannot have a PICTURE", dataDefinitionEntry);
-            }
+            DataDefinitionChecker.OnNode(dataDefinition);
 
             return true;
         }
