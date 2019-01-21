@@ -136,6 +136,15 @@ namespace TypeCobol.LanguageServer.Test
         }
         #endregion
 
+        #region Sementic_Tests
+        [TestMethod]
+        [TestCategory("Semantic")]
+        public void MultiLineBlockDeleteUndo()
+        {
+            LSRTestHelper.Test("MultiLineBlockDeleteUndo", LsrTestingOptions.NoLsrTesting, false);
+        }
+        #endregion
+
         #region Completion_Tests
         [TestMethod]
         [TestCategory("Completion")]
