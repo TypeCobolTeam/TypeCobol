@@ -1,4 +1,9 @@
 ﻿--------- FIELD LEVEL|NAME ---------- START     END  LENGTH
+1 DEF1                                    1       5       5
+1 DEF2                                    1      16      16
+    5 DATADEF201                          1       5       5
+    5 DATADEF202                          6      12       7
+    5 DATADEF203                         13      16       4
 1 STR1                                    1      15      15
     5 DATA101                             1       5       5
     5 DATA102                             6      15      10
@@ -63,6 +68,9 @@
 1 STR14                                   1       8       8
     5 DATA1401                            1       4       4
     5 DATA1402                            5       8       4
+1 STR15                                   1      21      21
+    5 DATA1501                            1       5       5
+    5 DATA1502                            6      21      16
 77 DATA77-01                              1       1       1
 77 DATA77-02                              1       4       4
 77 DATA77-03                              1       1       1

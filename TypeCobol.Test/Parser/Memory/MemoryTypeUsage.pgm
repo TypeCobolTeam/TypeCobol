@@ -4,18 +4,24 @@ ENVIRONMENT DIVISION.
 *=================================================================
 CONFIGURATION SECTION.
 *SOURCE-COMPUTER. IBM-370 WITH DEBUGGING MODE.
-      
+             
 *vvvvv attention vvvvvv ne jamais commenter :
 SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
-      
-      
+             
+             
 Data Division.
 Working-Storage Section.
-      
+       
+01 DEF1 TYPEDEF STRICT PUBLIC PIC X(5).
+01 DEF2 TYPEDEF STRICT PUBLIC.
+    05 DATADEF201   PIC 9(5).
+    05 DATADEF202   PIC 9(5)V99.
+    05 DATADEF203   PIC 9(5)V99 COMP-3.
+           
 01 STR1.
     05 DATA101   PIC X(5).
     05 DATA102   PIC N(5).
-
+       
 01 STR2.
     05 DATA201   PIC 9(5).
     05 DATA202   PIC 9(5)V99.
@@ -32,11 +38,11 @@ Working-Storage Section.
     05 DATA306   PIC 9(6)V99 COMP-3.
     05 DATA307   PIC 9(6)V9(6) COMP-3.
     05 DATA308   PIC S9(6)V9(6) COMP-3.
-
+       
 01 STR4.
     05 DATA401   PIC ZZZ.ZZ9,99.
     05 DATA401   PIC ZZZ.ZZ9,99+.
-
+       
 01 STR5.
     05 DATA501   COMP-1.
     05 DATA502   COMP-2.
@@ -44,19 +50,19 @@ Working-Storage Section.
     05 DATA601   POINTER.
     05 DATA602   PROCEDURE-POINTER.
     05 DATA603   FUNCTION-POINTER.
-
+       
 01 STR7.
     05 DATA701   PIC X(1).
     05 DATA702   PIC 9(5) COMP SYNC.
     05 DATA703   PIC X(1).
     05 DATA704   PIC S9(5) COMP SYNC.
-
+       
 01 STR8 SYNC.
     05 DATA801   PIC X(1).
     05 DATA802   PIC 9(5) COMP.
     05 DATA803   PIC X(1).
     05 DATA804   PIC S9(5) COMP.
-
+       
 01 STR9 USAGE COMP.
     05 DATA901   PIC 9(5).
     05 DATA902   PIC S9(5).
@@ -69,27 +75,31 @@ Working-Storage Section.
     05 DATA1102   PIC 9(5).
     05 DATA1103   PIC N(1).
     05 DATA1104   PIC S9(5) SIGN TRAILING SEPARATE.
-
+       
 01 STR12 PROCEDURE-POINTER.
     05 DATA1201.
     05 DATA1202.
-      
+             
 01 STR13 POINTER.
     05 DATA1301.
     05 DATA1302.
-      
+             
 01 STR14 FUNCTION-POINTER.
     05 DATA1401.
     05 DATA1402.
-
+       
+01 STR15.
+    05 DATA1501   TYPE DEF1.
+    05 DATA1502   TYPE DEF2.
+       
 77 DATA77-01   PIC X(1).
 77 DATA77-02   PIC 9(5) COMP SYNC.
 77 DATA77-03   PIC X(1).
 77 DATA77-04   PIC 9(5) COMP SYNC.
-      
+             
 Procedure Division.
     goback
     .
-      
+             
 END PROGRAM MemoryLayout.
-      
+             
