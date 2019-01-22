@@ -317,6 +317,10 @@ namespace TypeCobol.Compiler.Nodes {
                     {
                         _physicalLength = GetPhysicalLength();
                     }
+                    else if (TypeDefinition != null)
+                    {
+                        _physicalLength = TypeDefinition.PhysicalLength;
+                    }
                     else
                     {
                         foreach (var node in children)
