@@ -210,6 +210,12 @@
     <None Include="LSRTests\MultiLineBlockDeleteUndo\output_expected\MultiLineBlockDeleteUndo.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\MultiLineCommentIncScan\input\MultiLineCommentIncScan.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\MultiLineCommentIncScan\output_expected\MultiLineCommentIncScan.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\OfCompletion\input\OfCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
