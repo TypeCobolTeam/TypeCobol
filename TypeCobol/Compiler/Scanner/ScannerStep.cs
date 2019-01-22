@@ -202,15 +202,53 @@ namespace TypeCobol.Compiler.Scanner
             return tokensLinesChanges;
         }
 
+        /// <summary>
+        /// Check if two Tokens set are different
+        /// </summary>
+        /// <param name="curTokens">Current Tokens set</param>
+        /// <param name="newTokens">New Token Set</param>
+        /// <returns>true if different, false otherwise</returns>
+        private static bool AreTokensChanging(Token[] curTokens, Token[] newTokens)
+        {
+            if (curTokens == newTokens)
+                return false;
+            if (curTokens.Length != newTokens.Length)
+                return true;
+            for (int i = 0; i < curTokens.Length; i++)
+                if (!object.Equals(curTokens[i], newTokens[i]))
+                    return true;
+            return false;
+        }
         private static void ScanTokensLineWithMultilineScanState(int lineToScanIndex, TokensLine lineToScan, TextSourceInfo textSourceInfo, ISearchableReadOnlyList<TokensLine> documentLines, PrepareDocumentLineForUpdate prepareDocumentLineForUpdate, TypeCobolOptions compilerOptions, List<RemarksDirective.TextNameVariation> copyTextNameVariations, IList<DocumentChange<ITokensLine>> tokensLinesChanges, MultilineScanState initialScanState, out int nextLineToScanIndex, out TokensLine nextLineToScan)
         {
             // Scan the current line (or continuation lines group)
             MultilineScanState scanState = ScanTokensLineWithContinuations(lineToScanIndex, lineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, initialScanState, out nextLineToScanIndex, out nextLineToScan);
 
             // Scan the following lines until we find that the scan state at the beginning of the next line has been updated
-            while (nextLineToScan != null && nextLineToScan.InitialScanState != null && !nextLineToScan.InitialScanState.Equals(scanState))
+            while (nextLineToScan != null && nextLineToScan.InitialScanState != null)
             {
-                scanState = ScanTokensLineWithContinuations(nextLineToScanIndex, nextLineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
+                if (nextLineToScan.InitialScanState.Equals(scanState))
+                {//The state is no longer changing, but before stopping we check that tokens are not also changing on that line.
+                    TokensLine currentScanLine = nextLineToScan;
+                    Token[] curTokens = new Token[currentScanLine.SourceTokens.Count];
+                    currentScanLine.SourceTokens.CopyTo(curTokens, 0);
+
+                    scanState = ScanTokensLineWithContinuations(nextLineToScanIndex, nextLineToScan, textSourceInfo,
+                        documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations,
+                        tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
+
+                    Token[] newTokens = new Token[currentScanLine.SourceTokens.Count];
+                    currentScanLine.SourceTokens.CopyTo(newTokens, 0);
+                    bool bNotChanging = !AreTokensChanging(curTokens, newTokens);
+                    if (bNotChanging)
+                        break;//The tokens of the line have not changed.
+                }
+                else
+                {
+                    scanState = ScanTokensLineWithContinuations(nextLineToScanIndex, nextLineToScan, textSourceInfo,
+                        documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations,
+                        tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
+                }
             }
         }
 

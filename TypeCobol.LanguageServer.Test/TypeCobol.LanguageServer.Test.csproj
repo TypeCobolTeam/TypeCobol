@@ -204,6 +204,12 @@
     <None Include="LSRTests\CompletionWithNestedProgram\output_expected\CompletionWithNestedProgram.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\MultiLineBlockDeleteUndo\input\MultiLineBlockDeleteUndo.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\MultiLineBlockDeleteUndo\output_expected\MultiLineBlockDeleteUndo.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\OfCompletion\input\OfCompletion.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
