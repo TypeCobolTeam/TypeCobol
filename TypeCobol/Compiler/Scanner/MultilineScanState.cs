@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Scanner
         /// True if we are between two MultilineComments markups
         /// </summary>
         public bool InsideMultilineComments { get; private set; }
-        
+
 
         /// <summary>
         /// True as soon as the keyword DECIMAL-POINT has been encountered
@@ -161,10 +161,10 @@ namespace TypeCobol.Compiler.Scanner
             // Ignore whitespace separators
             if (newToken.TokenFamily == TokenFamily.Whitespace ||
                 newToken.TokenFamily == TokenFamily.Comments)
-            { 
+            {
                 return;
             }
-            
+
             // Ignore pseudo-text tokens to update scan state
             if (InsidePseudoText && newToken.TokenType != TokenType.PseudoTextDelimiter && newToken.TokenType != TokenType.COPY)
             {
@@ -259,9 +259,9 @@ namespace TypeCobol.Compiler.Scanner
                     InsideMultilineComments = false;
                     return;
             }
-            
+
             // Avoid setting last significative token for multiline Comments
-            if (InsideMultilineComments) { return;}
+            if (InsideMultilineComments) { return; }
 
             // Register the end of a SYMBOLIC CHARACTERS? clause
             if (InsideSymbolicCharacterDefinitions &&
@@ -449,26 +449,28 @@ namespace TypeCobol.Compiler.Scanner
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.CommentEntry; }
         }
-        
+
         public bool AfterFUNCTION
         {
             get { return LastSignificantToken != null && LastSignificantToken.TokenType == TokenType.FUNCTION; }
-        }        
+        }
 
         /// <summary>
         /// True at the beggining of a parse section, or after PeriodSeparator, or after END-EXEC
         /// </summary>
         public bool AtBeginningOfSentence
         {
-            get { return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FORMALIZED_COMMENTS_STOP ||
-                    // Special cases : compiler directives sometimes without a final PeriodSeparator
-                    // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
-                    //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
-                    (BeforeLastSignificantToken!=null && (BeforeLastSignificantToken.TokenType == TokenType.COPY || BeforeLastSignificantToken.TokenType == TokenType.EXEC_SQL) && LastSignificantToken.TokenType == TokenType.UserDefinedWord) ||
-                    // 2. EJECT | SKIP1 | SKIP2 | SKIP3 <= sometimes PeriodSeparator missing here.
-                    (LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EJECT || LastSignificantToken.TokenType == TokenType.SKIP1 || LastSignificantToken.TokenType == TokenType.SKIP2 || LastSignificantToken.TokenType == TokenType.SKIP3)) ||
-                    // 3. TITLE alphanumericValue2 <= sometimes PeriodSeparator missing here.
-                    (BeforeLastSignificantToken != null && BeforeLastSignificantToken.TokenType == TokenType.TITLE && LastSignificantToken.TokenFamily == TokenFamily.AlphanumericLiteral);
+            get
+            {
+                return LastSignificantToken == null || LastSignificantToken.TokenType == TokenType.PeriodSeparator || LastSignificantToken.TokenType == TokenType.END_EXEC || LastSignificantToken.TokenType == TokenType.FORMALIZED_COMMENTS_STOP ||
+                  // Special cases : compiler directives sometimes without a final PeriodSeparator
+                  // 1. COPY UserDefinedWord <= sometimes PeriodSeparator missing here.
+                  //    Has no impact except if the next token is a numeric or alphanumeric literal, which can't happen inside a COPY directive.
+                  (BeforeLastSignificantToken != null && (BeforeLastSignificantToken.TokenType == TokenType.COPY || BeforeLastSignificantToken.TokenType == TokenType.EXEC_SQL) && LastSignificantToken.TokenType == TokenType.UserDefinedWord) ||
+                  // 2. EJECT | SKIP1 | SKIP2 | SKIP3 <= sometimes PeriodSeparator missing here.
+                  (LastSignificantToken != null && (LastSignificantToken.TokenType == TokenType.EJECT || LastSignificantToken.TokenType == TokenType.SKIP1 || LastSignificantToken.TokenType == TokenType.SKIP2 || LastSignificantToken.TokenType == TokenType.SKIP3)) ||
+                  // 3. TITLE alphanumericValue2 <= sometimes PeriodSeparator missing here.
+                  (BeforeLastSignificantToken != null && BeforeLastSignificantToken.TokenType == TokenType.TITLE && LastSignificantToken.TokenFamily == TokenFamily.AlphanumericLiteral);
             }
         }
 
@@ -488,6 +490,10 @@ namespace TypeCobol.Compiler.Scanner
                        InsideProcedureDivision == otherScanState.InsideProcedureDivision &&
                        InsidePseudoText == otherScanState.InsidePseudoText &&
                        InsideSymbolicCharacterDefinitions == otherScanState.InsideSymbolicCharacterDefinitions &&
+                       InsideFormalizedComment == otherScanState.InsideFormalizedComment &&
+                       InsideParamsField == otherScanState.InsideParamsField &&
+                       InsideMultilineComments == otherScanState.InsideMultilineComments &&
+
 #if EUROINFO_RULES
                 InsideRemarksDirective == otherScanState.InsideRemarksDirective &&
                     //((CopyTextNamesVariations == null && otherScanState.CopyTextNamesVariations == null) ||
@@ -496,7 +502,7 @@ namespace TypeCobol.Compiler.Scanner
                     DecimalPointIsComma == otherScanState.DecimalPointIsComma &&
                     WithDebuggingMode == otherScanState.WithDebuggingMode &&
                     EncodingForAlphanumericLiterals == otherScanState.EncodingForAlphanumericLiterals &&
-                    ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) || 
+                    ((SymbolicCharacters == null && otherScanState.SymbolicCharacters == null) ||
                      (SymbolicCharacters != null && otherScanState.SymbolicCharacters != null && SymbolicCharacters.Count == otherScanState.SymbolicCharacters.Count));
             }
         }
@@ -514,6 +520,10 @@ namespace TypeCobol.Compiler.Scanner
                 hash = hash * 23 + InsideProcedureDivision.GetHashCode();
                 hash = hash * 23 + InsidePseudoText.GetHashCode();
                 hash = hash * 23 + InsideSymbolicCharacterDefinitions.GetHashCode();
+                hash = hash * 23 + InsideFormalizedComment.GetHashCode();
+                hash = hash * 23 + InsideParamsField.GetHashCode();
+                hash = hash * 23 + InsideMultilineComments.GetHashCode();
+
 #if EUROINFO_RULES
                 hash = hash * 23 + InsideRemarksDirective.GetHashCode();
 #endif
@@ -526,6 +536,6 @@ namespace TypeCobol.Compiler.Scanner
                 }
                 return hash;
             }
-        }        
-    }    
+        }
+    }
 }

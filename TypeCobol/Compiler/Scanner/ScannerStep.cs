@@ -161,8 +161,10 @@ namespace TypeCobol.Compiler.Scanner
                     }
 
                     // When a text line is removed :
-                    // - the previous line must be scanned again if the line which was removed was a member of a multiline continuation group
-                    if (previousLine != null && previousLine.HasTokenContinuedOnNextLine)
+                    // - the previous line must be scanned again if the line which was removed was a member of a multiline continuation group or a multi line comment.
+                    if (previousLine != null &&
+                        (previousLine.HasTokenContinuedOnNextLine ||
+                         (previousLine.ScanState != null && (previousLine.ScanState.InsideMultilineComments || previousLine.ScanState.InsideFormalizedComment))))
                     {
                         ScanTokensLineWithMultilineScanState(textChange.LineIndex - 1, previousLine, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
                     }
@@ -173,7 +175,7 @@ namespace TypeCobol.Compiler.Scanner
                     }
                     // - the next line must be scanned again if the scan state at the end of the previous line is different from the scan state at the beginning of the next line
                     if (nextLineToScan != null && nextLineToScanIndex == textChange.LineIndex && previousLine != null &&
-                        nextLineToScan.InitialScanState.Equals(previousLine.ScanState))
+                        !nextLineToScan.InitialScanState.Equals(previousLine.ScanState))
                     {
                         ScanTokensLineWithMultilineScanState(textChange.LineIndex, nextLineToScan, textSourceInfo, documentLines, prepareDocumentLineForUpdate, compilerOptions, copyTextNameVariations, tokensLinesChanges, scanState, out nextLineToScanIndex, out nextLineToScan);
                     }

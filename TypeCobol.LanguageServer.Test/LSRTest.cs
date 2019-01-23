@@ -125,6 +125,13 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("SupprMultipleLinesFromMiddlePreviousLine", LsrTestingOptions.LsrParsingPhaseTesting);
         }
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void MultiLineCommentIncScan()
+        {
+            LSRTestHelper.Test("MultiLineCommentIncScan", LsrTestingOptions.NoLsrTesting, false);
+        }        
         #endregion
 
         #region Sementic_Tests
