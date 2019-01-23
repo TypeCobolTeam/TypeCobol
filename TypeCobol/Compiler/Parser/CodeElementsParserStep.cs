@@ -121,9 +121,9 @@ namespace TypeCobol.Compiler.Parser
 
             // Optionnaly activate Antlr Parser performance profiling
             // WARNING : use this in a single-treaded context only (uses static field)     
-            if (AntlrPerformanceProfiler == null && perfStatsForParserInvocation.ActivateDetailedAntlrPofiling)
+            if (perfStatsForParserInvocation.ActivateDetailedAntlrPofiling)
                 AntlrPerformanceProfiler = new AntlrPerformanceProfiler(cobolParser);
-            else if (!perfStatsForParserInvocation.ActivateDetailedAntlrPofiling && AntlrPerformanceProfiler != null)
+            else
                 AntlrPerformanceProfiler = null;
 
             if (AntlrPerformanceProfiler != null)
