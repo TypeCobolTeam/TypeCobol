@@ -131,7 +131,16 @@ namespace TypeCobol.LanguageServer.Test
         public void MultiLineCommentIncScan()
         {
             LSRTestHelper.Test("MultiLineCommentIncScan", LsrTestingOptions.NoLsrTesting, false);
-        }        
+        }
+        #endregion
+
+        #region SyntaxColoring
+        [TestMethod]
+        [TestCategory("SyntaxColoring")]
+        public void MultiCommentSyntaxColoring()
+        {
+            LSRTestHelper.Test("MultiCommentSyntaxColoring", LsrTestingOptions.NoLsrTesting, false, true);
+        }
         #endregion
 
         #region Sementic_Tests
@@ -185,7 +194,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void ProcedureCompletion()
         {
-            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, null, null, "CustomDependencies");
+            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, null, null, "CustomDependencies");
         }
 
         [TestMethod]
@@ -306,7 +315,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestMethod]
         public void GoToDefinition()
         {
-            LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+            LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
         }
 
         [TestMethod]

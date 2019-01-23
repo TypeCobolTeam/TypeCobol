@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.Compiler
 {
@@ -58,6 +59,11 @@ namespace TypeCobol.Compiler
         /// Issue #315
         /// </summary>
         private MultilineScanState initialScanStateForCopy;
+
+        /// <summary>
+        /// Any connection to a Language Server instance.
+        /// </summary>
+        public ILanguageServer LanguageServer { get; set; }
 
         /// <summary>
         /// Informations used to track the performance of each compilation step
@@ -476,6 +482,8 @@ namespace TypeCobol.Compiler
                 if (scanAllDocumentLines)
                 {
                     ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
+                    //Notify any Language Server listener that the whole document has been rescanned
+                    this.LanguageServer?.UpdateTokensLines(null, this);
                 }
                 else
                 {
@@ -501,6 +509,8 @@ namespace TypeCobol.Compiler
                             ceLine.ResetCodeElements();
                         }
                     }
+                    //Notify any Language Server listener
+                    this.LanguageServer?.UpdateTokensLines(documentChanges, this);
                 }
 
                 // Register that the tokens lines were synchronized with the current text lines version

@@ -73,6 +73,10 @@ namespace TypeCobol.LanguageServer
         /// Lstr Testing semantic phase
         /// </summary>
         public bool LsrSemanticTesting { get; set; }
+        /// <summary>
+        /// Are we supporting Syntax Coloring Notifications.    
+        /// </summary>
+        public bool UseSyntaxColoring { get; set; }
 
         /// <summary>
         /// Are Log message notifications enabled ? false if yes, true otherwise.
@@ -100,6 +104,7 @@ namespace TypeCobol.LanguageServer
             if (LsrPreprocessTesting) typeCobolWorkspace.IsLsrPreprocessinTesting = LsrPreprocessTesting;
             if (LsrParserTesting) typeCobolWorkspace.IsLsrParserTesting = LsrParserTesting;
             if (LsrSemanticTesting) typeCobolWorkspace.IsLsrSemanticTesting = LsrSemanticTesting;
+            typeCobolWorkspace.UseSyntaxColoring = UseSyntaxColoring;
 
             typeCobolWorkspace.UseAntlrProgramParsing = UseAntlrProgramParsing;
             typeCobolWorkspace.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
@@ -137,9 +142,16 @@ namespace TypeCobol.LanguageServer
                 typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
 
+                //Create a ILanguageServer instance for the document.
+                TypeCobolLanguageServer languageServer = new TypeCobolLanguageServer(this.rpcServer, parameters.textDocument);
+
                 typeCobolWorkspace.OpenSourceFile(objUri,
-                    parameters.text != null ? parameters.text : parameters.textDocument.text, Workspace.LsrTestOptions);
-                
+                    parameters.text != null ? parameters.text : parameters.textDocument.text, Workspace.LsrTestOptions, languageServer);
+
+                //The se are no longer needed.
+                parameters.text = null;
+                parameters.textDocument.text = null;
+
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + objUri.LocalPath);
             }
@@ -181,7 +193,7 @@ namespace TypeCobol.LanguageServer
                     //To avoid crashes.
                     try
                     {
-                        typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text, this.Workspace.LsrTestOptions);
+                        typeCobolWorkspace.OpenSourceFile(objUri, contentChange.text, this.Workspace.LsrTestOptions, fileCompiler.LanguageServer);
                         return;
                     }
                     catch (Exception e)

@@ -16,6 +16,7 @@ using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
+using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.LanguageServer
 {
@@ -134,6 +135,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseEuroInformationLegacyReplacingSyntax { get; set; }
 
+        /// <summary>
+        /// Are we supporting Syntax Coloring Notifications.    
+        /// </summary>
+        public bool UseSyntaxColoring { get; set; }
+
         #endregion
 
 
@@ -165,7 +171,12 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Start continuous background compilation on a newly opened file
         /// </summary>
-        public void OpenSourceFile(Uri fileUri, string sourceText, LsrTestingOptions lsrOptions)
+        /// <param name="fileUri">The File Uri</param>
+        /// <param name="sourceText">The source text</param>
+        /// <param name="lsrOptions">LSR options</param>
+        /// <param name="languageServer">The ILanguageServer instance.</param>
+        /// <returns>The corresponding FileCompiler instance.</returns>
+        public FileCompiler OpenSourceFile(Uri fileUri, string sourceText, LsrTestingOptions lsrOptions, ILanguageServer languageServer = null)
         {
             string fileName = Path.GetFileName(fileUri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
@@ -202,7 +213,14 @@ namespace TypeCobol.LanguageServer
 #else
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, false, CompilationProject);
 #endif
-
+            //Set Any Language Server Connection Options.
+            if (languageServer != null)
+            {
+                //Set the TypeCobol Document
+                languageServer.TextDocument = fileCompiler.TextDocument;
+                languageServer.UseSyntaxColoring = UseSyntaxColoring;
+                fileCompiler.LanguageServer = languageServer;
+            }
 
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
@@ -221,6 +239,8 @@ namespace TypeCobol.LanguageServer
             {
                 fileCompiler.CompileOnce(lsrOptions.ExecutionStep(fileCompiler.CompilerOptions.ExecToStep.Value), fileCompiler.CompilerOptions.HaltOnMissingCopy, fileCompiler.CompilerOptions.UseAntlrProgramParsing); //Let's parse file for the first time after opening. 
             }
+
+            return fileCompiler;
         }
 
         /// <summary>
@@ -484,7 +504,7 @@ namespace TypeCobol.LanguageServer
                     foreach (var line in fileParser.Value.TextDocument.Lines)
                         sourceText.AppendLine(line.Text);
 
-                    OpenSourceFile(fileParser.Key, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
+                    OpenSourceFile(fileParser.Key, sourceText.ToString(), LsrTestingOptions.NoLsrTesting, fileParser.Value.LanguageServer);
                 }
             }
         }
