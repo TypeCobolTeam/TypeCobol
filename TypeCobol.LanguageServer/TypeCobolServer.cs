@@ -145,12 +145,11 @@ namespace TypeCobol.LanguageServer
                 //Create a ILanguageServer instance for the document.
                 TypeCobolLanguageServer languageServer = new TypeCobolLanguageServer(this.rpcServer, parameters.textDocument);
 
-                typeCobolWorkspace.OpenSourceFile(objUri,
-                    parameters.text != null ? parameters.text : parameters.textDocument.text, Workspace.LsrTestOptions, languageServer);
-
-                //The se are no longer needed.
+                string text = parameters.text ?? parameters.textDocument.text;
+                //These are no longer needed.
                 parameters.text = null;
                 parameters.textDocument.text = null;
+                typeCobolWorkspace.OpenSourceFile(objUri, text, Workspace.LsrTestOptions, languageServer);
 
                 // DEBUG information
                 RemoteConsole.Log("Opened source file : " + objUri.LocalPath);
