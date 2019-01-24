@@ -33,15 +33,19 @@ namespace TypeCobol.Test.Parser.Performance
         [TestMethod]
         [TestCategory("Incremental")]
         [TestProperty("Time", "long")]
+        [Ignore]
         public void IncrementalPerformance()
         {
-            // Sample program properties
-            string folder = "Parser" + Path.DirectorySeparatorChar + "Samples";
-            string textName = "BigBatch";
+            IncrementalPerformance2(PlatformUtils.GetPathForProjectFile("ThirdParty" + Path.DirectorySeparatorChar + "CNAF" + Path.DirectorySeparatorChar + "Batch"), "CGMV01.COB",
+                 55987, "           MOVE LOW-VALUE     TO C1M010R.                               CGZPARAK");
+        }
+
+        private void IncrementalPerformance2(string folder, string textName, int newLineIndex, string newLineText)
+        { 
             DocumentFormat documentFormat = DocumentFormat.RDZReferenceFormat;
 
             // Create a FileCompiler for this program
-            DirectoryInfo localDirectory = new DirectoryInfo(PlatformUtils.GetPathForProjectFile(folder));
+            DirectoryInfo localDirectory = new DirectoryInfo(folder);
             if (!localDirectory.Exists)
             {
                 throw new Exception(String.Format("Directory : {0} does not exist", localDirectory.FullName));
@@ -52,24 +56,26 @@ namespace TypeCobol.Test.Parser.Performance
             FileCompiler compiler = new FileCompiler(null, textName, project.SourceFileProvider, project, documentFormat.ColumnsLayout, new TypeCobolOptions(), null, false, project);
             //Make an incremental change to the source code
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
-            ExecuteInceremental(compiler, stats);
+            ExecuteInceremental(compiler, stats, newLineIndex, newLineText);
 
             // Display a performance report
-            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name + "-Incremental", stats, compiler.CompilationResultsForProgram);
+            TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name, stats, compiler.CompilationResultsForProgram);
         }
 
-        public static void ExecuteInceremental(FileCompiler compiler, TestUtils.CompilationStats stats)
+        private static void ExecuteInceremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText )
         {
             // Execute a first (complete) compilation
             compiler.CompileOnce();
             //Iterate multiple times over an incremental change
-            stats.IterationNumber= 20;
+            stats.IterationNumber= 40;
             for (int i = 0; i < stats.IterationNumber; i++)
             {
                 // Append one line in the middle of the program
-                ITextLine newLine = new TextLineSnapshot(9211, "094215D    DISPLAY '-ICLAUA      = ' ICLAUA.                            0000000", null);
+                
+                ITextLine newLine = new TextLineSnapshot(newLineIndex, newLineText, null);
+                
                 TextChangedEvent textChangedEvent = new TextChangedEvent();
-                textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, 9211, newLine));
+                textChangedEvent.TextChanges.Add(new TextChange(TextChangeType.LineInserted, newLine.LineIndex, newLine));
                 compiler.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
                 
                 // Execute a second (incremental) compilation
@@ -103,16 +109,13 @@ namespace TypeCobol.Test.Parser.Performance
         [Ignore]
         public void FullParsingAndGenerationTest()
         {
-            string[] copiesFolder = new string[] { };
             string pwd = Directory.GetCurrentDirectory();
+            FullParsingAndGenerationTest2(Directory.GetParent(pwd)?.Parent?.FullName + "\\TypeCobol.Test\\ThirdParty\\CNAF\\Batch\\CGMV01.COB");
+        }
 
+        private void FullParsingAndGenerationTest2(string path, params string[] copiesFolder)
+        { 
             var format = TypeCobol.Compiler.DocumentFormat.RDZReferenceFormat;
-            string rootFolder = Directory.GetParent(pwd)?.Parent?.FullName +
-                                "\\TypeCobol.Test\\Parser\\Samples";
-            string textName = "BigBatch";
-
-            string filename = Path.GetFileName(textName);
-            string path = Path.Combine(rootFolder, filename);
 
             TestUtils.CompilationStats stats = new TestUtils.CompilationStats();
             stats.IterationNumber = 20;
@@ -170,7 +173,8 @@ namespace TypeCobol.Test.Parser.Performance
             stats.Line = documentWarmup.Results.CobolTextLines.Count;
             stats.TotalCodeElements = documentWarmup.Results.CodeElementsDocumentSnapshot.CodeElements.Count();
 
-            TestUtils.CreateRunReport(TestUtils.GetReportDirectoryPath(), filename + "-FullParsing", stats, null);
+
+            TestUtils.CreateRunReport("FullParsing", TestUtils.GetReportDirectoryPath(), Path.GetFileNameWithoutExtension(path), stats);
         }
     }
 }
