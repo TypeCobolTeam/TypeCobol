@@ -80,16 +80,31 @@ namespace TypeCobol.Compiler
 
         public EventHandler<ExecutionStepEventArgs> ExecutionStepEventHandler { get; set; }
 
+        private ILanguageServer _LanguageServer;
         /// <summary>
         /// Any connection to a Language Server instance.
         /// </summary>
         public ILanguageServer LanguageServer
         {
-            get { return CompilationResultsForProgram?.LanguageServer; }
+            get { return _LanguageServer; }
             set
             {
                 if (CompilationResultsForProgram != null)
-                    CompilationResultsForProgram.LanguageServer = value;
+                {
+                    if (_LanguageServer != null)
+                    {
+                        CompilationResultsForProgram.TokensLinesChanged -= _LanguageServer.TokensLinesChanged;
+                        CompilationResultsForProgram.WholeDocumentChanged -= _LanguageServer.WholeDocumentChanged;
+                    }
+
+                    _LanguageServer = value;
+
+                    if (_LanguageServer != null)
+                    {
+                        CompilationResultsForProgram.TokensLinesChanged += _LanguageServer.TokensLinesChanged;
+                        CompilationResultsForProgram.WholeDocumentChanged += _LanguageServer.WholeDocumentChanged;
+                    }
+                }
             }
         }
 

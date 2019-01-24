@@ -61,11 +61,6 @@ namespace TypeCobol.Compiler
         private MultilineScanState initialScanStateForCopy;
 
         /// <summary>
-        /// Any connection to a Language Server instance.
-        /// </summary>
-        public ILanguageServer LanguageServer { get; set; }
-
-        /// <summary>
         /// Informations used to track the performance of each compilation step
         /// </summary>
         public class PerfStatsForCompilationStep
@@ -482,8 +477,9 @@ namespace TypeCobol.Compiler
                 if (scanAllDocumentLines)
                 {
                     ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
-                    //Notify any Language Server listener that the whole document has been rescanned
-                    this.LanguageServer?.UpdateTokensLines(null, this);
+                    // Notify all listeners that the whole document has changed.
+                    EventHandler wholeDocumentChanged = WholeDocumentChanged; // avoid race condition
+                    wholeDocumentChanged?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
@@ -509,8 +505,6 @@ namespace TypeCobol.Compiler
                             ceLine.ResetCodeElements();
                         }
                     }
-                    //Notify any Language Server listener
-                    this.LanguageServer?.UpdateTokensLines(documentChanges, this);
                 }
 
                 // Register that the tokens lines were synchronized with the current text lines version
@@ -551,6 +545,11 @@ namespace TypeCobol.Compiler
         /// Subscribe to this event to be notified of all changes in the tokens lines of the document
         /// </summary>
         public event EventHandler<DocumentChangedEvent<ITokensLine>> TokensLinesChanged;
+
+        /// <summary>
+        /// Subscribe to this event to be notified when whole document has changed.
+        /// </summary>
+        public event EventHandler WholeDocumentChanged;
 
         /// <summary>
         /// Performance stats for the UpdateTokensLines method

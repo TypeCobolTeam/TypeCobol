@@ -154,7 +154,12 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        public void UpdateTokensLines(IList<DocumentChange<ITokensLine>> changes, CompilationDocument compilationDocument)
+        /// <summary>
+        /// Called when a token scanning has been performed.
+        /// </summary>
+        /// <param name="changes">The list of document change instances, if this parameter is null then the whole document has been rescanned.</param>
+        /// <param name="compilationDocument">The underlying CompilationDocument instance</param>
+        public void UpdateTokensLines(IEnumerable<DocumentChange<ITokensLine>> changes, CompilationDocument compilationDocument)
         {
             Range docRange = null;
             List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token> tokens = null;
@@ -162,9 +167,6 @@ namespace TypeCobol.LanguageServer
                 return;
             if (changes != null)
             {
-                if (changes.Count == 0)
-                    return;
-
                 //Compute the update range so that client can optimize its rescanning
                 DocumentChange<ITokensLine> minChange = null;
                 DocumentChange<ITokensLine> maxChange = null;
@@ -205,6 +207,34 @@ namespace TypeCobol.LanguageServer
             SyntaxColoringParams scParams = new SyntaxColoringParams(this.LspTextDocument, docRange, tokens);
             //Now send the notification.
             this.RpcServer.SendNotification(SyntaxColoringNotification.Type, scParams);
+        }
+
+        /// <summary>
+        /// Handler when some tokens lines has changed.
+        /// </summary>
+        /// <param name="sender">Must be an instance of CompilationDocument </param>
+        /// <param name="eventArgs">Must be an instance of TypeCobol.Compiler.Concurrency.DocumentChangedEvent<TypeCobol.Compiler.Scanner.ITokensLine> </param>
+        public void TokensLinesChanged(object sender, EventArgs eventArgs)
+        {
+            System.Diagnostics.Debug.Assert(sender is CompilationDocument);
+            System.Diagnostics.Debug.Assert(eventArgs is DocumentChangedEvent<ITokensLine>);
+            TypeCobol.Compiler.Concurrency.DocumentChangedEvent<TypeCobol.Compiler.Scanner.ITokensLine> changeEvent =
+                (TypeCobol.Compiler.Concurrency.DocumentChangedEvent<TypeCobol.Compiler.Scanner.ITokensLine>) eventArgs;
+
+            CompilationDocument compilationDocument = (CompilationDocument) sender;
+            UpdateTokensLines(changeEvent.DocumentChanges, compilationDocument);
+        }
+
+        /// <summary>
+        /// Handler when whole document has changed.
+        /// </summary>
+        /// <param name="sender">Must be an instance of CompilationDocument </param>
+        /// <param name="eventArgs">Not used</param>
+        public void WholeDocumentChanged(object sender, EventArgs eventArgs)
+        {
+            System.Diagnostics.Debug.Assert(sender is CompilationDocument);
+            CompilationDocument compilationDocument = (CompilationDocument) sender;
+            UpdateTokensLines(null, compilationDocument);
         }
 
         /// <summary>

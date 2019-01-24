@@ -21,10 +21,17 @@ namespace TypeCobol.LanguageServices.Editor
         bool UseSyntaxColoring { get; set; }
 
         /// <summary>
-        /// Called when a token scanning has been performed.
+        /// Event handler when some tokens lines has changed.
         /// </summary>
-        /// <param name="changes">The list of document change instances, if this parameter is null then the whole document has been rescanned.</param>
-        /// <param name="compilationDocument">The underlying CompilationDocument instance</param>
-        void UpdateTokensLines(IList<DocumentChange<ITokensLine>> changes, CompilationDocument compilationDocument);
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
+        void TokensLinesChanged(object sender, EventArgs eventArgs);
+
+        /// <summary>
+        /// Event Handler when the whole document has changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
+        void WholeDocumentChanged(object sender, EventArgs eventArgs);
     }
 }
