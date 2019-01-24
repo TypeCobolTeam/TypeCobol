@@ -157,9 +157,9 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Called when a token scanning has been performed.
         /// </summary>
-        /// <param name="changes">The list of document change instances, if this parameter is null then the whole document has been rescanned.</param>
         /// <param name="compilationDocument">The underlying CompilationDocument instance</param>
-        public void UpdateTokensLines(IEnumerable<DocumentChange<ITokensLine>> changes, CompilationDocument compilationDocument)
+        /// <param name="changes">The list of document change instances, if this parameter is null then the whole document has been rescanned.</param>
+        public void UpdateTokensLines(CompilationDocument compilationDocument, IEnumerable<DocumentChange<ITokensLine>> changes = null)
         {
             Range docRange = null;
             List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token> tokens = null;
@@ -222,7 +222,7 @@ namespace TypeCobol.LanguageServer
                 (TypeCobol.Compiler.Concurrency.DocumentChangedEvent<TypeCobol.Compiler.Scanner.ITokensLine>) eventArgs;
 
             CompilationDocument compilationDocument = (CompilationDocument) sender;
-            UpdateTokensLines(changeEvent.DocumentChanges, compilationDocument);
+            UpdateTokensLines(compilationDocument, changeEvent.DocumentChanges);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace TypeCobol.LanguageServer
         {
             System.Diagnostics.Debug.Assert(sender is CompilationDocument);
             CompilationDocument compilationDocument = (CompilationDocument) sender;
-            UpdateTokensLines(null, compilationDocument);
+            UpdateTokensLines(compilationDocument);
         }
 
         /// <summary>
