@@ -960,6 +960,7 @@ namespace TypeCobol.LanguageServer
         public CodeElementWrapper(CodeElement codeElement)
             : base(codeElement.Type)
         {
+            this.CodeElement = codeElement;
             ConsumedTokens = codeElement.ConsumedTokens;
 
             ArrangedConsumedTokens = new List<Token>();
