@@ -12,7 +12,6 @@ using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Tools;
-using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.Compiler
 {
