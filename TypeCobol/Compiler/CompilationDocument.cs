@@ -12,6 +12,7 @@ using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.AntlrUtils;
+using TypeCobol.LanguageServices.Editor;
 
 namespace TypeCobol.Compiler
 {
@@ -476,6 +477,9 @@ namespace TypeCobol.Compiler
                 if (scanAllDocumentLines)
                 {
                     ScannerStep.ScanDocument(TextSourceInfo, compilationDocumentLines, CompilerOptions, CopyTextNamesVariations, initialScanStateForCopy);
+                    // Notify all listeners that the whole document has changed.
+                    EventHandler wholeDocumentChanged = WholeDocumentChanged; // avoid race condition
+                    wholeDocumentChanged?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
@@ -541,6 +545,11 @@ namespace TypeCobol.Compiler
         /// Subscribe to this event to be notified of all changes in the tokens lines of the document
         /// </summary>
         public event EventHandler<DocumentChangedEvent<ITokensLine>> TokensLinesChanged;
+
+        /// <summary>
+        /// Subscribe to this event to be notified when whole document has changed.
+        /// </summary>
+        public event EventHandler WholeDocumentChanged;
 
         /// <summary>
         /// Performance stats for the UpdateTokensLines method

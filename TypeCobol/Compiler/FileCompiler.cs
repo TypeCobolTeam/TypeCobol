@@ -79,7 +79,6 @@ namespace TypeCobol.Compiler
 
         public EventHandler<ExecutionStepEventArgs> ExecutionStepEventHandler { get; set; }
 
-
         /// <summary>
         /// Load a Cobol source file in memory
         /// </summary>
