@@ -36,7 +36,9 @@
     <Compile Include="Completion Factory\CompletionElligibleTokens.cs" />
     <Compile Include="Completion Factory\CompletionFactory.cs" />
     <Compile Include="Completion Factory\CompletionFactoryHelpers.cs" />
+    <Compile Include="Context\DocumentContext.cs" />
     <Compile Include="FileWatchers\DependenciesFileWatcher.cs" />
+    <Compile Include="Interfaces\ILanguageServer.cs" />
     <Compile Include="JsonRPC\ErrorCodes.cs" />
     <Compile Include="JsonRPC\IRPCHandler.cs" />
     <Compile Include="JsonRPC\IRPCServer.cs" />

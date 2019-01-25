@@ -8,6 +8,7 @@ using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.TypeChecker;
+using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring;
 using TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol;
@@ -193,7 +194,7 @@ namespace TypeCobol.LanguageServer
                     docRange = new Range(firstPos, lastPos);
                 }
             }
-            //Compute all interesting token
+            //Compute all interesting tokens
             if (_tokenRangeMap == null)
                 _tokenRangeMap = new Dictionary<int, List<TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol.SyntaxColoring.Token>>();
             _tokenRangeMap.Clear();

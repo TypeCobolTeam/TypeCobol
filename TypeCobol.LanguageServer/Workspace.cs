@@ -14,6 +14,8 @@ using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.File;
 using TypeCobol.Compiler.Text;
 using TypeCobol.CustomExceptions;
+using TypeCobol.LanguageServer.Context;
+using TypeCobol.LanguageServer.Interfaces;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServices.Editor;
@@ -44,7 +46,7 @@ namespace TypeCobol.LanguageServer
 
         private TypeCobolConfiguration TypeCobolConfiguration { get; set; }
         private List<FileCompiler> _fileCompilerWaittingForNodePhase;
-        public Dictionary<Uri, FileCompiler> OpenedFileCompiler{ get; private set; }
+        public Dictionary<Uri, DocumentContext> OpenedDocumentContext { get; private set; }
         public EventHandler<DiagnosticEvent> DiagnosticsEvent { get; set; }
         public EventHandler<MissingCopiesEvent> MissingCopiesEvent { get; set; }
         public EventHandler<LoadingIssueEvent> LoadingIssueEvent { get; set; }
@@ -147,7 +149,7 @@ namespace TypeCobol.LanguageServer
         {
             MessagesActionsQueue = messagesActionsQueue;
             TypeCobolConfiguration = new TypeCobolConfiguration();
-            OpenedFileCompiler = new Dictionary<Uri, FileCompiler>();
+            OpenedDocumentContext = new Dictionary<Uri, DocumentContext>();
             _fileCompilerWaittingForNodePhase = new List<FileCompiler>();
             _Logger = logger;
 
@@ -171,14 +173,13 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Start continuous background compilation on a newly opened file
         /// </summary>
-        /// <param name="fileUri">The File Uri</param>
+        /// <param name="docContext">The Document context</param>
         /// <param name="sourceText">The source text</param>
         /// <param name="lsrOptions">LSR options</param>
-        /// <param name="languageServer">The ILanguageServer instance.</param>
         /// <returns>The corresponding FileCompiler instance.</returns>
-        public FileCompiler OpenSourceFile(Uri fileUri, string sourceText, LsrTestingOptions lsrOptions, ILanguageServer languageServer = null)
+        public FileCompiler OpenTextDocument(DocumentContext docContext, string sourceText, LsrTestingOptions lsrOptions)
         {
-            string fileName = Path.GetFileName(fileUri.LocalPath);
+            string fileName = Path.GetFileName(docContext.Uri.LocalPath);
             ITextDocument initialTextDocumentLines = new ReadOnlyTextDocument(fileName, TypeCobolConfiguration.Format.Encoding, TypeCobolConfiguration.Format.ColumnsLayout, sourceText);
             FileCompiler fileCompiler = null;
 
@@ -214,22 +215,17 @@ namespace TypeCobol.LanguageServer
             fileCompiler = new FileCompiler(initialTextDocumentLines, CompilationProject.SourceFileProvider, CompilationProject, CompilationProject.CompilationOptions, _customSymbols, false, CompilationProject);
 #endif
             //Set Any Language Server Connection Options.
-            if (languageServer != null)
-            {
-                //Set the TypeCobol Document
-                languageServer.TextDocument = fileCompiler.TextDocument;
-                languageServer.UseSyntaxColoring = UseSyntaxColoring;
-                fileCompiler.LanguageServer = languageServer;
-            }
+            docContext.FileCompiler = fileCompiler;
+            docContext.LanguageServerConnection(true);
 
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
-            lock (OpenedFileCompiler)
+            lock (OpenedDocumentContext)
             {
-                if (OpenedFileCompiler.ContainsKey(fileUri))
-                    CloseSourceFile(fileUri); //Close and remove the previous opened file.
+                if (OpenedDocumentContext.ContainsKey(docContext.Uri))
+                    CloseSourceFile(docContext.Uri); //Close and remove the previous opened file.
 
-                OpenedFileCompiler.Add(fileUri, fileCompiler);
+                OpenedDocumentContext.Add(docContext.Uri, docContext);
                 fileCompiler.CompilationResultsForProgram.ProgramClassChanged += ProgramClassChanged;
             }
 
@@ -248,9 +244,10 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public void UpdateSourceFile(Uri fileUri, TextChangedEvent textChangedEvent)
         {
-            FileCompiler fileCompilerToUpdate = null;
-            if (OpenedFileCompiler.TryGetValue(fileUri, out fileCompilerToUpdate))
+            DocumentContext contextToUpdate = null;
+            if (OpenedDocumentContext.TryGetValue(fileUri, out contextToUpdate))
             {
+                FileCompiler fileCompilerToUpdate = contextToUpdate.FileCompiler;
                 _semanticUpdaterTimer?.Stop();
 
                 fileCompilerToUpdate.CompilationResultsForProgram.UpdateTextLines(textChangedEvent);
@@ -390,12 +387,13 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public void CloseSourceFile(Uri fileUri)
         {
-            lock (OpenedFileCompiler)
+            lock (OpenedDocumentContext)
             {
-                if (OpenedFileCompiler.ContainsKey(fileUri))
+                if (OpenedDocumentContext.ContainsKey(fileUri))
                 {
-                    var fileCompilerToClose = OpenedFileCompiler[fileUri];
-                    OpenedFileCompiler.Remove(fileUri);
+                    var contextToClose = OpenedDocumentContext[fileUri];
+                    FileCompiler fileCompilerToClose = contextToClose.FileCompiler;
+                    OpenedDocumentContext.Remove(fileUri);
                     fileCompilerToClose.CompilationResultsForProgram.ProgramClassChanged -= ProgramClassChanged;
                 }
             }            
@@ -452,7 +450,7 @@ namespace TypeCobol.LanguageServer
                 
             }
 
-            if (OpenedFileCompiler.Count > 0)
+            if (OpenedDocumentContext.Count > 0)
                 RefreshOpenedFiles();
             else
                 RefreshCustomSymbols();
@@ -471,9 +469,10 @@ namespace TypeCobol.LanguageServer
 
         public void UpdateMissingCopies(Uri fileUri, List<string> RemainingMissingCopies)
         {
-            if (!OpenedFileCompiler.Any())
+            if (!OpenedDocumentContext.Any())
                 return;
-            var fileCompiler = OpenedFileCompiler[fileUri];
+            var context = OpenedDocumentContext[fileUri];
+            FileCompiler fileCompiler = context.FileCompiler;
             if (fileCompiler == null)
                 return;
 
@@ -495,16 +494,21 @@ namespace TypeCobol.LanguageServer
         {
             RefreshCustomSymbols();
 
-            lock(OpenedFileCompiler)
+            lock(OpenedDocumentContext)
             {
-                var tempOpenedFileCompiler = new Dictionary<Uri, FileCompiler>(OpenedFileCompiler);
-                foreach (var fileParser in tempOpenedFileCompiler)
+                var tempOpeneContexts = new Dictionary<Uri, DocumentContext >(OpenedDocumentContext);
+                foreach (var contextEntry in tempOpeneContexts)
                 {
+                    Uri uri = contextEntry.Key;
+                    DocumentContext docContext = contextEntry.Value;
                     var sourceText = new StringBuilder();
-                    foreach (var line in fileParser.Value.TextDocument.Lines)
+                    foreach (var line in docContext.FileCompiler.TextDocument.Lines)
                         sourceText.AppendLine(line.Text);
 
-                    OpenSourceFile(fileParser.Key, sourceText.ToString(), LsrTestingOptions.NoLsrTesting, fileParser.Value.LanguageServer);
+                    //Disconnect previous LanguageServer connection
+                    docContext.LanguageServerConnection(false);                    
+
+                    OpenTextDocument(docContext, sourceText.ToString(), LsrTestingOptions.NoLsrTesting);
                 }
             }
         }
@@ -583,7 +587,7 @@ namespace TypeCobol.LanguageServer
         private void ProgramClassChanged(object cUnit, ProgramClassEvent programEvent)
         {
             var compilationUnit = cUnit as CompilationUnit;
-            var fileUri = OpenedFileCompiler.Keys.FirstOrDefault(k => compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
+            var fileUri = OpenedDocumentContext.Keys.FirstOrDefault(k => compilationUnit != null && k.LocalPath.Contains(compilationUnit.TextSourceInfo.Name));
 
             var diags = compilationUnit?.AllDiagnostics().Take(TypeCobolConfiguration.MaximumDiagnostics == 0 ? 100 : TypeCobolConfiguration.MaximumDiagnostics);
             DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags});

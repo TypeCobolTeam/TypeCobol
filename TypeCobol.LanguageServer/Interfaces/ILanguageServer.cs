@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TypeCobol.Compiler;
-using TypeCobol.Compiler.Concurrency;
-using TypeCobol.Compiler.Scanner;
-using TypeCobol.Compiler.Text;
+using TypeCobol.LanguageServices.Editor;
 
-namespace TypeCobol.LanguageServices.Editor
+namespace TypeCobol.LanguageServer.Interfaces
 {
     /// <summary>
     /// Any Language Server instance, that can communicate with a Client must implements this interface.
