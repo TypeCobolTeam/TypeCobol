@@ -15,24 +15,6 @@
     <DoNotCopyLocalIfInGac>true</DoNotCopyLocalIfInGac>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Debug|AnyCPU'">
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Release|AnyCPU'">
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Debug_Net40|AnyCPU'">
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EI_Release_Net40|AnyCPU'">
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
   <!-- ITEM Group for .NET 4.5 Dependencies -->
   <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
     <Reference Include="System" />
