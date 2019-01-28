@@ -307,13 +307,8 @@ namespace TypeCobol.Compiler.Scanner
                     // Check if the last token so far is an alphanumeric or national literal
                     if (lastTokenOfConcatenatedLineSoFar.TokenFamily == TokenFamily.AlphanumericLiteral)
                     {
-                        // The continuation line must contain a hyphen in the indicator area, and the first nonblank character must be a quotation mark
-                        if (line[startOfContinuationIndex] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
-                        {
-                            continuationLine.AddDiagnostic(MessageCode.InvalidFirstCharForContinuationLine, startOfContinuationIndex, startOfContinuationIndex, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
-                        }
-                        // The continuation of the literal begins with the character immediately following the quotation mark.
-                        else
+                        //// The continuation of the literal begins with the character immediately following the quotation mark.
+                        if (line[startOfContinuationIndex] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
                         {
                             offsetForLiteralContinuation = 1;
 
