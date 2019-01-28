@@ -410,21 +410,7 @@ namespace TypeCobol.Codegen.Actions
                                                                 {
                                                                                 SkeleTonBOOL_SETModel @Model = new SkeleTonBOOL_SETModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
-                                                                                @SelfResult.Append(@"");
-        var item = "";
-        for (int i = 0; i < @Model.receiver.Count;  i++){
-        if (i == 0){
-        item += "SET " + @Model.receiver[i] + "-false\n";
-        }
-        else{
-        item += "         " + @Model.receiver[i] + "-false\n";
-        }
-
-        }
-        item = item.Remove(item.Length-1);
-        item += " TO TRUE";
-        @SelfResult.Append(@"
-");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@item}");@SelfResult.Append(@"");
+                                                                                @SelfResult.Append(@"SET ");@SelfResult.Append($@"{@Model.receiver}");@SelfResult.Append(@"-false TO TRUE");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "BOOL.SET", @SelfResult.ToString(), "replace", null, "NODE", null, false);
                                                                                 if (@SelfAction != null)
                                                                                 {
