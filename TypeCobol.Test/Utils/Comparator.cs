@@ -533,8 +533,6 @@ namespace TypeCobol.Test.Utils
 
             foreach (var program in programs)
             {
-                var dataSections = program.Children.First(c => c is DataDivision).Children.Where(c => c is DataSection);
-
                 foreach (Node node in program.Children.First(c => c is DataDivision).Children.Where(c => c is DataSection))
                 {
                     dataDefinitions.AddRange(GetDataDefinitions(node));
@@ -544,7 +542,7 @@ namespace TypeCobol.Test.Utils
                 {
                     //TODO: Issue #1192 handle correctly a DataRenames
                     if (dataDefinition is DataRenames == false)
-                        str.AppendLine(CreateLine(dataDefinition));
+                        str.AppendLine(CreateLine(dataDefinition, dataDefinition.SlackBytes == 0));
                 }
             }
 			
@@ -569,9 +567,8 @@ namespace TypeCobol.Test.Utils
             return dataDefinitions;
         }
 
-		private string CreateLine(DataDefinition data)
+		private string CreateLine(DataDefinition data, bool slackByteIsHandled)
 		{
-		    var dataEntry = data.CodeElement as DataDefinitionEntry;
 		    Node parentData = data.Parent;
 			var res = new StringBuilder();
 		    int indent = 4;
@@ -582,22 +579,36 @@ namespace TypeCobol.Test.Utils
 		        res.Append(new string(' ', indent));
 		    }
 
-		    if (dataEntry != null)
+		    if (!slackByteIsHandled)
 		    {
-		        if (data.IsTableOccurence)
-		            res.Append($"{dataEntry.LevelNumber} {data.Name} ({data.MaxOccurencesCount})");
-		        else
-		            res.Append($"{dataEntry.LevelNumber} {data.Name}");
+		        res.Append("SlackByte");
 
+		        res.AppendLine(InsertValues(res.Length, (data.StartPosition - data.SlackBytes).ToString(), (data.StartPosition - 1).ToString(),
+		            data.SlackBytes.ToString()));
+
+		        res.Append(CreateLine(data, true));
 		    }
+		    else
+		    {
+		        var dataEntry = data.CodeElement as DataDefinitionEntry;
 
-		    res.Append(InsertValues(res.Length, data.StartPosition.ToString(), data.PhysicalPosition.ToString(), 
-		        data.PhysicalLength.ToString()));
+		        if (dataEntry != null)
+		        {
+		            if (data.IsTableOccurence)
+		                res.Append($"{dataEntry.LevelNumber} {data.Name} ({data.MaxOccurencesCount})");
+		            else
+		                res.Append($"{dataEntry.LevelNumber} {data.Name}");
+
+		            res.Append(InsertValues(res.Length, data.StartPosition.ToString(), data.PhysicalPosition.ToString(),
+		                data.PhysicalLength.ToString()));
+		        }
+		    }
 
             return res.ToString();
 		}
 
-	    private string InsertValues(int lineLength, string startPosition, string physicalPosition, string physicalLength)
+
+        private string InsertValues(int lineLength, string startPosition, string physicalPosition, string physicalLength)
 	    {
             StringBuilder str = new StringBuilder();
 	        const int columnStartPosition = 43;

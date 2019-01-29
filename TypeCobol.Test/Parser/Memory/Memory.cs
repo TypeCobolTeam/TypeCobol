@@ -18,11 +18,27 @@ namespace TypeCobol.Test.Parser.Memory
 
         /// <summary>
         /// Check variable size and position in memory
+        /// Test with Clause OCCURS and REDEFINES
         /// </summary>
         [TestMethod]
-        public void CheckMemory()
+        public void CheckMemoryOccursRedefines()
         {
-            Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "Memory.pgm", new MemoryName());
+            Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryOccursRedefines.pgm", new MemoryName());
+            TestUnit unit = new TestUnit(new MemoryComparator(paths));
+            unit.Init(new[] { ".pgm", ".cpy" }, false, true);
+            unit.Parse();
+
+            unit.Compare();
+        }
+
+        /// <summary>
+        /// Check variable size and position in memory
+        /// Test with all variable types and usages possible
+        /// </summary>
+        [TestMethod]
+        public void CheckMemoryTypeUsage()
+        {
+            Paths paths = new Paths(MemoryFolder, MemoryFolder, MemoryFolder + Path.DirectorySeparatorChar + "MemoryTypeUsage.pgm", new MemoryName());
             TestUnit unit = new TestUnit(new MemoryComparator(paths));
             unit.Init(new[] { ".pgm", ".cpy" }, false, true);
             unit.Parse();

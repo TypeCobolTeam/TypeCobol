@@ -325,6 +325,7 @@ namespace TypeCobol.Compiler.Nodes {
                             if (dataDefinition != null)
                             {
                                 _physicalLength += dataDefinition.PhysicalLength;
+                                _physicalLength += dataDefinition.SlackBytes;
                             }
 
                             if (dataDefinition is DataRedefines)
@@ -420,7 +421,84 @@ namespace TypeCobol.Compiler.Nodes {
                 return 1;
         }
 
-       
+        /// <summary>
+        /// A SlackByte is a unit that is used to synchronize DataDefinitions in memory.
+        /// One or more will be present only if the keyword SYNC is placed on a DataDefinition
+        /// To calculated the number of slackbytes present :
+        /// - Calculate the size of all previous DataDefinitions to the current one
+        /// - The number of SlackBytes inserted will be determined by the formula m - (occupiedMemory % m) where m is determined by the usage of the DataDefinition
+        /// - Whether it will be put before or after the size of the DataDefinition is determined by the keyword LEFT or RIGHT after the keyword SYNC (not implemented yet)
+        /// </summary>
+        private long? _slackBytes = null;
+        public long SlackBytes
+        {
+            get
+            {
+                if (_slackBytes != null)
+                {
+                    return _slackBytes.Value;
+                }
+
+                int index = Parent.ChildIndex(this);
+                long occupiedMemory = 0;
+                DataDefinition parent = Parent as DataDefinition;
+                _slackBytes = 0;
+
+                if (IsSynchronized && Usage != null && Usage != DataUsage.None && parent != null)
+                {
+                    while (parent != null && parent.Type != CodeElementType.SectionHeader)
+                    {
+
+                        for (int i = 0; i < index; i++)
+                        {
+                            occupiedMemory += ((DataDefinition)parent.Children[i]).PhysicalLength;
+                            occupiedMemory += ((DataDefinition)parent.Children[i]).SlackBytes;
+                        }
+
+                        index = parent.Parent.ChildIndex(parent);
+                        parent = parent.Parent as DataDefinition;
+                    }
+
+                    
+                    int m = 1;
+
+                    switch (Usage.Value)
+                    {
+                        case DataUsage.Binary:
+                            if (PictureValidator.ValidationContext.Digits <= 4)
+                            {
+                                m = 2;
+                            }
+                            else
+                            {
+                                m = 4;
+                            }
+                            break;
+                        case DataUsage.Index:
+                        case DataUsage.Pointer:
+                        case DataUsage.ProcedurePointer:
+                        case DataUsage.ObjectReference:
+                        case DataUsage.FunctionPointer:
+                        case DataUsage.PackedDecimal:
+                            m = 4; 
+                            break;
+                        case DataUsage.FloatingPoint:
+                            m = 8;
+                            break;
+                    }
+
+                    if (occupiedMemory % m > 0)
+                    {
+                        _slackBytes = m - (occupiedMemory % m);
+                    }
+
+
+                }
+
+                return _slackBytes.Value;
+
+            }
+        }
 
         private long? _startPosition = null;
         public virtual long StartPosition
@@ -459,7 +537,7 @@ namespace TypeCobol.Compiler.Nodes {
                                 sibling = Parent.Children[i - 1];
 
                             //Add 1 for the next free Byte in memory
-                            _startPosition = ((DataDefinition)sibling).PhysicalPosition + 1;
+                            _startPosition = ((DataDefinition)sibling).PhysicalPosition + 1 + SlackBytes;
                         }
                             
                     }
@@ -475,7 +553,7 @@ namespace TypeCobol.Compiler.Nodes {
 
         /// PhysicalPosition is the position of the last Byte used by a DataDefinition in memory
         /// Minus 1 is due to PhysicalLength, which is calculated from 0. 
-        public virtual long PhysicalPosition => StartPosition + PhysicalLength - 1;
+        public virtual long PhysicalPosition => StartPosition + PhysicalLength - 1 + SlackBytes;
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
         public virtual bool IsPartOfATypeDef { get { return _ParentTypeDefinition != null; } }
@@ -551,16 +629,29 @@ namespace TypeCobol.Compiler.Nodes {
         public DataUsage? Usage { get { if (_ComonDataDesc != null && _ComonDataDesc.Usage != null) return _ComonDataDesc.Usage.Value; else return null; } }
         public bool IsGroupUsageNational { get { if (_ComonDataDesc != null && _ComonDataDesc.IsGroupUsageNational != null) return _ComonDataDesc.IsGroupUsageNational.Value; else return false; } }
         public long MinOccurencesCount { get { if (_ComonDataDesc != null && _ComonDataDesc.MinOccurencesCount != null) return _ComonDataDesc.MinOccurencesCount.Value; else return 1; } }
-        public long MaxOccurencesCount { get {return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1;}}
+        public long MaxOccurencesCount { get { return _ComonDataDesc != null && _ComonDataDesc.MaxOccurencesCount != null ? _ComonDataDesc.MaxOccurencesCount.Value : 1; } }
 
 
-        public NumericVariable OccursDependingOn { get {return _ComonDataDesc != null ? _ComonDataDesc.OccursDependingOn : null;}}
+        public NumericVariable OccursDependingOn { get { return _ComonDataDesc != null ? _ComonDataDesc.OccursDependingOn : null; } }
         public bool HasUnboundedNumberOfOccurences { get { if (_ComonDataDesc != null && _ComonDataDesc.HasUnboundedNumberOfOccurences != null) return _ComonDataDesc.HasUnboundedNumberOfOccurences.Value; else return false; } }
         public bool IsTableOccurence { get { if (_ComonDataDesc != null) return _ComonDataDesc.IsTableOccurence; else return false; } }
         public CodeElementType? Type { get { if (_ComonDataDesc != null) return _ComonDataDesc.Type; else return null; } }
-        public bool SignIsSeparate { get { if (_ComonDataDesc != null && _ComonDataDesc.SignIsSeparate != null) return _ComonDataDesc.SignIsSeparate.Value; else return false;  } }
+        public bool SignIsSeparate { get { if (_ComonDataDesc != null && _ComonDataDesc.SignIsSeparate != null) return _ComonDataDesc.SignIsSeparate.Value; else return false; } }
         public SignPosition? SignPosition { get { if (_ComonDataDesc != null && _ComonDataDesc.SignPosition != null) return _ComonDataDesc.SignPosition.Value; else return null; } }
-        public bool IsSynchronized { get { if (_ComonDataDesc != null && _ComonDataDesc.IsSynchronized != null) return _ComonDataDesc.IsSynchronized.Value; else return false;  } }
+
+        public bool IsSynchronized
+        {
+            get
+            {
+                if (_ComonDataDesc != null && _ComonDataDesc.IsSynchronized != null)
+                    return _ComonDataDesc.IsSynchronized.Value;
+
+                else if (Parent is DataDefinition)
+                    return ((DataDefinition)Parent).IsSynchronized;
+
+                else return false;
+            }
+        }
         public SymbolReference ObjectReferenceClass { get { if (_ComonDataDesc != null) return _ComonDataDesc.ObjectReferenceClass; else return null; } }
         #endregion
     }
