@@ -344,8 +344,30 @@ namespace CLI.Test
             }
 
             // Take a snapshot of the file system.  
-            var targetFiles = targetDir.GetFiles("*.*", System.IO.SearchOption.AllDirectories).ToList();
-            var actualFiles = actualDir.GetFiles("*.*", System.IO.SearchOption.AllDirectories).ToList();
+            List<FileInfo> targetFiles = null;
+            List<FileInfo> actualFiles = null;
+            int maxSleep = 5000; //5 Seconds of time out
+            int sleepTimeout = 200;
+
+            for (; ; )
+            {
+                try
+                {
+                    targetFiles = targetDir.GetFiles("*.*", System.IO.SearchOption.AllDirectories).ToList();
+                    actualFiles = actualDir.GetFiles("*.*", System.IO.SearchOption.AllDirectories).ToList();
+                    break;
+                }
+                catch (System.IO.DirectoryNotFoundException dnf)
+                {
+                    Console.WriteLine("!!!!Got System.IO.DirectoryNotFoundException Test Timeout : " + maxSleep);
+                    Thread.Sleep(sleepTimeout);
+                    maxSleep -= sleepTimeout;
+                    if (maxSleep < 0)
+                    {
+                        throw dnf;
+                    }
+                }
+            }
             targetFiles.Sort((f1, f2) => string.Compare(f1.Name, f2.Name, StringComparison.Ordinal));
             actualFiles.Sort((f1, f2) => string.Compare(f1.Name, f2.Name, StringComparison.Ordinal));
 
