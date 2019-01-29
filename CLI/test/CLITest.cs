@@ -346,8 +346,8 @@ namespace CLI.Test
             // Take a snapshot of the file system.  
             List<FileInfo> targetFiles = null;
             List<FileInfo> actualFiles = null;
-            int maxSleep = 5000; //5 Seconds of time out
-            int sleepTimeout = 200;
+            int maxSleep = 30000; //30 Seconds of time out
+            int sleepTimeout = 5000;
 
             for (; ; )
             {
