@@ -90,7 +90,11 @@ namespace TypeCobol.LanguageServer.Test
             process.Start();
             process.WaitForExit(LSR_TEST_TIMEOUT);
             if (!process.HasExited)
+            {
+                System.Console.WriteLine("!!!! LSR PROCESS KILLED !!!");
                 process.Kill();
+            }
+
             DirectoryInfo expectedOutputDir = new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "output_expected");
             DirectoryInfo resultOutputDir = new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" + Path.DirectorySeparatorChar + "Results");
             bool dirIdentical = UnitTestHelper.CompareDirectory(expectedOutputDir, resultOutputDir, "TypeCobol.LanguageServer.Test");
