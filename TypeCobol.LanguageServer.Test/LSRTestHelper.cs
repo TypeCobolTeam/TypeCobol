@@ -22,7 +22,7 @@ namespace TypeCobol.LanguageServer.Test
         /// -init Give the initialize file path
         /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"  -init={1} -config={2}\" -script={3} {4} {5}";
+        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"-lf={6} -l=3 -init={1} -config={2}\" -script={3} {4} {5}";
         /// <summary>
         /// LSR Test Timeout in milli secondes.
         /// </summary>
@@ -75,10 +75,20 @@ namespace TypeCobol.LanguageServer.Test
                 new DirectoryInfo(testWorkingDirectory);
             workingDir.CreateSubdirectory(Path.Combine("input", "Results"));
 
+            //Specify log file
+            var logFile = Path.Combine(workingDir.FullName, "Log.txt");
+
             var scriptFileInfo = new FileInfo(scriptPath);
             //Setup the arguments
             //The path for LanguageServerRobot depends on the NuGetPackage. If the NuGet is not downloaded, it won't works
-            var arguments = string.Format(defaultTypeCobolLSArgs, @"TypeCobol.LanguageServerRobot.exe", initGeneratedFileInfo.FullName, configGeneratedFileInfo.FullName, scriptFileInfo.FullName, activateTdOption ? "-td" : "", lsrTestingOption.ToLanguageServerOption());
+            var arguments = string.Format(defaultTypeCobolLSArgs,
+                @"TypeCobol.LanguageServerRobot.exe",
+                initGeneratedFileInfo.FullName, 
+                configGeneratedFileInfo.FullName, 
+                scriptFileInfo.FullName, 
+                activateTdOption ? "-td" : "", 
+                lsrTestingOption.ToLanguageServerOption(),
+                logFile);
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
