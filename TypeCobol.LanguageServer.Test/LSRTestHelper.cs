@@ -94,6 +94,13 @@ namespace TypeCobol.LanguageServer.Test
                 System.Console.WriteLine("!!!! LSR PROCESS KILLED !!!");
                 process.Kill();
             }
+            else
+            {
+                if (process.ExitCode != 0 && process.ExitCode != 1)
+                {
+                    System.Console.WriteLine("!!!! LSR PROCESS EXIT CODE" + process.ExitCode);
+                }
+            }
 
             DirectoryInfo expectedOutputDir = new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "output_expected");
             DirectoryInfo resultOutputDir = new DirectoryInfo(testWorkingDirectory + Path.DirectorySeparatorChar + "input" + Path.DirectorySeparatorChar + "Results");
