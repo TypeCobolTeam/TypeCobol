@@ -70,6 +70,10 @@ namespace TypeCobol.LanguageServer.Test
             //Write the config file content into generatedConfig.json file
             File.WriteAllText(configGeneratedFileInfo.FullName, configFileContent);
 
+            //Pre-Create the Result directory.
+            var workingDir =
+                new DirectoryInfo(testWorkingDirectory);
+            workingDir.CreateSubdirectory(Path.Combine("input", "Results"));
 
             var scriptFileInfo = new FileInfo(scriptPath);
             //Setup the arguments

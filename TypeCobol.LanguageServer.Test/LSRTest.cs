@@ -178,14 +178,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void VariableQualifiedNameCompletion2()
         {
-            try
-            {
-                LSRTestHelper.Test("VariableQualifiedNameCompletion2", LsrTestingOptions.NoLsrTesting, true);
-            }
-            catch (System.IO.DirectoryNotFoundException dne)
-            {//Try again
-                LSRTestHelper.Test("VariableQualifiedNameCompletion2", LsrTestingOptions.NoLsrTesting, true);
-            }
+            LSRTestHelper.Test("VariableQualifiedNameCompletion2", LsrTestingOptions.NoLsrTesting, true);
         }
 
         [TestMethod]
