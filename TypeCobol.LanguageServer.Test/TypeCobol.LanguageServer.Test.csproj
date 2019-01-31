@@ -201,6 +201,12 @@
     <None Include="LSRTests\CompletionWithNestedProgram\output_expected\CompletionWithNestedProgram.rlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LSRTests\MultiCommentSyntaxColoring\input\MultiCommentSyntaxColoring.tlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LSRTests\MultiCommentSyntaxColoring\output_expected\MultiCommentSyntaxColoring.rlsp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LSRTests\MultiLineBlockDeleteUndo\input\MultiLineBlockDeleteUndo.tlsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

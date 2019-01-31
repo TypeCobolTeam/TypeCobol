@@ -36,7 +36,9 @@
     <Compile Include="Completion Factory\CompletionElligibleTokens.cs" />
     <Compile Include="Completion Factory\CompletionFactory.cs" />
     <Compile Include="Completion Factory\CompletionFactoryHelpers.cs" />
+    <Compile Include="Context\DocumentContext.cs" />
     <Compile Include="FileWatchers\DependenciesFileWatcher.cs" />
+    <Compile Include="Interfaces\ILanguageServer.cs" />
     <Compile Include="JsonRPC\ErrorCodes.cs" />
     <Compile Include="JsonRPC\IRPCHandler.cs" />
     <Compile Include="JsonRPC\IRPCServer.cs" />
@@ -58,10 +60,14 @@
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Request\NodeRefreshRequest.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\SyntaxColoring\SyntaxColoringNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\SyntaxColoring\SyntaxColoringParams.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\SyntaxColoring\Token.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolCustomLanguageServer.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\TypeCobolRemoteConsole.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Uri Log Notification\UriLogMessageParams.cs" />
+    <Compile Include="TypeCobolLanguageServer.cs" />
     <Compile Include="TypeCobolServer.cs" />
     <Compile Include="TypeCobolServerHost.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Missing Copies Notification\MissingCopiesNotification.cs" />

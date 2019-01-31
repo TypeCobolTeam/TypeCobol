@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Codegen.Actions
 {
@@ -82,9 +83,20 @@ namespace TypeCobol.Codegen.Actions
                 //Method : Optimization don't use Razor just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
                 //In addition this method can allow the Code Generator to detect a column 72 overflow.
                 int count = node.Children.Count;
-                TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = node.Children[0] as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
-                //Add the -false
-                if (token != null) token.ReplaceCode = token.ReplaceCode + "-false";
+                Node previousNode = null;
+
+                foreach (var child in node.Children)
+                {
+                    TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = child as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
+
+                    if (previousNode == null || child.CodeElement.ConsumedTokens[0].TokenType == TokenType.UserDefinedWord && previousNode.CodeElement.ConsumedTokens[0].TokenType != TokenType.QualifiedNameSeparator)
+                    {
+                        //Add the -false
+                        if (token != null) token.ReplaceCode = token.ReplaceCode + "-false";
+                    }
+                    previousNode = child;
+                }
+                
                 //Create a Token to replase the "false" to TRUE ==> lookup for the last one;
                 var consumedTokens = node.CodeElement.ConsumedTokens;
                 count = consumedTokens.Count;
