@@ -22,7 +22,7 @@ namespace TypeCobol.LanguageServer.Test
         /// -init Give the initialize file path
         /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"-lf={6} -l=3 -init={1} -config={2}\" -script={3} {4} {5}";
+        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"-lf={6} -l=3 -init={1} -config={2}\" -script={3} {4} {5} -lf={7} -l=3";
         /// <summary>
         /// LSR Test Timeout in milli secondes.
         /// </summary>
@@ -75,8 +75,11 @@ namespace TypeCobol.LanguageServer.Test
                 new DirectoryInfo(testWorkingDirectory);
             workingDir.CreateSubdirectory(Path.Combine("input", "Results"));
 
-            //Specify log file
-            var logFile = Path.Combine(workingDir.FullName, "Log.txt");
+            //Specify log file for LSR
+            var logFile = Path.Combine(workingDir.FullName, "LSRLog.txt");
+
+            //Specify log file for TC LSP
+            var tcLogFile = Path.Combine(workingDir.FullName, "TCLSPLog.txt");
 
             var scriptFileInfo = new FileInfo(scriptPath);
             //Setup the arguments
@@ -88,7 +91,8 @@ namespace TypeCobol.LanguageServer.Test
                 scriptFileInfo.FullName, 
                 activateTdOption ? "-td" : "", 
                 lsrTestingOption.ToLanguageServerOption(),
-                logFile);
+                logFile,
+                tcLogFile);
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -101,14 +105,14 @@ namespace TypeCobol.LanguageServer.Test
             process.WaitForExit(LSR_TEST_TIMEOUT);
             if (!process.HasExited)
             {
-                System.Console.WriteLine("!!!! LSR PROCESS KILLED !!!");
+                System.Console.WriteLine("!!!! TC-LSP PROCESS KILLED !!!");
                 process.Kill();
             }
             else
             {
                 if (process.ExitCode != 0 && process.ExitCode != 1)
                 {
-                    System.Console.WriteLine("!!!! LSR PROCESS EXIT CODE" + process.ExitCode);
+                    System.Console.WriteLine("!!!! TC-LSP PROCESS EXIT CODE" + process.ExitCode);
                 }
             }
 
