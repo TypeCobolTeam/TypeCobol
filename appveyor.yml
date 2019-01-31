@@ -22,18 +22,21 @@ build:
   project: TypeCobol.sln
   verbosity: minimal
   
-before_test:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  # To uncomment to activate Remote Desktop, will be deleted on job completed
+#before_test:
+#  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   
 test:
-  # only assemblies to test
-  assemblies:
-    only:
-      - TypeCobol.LanguageServer.Test.dll
+  # assembly or category to test or to ignore
+  categories:
+    except:
+      - CompletionToIgnore
   
-on_failure:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  #To uncomment to block the job on test failure, so the Remote Desktop remains after test
+  #To continue the job, you have to delete a .txt on the Remote Desktop session located on the desktop
+#on_failure:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   
 artifacts: 
   - path: bin\EI_TypeCobol_Release
