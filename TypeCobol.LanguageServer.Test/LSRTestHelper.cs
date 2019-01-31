@@ -21,9 +21,9 @@ namespace TypeCobol.LanguageServer.Test
         /// -config contains the path to the config file necessary for TypeCobolLSR initialization 
         /// -init Give the initialize file path
         /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
-        /// {5} is filled with -sc if useSyntaxColoring is set to true.
+        /// {8} is filled with -sc if useSyntaxColoring is set to true.
         /// </summary>
-        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"-lf={6} -l=3 -init={1} -config={2}\" -script={3} {4} {5} -lf={7} -l=3";
+        private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"-lf={6} -l=3 -init={1} -config={2}\" -script={3} {4} {5} -lf={7} -l=3 {8}";
         /// <summary>
         /// LSR Test Timeout in milli secondes.
         /// </summary>
@@ -93,7 +93,8 @@ namespace TypeCobol.LanguageServer.Test
                 activateTdOption ? "-td" : "", 
                 lsrTestingOption.ToLanguageServerOption(),
                 logFile,
-                tcLogFile);
+                tcLogFile,
+                useSyntaxColoring ? "-sc" : "");
 
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
