@@ -27,11 +27,11 @@ build:
 #  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   
-test:
+#test:
   # assembly or category to test or to ignore
-  categories:
-    except:
-      - CompletionToIgnore
+#  categories:
+#    except:
+#      - CompletionToIgnore
   
   #To uncomment to block the job on test failure, so the Remote Desktop remains after test
   #To continue the job, you have to delete a .txt on the Remote Desktop session located on the desktop
