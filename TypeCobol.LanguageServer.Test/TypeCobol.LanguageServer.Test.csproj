@@ -33,11 +33,11 @@
     <Reference Include="TypeCobol.LanguageServer.Protocol, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TypeCobol.LanguageServer.Protocol.1.0.0\lib\net45\TypeCobol.LanguageServer.Protocol.dll</HintPath>
     </Reference>
-    <Reference Include="TypeCobol.LanguageServer.Robot.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TypeCobol.LanguageServer.Robot.Common.1.0.0\lib\net45\TypeCobol.LanguageServer.Robot.Common.dll</HintPath>
+    <Reference Include="TypeCobol.LanguageServer.Robot.Common, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TypeCobol.LanguageServer.Robot.Common.1.1.0\lib\net45\TypeCobol.LanguageServer.Robot.Common.dll</HintPath>
     </Reference>
-    <Reference Include="TypeCobol.LanguageServerRobot, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TypeCobol.LanguageServerRobot.1.1.0\lib\net45\TypeCobol.LanguageServerRobot.exe</HintPath>
+    <Reference Include="TypeCobol.LanguageServerRobot, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TypeCobol.LanguageServerRobot.1.2.0\lib\net45\TypeCobol.LanguageServerRobot.exe</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>

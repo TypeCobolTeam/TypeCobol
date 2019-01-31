@@ -175,7 +175,7 @@ namespace TypeCobol.LanguageServer.Test
         }
 
         [TestMethod]
-        [TestCategory("CompletionToIgnore")]
+        [TestCategory("Completion")]
         public void VariableQualifiedNameCompletion2()
         {
             LSRTestHelper.Test("VariableQualifiedNameCompletion2", LsrTestingOptions.NoLsrTesting, true);
@@ -260,7 +260,7 @@ namespace TypeCobol.LanguageServer.Test
         }
 
         [TestMethod]
-        [TestCategory("CompletionToIgnore")]
+        [TestCategory("Completion")]
         public void ProcedureCompletionInputInoutOutput()
         {
             LSRTestHelper.Test("ProcedureCompletionInputInoutOutput", LsrTestingOptions.NoLsrTesting, true);
