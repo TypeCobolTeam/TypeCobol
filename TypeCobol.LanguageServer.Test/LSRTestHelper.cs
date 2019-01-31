@@ -20,7 +20,7 @@ namespace TypeCobol.LanguageServer.Test
         /// -script contains the path to the script to test
         /// -config contains the path to the config file necessary for TypeCobolLSR initialization 
         /// -init Give the initialize file path
-        /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh
+        /// {4} is filled with -td option if activateTdOption is true. This option will allow to avoid TypeCobolServer to do Node Refresh.
         /// {8} is filled with -sc if useSyntaxColoring is set to true.
         /// </summary>
         private static readonly string defaultTypeCobolLSArgs = "-r -lsr={0} -ro=\"-lf={6} -l=3 -init={1} -config={2}\" -script={3} {4} {5} -lf={7} -l=3 {8}";
