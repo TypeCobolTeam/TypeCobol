@@ -122,7 +122,7 @@ namespace TypeCobol.Codegen
         /// Performs all actions
         /// <param name="tree">The tree on which to operate</param>
         /// </summary>
-        public void Perform(SourceFile tree)
+        public void Perform(Node tree)
         {
             if (tree == null)
                 return;

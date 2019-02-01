@@ -17,6 +17,7 @@ namespace TypeCobol.Codegen.Actions
                                 {
                                                 NodeActionsProviderMap = new Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.TypeDefinition)]=TypeCobol_Compiler_Nodes_TypeDefinition;
+                                                NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.GlobalStorageSection)]=TypeCobol_Compiler_Nodes_GlobalStorageSection;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.DataDescription)]=TypeCobol_Compiler_Nodes_DataDescription;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.Set)]=TypeCobol_Compiler_Nodes_Set;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.CodeElements.VariableWriter)]=TypeCobol_Compiler_CodeElements_VariableWriter;
@@ -58,6 +59,19 @@ namespace TypeCobol.Codegen.Actions
                                                 {
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.TypeDefinition")};
+                                                public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                return CheckConditions(@Self, __ConditionsAttributes_0);
+                                                }
+
+                                }
+
+                                struct SkeleTonGlobalStorageSectionModel
+                                {
+                                                public SkeleTonGlobalStorageSectionModel(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                }
+                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.GlobalStorageSection")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 return CheckConditions(@Self, __ConditionsAttributes_0);
@@ -365,6 +379,25 @@ namespace TypeCobol.Codegen.Actions
                                                                 if ((SkeleTonTYPEDEFModel.Conditions_0(@Self)))
                                                                 {
                                                                                 SkeleTonTYPEDEFModel @Model = new SkeleTonTYPEDEFModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "comment", null, "NODE", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                return @SelfActions;
+                                }
+
+                                public static List<TypeCobol.Codegen.Actions.Action> TypeCobol_Compiler_Nodes_GlobalStorageSection(TypeCobol.Compiler.Nodes.Node @Self, TypeCobol.Codegen.GeneratorActions @SelfContext)
+                                {
+                                                List<TypeCobol.Codegen.Actions.Action> @SelfActions = new List<TypeCobol.Codegen.Actions.Action>();
+                                                {
+                                                                if ((SkeleTonGlobalStorageSectionModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonGlobalStorageSectionModel @Model = new SkeleTonGlobalStorageSectionModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "comment", null, "NODE", null, false);

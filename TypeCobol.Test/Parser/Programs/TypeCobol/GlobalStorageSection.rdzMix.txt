@@ -13,13 +13,17 @@ Line 8[12,19] <27, Error, Syntax> - Syntax error : Data must be declared between
        01 G-TechCtx         TYPE Bool.
        01 DuplicatedVar     TYPE Bool.
 
+       01 Test48.
+Line 14[14,18] <27, Error, Syntax> - Syntax error : Data declaration in global-storage section cannot be level 49
+          49 NoVar PIC X.
+
        01 MyGroup.
       *Global clause is not authorized inside Global Storage
-Line 15[15,32] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.
+Line 18[15,32] <27, Error, Syntax> - Syntax error : Illegal GLOBAL clause in GLOBAL-STORAGE SECTION.
            05 ForbiddenGlobalVar     PIC x(10) GLOBAL.
            88 zedzed                VALUE 'TEST'.
       *External clause is not authorized inside Global Storage
-Line 18[11,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.
+Line 21[11,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in GLOBAL-STORAGE SECTION.
        01 ForbiddenExternalVar   PIC 10 EXTERNAL.
 
 
@@ -42,7 +46,7 @@ Line 18[11,30] <27, Error, Syntax> - Syntax error : Illegal EXTERNAL clause in G
         END-DECLARE.
 
        MOVE G-Date TO G-Date.
-Line 40[13,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 
+Line 43[13,25] <27, Error, Syntax> - Syntax error : Ambiguous reference to symbol DuplicatedVar 
 Symbols found: GlobalStorageTest::DuplicatedVar | GlobalStorageTest::DuplicatedVar
        MOVE DuplicatedVar TO G-TechCtx.
 
@@ -52,7 +56,7 @@ Symbols found: GlobalStorageTest::DuplicatedVar | GlobalStorageTest::DuplicatedV
        DATA DIVISION.
       *Global Storage Section cannot 
       * be define inside nested program
-Line 48[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
+Line 51[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
        GLOBAL-STORAGE SECTION.
        WORKING-STORAGE SECTION.
        01 MyDate TYPE Date.
@@ -83,7 +87,7 @@ Line 48[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
        DATA DIVISION.
       *Global Storage Section cannot 
       * be define inside stacked program
-Line 78[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
+Line 81[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is only authorized in the main program of this source file.
        GLOBAL-STORAGE SECTION.
 
        WORKING-STORAGE SECTION.
@@ -91,7 +95,7 @@ Line 78[8,30] <27, Error, Syntax> - Syntax error : GLOBAL-STORAGE SECTION is onl
 
        PROCEDURE DIVISION.
       *G-Date is not accessible in StackedProgram
-Line 85[13,18] <27, Error, Syntax> - Syntax error : Symbol G-Date is not referenced
+Line 88[13,18] <27, Error, Syntax> - Syntax error : Symbol G-Date is not referenced
        MOVE G-Date TO MyDate.
 
        END PROGRAM StackedProg.

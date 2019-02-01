@@ -10,6 +10,16 @@
     </patterns>
   </skeleton>
 
+  <!-- comment GLOBAL_STORAGE SECTION -->
+  <skeleton name="GlobalStorageSection">
+    <conditions>
+      <condition node="TypeCobol.Compiler.Nodes.GlobalStorageSection"/>
+    </conditions>
+    <patterns>
+      <pattern location="NODE" action="comment"></pattern>
+    </patterns>
+  </skeleton>
+
   <!-- replace TYPE BOOL declarations -->
   <skeleton name="BOOL.DECLARE" var="level,name,value,global">
     <conditions>
@@ -170,17 +180,6 @@
 01  TC-@Model.programName8-FctList-Loaded PIC X(02).
     88 TC-@Model.programName8-FctList-IsLoaded      VALUE 'OK'.
       </pattern>
-      <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
-      <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="true">
-        @{
-        var items = "";
-        foreach (var f in @Model.definitions.functions.Public) {
-        items += "*"+@Model.programName8 + "::" +f.Name+'\n';
-        items += " 01 TC-"+@Model.programName8 + "-" + f.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
-        }
-        }
-        @items
-      </pattern>
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL -->
       <pattern location="program.data-division.working-storage" action="create" group="TCRFUN_CODEGEN_POINTER_ARRAY" deprecated="false">
         @{
@@ -211,32 +210,6 @@
       </pattern>
 
       <pattern action="expand" location="program.end"></pattern>
-      <!-- CALLEE WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
-      <pattern location="program.procedure-division.sentence-0.begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="true">
-*
-*    IF CallIsCopy
-*      PERFORM Copy-Process-Mode
-*    ELSE
-    PERFORM FctList-Process-Mode
-    perform INIT-LIBRARY
-*    END-IF
-
-    GOBACK.
-        @{
-        var entries = "";
-        int c = 0;
-        foreach (var f in @Model.definitions.functions.Public) {
-        entries += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
-        }
-        }
- FctList-Process-Mode.
-     IF NOT TC-@Model.programName8-FctList-IsLoaded
-@entries
-       SET TC-@Model.programName8-FctList-IsLoaded TO TRUE
-     END-IF
-        .
-        
-      </pattern>
 
       <!-- CALLEE WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
       <pattern name="ProcedureDivisionCalleeWithoutExternal" location="program.procedure-division.sentence-([0-9]+).begin" action="create" newline="true" group="TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR" deprecated="false">
@@ -464,29 +437,13 @@
       <pattern action="expand" location="NODE"></pattern>
     </patterns>
   </skeleton>
-
+  
   <skeleton name="PROGRAM.IMPORT.FUN.PUBLIC" var="imports">
     <conditions>
       <condition node="TypeCobol.Compiler.CodeModel.Program"/>
     </conditions>
     <patterns>
       <pattern location="NODE" action="remarks"></pattern> <!-- Remarks Directive -->
-      <!-- CALLER WORKING-STORAGE SECTION WITH EXTERNAL : Deprecated-->
-      <pattern location="program.data-division.working-storage" action="create" boolean_property="imports.IsNotEmpty" deprecated="true">
-        @{
-          var items = "";
-          foreach (var pgm in @Model.imports.Programs.Values) {
-            items += "01 TC-"+ pgm.Name + " pic X(08) value '" + pgm.Name.ToUpperInvariant() + "'.\n";
-            items += "01 TC-"+ pgm.Name + "-FctList-Loaded PIC X(02) EXTERNAL.\n";
-            items += "    88 TC-" + pgm.Name + "-FctList-IsLoaded      VALUE 'OK'.\n";
-            foreach (var proc in pgm.Procedures.Values) {
-              items += "*"+ pgm.Name + "::" +proc.Name+'\n';
-              items += " 01 TC-"+pgm.Name + "-" + proc.Hash+" PROCEDURE-POINTER EXTERNAL.\n";
-            }
-          }
-        }
-        @items
-      </pattern>
 
       <!-- CALLER WORKING-STORAGE SECTION WITHOUT EXTERNAL-->
       <pattern location="program.data-division.working-storage.begin" action="create" boolean_property="imports.IsNotEmpty" deprecated="false">
@@ -555,30 +512,7 @@
  TC-Initializations.
 *=================================================================
      .
-      </pattern>-->
-      
-      <!-- CALLER PROCEDURE DIVISION WITH EXTERNAL-->
-      <!--<pattern location="program.procedure-division.end" action="create"  boolean_property="imports.IsNotEmpty" deprecated="true">
-        <conditions>
-          <condition node="TypeCobol.Compiler.CodeModel.Program"/>
-        </conditions>
-        @{
-        var clause = "";
-        if (!@Model.imports.IsEmpty) {
-        --><!--clause += "*=================================================================\n";
-        clause += " TC-Initializations.\n";
-        clause += "*=================================================================\n";--><!--
-        foreach (var pgm in @Model.imports.Programs.Values) {
-        clause += "     IF NOT TC-" + pgm.Name + "-FctList-IsLoaded\n";
-        clause += "         CALL 'ZCALLPGM' USING TC-"+ pgm.Name +"\n";
-        clause += "     END-IF\n";
-        }
-        clause += "     .\n";
-        }
-        }
-        @clause
-      </pattern>-->
-
+      </pattern>-->     
       
       <!-- CALLER PROCEDURE DIVISION WITHOUT EXTERNAL-->
       <pattern location="program.procedure-division.declaratives-header.end,//program.procedure-division.sentence-([0-9]+).begin,//program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-([0-9]+).begin|program.procedure-division.paragraph.sentence-([0-9]+).begin|program.procedure-division.sentence-0.begin" action="create" newline="false"  boolean_property="imports.HasPublicProcedures">
