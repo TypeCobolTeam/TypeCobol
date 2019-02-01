@@ -795,6 +795,10 @@ namespace TypeCobol.Codegen.Generators
             //During the Linearization Phase, collect data, index of all Nodes.
             //1) Get the Positions of the Node: 
             //  Tuple(from,to,span, lineNumbers, lineOffsets);
+            if (node.IsFlagSet(Node.Flag.UseGlobalStorage))
+            {
+                UseGlobalStorageSection = true;
+            }
             Tuple<int, int, int, List<int>, List<int>> positions = this.Generator.FromToPositions(node);
             if (positions == null)
             { //Node without positions probably a generated node.
@@ -1032,6 +1036,8 @@ namespace TypeCobol.Codegen.Generators
             }
             return true;
         }
+
+        public bool UseGlobalStorageSection { get; set; }
 
         /// <summary>
         /// Collect all lines that have not been associated to a Node during Function Declaration

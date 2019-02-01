@@ -10,6 +10,9 @@
        01 G-TechCtx         TYPE Bool.
        01 DuplicatedVar     TYPE Bool.
 
+       01 Test48.
+          49 NoVar PIC X.
+
        01 MyGroup.
       *Global clause is not authorized inside Global Storage
            05 ForbiddenGlobalVar     PIC x(10) GLOBAL.

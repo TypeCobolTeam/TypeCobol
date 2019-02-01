@@ -20,13 +20,21 @@ namespace TypeCobol.Codegen.Actions
             private set;
         }
 
+        private bool Commented
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="node">The target node to be commented</param>
-        public Comment(Node node) 
+        /// <param name="bComment">true to comment, false to uncomment</param>
+        public Comment(Node node, bool bComment = true) 
         { 
-            this.Node = node; 
+            this.Node = node;
+            this.Commented = bComment;
         }
 
         /// <summary>
@@ -47,9 +55,12 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="node"></param>
         private void comment(Node node)
         {
-            node.Comment = true;
-            foreach (var child in node.Children) 
-                comment(child);
+            if (!node.IsFlagSet(Node.Flag.IgnoreCommentAction))
+            {
+                node.Comment = Commented;
+                foreach (var child in node.Children)
+                    comment(child);
+            }
         }
     }
 }

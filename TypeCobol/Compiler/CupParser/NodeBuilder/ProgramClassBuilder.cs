@@ -373,8 +373,14 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void StartGlobalStorageSection(GlobalStorageSectionHeader header)
         {
-            Enter(new GlobalStorageSection(header), header, SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage));
+            GlobalStorageSection gs = new GlobalStorageSection(header);
+            Enter(gs, header, SyntaxTree.CurrentNode.SymbolTable.GetTableFromScope(SymbolTable.Scope.GlobalStorage));
             _IsInsideGlobalStorageSection = true;
+            if (SyntaxTree.Root.GlobalStorageProgram == null)
+            {
+                SyntaxTree.Root.GlobalStorageProgram = new GlobalStorageProgram(TableOfGlobals, null);
+            }
+            SyntaxTree.Root.GlobalStorageProgram.Add(gs);
         }
 
         public virtual void EndGlobalStorageSection()

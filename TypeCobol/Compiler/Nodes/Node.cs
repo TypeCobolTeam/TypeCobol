@@ -188,17 +188,21 @@ namespace TypeCobol.Compiler.Nodes {
             /// </summary>
             NodeisIncrementedPointer = 0x01 << 22,
             /// <summary>
-            /// Mark that this node is declared inside a procedure or function
+            /// Mark that this DataDefinition Node is declared inside a procedure or function
             /// </summary>
             InsideProcedure = 0x01 << 23,
             /// <summary>
-            /// Flag node belongs to Global Storage Section (usefull for DataDefinition)
+            /// Flag DataDefinition belongs to Global Storage Section (usefull for DataDefinition)
             /// </summary>
             GlobalStorageSection = 0x01 << 24,
             /// <summary>
+            /// Program or Function/procedre use the global-storage section
+            /// </summary>
+            UseGlobalStorage = 0x01 << 25,
+            /// <summary>
             /// The Node for a missing END PROGRAM.
             /// </summary>
-            MissingEndProgram = 0x01 << 25,
+            MissingEndProgram = 0x01 << 26,
             /// <summary>
             /// Mark a program that contains procedure declaration.
             /// </summary>
@@ -214,6 +218,10 @@ namespace TypeCobol.Compiler.Nodes {
             /// Mark a program that should generate its procedure as nested pgm.
             /// </summary>
             GenerateAsNested = 0x01 << 29,
+            /// <summary>
+            /// Codegen Ignore comment action on this node.
+            /// </summary>
+            IgnoreCommentAction = 0x01 << 30,
         };
         /// <summary>
         /// A 32 bits value for flags associated to this Node
@@ -528,6 +536,39 @@ namespace TypeCobol.Compiler.Nodes {
 
             return _programNode;
         }
+
+        private Node _enclosingProgramOrFunctionNode;
+        /// <summary>
+        /// Get the encolsing Program or Function Node corresponding to a Child
+        /// </summary>
+        /// <param name="child">The Child Node</param>
+        /// <returns>The Program Node</returns>
+        public Node GetEnclosingProgramOrFunctionNode()
+        {
+            if (_enclosingProgramOrFunctionNode != null) return _enclosingProgramOrFunctionNode;
+            Node child = this;
+            while (child != null && !(child is Program) && !(child is FunctionDeclaration))
+                child = child.Parent;
+            _enclosingProgramOrFunctionNode = child;
+
+            return _enclosingProgramOrFunctionNode;
+        }
+
+
+        /// <summary>Search for all children of a specific Name</summary>
+        /// <param name="name">Name we search for</param>
+        /// <param name="deep">true for deep search, false for shallow search</param>
+        /// <returns>List of all children with the proper name ; empty list if there is none</returns>
+        public IList<T> GetChildren<T>(string name, bool deep) where T : Node {
+            var results = new List<T>();
+            foreach (var child in children) {
+                var typedChild = child as T;
+                if (typedChild != null && name.Equals(child.Name, StringComparison.OrdinalIgnoreCase)) results.Add(typedChild);
+                if (deep) results.AddRange(child.GetChildren<T>(name, true));
+            }
+            return results;
+        }
+
 
         /// <summary>Adds a node as a children of this one.</summary>
         /// <param name="child">Child to-be.</param>
@@ -939,6 +980,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// </summary>
         public Dictionary<string, string> GeneratedCobolHashes { get; set; }
 
+        public Program GlobalStorageProgram { get; set; }
 
         public IEnumerable<Program> Programs {
             get

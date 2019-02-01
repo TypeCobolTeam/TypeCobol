@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TypeCobol.Codegen.Actions;
 using TypeCobol.Codegen.Nodes;
 using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.Nodes;
@@ -638,8 +639,32 @@ namespace TypeCobol.Codegen.Generators
                     lmCtx?.RelocateFunctionRanges(funData, funData.FunctionDeclBuffer, targetSourceText, false);
                 }
             }
-            //5)//Generate Line Exceed Diagnostics
-            GenerateExceedLineDiagnostics();
+            //5)//Generate stacked program for the global-storage section
+            if (mapper.UseGlobalStorageSection)
+            {
+                StringWriter sw = new StringWriter();                
+                //Uncomment all Global Storages
+                (new Comment(this.RootNode.GlobalStorageProgram, false)).Execute();
+                var Actions = new GeneratorActions(this, null, this.CompilationResults, new TypeCobol.Codegen.Actions.Skeletons());
+
+                foreach (var gs in this.RootNode.GlobalStorageProgram.Children)
+                {
+                    gs.SetFlag(Node.Flag.IgnoreCommentAction, true);
+                    Actions.Perform(gs);
+                }
+                var lines = this.RootNode.GlobalStorageProgram.Lines;
+                foreach (var line in lines)
+                {
+                    foreach (var l in Indent(line, null))
+                    {
+                        sw.WriteLine(l.Text.TrimEnd());
+                    }
+                }
+                InsertLineMaybeSplit(targetSourceText, sw.ToString(), targetSourceText.Size, targetSourceText.Size, false);
+            }
+
+            //6)//Generate Line Exceed Diagnostics
+                GenerateExceedLineDiagnostics();
             return targetSourceText;
         }
 

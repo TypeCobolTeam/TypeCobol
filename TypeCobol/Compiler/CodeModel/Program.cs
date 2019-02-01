@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Nodes;
+using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -226,6 +227,50 @@ namespace TypeCobol.Compiler.CodeModel
         public override bool VisitNode(IASTVisitor astVisitor)
         {
             return astVisitor.Visit(this);
+        }
+    }
+
+    public class GlobalStorageProgram : StackedProgram
+    {
+        public GlobalStorageProgram(SymbolTable EnclosingScope, CodeElement codeElement) : base(EnclosingScope, codeElement)
+        {
+        }
+
+        public override bool VisitNode(IASTVisitor astVisitor)
+        {
+            return astVisitor.Visit(this);
+        }
+
+        /// <summary>Adds a node as a children of this one.</summary>
+        /// <param name="child">Child to-be.</param>
+        /// <param name="index">Child position in children list.</param>
+        public override void Add(Node child, int index = -1)
+        {
+            if (index < 0) children.Add(child);
+            else children.Insert(index, child);
+        }
+
+        public override IEnumerable<ITextLine> Lines
+        {
+            get
+            {
+                List<ITextLine> lines = new List<ITextLine>();
+                lines.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
+                lines.Add(new TextLineSnapshot(-1, "PROGRAM-ID. a9a9a5eaTC-GetGlobal.", null));
+                lines.Add(new TextLineSnapshot(-1, "DATA DIVISION.", null));
+                lines.Add(new TextLineSnapshot(-1, "WORKING-STORAGE SECTION..", null));
+
+                foreach (GlobalStorageSection gs in Children.OfType<GlobalStorageSection>())
+                {
+                    foreach (var child in gs.Children)
+                    {
+                        lines.AddRange(child.Lines);
+                    }
+                }
+
+                lines.Add(new TextLineSnapshot(-1, "END PROGRAM a9a9a5eaTC-GetGlobal.", null));
+                return lines;
+            }
         }
     }
 }
