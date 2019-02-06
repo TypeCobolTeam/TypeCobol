@@ -1,8 +1,10 @@
 ﻿
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Text;
 
 namespace TypeCobol.Compiler.Nodes {
@@ -468,6 +470,39 @@ namespace TypeCobol.Compiler.Nodes {
                     return this.DataType == generatedDataType.DataType;
             }
             return false;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            FormalizedCommentDocumentation doc = this.CodeElement().FormalizedCommentDocumentation;
+
+            int i = 0;
+
+            while (i < SelfAndChildrenLines.Count())
+            {
+                if (SelfAndChildrenLines.ElementAt(i) is CodeElementsLine line)
+                {
+                    if (line.Text.Contains("*<<<"))
+                    {
+                        while (!SelfAndChildrenLines.ElementAt(i).Text.Contains("*>>>"))
+                            i++;
+                    }
+                    else if (line.IndicatorChar != '*')
+                    {
+                        sb.AppendLine(line.Text);
+                    }
+                }
+                i++;
+            }
+
+            if (doc != null)
+            {
+                sb.AppendLine();
+                sb.Append(doc);
+            }
+
+            return sb.ToString();
         }
     }
     // [/COBOL 2002]

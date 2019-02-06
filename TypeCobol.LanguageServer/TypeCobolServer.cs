@@ -390,15 +390,28 @@ namespace TypeCobol.LanguageServer
             if (matchingNode == null)
                 return null;
 
-            //OnHover for data declared with a type
-            var dataDefinition = matchingNode as DataDefinition;
-            if (dataDefinition?.TypeDefinition != null)
+            string message = string.Empty;
+
+            switch (matchingNode)
+            {
+                case DataDefinition data:
+                    message = data.TypeDefinition.ToString();
+                    break;
+                case ProcedureStyleCall call:
+                    if (lastSignificantToken.TokenType != TokenType.INPUT && lastSignificantToken.TokenType != TokenType.IN_OUT && lastSignificantToken.TokenType != TokenType.OUTPUT)
+                    {
+                        message = call.ToString();
+                    }
+                    break;
+            }
+
+            if (message != string.Empty)
             {
                 resultHover.range = new Range(matchingCodeElement.Line, matchingCodeElement.StartIndex,
                     matchingCodeElement.Line,
                     matchingCodeElement.StopIndex + 1);
                 resultHover.contents =
-                    new MarkedString[] { new MarkedString() { language = "Cobol", value = string.Join("", dataDefinition.TypeDefinition.SelfAndChildrenLines.Select(e => e.Text + "\r\n")) } };
+                    new MarkedString[] { new MarkedString() { language = "Cobol", value = message } };
                 return resultHover;
             }
 
