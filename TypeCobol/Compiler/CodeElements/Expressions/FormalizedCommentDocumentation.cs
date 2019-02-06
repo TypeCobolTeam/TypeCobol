@@ -231,5 +231,69 @@ namespace TypeCobol.Compiler.CodeElements
         {
             Add(parameter, item.Key, item.Value);
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (Description != null)
+                sb.AppendLine(Description);
+
+            if (Restriction != null)
+                sb.AppendLine("Restriction: " + Restriction);
+
+            if (Deprecated != null)
+            {
+                if (sb.Length != 0)
+                    sb.AppendLine();
+                sb.AppendLine(Deprecated != string.Empty ? "Deprecated: " + Deprecated : "Deprecated");
+            }
+
+            if (ReplacedBy != null)
+                sb.AppendLine("Replaced By: " + ReplacedBy);
+
+            if (See != null)
+            {
+                if (sb.Length != 0)
+                    sb.AppendLine();
+                sb.AppendLine("See: " + See);
+            }
+            
+
+            if (Parameters.Count > 0)
+            {
+                if (sb.Length != 0)
+                    sb.AppendLine();
+                sb.AppendLine("Parameters:");
+                foreach (var parameter in Parameters)
+                {
+                    sb.AppendLine("\t-\t" + parameter.Key + ": " + parameter.Value);
+                }
+            }
+
+            if (Needs.Count > 0)
+            {
+                if (sb.Length != 0)
+                    sb.AppendLine();
+                sb.AppendLine("Needs:");
+                foreach (var need in Needs)
+                {
+                    sb.AppendLine("\t-\t" + need);
+                }
+            }
+
+            if (ToDo.Count > 0)
+            {
+                if (sb.Length != 0)
+                    sb.AppendLine();
+                sb.AppendLine("To do:");
+                foreach (var todo in ToDo)
+                {
+                    sb.AppendLine("\t-\t" + todo);
+                }
+            }
+
+            return sb.ToString();
+        }
     }
 }

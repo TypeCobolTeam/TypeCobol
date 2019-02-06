@@ -58,6 +58,15 @@
         {
             return astVisitor.Visit(this);
         }
+
+        public override string ToString()
+        {
+            var doc = FunctionDeclaration.CodeElement.FormalizedCommentDocumentation;
+            if (doc != null)
+                return doc.ToString();
+
+            return string.Empty;
+        }
     }
 
     public class Cancel: GenericNode<CancelStatement>, Statement {
