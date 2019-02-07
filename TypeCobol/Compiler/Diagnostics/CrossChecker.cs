@@ -279,7 +279,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 CheckPicture(dataDefinition);
             }
 
-
             DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement as DataDefinitionEntry;
             
             if (dataDefinitionEntry == null) return true;
@@ -349,6 +348,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 return true;
             }
+
+            DataDefinitionChecker.OnNode(dataDefinition);
 
             return true;
         }
