@@ -16,6 +16,7 @@
       <condition node="TypeCobol.Compiler.Nodes.GlobalStorageSection"/>
     </conditions>
     <patterns>
+      <pattern location="NODE" action="clone"></pattern>
       <pattern location="NODE" action="comment"></pattern>
     </patterns>
   </skeleton>

@@ -40,7 +40,7 @@ namespace TypeCobol.Codegen.Actions
             CompilationDocument = compilationDocument;
         }
 
-        public void Execute()
+        public IList<Action> Execute()
         {
 #if EUROINFO_RULES
             if (((Program) Source).IsNested)
@@ -72,6 +72,7 @@ namespace TypeCobol.Codegen.Actions
             else
                 Source.Add(fakeRemarksNode);
 #endif
+            return null;
         }
 
         internal class FakeRemars : FakeGeneratedNode

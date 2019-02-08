@@ -400,6 +400,19 @@ namespace TypeCobol.Codegen.Actions
                                                                                 SkeleTonGlobalStorageSectionModel @Model = new SkeleTonGlobalStorageSectionModel(@Self);
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "clone", null, "NODE", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonGlobalStorageSectionModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonGlobalStorageSectionModel @Model = new SkeleTonGlobalStorageSectionModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "comment", null, "NODE", null, false);
                                                                                 if (@SelfAction != null)
                                                                                 {

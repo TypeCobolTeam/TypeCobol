@@ -56,11 +56,11 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// Perform the expansion.
         /// </summary>
-        public void Execute()
+        public IList<Action> Execute()
         {
             //Bug correction: Don't expand commented Nodes
             if (this.Source.Comment != null ? this.Source.Comment.Value : false)
-                return;
+                return null;
 
             var typegen = GetGeneratedNode(this.Source.CodeElement.GetType());
 
@@ -122,6 +122,8 @@ namespace TypeCobol.Codegen.Actions
                     ErasedNodes.Remove(n);
                 }                
             }
+
+            return null;
         }
 
         /// <summary>
