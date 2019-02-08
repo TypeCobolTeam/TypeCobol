@@ -799,6 +799,12 @@ namespace TypeCobol.Codegen.Generators
             {
                 UseGlobalStorageSection = true;
             }
+
+            if (node.CodeElement != null && node.CodeElement.Type == CodeElementType.GlobalStorageSectionHeader && !node.Comment.HasValue)
+            {
+                //Remember the Global Storage Section node.
+                this.ClonedGlobalStorageSection = (GlobalStorageSection)node;
+            }
             Tuple<int, int, int, List<int>, List<int>> positions = this.Generator.FromToPositions(node);
             if (positions == null)
             { //Node without positions probably a generated node.
@@ -1036,6 +1042,8 @@ namespace TypeCobol.Codegen.Generators
             }
             return true;
         }
+
+        public GlobalStorageSection ClonedGlobalStorageSection { get; set; }
 
         public bool UseGlobalStorageSection { get; set; }
 

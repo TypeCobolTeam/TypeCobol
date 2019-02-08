@@ -40,14 +40,22 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// Execute the action
         /// </summary>
-        public void Execute() 
-        { 
-            comment(this.Node);
-            List<Node> erasedNodes = new List<Node>();
-            erasedNodes.Add(this.Node);
-            this.Node.ListChildren(erasedNodes);
-            erasedNodes.TrimExcess();
-            ErasedNodes = erasedNodes;
+        public IList<Action> Execute() 
+        {
+            if (!this.Node.IsFlagSet(Node.Flag.IgnoreCommentAction))
+            {
+                comment(this.Node);
+                if (Commented)
+                {
+                    List<Node> erasedNodes = new List<Node>();
+                    erasedNodes.Add(this.Node);
+                    this.Node.ListChildren(erasedNodes);
+                    erasedNodes.TrimExcess();
+                    ErasedNodes = erasedNodes;
+                }
+            }
+
+            return null;
         }
         /// <summary>
         /// Mark this node that it must be commented with all its chilbren.
@@ -55,12 +63,9 @@ namespace TypeCobol.Codegen.Actions
         /// <param name="node"></param>
         private void comment(Node node)
         {
-            if (!node.IsFlagSet(Node.Flag.IgnoreCommentAction))
-            {
-                node.Comment = Commented;
-                foreach (var child in node.Children)
-                    comment(child);
-            }
+            node.Comment = Commented;
+            foreach (var child in node.Children)
+                comment(child);
         }
     }
 }

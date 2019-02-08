@@ -128,15 +128,20 @@ namespace TypeCobol.Codegen
                 return;
             tree.Accept(this);
             var groups = new List<string>();
-            foreach (var action in this)
+            for(int i = 0; i < this.Count; i++)
             {
+                var action = this[i];
                 try
                 {
                     if (action.Group != null && groups.Contains(action.Group)) 
                     continue;
                     if (BeforeAction != null)
                         BeforeAction(this, (EventArgs)action);
-                    action.Execute();
+                    var subActions = action.Execute();
+                    if (subActions != null)
+                    {
+                        this.AddRange(subActions);
+                    }
                     if (AfterAction != null)
                         AfterAction(this, (EventArgs)action);
                     if (action.Group != null)
@@ -242,7 +247,11 @@ namespace TypeCobol.Codegen
             {
                 return new Remarks(source, destination, location, CompilationDocument);
             }
-            System.Console.WriteLine("Unknown action: \"" + action + "\"");
+            if ("clone".Equals(action))
+            {
+                return new Clone(destination, this);
+            }
+                System.Console.WriteLine("Unknown action: \"" + action + "\"");
             return null;
 
         }
