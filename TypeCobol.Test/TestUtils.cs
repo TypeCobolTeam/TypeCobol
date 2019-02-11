@@ -89,7 +89,7 @@ namespace TypeCobol.Test
             return Path.Combine(Directory.GetCurrentDirectory(), _report);
         }
 
-        public static void CreateRunReport(string localDirectoryFullName, string cobolFileName,
+        public static void CreateRunReport(string reportName, string localDirectoryFullName, string cobolFileName,
             [NotNull] CompilationStats stats, CompilationUnit compiler = null)
         {
 
@@ -160,8 +160,8 @@ namespace TypeCobol.Test
             report.AppendLine("TAT " + stats.AverageTotalProcessingTime + " - ms");
             report.AppendLine("*TAT - Total average time");
 
-            var reportFile = "Report_" + cobolFileName.Split('.')[0] + "_" +
-                                DateTime.Now.ToString("dd_MM_yyyy_H_mm_ss_fff") + ".txt";
+            var reportFile = reportName + "_" + cobolFileName.Split('.')[0] + "_" +
+                                DateTime.Now.ToString("yyyMMdd_HH_mm_ss") + ".txt";
             Directory.CreateDirectory(GetReportDirectoryPath());
             File.WriteAllText(Path.Combine(localDirectoryFullName, reportFile), report.ToString());
             Console.WriteLine(report.ToString());
