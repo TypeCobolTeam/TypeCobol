@@ -81,8 +81,6 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void CheckTypeDefinition(TypeDefinition typeDefinition)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypedUsed, typeDefinition.Name, LogType.TypeCobolUsage);
-
             if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
             {
                 var message = string.Format("TYPE '{0}' has already been declared", typeDefinition.DataType.Name);
