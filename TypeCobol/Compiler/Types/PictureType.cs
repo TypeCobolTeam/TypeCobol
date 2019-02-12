@@ -9,7 +9,7 @@ namespace TypeCobol.Compiler.Types
     /// <summary>
     /// A Type that Comes from a COBOL PICTURE clause.
     /// </summary>
-    public class PictureType : TypeCobolType
+    public class PictureType : Type
     {
         /// <summary>
         /// Empty Constructor
@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Types
         /// <param name="value">Picture string value</param>
         /// <param name="separateSign">a boolean value indicating whether the sign is separate character</param>
         public PictureType(String value, bool separateSign) : this(new PictureValidator(value, separateSign))
-        {            
+        {
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace TypeCobol.Compiler.Types
         public PictureType(PictureValidator validator)
             : base(Tags.Picture)
         {
-            AssignFromValidator(validator);            
+            AssignFromValidator(validator);
         }
 
         /// <summary>
@@ -118,6 +118,7 @@ namespace TypeCobol.Compiler.Types
                 this.IsExternalFloat = validator.ValidationContext.IsExternalFloatSequence();
                 this.Sequence = validator.ValidationContext.Sequence.ToArray();
                 this.Size = validator.ValidationContext.Size;
+                this.IsSeparateSign = validator.ValidationContext.IsSeparateSign;
                 if (validator.ValidationContext.IsDbcsSequence())
                     Category = PictureCategory.Dbcs;
                 if (this.IsExternalFloat)
@@ -329,6 +330,31 @@ namespace TypeCobol.Compiler.Types
                                         break;
                                     default:
                                         len += c.count;//double the size
+                                        break;
+                                }
+                            }
+                            return len;
+                        }
+                    case UsageFormat.National:
+                        {
+                            int len = Size;
+                            foreach (PictureValidator.Character c in Sequence)
+                            {
+                                switch (c.ch)
+                                {
+                                    case PictureValidator.SC.S:
+                                        if (IsSeparateSign)
+                                        {
+                                            len += c.count;//double the size of S.
+                                        }
+                                        break;
+                                    case PictureValidator.SC.A:
+                                    case PictureValidator.SC.B:
+                                    case PictureValidator.SC.Z:
+                                    case PictureValidator.SC.NINE:
+                                    case PictureValidator.SC.DOT:
+                                    case PictureValidator.SC.COMMA:
+                                        len += c.count;//double the size.
                                         break;
                                 }
                             }

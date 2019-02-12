@@ -525,7 +525,7 @@ namespace TypeCobol.Compiler.Types
             }
 
             if (i >= sequence.Count && firstIndex >= 0)
-            { //We have reach thn end of the sequence with a first index and no lastIndex ==>
+            { //We have reach the end of the sequence with a first index and no lastIndex ==>
               //Set the last index to the last character of the sequence
                 lastIndex = sequence.Count - 1;
                 return;
@@ -601,11 +601,11 @@ namespace TypeCobol.Compiler.Types
         {
             internal static readonly string SymbolCountCannotBeZeroMsg = "Symbol count cannot be zero";
             internal static readonly string InvalidSymbolPosMsg = "Invalid position in PICTURE string of the symbol : {0}";
-            internal static readonly string SymbolSMustOccurOnlyOnceMsg = "Character S must be repeated ont once in PICTURE string";
+            internal static readonly string SymbolSMustOccurOnlyOnceMsg = "Character S must be repeated only once in PICTURE string";
             internal static readonly string SymbolSMustBeTheFirstMsg = "S must be at the beginning of a PICTURE string";
             internal static readonly string MultipleVMsg = "V must appears only once in a PICTURE string";
             internal static readonly string WrongPPoitionMsg = "P must appears at the head or tail position of a PICTURE string";
-            internal static readonly string ZStarMutuallyExclusiveMsg = "Z and * symbols are mutually exclusise ina PICTURE string.";
+            internal static readonly string ZStarMutuallyExclusiveMsg = "Z and * symbols are mutually exclusise in a PICTURE string.";
             internal static readonly string MoreThanOne_E_CharacterMsg = "Only one occurence of E symbol can appers in a PICTURE string";
             internal static readonly string MoreThanOne_CR_CharacterMsg = "Only one occurence of CR symbol can appers in a PICTURE string";
             internal static readonly string MoreThanOne_DB_CharacterMsg = "Only one occurence of DB symbol can appers in a PICTURE string";
@@ -1154,7 +1154,7 @@ namespace TypeCobol.Compiler.Types
                     return false;
                 if (this.Sequence.Count == 0)
                     return false;
-                return this.Sequence.TrueForAll(c => c.ch == SC.G || c.ch == SC.N || c.ch == SC.B);
+                return this.Sequence.TrueForAll(c => c.ch == SC.G || c.ch == SC.B);
             }
 
             /// <summary>

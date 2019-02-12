@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Symbols;
+using static TypeCobol.Compiler.Symbols.Symbol;
 
 namespace TypeCobol.Compiler.Types
 {
     /// <summary>
     /// A Cobol Type
     /// </summary>
-    public class TypeCobolType : ISemanticData
+    public class Type : ISemanticData
     {
         /// <summary>
         /// Type tags
@@ -36,7 +37,7 @@ namespace TypeCobol.Compiler.Types
         {
             Strong = 0x01 << 0,
             Weak = 0x01 << 1,
-            Strict = 0x01 << 2
+            Strict = 0x01 << 2,
         }
 
         /// <summary>
@@ -60,7 +61,24 @@ namespace TypeCobol.Compiler.Types
             ObjectReference,
             Pointer,
             ProcedurePointer,
-            FunctionPointer
+            FunctionPointer,
+
+            //Cobol Bultin types usage
+            Omitted,
+            Alphabetic,
+            Numeric,
+            NumericEdited,
+            Alphanumeric,
+            AlphanumericEdited,
+            DBCS,
+            FloatingPoint,
+            Occurs,
+
+            //Special Usage for builtin Types
+            Boolean,
+            Date,
+            Currency,
+            String
         }
 
         /// <summary>
@@ -77,7 +95,7 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         /// <param name="tag">TypeCobol type</param>
         /// <param name="usage">Usage format</param>
-        internal TypeCobolType(Tags tag, UsageFormat usage = UsageFormat.None)
+        internal Type(Tags tag, UsageFormat usage = UsageFormat.None)
         {
             this.Tag = tag;
             this.Usage = usage;
@@ -101,7 +119,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// The Symbol associated to this type if any: This for a Program or a Function or a TYPEDEF
         /// </summary>
-        public TypeCobolSymbol Symbol
+        public Symbol Symbol
         {
             get;
             set;
@@ -116,24 +134,31 @@ namespace TypeCobol.Compiler.Types
             {
                 switch (Usage)
                 {
+                    case UsageFormat.Comp:
+                    case UsageFormat.Comp4:
+                    case UsageFormat.Comp5:
+                    case UsageFormat.Display1:
+                    case UsageFormat.National:
+                    case UsageFormat.Binary:
+                        return 2;
                     //Floating-point: Specifies for internal floating -point items (single precision)
                     //(i.e float in java, or C)
                     case UsageFormat.Comp1:
+                    case UsageFormat.FunctionPointer:
+                    case UsageFormat.ObjectReference:
+                    case UsageFormat.Index:
+                    case UsageFormat.Pointer:
                         return 4;
                     //Long floating-point: Specifies for internal  floating point items(double precision)
                     //(i.e double in java or C)
                     case UsageFormat.Comp2:
-                        return 8;
-                    case UsageFormat.ObjectReference:
-                        return 4;
-                    case UsageFormat.FunctionPointer:
-                        return 4;
-                    case UsageFormat.Pointer:
-                        return 4;
                     case UsageFormat.ProcedurePointer:
                         return 8;
-                    case UsageFormat.Index:
-                        return 4;
+                    case UsageFormat.Comp3:
+                    case UsageFormat.Display:
+                    case UsageFormat.PackedDecimal:
+                        return 1;
+
                     default:
                         throw new ArgumentException("Invalid Usage for type length calculation : " + Usage.ToString());
                 }
@@ -143,6 +168,23 @@ namespace TypeCobol.Compiler.Types
         public SemanticKinds SemanticKind
         {
             get { return SemanticKinds.Type; }
+        }
+
+        /// <summary>
+        /// Expand this type by expanding any Variable that has a TypDef type to is real COBOL85 type.
+        /// </summary>
+        /// <param name="bClone">True if the expansion must clone the type, false otheriwse.</param>
+        /// <param name="owner">Expansion requester symbol</param>
+        /// <param name="varSymIndexer">A function used to index newly created Variable symbol during expansion, can be null.</param>
+        /// <returns>The expanded type</returns>
+        public virtual Type Expand(Symbol owner, bool bClone, Func<uint> varSymIndexer)
+        {
+            return this;
+        }
+
+        public virtual void SetFlag(Flags flag, bool value)
+        {
+
         }
     }
 }
