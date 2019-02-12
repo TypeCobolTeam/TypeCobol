@@ -313,10 +313,14 @@ namespace TypeCobol.Compiler.Nodes {
         {
             var codeElement = ((Node)o).CodeElement;
             var variablesWritten = codeElement.StorageAreaWrites;
+            List<URI> variablesURI = new List<URI>();
             if (variablesWritten == null) return null;
             if (variablesWritten.Count == 0) return null;
-            if (variablesWritten.Count == 1) return new URI(variablesWritten[0].ToString());
-            throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");            
+            foreach (var codeElementStorageAreaWrite in variablesWritten)
+            {
+                variablesURI.Add(new URI(codeElementStorageAreaWrite.ToString()));
+            }
+            return variablesURI;
         }
     }
     internal class PointerDisplayableReceiversAttribute : Attribute

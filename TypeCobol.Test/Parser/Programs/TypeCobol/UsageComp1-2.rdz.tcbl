@@ -1,0 +1,17 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZF0OSM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 MyVar1 PIC 9(5) COMP-1.
+       01 MyVar2 PIC 9(5) COMP-2.
+       PROCEDURE DIVISION.
+
+       declare procedure KONotCorrectFormat private
+             input  var21 pic S9(5)
+                    var22 pic S9(06) comp
+                    var23 pic S9(07) comp-1
+                    var24 pic S9(08) comp-2
+                    var25 pic  9(10) comp-5.
+       end-declare.
+
+       END PROGRAM DVZF0OSM.

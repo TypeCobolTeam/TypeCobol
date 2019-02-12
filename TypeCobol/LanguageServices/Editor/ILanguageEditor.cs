@@ -15,6 +15,6 @@ namespace TypeCobol.LanguageServices.Editor
         /// <summary>
         /// Text document currrently displayed by the editor 
         /// </summary>
-        ITextDocument TextDocument { get; }
+        ITextDocument TextDocument { get; set; }
     }
 }

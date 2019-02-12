@@ -278,7 +278,7 @@ namespace TypeCobol.Codegen
             }
             if ("replace".Equals(pattern.Action))
             {
-                return new Replace(destination, pattern.Template, properties, group);
+                return new Replace(destination, pattern, properties, group);
             }
             if ("comment".Equals(pattern.Action))
             {

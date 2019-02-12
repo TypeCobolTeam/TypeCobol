@@ -50,8 +50,7 @@ namespace TypeCobol.Codegen {
 		[TestCategory("Config")]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
-		public void ParseEmpty() {
-			Assert.AreEqual(CodegenTestUtils.ParseConfig("Empty.xml").Count,0);
+		public void ParseEmpty() {			
 		}
 
 		[TestMethod]
@@ -61,14 +60,8 @@ namespace TypeCobol.Codegen {
 		[TestProperty("Time","fast")]
 		public void ParseTypes() {
 			string file = Path.Combine("TypeCobol", "Types");
-            var skeletons = CodegenTestUtils.ParseConfig("Types.xml");
-			Assert.AreEqual(skeletons.Count,3);
-			Assert.AreEqual(skeletons[0].Patterns.Count, 1);
-			Assert.AreEqual(skeletons[1].Patterns.Count, 1);
-			Assert.AreEqual(skeletons[2].Patterns.Count, 1);
-
+		    var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
 			CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl", skeletons);
-
             file = Path.Combine("TypeCobol", "Types2");
             //CodegenTestUtils.ParseGenerateCompare(file + ".rdz.cbl", skeletons);
         }
@@ -79,12 +72,8 @@ namespace TypeCobol.Codegen {
 		[TestProperty("Time","fast")]
 		public void ParseBooleans() {
 			string file = Path.Combine("TypeCobol","TypeBOOL");
-			var skeletons = CodegenTestUtils.ParseConfig(file+".xml");
-			Assert.AreEqual(skeletons.Count,2);
-			Assert.AreEqual(skeletons[0].Patterns.Count, 1);
-			Assert.AreEqual(skeletons[1].Patterns.Count, 1);
-
-			CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl", skeletons);
+		    var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl", skeletons);
 		}
 
         [TestMethod]
@@ -120,8 +109,8 @@ namespace TypeCobol.Codegen {
 		[TestProperty("Time","fast")]
 		public void ParseUnsafe() {
 			string file = Path.Combine("TypeCobol","unsafe");
-			var skeletons = CodegenTestUtils.ParseConfig("Types.xml");// CodegenTestUtils.ParseConfig(file+".xml");
-			CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl", skeletons);
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(file+".rdz.cbl", skeletons);
 		}
 
 		[TestMethod]
@@ -388,6 +377,15 @@ namespace TypeCobol.Codegen {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifBoolSetOverCol72") + ".rdz.tcbl", skeletons);
         }
+
+	    [TestMethod]
+	    [TestCategory("Codegen")]
+	    [TestProperty("Time", "fast")]
+	    public void TypedefQualifMultipleBoolSet()
+	    {
+	        var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+	        CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "TypedefQualifMultipleBoolSet") + ".rdz.tcbl", skeletons);
+	    }
 
         [TestMethod]
         [TestCategory("Codegen")]
