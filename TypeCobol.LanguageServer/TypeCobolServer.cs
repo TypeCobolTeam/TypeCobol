@@ -410,13 +410,18 @@ namespace TypeCobol.LanguageServer
                     //only for params of a function declaration
                     if (userFilterToken != null && (lastSignificantToken.TokenType == TokenType.QualifiedNameSeparator || lastSignificantToken.TokenType == TokenType.TYPE))
                     {
-                        //get the node of the param
-                        var param = fun.Profile.Parameters.FirstOrDefault(p =>
-                            p.TypeDefinition != null && p.TypeDefinition.QualifiedName.ToString() ==
-                            GetFullQualifiedName(matchingCodeElement.ConsumedTokens, userFilterToken));
-
-                        if(param?.TypeDefinition != null)
-                            message = param.TypeDefinition.ToString();
+                        foreach (var param in fun.Profile.Parameters)
+                        {
+                            //if the hovered position is inside this parameter
+                            //line + 1 : because start index is 0
+                            if (param.CodeElement.Line == parameters.position.line + 1 && 
+                                param.CodeElement.StartIndex < parameters.position.character && 
+                                param.CodeElement.StopIndex > parameters.position.character)
+                            {
+                                if (param.TypeDefinition != null)
+                                    message = param.TypeDefinition.ToString();
+                            }
+                        }
                     }
                     break;
             }
@@ -980,44 +985,6 @@ namespace TypeCobol.LanguageServer
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Get the qualified name out of a hovered UserDefinedWord
-        /// </summary>
-        /// <param name="consumedToken"> he list of all consumed token in the CodeElement</param>
-        /// <param name="currentToken"> The hovered word</param>
-        /// <returns></returns>
-        private string GetFullQualifiedName(IList<Token> consumedToken, Token currentToken)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < consumedToken.Count; i++)
-            {
-                if (consumedToken[i].Equals(currentToken))
-                {
-                    int j = i;
-                    //get the tail
-                    while (j >= 0 && consumedToken[j - 1].TokenType == TokenType.QualifiedNameSeparator)
-                    {
-                        sb.Append(consumedToken[j - 2].Text + '.');
-                        j = j - 2;
-                    }
-
-                    sb.Append(currentToken.Text + '.');
-                    j = i;
-
-                    //get the head
-                    while (j < consumedToken.Count && consumedToken[j + 1].TokenType == TokenType.QualifiedNameSeparator)
-                    {
-                        sb.Append(consumedToken[j + 2].Text + '.');
-                        j = j + 2;
-                    }
-                }
-            }
-
-            sb.Remove(sb.Length - 1, 1);
-            return sb.ToString();
         }
 
     }
