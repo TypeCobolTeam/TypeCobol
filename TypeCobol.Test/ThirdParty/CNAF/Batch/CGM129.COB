@@ -326,8 +326,7 @@
                                                    VALUE LOW-VALUES.    WSHWZ007
            05 CEA-EIBRCODE                       PIC X(6).              WSHWZ007
          03 CEA-ANALYZE-AREA                   REDEFINES CEA-WORK-AREA. WSHWZ007
-           05 CEA-TP-RETURN-CODE               PIC S9(4) COMP-1.        WSHWZ007
-      *    05 CEA-TP-RETURN-CODE                         BINARY-SHORT.  WSHWZ007
+           05 CEA-TP-RETURN-CODE               PIC S9(4) .              WSHWZ007
               88 CEA-TP-RETURN-NORMAL            VALUE +0.              WSHWZ007
               88 CEA-TP-RETURN-QZERO             VALUE +1.              WSHWZ007
               88 CEA-TP-RETURN-ITEMERR           VALUE +1.              WSHWZ007
@@ -396,8 +395,7 @@
        01 HMEM-CTB-KEY.                                                 HMEML020
          03 HMEM-CTB-USER-KEY.                                          HMEML020
            05 HMEM-CTB-USER-KEY-ID            PIC X(17).                HMEML020
-           05 HMEM-CTB-USER-KEY-EFF-DATE      PIC S9(7) COMP-2.         HMEML020
-      *    05 HMEM-CTB-USER-KEY-EFF-DATE                BINARY-LONG.    HMEML020
+           05 HMEM-CTB-USER-KEY-EFF-DATE      PIC S9(7).                HMEML020
          03 HMEM-CTB-EFF-DATE-FLAG            PIC X(1).                 HMEML020
            88 HMEM-CTB-EFF-DATE-USED       VALUE "Y".                   HMEML020
            88 HMEM-CTB-EFF-DATE-NOT-USED   VALUE "N".                   HMEML020
@@ -496,11 +494,9 @@
            05  EIBTRMID                    PIC X(12).                   DFHEIBLK
            05  EIBRCODE                    PIC X(6).                    DFHEIBLK
            05  EIBAID                      PIC X.                       DFHEIBLK
-           05  EIBCPOSN                    PIC S9(4) COMP-1.            DFHEIBLK
-      *    05  EIBCPOSN                              BINARY-SHORT.      DFHEIBLK
+           05  EIBCPOSN                    PIC S9(4) .                  DFHEIBLK
            05  EIBFN                       PIC X(2).                    DFHEIBLK
-           05  EIBCALEN                    PIC S9(4) COMP-1.            DFHEIBLK
-      *    05  EIBCALEN                              BINARY-SHORT.      DFHEIBLK
+           05  EIBCALEN                    PIC S9(4) .                  DFHEIBLK
            05  EIBTASKN                    PIC S9(7)     COMP-3.        DFHEIBLK
            05  EIBTTYPE                    PIC X(2).                    DFHEIBLK
                88  EIB-DKU7107                         VALUE  "K7".     DFHEIBLK
@@ -559,24 +555,19 @@
                                                                         WSHWZ009
        01  LITERALS.                                                    WSHWZ009
                                                                         WSHWZ009
-         03 LT-NO-ERROR-OCCURRED                 PIC S9(4) COMP-1       WSHWZ009
-      *  03 LT-NO-ERROR-OCCURRED                           BINARY-SHORT WSHWZ009
+         03 LT-NO-ERROR-OCCURRED                 PIC S9(4)              WSHWZ009
                                                                         WSHWZ009
                                                    VALUE +0000.         WSHWZ009
-         03 LT-FLD-ERROR-OCCURRED                PIC S9(4) COMP-1       WSHWZ009
-      *  03 LT-FLD-ERROR-OCCURRED                          BINARY-SHORT WSHWZ009
+         03 LT-FLD-ERROR-OCCURRED                PIC S9(4)              WSHWZ009
                                                                         WSHWZ009
                                                    VALUE +0001.         WSHWZ009
-         03 LT-REL-ERROR-OCCURRED                PIC S9(4) COMP-1       WSHWZ009
-      *  03 LT-REL-ERROR-OCCURRED                          BINARY-SHORT WSHWZ009
+         03 LT-REL-ERROR-OCCURRED                PIC S9(4)              WSHWZ009
                                                                         WSHWZ009
                                                    VALUE +0002.         WSHWZ009
-         03 LT-APPL-PROCESSING-ERROR             PIC S9(4) COMP-1       WSHWZ009
-      *  03 LT-APPL-PROCESSING-ERROR                       BINARY-SHORT WSHWZ009
+         03 LT-APPL-PROCESSING-ERROR             PIC S9(4)              WSHWZ009
                                                                         WSHWZ009
                                                    VALUE +0001.         WSHWZ009
-         03 LT-INFORMATION-ERROR-OCCURRED        PIC S9(4) COMP-1       WSHWZ009
-      *  03 LT-INFORMATION-ERROR-OCCURRED                  BINARY-SHORT WSHWZ009
+         03 LT-INFORMATION-ERROR-OCCURRED        PIC S9(4)              WSHWZ009
                                                                         WSHWZ009
                                                    VALUE +0003.         WSHWZ009
          03 LT-APPL-REQUIRES-ABEND               PIC X(1) VALUE "1".    WSHWZ009
