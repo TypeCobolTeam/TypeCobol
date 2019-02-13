@@ -344,7 +344,7 @@ namespace TypeCobol.Server
 
                     }
 
-                    if (diagnostics.Count == 0)
+                    if (diagnostics.All(d => d.Info.Severity != Severity.Error))
                     {
                         if (config.ExecToStep >= ExecutionStep.CrossCheck && reports != null && reports.Count > 0)
                         {
