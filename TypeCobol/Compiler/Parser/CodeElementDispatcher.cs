@@ -28,7 +28,8 @@ namespace TypeCobol.Compiler.Parser
         void OnNode(Node node, Program program);
     }
 
-    public class NodeDispatcher : NodeListener {
+    public class NodeDispatcher : NodeListener
+    {
         /// <summary>
         /// List of Static NodeListener Factory
         /// </summary>
@@ -76,9 +77,18 @@ namespace TypeCobol.Compiler.Parser
         private IList<NodeListener> _listeners = null;
 
         /// <summary>
+        /// Add a listener
+        /// </summary>
+        /// <param name="listener">The listener to be added</param>
+        protected virtual void AddListener(NodeListener listener)
+        {
+            System.Diagnostics.Debug.Assert(_listeners != null);
+            _listeners.Add(listener);
+        }
+
+        /// <summary>
         /// Adds to listeners one instance of each type implementing CodeElementListener interface
         /// and defined in namespace TypeCobol.Compiler.Diagnostics.
-        /// TODO: the list of namespace where CodeElementListeners are searched for should not be hard-coded
         /// </summary>
         internal void CreateListeners()
         {
@@ -101,7 +111,7 @@ namespace TypeCobol.Compiler.Parser
                     NodeListener listener = factory();
                     if (listener != null)
                     {
-                        _listeners.Add(listener);
+                        AddListener(listener);
                     }
                 }
             }
