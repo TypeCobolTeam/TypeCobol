@@ -8,7 +8,7 @@ namespace TypeCobol.Codegen.Actions
     /// <summary>
     /// Comment Node Action
     /// </summary>
-    public class Clone : EventArgs, Action
+    public class Clone : EventArgs, Action, ICloneAction
     {
         public string Group { get; private set; }
         internal Node Node;
@@ -58,11 +58,12 @@ namespace TypeCobol.Codegen.Actions
             if (!node.IsFlagSet(Node.Flag.IsCloned))
             {
                 Node cloned = (Node)node.Clone();
-                //Add it in the same parent than the original node
-                this.Node.Parent.Add(cloned, node.Parent.ChildrenCount);
+                //No parent for the cloned node.
+                cloned.SetParent(null);
                 //Do not comment a cloned node
                 cloned.SetFlag(Node.Flag.IgnoreCommentAction, true);
                 cloned.SetFlag(Node.Flag.IsCloned, true);
+                ClonedNodes = new List<Node>() {cloned};
                
                 List<Action> actions = new List<Action>();
                 CollectActions(cloned, actions);
@@ -71,5 +72,7 @@ namespace TypeCobol.Codegen.Actions
 
             return null;
         }
+
+        public IList<Node> ClonedNodes { get; private set; }
     }
 }

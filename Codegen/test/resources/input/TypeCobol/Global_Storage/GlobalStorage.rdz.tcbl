@@ -7,6 +7,9 @@
        01 G-Date            TYPE Date.
        01 G-TechCtx         TYPE Bool.
        01 DuplicatedVar     TYPE Bool.
+       01 purCblVar PIC X(22).
+       01 purCblGrp.
+          48 purCblVar PIC X(32).
       
        WORKING-STORAGE SECTION.
       * 01 MyType TYPEDEF STRICT PIC X.
