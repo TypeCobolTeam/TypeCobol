@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Types;
 using Type = TypeCobol.Compiler.Types.Type;
@@ -29,17 +31,32 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name">Function's name</param>
         /// <param name="parameters">Function's paramaetrs</param>
-        /// <param name="returnType">Function's return type</param>
-        public FunctionSymbol(String name, List<VariableSymbol> parameters, FunctionType returnType)
+        /// <param name="retVar">Function's return variable</param>
+        public FunctionSymbol(String name, List<VariableSymbol> parameters, VariableSymbol retVar)
+            : this(name, new FunctionType(parameters, retVar))
+        {            
+        }
+
+        /// <summary>
+        /// FunctionType constructor.
+        /// </summary>
+        /// <param name="name">Function's name</param>
+        /// <param name="funType">Function's type</param>
+        public FunctionSymbol(String name, FunctionType funType)
             : base(name)
         {
-            this.FunctionType = new FunctionType(parameters, returnType);
+            this.FunctionType = funType;
         }
 
         /// <summary>
         /// Function parameters.
         /// </summary>
         public List<VariableSymbol> Parameters => FunctionType?.Parameters;
+
+        /// <summary>
+        /// variable symbol
+        /// </summary>
+        public VariableSymbol ReturnSymbol => FunctionType?.ReturnSymbol;
 
         /// <summary>
         /// The return type
@@ -57,7 +74,7 @@ namespace TypeCobol.Compiler.Symbols
                 //Enter Parameters in the Scope.
                 foreach (var param in value.Parameters)
                 {
-                    LinkageStorageData.Enter(param);
+                    LinkageStorageData.EnterIfNotExist(param);
                 }
                 base.Type = value;                
             }
@@ -76,5 +93,65 @@ namespace TypeCobol.Compiler.Symbols
                 this.FunctionType = (FunctionType)value;
             }
         }
+
+        /// <summary>
+        /// Function are not considered of Nested Programs.
+        /// </summary>
+        public override bool IsNested => false;
+
+        /// <summary>
+        /// Get the Variable visibility mask.
+        /// </summary>
+        public override Flags VariableVisibilityMask => Flags.GLOBAL_STORAGE;
+
+        /// <summary>
+        /// Get the type visibility mask for a procedure.
+        /// </summary>
+        public override Flags TypeVisibilityMask => Flags.Private | Flags.Public;
+
+        /// <summary>
+        /// Function have their types declared in their enclosing program.
+        /// So lookup is performed backward.
+        /// </summary>
+        /// <param name="rootScope">The top rootScope</param>
+        /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
+        /// <param name="bCreate">true if the TypeDef symbol shall be created if not existing, false otherwise.</param>
+        /// <returns>The TypedefSymbol if found, null otherwise.</returns>
+        public override Scope<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path,
+            bool bCreate)
+        {
+            System.Diagnostics.Debug.Assert(Owner.Kind == Kinds.Function || Owner.Kind == Kinds.Program);
+            ProgramSymbol prg = (ProgramSymbol) Owner;
+            return prg.ReverseResolveType(rootScope, path, bCreate);
+        }
+
+        /// <summary>
+        /// Dump this symbol in the given TextWriter instance
+        /// </summary>
+        /// <param name="tw">TextWriter instance</param>
+        /// <param name="indentLevel">Indentation level</param>
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write(s);
+            tw.Write("DECLARE PROCEDURE ");
+            tw.Write(Name);
+            tw.Write(". ");
+            DumpSymbolFlags(Flag, tw);
+            tw.WriteLine();
+            tw.Write(s);
+            tw.Write("PROCEDURE DIVISION");
+            this.Type?.Dump(tw, indentLevel + 1);
+            tw.WriteLine();
+            tw.Write("  ");
+            tw.Write(s);
+            tw.Write('.');
+            tw.WriteLine();
+            tw.Write(s);
+            tw.Write("END-DECLARE");
+            tw.Write(".");
+        }
+
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitFunctionSymbol(this, arg); }
     }
 }

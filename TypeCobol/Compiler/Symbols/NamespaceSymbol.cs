@@ -20,9 +20,9 @@ namespace TypeCobol.Compiler.Symbols
         public NamespaceSymbol(String name)
             : base(name, Kinds.Namespace)
         {
-            Types = new Scope<TypedefSymbol>();
-            Programs = new Scope < ProgramSymbol >();
-            Namespaces = new Scope<NamespaceSymbol>();
+            Types = new Scope<TypedefSymbol>(this);
+            Programs = new Scope < ProgramSymbol >(this);
+            Namespaces = new Scope<NamespaceSymbol>(this);
         }
 
         /// <summary>
@@ -82,5 +82,7 @@ namespace TypeCobol.Compiler.Symbols
             get;
             protected set;
         }
+
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitNamespaceSymbol(this, arg); }
     }
 }

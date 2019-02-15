@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Scopes;
 
 namespace TypeCobol.Compiler.Symbols
@@ -91,7 +92,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="progName">The program name to be looked up</param>
         /// <param name="bCreate">true if an instance of the program symbol should be created, false otherwise.</param>
         /// <returns></returns>
-        private Scope<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, bool bCreate)
+        protected virtual Scope<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, bool bCreate)
         {
             AbstractScope currentScope = null;
             AbstractScope stopScope = null;
@@ -105,7 +106,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="progName">The program name to be looked up</param>
         /// <param name="bCreate">true if an instance of the program symbol should be created, false otherwise.</param>
         /// <returns></returns>
-        private Scope<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, bool bCreate, out AbstractScope currentScope, out AbstractScope stopScope)
+        protected virtual Scope<ProgramSymbol>.Entry LookupProgram(AbstractScope rootScope, string progName, bool bCreate, out AbstractScope currentScope, out AbstractScope stopScope)
         {
             stopScope = rootScope;
             currentScope = this;
@@ -155,7 +156,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <param name="path">Looking path à la COBOL85 --> in Reverse order</param>
         /// <param name="bCreate">true if the TypeDef symbol shall be created if not existing, false otherwise.</param>
         /// <returns>The TypedefSymbol if found, null otherwise.</returns>
-        public Scope<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path, bool bCreate)
+        public virtual Scope<TypedefSymbol>.Entry ReverseResolveType(AbstractScope rootScope, string[] path, bool bCreate)
         {
             System.Diagnostics.Debug.Assert(rootScope != null);
             System.Diagnostics.Debug.Assert(path != null);
@@ -206,43 +207,6 @@ namespace TypeCobol.Compiler.Symbols
                     case 1://We must look for a Program
                         {
                             Scope<ProgramSymbol>.Entry entry = LookupProgram(stopScope, path[i], bCreate, out currentScope, out stopScope);
-                        //    Scope<ProgramSymbol>.Entry entry = null;
-                        //    while (currentScope != null)
-                        //    {
-                        //        var programs = currentScope.Programs;
-                        //        if (programs != null)
-                        //        {
-                        //            entry = programs.Lookup(path[i]);
-                        //            if (entry != null)
-                        //            {
-                        //                System.Diagnostics.Debug.Assert(entry.Count == 1);
-                        //                currentScope = entry[0] as AbstractScope;
-                        //                stopScope = currentScope;
-                        //                break;
-                        //            }
-                        //        }
-                        //        if (currentScope.Owner != null && currentScope != stopScope &&
-                        //            (currentScope.Owner.Kind == Kinds.Namespace || currentScope.Owner.Kind == Kinds.Program || currentScope.Owner.Kind == Kinds.Function))
-                        //        {
-                        //            currentScope = currentScope.Owner as AbstractScope;
-                        //        }
-                        //        else
-                        //        {
-                        //            currentScope = null;
-                        //        }
-                        //    }
-                        //    if (entry == null && bCreate)
-                        //    {
-                        //        var programs = stopScope.Programs;
-                        //        if (programs != null)
-                        //        {
-                        //            ProgramSymbol pgmSym = new ProgramSymbol(path[i]);
-                        //            programs.Enter(pgmSym);
-                        //            entry = programs.Lookup(path[i]);
-                        //            currentScope = entry[0] as AbstractScope;
-                        //            stopScope = currentScope;
-                        //        }
-                        //    }
                         }
                         break;
                     default://We are looking for a Namepace
@@ -252,5 +216,39 @@ namespace TypeCobol.Compiler.Symbols
             }
             return null;
         }
+
+        /// <summary>
+        /// Compute the path represented by a Symbol Reference
+        /// </summary>
+        /// <param name="symRef">The Symbol Reference instance</param>
+        /// <returns>The corresponding Path in the COBOL IN|OF ORDER. The paths are return ed in lower cases</returns>
+        public static string[] SymbolReferenceToPath(SymbolReference datSymRef)
+        {
+            string[] paths = null;
+            IList<SymbolReference> refs = null;
+
+            if (datSymRef.IsTypeCobolQualifiedReference)
+            {
+                TypeCobolQualifiedSymbolReference tc_qualifiedSymbolReference = datSymRef as TypeCobolQualifiedSymbolReference;
+                refs = tc_qualifiedSymbolReference.AsList();
+            }
+            else if (datSymRef.IsQualifiedReference)
+            {//Path in reverse order DVZF0OS3::EventList --> {EventList, DVZF0OS3}
+                QualifiedSymbolReference qualifiedSymbolReference = datSymRef as QualifiedSymbolReference;
+                refs = qualifiedSymbolReference.AsList();
+            }
+            else
+            {
+                refs = new List<SymbolReference>() { datSymRef };
+            }
+
+            paths = new string[refs.Count];
+            for (int i = 0; i < refs.Count; i++)
+            {
+                paths[i] = refs[i].Name.ToLower();
+            }
+
+            return paths;
+        }        
     }
 }

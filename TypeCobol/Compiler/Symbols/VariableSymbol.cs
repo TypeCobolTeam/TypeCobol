@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Scopes;
+using TypeCobol.Compiler.Types;
+using Type = TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Symbols
 {
@@ -16,19 +20,8 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         /// <param name="name"></param>
         public VariableSymbol(String name)
-            : this(name, 0)
-        {
-        }
-
-        /// <summary>
-        /// Index Name creator
-        /// </summary>
-        /// <param name="name">Variable's name</param>
-        /// <param name="varIndex">Internal Variable Index</param>
-        internal VariableSymbol(String name, uint varIndex)
             : base(name, Kinds.Variable)
         {
-            GlobalIndex = varIndex;
         }
 
         /// <summary>
@@ -172,5 +165,88 @@ namespace TypeCobol.Compiler.Symbols
             }
             Redefines.Add(symbol);
         }
+
+        /// <summary>
+        /// Lookup for the parent having the given Level
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="inclusive">true if this symbol must be taken in account, false otherwise</param>
+        /// <returns>The parent symbol of the level if one exists, null otherwise</returns>
+        public override Symbol LookupParentLevelSymbol(int level, bool inclusive)
+        {
+            if (this.Level == level && inclusive)
+                return this;
+            if (Owner == null)
+                return null;
+            if (Owner.Kind != Kinds.Variable)
+            {
+                return null;
+            }
+
+            return ((VariableSymbol) Owner).Level == level ? Owner : Owner.LookupParentLevelSymbol(level, true);
+        }
+
+        /// <summary>
+        /// Call to normalize an expanded symbol.
+        /// </summary>
+        /// <param name="scope">The normalization scope</param>
+        internal virtual void NormalizeExpandedSymbol(Scope<VariableSymbol> scope)
+        {
+
+        }
+
+        private Types.Type MyExpandedType { get; set; }
+        public override Types.Type ExpandedType(ProgramSymbol program)
+        {
+            if (this.Type == null)
+                return null;
+            if (MyExpandedType != null)
+                return MyExpandedType;
+            if (this.Type.MayExpand)
+            {
+                TypedefExpander expander = new TypedefExpander(program);
+                MyExpandedType = this.Type.Accept(expander, this);
+                return MyExpandedType;
+            }
+            else
+            {
+                return MyExpandedType = this.Type;
+            }
+        }
+
+        /// <summary>
+        /// Dump this symbol in the given TextWriter instance
+        /// </summary>
+        /// <param name="tw">TextWriter instance</param>
+        /// <param name="indentLevel">Indentation level</param>
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write(this.Level.ToString("00"));
+            tw.Write(' ');
+            tw.Write(Name);
+            tw.Write(' ');
+            bool bHasDot = false;
+            if (Type != null)
+            {
+                if (Type.TypeComponent?.Tag == Type.Tags.Record && !HasFlag(Flags.Renames))
+                {
+                    tw.WriteLine(".");
+                    this.Type.Dump(tw, indentLevel + 1);
+                    bHasDot = true;
+                }
+                else
+                {
+                    this.Type.Dump(tw, 0);
+                }                
+            }
+            else
+                tw.Write("???");
+            DumpSymbolFlags(this.Flag, tw);
+            if (!bHasDot)
+                tw.WriteLine('.');
+        }
+
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitVariableSymbol(this, arg); }
     }
 }

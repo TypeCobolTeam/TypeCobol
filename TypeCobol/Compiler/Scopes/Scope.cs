@@ -86,17 +86,28 @@ namespace TypeCobol.Compiler.Scopes
                 System.Diagnostics.Debug.Assert(symbol != null);
                 Symbol = symbol;
             }
+        protected Entry()
+            {
+
+            }
         }
 
         /// <summary>
         /// A Multi symbol entry class that represent several symbol.
         /// </summary>
-        private class MultiSymbols : Entry
+        public class MultiSymbols : Entry
         {
             /// <summary>
             /// All Symbols
             /// </summary>
             private List<T> _symbols = new List<T>();
+            /// <summary>
+            /// Empty constructor
+            /// </summary>
+            public MultiSymbols()
+            {                
+            }
+
             /// <summary>
             /// Constructor with at list one symbol.
             /// </summary>
@@ -111,6 +122,10 @@ namespace TypeCobol.Compiler.Scopes
             /// <param name="symbol">The symbol to be added</param>
             public void Add(T symbol)
             {
+                if (Count == 0)
+                {
+                    base.Symbol = symbol;
+                }
                 _symbols.Add(symbol);
             }
 
@@ -156,6 +171,15 @@ namespace TypeCobol.Compiler.Scopes
         List<T> _orderedSymbols = null;
 
         /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="owner">Scope Owner</param>
+        public Scope(Symbol owner)
+        {
+            this.Owner = owner;
+        }
+
+        /// <summary>
         /// Enter a Symbol in this scope, if a previous symbol with the same name exits, then a MultySymbols entry
         /// will be used to store the nes symbol.
         /// </summary>
@@ -163,6 +187,8 @@ namespace TypeCobol.Compiler.Scopes
         /// <returns>The entry of the symbol</returns>
         public Entry Enter(T sym)
         {
+            System.Diagnostics.Debug.Assert(sym != null);
+            System.Diagnostics.Debug.Assert(sym.Name != null);
             if (_symbols == null)
             {
                 _symbols = new Dictionary<String, Entry >();
@@ -336,5 +362,18 @@ namespace TypeCobol.Compiler.Scopes
         /// Get the list of symbols in this scope, in entering order.
         /// </summary>
         internal IList<T> Symbols => _orderedSymbols;
+
+        /// <summary>
+        /// Change the Owner of this scope, and does it for all symbols.
+        /// </summary>
+        /// <param name="owner">The new Owner</param>
+        public void ChangeOwner(TypedefSymbol owner)
+        {
+            this.Owner = owner;
+            foreach (var field in this)
+            {
+                field.Owner = owner;
+            }
+        }
     }
 }

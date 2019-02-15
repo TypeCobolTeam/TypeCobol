@@ -284,7 +284,6 @@ namespace TypeCobol.Compiler.Types
             }
         }
 
-
         /// <summary>
         /// Dertermine if the given character is a simple insertion character.
         /// </summary>
@@ -591,6 +590,60 @@ namespace TypeCobol.Compiler.Types
             {
                 ch = c;
                 count = n;
+            }
+
+            public override string ToString()
+            {
+                string s = null;
+                switch (ch)
+                {
+                    case SC.A:
+                        s = "A";
+                        break;
+                    case SC.B:
+                        s = "B"; break;
+                    case SC.E:
+                        s = "E"; break;
+                    case SC.G:
+                        s = "G"; break;
+                    case SC.N:
+                        s = "N"; break;
+                    case SC.P:
+                        s = "P"; break;
+                    case SC.S:
+                        s = "S"; break;
+                    case SC.V:
+                        s = "V"; break;
+                    case SC.X:
+                        s = "X"; break;
+                    case SC.Z:
+                        s = "Z"; break;
+                    case SC.NINE:
+                        s = "9"; break;
+                    case SC.ZERO:
+                        s = "0"; break;
+                    case SC.SLASH:
+                        s = "/"; break;
+                    case SC.COMMA:
+                        s = ","; break;
+                    case SC.DOT:
+                        s = "."; break;
+                    case SC.PLUS:
+                        s = "+"; break;
+                    case SC.MINUS:
+                        s = "-"; break;
+                    case SC.STAR:
+                        s = "*"; break;
+                    case SC.CS:
+                        s = "."; break;
+                    case SC.CR:
+                        s = "CR"; break;
+                    case SC.DB:
+                        s = "DB"; break;
+                    default:
+                        throw new ArgumentException();
+                }
+                return count > 0 ? (s +'(' + count +')') : s;
             }
         }
 

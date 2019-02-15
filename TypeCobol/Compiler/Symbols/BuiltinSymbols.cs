@@ -36,34 +36,34 @@ namespace TypeCobol.Compiler.Symbols
         /// </summary>
         static BuiltinSymbols()
         {
-            Omitted = new TypedefSymbol("Omitted");
-            Omitted.Type = new TypedefType(BuiltinTypes.OmittedType);
-            Alphabetic = new TypedefSymbol("Alphabetic");
-            Alphabetic.Type = new TypedefType(BuiltinTypes.AlphabeticType);
-            Numeric = new TypedefSymbol("Numeric");
-            Numeric.Type = new TypedefType(BuiltinTypes.NumericType);
-            NumericEdited = new TypedefSymbol("NumericEdited");
-            NumericEdited.Type = new TypedefType(BuiltinTypes.NumericEditedType);
-            Alphanumeric = new TypedefSymbol("Alphanumeric");
-            Alphanumeric.Type = new TypedefType(BuiltinTypes.AlphanumericType);
-            AlphanumericEdited = new TypedefSymbol("AlphanumericEdited");
-            AlphanumericEdited.Type = new TypedefType(BuiltinTypes.AlphanumericEditedType);
-            DBCS = new TypedefSymbol("DBCS");
-            DBCS.Type = new TypedefType(BuiltinTypes.DBCSType);
-            FloatingPoint = new TypedefSymbol("FloatingPoint");
-            FloatingPoint.Type = new TypedefType(BuiltinTypes.FloatingPointType);
-            Occurs = new TypedefSymbol("Array");
-            Occurs.Type = new TypedefType(BuiltinTypes.OccursType);
+            Omitted = new TypedefSymbol(string.Intern("Omitted"));
+            Omitted.Type = new TypedefType(Omitted, BuiltinTypes.OmittedType);
+            Alphabetic = new TypedefSymbol(string.Intern("Alphabetic"));
+            Alphabetic.Type = new TypedefType(Alphabetic, BuiltinTypes.AlphabeticType);
+            Numeric = new TypedefSymbol(string.Intern("Numeric"));
+            Numeric.Type = new TypedefType(Numeric, BuiltinTypes.NumericType);
+            NumericEdited = new TypedefSymbol(string.Intern("NumericEdited"));
+            NumericEdited.Type = new TypedefType(NumericEdited, BuiltinTypes.NumericEditedType);
+            Alphanumeric = new TypedefSymbol(string.Intern("Alphanumeric"));
+            Alphanumeric.Type = new TypedefType(Alphanumeric, BuiltinTypes.AlphanumericType);
+            AlphanumericEdited = new TypedefSymbol(string.Intern("AlphanumericEdited"));
+            AlphanumericEdited.Type = new TypedefType(AlphanumericEdited, BuiltinTypes.AlphanumericEditedType);
+            DBCS = new TypedefSymbol(string.Intern("DBCS"));
+            DBCS.Type = new TypedefType(DBCS, BuiltinTypes.DBCSType);
+            FloatingPoint = new TypedefSymbol(string.Intern("FloatingPoint"));
+            FloatingPoint.Type = new TypedefType(FloatingPoint, BuiltinTypes.FloatingPointType);
+            Occurs = new TypedefSymbol(string.Intern("Array"));
+            Occurs.Type = new TypedefType(Occurs, BuiltinTypes.OccursType);
 
 
-            Boolean = new TypedefSymbol("Bool");
-            Boolean.Type = new TypedefType(BuiltinTypes.BooleanType);
-            Date = new TypedefSymbol("Date");
-            Date.Type = new TypedefType(BuiltinTypes.DateType);
-            Currency = new TypedefSymbol("Currency");
-            Currency.Type = new TypedefType(BuiltinTypes.CurrencyType);
-            String = new TypedefSymbol("String");
-            String.Type = new TypedefType(BuiltinTypes.StringType);
+            Boolean = new TypedefSymbol(string.Intern("Bool"));
+            Boolean.Type = new TypedefType(Boolean, BuiltinTypes.BooleanType);
+            Date = new TypedefSymbol(string.Intern("Date"));
+            Date.Type = new TypedefType(Date, BuiltinTypes.DateType);
+            Currency = new TypedefSymbol(string.Intern("Currency"));
+            Currency.Type = new TypedefType(Currency, BuiltinTypes.CurrencyType);
+            String = new TypedefSymbol(string.Intern("String"));
+            String.Type = new TypedefType(String, BuiltinTypes.StringType);
         }
 
         /// <summary>

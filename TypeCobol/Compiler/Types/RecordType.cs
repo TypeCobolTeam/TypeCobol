@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scopes;
 using TypeCobol.Compiler.Symbols;
 using static TypeCobol.Compiler.Symbols.Symbol;
@@ -19,62 +21,75 @@ namespace TypeCobol.Compiler.Types
         /// </summary>
         private Scope<VariableSymbol> _scope;
 
-        public RecordType() : base(Tags.Record)
+        /// <summary>
+        /// Scope Owner constructor
+        /// </summary>
+        /// <param name="owner">Owner of the record scope if any</param>
+        public RecordType(Symbol owner) : base(Tags.Record)
         {
-            _scope = new Scope<VariableSymbol>();
+            _scope = new Scope<VariableSymbol>(owner);
+            _scope.Owner = owner;
         }
+
         /// <summary>
         /// Fields in this Records.
         /// </summary>
         public IList<VariableSymbol> Fields => Scope.Symbols;
 
         /// <summary>
-        /// Get the scope of this reecord.
+        /// Get the scope of this record.
         /// </summary>
-        public Scope<VariableSymbol> Scope => _scope;
-
-        public override Type Expand(Symbol owner, bool bClone, Func<uint> varSymIndexer)
+        public Scope<VariableSymbol> Scope
         {
-            if (bClone)
-            {
-                RecordType recType = new RecordType();
-                foreach (var varSym in Scope.Symbols)
-                {
-                    VariableSymbol sym = (VariableSymbol)varSym.Clone();
-                    if (varSymIndexer != null)
-                    {//Fresh variable with a new Global Index
-                        varSym.GlobalIndex = varSymIndexer();
-                    }
-                    recType.Scope.Enter(sym);
-                    //Check this symbol too for it to be expanded if necessary
-                    sym.Check(varSymIndexer);
-                    sym.Owner = owner;
-                    //Propagate DataDivision location
-                    sym.SetFlag(Symbol.Flags.FILE_SECTION, owner.HasFlag(Symbol.Flags.FILE_SECTION));
-                    sym.SetFlag(Symbol.Flags.GLOBAL_STORAGE, owner.HasFlag(Symbol.Flags.GLOBAL_STORAGE));
-                    sym.SetFlag(Symbol.Flags.WORKING_STORAGE, owner.HasFlag(Symbol.Flags.WORKING_STORAGE));
-                    sym.SetFlag(Symbol.Flags.LOCAL_STORAGE, owner.HasFlag(Symbol.Flags.LOCAL_STORAGE));
-                    sym.SetFlag(Symbol.Flags.LINKAGE, owner.HasFlag(Symbol.Flags.LINKAGE));
-                }
-                return recType;
-            }
-            else
-            {
-                foreach (var varSym in Scope.Symbols)
-                {
-                    varSym.Check(varSymIndexer);
-                }
-                return this;
-            }
+            get => _scope;
+            internal set => _scope = value;
         }
 
-        public override void SetFlag(Flags flag, bool value)
+        internal override void SetFlag(Flags flag, bool value)
         {
+            base.SetFlag(flag, value);
             foreach (var varSym in Scope.Symbols)
             {
                 varSym.SetFlag(flag, value, true);
             }
         }
 
+        /// <summary>
+        /// Using Cobol some records can have a leading type
+        /// which can be a USAGE type or a PICTURE Type, for instance;
+        /// 
+        /// 10  checkToDo-value PIC X VALUE LOW-VALUE.
+        ///        88  checkToDo VALUE 'T'.
+        ///        88  checkToDo-false VALUE 'F'
+        ///             X'00' thru 'S'
+        ///             'U' thru X'FF'.
+        ///
+        /// the leading type is PIC X.
+        /// </summary>
+        public Type LeadingType
+        {
+            get;
+            set;
+        }
+        public override Type TypeComponent => this;
+
+        /// <summary>
+        /// A Record may always expand to another records because it is related to a new Symbol owner.
+        /// </summary>
+        public override bool MayExpand => true;
+
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            indentLevel++;            
+            foreach (var field in Scope)
+            {                
+                string s = new string(' ', 2 * indentLevel);
+                tw.Write(s);
+                field.Dump(tw, indentLevel);
+            }
+            --indentLevel;
+        }
+
+        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitRecordType(this, s); }
     }
 }

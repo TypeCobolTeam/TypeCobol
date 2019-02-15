@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Symbols;
 using static TypeCobol.Compiler.Symbols.Symbol;
 
@@ -12,7 +15,7 @@ namespace TypeCobol.Compiler.Types
     /// <summary>
     /// A Cobol Type
     /// </summary>
-    public class Type : ISemanticData
+    public class Type : ISemanticData, ICloneable
     {
         /// <summary>
         /// Type tags
@@ -28,16 +31,6 @@ namespace TypeCobol.Compiler.Types
             Function,
             Typedef,
             Renames
-        }
-
-        /// <summary>
-        /// Type's flags
-        /// </summary>
-        public enum Flag
-        {
-            Strong = 0x01 << 0,
-            Weak = 0x01 << 1,
-            Strict = 0x01 << 2,
         }
 
         /// <summary>
@@ -104,7 +97,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Types's Flags.
         /// </summary>
-        public Flag Flags
+        public Symbol.Flags Flag
         {
             get;
             set;
@@ -165,26 +158,124 @@ namespace TypeCobol.Compiler.Types
             }
         }
 
-        public SemanticKinds SemanticKind
+        public SemanticKinds SemanticKind => SemanticKinds.Type;
+
+        /// <summary>
+        /// Set a set of flags to true or false.
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="value"></param>
+        internal virtual void SetFlag(Flags flag, bool value)
         {
-            get { return SemanticKinds.Type; }
+            this.Flag = value ? (Flags)((ulong)this.Flag | (ulong)flag)
+                : (Flags)((ulong)this.Flag & ~(ulong)flag);
         }
 
         /// <summary>
-        /// Expand this type by expanding any Variable that has a TypDef type to is real COBOL85 type.
+        /// Determines if the given flag is set.
         /// </summary>
-        /// <param name="bClone">True if the expansion must clone the type, false otheriwse.</param>
-        /// <param name="owner">Expansion requester symbol</param>
-        /// <param name="varSymIndexer">A function used to index newly created Variable symbol during expansion, can be null.</param>
-        /// <returns>The expanded type</returns>
-        public virtual Type Expand(Symbol owner, bool bClone, Func<uint> varSymIndexer)
+        /// <param name="flag">The flag to be tested</param>
+        /// <returns>true if yes, false otherwise.</returns>
+        public bool HasFlag(Flags flag)
         {
-            return this;
+            return ((ulong)this.Flag & (ulong)flag) != 0;
         }
 
-        public virtual void SetFlag(Flags flag, bool value)
+        public object Clone()
         {
+            return MemberwiseClone();
+        }
 
+        /// <summary>
+        /// TypeComponent for example for Array, Pointer type or TypeDef.
+        /// </summary>
+        public virtual Type TypeComponent => null;
+
+        /// <summary>
+        /// A Type may expand to a Cobol85 if it has a type component.
+        /// Or it is a builtin type.
+        /// </summary>
+        public virtual bool MayExpand => HasFlag(Flags.BuiltinType) || TypeComponent != null;
+
+        public override string ToString()
+        {
+            StringWriter sw  = new StringWriter();
+            Dump(sw, 0);
+            return sw.ToString();
+        }
+
+        /// <summary>
+        /// Dump this type in the given TextWriter instance
+        /// </summary>
+        /// <param name="tw"></param>
+        /// <param name="indentLevel"></param>
+        public virtual void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write(s);
+            tw.Write(System.Enum.GetName(typeof(UsageFormat), Usage));            
+        }
+
+        /// <summary>
+        /// Exception thrown when a Type is Cyclic
+        /// </summary>
+        public class CyclicTypeException : Exception
+        {
+            /// <summary>
+            /// The target type.
+            /// </summary>
+            public Type TargetType
+            {
+                get;
+                private set;
+            }
+            public CyclicTypeException(Type type)
+            {
+                this.TargetType = type;
+            }
+        }
+        public virtual TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitType(this, s); }
+
+        /// <summary>
+        /// A visitor for types.  A visitor is used to implement operations
+        /// (or relations) on types. Most common operations on types are
+        /// binary relations of the form : Type x TS -> TR 
+        /// </summary>
+        /// <typeparam name="TR">the return type of the operation implemented by this visitor.
+        /// </typeparam>
+        /// <typeparam name="TS">the type of the second argument (the first being the
+        /// symbol itself) of the operation implemented by this visitor.
+        /// </typeparam>
+        public interface IVisitor<out TR, in TS>
+        {
+            TR VisitArrayType(ArrayType t, TS s);
+            TR VisitFunctionType(FunctionType t, TS s);
+            TR VisitPictureType(PictureType t, TS s);
+            TR VisitPointerType(PointerType t, TS s);
+            TR VisitProgramType(ProgramType t, TS s);
+            TR VisitRecordType(RecordType t, TS s);
+            TR VisitRenamesType(RenamesType t, TS s);
+            TR VisitTypedefType(TypedefType t, TS s);
+            TR VisitType(Type t, TS s);
+        }
+
+        /// <summary>
+        /// The Abstract Type Visitor Class
+        /// </summary>
+        /// <typeparam name="TR"></typeparam>
+        /// <typeparam name="TS"></typeparam>
+        public abstract class AbstractTypeVisitor<TR, TS>  : IVisitor<TR, TS>
+        {
+            public TR Visit(Type t, TS s) { return t.Accept(this, s); }
+            public virtual TR VisitArrayType(ArrayType t, TS s) { return VisitType(t, s); }
+            public virtual TR VisitFunctionType(FunctionType t, TS s) { return VisitType(t, s); }
+            public virtual TR VisitPictureType(PictureType t, TS s) { return VisitType(t, s); }
+            public virtual TR VisitPointerType(PointerType t, TS s) { return VisitType(t, s); }
+            public virtual TR VisitProgramType(ProgramType t, TS s) { return VisitType(t, s); }
+            public virtual TR VisitRecordType(RecordType t, TS s) { return VisitType(t, s); }
+            public virtual TR VisitRenamesType(RenamesType t, TS s) { return VisitType(t, s); }
+            public virtual TR VisitTypedefType(TypedefType t, TS s) { return VisitType(t, s); }
+            public abstract TR VisitType(Type t, TS s);
         }
     }
 }

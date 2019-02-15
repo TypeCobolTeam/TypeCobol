@@ -1,0 +1,27 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. VisNestedPrgVar0.
+       AUTHOR. MAYANJE.
+       DATA DIVISION.
+       GLOBAL-STORAGE SECTION.
+       01 Var0 PIC 9(4).
+       WORKING-STORAGE SECTION.
+       01 Var1 PIC X GLOBAL.
+       01 NoVar1 PIC 9.
+       LOCAL-STORAGE SECTION.
+       01 Var2 PIC 9 GLOBAL.
+       01 NoVar2 PIC 9.
+      
+       PROCEDURE DIVISION.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. Nested.
+       PROCEDURE DIVISION.
+           DISPLAY Var0
+           DISPLAY Var1
+           DISPLAY Var2
+      
+           DISPLAY NoVar1
+           DISPLAY NoVar2
+           .
+       END PROGRAM Nested.
+      
+       END PROGRAM VisNestedPrgVar0.

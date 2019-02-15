@@ -99,6 +99,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>TypeCobol.Compiler.Preprocessor.Generated</CustomToolNamespace>
     </Antlr4>
+    <EmbeddedResource Include="TypeCobolResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TypeCobolResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="AntlrGrammar\CobolExpressions.g4" />
     <None Include="AntlrGrammar\CobolWords.g4" />
     <Antlr4 Include="AntlrGrammar\CodeElements.g4">

@@ -1,0 +1,16 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. VisPrgGblVar0.
+       AUTHOR. MAYANJE.
+       DATA DIVISION.
+       GLOBAL-STORAGE SECTION.
+       01 Var0 PIC 9(4).
+       WORKING-STORAGE SECTION.
+       01 Var1 PIC X GLOBAL.
+       LOCAL-STORAGE SECTION.
+       01 Var2 PIC 9 GLOBAL.
+      
+       PROCEDURE DIVISION.
+       .
+      
+       END PROGRAM VisPrgGblVar0.
+      

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,5 +47,38 @@ namespace TypeCobol.Compiler.Types
             get;
             set;
         }
+
+        /// <summary>
+        /// The return variable if any.
+        /// </summary>
+        public VariableSymbol ReturnVariable
+        {
+            get;
+            set;
+        }
+
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            if (Usings != null)
+            {
+                tw.WriteLine();
+                tw.Write(s);
+                foreach (var p in Usings)
+                {
+                    if (p.HasFlag(Symbol.Flags.ByValue))
+                        tw.Write("BY VALUE ");
+                    else if (p.HasFlag(Symbol.Flags.ByReference))
+                        tw.Write("BY REFERENCE ");
+                    else if (p.HasFlag(Symbol.Flags.ByContent))
+                        tw.Write("BY CONTENT ");
+                    p.Dump(tw, 0);
+                }
+            }
+            tw.WriteLine();
+            ReturnVariable?.Dump(tw, indentLevel);
+        }
+
+        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitProgramType(this, s); }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,21 +15,25 @@ namespace TypeCobol.Compiler.Types
     {
         /// <summary>
         /// Empty constructor.
+        /// <param name="symbol">Typedef's symbol</param>
         /// </summary>
-        public TypedefType()
+        public TypedefType(TypedefSymbol symbol)
             : base(Tags.Typedef)
         {
+            this.Symbol = symbol;
         }
 
         /// <summary>
         /// Type Constructor
         /// </summary>
-        /// <param name="targetType"></param>
-        public TypedefType(Type targetType)
+        /// <param name="symbol">Typedef's symbol</param>
+        /// <param name="targetType">Typedef's type</param>
+        public TypedefType(TypedefSymbol symbol, Type targetType)
             : base(Tags.Typedef)
         {
             System.Diagnostics.Debug.Assert(targetType != null);
             TargetType = targetType;
+            this.Symbol = symbol;
         }
 
         /// <summary>
@@ -40,16 +45,31 @@ namespace TypeCobol.Compiler.Types
             set;
         }
 
-        /// <summary>
-        /// Expand a TypeDef by create the same type from it by copying it.
-        /// </summary>
-        /// <param name="owner">Owner which request the expansion</param>
-        /// <param name="bClone">Shall we clone by expansion or simply copy</param>
-        /// <param name="varSymbolIndex">The Variable Symbol Indexer Function.</param>
-        /// <returns></returns>
-        public override Type Expand(Symbol owner,  bool bClone, Func<uint> varSymbolIndex)
+        internal override void SetFlag(Symbol.Flags flag, bool value)
         {
-            return TargetType?.Expand(owner, bClone, varSymbolIndex);
+            base.SetFlag(flag, value);
+            if (TargetType != null)
+                TargetType.SetFlag(flag, value);
         }
+
+        /// <summary>
+        /// We take the the real representation type.
+        /// For example:
+        /// T Typedef S-> S Typedef R -> R PIC X(10).
+        /// give the type of PIX X(10)
+        /// </summary>
+        public override Type TypeComponent => TargetType?.TypeComponent ?? TargetType;
+
+        /// <summary>
+        /// Typedef may always expand.
+        /// </summary>
+        public override bool MayExpand => true;
+
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            TargetType?.Dump(tw, indentLevel);
+        }
+
+        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitTypedefType(this, s); }
     }
 }

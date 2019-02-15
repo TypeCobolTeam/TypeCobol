@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,10 +54,11 @@ namespace TypeCobol.Compiler.Types
         /// 
         /// 
         /// </summary>
+        /// <param name="owner">Owner of the scope</param>
         /// <param name="containerType"></param>
         /// <param name="data_name_2"></param>
         /// <param name="data_name_3"></param>
-        public RenamesType(RecordType containerType, VariableSymbol data_name_2) : this(containerType, data_name_2, data_name_2)
+        public RenamesType(Symbol owner, RecordType containerType, VariableSymbol data_name_2) : this(owner, containerType, data_name_2, data_name_2)
         {
         }
 
@@ -67,38 +69,28 @@ namespace TypeCobol.Compiler.Types
         /// 
         /// 
         /// </summary>
+        /// <param name="owner">Owner of the scope</param>
         /// <param name="containerType"></param>
         /// <param name="data_name_2"></param>
         /// <param name="data_name_3"></param>
-        public RenamesType(RecordType containerType, VariableSymbol data_name_2, VariableSymbol data_name_3)
+        public RenamesType(Symbol owner, RecordType containerType, VariableSymbol data_name_2, VariableSymbol data_name_3) : base(owner)
         {
-            System.Diagnostics.Contracts.Contract.Requires(data_name_2 != null);
-            System.Diagnostics.Contracts.Contract.Requires(data_name_3 != null);
-            System.Diagnostics.Contracts.Contract.Requires(containerType != null);
-            System.Diagnostics.Contracts.Contract.Requires(!(containerType is RenamesType));
-            System.Diagnostics.Contracts.Contract.Requires(containerType.Scope != null);
-            //System.Diagnostics.Contracts.Contract.Requires(containerType.Scope.Contains(data_name_2));
-            //System.Diagnostics.Contracts.Contract.Requires(containerType.Scope.Contains(data_name_3));
-
-            //Tuple<VariableSymbol, int> entry2 = containerType.Scope.LookupEntry(data_name_2.Name);
-            //Tuple<VariableSymbol, int> entry3 = containerType.Scope.LookupEntry(data_name_3.Name);
-            //System.Diagnostics.Contracts.Contract.Requires((entry2.Item2 <= entry3.Item2));
-
-            int idx2 = containerType.Scope.IndexOf(data_name_2);            
-            int idx3 = data_name_2 == data_name_3 ? idx2 : containerType.Scope.IndexOf(data_name_3);
-            System.Diagnostics.Debug.Assert(idx2 >= 0 && idx3 >= 0 && idx2 <= idx3);
-            if (idx2 >= 0 && idx3 >= 0 && idx2 <= idx3)
-            {   //Copy all symbols in our scope.
-                for (int i = idx2; i <= idx3; i++)
-                {
-                    var sym = containerType.Scope[i];
-                    base.Scope.Enter(sym);
-                }
-            }
-
             ContainerType = containerType;
+            DataName1 = data_name_2;
+            DataName2 = data_name_3;
         }
 
+        public VariableSymbol DataName1
+        {
+            get;
+            internal set;
+        }
+
+        public VariableSymbol DataName2
+        {
+            get;
+            internal set;
+        }
         /// <summary>
         /// The Container type of the RENAMES
         /// </summary>
@@ -107,5 +99,24 @@ namespace TypeCobol.Compiler.Types
             get;
             private set;
         }
+
+        /// <summary>
+        /// Dump this symbol in the given TextWriter instance
+        /// </summary>
+        /// <param name="tw">TextWriter instance</param>
+        /// <param name="indentLevel">Indentation level</param>
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write("RENAMES ");
+            tw.Write(DataName1.Name);
+            if (DataName2 != null && DataName1 != DataName2)
+            {
+                tw.Write(" THRU ");
+                tw.Write(DataName2.Name);
+            }            
+        }
+
+        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitRenamesType(this, s); }
     }
 }

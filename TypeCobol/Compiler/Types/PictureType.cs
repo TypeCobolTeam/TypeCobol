@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -136,7 +137,21 @@ namespace TypeCobol.Compiler.Types
         {
             get
             {
-                return ConsumedToken.Text;
+                if (ConsumedToken != null)
+                {
+                    return ConsumedToken.Text;
+                }
+                else if (Sequence != null)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var c in Sequence)
+                    {
+                        sb.Append(c);
+                    }
+
+                    return sb.ToString();
+                }
+                else return "???";
             }
         }
 
@@ -364,5 +379,20 @@ namespace TypeCobol.Compiler.Types
                 return Size;
             }
         }
+
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write(s);
+            tw.Write("PIC ");
+            tw.Write(Picture);
+            if (Usage != 0)
+            {
+                tw.Write(' ');
+                base.Dump(tw, 0);
+            }            
+        }
+
+        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitPictureType(this, s); }
     }
 }

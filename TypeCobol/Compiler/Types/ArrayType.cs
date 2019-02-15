@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,27 +49,34 @@ namespace TypeCobol.Compiler.Types
             set;
         }
 
-        public override Type Expand(Symbol owner, bool bClone, Func<uint> varSymIndexer)
+        internal override void SetFlag(Flags flag, bool value)
         {
-            if (bClone)
-            {
-                ArrayType arrayType = (ArrayType)MemberwiseClone();
-                arrayType.MinOccur = MinOccur;
-                arrayType.MaxOccur = MaxOccur;
-                arrayType.ElementType = (Type)ElementType.Expand(owner, bClone, varSymIndexer);
-                return arrayType;
-            }
-            else
-            {
-                ElementType = (Type)ElementType.Expand(owner, bClone, varSymIndexer);
-                return this;
-            }
-        }
-
-        public override void SetFlag(Flags flag, bool value)
-        {
+            base.SetFlag(flag, value);
             ElementType.SetFlag(flag, value);
         }
 
+        public override Type TypeComponent => ElementType;
+
+        public override bool MayExpand => ElementType != null && ElementType.MayExpand;
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write(s);
+            if (ElementType != null)
+            {
+                ElementType.Dump(tw, indentLevel);
+            }
+            else
+            {
+                tw.Write("???");
+            }
+            tw.Write(" OCCURS ");
+            tw.Write(MinOccur);
+            tw.Write(" TO ");
+            tw.Write(MaxOccur);
+            tw.Write(" TIMES ");
+        }
+
+        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitArrayType(this, s); }
     }
 }

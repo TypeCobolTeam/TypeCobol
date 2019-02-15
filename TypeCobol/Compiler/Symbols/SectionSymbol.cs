@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Symbols
         public SectionSymbol(String name)
             : base(name, Kinds.Section)
         {
-            Paragraphs = new Scope<ParagraphSymbol>();
+            Paragraphs = new Scope<ParagraphSymbol>(this);
         }
 
         /// <summary>
@@ -27,5 +27,6 @@ namespace TypeCobol.Compiler.Symbols
             protected set;
         }
 
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitSectionSymbol(this, arg); }
     }
 }

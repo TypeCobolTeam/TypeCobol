@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TypeCobol.Compiler.Symbols;
 using static TypeCobol.Compiler.Types.Type;
 
 namespace TypeCobol.Compiler.Types
@@ -67,28 +68,48 @@ namespace TypeCobol.Compiler.Types
         {
             Comp1Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp1);
             FloatType = Comp1Type;
+            FloatType.SetFlag(Symbol.Flags.BuiltinType, true);
             Comp2Type = new Type(Type.Tags.Usage, Type.UsageFormat.Comp2);
             DoubleType = Comp2Type;
+            DoubleType.SetFlag(Symbol.Flags.BuiltinType, true);
             PointerType = new Type(Type.Tags.Usage, Type.UsageFormat.Pointer);
+            PointerType.SetFlag(Symbol.Flags.BuiltinType, true);
             FunctionPointerType = new Type(Type.Tags.Usage, Type.UsageFormat.FunctionPointer);
+            FunctionPointerType.SetFlag(Symbol.Flags.BuiltinType, true);
             ProcedurePointerType = new Type(Type.Tags.Usage, Type.UsageFormat.ProcedurePointer);
+            ProcedurePointerType.SetFlag(Symbol.Flags.BuiltinType, true);
             IndexType = new Type(Type.Tags.Usage, Type.UsageFormat.Index);
+            IndexType.SetFlag(Symbol.Flags.BuiltinType, true);
             ObjectReferenceType = new Type(Type.Tags.Usage, Type.UsageFormat.ObjectReference);
+            ObjectReferenceType.SetFlag(Symbol.Flags.BuiltinType, true);
 
             OmittedType = new Type(Type.Tags.Usage, Type.UsageFormat.Omitted);
+            OmittedType.SetFlag(Symbol.Flags.BuiltinType, true);
             AlphabeticType = new Type(Type.Tags.Usage, Type.UsageFormat.Alphabetic);
+            AlphabeticType.SetFlag(Symbol.Flags.BuiltinType, true);
             NumericType = new Type(Type.Tags.Usage, Type.UsageFormat.Numeric);
+            NumericType.SetFlag(Symbol.Flags.BuiltinType, true);
             NumericEditedType = new Type(Type.Tags.Usage, Type.UsageFormat.NumericEdited);
+            NumericEditedType.SetFlag(Symbol.Flags.BuiltinType, true);
             AlphanumericType = new Type(Type.Tags.Usage, Type.UsageFormat.Alphanumeric);
+            AlphanumericType.SetFlag(Symbol.Flags.BuiltinType, true);
             AlphanumericEditedType = new Type(Type.Tags.Usage, Type.UsageFormat.AlphanumericEdited);
+            AlphanumericEditedType.SetFlag(Symbol.Flags.BuiltinType, true);
             DBCSType = new Type(Type.Tags.Usage, Type.UsageFormat.DBCS);
+            DBCSType.SetFlag(Symbol.Flags.BuiltinType, true);
             FloatingPointType = new Type(Type.Tags.Usage, Type.UsageFormat.FloatingPoint);
+            FloatingPointType.SetFlag(Symbol.Flags.BuiltinType, true);
             OccursType = new Type(Type.Tags.Usage, Type.UsageFormat.Occurs);
+            OccursType.SetFlag(Symbol.Flags.BuiltinType, true);
 
             BooleanType = new Type(Type.Tags.Usage, Type.UsageFormat.Boolean);
+            BooleanType.SetFlag(Symbol.Flags.BuiltinType, true);
             DateType = new Type(Type.Tags.Usage, Type.UsageFormat.Date);
+            DateType.SetFlag(Symbol.Flags.BuiltinType, true);
             CurrencyType = new Type(Type.Tags.Usage, Type.UsageFormat.Currency);
+            CurrencyType.SetFlag(Symbol.Flags.BuiltinType, true);
             StringType = new Type(Type.Tags.Usage, Type.UsageFormat.String);
+            StringType.SetFlag(Symbol.Flags.BuiltinType, true);
         }
 
     /// <summary>

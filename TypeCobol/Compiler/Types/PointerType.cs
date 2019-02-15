@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,24 +31,29 @@ namespace TypeCobol.Compiler.Types
             set;
         }
 
-        public override Type Expand(Symbol owner, bool bClone, Func<uint> varSymIndexer)
+        internal override void SetFlag(Flags flag, bool value)
         {
-            if (bClone)
+            base.SetFlag(flag, value);
+            ElementType.SetFlag(flag, value);
+        }
+
+        public override Type TypeComponent => ElementType;
+        public override bool MayExpand => ElementType != null && ElementType.MayExpand;
+        public override void Dump(TextWriter tw, int indentLevel)
+        {
+            string s = new string(' ', 2 * indentLevel);
+            tw.Write(s);
+            if (ElementType != null)
             {
-                PointerType ptrType = new PointerType();
-                ptrType.ElementType = (Type)ElementType.Expand(owner, bClone, varSymIndexer);
-                return ptrType;
+                ElementType.Dump(tw, indentLevel);
             }
             else
             {
-                ElementType = (Type)ElementType.Expand(owner, bClone, varSymIndexer);
-                return this;
+                tw.Write("???");
             }
+            tw.Write(" POINTER");
         }
 
-        public override void SetFlag(Flags flag, bool value)
-        {
-            ElementType.SetFlag(flag, value);
-        }
+        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitPointerType(this, s); }
     }
 }

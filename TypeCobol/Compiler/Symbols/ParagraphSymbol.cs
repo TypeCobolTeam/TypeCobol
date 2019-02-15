@@ -19,5 +19,6 @@ namespace TypeCobol.Compiler.Symbols
             : base(name, Kinds.Paragraph)
         {
         }
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitParagraphSymbol(this, arg); }
     }
 }

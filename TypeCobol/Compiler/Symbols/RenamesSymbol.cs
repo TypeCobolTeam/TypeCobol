@@ -47,5 +47,7 @@ namespace TypeCobol.Compiler.Symbols
         {
             base.SetFlag(Flags.Renames, true);
         }
+
+        public override TR Accept<TR, TP>(IVisitor<TR, TP> v, TP arg) { return v.VisitRenamesSymbol(this, arg); }
     }
 }

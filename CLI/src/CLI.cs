@@ -15,6 +15,7 @@ using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Tools.Options_Config;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Report;
+using TypeCobol.Compiler.Domain;
 
 namespace TypeCobol.Server
 {
@@ -110,6 +111,15 @@ namespace TypeCobol.Server
         private static ReturnCode runOnce2(TypeCobolConfiguration config, AbstractErrorWriter errorWriter)
         {
             SymbolTable baseTable = null;
+
+            //----------------------------------------------------------------------
+            //Register a static SymbolTableBuilder for a Program as a Node Listener.
+            //----------------------------------------------------------------------
+            Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(
+                () => {
+                    var builder = new ProgramSymbolTableBuilder();
+                    return builder;
+                });
 
             #region Dependencies parsing
             var depParser = new Parser();
