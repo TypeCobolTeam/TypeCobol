@@ -800,7 +800,7 @@ namespace TypeCobol.Codegen.Generators
                 UseGlobalStorageSection = true;
             }
 
-            if (node.CodeElement != null && node.CodeElement.Type == CodeElementType.GlobalStorageSectionHeader && !node.Comment.HasValue)
+            if (node.CodeElement != null && node.CodeElement.Type == CodeElementType.GlobalStorageSectionHeader && node.IsFlagSet(Node.Flag.IsCloned))
             {
                 //Remember the Global Storage Section node.
                 this.ClonedGlobalStorageSection = (GlobalStorageSection)node;
@@ -1439,7 +1439,7 @@ namespace TypeCobol.Codegen.Generators
         /// <param name="lastLine">output le last line number</param>
         /// <param name="lastNode">The last node of the last line number</param>
         /// <returns></returns>
-        private void GetAfterLinearizationLastLine(Node node, ref int lastLine, ref Node lastNode)
+        internal void GetAfterLinearizationLastLine(Node node, ref int lastLine, ref Node lastNode)
         {
             if (node == null)
                 return;

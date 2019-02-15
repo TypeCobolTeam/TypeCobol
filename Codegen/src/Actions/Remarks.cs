@@ -44,7 +44,7 @@ namespace TypeCobol.Codegen.Actions
         {
 #if EUROINFO_RULES
             if (((Program) Source).IsNested)
-                return; //We dont have to care about nested program. It prevents from generating REMARKS directive multiple times
+                return null; //We dont have to care about nested program. It prevents from generating REMARKS directive multiple times
 
             //Get tokensLine
             var tokensLines = (CompilationDocument.CobolTextLines as IReadOnlyList<Compiler.Scanner.TokensLine>);
@@ -52,7 +52,7 @@ namespace TypeCobol.Codegen.Actions
             //Get all the CopyTextNameVariations
             var copys = CompilationDocument.CopyTextNamesVariations;
             if (copys == null || copys.Count == 0)
-                return;
+                return null;
 
             //Get remarks lines
             var remarksLines = (tokensLines as IList<TypeCobol.Compiler.Parser.CodeElementsLine>).Where(l => l.ScanState.InsideRemarksDirective).ToList(); 

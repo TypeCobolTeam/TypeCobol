@@ -206,29 +206,30 @@ namespace TypeCobol.Compiler.Nodes {
             /// <summary>
             /// Mark a program that contains procedure declaration.
             /// </summary>
-            ContainsProcedure = 0x01 << 26,
+            ContainsProcedure = 0x01 << 27,
             /// <summary>
             /// Mark a node whose come from a Typedef Declared By a Copy.
             /// </summary>
-            InsideTypedefFromCopy = 0x01 << 27,
+            InsideTypedefFromCopy = 0x01 << 28,
             /// <summary>
             /// Indicate the node who is inserted by the codegen to indicate the COPY node.
             /// </summary>
-            IsTypedefCopyNode = 0x01 << 28,
+            IsTypedefCopyNode = 0x01 << 29,
+            /// <summary>
             /// Mark a program that should generate its procedure as nested pgm.
             /// </summary>
-            GenerateAsNested = 0x01 << 29,
+            GenerateAsNested = 0x01 << 30,
             /// <summary>
             /// Codegen Ignore comment action on this node.
             /// </summary>
-            IgnoreCommentAction = 0x01 << 30,
+            IgnoreCommentAction = 0x01UL << 31,
             /// <summary>
             /// Codegen node is cloned.
             /// </summary>
-            IsCloned = 0x01UL << 31,
+            IsCloned = 0x01UL << 32,
         };
         /// <summary>
-        /// A 32 bits value for flags associated to this Node
+        /// A 64 bits value for flags associated to this Node
         /// </summary>
         public ulong Flags 
         { 
@@ -886,8 +887,8 @@ namespace TypeCobol.Compiler.Nodes {
         /// <param name="node"></param>
         private void CloneChildren(Node parent)
         {
-            var oldChildren = this.children;
-            this.children = new List<Node>();
+            var oldChildren = parent.children;
+            parent.children = new List<Node>();
             foreach (var child in oldChildren)
             {
                 Node cloned = (Node)child.Clone();

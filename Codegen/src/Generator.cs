@@ -96,6 +96,15 @@ namespace TypeCobol.Codegen
             private set;
         }
 
+        /// <summary>
+        /// Lines of Cloned Nodes.
+        /// </summary>
+        public List<Node> ClonedNodes
+        {
+            get;
+            private set;
+        }
+
         public List<Diagnostic> Diagnostics
         {
             get;
@@ -121,6 +130,8 @@ namespace TypeCobol.Codegen
             Actions = new GeneratorActions(this, skeletons, document, skeletons != null ? null : new TypeCobol.Codegen.Actions.Skeletons());
             //To Store Erased Nodes by the Erase Action.
             ErasedNodes = new List<Node>();
+            //To Store Cloned Nodes by the Clone Action.
+            ClonedNodes = new List<Node>();
             //The After Action Listener
             Actions.AfterAction += OnAfterAction;
         }
@@ -217,6 +228,19 @@ namespace TypeCobol.Codegen
                         node.SetFlag(Node.Flag.GeneratorErasedNode, true);
                         ErasedNodes.Add(node);
                     }                    
+                }
+            }
+            //Collect cloned nodes.
+            if (action is TypeCobol.Codegen.Actions.ICloneAction)
+            {
+                TypeCobol.Codegen.Actions.ICloneAction clone = (TypeCobol.Codegen.Actions.ICloneAction)action;
+                IList<Node> nodes = clone.ClonedNodes;
+                if (nodes != null)
+                {
+                    foreach (Node node in nodes)
+                    {                        
+                        ClonedNodes.Add(node);
+                    }
                 }
             }
         }

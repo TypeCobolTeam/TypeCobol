@@ -46,12 +46,13 @@ namespace TypeCobol.Codegen.Generators
         /// //4) Flush of Function declations.
         /// <param name="mapper">The linearization representation</param>
         /// <param name="Input">Input source lines</param>
+        /// <param name="clonedMapper">Linear mapper for cloned nodes</param>
         /// <returns>The Generated Source Document</returns>
         /// </summary>
-        protected override SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input)
+        protected override SourceText LinearGeneration<A>(LinearNodeSourceCodeMapper mapper, IReadOnlyList<A> Input, LinearNodeSourceCodeMapper clonedMapper = null)
         {
             LineMappingCtx lmCtx = new LineMappingCtx(this.LineMapping);
-            return base.LinearGeneration<A>(mapper, Input, lmCtx);
+            return base.LinearGeneration<A>(mapper, clonedMapper, Input, lmCtx, 0, mapper.LineData.Length);
         }
 
         /// <summary>
