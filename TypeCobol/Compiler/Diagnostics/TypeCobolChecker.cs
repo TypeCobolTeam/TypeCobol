@@ -86,9 +86,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 !functionCaller.FunctionCall.NeedDeclaration)
                 return;
 
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionCalled, functionCaller.FunctionCall.FunctionName,
-                LogType.TypeCobolUsage);
-
             if (functionCaller.FunctionDeclaration == null)
             {
                 //Get Funtion by name and profile (matches on precise parameters)

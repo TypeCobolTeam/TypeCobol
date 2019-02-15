@@ -501,8 +501,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             table.AddType(node);
 
             _CurrentTypeDefinition = node;
-
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypeDeclared, node.Name, LogType.TypeCobolUsage);
         }
 
         public virtual void StartWorkingStorageSection(WorkingStorageSectionHeader header)
@@ -653,8 +651,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
                 paramNode.SetParent(CurrentNode);
                 CurrentNode.SymbolTable.AddVariable(paramNode);
             }
-
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.FunctionDeclared, declaration.FunctionName.ToString(), LogType.TypeCobolUsage);
         }
 
         public virtual void EndFunctionDeclaration(FunctionDeclarationEnd end)
