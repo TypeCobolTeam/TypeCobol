@@ -28,7 +28,7 @@ namespace TypeCobol.Compiler.CodeModel
     /// <summary>
     /// A COBOL source program is a syntactically correct set of COBOL statements.
     /// </summary>
-    public class Program : GenericNode<ProgramIdentification>, CodeElementHolder<ProgramIdentification>, IProcCaller, IDocumentable
+    public class Program : GenericNode<ProgramIdentification>, IProcCaller, IDocumentable
     {
         public Program(ProgramIdentification codeElement) : base(codeElement) { }
         public override bool VisitNode(IASTVisitor astVisitor)
