@@ -208,7 +208,7 @@ namespace TypeCobol.Compiler.Nodes {
     /// Implementation note:
     /// DataDefinition doesn't inherits from GenericNode. See explanation on property InternalDataDefinitionEntry
     /// </summary>
-    public abstract class DataDefinition: Node, Parent<DataDefinition>, ITypedNode
+    public abstract class DataDefinition: Node, Parent<DataDefinition>
     {
         protected DataDefinition([CanBeNull] DataDefinitionEntry dataDefinitionEntry)
         {

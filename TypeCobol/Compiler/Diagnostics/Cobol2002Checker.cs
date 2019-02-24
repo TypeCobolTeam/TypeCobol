@@ -212,10 +212,6 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class TypedDeclarationChecker
     {
-        public IList<Type> GetNodes()
-        {
-            return new List<Type>() {typeof(ITypedNode),};
-        }
 
         private static List<Node> browsedTypes = new List<Node>();
 

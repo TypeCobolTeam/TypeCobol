@@ -831,7 +831,7 @@ namespace TypeCobol.Compiler.CodeModel
             }
         }
 
-        public IList<TypeDefinition> GetType(ITypedNode symbol)
+        public IList<TypeDefinition> GetType(DataDefinition symbol)
         {
             return GetType(symbol.DataType);
         }
@@ -1344,7 +1344,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             str.Append(indent);
             str.Append(symbol.Name);
-            if (symbol is ITypedNode) str.Append(':').Append(((ITypedNode) symbol).DataType);
+            if (symbol is DataDefinition) str.Append(':').Append(((DataDefinition) symbol).DataType);
             var fun = symbol as FunctionDeclaration;
             if (fun != null)
             {

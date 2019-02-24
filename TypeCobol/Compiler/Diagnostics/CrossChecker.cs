@@ -845,14 +845,15 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (entry.UserDefinedDataType == null)
                     return new GeneratedDefinition(entry.DataType.Name, entry.DataType);
+            } else
+            {
+                return null;
             }
-            ITypedNode typed = symbol as ITypedNode;
-            if (typed == null) return null; // symbol untyped
 
             if (data?.TypeDefinition != null)
                 return data.TypeDefinition;
 
-            var types = node.SymbolTable.GetType(typed);
+            var types = node.SymbolTable.GetType(data);
             // return null if symbol type not found or ambiguous
             return types.Count != 1 ? null : types[0];
         }

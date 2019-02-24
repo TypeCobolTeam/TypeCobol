@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void checkReadOnly(Node node, [NotNull] Node receiving)
         {
-            var rtype = receiving.Parent as ITypedNode;
+            var rtype = receiving.Parent as DataDefinition;
             if (rtype == null) return;
             foreach (var type in READONLY_DATATYPES)
             {

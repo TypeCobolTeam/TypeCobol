@@ -792,13 +792,6 @@ namespace TypeCobol.Compiler.Nodes {
         }
     }
 
-// --- Temporary base classes for data definition noes ---
-
-    public interface ITypedNode {
-        DataType DataType { get; }
-        int Length { get; }
-    }
-
     /// <summary>
     /// <![CDATA[
     /// This class provide generics support for CodeElement property.
