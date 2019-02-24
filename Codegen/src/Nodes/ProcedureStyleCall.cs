@@ -14,7 +14,7 @@ namespace TypeCobol.Codegen.Nodes {
     /// <summary>
     ///  Class that represents the Node associated to a procedure call.
     /// </summary>
-    internal class ProcedureStyleCall: Compiler.Nodes.Call, Generated {
+    internal class ProcedureStyleCall: Compiler.Nodes.ProcedureStyleCall, Generated {
 	private Compiler.Nodes.ProcedureStyleCall Node;
 	private CallStatement call;
     //The Original Staement
