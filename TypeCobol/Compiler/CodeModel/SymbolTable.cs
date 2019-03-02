@@ -714,17 +714,17 @@ namespace TypeCobol.Compiler.CodeModel
         private static IEnumerable<DataDefinition> GetVariablesUnderTypeDefFromTableAndEnclosing(SymbolTable symbolTable, string name)
         {
             var currSymbolTable = symbolTable;
-            var datadefinitions = new List<DataDefinition>();
+            var dataDefinitions = new List<DataDefinition>();
             //Don't search into Intrinsic table because it's shared between all programs
             while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Intrinsic) {
                 var result = GetVariablesUnderTypeDefinition(name, currSymbolTable);
                 if (result != null) {
-                    datadefinitions.AddRange(result);
+                    dataDefinitions.AddRange(result);
                 }
                 currSymbolTable = currSymbolTable.EnclosingScope;
             }
 
-            return datadefinitions;
+            return dataDefinitions;
         }
 
         
