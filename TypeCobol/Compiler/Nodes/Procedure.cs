@@ -150,7 +150,10 @@ namespace TypeCobol.Compiler.Nodes {
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {
-            return astVisitor.Visit(this);
+            return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, Profile.InputParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.InoutParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.OutputParameters);
+
         }
 
         public Dictionary<string, Tuple<IList<SymbolReference>, ProcedureStyleCall>> ProcStyleCalls { get; set; }
