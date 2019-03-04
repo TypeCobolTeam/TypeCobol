@@ -1246,12 +1246,13 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="symbol"></param>
         private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node
         {
+            string key = symbol.Name;
             //QualifiedName of symbol can be null - if we have a filler in the type definition
-            if (symbol.QualifiedName == null)
+            if (key == null) 
             {
                 return;
             }
-            string key = symbol.QualifiedName.Head;
+
             List<T> found;
             bool present = table.TryGetValue(key, out found);
             if (!present)
