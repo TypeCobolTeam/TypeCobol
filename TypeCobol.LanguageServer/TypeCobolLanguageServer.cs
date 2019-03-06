@@ -156,8 +156,14 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-
+        //The root OutlineNode is stored in memory to be able to update it with new nodes
         private OutlineNode _rootOutlineNode = null;
+        /// <summary>
+        /// Update the OutlineNodes of the root OutlineNode. Creates it if new document.
+        /// </summary>
+        /// <param name="programClassDocument"></param>
+        /// <param name="bForced"></param>
+        /// <returns></returns>
         public RefreshOutlineParams UpdateOutline(ProgramClassDocument programClassDocument, bool bForced)
         {
             if(_rootOutlineNode == null)

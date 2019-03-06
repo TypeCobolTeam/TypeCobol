@@ -80,7 +80,7 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
         /// <summary>
-        /// Are we supporting Syntax Coloring Notifications.    
+        /// Are we supporting OutlineRefresh Notifications.    
         /// </summary>
         public bool UseOutlineRefresh { get; set; }
 
@@ -147,6 +147,8 @@ namespace TypeCobol.LanguageServer
                 //Subscribe to diagnostics event
                 typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
+
+                //subscribe to outline event
                 typeCobolWorkspace.DocumentModifiedEvent += DocumentModified;
 
                 //Create a ILanguageServer instance for the document.
@@ -850,6 +852,7 @@ namespace TypeCobol.LanguageServer
 
         public override void OnDidReceiveRefreshOutline(string uri, bool bForced)
         {
+            //if Outline not activated at the start of Language Server, client side
             if (!UseOutlineRefresh)
                 return;
 
