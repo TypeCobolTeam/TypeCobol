@@ -93,7 +93,8 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// It will update the main OutlineNode with the new information. 
         /// </summary>
         /// <param name="uri"></param>
-        public virtual void OnDidReceiveRefreshOutline(string uri)
+        /// <param name="bForced">Force the server to send the program OutlineNodes</param>
+        public virtual void OnDidReceiveRefreshOutline(string uri, bool bForced)
         {
 
         }

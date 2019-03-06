@@ -24,7 +24,8 @@ namespace TypeCobol.LanguageServer.Interfaces
         /// Method to update the Outline data.
         /// </summary>
         /// <param name="programClassDocument"></param>
-        TypeCobolCustomLanguageServerProtocol.RefreshOutlineParams UpdateOutline(Compiler.Parser.ProgramClassDocument programClassDocument);
+        /// <param name="bForced"></param>
+        TypeCobolCustomLanguageServerProtocol.RefreshOutlineParams UpdateOutline(Compiler.Parser.ProgramClassDocument programClassDocument, bool bForced);
 
         /// <summary>
         /// Event Handler when the whole document has changed.

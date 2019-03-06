@@ -346,6 +346,7 @@ namespace TypeCobol.LanguageServer
                 tdcce.text = parameters.text;
                 dctdp.contentChanges = new TextDocumentContentChangeEvent[] {tdcce};
                 OnDidChangeTextDocument(dctdp);
+                OnDidReceiveRefreshOutline(parameters.textDocument.uri, true);
             }
         }
 
@@ -843,12 +844,12 @@ namespace TypeCobol.LanguageServer
             }
         }
 
-        public override void OnDidReceiveRefreshOutline(string uri)
+        public override void OnDidReceiveRefreshOutline(string uri, bool bForced)
         {
             var context = GetDocumentContextFromStringUri(uri, false);
             if (context != null && context.FileCompiler != null)
             {
-                var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot);
+                var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot, bForced);
                 if (refreshOutlineParams != null)
                 {
                     SendOutlineData(refreshOutlineParams);
@@ -902,7 +903,7 @@ namespace TypeCobol.LanguageServer
 
         private void DocumentModified(object sender, EventArgs args)
         {
-            OnDidReceiveRefreshOutline(sender.ToString());
+            OnDidReceiveRefreshOutline(sender.ToString(), false);
         }
 
         private void ExceptionTriggered(object sender, ThreadExceptionEventArgs exception)
