@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -138,7 +138,7 @@ namespace TypeCobol.LanguageServer
         public override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {            
             DocumentContext docContext = new DocumentContext(parameters.textDocument);
-            if (docContext.Uri.IsFile)
+            if (docContext.Uri.IsFile && typeCobolWorkspace.OpenedDocumentContext.All(odc => odc.Key != docContext.Uri))
             {
                 //Subscribe to diagnostics event
                 typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
@@ -327,6 +327,8 @@ namespace TypeCobol.LanguageServer
             if (objUri.IsFile)
             {
                 typeCobolWorkspace.CloseSourceFile(objUri);
+                typeCobolWorkspace.MissingCopiesEvent -= MissingCopiesDetected;
+                typeCobolWorkspace.DiagnosticsEvent -= DiagnosticsDetected;
 
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
