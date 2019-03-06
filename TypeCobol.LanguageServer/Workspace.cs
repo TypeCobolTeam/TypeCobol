@@ -119,6 +119,10 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting Syntax Coloring Notifications.    
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
+        /// <summary>
+        /// Are we supporting OutlineRefresh Notifications.    
+        /// </summary>
+        public bool UseOutlineRefresh { get; set; }
 
         #endregion
 
@@ -588,7 +592,7 @@ namespace TypeCobol.LanguageServer
             if (compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = compilationUnit.MissingCopies.Select(c => c.TextName).Distinct().ToList() });
 
-            DocumentModifiedEvent(fileUri, new EventArgs());
+            DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
         }
     }
 

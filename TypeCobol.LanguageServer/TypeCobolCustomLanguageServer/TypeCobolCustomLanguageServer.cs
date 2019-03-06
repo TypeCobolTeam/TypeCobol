@@ -18,9 +18,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             rpcServer.RegisterNotificationMethod(ExtractUseCopiesNotification.Type, ReceivedExtractUseCopiesNotification);
         }
 
+        /// <summary>
+        /// Are we using the Outline view in the client.    
+        /// </summary>
+        public bool UseOutlineRefresh { get; set; }
+
         protected override void OnShutdown()
         {
-            if (this.Workspace.DocumentModifiedEvent != null)
+            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent != null)
                 this.Workspace.DocumentModifiedEvent -= DocumentModified;
 
             base.OnShutdown();
@@ -28,7 +33,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         protected override void OnDidOpenTextDocument(DidOpenTextDocumentParams parameters)
         {
-            if (this.Workspace.DocumentModifiedEvent == null)
+            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent == null)
             {
                 this.Workspace.DocumentModifiedEvent += DocumentModified;
             }
@@ -38,7 +43,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         protected override void OnDidCloseTextDocument(DidCloseTextDocumentParams parameters)
         {
             base.OnDidCloseTextDocument(parameters);
-            if (this.Workspace.DocumentModifiedEvent != null && this.Workspace.OpenedDocumentContext.Count == 0)
+            if (UseOutlineRefresh && this.Workspace.DocumentModifiedEvent != null && this.Workspace.OpenedDocumentContext.Count == 0)
                 this.Workspace.DocumentModifiedEvent -= DocumentModified;
 
         }
@@ -46,7 +51,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
         {
             base.OnDidSaveTextDocument(parameters);
-            if (parameters.text != null)
+            if (parameters.text != null && UseOutlineRefresh)
             {
                 OnDidReceiveRefreshOutline(parameters.textDocument.uri, true);
             }
