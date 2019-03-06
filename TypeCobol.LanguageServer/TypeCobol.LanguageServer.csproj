@@ -58,6 +58,9 @@
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Notification\NodeRefreshParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Node Refresh Request\NodeRefreshRequest.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\OutlineNode.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\RefreshOutlineNotification.cs" />
+    <Compile Include="TypeCobolCustomLanguageServer\Refresh Outline Notification\RefreshOutlineParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextParams.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\Signature Help Context Notification\SignatureHelpContextNotification.cs" />
     <Compile Include="TypeCobolCustomLanguageServer\SyntaxColoring\SyntaxColoringNotification.cs" />

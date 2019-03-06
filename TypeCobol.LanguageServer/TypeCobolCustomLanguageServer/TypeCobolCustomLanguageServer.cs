@@ -88,6 +88,16 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
             
         }
 
+        /// <summary>
+        /// The refresh Outline notification is received for each document modification 
+        /// It will update the main OutlineNode with the new information. 
+        /// </summary>
+        /// <param name="uri"></param>
+        public virtual void OnDidReceiveRefreshOutline(string uri)
+        {
+
+        }
+
         public virtual void OnDidReceiveSignatureHelpContext(SignatureHelpContextParams procedureHash)
         {
             
@@ -109,6 +119,14 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         public virtual void SendLoadingIssue(LoadingIssueParams parameters)
         {
             this.rpcServer.SendNotification(LoadingIssueNotification.Type, parameters);
+        }
+
+        /// <summary>
+        /// Outline data notification are sent from the server to the client to send data when changing focused document.
+        /// </summary>
+        public virtual void SendOutlineData(RefreshOutlineParams parameters)
+        {
+            rpcServer.SendNotification(RefreshOutlineNotification.Type, parameters);
         }
     }
 }

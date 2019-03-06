@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -143,6 +143,7 @@ namespace TypeCobol.LanguageServer
                 //Subscribe to diagnostics event
                 typeCobolWorkspace.MissingCopiesEvent += MissingCopiesDetected;
                 typeCobolWorkspace.DiagnosticsEvent += DiagnosticsDetected;
+                typeCobolWorkspace.DocumentModifiedEvent += DocumentModified;
 
                 //Create a ILanguageServer instance for the document.
                 docContext.LanguageServer = new TypeCobolLanguageServer(this.rpcServer, parameters.textDocument);
@@ -329,6 +330,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolWorkspace.CloseSourceFile(objUri);
                 typeCobolWorkspace.MissingCopiesEvent -= MissingCopiesDetected;
                 typeCobolWorkspace.DiagnosticsEvent -= DiagnosticsDetected;
+                typeCobolWorkspace.DocumentModifiedEvent -= DocumentModified;
 
                 // DEBUG information
                 RemoteConsole.Log("Closed source file : " + objUri.LocalPath);
@@ -822,6 +824,7 @@ namespace TypeCobol.LanguageServer
         {
             typeCobolWorkspace.MissingCopiesEvent -= MissingCopiesDetected;
             typeCobolWorkspace.DiagnosticsEvent -= DiagnosticsDetected;
+            typeCobolWorkspace.DocumentModifiedEvent -= DocumentModified;
 
             base.OnShutdown();
         }
@@ -837,6 +840,19 @@ namespace TypeCobol.LanguageServer
             if (context != null && context.FileCompiler != null)
             {
                 typeCobolWorkspace.RefreshSyntaxTree(context.FileCompiler, true);
+            }
+        }
+
+        public override void OnDidReceiveRefreshOutline(string uri)
+        {
+            var context = GetDocumentContextFromStringUri(uri, false);
+            if (context != null && context.FileCompiler != null)
+            {
+                var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot);
+                if (refreshOutlineParams != null)
+                {
+                    SendOutlineData(refreshOutlineParams);
+                }
             }
         }
 
@@ -882,6 +898,11 @@ namespace TypeCobol.LanguageServer
         private void LoadingIssueDetected(object sender, LoadingIssueEvent loadingIssueEvent)
         {
             SendLoadingIssue(new LoadingIssueParams() {Message = loadingIssueEvent.Message});
+        }
+
+        private void DocumentModified(object sender, EventArgs args)
+        {
+            OnDidReceiveRefreshOutline(sender.ToString());
         }
 
         private void ExceptionTriggered(object sender, ThreadExceptionEventArgs exception)

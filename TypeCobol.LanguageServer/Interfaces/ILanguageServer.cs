@@ -21,6 +21,12 @@ namespace TypeCobol.LanguageServer.Interfaces
         void TokensLinesChanged(object sender, EventArgs eventArgs);
 
         /// <summary>
+        /// Method to update the Outline data.
+        /// </summary>
+        /// <param name="programClassDocument"></param>
+        TypeCobolCustomLanguageServerProtocol.RefreshOutlineParams UpdateOutline(Compiler.Parser.ProgramClassDocument programClassDocument);
+
+        /// <summary>
         /// Event Handler when the whole document has changed.
         /// </summary>
         /// <param name="sender"></param>

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TypeCobol.Compiler;
 using TypeCobol.Compiler.Concurrency;
+using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.Compiler.TypeChecker;
@@ -154,6 +155,22 @@ namespace TypeCobol.LanguageServer
                 }
             }
         }
+
+
+        private OutlineNode _rootOutlineNode = null;
+        public RefreshOutlineParams UpdateOutline(ProgramClassDocument programClassDocument)
+        {
+            if(_rootOutlineNode == null)
+            {
+                _rootOutlineNode = new OutlineNode(programClassDocument.Root);
+            }
+
+            if (_rootOutlineNode.Update(programClassDocument.Root))
+                return new RefreshOutlineParams(new TextDocumentIdentifier(this.LspTextDocument.uri), _rootOutlineNode);
+            else
+                return null;
+        }
+
 
         /// <summary>
         /// Called when a token scanning has been performed.
