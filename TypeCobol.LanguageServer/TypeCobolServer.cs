@@ -79,6 +79,10 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting Syntax Coloring Notifications.    
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
+        /// <summary>
+        /// Are we supporting Syntax Coloring Notifications.    
+        /// </summary>
+        public bool UseOutlineRefresh { get; set; }
 
         /// <summary>
         /// Are Log message notifications enabled ? false if yes, true otherwise.
@@ -846,7 +850,11 @@ namespace TypeCobol.LanguageServer
 
         public override void OnDidReceiveRefreshOutline(string uri, bool bForced)
         {
+            if (!UseOutlineRefresh)
+                return;
+
             var context = GetDocumentContextFromStringUri(uri, false);
+            
             if (context != null && context.FileCompiler != null)
             {
                 var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot, bForced);

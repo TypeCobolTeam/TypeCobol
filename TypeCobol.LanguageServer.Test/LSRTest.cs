@@ -194,7 +194,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void ProcedureCompletion()
         {
-            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, null, null, "CustomDependencies");
+            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
         }
 
         [TestMethod]
@@ -293,14 +293,14 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void CompletionUsingCopy()
         {
-            LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
+            LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
         }
 
         [TestMethod]
         [TestCategory("Completion")]
         public void ReplacingSyntaxOff()
         {
-            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
+            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
         }
 #endif
 
@@ -315,7 +315,13 @@ namespace TypeCobol.LanguageServer.Test
         [TestMethod]
         public void GoToDefinition()
         {
-            LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
+            LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
+        }
+
+        [TestMethod]
+        public void OnOutlineRefresh()
+        {
+            LSRTestHelper.Test("OutlineRefresh", LsrTestingOptions.NoLsrTesting, true, useOutline: true);
         }
 
         [TestMethod]

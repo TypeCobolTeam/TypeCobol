@@ -142,6 +142,10 @@ namespace TypeCobol.LanguageServer
         /// Are we supporting Syntax Coloring Notifications.    
         /// </summary>
         public bool UseSyntaxColoring { get; set; }
+        /// <summary>
+        /// Are we supporting OutlineRefresh Notifications.    
+        /// </summary>
+        public bool UseOutlineRefresh { get; set; }
 
         #endregion
 
