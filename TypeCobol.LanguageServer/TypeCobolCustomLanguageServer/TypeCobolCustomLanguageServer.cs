@@ -43,6 +43,15 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
         }
 
+        protected override void OnDidSaveTextDocument(DidSaveTextDocumentParams parameters)
+        {
+            base.OnDidSaveTextDocument(parameters);
+            if (parameters.text != null)
+            {
+                OnDidReceiveRefreshOutline(parameters.textDocument.uri, true);
+            }
+        }
+
         private void CallReceiveMissingCopies(NotificationType notificationType, object parameters)
         {
             try
@@ -175,7 +184,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
 
             if (context != null && context.FileCompiler != null)
             {
-                var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot);
+                var refreshOutlineParams = context.LanguageServer.UpdateOutline(context.FileCompiler.CompilationResultsForProgram.ProgramClassDocumentSnapshot, bForced);
                 if (refreshOutlineParams != null)
                 {
                     SendOutlineData(refreshOutlineParams);

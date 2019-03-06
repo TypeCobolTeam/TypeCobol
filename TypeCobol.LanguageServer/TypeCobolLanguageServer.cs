@@ -176,15 +176,16 @@ namespace TypeCobol.LanguageServer
         /// Update the OutlineNodes of the root OutlineNode. Creates it if new document.
         /// </summary>
         /// <param name="programClassDocument"></param>
+        /// <param name="bForced"></param>
         /// <returns></returns>
-        public RefreshOutlineParams UpdateOutline(ProgramClassDocument programClassDocument)
+        public RefreshOutlineParams UpdateOutline(ProgramClassDocument programClassDocument, bool bForced)
         {
             if(_rootOutlineNode == null)
             {
                 _rootOutlineNode = new OutlineNode(programClassDocument.Root);
             }
 
-            if (_rootOutlineNode.Update(programClassDocument.Root))
+            if (bForced || _rootOutlineNode.Update(programClassDocument.Root))
                 return new RefreshOutlineParams(new TextDocumentIdentifier(this.LspTextDocument.uri), _rootOutlineNode);
             else
                 return null;
