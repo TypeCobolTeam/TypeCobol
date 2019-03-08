@@ -311,9 +311,7 @@ namespace TypeCobol.Compiler.CodeModel
 
             while (!redefinedVariableFound && index >= 0)
             {
-                CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as DataDescriptionEntry ??
-                                                              (CommonDataDescriptionAndDataRedefines)
-                                                              (childrens[index].CodeElement as DataRedefinesEntry);
+                CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as CommonDataDescriptionAndDataRedefines;
 
                 if (child != null && (child is DataDescriptionEntry || child is DataRedefinesEntry))
                 {
@@ -831,7 +829,7 @@ namespace TypeCobol.Compiler.CodeModel
             }
         }
 
-        public IList<TypeDefinition> GetType(ITypedNode symbol)
+        public IList<TypeDefinition> GetType(DataDefinition symbol)
         {
             return GetType(symbol.DataType);
         }
@@ -898,8 +896,8 @@ namespace TypeCobol.Compiler.CodeModel
 
                 if (currentTable.CurrentScope == Scope.Intrinsic || currentTable.CurrentScope == Scope.Namespace)
                     results = results.Where(tp =>
-                        (tp.CodeElement as DataTypeDescriptionEntry) != null &&
-                        (tp.CodeElement as DataTypeDescriptionEntry).Visibility == AccessModifier.Public);
+                        tp.CodeElement != null &&
+                        tp.CodeElement.Visibility == AccessModifier.Public);
 
                 foundedTypes.AddRange(results);
 
@@ -945,7 +943,7 @@ namespace TypeCobol.Compiler.CodeModel
         private static Dictionary<string, List<TypeDefinition>> GetPublicTypes(IDictionary<string, List<TypeDefinition>> programTypes) {
             return programTypes
                 .Where(p =>
-                    p.Value.All(f => ((DataTypeDescriptionEntry) f.CodeElement).Visibility == AccessModifier.Public)) 
+                    p.Value.All(f => f.CodeElement.Visibility == AccessModifier.Public)) 
                 .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort types to get only the ones with public AccessModifier
         }
 
@@ -1008,8 +1006,8 @@ namespace TypeCobol.Compiler.CodeModel
 
                 if (currentTable.CurrentScope == Scope.Intrinsic || currentTable.CurrentScope == Scope.Namespace)
                     results = results.Where(tp =>
-                        (tp.CodeElement as FunctionDeclarationHeader) != null &&
-                        (tp.CodeElement as FunctionDeclarationHeader).Visibility == AccessModifier.Public);
+                        tp.CodeElement != null &&
+                        tp.CodeElement.Visibility == AccessModifier.Public);
 
                 foundedFunctions.AddRange(results);
 
@@ -1095,7 +1093,7 @@ namespace TypeCobol.Compiler.CodeModel
                 var programFunctions = program.SymbolTable.GetTableFromScope(Scope.Declarations).Functions; //Get all function from this program
                 programFunctions = programFunctions
                                     .Where(p =>
-                                            p.Value.All(f => ((FunctionDeclarationHeader) f.CodeElement).Visibility == AccessModifier.Public))
+                                            p.Value.All(f => (f.CodeElement).Visibility == AccessModifier.Public))
                                             .ToDictionary(f => f.Key, f => f.Value, StringComparer.OrdinalIgnoreCase); //Sort functions to get only the one with public AccessModifier
 
                 result = GetFromTable(head, programFunctions); //Check if there is a function that correspond to the given name (head)
@@ -1344,7 +1342,7 @@ namespace TypeCobol.Compiler.CodeModel
         {
             str.Append(indent);
             str.Append(symbol.Name);
-            if (symbol is ITypedNode) str.Append(':').Append(((ITypedNode) symbol).DataType);
+            if (symbol is DataDefinition) str.Append(':').Append(((DataDefinition) symbol).DataType);
             var fun = symbol as FunctionDeclaration;
             if (fun != null)
             {
@@ -1423,7 +1421,7 @@ namespace TypeCobol.Compiler.CodeModel
                 foreach (var function in functions.Value)
                 {
                     if (accessModifier == null  //If no AccessModifier given, add all the functions
-                        || ((FunctionDeclarationHeader)function.CodeElement).Visibility == accessModifier) {
+                        || (function.CodeElement).Visibility == accessModifier) {
                         this.AddFunction(function); //Add function depending on the specified AccessModifier
                     }
                 }

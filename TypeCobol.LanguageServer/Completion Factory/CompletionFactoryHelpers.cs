@@ -78,7 +78,7 @@ namespace TypeCobol.LanguageServer
                 if (enablePublicFlag)
                 {
                     var declarationTable = node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations);
-                    typeIsPublic = ((DataTypeDescriptionEntry) type.CodeElement)?.Visibility == AccessModifier.Public
+                    typeIsPublic = type.CodeElement?.Visibility == AccessModifier.Public
                                    && !(type.GetProgramNode() == node.GetProgramNode()  //Ignore public if type is in the current program
                                     || typeIsIntrinsic); //Ignore public if type is in intrinsic
                 }
@@ -140,7 +140,7 @@ namespace TypeCobol.LanguageServer
                 }
                 bool procIsPublic = false;
                 if (enablePublicFlag)
-                    procIsPublic = ((FunctionDeclarationHeader) proc.CodeElement).Visibility == AccessModifier.Public
+                    procIsPublic = proc.CodeElement.Visibility == AccessModifier.Public
                                    &&
                                    !(node.SymbolTable.GetTableFromScope(SymbolTable.Scope.Declarations)
                                          .Functions.Values.Any(t => t.Contains(proc))

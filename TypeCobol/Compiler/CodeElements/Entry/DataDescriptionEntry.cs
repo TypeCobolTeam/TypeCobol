@@ -6,14 +6,26 @@ using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.CodeElements {
 
-	/// <summary>
-	/// Base class for all types of data definition entries :
-	/// - DataDescriptionEntry
-	/// - DataRedefinesEntry
-	/// - DataRenamesEntry
-	/// - DataConditionEntry
-	/// </summary>
-	public abstract class DataDefinitionEntry: NamedCodeElement {
+    /// <summary>
+    /// Base class for all types of data definition entries :
+    /// - DataDescriptionEntry
+    /// - DataRedefinesEntry
+    /// - DataRenamesEntry
+    /// - DataConditionEntry
+    ///
+    /// DataDefinitionEntry
+    ///     DataConditionEntry
+    ///     CommonDataDescriptionAndDataRedefines
+    ///         DataDescriptionEntry
+    ///             DataTypeDescriptionEntry
+    ///             SpecialRegisterDescriptionEntry
+    ///             ParameterDescriptionEntry
+    ///             FunctionCallResultDescriptionEntry
+    ///         DataRedefinesEntry
+    ///     DataRenamesEntry
+    /// 
+    /// </summary>
+    public abstract class DataDefinitionEntry: NamedCodeElement {
 	    protected DataDefinitionEntry(CodeElementType codeElementType) : base(codeElementType) {
 	        this.DataType = DataType.Unknown;
 	    }
