@@ -235,7 +235,7 @@ namespace TypeCobol.Test.Parser.Performance
             TestUtils.CreateRunReport("Incremental", TestUtils.GetReportDirectoryPath(), compiler.CobolFile.Name, stats, compiler.CompilationResultsForProgram);
         }
 
-        private static void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText )
+        private void ExecuteIncremental(FileCompiler compiler, TestUtils.CompilationStats stats, int newLineIndex, string newLineText )
         {
             // Execute a first (complete) compilation
             compiler.CompileOnce();
@@ -253,6 +253,9 @@ namespace TypeCobol.Test.Parser.Performance
                 
                 // Execute a second (incremental) compilation
                 compiler.CompileOnce();
+                //Be sure that there is no error, otherwise parsing can be incomplete
+                CheckThatThereIsNoError(compiler.CompilationResultsForProgram);
+
                 //Accumulate results
                 stats.AverageTextUpdateTime                 += compiler.CompilationResultsForProgram.PerfStatsForText.LastRefreshTime;
                 stats.AverageScannerTime                    += compiler.CompilationResultsForProgram.PerfStatsForScanner.LastRefreshTime;
@@ -372,7 +375,7 @@ namespace TypeCobol.Test.Parser.Performance
             stats.IterationNumber = 20;
             //Warmup before measurement
             var documentWarmup = new TypeCobol.Parser();
-            var optionsWarmup = new TypeCobolOptions
+            var options = new TypeCobolOptions
             {
                 ExecToStep = ExecutionStep.CrossCheck,
 #if EUROINFO_RULES
@@ -381,22 +384,16 @@ namespace TypeCobol.Test.Parser.Performance
             };
 
 
+            //Warmup
+            documentWarmup = new TypeCobol.Parser();
+            documentWarmup.Init(fullPath, options, format, copiesFolder);
+            documentWarmup.Parse(fullPath);
+            //Be sure that there is no error, otherwise parsing can be incomplete
+            CheckThatThereIsNoError(documentWarmup.Results);
+
             for (int i = 0; i < stats.IterationNumber; i++)
             {
-
-                //Warmup
-                documentWarmup = new TypeCobol.Parser();
-                documentWarmup.Init(fullPath, optionsWarmup, format, copiesFolder);
-                documentWarmup.Parse(fullPath);
-
                 var document = new TypeCobol.Parser();
-                var options = new TypeCobolOptions
-                {
-                    ExecToStep = ExecutionStep.CrossCheck,
-#if EUROINFO_RULES
-                    AutoRemarksEnable = true
-#endif
-                };
                 document.Init(fullPath, options, format, copiesFolder);
                 document.Parse(fullPath);
 
@@ -428,6 +425,20 @@ namespace TypeCobol.Test.Parser.Performance
 
 
             TestUtils.CreateRunReport("FullParsing", TestUtils.GetReportDirectoryPath(), Path.GetFileNameWithoutExtension(fullPath), stats);
+        }
+
+        /// <summary>
+        ///Be sure that there is no error, otherwise parsing can be incomplete
+        ///
+        ///We want to be sure that all steps of the parsing are done correctly, otherwise performance
+        ///cannot be compared
+        /// </summary>
+        private void CheckThatThereIsNoError(CompilationUnit compilationUnit)
+        {
+            if (compilationUnit.AllDiagnostics().Any(d => d.Info.Severity == Severity.Error))
+            {
+                throw new Exception("Error diagnostics Detected");
+            }
         }
     }
 }
