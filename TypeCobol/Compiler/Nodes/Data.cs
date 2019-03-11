@@ -251,6 +251,26 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
+        private IList<DataRedefines> _dataRedefines;
+
+        public void AddDataRedefinition(DataRedefines dataRedefines)
+        {
+            if (_dataRedefines == null)
+            {
+                _dataRedefines = new List<DataRedefines>();
+            }
+
+            _dataRedefines.Add(dataRedefines);
+        }
+
+        public DataRedefines GetBiggestRedefines()
+        {
+            //Order the list so the redefines that take the highest amout of memory is the top
+            var redefines = _dataRedefines?.OrderByDescending(dr => dr.PhysicalLength).First();
+
+            //Recurse if this redefines a redefine
+            return redefines?.GetBiggestRedefines() ?? redefines;
+        }
 
         public override bool VisitNode(IASTVisitor astVisitor) {
             return astVisitor.Visit(this);
@@ -301,12 +321,12 @@ namespace TypeCobol.Compiler.Nodes {
         /// <summary>
         /// PhysicalLength is the size taken by a DataDefinition and its children in memory
         /// </summary>
-        private long _physicalLength = 0;
+        private long _physicalLength = -1;
         public virtual long PhysicalLength
         {
             get
             {
-                if (_physicalLength > 0)
+                if (_physicalLength != -1)
                 {
                     return _physicalLength;
                 }
@@ -317,27 +337,34 @@ namespace TypeCobol.Compiler.Nodes {
                     {
                         _physicalLength = GetPhysicalLength();
                     }
+                    else if (((DataDefinitionEntry) CodeElement).LevelNumber?.Value == 88)
+                    {
+                        //Exception case if this is a level 88
+                        _physicalLength = 0;
+                    }
+                    else if (DataType == DataType.Boolean)
+                    {
+                        //exception case if this is a type bool
+                        _physicalLength = 1;
+                    }
                     else if (TypeDefinition != null)
                     {
                         _physicalLength = TypeDefinition.PhysicalLength;
                     }
                     else
                     {
+                        if (_physicalLength == -1)
+                            _physicalLength = 0;
+
                         foreach (var node in children)
                         {
                             var dataDefinition = (DataDefinition)node;
-                            if (dataDefinition != null)
+                            
+                            if (dataDefinition is DataRedefines == false)
                             {
-                                _physicalLength += dataDefinition.PhysicalLength;
-                                _physicalLength += dataDefinition.SlackBytes;
-                            }
-
-                            if (dataDefinition is DataRedefines)
-                            {
-                                SymbolReference redefined = ((DataRedefinesEntry)dataDefinition.CodeElement)?.RedefinesDataName;
-                                var result = SymbolTable.GetRedefinedVariable((DataRedefines) dataDefinition, redefined);
-
-                                _physicalLength -= result.PhysicalLength > dataDefinition.PhysicalLength ? dataDefinition.PhysicalLength : result.PhysicalLength;
+                                var redefines = dataDefinition.GetBiggestRedefines();
+                                _physicalLength += Math.Max(redefines?.PhysicalLength ?? 0, dataDefinition.PhysicalLength);
+                                _physicalLength += redefines?.SlackBytes ?? dataDefinition.SlackBytes;
                             }
                         }
                     }
@@ -349,7 +376,7 @@ namespace TypeCobol.Compiler.Nodes {
                     _physicalLength = _physicalLength * MaxOccurencesCount;
                 }
 
-                return _physicalLength > 0 ? _physicalLength : 1;
+                return _physicalLength != -1 ? _physicalLength : 1;
             }
         }
 
@@ -447,16 +474,33 @@ namespace TypeCobol.Compiler.Nodes {
                 long occupiedMemory = 0;
                 DataDefinition parent = Parent as DataDefinition;
                 _slackBytes = 0;
+                DataDefinition redefinedDataDefinition = null;
 
                 if (IsSynchronized && Usage != null && Usage != DataUsage.None && parent != null)
                 {
                     while (parent != null && parent.Type != CodeElementType.SectionHeader)
                     {
+                        DataRedefines redefines = parent.Children[index] as DataRedefines;
+                        while (redefines != null)
+                        {
+                            SymbolReference redefined = redefines.CodeElement().RedefinesDataName;
+                            redefinedDataDefinition = redefines.SymbolTable.GetRedefinedVariable(redefines, redefined);
+
+                            var definition = redefinedDataDefinition as DataRedefines;
+                            redefines = definition ?? null;
+
+                        }
+                        
 
                         for (int i = 0; i < index; i++)
                         {
-                            occupiedMemory += ((DataDefinition)parent.Children[i]).PhysicalLength;
-                            occupiedMemory += ((DataDefinition)parent.Children[i]).SlackBytes;
+                            var child = (DataDefinition) parent.Children[i];
+                            if (child is DataRedefines == false && (redefinedDataDefinition == null || !child.Equals(redefinedDataDefinition)))
+                            {
+                                var dataRedefinition = child.GetBiggestRedefines();
+                                occupiedMemory += Math.Max(dataRedefinition?.PhysicalLength ?? 0, child.PhysicalLength);
+                                occupiedMemory += dataRedefinition?.SlackBytes ?? child.SlackBytes;
+                            }
                         }
 
                         index = parent.Parent.ChildIndex(parent);
@@ -534,16 +578,29 @@ namespace TypeCobol.Compiler.Nodes {
                     for (int i = 0; i < Parent.Children.Count; i++)
                     {
                         Node sibling = Parent.Children[i];
-                        
+
                         if (i == Parent.ChildIndex(this) - 1)
                         {
-                            while(sibling is DataRedefines)
-                                sibling = Parent.Children[i - 1];
+                            int siblingIndex = -1;
+                            while (sibling is DataRedefines)
+                            {
+                                if (siblingIndex == -1)
+                                {
+                                    siblingIndex = i;
+                                }
 
+                                sibling = Parent.Children[siblingIndex - 1];
+
+                                siblingIndex--;
+
+                            }
+
+                            DataDefinition siblingDefinition = (DataDefinition)sibling;
                             //Add 1 for the next free Byte in memory
-                            _startPosition = ((DataDefinition)sibling).PhysicalPosition + 1 + SlackBytes;
-                        }
+                            _startPosition = Math.Max(siblingDefinition.GetBiggestRedefines()?.PhysicalPosition ?? 0, siblingDefinition.PhysicalPosition) + 1 + SlackBytes;
                             
+                        }
+
                     }
                     if (_startPosition == null)
                     {
@@ -557,7 +614,7 @@ namespace TypeCobol.Compiler.Nodes {
 
         /// PhysicalPosition is the position of the last Byte used by a DataDefinition in memory
         /// Minus 1 is due to PhysicalLength, which is calculated from 0. 
-        public virtual long PhysicalPosition => StartPosition + PhysicalLength - 1 + SlackBytes;
+        public virtual long PhysicalPosition => StartPosition + PhysicalLength - 1;
 
         /// <summary>If this node a subordinate of a TYPEDEF entry?</summary>
         public virtual bool IsPartOfATypeDef { get { return _ParentTypeDefinition != null; } }
