@@ -29,7 +29,7 @@ namespace TypeCobol.Test.Domain
         public static TypeCobolConfiguration DefaultConfig = null;
         public static ProgramSymbolTableBuilder Builder = null;
         public static NodeListenerFactory BuilderNodeListenerFactory = null;
-        public static string DefaultIntrinsicPath = @"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
+        public static string DefaultIntrinsicPath = null;
 
         [TestInitialize]
         public void TestInitialize()

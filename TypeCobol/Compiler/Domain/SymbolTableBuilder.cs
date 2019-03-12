@@ -85,7 +85,6 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="path"></param>
         public static void LoadIntrinsics(string path)
         {
-            //@"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
             path = path ?? IntrinsicPath;
             if(path == null)
             {
