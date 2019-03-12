@@ -167,7 +167,21 @@ namespace TypeCobol.Codegen {
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FunDeclareWithExec") + ".rdz.cbl", skeletons);
         }
 
-		[TestMethod]
+
+        [TestMethod]
+        [TestCategory("Codegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseProcedureWithExec()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenerateAsNested", "FunDeclareWithExec-PrivateOnly") + ".rdz.cbl", skeletons);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenerateAsNested", "FunDeclareWithExec-PublicOnly") + ".rdz.cbl", skeletons);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "GenerateAsNested", "FunDeclareWithExec-PublicPrivate") + ".rdz.cbl", skeletons);
+        }
+
+
+        [TestMethod]
 		[TestCategory("Codegen")]
 		[TestProperty("Time","fast")]
 		public void ParseLibrary() {
