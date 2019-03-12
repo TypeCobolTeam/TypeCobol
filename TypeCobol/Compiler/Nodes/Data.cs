@@ -356,15 +356,16 @@ namespace TypeCobol.Compiler.Nodes {
                         if (_physicalLength == -1)
                             _physicalLength = 0;
 
+                        //Sum up the physical lengths of the children of the current node.
                         foreach (var node in children)
                         {
                             var dataDefinition = (DataDefinition)node;
                             
+                            //The highest amount of memory taken between a node and its redefinition is always the size taken in memory
                             if (dataDefinition is DataRedefines == false)
                             {
                                 var redefines = dataDefinition.GetBiggestRedefines();
-                                _physicalLength += Math.Max(redefines?.PhysicalLength ?? 0, dataDefinition.PhysicalLength);
-                                _physicalLength += redefines?.SlackBytes ?? dataDefinition.SlackBytes;
+                                _physicalLength += Math.Max(redefines?.PhysicalLength + redefines?.SlackBytes ?? 0, dataDefinition.PhysicalLength + dataDefinition.SlackBytes);
                             }
                         }
                     }
@@ -478,28 +479,27 @@ namespace TypeCobol.Compiler.Nodes {
 
                 if (IsSynchronized && Usage != null && Usage != DataUsage.None && parent != null)
                 {
+                    //Analyse all DataDefinition that preceed the current node
                     while (parent != null && parent.Type != CodeElementType.SectionHeader)
                     {
                         DataRedefines redefines = parent.Children[index] as DataRedefines;
+                        //Get the original redefined node
                         while (redefines != null)
                         {
                             SymbolReference redefined = redefines.CodeElement().RedefinesDataName;
                             redefinedDataDefinition = redefines.SymbolTable.GetRedefinedVariable(redefines, redefined);
 
-                            var definition = redefinedDataDefinition as DataRedefines;
-                            redefines = definition ?? null;
-
+                            redefines = redefinedDataDefinition as DataRedefines;
                         }
                         
-
+                        //Sum up all physical lengths except these from DataRedefines and the node that is redefined by the current node (if he is a DataRedefines)
                         for (int i = 0; i < index; i++)
                         {
                             var child = (DataDefinition) parent.Children[i];
                             if (child is DataRedefines == false && (redefinedDataDefinition == null || !child.Equals(redefinedDataDefinition)))
                             {
                                 var dataRedefinition = child.GetBiggestRedefines();
-                                occupiedMemory += Math.Max(dataRedefinition?.PhysicalLength ?? 0, child.PhysicalLength);
-                                occupiedMemory += dataRedefinition?.SlackBytes ?? child.SlackBytes;
+                                occupiedMemory += Math.Max(dataRedefinition?.PhysicalLength + dataRedefinition?.SlackBytes ?? 0, child.PhysicalLength + child.SlackBytes);
                             }
                         }
 
@@ -561,11 +561,12 @@ namespace TypeCobol.Compiler.Nodes {
                 var node = this as DataRedefines;
                 if (node != null)
                 {
+                    //Get the start position from the node it redefines.
                     SymbolReference redefined = ((DataRedefinesEntry)CodeElement).RedefinesDataName;
                     var result = SymbolTable.GetRedefinedVariable(node, redefined);
 
-                        _startPosition = result.StartPosition;
-                        return _startPosition.Value;
+                    _startPosition = result.StartPosition + SlackBytes;
+                    return _startPosition.Value;
                     
                 }
 
@@ -575,20 +576,17 @@ namespace TypeCobol.Compiler.Nodes {
                 }
                 else
                 {
+                    //Searching for the first sibling with specified physical position, preceeding the current node.
                     for (int i = 0; i < Parent.Children.Count; i++)
                     {
                         Node sibling = Parent.Children[i];
 
                         if (i == Parent.ChildIndex(this) - 1)
                         {
-                            int siblingIndex = -1;
+                            int siblingIndex = i;
+                            //Looks further up if the first position encountered is from a DataRedefines node.
                             while (sibling is DataRedefines)
                             {
-                                if (siblingIndex == -1)
-                                {
-                                    siblingIndex = i;
-                                }
-
                                 sibling = Parent.Children[siblingIndex - 1];
 
                                 siblingIndex--;

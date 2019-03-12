@@ -33,7 +33,7 @@
         10 TEST2-ELT9                  3055    3154     100
         10 TEST2-ELT10                 3155    3256     102
         10 TEST2-ELT11                 3257    3260       4
-1 TEST3-GROUP1                            1    3333    3333
+1 TEST3-GROUP1                            1    3340    3340
     5 TEST3-SGROUP1                       1     354     354
         10 TEST3-ELT1                     1       4       4
         10 TEST3-ELT2                     5     354     350
@@ -70,6 +70,10 @@
             15 TEST3-ELT18             3317    3320       4
             15 TEST3-ELT19             3321    3329       9
         10 TEST3-ELT20                 3330    3333       4
+    5 TEST3-SGROUP7                    3334    3340       7
+        10 TEST3-ELT21                 3334    3336       3
+        SlackByte                      3334    3336       3
+        10 TEST3-ELT21R                3337    3340       4
 1 TEST4-GROUP1                            1    3260    3260
     5 TEST4-SGROUP1                       1     354     354
         10 TEST4-ELT1                     1       4       4
