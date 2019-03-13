@@ -283,7 +283,7 @@ namespace TypeCobol.Codegen.Nodes {
                     _cache.Add(new TextLineSnapshot(-1, "*_________________________________________________________________",
                         null));
                     _cache.Add(new TextLineSnapshot(-1, "IDENTIFICATION DIVISION.", null));
-                    if (OriginalNode.GenerateAsNested && OriginalNode.CodeElement().Visibility == AccessModifier.Public)
+                    if (OriginalNode.GenerateAsNested)
                     {
                         _cache.Add(new TextLineSnapshot(-1, "PROGRAM-ID. " + OriginalHash + OriginalProcName + " IS COMMON.", null));
                     }

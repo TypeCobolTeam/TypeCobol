@@ -129,7 +129,7 @@
       *   input  personId  type date.
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. cd991005GetPersonById.
+       PROGRAM-ID. cd991005GetPersonById IS COMMON.
           
        DATA DIVISION.
        LINKAGE SECTION.

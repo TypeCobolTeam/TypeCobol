@@ -37,7 +37,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a0508f35check.
+       PROGRAM-ID. a0508f35check IS COMMON.
        data division.
        working-storage section.
       *PGM1.check - Params :
@@ -73,7 +73,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. efd9419fcheck.
+       PROGRAM-ID. efd9419fcheck IS COMMON.
        data division.
        working-storage section.
       *PGM1.check - Params :
@@ -114,7 +114,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a02a7aa5checkName.
+       PROGRAM-ID. a02a7aa5checkName IS COMMON.
        data division.
        working-storage section.
       *PGM1.checkName - Params :

@@ -101,7 +101,7 @@
       *   input  name  pic x(15).
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. f6b6da00GetPersonByName.
+       PROGRAM-ID. f6b6da00GetPersonByName IS COMMON.
        DATA DIVISION.
        LINKAGE SECTION.
       *PGM1.GetPersonByName - Params :
@@ -211,7 +211,7 @@
       *  .
       *_________________________________________________________________
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. a02a7aa5checkName.
+       PROGRAM-ID. a02a7aa5checkName IS COMMON.
        data division.
        working-storage section.
       *PGM1.checkName - Params :
