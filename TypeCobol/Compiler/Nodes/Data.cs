@@ -483,9 +483,9 @@ namespace TypeCobol.Compiler.Nodes {
             {
                 if (SelfAndChildrenLines.ElementAt(i) is CodeElementsLine line)
                 {
-                    if (line.Text.Contains("*<<<"))
+                    if (line.ScanState.InsideFormalizedComment)
                     {
-                        while (!SelfAndChildrenLines.ElementAt(i).Text.Contains("*>>>"))
+                        while ((SelfAndChildrenLines.ElementAt(i) as CodeElementsLine)?.ScanState.InsideFormalizedComment == true)
                             i++;
                     }
                     else if (line.IndicatorChar != '*')
