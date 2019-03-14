@@ -229,7 +229,7 @@ namespace TypeCobol.Compiler.Symbols
             bool bHasDot = false;
             if (Type != null)
             {
-                if (Type.TypeComponent?.Tag == Type.Tags.Record && !HasFlag(Flags.Renames))
+                if (Type.TypeComponent?.Tag == Type.Tags.Group && !HasFlag(Flags.Renames))
                 {
                     tw.WriteLine(".");
                     this.Type.Dump(tw, indentLevel + 1);

@@ -12,9 +12,9 @@ using static TypeCobol.Compiler.Symbols.Symbol;
 namespace TypeCobol.Compiler.Types
 {
     /// <summary>
-    /// Class that represents a record type
+    /// Class that represents a group type
     /// </summary>
-    public class RecordType : Type
+    public class GroupType : Type
     {
         /// <summary>
         /// The Scope of variables in this record.
@@ -24,8 +24,8 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// Scope Owner constructor
         /// </summary>
-        /// <param name="owner">Owner of the record scope if any</param>
-        public RecordType(Symbol owner) : base(Tags.Record)
+        /// <param name="owner">Owner of the group scope if any</param>
+        public GroupType(Symbol owner) : base(Tags.Group)
         {
             _scope = new Scope<VariableSymbol>(owner);
             _scope.Owner = owner;

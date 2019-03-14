@@ -186,7 +186,7 @@ namespace TypeCobol.Compiler.Symbols
             lock (Domain)
             {
                 //First add it in the Global Domain.
-                SymbolTableBuilder.Global.AddToUniverse(varSym);
+                SymbolTableBuilder.Root.AddToUniverse(varSym);
                 string name = varSym.Name.ToLower();
                 Domain.TryGetValue(name, out var value);
                 if (value == null)

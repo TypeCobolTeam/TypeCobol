@@ -45,7 +45,7 @@ namespace TypeCobol.Test.Domain
             SymbolTableBuilder.Config = DefaultConfig;
 
             //Force the creation of the Global Symbol Table
-            var global = SymbolTableBuilder.Global;
+            var global = SymbolTableBuilder.Root;
 
             //Allocate a static Program Symbol Table Builder
             BuilderNodeListenerFactory = () =>
@@ -60,10 +60,10 @@ namespace TypeCobol.Test.Domain
         {
             foreach (var nestPrg in prog.Programs)
             {
-                SymbolTableBuilder.Global.RemoveProgram(prog);
+                SymbolTableBuilder.Root.RemoveProgram(prog);
                 RemovePrograms(nestPrg);
             }
-            SymbolTableBuilder.Global.RemoveProgram(prog);
+            SymbolTableBuilder.Root.RemoveProgram(prog);
         }
 
         [TestCleanup]
@@ -124,7 +124,7 @@ namespace TypeCobol.Test.Domain
             today.Symbol.Accept(symExpander, null);
             Type te_today = today.Symbol.Type;
             Assert.IsNotNull(te_today);
-            Assert.IsTrue(te_today.Tag == Type.Tags.Record);
+            Assert.IsTrue(te_today.Tag == Type.Tags.Group);
 
             //After expansion there are YYYY, MM, DD variables in the program
             yyyy = currentProgram.ResolveReference(new string[] { "yyyy" }, false);
@@ -282,7 +282,7 @@ namespace TypeCobol.Test.Domain
             //Get all TYPEDEF Types
             //----------------------------
             //Lookup the type "typeOfDays"
-            var typeOfDays = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Global, new string[] { "typeOfDays" }, false);
+            var typeOfDays = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDays" }, false);
             Assert.IsNotNull(typeOfDays);
             Assert.IsTrue(typeOfDays.Count == 1);
             Assert.IsNotNull(typeOfDays.Symbol.Type);
@@ -291,7 +291,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDays.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysPrivate"
-            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Global, new string[] { "typeOfDaysPrivate" }, false);
+            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPrivate" }, false);
             Assert.IsNotNull(typeOfDaysPrivate);
             Assert.IsTrue(typeOfDaysPrivate.Count == 1);
             Assert.IsNotNull(typeOfDaysPrivate.Symbol.Type);
@@ -301,7 +301,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(typeOfDaysPrivate.Symbol.Type.TypeComponent.Tag == Type.Tags.Picture);
 
             //Lookup the type "typeOfDaysNoModifier"
-            var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Global, new string[] { "typeOfDaysNoModifier" }, false);
+            var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysNoModifier" }, false);
             Assert.IsNotNull(typeOfDaysNoModifier);
             Assert.IsTrue(typeOfDaysNoModifier.Count == 1);
             Assert.IsNotNull(typeOfDaysNoModifier.Symbol.Type);
@@ -397,7 +397,7 @@ namespace TypeCobol.Test.Domain
             rcarray.Symbol.Accept(symExpander, null);
             Assert.IsNotNull(rcarray.Symbol.Type);
             Assert.IsTrue(rcarray.Symbol.Type.Tag == Type.Tags.Array);
-            Assert.IsTrue(rcarray.Symbol.Type.TypeComponent.Tag == Type.Tags.Record);
+            Assert.IsTrue(rcarray.Symbol.Type.TypeComponent.Tag == Type.Tags.Group);
 
             //After expanding there are X1, Y1, X2, Y2 variables in the program.
             x1 = currentProgram.ResolveReference(new string[] { "x1" }, false);
@@ -447,7 +447,7 @@ namespace TypeCobol.Test.Domain
             //No rcpt is of type Record
             rcpt.Symbol.Accept(symExpander, currentProgram);
             Assert.IsNotNull(rcpt.Symbol.Type);
-            Assert.IsTrue(rcpt.Symbol.Type.Tag == Type.Tags.Record);
+            Assert.IsTrue(rcpt.Symbol.Type.Tag == Type.Tags.Group);
 
             //After expanding there are now x, y, pt1, pt2 variables in the program.
             x = currentProgram.ResolveReference(new string[] { "x" }, false);
@@ -457,11 +457,11 @@ namespace TypeCobol.Test.Domain
             pt1 = currentProgram.ResolveReference(new string[] { "pt1" }, false);
             Assert.IsTrue(pt1.Count == 1);
             Assert.IsNotNull(pt1.Symbol.Type);
-            Assert.IsNotNull(pt1.Symbol.Type.Tag == Type.Tags.Record);
+            Assert.IsNotNull(pt1.Symbol.Type.Tag == Type.Tags.Group);
             pt2 = currentProgram.ResolveReference(new string[] { "pt2" }, false);
             Assert.IsTrue(pt2.Count == 1);
             Assert.IsNotNull(pt2.Symbol.Type);
-            Assert.IsNotNull(pt2.Symbol.Type.Tag == Type.Tags.Record);
+            Assert.IsNotNull(pt2.Symbol.Type.Tag == Type.Tags.Group);
 
             var pt1_x = currentProgram.ResolveReference(new string[] { "x", "pt1" }, false);
             Assert.IsTrue(pt1_x.Count == 1);            
@@ -483,7 +483,7 @@ namespace TypeCobol.Test.Domain
             var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" }, false);
             Assert.IsTrue(grcarray.Count == 1);
             Assert.IsNotNull(grcarray.Symbol.Type);
-            Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Record);
+            Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
 
             //Before expansion
             //____________________
@@ -492,7 +492,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(rc.Count == 1);
             Assert.IsNotNull(rc.Symbol.Type);
             Assert.IsTrue(rc.Symbol.Type.Tag == Type.Tags.Typedef);
-            var pt = currentProgram.ReverseResolveType(SymbolTableBuilder.Global, new string[] {"pt"}, false);
+            var pt = currentProgram.ReverseResolveType(SymbolTableBuilder.Root, new string[] {"pt"}, false);
             Assert.IsTrue(pt.Count == 1);
             Assert.IsTrue(rc.Symbol.Type == pt.Symbol.Type);
 
@@ -501,7 +501,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(arr.Count == 1);
             Assert.IsNotNull(arr.Symbol.Type);
             Assert.IsTrue(arr.Symbol.Type.Tag == Type.Tags.Typedef);
-            var rectarray = currentProgram.ReverseResolveType(SymbolTableBuilder.Global, new string[] { "rectarray" }, false);
+            var rectarray = currentProgram.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "rectarray" }, false);
             Assert.IsTrue(rectarray.Count == 1);
             Assert.IsTrue(arr.Symbol.Type == rectarray.Symbol.Type);
 
@@ -514,9 +514,9 @@ namespace TypeCobol.Test.Domain
             var rc_after = currentProgram.ResolveReference(new string[] { "rc" }, false);
             Assert.IsTrue(rc_after.Count == 2);
             Assert.IsNotNull(rc_after[0].Type);
-            Assert.IsNotNull(rc_after[0].Type.Tag == Type.Tags.Record);
+            Assert.IsNotNull(rc_after[0].Type.Tag == Type.Tags.Group);
             Assert.IsNotNull(rc_after[1].Type);
-            Assert.IsNotNull(rc_after[1].Type.Tag == Type.Tags.Record);
+            Assert.IsNotNull(rc_after[1].Type.Tag == Type.Tags.Group);
             Assert.IsTrue(rc_after[0] != rc_after[1]);
             var rc_arr = currentProgram.ResolveReference(new string[] { "rc", "arr" }, false);
             Assert.IsTrue(rc_arr.Count == 1);
@@ -617,7 +617,7 @@ namespace TypeCobol.Test.Domain
             var grcarray = currentProgram.ResolveReference(new string[] { "grcarray" }, false);
             Assert.IsTrue(grcarray.Count == 1);
             Assert.IsNotNull(grcarray.Symbol.Type);
-            Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Record);
+            Assert.IsTrue(grcarray.Symbol.Type.Tag == Type.Tags.Group);
 
             grcarray.Symbol.Accept(symExpander, null);
             //After the expansion the situation is like this
@@ -958,7 +958,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsNotNull(refs);
             Assert.IsTrue(refs.Count == 1);
             var p9 = refs.Symbol;
-            Assert.IsTrue(p9.Type.Tag == Type.Tags.Record);
+            Assert.IsTrue(p9.Type.Tag == Type.Tags.Group);
             checker = new CyclicTypeChecker();
             Assert.IsTrue(p9.Type.Accept(checker, null));
             Assert.IsTrue(checker.CyclicType == tPointCyc0.Type);
@@ -1604,7 +1604,7 @@ namespace TypeCobol.Test.Domain
             Assert.AreEqual(nestPrgSym.Name, "Tester");
 
             //Lookup the type "typeOfDays"
-            var typeOfDays = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Global, new string[] { "typeOfDays" }, false);
+            var typeOfDays = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDays" }, false);
             Assert.IsNotNull(typeOfDays);
             Assert.IsTrue(typeOfDays.Count == 1);
             Assert.IsNotNull(typeOfDays.Symbol.Type);
@@ -1626,7 +1626,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDays.Symbol));
 
             //Lookup the type "typeOfDaysPrivate"
-            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Global, new string[] { "typeOfDaysPrivate" }, false);
+            var typeOfDaysPrivate = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysPrivate" }, false);
             Assert.IsNotNull(typeOfDaysPrivate);
             Assert.IsTrue(typeOfDaysPrivate.Count == 1);
             Assert.IsNotNull(typeOfDaysPrivate.Symbol.Type);
@@ -1645,7 +1645,7 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(nestPrgSym.IsTypeAccessible(typeOfDaysPrivate.Symbol));
 
             //Lookup the type "typeOfDaysNoModifier"
-            var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Global, new string[] { "typeOfDaysNoModifier" }, false);
+            var typeOfDaysNoModifier = nestPrgSym.ReverseResolveType(SymbolTableBuilder.Root, new string[] { "typeOfDaysNoModifier" }, false);
             Assert.IsNotNull(typeOfDaysNoModifier);
             Assert.IsTrue(typeOfDaysNoModifier.Count == 1);
             Assert.IsNotNull(typeOfDaysNoModifier.Symbol.Type);

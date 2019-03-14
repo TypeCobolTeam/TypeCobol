@@ -76,7 +76,7 @@ namespace TypeCobol.Compiler.Symbols
                 }
                 else
                 {
-                    if (Type.TypeComponent?.Tag == Type.Tags.Record)
+                    if (Type.TypeComponent?.Tag == Type.Tags.Group)
                     {
                         tw.WriteLine(".");
                         this.Type.Dump(tw, indentLevel + 1);

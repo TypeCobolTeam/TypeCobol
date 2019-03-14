@@ -26,7 +26,7 @@ namespace TypeCobol.Compiler.Types
             Picture,
             Array,
             Pointer,
-            Record,
+            Group,
             Program,
             Function,
             Typedef,
@@ -253,7 +253,7 @@ namespace TypeCobol.Compiler.Types
             TR VisitPictureType(PictureType t, TS s);
             TR VisitPointerType(PointerType t, TS s);
             TR VisitProgramType(ProgramType t, TS s);
-            TR VisitRecordType(RecordType t, TS s);
+            TR VisitRecordType(GroupType t, TS s);
             TR VisitRenamesType(RenamesType t, TS s);
             TR VisitTypedefType(TypedefType t, TS s);
             TR VisitType(Type t, TS s);
@@ -272,7 +272,7 @@ namespace TypeCobol.Compiler.Types
             public virtual TR VisitPictureType(PictureType t, TS s) { return VisitType(t, s); }
             public virtual TR VisitPointerType(PointerType t, TS s) { return VisitType(t, s); }
             public virtual TR VisitProgramType(ProgramType t, TS s) { return VisitType(t, s); }
-            public virtual TR VisitRecordType(RecordType t, TS s) { return VisitType(t, s); }
+            public virtual TR VisitRecordType(GroupType t, TS s) { return VisitType(t, s); }
             public virtual TR VisitRenamesType(RenamesType t, TS s) { return VisitType(t, s); }
             public virtual TR VisitTypedefType(TypedefType t, TS s) { return VisitType(t, s); }
             public abstract TR VisitType(Type t, TS s);

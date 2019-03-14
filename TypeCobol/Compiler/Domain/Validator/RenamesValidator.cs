@@ -22,7 +22,7 @@ namespace TypeCobol.Compiler.Domain.Validator
     {
         private readonly VariableSymbol _from;
         private readonly VariableSymbol _to;
-        private readonly RecordType _containerType;
+        private readonly GroupType _containerType;
 
         public int FromIndex { get; private set; }
         public int ToIndex { get; private set; }
@@ -40,7 +40,7 @@ namespace TypeCobol.Compiler.Domain.Validator
         public bool FromSeen => FromIndex >= 0;
         public bool ToSeen => ToIndex >= 0;
 
-        public RenamesValidator(RecordType containerType, VariableSymbol from, VariableSymbol to = null)
+        public RenamesValidator(GroupType containerType, VariableSymbol from, VariableSymbol to = null)
         {
             System.Diagnostics.Debug.Assert(from != null);
             this._containerType = containerType;
@@ -74,9 +74,9 @@ namespace TypeCobol.Compiler.Domain.Validator
                         OccurSymbol = s;
                         result = false;
                         break;
-                    case Tags.Record:
+                    case Tags.Group:
                     {//Validate each Symbol in the Record
-                        RecordType recType = (RecordType) s.Type;
+                        GroupType recType = (GroupType) s.Type;
                         foreach (var field in recType.Scope)
                         {
                             if (!field.Accept(this, arg))
@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Domain.Validator
             }
             
             //We use a flat representation so RECORD Symbols are flattened.
-            if (FromSeen && s.Type != null && s.Type.Tag != Tags.Record)
+            if (FromSeen && s.Type != null && s.Type.Tag != Tags.Group)
             {//We can start building the renames type
                 if (this.Type == null)
                 {

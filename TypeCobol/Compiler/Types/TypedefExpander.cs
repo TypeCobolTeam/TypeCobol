@@ -82,9 +82,9 @@ namespace TypeCobol.Compiler.Types
         /// <param name="t"></param>
         /// <param name="owner"></param>
         /// <returns></returns>
-        public override Type VisitRecordType(RecordType t, Symbol owner)
+        public override Type VisitRecordType(GroupType t, Symbol owner)
         {
-            RecordType newType = (RecordType) t.Clone();
+            GroupType newType = (GroupType) t.Clone();
             newType.Scope = new Scope<VariableSymbol>(owner);
             foreach (var field in t.Scope)
             {
@@ -140,7 +140,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// The Cobol85 representation off a date type.
         /// </summary>
-        public static RecordType DateCobol85 { get; private set;  }
+        public static GroupType DateCobol85 { get; private set;  }
         public static Type DateYYYYType = new PictureType(new PictureValidator("9(04)", false));
         public static Type DateMMType = new PictureType(new PictureValidator("9(02)", false));
         public static Type DateDDType = DateMMType;
@@ -162,7 +162,7 @@ namespace TypeCobol.Compiler.Types
             }
             else if (t == BuiltinTypes.DateType)
             {                
-                RecordType recType = new RecordType(s);
+                GroupType recType = new GroupType(s);
                 VariableSymbol yyyy = new VariableSymbol("YYYY") {Level = varSym.Level + 1, Type = DateYYYYType, Owner = s};
                 recType.Scope.Enter(yyyy);
                 //Inherits flags

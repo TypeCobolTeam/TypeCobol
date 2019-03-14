@@ -8,9 +8,9 @@ using TypeCobol.Compiler.Symbols;
 namespace TypeCobol.Compiler.Scopes
 {
     /// <summary>
-    /// The Global Symbol Table is a special Namespace
+    /// The Root Symbol Table is a special Namespace
     /// </summary>
-    public class GlobalSymbolTable : NamespaceSymbol
+    public class RootSymbolTable : NamespaceSymbol
     {
         public VariableSymbol BottomVariable { get; private set;}
 
@@ -21,7 +21,7 @@ namespace TypeCobol.Compiler.Scopes
         /// <summary>
         /// Empty Constructor.
         /// </summary>
-        public GlobalSymbolTable() : base("<<Global>>")
+        public RootSymbolTable() : base("<<Root>>")
         {
             base.Kind = Kinds.Global;
             Universe = new List<VariableSymbol>();

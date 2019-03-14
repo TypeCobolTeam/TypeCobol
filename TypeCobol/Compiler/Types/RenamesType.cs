@@ -46,7 +46,7 @@ namespace TypeCobol.Compiler.Types
     ///     66 B RENAMES ITEM1 THRU ITEM6.
     /// </summary>
     /// </summary>
-    public class RenamesType : RecordType
+    public class RenamesType : GroupType
     {
         /// <summary>
         /// Constructor for the Syntax:
@@ -58,7 +58,7 @@ namespace TypeCobol.Compiler.Types
         /// <param name="containerType"></param>
         /// <param name="data_name_2"></param>
         /// <param name="data_name_3"></param>
-        public RenamesType(Symbol owner, RecordType containerType, VariableSymbol data_name_2) : this(owner, containerType, data_name_2, data_name_2)
+        public RenamesType(Symbol owner, GroupType containerType, VariableSymbol data_name_2) : this(owner, containerType, data_name_2, data_name_2)
         {
         }
 
@@ -73,7 +73,7 @@ namespace TypeCobol.Compiler.Types
         /// <param name="containerType"></param>
         /// <param name="data_name_2"></param>
         /// <param name="data_name_3"></param>
-        public RenamesType(Symbol owner, RecordType containerType, VariableSymbol data_name_2, VariableSymbol data_name_3) : base(owner)
+        public RenamesType(Symbol owner, GroupType containerType, VariableSymbol data_name_2, VariableSymbol data_name_3) : base(owner)
         {
             ContainerType = containerType;
             DataName1 = data_name_2;
@@ -94,7 +94,7 @@ namespace TypeCobol.Compiler.Types
         /// <summary>
         /// The Container type of the RENAMES
         /// </summary>
-        public RecordType ContainerType
+        public GroupType ContainerType
         {
             get;
             private set;

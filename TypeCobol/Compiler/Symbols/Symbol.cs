@@ -384,7 +384,7 @@ namespace TypeCobol.Compiler.Symbols
 
         /// <summary>
         /// A visitor for symbols.  A visitor is used to implement operations
-        /// (or relations) on symbols.  Most common operations on types are
+        /// (or relations) on symbols.  Most common operations on symbols are
         ///  binary relations of the form : Symbol x TP -> TR
         /// </summary>
         /// <typeparam name="TR">the return type of the operation implemented by this visitor.

@@ -57,25 +57,25 @@ namespace TypeCobol.Compiler.Domain
         public abstract override void OnNode(Node node, Program program);
 
         /// <summary>
-        /// The Global Symbol Table.
+        /// The Root Symbol Table.
         /// </summary>
-        private static GlobalSymbolTable _globalSymbolTable;
+        private static RootSymbolTable _rootSymbolTable;
 
         /// <summary>
-        /// The Global Symbol Table
+        /// The Root Symbol Table
         /// </summary>
-        public static GlobalSymbolTable Global
+        public static RootSymbolTable Root
         {
             get
             {
-                if (_globalSymbolTable == null)
+                if (_rootSymbolTable == null)
                 {
-                    _globalSymbolTable = new GlobalSymbolTable();
+                    _rootSymbolTable = new RootSymbolTable();
                     //Store Builtin Symbols.
-                    BuiltinSymbols.StoreSymbols(_globalSymbolTable.Types);
+                    BuiltinSymbols.StoreSymbols(_rootSymbolTable.Types);
                     LoadBaseTable();
                 }
-                return _globalSymbolTable;
+                return _rootSymbolTable;
             }
         }
 
@@ -99,11 +99,11 @@ namespace TypeCobol.Compiler.Domain
             };
             Compiler.Parser.NodeDispatcher.RegisterStaticNodeListenerFactory(BuilderNodeListenerFactory);
             //Put all Types from programs into the Global Namespace.
-            foreach (var pgm in Global.Programs)
+            foreach (var pgm in Root.Programs)
             {
                 foreach (var type in pgm.Types)
                 {
-                    Global.Types.Enter(type);
+                    Root.Types.Enter(type);
                 }
             }
 
@@ -156,11 +156,11 @@ namespace TypeCobol.Compiler.Domain
                     Tools.APIHelpers.Helpers.LoadIntrinsic(config.Copies, config.Format,
                         DiagnosticsErrorEvent); //Load intrinsic
                 //Put all Intrinsic Types from programs into the Global Namespace.
-                foreach (var pgm in Global.Programs)
+                foreach (var pgm in Root.Programs)
                 {
                     foreach (var type in pgm.Types)
                     {
-                        Global.Types.Enter(type);
+                        Root.Types.Enter(type);
                     }
                 }
 

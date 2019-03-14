@@ -39,7 +39,7 @@ namespace TypeCobol.Compiler.Types
             return t.ElementType?.Accept(this, currentLevel) ?? currentLevel;
         }
 
-        public override int VisitRecordType(RecordType t, int currentLevel)
+        public override int VisitRecordType(GroupType t, int currentLevel)
         {
             int maxLevel = currentLevel;
             foreach (var field in t.Scope)

@@ -194,12 +194,12 @@ namespace TypeCobol.Compiler.Domain
             bool bDuplicate = false;
             if (this.CurrentProgram == null)
             {//This is the main program or a stacked program with no parent.
-                var prg = Global.Programs.Lookup(programIdentification.ProgramName.Name);
+                var prg = Root.Programs.Lookup(programIdentification.ProgramName.Name);
                 if (prg != null)
                 {//Duplicate Program
                     bDuplicate = true;
                 }
-                this.CurrentProgram = Global.EnterProgram(programIdentification.ProgramName.Name);
+                this.CurrentProgram = Root.EnterProgram(programIdentification.ProgramName.Name);
                 //Add the new Stacked program.
                 Programs.Add(CurrentProgram);
             }
@@ -212,7 +212,7 @@ namespace TypeCobol.Compiler.Domain
                 //So the Now the Main Parent namespace in the Global Namespace, so add it in it.
                 //So first lookup if one exists already.
                 bool bAddNested = true;
-                var prgEntry = Global.Programs.Lookup(programIdentification.ProgramName.Name);
+                var prgEntry = Root.Programs.Lookup(programIdentification.ProgramName.Name);
                 if (prgEntry != null)
                 {//The program exitst, we must ensure that it is not a duplicated.                    
                     if (prgEntry.Count == 1)
@@ -239,7 +239,7 @@ namespace TypeCobol.Compiler.Domain
                 }
                 if (bAddNested)
                 {//Enter a new program.
-                    var nestedProgram = Global.EnterProgram(programIdentification.ProgramName.Name);
+                    var nestedProgram = Root.EnterProgram(programIdentification.ProgramName.Name);
                     //Reenter the program as nested here and change the parent.
                     this.CurrentProgram.Programs.Enter(nestedProgram);
                     nestedProgram.Owner = this.CurrentProgram;
@@ -788,7 +788,7 @@ namespace TypeCobol.Compiler.Domain
             if (sym != null)
             {               
                 //We create the record type
-                RecordType recType = new RecordType(sym);
+                GroupType recType = new GroupType(sym);
                 //Store the symbol associated to this Record Type.
                 recType.Symbol = sym;
                 sym.Type = recType;
@@ -900,9 +900,9 @@ namespace TypeCobol.Compiler.Domain
             tdSym.Type.Symbol = tdSym;
             //Important if the target Type is a Record Type we must change the parent Scope to the TypedefSymbol.
             Types.Type elemType = tdSym.Type?.TypeComponent;
-            if (elemType != null && elemType.Tag == Type.Tags.Record)
+            if (elemType != null && elemType.Tag == Type.Tags.Group)
             {
-                RecordType recType = (RecordType)elemType;
+                GroupType recType = (GroupType)elemType;
                 recType.Scope.ChangeOwner(tdSym);
             }
             //Mark all symbol has belonging to a TYPEDEF
@@ -978,7 +978,7 @@ namespace TypeCobol.Compiler.Domain
             //    System.Diagnostics.Debug.WriteLine("Not Existing TypeDef : " + dataDef.Name);
             //}
 
-            var tdEntry = this.CurrentScope.ReverseResolveType(Global, paths, true);
+            var tdEntry = this.CurrentScope.ReverseResolveType(Root, paths, true);
             System.Diagnostics.Debug.Assert(tdEntry.Count == 1);
             TypedefSymbol tdSymbol = tdEntry[0];
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, tdSymbol);
@@ -1207,7 +1207,7 @@ namespace TypeCobol.Compiler.Domain
             Symbol zeroOneParent = parentScope.Owner.LookupParentLevelSymbol(01, true);
             VariableSymbol lastSymbol = zeroOneParent != null && zeroOneParent.Kind == Symbol.Kinds.Variable
                 ? (VariableSymbol)zeroOneParent : null;
-            if (!(lastSymbol?.Type != null && lastSymbol.Type.Tag == Type.Tags.Record))
+            if (!(lastSymbol?.Type != null && lastSymbol.Type.Tag == Type.Tags.Group))
             {
                 Diagnostic d = new Diagnostic(MessageCode.SemanticTCErrorInParser,
                     from.NameLiteral.Token.Column,
@@ -1219,7 +1219,7 @@ namespace TypeCobol.Compiler.Domain
             }
 
             //Full Validate the rename.
-            RecordType containerType = (RecordType)lastSymbol.Type;
+            GroupType containerType = (GroupType)lastSymbol.Type;
             RenamesValidator validator = new RenamesValidator(containerType, fromSymbol, toSymbol);
             lastSymbol.Accept(validator, null);
             if (!validator.IsValid)

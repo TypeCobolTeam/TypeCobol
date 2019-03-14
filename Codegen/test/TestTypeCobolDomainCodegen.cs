@@ -33,7 +33,7 @@ namespace TypeCobol.Codegen.Domain
             SymbolTableBuilder.Config = DefaultConfig;
 
             //Force the creation of the Global Symbol Table
-            var global = SymbolTableBuilder.Global;
+            var global = SymbolTableBuilder.Root;
 
             //Allocate a static Program Symbol Table Builder
             BuilderNodeListenerFactory = () =>
@@ -54,7 +54,7 @@ namespace TypeCobol.Codegen.Domain
                 if (Builder.Programs.Count != 0)
                 {
                     foreach (var prog in Builder.Programs)
-                        SymbolTableBuilder.Global.RemoveProgram(prog);
+                        SymbolTableBuilder.Root.RemoveProgram(prog);
                 }
             }
         }
