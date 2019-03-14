@@ -514,22 +514,36 @@ namespace TypeCobol.Test.Utils
                 programs.Add(pgm);
             }
             
-			Compare(programs, reader, expectedResultPath);
+			Compare(result, programs, reader, expectedResultPath);
 		}
 
-		internal void Compare(List<Program> programs, StreamReader expected, string expectedResultPath)
+		internal void Compare(CompilationUnit compUnit, List<Program> programs, StreamReader expected, string expectedResultPath)
 		{
-			string result = Dump(programs);
+			string result = Dump(compUnit, programs);
 			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
 			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
 		}
 
-		private string Dump(List<Program> programs)
+		private string Dump(CompilationUnit compUnit, List<Program> programs)
 		{
 			var str = new StringBuilder();
             List<DataDefinition> dataDefinitions = new List<DataDefinition>();
+            str.AppendLine("Diagnostics");
+            str.AppendLine("------------");
+            var diags = compUnit.AllDiagnostics();
+            if (diags.Count > 0)
+            {
+                foreach (var diag in compUnit.AllDiagnostics())
+                {
+                    str.AppendLine(diag.ToString());
+                }
+            } else
+            {
+                str.AppendLine("  None");
+            }
 
-			str.AppendLine("--------- FIELD LEVEL|NAME ---------- START     END  LENGTH");
+            str.AppendLine("   ");
+            str.AppendLine("--------- FIELD LEVEL|NAME ---------- START     END  LENGTH");
 
             foreach (var program in programs)
             {
@@ -611,11 +625,11 @@ namespace TypeCobol.Test.Utils
         private string InsertValues(int lineLength, string startPosition, string physicalPosition, string physicalLength)
 	    {
             StringBuilder str = new StringBuilder();
-	        const int columnStartPosition = 43;
+	        const int columnStartPosition = 60;
 	        const int offsetBetweenValue = 8;
 
 
-	        str.Append(new string(' ', columnStartPosition - lineLength - startPosition.Length) + startPosition);
+	        str.Append(new string(' ', Math.Max(columnStartPosition - lineLength - startPosition.Length,0)) + startPosition);
 	        str.Append(new string(' ', offsetBetweenValue - physicalPosition.Length) + physicalPosition);
 	        str.Append(new string(' ', offsetBetweenValue - physicalLength.Length) + physicalLength);
 	        

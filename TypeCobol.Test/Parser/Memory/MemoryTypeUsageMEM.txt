@@ -1,86 +1,90 @@
-﻿--------- FIELD LEVEL|NAME ---------- START     END  LENGTH
-1 DEF1                                    1       5       5
-1 DEF2                                    1      16      16
-    5 DATADEF201                          1       5       5
-    5 DATADEF202                          6      12       7
-    5 DATADEF203                         13      16       4
-1 DEF3                                    1      26      26
-    5 DATADEF301                          1       5       5
-    5 DATADEF302                          6      10       5
-    5 DATADEF303                         11      26      16
-1 STR1                                    1      15      15
-    5 DATA101                             1       5       5
-    5 DATA102                             6      15      10
-1 STR2                                    1      58      58
-    5 DATA201                             1       5       5
-    5 DATA202                             6      12       7
-    5 DATA203                            13      23      11
-    5 DATA204                            24      34      11
-    5 DATA205                            35      46      12
-    5 DATA205                            47      58      12
-1 STR3                                    1      42      42
-    5 DATA301                             1       3       3
-    5 DATA302                             4       7       4
-    5 DATA303                             8      13       6
-    5 DATA304                            14      19       6
-    5 DATA305                            20      23       4
-    5 DATA306                            24      28       5
-    5 DATA307                            29      35       7
-    5 DATA308                            36      42       7
-1 STR4                                    1      21      21
-    5 DATA401                             1      10      10
-    5 DATA401                            11      21      11
-1 STR5                                    1      12      12
-    5 DATA501                             1       4       4
-    5 DATA502                             5      12       8
-1 STR6                                    1      16      16
-    5 DATA601                             1       4       4
-    5 DATA602                             5      12       8
-    5 DATA603                            13      16       4
-1 STR7                                    1      16      16
-    5 DATA701                             1       1       1
-    SlackByte                             2       4       3
-    5 DATA702                             5       8       4
-    5 DATA703                             9       9       1
-    SlackByte                            10      12       3
-    5 DATA704                            13      16       4
-1 STR8                                    1      16      16
-    5 DATA801                             1       1       1
-    SlackByte                             2       4       3
-    5 DATA802                             5       8       4
-    5 DATA803                             9       9       1
-    SlackByte                            10      12       3
-    5 DATA804                            13      16       4
-1 STR9                                    1       8       8
-    5 DATA901                             1       4       4
-    5 DATA902                             5       8       4
-1 STR10                                   1       9       9
-    5 DATA1001                            1       3       3
-    5 DATA1002                            4       6       3
-    5 DATA1003                            7       9       3
-1 STR11                                   1      26      26
-    5 DATA1101                            1       2       2
-    5 DATA1102                            3      12      10
-    5 DATA1103                           13      14       2
-    5 DATA1104                           15      26      12
-1 STR12                                   1      16      16
-    5 DATA1201                            1       8       8
-    5 DATA1202                            9      16       8
-1 STR13                                   1       8       8
-    5 DATA1301                            1       4       4
-    5 DATA1302                            5       8       4
-1 STR14                                   1       8       8
-    5 DATA1401                            1       4       4
-    5 DATA1402                            5       8       4
-1 STR15                                   1      16      16
-    10 STR1501                            1      16      16
-        15 DATA1501                       1       3       3
-        15 DATA1502                       4      16      13
-1 STR16                                   1      47      47
-    5 DATA1601                            1       5       5
-    5 DATA1602                            6      21      16
-    5 DATA1603                           22      47      26
-77 DATA77-01                              1       1       1
-77 DATA77-02                              1       4       4
-77 DATA77-03                              1       1       1
-77 DATA77-04                              1       4       4
+Diagnostics
+------------
+  None
+   
+--------- FIELD LEVEL|NAME ---------- START     END  LENGTH
+1 DEF1                                                     1       5       5
+1 DEF2                                                     1      16      16
+    5 DATADEF201                                           1       5       5
+    5 DATADEF202                                           6      12       7
+    5 DATADEF203                                          13      16       4
+1 DEF3                                                     1      26      26
+    5 DATADEF301                                           1       5       5
+    5 DATADEF302                                           6      10       5
+    5 DATADEF303                                          11      26      16
+1 STR1                                                     1      15      15
+    5 DATA101                                              1       5       5
+    5 DATA102                                              6      15      10
+1 STR2                                                     1      58      58
+    5 DATA201                                              1       5       5
+    5 DATA202                                              6      12       7
+    5 DATA203                                             13      23      11
+    5 DATA204                                             24      34      11
+    5 DATA205                                             35      46      12
+    5 DATA205                                             47      58      12
+1 STR3                                                     1      42      42
+    5 DATA301                                              1       3       3
+    5 DATA302                                              4       7       4
+    5 DATA303                                              8      13       6
+    5 DATA304                                             14      19       6
+    5 DATA305                                             20      23       4
+    5 DATA306                                             24      28       5
+    5 DATA307                                             29      35       7
+    5 DATA308                                             36      42       7
+1 STR4                                                     1      21      21
+    5 DATA401                                              1      10      10
+    5 DATA401                                             11      21      11
+1 STR5                                                     1      12      12
+    5 DATA501                                              1       4       4
+    5 DATA502                                              5      12       8
+1 STR6                                                     1      16      16
+    5 DATA601                                              1       4       4
+    5 DATA602                                              5      12       8
+    5 DATA603                                             13      16       4
+1 STR7                                                     1      16      16
+    5 DATA701                                              1       1       1
+    SlackByte                                              2       4       3
+    5 DATA702                                              5       8       4
+    5 DATA703                                              9       9       1
+    SlackByte                                             10      12       3
+    5 DATA704                                             13      16       4
+1 STR8                                                     1      16      16
+    5 DATA801                                              1       1       1
+    SlackByte                                              2       4       3
+    5 DATA802                                              5       8       4
+    5 DATA803                                              9       9       1
+    SlackByte                                             10      12       3
+    5 DATA804                                             13      16       4
+1 STR9                                                     1       8       8
+    5 DATA901                                              1       4       4
+    5 DATA902                                              5       8       4
+1 STR10                                                    1       9       9
+    5 DATA1001                                             1       3       3
+    5 DATA1002                                             4       6       3
+    5 DATA1003                                             7       9       3
+1 STR11                                                    1      26      26
+    5 DATA1101                                             1       2       2
+    5 DATA1102                                             3      12      10
+    5 DATA1103                                            13      14       2
+    5 DATA1104                                            15      26      12
+1 STR12                                                    1      16      16
+    5 DATA1201                                             1       8       8
+    5 DATA1202                                             9      16       8
+1 STR13                                                    1       8       8
+    5 DATA1301                                             1       4       4
+    5 DATA1302                                             5       8       4
+1 STR14                                                    1       8       8
+    5 DATA1401                                             1       4       4
+    5 DATA1402                                             5       8       4
+1 STR15                                                    1      16      16
+    10 STR1501                                             1      16      16
+        15 DATA1501                                        1       3       3
+        15 DATA1502                                        4      16      13
+1 STR16                                                    1      47      47
+    5 DATA1601                                             1       5       5
+    5 DATA1602                                             6      21      16
+    5 DATA1603                                            22      47      26
+77 DATA77-01                                               1       1       1
+77 DATA77-02                                               1       4       4
+77 DATA77-03                                               1       1       1
+77 DATA77-04                                               1       4       4
