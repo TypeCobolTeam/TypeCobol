@@ -272,15 +272,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(DataDefinition dataDefinition)
         {
-            CommonDataDescriptionAndDataRedefines commonDataDataDefinitionCodeElement =
-                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
+            var commonDataDataDefinitionCodeElement = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
             if (commonDataDataDefinitionCodeElement!=null)
             {
                 CheckPicture(dataDefinition);
             }
 
 
-            DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement as DataDefinitionEntry;
+            DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
             
             if (dataDefinitionEntry == null) return true;
 
@@ -349,6 +348,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 return true;
             }
+
+            DataDefinitionChecker.OnNode(dataDefinition);
 
             return true;
         }
@@ -544,8 +545,8 @@ namespace TypeCobol.Compiler.Diagnostics
                         DiagnosticUtils.AddError(node,
                             "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
                 }
-                else if (dataDefinition.DataType == DataType.Boolean && dataDefinition.CodeElement is DataDefinitionEntry &&
-                         ((DataDefinitionEntry) dataDefinition?.CodeElement)?.LevelNumber?.Value != 88)
+                else if (dataDefinition.DataType == DataType.Boolean && 
+                         (dataDefinition.CodeElement)?.LevelNumber?.Value != 88)
                 {
                     if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
                     {
@@ -625,7 +626,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void CheckReferenceToParagraphOrSection(PerformProcedure perform)
         {
-            var performCE = (PerformProcedureStatement)perform.CodeElement;
+            var performCE = perform.CodeElement;
             SymbolReference symbol;
             symbol = ResolveProcedureName(perform.SymbolTable, performCE.Procedure as AmbiguousSymbolReference, perform);
             if (symbol != null) performCE.Procedure = symbol;
@@ -810,8 +811,8 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var dataCondition = data as DataCondition;
                 if (dataCondition != null)
-                    return new GeneratedDefinition(dataCondition.CodeElement().DataType.Name,
-                        dataCondition.CodeElement().DataType);
+                    return new GeneratedDefinition(dataCondition.CodeElement.DataType.Name,
+                        dataCondition.CodeElement.DataType);
 
                 DataDescriptionEntry entry;
                 var descriptionEntry = data.CodeElement as DataDescriptionEntry;
@@ -844,14 +845,15 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (entry.UserDefinedDataType == null)
                     return new GeneratedDefinition(entry.DataType.Name, entry.DataType);
+            } else
+            {
+                return null;
             }
-            ITypedNode typed = symbol as ITypedNode;
-            if (typed == null) return null; // symbol untyped
 
             if (data?.TypeDefinition != null)
                 return data.TypeDefinition;
 
-            var types = node.SymbolTable.GetType(typed);
+            var types = node.SymbolTable.GetType(data);
             // return null if symbol type not found or ambiguous
             return types.Count != 1 ? null : types[0];
         }

@@ -410,30 +410,29 @@ namespace TypeCobol.Codegen.Actions
                 TypeCobol.Compiler.Nodes.ProcedureStyleCall procStyleCall = CurrentNode as TypeCobol.Compiler.Nodes.ProcedureStyleCall;
                 if (procStyleCall != null)
                 {
-                    ProcedureStyleCallStatement procStyleCallStmt = procStyleCall.CodeElement as ProcedureStyleCallStatement;
-                    if (procStyleCallStmt != null)
-                    {
-                        TypeCobolQualifiedSymbolReference tcqsr = procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction as
-                            TypeCobolQualifiedSymbolReference ?? procStyleCallStmt.ProcdurePointerOrTCProcedureFunction as TypeCobolQualifiedSymbolReference;
+                    ProcedureStyleCallStatement procStyleCallStmt = procStyleCall.CodeElement;
+                   
+                    TypeCobolQualifiedSymbolReference tcqsr = procStyleCallStmt.ProgramOrProgramEntryOrProcedureOrFunctionOrTCProcedureFunction as
+                                                                  TypeCobolQualifiedSymbolReference ?? procStyleCallStmt.ProcdurePointerOrTCProcedureFunction as TypeCobolQualifiedSymbolReference;
 
-                        if (tcqsr != null)
-                        {
-                            IList<SymbolReference> names_items = tcqsr.AsList();
-                            if (names_items.Count != items.Count)
-                                return false;
-                            if (EqualItems(items, names_items))
-                            {//This is a reference to a Function Call.
-                                hashFunction = procStyleCall.FunctionDeclaration.Hash;
-                                if (ProcCallerStack != null && ProcCallerStack.Count > 0)
-                                {   //Memorize the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
-                                    var program = ProcCallerStack.Peek();
-                                    if (!program.ProcStyleCalls.ContainsKey(hashFunction))
-                                        program.ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
-                                }
-                                return true;
+                    if (tcqsr != null)
+                    {
+                        IList<SymbolReference> names_items = tcqsr.AsList();
+                        if (names_items.Count != items.Count)
+                            return false;
+                        if (EqualItems(items, names_items))
+                        {//This is a reference to a Function Call.
+                            hashFunction = procStyleCall.FunctionDeclaration.Hash;
+                            if (ProcCallerStack != null && ProcCallerStack.Count > 0)
+                            {   //Memorize the (hash,ProcedureStyleCall) In the Program procedure style call dictionary.
+                                var program = ProcCallerStack.Peek();
+                                if (!program.ProcStyleCalls.ContainsKey(hashFunction))
+                                    program.ProcStyleCalls[hashFunction] = new Tuple<IList<SymbolReference>, TypeCobol.Compiler.Nodes.ProcedureStyleCall>(items, procStyleCall);
                             }
+                            return true;
                         }
                     }
+                    
                 }
                 return false;
             }
@@ -711,7 +710,7 @@ namespace TypeCobol.Codegen.Actions
         /// <summary>
         /// A Node to just generate Qualifier tokens.
         /// </summary>
-        internal class GenerateToken : Compiler.Nodes.Node, GeneratedAndReplace
+        internal class GenerateToken : GenericNode<CodeElement>, GeneratedAndReplace
         {
             /// <summary>
             /// 
