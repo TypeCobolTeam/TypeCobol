@@ -552,7 +552,7 @@ namespace TypeCobol.LanguageServer
             var userFilterText = userFilterToken == null ? string.Empty : userFilterToken.Text;
             Expression<Func<DataDefinition, bool>> variablePredicate =
                 da =>
-                    (da.CodeElement != null && ((DataDefinitionEntry) da.CodeElement).LevelNumber.Value < 88) ||
+                    (da.CodeElement != null && (da.CodeElement).LevelNumber.Value < 88) ||
                     (da.CodeElement == null && da is IndexDefinition); //Ignore variable of level 88.
 
             //Look if the sending variable is like litteral Alpha / Numeric
@@ -704,7 +704,7 @@ namespace TypeCobol.LanguageServer
                 potentialVariable = node.SymbolTable.GetVariables(v => v != null
                                                 && v.IsFlagSet(Node.Flag.LinkageSectionNode)
                                                 && v.CodeElement is DataDefinitionEntry
-                                                && (((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 1 || ((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 77)
+                                                && ((v.CodeElement).LevelNumber.Value == 1 || (v.CodeElement).LevelNumber.Value == 77)
                                                 && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                                                 SymbolTable.Scope.GlobalStorage);
             }
@@ -714,8 +714,8 @@ namespace TypeCobol.LanguageServer
                 potentialVariable = node.SymbolTable.GetVariables(
                     v => v != null
                          && v.CodeElement is DataDefinitionEntry
-                         && (((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 1 ||
-                             ((DataDefinitionEntry) v.CodeElement).LevelNumber.Value == 77)
+                         && ((v.CodeElement).LevelNumber.Value == 1 ||
+                             (v.CodeElement).LevelNumber.Value == 77)
                          && v.Name.StartsWith(userFilterText, StringComparison.InvariantCultureIgnoreCase),
                         SymbolTable.Scope.GlobalStorage);
             }

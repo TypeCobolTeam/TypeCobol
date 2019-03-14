@@ -170,9 +170,9 @@ namespace TypeCobol.Tools.APIHelpers
 
                         //If there is no public types or functions, then call diagEvent
                         if (diagEvent != null
-                            && !globalTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement().Visibility == AccessModifier.Public))            //No Public Types in Global table
-                            && !declarationTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement().Visibility == AccessModifier.Public))       //No Public Types in Declaration table
-                            && !declarationTable.Functions.Values.Any(fds => fds.Any(fd => fd.CodeElement().Visibility == AccessModifier.Public)))  //No Public Functions in Declaration table
+                            && !globalTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement.Visibility == AccessModifier.Public))            //No Public Types in Global table
+                            && !declarationTable.Types.Values.Any(tds => tds.Any(td => td.CodeElement.Visibility == AccessModifier.Public))       //No Public Types in Declaration table
+                            && !declarationTable.Functions.Values.Any(fds => fds.Any(fd => fd.CodeElement.Visibility == AccessModifier.Public)))  //No Public Functions in Declaration table
                         {
                             diagEvent(null, new DiagnosticsErrorEvent() { Path = path, Diagnostic = new ParserDiagnostic(string.Format("No public types or procedures/functions found in {0}", program.Name), 1, 1, 1, null, MessageCode.Warning) });
                             continue;

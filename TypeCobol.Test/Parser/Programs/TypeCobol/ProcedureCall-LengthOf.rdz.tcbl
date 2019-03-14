@@ -41,7 +41,7 @@
        declare procedure KONotCorrectFormat private
              input  var21 pic S9(5)
                     var22 pic S9(06) comp
-                    var23 pic S9(07) comp-2
+                    var23 pic S9(07) comp-3
                     var24 pic S9(08) comp-3
                     var25 pic  9(10) comp-5.
        end-declare.

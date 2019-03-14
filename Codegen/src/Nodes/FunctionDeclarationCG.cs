@@ -14,12 +14,12 @@ namespace TypeCobol.Codegen.Nodes {
         private string OriginalProcName = string.Empty; //Limited to 22 characters
         FunctionDeclaration OriginalNode = null;
 
-        public FunctionDeclarationCG(Compiler.Nodes.FunctionDeclaration originalNode) : base(originalNode.CodeElement()) {
+        public FunctionDeclarationCG(Compiler.Nodes.FunctionDeclaration originalNode) : base(originalNode.CodeElement) {
             this.OriginalNode = originalNode;
 
             //Check if we need to generate something special for this Procedure
-            bool needToGenerateParametersIntoLinkage = originalNode.CodeElement().Profile.InputParameters.Count + originalNode.CodeElement().Profile.InoutParameters.Count + originalNode.CodeElement().Profile.OutputParameters.Count +
-                             (originalNode.CodeElement().Profile.ReturningParameter != null ? 1 : 0) > 0;
+            bool needToGenerateParametersIntoLinkage = originalNode.CodeElement.Profile.InputParameters.Count + originalNode.CodeElement.Profile.InoutParameters.Count + originalNode.CodeElement.Profile.OutputParameters.Count +
+                             (originalNode.CodeElement.Profile.ReturningParameter != null ? 1 : 0) > 0;
             //we'll generate things for public call
             var containsPublicCall = originalNode.ProcStyleCalls != null && originalNode.ProcStyleCalls.Count > 0;
 

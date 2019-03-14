@@ -19,9 +19,8 @@ namespace TypeCobol.Codegen.Nodes
     {
 
         private DataDescription Node;
-        public TypedDataNode(DataDescription node) : base(null) { this.Node = node; }
+        public TypedDataNode(DataDescription node) : base(node.CodeElement) { this.Node = node; }
 
-        public override CodeElement CodeElement { get { return this.Node.CodeElement; } }
 
         private List<ITextLine> _cache = null;
         public override IEnumerable<ITextLine> Lines
@@ -33,7 +32,7 @@ namespace TypeCobol.Codegen.Nodes
                     _cache = new List<ITextLine>();
                     if (this.Node.IsPartOfATypeDef) return _cache;
 
-                    var data = this.Node.CodeElement();
+                    var data = this.Node.CodeElement;
                     if (data.LevelNumber != null)
                     {
                         int level = (int) (data.LevelNumber.Value);
@@ -699,7 +698,7 @@ namespace TypeCobol.Codegen.Nodes
                     }
                     var type = data.TypeDefinition;
                     bool isCustomTypeToo = !(data is TypeDefinition) && (type != null);
-                    var dataDefinitionEntry = data.CodeElement as DataDefinitionEntry;
+                    var dataDefinitionEntry = data.CodeElement;
                     if (isCustomTypeToo && dataDefinitionEntry != null)
                     {                        
                         List<string> sub_acc = new List<string>();
@@ -855,7 +854,7 @@ namespace TypeCobol.Codegen.Nodes
                 }
 
                 bool isCustomTypeToo = !(child is TypeDefinition) && (typed.TypeDefinition != null);
-                var dataDefinitionEntry = typed.CodeElement as DataDefinitionEntry;
+                var dataDefinitionEntry = typed.CodeElement;
                 if (dataDefinitionEntry != null)
                 {
                     lines.AddRange(CreateDataDefinition(child, child.SymbolTable, layout, rootProcedures, rootVariableName, typed, dataDefinitionEntry, level, indent, isCustomTypeToo, false, isCustomTypeToo ? typed.TypeDefinition : null));
