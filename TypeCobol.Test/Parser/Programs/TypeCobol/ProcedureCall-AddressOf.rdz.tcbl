@@ -1,0 +1,19 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CallAdrsOf.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 myDate TYPE DATE.
+
+       LINKAGE SECTION.
+       01 var2 pic X.
+
+       PROCEDURE DIVISION.
+
+       declare toto input titi pic X.
+       end-declare.
+
+      *KO type are not compatible
+       call toto input address of var2.
+
+       END PROGRAM CallAdrsOf.

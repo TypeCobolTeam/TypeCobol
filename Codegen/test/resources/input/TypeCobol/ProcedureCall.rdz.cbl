@@ -29,6 +29,14 @@
        DECLARE PROCEDURE ProcedureWithANameOver22Chars PRIVATE.
        END-DECLARE.
 
+       DECLARE PROCEDURE MyProcPointerTest PRIVATE
+           INPUT    myPtn POINTER.
+        END-DECLARE.
+
+       DECLARE PROCEDURE MyProcPointerTest PRIVATE
+           INPUT    NumericInput PIC S9(9) COMP-5.
+        END-DECLARE.
+
        DECLARE PROCEDURE ValidateDateFormat PRIVATE.
        END-DECLARE.
 

@@ -1,0 +1,25 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CallWithPointer.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 myDate TYPE DATE.
+
+       LINKAGE SECTION.
+       01 myVar TYPE Bool.
+
+       PROCEDURE DIVISION.
+
+       DECLARE PROCEDURE MyProc PRIVATE
+           INPUT    someDate   TYPE DATE
+           OUTPUT   myptr  pointer.
+        END-DECLARE.
+
+       DECLARE PROCEDURE MyProc PRIVATE
+           INPUT    myBool   TYPE BOOL
+           OUTPUT   myptr  pointer.
+        END-DECLARE.
+
+        CALL MyProc INPUT myDate OUTPUT ADDRESS OF myVar.
+
+       END PROGRAM CallWithPointer.
