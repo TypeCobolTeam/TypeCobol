@@ -518,7 +518,7 @@ namespace TypeCobol.Compiler.Nodes {
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            FormalizedCommentDocumentation doc = this.CodeElement().FormalizedCommentDocumentation;
+            FormalizedCommentDocumentation doc = this.CodeElement.FormalizedCommentDocumentation;
 
             int i = 0;
 

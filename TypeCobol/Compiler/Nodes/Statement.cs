@@ -61,7 +61,7 @@
 
         public override string ToString()
         {
-            var doc = FunctionDeclaration.CodeElement().FormalizedCommentDocumentation;
+            var doc = FunctionDeclaration.CodeElement.FormalizedCommentDocumentation;
             if (doc != null)
                 return doc.ToString();
 
