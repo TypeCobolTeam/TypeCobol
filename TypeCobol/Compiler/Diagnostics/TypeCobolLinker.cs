@@ -100,11 +100,11 @@ namespace TypeCobol.Compiler.Diagnostics
             if (type == dataEntry.ParentTypeDefinition || circularRefInsideChildren) 
             {
                 DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", 
-                    (DataDefinitionEntry) dataEntry.CodeElement, code: MessageCode.SemanticTCErrorInParser);
+                    dataEntry.CodeElement, code: MessageCode.SemanticTCErrorInParser);
                 return; //Do not continue to prevent further work/crash with circular references
             }
 
-            if ((dataEntry.CodeElement as DataDescriptionEntry).IsGlobal)
+            if (dataEntry.CodeElement.IsGlobal)
                 symbolTable = symbolTable.GetTableFromScope(SymbolTable.Scope.Global);
 
             

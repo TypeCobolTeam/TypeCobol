@@ -316,13 +316,8 @@ namespace TypeCobol.Compiler.Scanner
                     // Check if the last token so far is an alphanumeric or national literal
                     if (lastTokenOfConcatenatedLineSoFar.TokenFamily == TokenFamily.AlphanumericLiteral)
                     {
-                        // The continuation line must contain a hyphen in the indicator area, and the first nonblank character must be a quotation mark
-                        if (line[startOfContinuationIndex] != lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
-                        {
-                            continuationLine.AddDiagnostic(MessageCode.InvalidFirstCharForContinuationLine, startOfContinuationIndex, startOfContinuationIndex, lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter);
-                        }
-                        // The continuation of the literal begins with the character immediately following the quotation mark.
-                        else
+                        //// The continuation of the literal begins with the character immediately following the quotation mark.
+                        if (line[startOfContinuationIndex] == lastTokenOfConcatenatedLineSoFar.ExpectedClosingDelimiter)
                         {
                             offsetForLiteralContinuation = 1;
 
@@ -684,7 +679,7 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         return new Token(TokenType.ColonSeparator, startIndex, currentIndex - 1, tokensLine);
                     case '*':
-                        if (line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>' && line[currentIndex + 3] == '>')
+                        if ((line.Length > currentIndex + 3) && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>' && line[currentIndex + 3] == '>')
                         {
                             // We are in the case of a Formalize Comment stop with the '*' on column other than 7 wich is forbidden
                             tokensLine.AddDiagnostic(MessageCode.WrongFormalizedCommentMarckupPosition,
@@ -697,7 +692,7 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex ++;
                         return new Token(TokenType.MultiplyOperator, startIndex, currentIndex - 1, tokensLine);
                     case '>':
-                        if (line[currentIndex - 1] == '*' && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
+                        if ((line.Length > currentIndex + 2) && line[currentIndex - 1] == '*' && line[currentIndex + 1] == '>' && line[currentIndex + 2] == '>')
                         {
                             // We are in the case of a Formalize Comment stop with the '*' on column 7
                             // consume the three > chars

@@ -125,6 +125,22 @@ namespace TypeCobol.LanguageServer.Test
         {
             LSRTestHelper.Test("SupprMultipleLinesFromMiddlePreviousLine", LsrTestingOptions.LsrParsingPhaseTesting);
         }
+
+        [TestMethod]
+        [TestCategory("Incremental")]
+        public void MultiLineCommentIncScan()
+        {
+            LSRTestHelper.Test("MultiLineCommentIncScan", LsrTestingOptions.NoLsrTesting, false);
+        }
+        #endregion
+
+        #region SyntaxColoring
+        [TestMethod]
+        [TestCategory("SyntaxColoring")]
+        public void MultiCommentSyntaxColoring()
+        {
+            LSRTestHelper.Test("MultiCommentSyntaxColoring", LsrTestingOptions.NoLsrTesting, false, true);
+        }
         #endregion
 
         #region Sementic_Tests
@@ -133,6 +149,15 @@ namespace TypeCobol.LanguageServer.Test
         public void RemoveDataDivisionCtrlZWithDiag()
         {
             LSRTestHelper.Test("RemoveDataDivisionCtrlZWithDiag", LsrTestingOptions.NoLsrTesting, true);
+        }
+        #endregion
+
+        #region Sementic_Tests
+        [TestMethod]
+        [TestCategory("Semantic")]
+        public void MultiLineBlockDeleteUndo()
+        {
+            LSRTestHelper.Test("MultiLineBlockDeleteUndo", LsrTestingOptions.NoLsrTesting, false);
         }
         #endregion
 
@@ -169,7 +194,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void ProcedureCompletion()
         {
-            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, null, null, "CustomDependencies");
+            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, null, null, "CustomDependencies");
         }
 
         [TestMethod]
@@ -268,14 +293,14 @@ namespace TypeCobol.LanguageServer.Test
         [TestCategory("Completion")]
         public void CompletionUsingCopy()
         {
-            LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+            LSRTestHelper.Test("CompletionUsingCopy", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
         }
 
         [TestMethod]
         [TestCategory("Completion")]
         public void ReplacingSyntaxOff()
         {
-            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+            LSRTestHelper.Test("replacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
         }
 #endif
 
@@ -290,7 +315,7 @@ namespace TypeCobol.LanguageServer.Test
         [TestMethod]
         public void GoToDefinition()
         {
-            LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, "CopyFolder");
+            LSRTestHelper.Test("GoToDefinition", LsrTestingOptions.NoLsrTesting, true, false, "CopyFolder");
         }
 
         [TestMethod]

@@ -165,7 +165,7 @@ namespace TypeCobol.Compiler.Nodes {
 
 		    var node = o as DataDescription;
 	        if (node != null) {
-                    var data = node.CodeElement as DataDescriptionEntry;
+                    var data = node.CodeElement;
 	            if (data != null) {
                         return /*data.Picture!=null? data.Picture.Value :*/ data.UserDefinedDataType != null ? data.UserDefinedDataType.Name : null;
                     }
@@ -185,7 +185,7 @@ namespace TypeCobol.Compiler.Nodes {
         {
             var data = o as DataDescription;
             if (data == null) return null;
-            TypeCobol.Compiler.CodeElements.Value value = ((DataDescriptionEntry)data.CodeElement).InitialValue;
+            TypeCobol.Compiler.CodeElements.Value value = data.CodeElement.InitialValue;
             if (value != null)
             {
                 if (value.LiteralType == Value.ValueLiteralType.Boolean)
@@ -204,7 +204,7 @@ namespace TypeCobol.Compiler.Nodes {
 	    {
 		    var data = o as DataDefinition;
 		    if (data == null) return null;
-		    return string.Format("{0:00}", ((DataDefinitionEntry)data.CodeElement)?.LevelNumber?.Value);
+		    return string.Format("{0:00}", data.CodeElement?.LevelNumber?.Value);
 	    }
     }
 
@@ -277,7 +277,7 @@ namespace TypeCobol.Compiler.Nodes {
             var node = (Node)o;
             if (node.IsFlagSet(Node.Flag.NodeContainsPointer))
             {
-                var setIndex = node.CodeElement as SetStatementForIndexes;
+                var setIndex = (node as Set)?.CodeElement as SetStatementForIndexes;
                 if (setIndex?.SendingVariable.ArithmeticExpression != null)
                     return true;
             }
@@ -333,10 +333,14 @@ namespace TypeCobol.Compiler.Nodes {
         {
             var codeElement = ((Node)o).CodeElement;
             var variablesWritten = codeElement.StorageAreaWrites;
+            List<URI> variablesURI = new List<URI>();
             if (variablesWritten == null) return null;
             if (variablesWritten.Count == 0) return null;
-            if (variablesWritten.Count == 1) return new URI(variablesWritten[0].ToString());
-            throw new System.ArgumentOutOfRangeException("Too many receiving items (" + variablesWritten.Count + ")");            
+            foreach (var codeElementStorageAreaWrite in variablesWritten)
+            {
+                variablesURI.Add(new URI(codeElementStorageAreaWrite.ToString()));
+            }
+            return variablesURI;
         }
     }
     internal class PointerDisplayableReceiversAttribute : Attribute
@@ -568,7 +572,7 @@ internal class DefinitionsAttribute: Attribute {
 internal class VisibilityAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var fun = o as FunctionDeclaration;
-		if (fun != null) return fun.CodeElement().Visibility.ToString();
+		if (fun != null) return fun.CodeElement.Visibility.ToString();
 		return null;
 	}
 }
@@ -576,9 +580,10 @@ internal class VisibilityAttribute: Attribute {
 internal class LibraryCopyAttribute: Attribute {
 	public object GetValue(object o, SymbolTable table) {
 		var pgm = ((Node)o).GetProgramNode();
-		var copies = pgm.GetCodeElementHolderChildren<LibraryCopyCodeElement>();
-		var copy = copies.Count > 0? ((LibraryCopy)copies[0]) : null;
-		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement().Name.Name;
+
+		var copies = pgm.GetChildren<LibraryCopy>();
+		var copy = copies.Count > 0? copies[0] : null;
+		return copy == null? "?TCRFUN_LIBRARY_COPY?" : copy.CodeElement.Name.Name;
 	}
 }
     /// <summary>
@@ -725,7 +730,7 @@ internal class LibraryCopyAttribute: Attribute {
                     FunctionDeclaration fun_decl = proc_style_call.FunctionDeclaration;
                     if (fun_decl != null)
                     {
-                        if (fun_decl.CodeElement().Visibility == AccessModifier.Private)
+                        if (fun_decl.CodeElement.Visibility == AccessModifier.Private)
                             continue;//Ignore a Private function ==> Cannot Import It.
                     }
                     var item_pgm = call.Item1[call.Item1.Count - 1];

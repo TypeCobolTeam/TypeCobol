@@ -81,15 +81,13 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         public static void CheckTypeDefinition(TypeDefinition typeDefinition)
         {
-            AnalyticsWrapper.Telemetry.TrackEvent(EventType.TypedUsed, typeDefinition.Name, LogType.TypeCobolUsage);
-
             if (typeDefinition.SymbolTable.GetType(new URI(typeDefinition.DataType.Name)).Any(t => t != typeDefinition))
             {
                 var message = string.Format("TYPE '{0}' has already been declared", typeDefinition.DataType.Name);
                 DiagnosticUtils.AddError(typeDefinition, message, MessageCode.SemanticTCErrorInParser);
             }
 
-            if (typeDefinition.CodeElement().Picture == null && typeDefinition.Children.Count < 1 &&
+            if (typeDefinition.CodeElement.Picture == null && typeDefinition.Children.Count < 1 &&
                 !typeDefinition.Usage.HasValue)
             {
                 string message = "TYPEDEF \'" + typeDefinition.Name + "\' has no description.";
@@ -103,10 +101,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
             }
             // Add a warning if a parameters field is set inside the formalized comment
-            if (typeDefinition.CodeElement().FormalizedCommentDocumentation != null &&
-                !typeDefinition.CodeElement().FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
+            if (typeDefinition.CodeElement.FormalizedCommentDocumentation != null &&
+                !typeDefinition.CodeElement.FormalizedCommentDocumentation.Parameters.IsNullOrEmpty())
             {
-                var token = typeDefinition.CodeElement().ConsumedTokens
+                var token = typeDefinition.CodeElement.ConsumedTokens
                     .FirstOrDefault(t => t.TokenType == TokenType.FORMALIZED_COMMENTS_PARAMETERS);
                 if (token != null)
                 {
@@ -143,7 +141,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     MessageCode.SemanticTCErrorInParser);
             }
 
-            var redefinesSymbolReference = redefinesNode.CodeElement().RedefinesDataName;
+            var redefinesSymbolReference = redefinesNode.CodeElement.RedefinesDataName;
             var redefinedVariable = redefinesNode.SymbolTable.GetRedefinedVariable(redefinesNode, redefinesSymbolReference);
 
             if (redefinedVariable == null)
@@ -171,10 +169,10 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 return; //not my job
             }
-            if (renames?.CodeElement()?.RenamesFromDataName != null)
-                Check(renames.CodeElement().RenamesFromDataName, renames);
-            if(renames?.CodeElement()?.RenamesToDataName != null)
-                Check(renames.CodeElement().RenamesToDataName, renames);
+            if (renames.CodeElement?.RenamesFromDataName != null)
+                Check(renames.CodeElement.RenamesFromDataName, renames);
+            if(renames.CodeElement?.RenamesToDataName != null)
+                Check(renames.CodeElement.RenamesToDataName, renames);
         }
 
         private static void Check(SymbolReference renames, Node node)
@@ -194,7 +192,7 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             var found = founds.First();
-            var foundCodeElement = found.CodeElement as DataDefinitionEntry;
+            var foundCodeElement = found.CodeElement;
            
             if (found.IsStronglyTyped || found.IsStrictlyTyped)
             {
@@ -214,10 +212,6 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class TypedDeclarationChecker
     {
-        public IList<Type> GetNodes()
-        {
-            return new List<Type>() {typeof(ITypedNode),};
-        }
 
         private static List<Node> browsedTypes = new List<Node>();
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TypeCobol.Codegen.Nodes;
+using TypeCobol.Codegen.Skeletons;
 using TypeCobol.Compiler.Nodes;
 
 namespace TypeCobol.Codegen.Actions
@@ -30,12 +31,12 @@ namespace TypeCobol.Codegen.Actions
         /// pattern
         /// </summary>
         /// <param name="node">The Node to check</param>
-        /// <param name="template">The replacement template to check</param>
-        /// <param name="variables">The set of variable templates</param>
+        /// <param name="pattern">The pattern instance</param>
+        /// <param name="variables">The set of variable templates</param>        
         /// <returns>true if all parameters corresponds to a "replace SET <boolean> TO FALSE" pattern, false otherwise</returns>
-        private static bool IsSetBoolVarTemplate(Node node, string template, Dictionary<string, object> variables)
+        private static bool IsSetBoolVarTemplate(Node node, Pattern pattern, Dictionary<string, object> variables)
         {
-            return (node is TypeCobol.Compiler.Nodes.Set) && template.Equals("SET @Model.receiver-false TO TRUE") && variables != null &&
+            return (node is TypeCobol.Compiler.Nodes.Set) && pattern.Name != null && pattern.Name.Equals("BOOL.SET") && variables != null &&
                    variables.ContainsKey("receiver");
         }
 
@@ -44,10 +45,10 @@ namespace TypeCobol.Codegen.Actions
         /// pattern
         /// </summary>
         /// <param name="node">The Node to check</param>
-        /// <param name="template">The replacement template to check</param>
+        /// <param name="pattern">The pattern instance</param>
         /// <param name="variables">The set of variable templates</param>
         /// <returns>true if all parameters corresponds to a "replace SET <boolean> TO FALSE" pattern, false otherwise</returns>
-        private static bool IsSetPointerInrementVarTemplate(Node node, string template, Dictionary<string, object> variables)
+        private static bool IsSetPointerInrementVarTemplate(Node node, Pattern pattern, Dictionary<string, object> variables)
         {
             return (node is TypeCobol.Compiler.Nodes.Set) && variables != null &&
                    variables.ContainsKey("incrementDirection");
@@ -74,23 +75,34 @@ namespace TypeCobol.Codegen.Actions
         /// Check for a customization of the replacement
         /// </summary>
         /// <param name="node">The old node</param>
-        /// <param name="template">The template to apply</param>
+        /// <param name="pattern">The pattern instance</param>
         /// <param name="variables">The substitution Variable for the new GenerateNode based on the template</param>
         /// <param name="group"></param>
         /// <returns>The new template to apply for a customization, or the same template otherwise</returns>
-        private string CheckCustomReplace(Node node, string template, Dictionary<string, object> variables, string group)
+        private string CheckCustomReplace(Node node, Pattern pattern, Dictionary<string, object> variables, string group)
         {
-            IsReplaceSetBool = IsSetBoolVarTemplate(node, template, variables) && IsQualifiedNodeReceiver(node);
-            IsReplaceSetUpByPointer = IsSetPointerInrementVarTemplate(node, template, variables) && IsQualifiedNodeReceiver(node);
+            IsReplaceSetBool = IsSetBoolVarTemplate(node, pattern, variables) && IsQualifiedNodeReceiver(node);
+            IsReplaceSetUpByPointer = IsSetPointerInrementVarTemplate(node, pattern, variables) && IsQualifiedNodeReceiver(node);
 
             if (IsReplaceSetBool)
             {
-              //Method : Optimization don't use Razor just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
-              //In addition this method can allow the Code Generator to detect a column 72 overflow.
+                //Method : Optimization don't use Razor just create adequate TypeCobol.Codegen.Actions.Qualifier.GenerateToken.
+                //In addition this method can allow the Code Generator to detect a column 72 overflow.
                 int count = node.Children.Count;
-                TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = node.Children[0] as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
-                //Add the -false
-                if (token != null) token.ReplaceCode = token.ReplaceCode + "-false";
+                Node previousNode = null;
+
+                foreach (var child in node.Children)
+                {
+                    TypeCobol.Codegen.Actions.Qualifier.GenerateToken token = child as TypeCobol.Codegen.Actions.Qualifier.GenerateToken;
+
+                    if (previousNode == null || child.CodeElement.ConsumedTokens[0].TokenType == Compiler.Scanner.TokenType.UserDefinedWord && previousNode.CodeElement.ConsumedTokens[0].TokenType != Compiler.Scanner.TokenType.QualifiedNameSeparator)
+                    {
+                        //Add the -false
+                        if (token != null) token.ReplaceCode = token.ReplaceCode + "-false";
+                    }
+                    previousNode = child;
+                }
+
                 //Create a Token to replase the "false" to TRUE ==> lookup for the last one;
                 var consumedTokens = node.CodeElement.ConsumedTokens;
                 count = consumedTokens.Count;
@@ -102,7 +114,7 @@ namespace TypeCobol.Codegen.Actions
                         TypeCobol.Codegen.Actions.Qualifier.GenerateToken trueToken =
                             new TypeCobol.Codegen.Actions.Qualifier.GenerateToken(
                                 new TypeCobol.Codegen.Actions.Qualifier.TokenCodeElement(consumed_token), "TRUE", null);
-                        Qualifier.AddGenerateTokenAtSortedLocationIndex(trueToken, node);
+                        node.Add(trueToken);
                         break;
                     }
                 }
@@ -113,20 +125,20 @@ namespace TypeCobol.Codegen.Actions
                 // In case of pointer incrementation, the name qualification is already done
                 node.RemoveAllChildren();
             }
-            return template;
+            return pattern.Template;
         }
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="node">The old node</param>
-        /// <param name="template">The template to apply</param>
+        /// <param name="pattern">The pattern instance</param>
         /// <param name="variables">The substitution Variable for the new GenerateNode based on the template</param>
-        /// <param name="group"></param>
-        public Replace(Node node, string template, Dictionary<string, object> variables, string group)
+        /// <param name="group"></param>        
+        public Replace(Node node, Pattern pattern, Dictionary<string, object> variables, string group)
         {
             this.Old = node;
             UseRazor = true;
-            template = CheckCustomReplace(node, template, variables, group);
+            string template = CheckCustomReplace(node, pattern, variables, group);
             //Substitute any group code
             if (UseRazor)
             {

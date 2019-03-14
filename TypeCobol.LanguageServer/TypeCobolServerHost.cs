@@ -106,6 +106,11 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         public static bool UseEuroInformationLegacyReplacingSyntax { get; set; }
 
+        /// <summary>
+        /// Are we supporting Syntax Coloring Notifications.    
+        /// </summary>
+        public static bool UseSyntaxColoring { get; set; }
+
         public static System.Diagnostics.Process Process;
 
         /// <summary>
@@ -192,6 +197,7 @@ namespace TypeCobol.LanguageServer
                 { "tsemantic",  "Semantic analysis testing mode.", _ => LsrSemanticTesting = true},
                 { "antlrp",  "Use ANTLR to parse a Program.", _ => UseAntlrProgramParsing = true},
                 { "dcs|disablecopysuffixing", "Deactictivate Euro Information suffixing", v => UseEuroInformationLegacyReplacingSyntax = false },
+                { "sc|syntaxcolor",  "Syntax Coloring Support.", _ => UseSyntaxColoring = true},
             };
 
             System.Collections.Generic.List<string> arguments;
@@ -265,6 +271,7 @@ namespace TypeCobol.LanguageServer
                 typeCobolServer.TimerDisabledOption = TimerDisabledOption;
                 typeCobolServer.UseAntlrProgramParsing = UseAntlrProgramParsing;
                 typeCobolServer.UseEuroInformationLegacyReplacingSyntax = UseEuroInformationLegacyReplacingSyntax;
+                typeCobolServer.UseSyntaxColoring = UseSyntaxColoring;
 
 
                 //Creating the thread that will read mesages and handle them 
