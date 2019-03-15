@@ -1,0 +1,38 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CircularRefCheck.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 ThirdType TYPEDEF STRICT.
+Line 8[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+            05 renjgrn TYPE myType.
+
+       01 myType TYPEDEF STRICT.
+            05 myVar PIC X(10).
+            05 secondGroup pic X.
+Line 13[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 13[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 13[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+            05 yhrtger    TYPE ThirdType.
+Line 14[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 14[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 14[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+            05 ezgoerk    TYPE MySendType.
+
+       01 MyGroup.
+Line 17[15,20] <30, Error, Semantics> - Semantic error: Variable 'MyVar1' has to be limited to level 47 because of 'myType' maximum estimated children level
+           48 MyVar1 TYPE myType.
+           45 MyVar2 TYPE myType.
+
+
+       01 MySendType TYPEDEF STRICT.
+            05 MyVariable PIC X(10).
+            05 MySecVariable PIC X.
+Line 24[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+            05 SelfRef    TYPE myType.
+
+
+       PROCEDURE DIVISION.
+            move MyVar1::myVar to MyVar2::secondGroup.
+       END PROGRAM CircularRefCheck.

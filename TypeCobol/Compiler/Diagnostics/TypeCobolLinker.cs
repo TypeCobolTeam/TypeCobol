@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(DataDescription dataEntry)
         {
             TypeReferencer(dataEntry, dataEntry.SymbolTable);
-            return base.Visit(dataEntry);
+            return false; //Visit of children is done by TypeReferencer
         }
 
         public override bool Visit(Paragraph paragraph)
@@ -44,6 +44,24 @@ namespace TypeCobol.Compiler.Diagnostics
         }
 
         public override bool IsStopVisitingChildren => false;
+
+        /// <summary>
+        /// Do not visit children of IF.
+        /// Just in case there are statements directly under the procedure division.
+        /// </summary>
+        public override bool Visit(If _) => false;
+
+        /// <summary>
+        /// Do not visit children of Evaluate.
+        /// Just in case there are statements directly under the procedure division.
+        /// </summary>
+        public override bool Visit(Evaluate _) => false;
+
+        /// <summary>
+        /// Do not visit children of Perform.
+        /// Just in case there are statements directly under the procedure division.
+        /// </summary>
+        public override bool Visit(Perform _) => false;
 
         public override bool Visit(Declaratives declaratives)
         {
@@ -80,8 +98,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 //Check the existing children, if they use a type
                 foreach (var child in dataEntry.Children) 
                 {
-                    var childDataDesc = child as DataDescription;
-                    if (childDataDesc != null)
+                    if (child is DataDescription childDataDesc)
                         TypeReferencer(childDataDesc, symbolTable);
                 }
                 return;
@@ -89,19 +106,24 @@ namespace TypeCobol.Compiler.Diagnostics
             var type = types.First();
             dataEntry.TypeDefinition = type; //Set the TypeDefinition on DataDefinition Node so to avoid symbolTable access
 
-            var circularRefInsideChildren = type.Children.Any(c =>
+            //Check circular type reference
+            if (dataEntry.IsPartOfATypeDef)
             {
-                var dataChild = c as DataDescription;
-                if (dataChild == null) return false;
-                var childrenType = symbolTable.GetType(dataChild.DataType).FirstOrDefault();
-                if (childrenType == null) return false;
-                return dataEntry.ParentTypeDefinition == childrenType; //Circular reference detected will return true
-            });
-            if (type == dataEntry.ParentTypeDefinition || circularRefInsideChildren) 
-            {
-                DiagnosticUtils.AddError(dataEntry, "Type circular reference detected", 
-                    dataEntry.CodeElement, code: MessageCode.SemanticTCErrorInParser);
-                return; //Do not continue to prevent further work/crash with circular references
+                var circularRefInsideChildren = type.Children.Any(c =>
+                {
+                    DataDefinition dataChild = (DataDefinition)c;
+                    var childrenType = symbolTable.GetType(dataChild.DataType).FirstOrDefault();
+                    if (childrenType == null) return false;
+                    return dataEntry.ParentTypeDefinition == childrenType; //Circular reference detected will return true
+                });
+
+
+                if (type == dataEntry.ParentTypeDefinition || circularRefInsideChildren)
+                {
+                    DiagnosticUtils.AddError(dataEntry, "Type circular reference detected",
+                        dataEntry.CodeElement, code: MessageCode.SemanticTCErrorInParser);
+                    return; //Do not continue to prevent further work/crash with circular references
+                }
             }
 
             if (dataEntry.CodeElement.IsGlobal)

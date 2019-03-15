@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Nodes;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Castle.Core.Internal;
+using TypeCobol.Compiler.Concurrency;
 
 namespace TypeCobol.Compiler.CodeModel
 {
@@ -26,49 +27,39 @@ namespace TypeCobol.Compiler.CodeModel
         /// <summary>
         /// Allow to get all the Type's references from any Enclosing Scope or Program
         /// </summary>
-        public Dictionary<Node, List<DataDefinition>> GetAllEnclosingTypeReferences()
+        public IEnumerable<DataDefinition> GetAllEnclosingTypeReferences(TypeDefinition currentTypeDef)
         {
-            var result = new Dictionary<Node, List<DataDefinition>>();
-            SymbolTable scope = this;//By default set this symboltable as the starting point
+            var result = new List<DataDefinition>();
+            SymbolTable symbolTable = this;//By default set this symboltable as the starting point
 
-            while (scope != null) //Loop on enclosing scope until null scope. 
+            while (symbolTable.CurrentScope >= Scope.Namespace) //Loop on enclosing scope until null scope. 
             {
-                foreach (var typeReference in scope.TypesReferences.Select(pt => new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
+                symbolTable.TypesReferences.TryGetValue(currentTypeDef, out var typeReferences);
+                if (typeReferences != null)
                 {
-                    if (!result.ContainsKey(typeReference.Key)) //Avoid duplicate key
-                        result.Add(typeReference.Key, typeReference.Value);
+                    result.AddRange(typeReferences);
                 }
 
-                if (scope.CurrentScope == Scope.Namespace && scope.Programs.Any())
+                if (symbolTable.CurrentScope == Scope.Namespace && symbolTable.Programs.Count > 0)
                     //Some TypeReferences are stored only in program's symbolTable, need to seek into them. 
                 {
-                    foreach (var program in scope.Programs.SelectMany(t => t.Value))
+                    foreach (var program in symbolTable.Programs.SelectMany(t => t.Value))
                     {
-                        if (program != null && program.SymbolTable != null &&
-                            !program.SymbolTable.TypesReferences.IsNullOrEmpty())
+                        if (!program.SymbolTable.TypesReferences.IsNullOrEmpty())
                         {
-                            foreach (var progTypeRef in program.SymbolTable.TypesReferences.Select(pt =>
-                                        new KeyValuePair<TypeDefinition, List<DataDefinition>>(pt.Key, pt.Value.ToArray().ToList()))) //new KeyValuePair allow to loose object ref
+
+                            program.SymbolTable.TypesReferences.TryGetValue(currentTypeDef, out var typeReferences2);
+                            if (typeReferences2 != null)
                             {
-                                if (!result.ContainsKey(progTypeRef.Key)) //Avoid duplicate key
-                                    result.Add(progTypeRef.Key, progTypeRef.Value);
-                                else
-                                {
-                                    foreach (var reference in progTypeRef.Value) //Add the reference values not already discovered
-                                    {
-                                        if (!result[progTypeRef.Key].Contains(reference))
-                                            result[progTypeRef.Key].Add(reference);
-                                    }
-                                }
-                                    
+                                result.AddRange(typeReferences2);
                             }
                         }
                     }
                 }
 
-                scope = scope.EnclosingScope; //Go to the next enclosing scope. 
+                symbolTable = symbolTable.EnclosingScope; //Go to the next enclosing scope. 
             }
-            return result;
+            return result.Distinct();
         }
 
 
@@ -81,28 +72,53 @@ namespace TypeCobol.Compiler.CodeModel
                 throw new InvalidOperationException("Only Table of INTRINSIC symbols don't have any enclosing scope.");
         }
 
+        /// <summary>
+        /// GetFromTableAndEnclosing 2 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="head"></param>
+        /// <param name="getTableFunction"></param>
+        /// <param name="maxScope"></param>
+        /// <returns></returns>
+        [NotNull]
         private List<T> GetFromTableAndEnclosing<T>(string head,
-            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, SymbolTable symbolTable = null) where T : Node
+            Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, Scope maxScope = Scope.Intrinsic) where T : Node
         {
-            symbolTable = symbolTable ?? this;
-            var table = getTableFunction.Invoke(symbolTable);
-            var values = GetFromTable(head, table);
-            if (EnclosingScope != null)
-            {
-                values.AddRange(EnclosingScope.GetFromTableAndEnclosing(head, getTableFunction));
-            }
-            return values;
+            System.Diagnostics.Debug.Assert(head != null);
+            var result = new List<T>();
+            this.GetFromTableAndEnclosing2(head, getTableFunction, result, maxScope);
+            
+            return result;
         }
 
+        private void GetFromTableAndEnclosing2<T>([NotNull] string head,
+           Func<SymbolTable, IDictionary<string, List<T>>> getTableFunction, List<T> result, Scope maxScope = Scope.Intrinsic) where T : Node
+        {
+            var table = getTableFunction.Invoke(this);
+            GetFromTable(head, table, result);
+            if (EnclosingScope != null && EnclosingScope.CurrentScope >= maxScope)
+            {
+                EnclosingScope.GetFromTableAndEnclosing2(head, getTableFunction, result, maxScope);
+            }
+        }
+
+
+
+        [NotNull]
         private List<T> GetFromTable<T>(string head, IDictionary<string, List<T>> table) where T : Node
         {
             if (head != null)
             {
-                List<T> values;
-                table.TryGetValue(head, out values);
+                table.TryGetValue(head, out List<T> values);
                 if (values != null) return values.ToList();
             }
             return new List<T>();
+        }
+
+        private void GetFromTable<T>(string head, IDictionary<string, List<T>> table, List<T> result) where T : Node
+        {
+            table.TryGetValue(head, out List<T> values);
+            if (values != null) result.AddRange(values);
         }
 
         #region DATA SYMBOLS
@@ -194,7 +210,7 @@ namespace TypeCobol.Compiler.CodeModel
         private IList<DataDefinition> GetVariables(string name)
         {
             //Try to get variable in the current program
-            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable);
+            var found = GetFromTableAndEnclosing(name, GetDataDefinitionTable, Scope.GlobalStorage);
            
             return found;
         }
@@ -307,9 +323,7 @@ namespace TypeCobol.Compiler.CodeModel
             var childrens = redefinesNode.Parent.Children;
             int index = redefinesNode.Parent.IndexOf(redefinesNode);
 
-            bool redefinedVariableFound = false;
-
-            while (!redefinedVariableFound && index >= 0)
+            while (index >= 0)
             {
                 CommonDataDescriptionAndDataRedefines child = childrens[index].CodeElement as CommonDataDescriptionAndDataRedefines;
 
@@ -403,15 +417,14 @@ namespace TypeCobol.Compiler.CodeModel
             TypeDefinition typeDefContext = null)
         {
             List<KeyValuePair<string, DataDefinition>> foundedVariables = new List<KeyValuePair<string, DataDefinition>>();
-            //Get variable name declared into typedef declaration
-            var candidates = GetCustomTypesSubordinatesNamed(name.Head);
-            //Get all variables that corresponds to the given head of QualifiedName    
-            candidates.AddRange(GetVariables(name.Head));
-            
+
+
+            #region Get variables declared under Type
             var found = new List<DataDefinition>();
-            int foundCount = 0;
             var completeQualifiedNames = new List<List<string>>();
-            foreach (var candidate in candidates.Distinct())
+            int foundCount = 0;
+            //Get all variables that corresponds to the given head of QualifiedName    
+            foreach (var candidate in GetCustomTypesSubordinatesNamed(name.Head))
             {
                 completeQualifiedNames.Add(new List<string>());
                 MatchVariable(found, candidate, name, name.Count - 1, candidate, completeQualifiedNames,
@@ -436,8 +449,66 @@ namespace TypeCobol.Compiler.CodeModel
                 if (completeQualifiedNames.Count == i)
                     break;
             }
+            #endregion
+
+
+            #region Get variables declared outside types
+            //If we are in the context of a typedef, it will be handled by "Get variables declared under Type"
+            if (typeDefContext == null)
+            {
+                var varOutsideTypes = GetVariables(name.Head);
+                //Get variable name declared outside typedef declaration
+                foreach (var candidate in varOutsideTypes)
+                {
+                    MatchVariableOutsideType(foundedVariables, candidate, name, name.Count - 1, candidate);
+                }
+            }
+            #endregion
 
             return foundedVariables;
+        }
+        
+
+        /// <summary>
+        /// Recursively try to find the path for the given QualifiedName name. 
+        /// Algorithm allows to browse every potential path to find where the variable QualifiedName is. 
+        /// It only browse DataDefinition (Var + Group) outside TypeDef. 
+        /// The algorithm will search as deep as possible in every direction until the path comes to an end. 
+        /// </summary>
+        /// <param name="found">List of compatible variable found regarding to the given name</param>
+        /// <param name="headDataDefinition">Given potential variable candidate</param>
+        /// <param name="name">QualifiedName of the symbol looked for</param>
+        /// <param name="nameIndex">Total count of the parts of the qualifiedName 'name' </param>
+        /// <param name="currentDataDefinition">Currently checked DataDefinition</param>
+        public void MatchVariableOutsideType(List<KeyValuePair<string, DataDefinition>> found, in DataDefinition headDataDefinition, in QualifiedName name,
+            int nameIndex, in DataDefinition currentDataDefinition)
+        {
+
+            //Name match ?
+            if (name[nameIndex].Equals(currentDataDefinition.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                nameIndex--;
+                if (nameIndex < 0)
+                { //We reached the end of the name : it's a complete match
+                    
+                    //we are on a variable
+                    found.Add(new KeyValuePair<string, DataDefinition>(headDataDefinition.QualifiedName.ToString(), headDataDefinition));
+
+                    //End here
+                    return;
+                }
+                //else it's not the end of name, let's continue with next part of QualifiedName
+            }
+
+            //Either we have a match or not, we need to continue to the parent
+            if (currentDataDefinition.Parent is DataDefinition parent)
+            {
+                //Go deeper to check the rest of the QualifiedName 'name'
+                MatchVariableOutsideType(found, headDataDefinition, name, nameIndex, parent);
+            }         
+
+            //If we reach here, it means we are on a DataDefinition with no parent
+            //==> End of treatment, there is no match
         }
 
         /// <summary>
@@ -453,8 +524,8 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="currentDataDefinition">Currently checked DataDefinition</param>
         /// <param name="completeQualifiedNames">List of list of string that allows to store all the different path for the founded possibilities</param>
         /// <param name="typeDefContext">TypeDefinition context to force the algorithm to only work inside the typedef scope</param>
-        public void MatchVariable(IList<DataDefinition> found, DataDefinition headDataDefinition, QualifiedName name,
-            int nameIndex, DataDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext) {
+        public void MatchVariable(IList<DataDefinition> found, in DataDefinition headDataDefinition, in QualifiedName name,
+            int nameIndex, in DataDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext) {
 
             completeQualifiedNames.Last().Add(currentDataDefinition.Name);
             var currentTypeDef = currentDataDefinition as TypeDefinition;
@@ -500,8 +571,7 @@ namespace TypeCobol.Compiler.CodeModel
 
 
             //Either we have a match or not, we need to continue to the parent or DataDefinition that use this TypeDefinition
-            var parent = currentDataDefinition.Parent as DataDefinition;
-            if (parent != null)
+            if (currentDataDefinition.Parent is DataDefinition parent)
             {
                 //Go deeper to check the rest of the QualifiedName 'name'
                 MatchVariable(found, headDataDefinition, name, nameIndex, parent, completeQualifiedNames, typeDefContext); 
@@ -511,17 +581,14 @@ namespace TypeCobol.Compiler.CodeModel
             
             if (currentTypeDef != null) //We've found that we are currently onto a typedef. 
             {
-                var dataType = GetAllEnclosingTypeReferences().FirstOrDefault(k => k.Key == currentTypeDef); //Let's get typereferences (built by TypeCobolLinker phase)
-                if (dataType.Key == null || dataType.Value == null)
-                    return;
-                var references = dataType.Value;
+                IEnumerable<DataDefinition> references = GetAllEnclosingTypeReferences(currentTypeDef); //Let's get typeReferences (built by TypeCobolLinker phase)
 
-                //If typedefcontext is set : Ignore references of this typedefContext to avoid loop seeking
+                //If typeDefContext is set : Ignore references of this typedefContext to avoid loop seeking
                 //                           Only takes variable references that are declared inside the typeDefContext
                 if (typeDefContext != null)
-                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext).ToList();
+                    references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
 
-                var primaryPath = completeQualifiedNames.Last().ToArray(); //PrmiaryPath that will be added in front of every reference's path found
+                var primaryPath = completeQualifiedNames.Last().ToArray(); //PrimaryPath that will be added in front of every reference's path found
                 foreach (var reference in references)
                 {
                     //references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
@@ -536,7 +603,6 @@ namespace TypeCobol.Compiler.CodeModel
                     }
                        
                 }
-                return;
             }
 
             //If we reach here, it means we are on a DataDefinition with no parent
@@ -556,14 +622,12 @@ namespace TypeCobol.Compiler.CodeModel
         private void AddAllReference(IList<DataDefinition> found, DataDefinition heaDataDefinition, [NotNull] TypeDefinition currentDataDefinition, List<List<string>> completeQualifiedNames, TypeDefinition typeDefContext)
         {
             completeQualifiedNames.Last().Add(currentDataDefinition.Name);
-            var dataType = GetAllEnclosingTypeReferences().FirstOrDefault(k => k.Key == currentDataDefinition);
-            if (dataType.Key == null || dataType.Value == null)
-                return;
-            var references = dataType.Value;
+            IEnumerable<DataDefinition> references = GetAllEnclosingTypeReferences(currentDataDefinition);
+
             //If typedefcontext is setted : Ignore references of this typedefContext to avoid loop seeking
             //                              + Only takes variable references that are declared inside the typeDefContext
             if (typeDefContext != null)
-                references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext).ToList();
+                references = references.Where(r => r.DataType != typeDefContext.DataType && r.ParentTypeDefinition == typeDefContext);
             var typePath = completeQualifiedNames.Last().ToArray();
             var referenceCounter = 0;
             foreach (var reference in references)
@@ -650,17 +714,17 @@ namespace TypeCobol.Compiler.CodeModel
         private static IEnumerable<DataDefinition> GetVariablesUnderTypeDefFromTableAndEnclosing(SymbolTable symbolTable, string name)
         {
             var currSymbolTable = symbolTable;
-            var datadefinitions = new List<DataDefinition>();
+            var dataDefinitions = new List<DataDefinition>();
             //Don't search into Intrinsic table because it's shared between all programs
             while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Intrinsic) {
                 var result = GetVariablesUnderTypeDefinition(name, currSymbolTable);
                 if (result != null) {
-                    datadefinitions.AddRange(result);
+                    dataDefinitions.AddRange(result);
                 }
                 currSymbolTable = currSymbolTable.EnclosingScope;
             }
 
-            return datadefinitions;
+            return dataDefinitions;
         }
 
         
@@ -743,6 +807,8 @@ namespace TypeCobol.Compiler.CodeModel
         private IDictionary<string, List<Section>> Sections =
             new Dictionary<string, List<Section>>(StringComparer.OrdinalIgnoreCase);
 
+        private static IList<Section> EmptySectionList = new ImmutableList<Section>();
+
         internal void AddSection(Section section)
         {
             Add(Sections, section);
@@ -750,7 +816,10 @@ namespace TypeCobol.Compiler.CodeModel
 
         public IList<Section> GetSection(string name)
         {
-            return GetFromTableAndEnclosing(name, GetSectionTable);
+            Sections.TryGetValue(name, out var values);
+            if (values != null) return values.ToList();  //.ToList so the caller cannot modify our stored list
+
+            return EmptySectionList;
         }
 
         private IDictionary<string, List<Section>> GetSectionTable(SymbolTable symbolTable)
@@ -765,6 +834,8 @@ namespace TypeCobol.Compiler.CodeModel
         private IDictionary<string, List<Paragraph>> Paragraphs =
             new Dictionary<string, List<Paragraph>>(StringComparer.OrdinalIgnoreCase);
 
+        private static IList<Paragraph> EmptyParagraphList = new ImmutableList<Paragraph>();
+
         internal void AddParagraph(Paragraph paragraph)
         {
             Add(Paragraphs, paragraph);
@@ -772,7 +843,10 @@ namespace TypeCobol.Compiler.CodeModel
 
         public IList<Paragraph> GetParagraph(string name)
         {
-            return GetFromTableAndEnclosing(name, GetParagraphTable);
+            Paragraphs.TryGetValue(name, out var values);
+            if (values != null) return values.ToList();  //.ToList so the caller cannot modify our stored list
+
+            return EmptyParagraphList;
         }
 
         private IDictionary<string, List<Paragraph>> GetParagraphTable(SymbolTable symbolTable)
@@ -829,20 +903,28 @@ namespace TypeCobol.Compiler.CodeModel
             }
         }
 
+        public IList<TypeDefinition> EmptyTypeDefinitionList = new List<TypeDefinition>();
+        [NotNull]
         public IList<TypeDefinition> GetType(DataDefinition symbol)
         {
             return GetType(symbol.DataType);
         }
 
+        [NotNull]
         public List<TypeDefinition> GetType(SymbolReference symbolReference)
         {
             return GetType(symbolReference.URI);
         }
 
       
-
-        public List<TypeDefinition> GetType(DataType dataType, string pgmName = null)
+        [NotNull]
+        public IList<TypeDefinition> GetType(DataType dataType, string pgmName = null)
         {
+            if (dataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85)
+            {
+                return EmptyTypeDefinitionList;
+            }
+
             var uri = new URI(dataType.Name);
             var types = GetType(uri);
             if (types.Count > 0)
@@ -974,10 +1056,7 @@ namespace TypeCobol.Compiler.CodeModel
             return GetFunction(storageArea.SymbolReference, profile);
         }
 
-        public List<FunctionDeclaration> GetFunction(VariableBase variable, ParameterList profile = null)
-        {
-            return GetFunction(new URI(variable.ToString()), profile);
-        }
+        
 
         public List<FunctionDeclaration> GetFunction(SymbolReference symbolReference, ParameterList profile = null)
         {
@@ -1124,48 +1203,15 @@ namespace TypeCobol.Compiler.CodeModel
         public void AddProgram(Program program)
         {
             Add(Programs, program);
-        }
-
-        /// <summary>
-        /// Add Multiple programs to SymbolTable
-        /// </summary>
-        /// <param name="programs"></param>
-        public void AddPrograms(List<Program> programs)
-        {
-            foreach (var program in programs)
-            {
-                AddProgram(program);
-            }
-        }
-
-        public List<Program> GetProgram(StorageArea storageArea, ParameterList profile = null)
-        {
-            return GetProgram(storageArea.SymbolReference, profile);
-        }
-
-        public List<Program> GetProgram(VariableBase variable, ParameterList profile = null)
-        {
-            return GetProgram(new URI(variable.ToString()), profile);
-        }
-
-        public List<Program> GetProgram(SymbolReference symbolReference, ParameterList profile = null)
-        {
-            var uri = new URI(symbolReference.Name);
-            return GetProgram(uri, profile);
-        }
-
-        public List<Program> GetProgram(QualifiedName name, ParameterList profile = null)
-        {
-            var found = GetProgram(name.Head);
-            found = Get(found, name);
-
-            return found;
-        }
+        } 
+        
+        
+        
 
         [NotNull]
         private List<Program> GetProgram(string name)
         {
-            return GetFromTableAndEnclosing(name, GetProgramsTable);
+            return GetFromTableAndEnclosing(name, GetProgramsTable, Scope.Namespace);
         }
 
         private IDictionary<string, List<Program>> GetProgramsTable(SymbolTable symbolTable)
@@ -1180,10 +1226,10 @@ namespace TypeCobol.Compiler.CodeModel
                 .Where(fd => fd.Name.StartsWith(filter, StringComparison.OrdinalIgnoreCase));
         }
 
-        public List<Program> GetPrograms()
+        public IEnumerable<Program> GetPrograms()
         {
             return this.GetTableFromScope(Scope.Namespace)
-                .Programs.Values.SelectMany(t => t).ToList();
+                .Programs.Values.SelectMany(t => t);
         }
 
 
@@ -1200,12 +1246,13 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="symbol"></param>
         private void Add<T>([NotNull] IDictionary<string, List<T>> table, [NotNull] T symbol) where T : Node
         {
+            string key = symbol.Name;
             //QualifiedName of symbol can be null - if we have a filler in the type definition
-            if (symbol.QualifiedName == null)
+            if (key == null) 
             {
                 return;
             }
-            string key = symbol.QualifiedName.Head;
+
             List<T> found;
             bool present = table.TryGetValue(key, out found);
             if (!present)
