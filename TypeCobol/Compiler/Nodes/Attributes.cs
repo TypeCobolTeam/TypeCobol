@@ -514,7 +514,7 @@ internal class DefinitionsAttribute: Attribute {
         if (pgm == null) return list;
 
         list.AddRange(pgm.Children.OfType<ProcedureDivision>().SelectMany(c => c.Children)
-            .Where(c => c is FunctionDeclaration && ((FunctionDeclaration)c).CodeElement().Visibility == AccessModifier.Public && ((FunctionDeclaration)c).GenerateAsNested));
+            .Where(c => c is FunctionDeclaration fun && fun.CodeElement.Visibility == AccessModifier.Public && fun.GenerateAsNested));
 
         foreach (var pgmNestedProgram in pgm.NestedPrograms)
         {
@@ -550,9 +550,8 @@ internal class DefinitionsAttribute: Attribute {
 	    private List<Node> retrieve(AccessModifier visibility) {
 	        var results = new List<Node>();
 	        foreach(var node in this) {
-	            var fun = node as FunctionDeclaration;
-	            if (fun == null) continue;
-	            if (fun.CodeElement().Visibility == visibility) results.Add(node);
+	            if (!(node is FunctionDeclaration fun)) continue;
+	            if (fun.CodeElement.Visibility == visibility) results.Add(node);
 	        }
 	        return results;
 	    }

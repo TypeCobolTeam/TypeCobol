@@ -70,9 +70,9 @@ namespace TypeCobol.Codegen.Actions
             if (DestinationURI.EndsWith(".end")) index = this.Destination.Parent.Children.Count - 1;
             else index = this.Destination.Parent.IndexOf(this.Destination);
 
-            if ((Source as FunctionDeclaration)?.GenerateAsNested == true)
+            if (Source is FunctionDeclaration fun && fun.GenerateAsNested)
             {
-                if (((FunctionDeclaration) Source).CodeElement().Visibility == AccessModifier.Public)
+                if (fun.CodeElement.Visibility == AccessModifier.Public)
                 {
                     Destination = Destination.Root.MainProgram.Children.First();
                 }
