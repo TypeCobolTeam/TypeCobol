@@ -230,17 +230,8 @@ namespace TypeCobol.Compiler.Nodes {
 
 
         public override string ID { get { return "data-definition"; } }
-        private string _name;
 
-        public override string Name
-        {
-            get
-            {
-                if (_name != null) return _name;
-                _name = this.CodeElement.Name;
-                return _name;
-            }
-        }
+        public override string Name=> this.CodeElement.Name;
 
         private Dictionary<StorageArea, Node> _References;
 
