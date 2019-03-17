@@ -674,7 +674,7 @@ namespace TypeCobol.Compiler.CodeModel
                 //Get Custom Types from program 
                 foreach (var pgm in programs.Value) { //we shouldn't have more than one program with the same name
                     //but just in case it changes 
-                    foundDataDef.AddRange(GetVariablesUnderTypeDefFromTableAndEnclosing(pgm.SymbolTable, name));
+                    GetVariablesUnderTypeDefForPublicType(pgm.SymbolTable, name, foundDataDef);
                 }
             }
 
@@ -696,9 +696,8 @@ namespace TypeCobol.Compiler.CodeModel
         /// <param name="table">SymbolTable that can have the searched DataDefinition</param>
         /// <returns>List of found DataDefinitions that correspond to the passed name</returns>
         [CanBeNull]
-        private static IEnumerable<DataDefinition> GetVariablesUnderTypeDefinition(string name, SymbolTable table) {
-            List<DataDefinition> dataDef;
-            table.DataTypeEntries.TryGetValue(name, out dataDef);
+        private static List<DataDefinition> GetVariablesUnderTypeDefinition(string name, SymbolTable table) {
+            table.DataTypeEntries.TryGetValue(name, out var dataDef);
             return dataDef;
         }
 
@@ -710,21 +709,27 @@ namespace TypeCobol.Compiler.CodeModel
         /// </summary>
         /// <param name="symbolTable">Current SymbolTable</param>
         /// <param name="name">name of the variable to search for</param>
+        /// <param name="resultDataDefinitions">Data definitions found with the specified name and under a type</param>
         /// <returns>List of found DataDefinition</returns>
-        private static IEnumerable<DataDefinition> GetVariablesUnderTypeDefFromTableAndEnclosing(SymbolTable symbolTable, string name)
+        private static void GetVariablesUnderTypeDefForPublicType(SymbolTable symbolTable, string name, List<DataDefinition> resultDataDefinitions)
         {
             var currSymbolTable = symbolTable;
-            var dataDefinitions = new List<DataDefinition>();
-            //Don't search into Intrinsic table because it's shared between all programs
-            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Intrinsic) {
-                var result = GetVariablesUnderTypeDefinition(name, currSymbolTable);
-                if (result != null) {
-                    dataDefinitions.AddRange(result);
+            //Start at scope Declarations because scope below cannot contains public type
+            while (currSymbolTable.CurrentScope != Scope.Declarations)
+            {
+                currSymbolTable = currSymbolTable.EnclosingScope;
+            }
+
+            //Stop at namespace because Namespace don't contains any type and Intrinsic is shared between all programs
+            //and will be searched separately
+            while (currSymbolTable != null && currSymbolTable.CurrentScope != Scope.Namespace) {
+                var temp = GetVariablesUnderTypeDefinition(name, currSymbolTable);
+                if (temp != null) {
+                    resultDataDefinitions.AddRange(temp);
                 }
                 currSymbolTable = currSymbolTable.EnclosingScope;
             }
 
-            return dataDefinitions;
         }
 
         
