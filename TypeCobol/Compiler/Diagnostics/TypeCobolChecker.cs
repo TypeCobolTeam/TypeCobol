@@ -347,7 +347,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     
 
                     //Cobol 85 Type will be checked with their picture
-                        if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 ||
+                    if (actualDataDefinition.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85 ||
                         expected.DataType.CobolLanguageLevel > CobolLanguageLevel.Cobol85) 
                     {
                         if (actualDataDefinition.DataType.CobolLanguageLevel == CobolLanguageLevel.Cobol85 ||
@@ -365,17 +365,25 @@ namespace TypeCobol.Compiler.Diagnostics
                         {
                             TypeDefinition callerType = actualDataDefinition.TypeDefinition;
                             TypeDefinition calleeType = expected.TypeDefinition;
-                            if (callerType == null || calleeType == null)
+                            if (callerType != null && calleeType != null)
                             {
-                                //Ignore, it's an unknown DataType. It's already checked
-                            }
-                            else if (!Equals(callerType.QualifiedName, calleeType.QualifiedName))
-                            {
-                                var m = string.Format(
+                                //Compare reference of TypeDefinition
+                                if (callerType != calleeType)
+                                {
+                                    var m = string.Format(
                                         "Function '{0}' expected parameter '{1}' of type {2} and received '{3}' of type {4} ",
                                         call.FunctionName, calleeType.Name, calleeType.DataType,
                                         callArgName ?? string.Format("position {0}", c + 1), callerType.DataType);
-                                DiagnosticUtils.AddError(node, m);
+                                    DiagnosticUtils.AddError(node, m);
+                                }
+                                //else
+                                //DataType were not written exactly the same in the source code
+                                //eg. we can have a type qualified with its program and the same type without the qualification, then DataType are not the same but TypeDefinition are
+                                //So no error here, it's ok
+                            }
+                            else
+                            {
+                                //Ignore, it's an unknown DataType. It's already checked by TypeCobolLinker
                             }
                         }
                     }
@@ -753,28 +761,28 @@ namespace TypeCobol.Compiler.Diagnostics
                 var used = Validate(profile.ReturningParameter, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.InputParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.OutputParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
 
                 used = GetParameter(profile.InoutParameters, description.Name);
                 if (used != null)
                 {
-                    AddErrorAlreadyParameter(description, description.QualifiedName);
+                    AddErrorAlreadyParameter(description, description.Name);
                     continue;
                 }
             }
@@ -808,9 +816,9 @@ namespace TypeCobol.Compiler.Diagnostics
             return null;
         }
 
-        private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] QualifiedName name)
+        private static void AddErrorAlreadyParameter([NotNull] Node node, [NotNull] string parameterName)
         {
-            DiagnosticUtils.AddError(node, name.Head + " is already a parameter.");
+            DiagnosticUtils.AddError(node, parameterName + " is already a parameter.");
         }
 
         private static void CheckNoPerform(SymbolTable table, [NotNull] Node node)
