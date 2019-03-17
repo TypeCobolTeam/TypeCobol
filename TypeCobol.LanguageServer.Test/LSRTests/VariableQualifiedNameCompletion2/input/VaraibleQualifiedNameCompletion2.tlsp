@@ -628,7 +628,7 @@
     },
     {
       "category": 2,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"MyTestLevel (BOOL) (MyTestLevel)\",\"kind\":6,\"insertText\":\"MyTestLevel\"},{\"label\":\"MyBoool (BOOL) (MyBoool)\",\"kind\":6,\"insertText\":\"MyBoool\"}]}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"20\",\"result\":[{\"label\":\"MyTestLevel (Level88) (MyTestLevel)\",\"kind\":6,\"insertText\":\"MyTestLevel\"},{\"label\":\"MyBoool (BOOL) (MyBoool)\",\"kind\":6,\"insertText\":\"MyBoool\"}]}"
     },
     {
       "category": 0,
