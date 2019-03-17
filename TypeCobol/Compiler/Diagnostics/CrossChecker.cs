@@ -272,12 +272,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(DataDefinition dataDefinition)
         {
-            var commonDataDataDefinitionCodeElement = dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
-            if (commonDataDataDefinitionCodeElement!=null)
-            {
-                CheckPicture(dataDefinition);
-            }
-
+            var commonDataDataDefinitionCodeElement =
+                dataDefinition.CodeElement as CommonDataDescriptionAndDataRedefines;
 
             DataDefinitionEntry dataDefinitionEntry = dataDefinition.CodeElement;
             
@@ -379,38 +375,6 @@ namespace TypeCobol.Compiler.Diagnostics
                     "An index named '" + indexDefinition.Name + "' is already defined.", MessageCode.Warning);
             }
             return true;
-        }
-
-        public static void CheckPicture(Node node, CommonDataDescriptionAndDataRedefines customCodeElement = null)
-        {
-            var codeElement = customCodeElement ?? node.CodeElement as CommonDataDescriptionAndDataRedefines;
-            if (codeElement?.Picture == null) return;
-
-
-            // if there is not the same number of '(' than of ')'
-            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
-            {
-                DiagnosticUtils.AddError(node, "missing '(' or ')'");
-            }
-            // if the first '(' is after first ')' OR last '(' is after last ')'
-            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
-                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
-                DiagnosticUtils.AddError(node, "missing '(' or ')'");
-            else
-            {
-                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
-                {
-                    try //Try catch is here because of the risk to parse a non numerical value
-                    {
-                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
-                    }
-                    catch (Exception)
-                    {
-                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
-                        DiagnosticUtils.AddError(node, m, codeElement);
-                    }
-                }
-            }
         }
 
         public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)

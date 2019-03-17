@@ -1,5 +1,5 @@
 --- Diagnostics ---
-Line 15[12,15] <27, Error, Syntax> - Syntax error : Given value is not correct : (00ABC100) expected numerical value only OffendingSymbol=[12,15:varD]<UserDefinedWord>
+Line 15[29,39] <27, Error, Syntax> - Syntax error : Given value is not correct : (00ABC100) expected numerical value only OffendingSymbol=[29,39:X(00ABC100)]<PictureCharacterString>
 Line 27[37,39] <27, Error, Syntax> - Syntax error : mismatched input 'PIC' expecting {user defined word, CURRENCY, DATE} RuleStack=codeElement>tcCodeElement>functionDeclarationHeader>inputPhrase>parameterDescription>functionDataParameter>cobol2002TypeClause,  OffendingSymbol=[37,39:PIC]<PIC>
 Line 36[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>
 Line 37[21,26] <27, Error, Syntax> - Syntax error : Parameter with name 'format' declared multiple times OffendingSymbol=[21,26:format]<UserDefinedWord>

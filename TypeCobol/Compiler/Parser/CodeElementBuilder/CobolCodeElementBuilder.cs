@@ -1115,7 +1115,7 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
 			CodeElement = entry;
 
-		    TypeDefinitionEntryChecker.CheckRedefines(entry, context);
+            DataDescriptionChecker.CheckRedefines(entry, context);
 		}
 
 	    private void EnterCommonDataDescriptionAndDataRedefines(CommonDataDescriptionAndDataRedefines entry, CodeElementsParser.DataDescriptionEntryContext context)

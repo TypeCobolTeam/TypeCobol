@@ -1,4 +1,4 @@
-﻿       IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. DependOnPgm.
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
@@ -9,184 +9,184 @@
 
       * OK
        01 pic X(5).
-Line 12[8,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 12[15,17] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic X5).
-Line 13[8,19] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 13[15,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic X)5).
-Line 14[8,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 14[15,17] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic X(5.
       * OK
        01 pic X5.
-Line 17[8,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 17[15,17] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic X)5.
-Line 18[8,19] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 18[15,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic X(5(.
-Line 19[8,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 19[15,17] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic X5(.
-Line 20[8,19] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 20[15,18] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic X)5(.
 
       * OK
        01 pic S9(5)V9(5).
-Line 24[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 24[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V9(5).
-Line 25[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 25[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V9(5).
-Line 26[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 26[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5V9(5).
       * OK
        01 pic S95V9(5).
-Line 29[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 29[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V9(5).
-Line 30[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 30[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5(V9(5).
-Line 31[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 31[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95(V9(5).
-Line 32[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 32[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V9(5).
-Line 33[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 33[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5)V95).
-Line 34[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 34[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V95).
-Line 35[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 35[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V95).
-Line 36[8,23] <27, Error, Syntax> - Syntax error : Given value is not correct : (5V95) expected numerical value only
+Line 36[15,22] <27, Error, Syntax> - Syntax error : Given value is not correct : (5V95) expected numerical value only
        01 pic S9(5V95).
-Line 37[8,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 37[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95V95).
-Line 38[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 38[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V95).
-Line 39[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 39[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5(V95).
-Line 40[8,23] <27, Error, Syntax> - Syntax error : Given value is not correct : (V95) expected numerical value only
+Line 40[15,22] <27, Error, Syntax> - Syntax error : Given value is not correct : (V95) expected numerical value only
        01 pic S95(V95).
-Line 41[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 41[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V95).
-Line 42[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 42[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5)V9)5).
-Line 43[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 43[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V9)5).
-Line 44[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 44[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V9)5).
-Line 45[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 45[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5V9)5).
-Line 46[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 46[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95V9)5).
-Line 47[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 47[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V9)5).
-Line 48[8,25] <27, Error, Syntax> - Syntax error : Given value is not correct : (5(V9) expected numerical value only
+Line 48[15,24] <27, Error, Syntax> - Syntax error : Given value is not correct : (5(V9) expected numerical value only
        01 pic S9(5(V9)5).
-Line 49[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 49[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95(V9)5).
-Line 50[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 50[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V9)5).
-Line 51[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 51[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5)V9(5.
-Line 52[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 52[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V9(5.
-Line 53[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 53[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V9(5.
-Line 54[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 54[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5V9(5.
-Line 55[8,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 55[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95V9(5.
-Line 56[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 56[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V9(5.
-Line 57[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 57[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5(V9(5.
-Line 58[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 58[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95(V9(5.
-Line 59[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 59[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V9(5.
       * OK
        01 pic S9(5)V95.
-Line 62[8,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 62[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V95.
-Line 63[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 63[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V95.
-Line 64[8,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 64[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5V95.
       * OK
        01 pic S95V95.
-Line 67[8,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 67[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V95.
-Line 68[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 68[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5(V95.
-Line 69[8,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 69[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95(V95.
-Line 70[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 70[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V95.
-Line 71[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 71[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5)V9)5.
-Line 72[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 72[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V9)5.
-Line 73[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 73[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V9)5.
-Line 74[8,23] <27, Error, Syntax> - Syntax error : Given value is not correct : (5V9) expected numerical value only
+Line 74[15,22] <27, Error, Syntax> - Syntax error : Given value is not correct : (5V9) expected numerical value only
        01 pic S9(5V9)5.
-Line 75[8,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 75[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95V9)5.
-Line 76[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 76[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V9)5.
-Line 77[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 77[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5(V9)5.
-Line 78[8,23] <27, Error, Syntax> - Syntax error : Given value is not correct : (V9) expected numerical value only
+Line 78[15,22] <27, Error, Syntax> - Syntax error : Given value is not correct : (V9) expected numerical value only
        01 pic S95(V9)5.
-Line 79[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 79[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V9)5.
-Line 80[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 80[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5)V9(5(.
-Line 81[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 81[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V9(5(.
-Line 82[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 82[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V9(5(.
-Line 83[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 83[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5V9(5(.
-Line 84[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 84[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95V9(5(.
-Line 85[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 85[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V9(5(.
-Line 86[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 86[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5(V9(5(.
-Line 87[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 87[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95(V9(5(.
-Line 88[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 88[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V9(5(.
-Line 89[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 89[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5)V95(.
-Line 90[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 90[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V95(.
-Line 91[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 91[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V95(.
-Line 92[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 92[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5V95(.
-Line 93[8,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 93[15,21] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95V95(.
-Line 94[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 94[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V95(.
-Line 95[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 95[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5(V95(.
-Line 96[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 96[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95(V95(.
-Line 97[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 97[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V95(.
-Line 98[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 98[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5)V9)5(.
-Line 99[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 99[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95)V9)5(.
-Line 100[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 100[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5)V9)5(.
-Line 101[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 101[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5V9)5(.
-Line 102[8,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 102[15,22] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95V9)5(.
-Line 103[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 103[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5V9)5(.
-Line 104[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 104[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9(5(V9)5(.
-Line 105[8,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 105[15,23] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S95(V9)5(.
-Line 106[8,25] <27, Error, Syntax> - Syntax error : missing '(' or ')'
+Line 106[15,24] <27, Error, Syntax> - Syntax error : missing '(' or ')'
        01 pic S9)5(V9)5(.
 
        PROCEDURE DIVISION.

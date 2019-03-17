@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
+using JetBrains.Annotations;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
@@ -16,7 +18,8 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class DataDescriptionChecker
     {
-        public static void OnCodeElement(DataDescriptionEntry data, CodeElementsParser.DataDescriptionEntryContext context)
+        public static void OnCodeElement(DataDescriptionEntry data,
+            CodeElementsParser.DataDescriptionEntryContext context)
         {
             var external = GetContext(data, context?.externalClause());
             var global = GetContext(data, context?.globalClause());
@@ -45,6 +48,51 @@ namespace TypeCobol.Compiler.Diagnostics
                         context?.dataNameDefinition());
                 }
             }
+
+            CheckPicture(data);
+        }
+
+        
+            
+        /// <summary>
+        /// Check if the picture of the CodeElement is valid.
+        /// </summary>
+        /// <param name="codeElement"></param>
+        public static void CheckPicture([NotNull] CommonDataDescriptionAndDataRedefines codeElement)
+        {
+            if (codeElement.Picture == null) return;
+
+
+            // if there is not the same number of '(' than of ')'
+            if ((codeElement.Picture.Value.Split('(').Length - 1) != (codeElement.Picture.Value.Split(')').Length - 1))
+            {
+                DiagnosticUtils.AddError(codeElement, "missing '(' or ')'", codeElement.Picture.Token);
+            }
+            // if the first '(' is after first ')' OR last '(' is after last ')'
+            else if (codeElement.Picture.Value.IndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.IndexOf(")", StringComparison.Ordinal) ||
+                     codeElement.Picture.Value.LastIndexOf("(", StringComparison.Ordinal) > codeElement.Picture.Value.LastIndexOf(")", StringComparison.Ordinal))
+                DiagnosticUtils.AddError(codeElement, "missing '(' or ')'", codeElement.Picture.Token);
+            else
+            {
+                foreach (Match match in Regex.Matches(codeElement.Picture.Value, @"\(([^)]*)\)"))
+                {
+                    try //Try catch is here because of the risk to parse a non numerical value
+                    {
+                        int.Parse(match.Value, System.Globalization.NumberStyles.AllowParentheses);
+                    }
+                    catch (Exception)
+                    {
+                        var m = "Given value is not correct : " + match.Value + " expected numerical value only";
+                        DiagnosticUtils.AddError(codeElement, m, codeElement.Picture.Token);
+                    }
+                }
+            }
+        }
+
+        public static void CheckRedefines(DataRedefinesEntry redefines, CodeElementsParser.DataDescriptionEntryContext context)
+        {
+            TypeDefinitionEntryChecker.CheckRedefines(redefines, context);
+            CheckPicture(redefines);
         }
 
         /// <summary>
