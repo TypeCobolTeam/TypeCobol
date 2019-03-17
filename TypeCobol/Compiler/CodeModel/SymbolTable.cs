@@ -608,7 +608,7 @@ namespace TypeCobol.Compiler.CodeModel
                 { 
                     //we are on a variable but ... references property of a TypeDefinition can lead to variable in totally others scopes, like in another program
                     //So we need to check if we can access this variable OR check if the variable is declared inside the typeDefContext
-                    if (GetVariables(reference.Name).Contains(reference) || (typeDefContext != null && typeDefContext.GetChildren<DataDefinition>(reference.Name, true).Contains(reference)))
+                    if (GetVariables(reference.Name).Contains(reference) || (typeDefContext != null && typeDefContext.Equals(parentTypeDef)))
                     {
                         var newDataDefinitionPath = new DataDefinitionPath(dataDefinitionPath, reference);//Add the reference found to the dataDefinitionPath
                         foundedVariables.Add(new KeyValuePair<DataDefinitionPath, DataDefinition>(newDataDefinitionPath, headDataDefinition));
