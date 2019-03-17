@@ -334,10 +334,10 @@ namespace TypeCobol.Compiler.Nodes {
                 foreach (var data in node.StorageAreaWritesDataDefinition)
                 {
                     // Usage of Regex.Replace to replace only the first ooccurence of dataDef.Name to avoid probleme with groups like myPtrGroup::myPtr
-                    var regex = new Regex(Regex.Escape(data.Value.Item2.Name));
+                    var regex = new Regex(Regex.Escape(data.Value.Name));
                     displayableWritten.Add(
                         regex.Replace(
-                            data.Key.ToString(), data.Value.Item2.Name + data.Value.Item2.Hash, 1)
+                            data.Key.ToString(), data.Value.Name + data.Value.Hash, 1)
                             .Replace(" IN ", " OF "));
                 }
 
@@ -354,7 +354,7 @@ namespace TypeCobol.Compiler.Nodes {
             var node = (Node)o;
             if (node.CodeElement is SetStatementForIndexes)
             {
-                return node.StorageAreaWritesDataDefinition.Values.Select(tuple => tuple.Item2);
+                return node.StorageAreaWritesDataDefinition.Values;
             }
             return null;
         }
