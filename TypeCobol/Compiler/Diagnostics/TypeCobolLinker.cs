@@ -25,7 +25,7 @@ namespace TypeCobol.Compiler.Diagnostics
         public override bool Visit(DataDescription dataEntry)
         {
             TypeReferencer(dataEntry, dataEntry.SymbolTable);
-            return false; //Visit of children is done by TypeReferencer
+            return true;
         }
 
         public override bool Visit(Paragraph paragraph)

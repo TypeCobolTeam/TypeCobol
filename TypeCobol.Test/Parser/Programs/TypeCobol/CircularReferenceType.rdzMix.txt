@@ -14,7 +14,11 @@ Line 8[16,22] <30, Error, Semantics> - Semantic error: Type circular reference d
 Line 13[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
 Line 13[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
 Line 13[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 13[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 13[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
             05 yhrtger    TYPE ThirdType.
+Line 14[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
+Line 14[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
 Line 14[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
 Line 14[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
 Line 14[16,22] <30, Error, Semantics> - Semantic error: Type circular reference detected
