@@ -49,7 +49,8 @@ namespace TypeCobol.Codegen.Generators
         public override bool Visit(FunctionDeclaration node)
         {
             //Specify that all FunctionDeclaration should be generated as nested programs
-            node.SetFlag(Node.Flag.GenerateAsNested, true);
+            //Temporary fix, see PR #1215. Should be set on node. 
+            node.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
 
             return false;
         }

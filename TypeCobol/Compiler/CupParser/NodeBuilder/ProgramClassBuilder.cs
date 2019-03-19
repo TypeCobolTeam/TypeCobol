@@ -746,11 +746,22 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
         public virtual void EndExecStatement()
         {
+            //Code duplicated in OnExecStatement
+            //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
+            //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
+
             //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
             //This might be helpful for later
+            //if (_ProcedureDeclaration != null)
+            //{
+            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
+            //}
+
+            //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
+            //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
             if (_ProcedureDeclaration != null)
             {
-                _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
+                CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
             }
             Exit();
         }
@@ -898,13 +909,23 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             Enter(new Exec(stmt), stmt);
 
+            //Code duplicated in OnExecStatement
+            //EndExecStatement (therefore StartExecStatement) is fired if the exec is in a procedure division and is the first instruction
+            //OnExecStatement is fired if the exec is in a procedure division and is not the first instruction
+
             //Code to generate a specific ProcedureDeclaration as Nested when an Exec Statement is spotted. See Issue #1209
             //This might be helpful for later
+            //if (_ProcedureDeclaration != null)
+            //{
+            //    _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
+            //}
+
+            //Code to generate all ProcedureDeclarations as Nested when an Exec Statement is spotted. See Issue #1209
+            //This is the selected solution until we determine the more optimal way to generate a program that contains Exec Statements
             if (_ProcedureDeclaration != null)
             {
-                _ProcedureDeclaration.SetFlag(Node.Flag.GenerateAsNested, true);
+                CurrentNode.Root.MainProgram.SetFlag(Node.Flag.GenerateAsNested, true);
             }
-
             Exit();
         }
 
