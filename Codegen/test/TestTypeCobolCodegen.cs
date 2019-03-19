@@ -164,6 +164,7 @@ namespace TypeCobol.Codegen {
 			var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol","skeletons")+".xml") : null;
 
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FunDeclare") + ".rdz.cbl", skeletons);
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "FunDeclareWithExec") + ".rdz.cbl", skeletons);
         }
 
 		[TestMethod]

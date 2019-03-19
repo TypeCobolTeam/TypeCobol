@@ -27,8 +27,7 @@
        working-storage section.
        linkage section.
        PROCEDURE DIVISION.
-           Call PersonService::GetPersonByName input myname
-           .
+           CONTINUE.
        END-DECLARE.
 
        INIT-LIBRARY.
@@ -48,7 +47,7 @@
            CONTINUE.
        END-DECLARE.
        
-       declare procedure GetPersonByName public
+       declare procedure GetPersonByName private
           input  name  pic x(15).
          PROCEDURE DIVISION.
            CONTINUE.
