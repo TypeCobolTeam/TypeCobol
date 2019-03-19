@@ -22,6 +22,7 @@ namespace TypeCobol.Codegen.Actions
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.CodeElements.VariableWriter)]=TypeCobol_Compiler_CodeElements_VariableWriter;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.LibraryCopy)]=TypeCobol_Compiler_Nodes_LibraryCopy;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.FunctionDeclaration)]=TypeCobol_Compiler_Nodes_FunctionDeclaration;
+                                                NodeActionsProviderMap[typeof(TypeCobol.Compiler.CodeModel.SourceProgram)]=TypeCobol_Compiler_CodeModel_SourceProgram;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.Nodes.ProcedureStyleCall)]=TypeCobol_Compiler_Nodes_ProcedureStyleCall;
                                                 NodeActionsProviderMap[typeof(TypeCobol.Compiler.CodeModel.Program)]=TypeCobol_Compiler_CodeModel_Program;
                                 }
@@ -198,7 +199,7 @@ namespace TypeCobol.Codegen.Actions
                                                                 copyname = @Self["copyname"];
                                                                 programName8 = @Self["programName8"];
                                                 }
-                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.FunctionDeclaration"), new Tuple<string,string>("visibility","public")};
+                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.FunctionDeclaration"), new Tuple<string,string>("visibility","public"), new Tuple<string,string>("isnested","false")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 return CheckConditions(@Self, __ConditionsAttributes_0);
@@ -215,6 +216,40 @@ namespace TypeCobol.Codegen.Actions
                                                                 definitions = @Self["definitions"];
                                                 }
                                                 private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.FunctionDeclaration"), new Tuple<string,string>("visibility","private")};
+                                                public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                return CheckConditions(@Self, __ConditionsAttributes_0);
+                                                }
+
+                                }
+
+                                struct SkeleTonFUN_DECLARE_NESTEDModel
+                                {
+                                                public dynamic definitions;
+                                                
+                                                public SkeleTonFUN_DECLARE_NESTEDModel(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                definitions = @Self["definitions"];
+                                                }
+                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.Nodes.FunctionDeclaration"), new Tuple<string,string>("visibility","public"), new Tuple<string,string>("isnested","true")};
+                                                public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                return CheckConditions(@Self, __ConditionsAttributes_0);
+                                                }
+
+                                }
+
+                                struct SkeleTonMAIN_DECLARE_NESTEDModel
+                                {
+                                                public dynamic definitions;
+                                                public dynamic programName8;
+                                                
+                                                public SkeleTonMAIN_DECLARE_NESTEDModel(TypeCobol.Compiler.Nodes.Node @Self)
+                                                {
+                                                                definitions = @Self["definitions"];
+                                                                programName8 = @Self["programName8"];
+                                                }
+                                                private static Tuple<string,string>[] __ConditionsAttributes_0 = new Tuple<string,string>[]{new Tuple<string,string>("node","TypeCobol.Compiler.CodeModel.SourceProgram"), new Tuple<string,string>("containnested","true")};
                                                 public static bool Conditions_0(TypeCobol.Compiler.Nodes.Node @Self)
                                                 {
                                                                 return CheckConditions(@Self, __ConditionsAttributes_0);
@@ -655,6 +690,172 @@ namespace TypeCobol.Codegen.Actions
                                                                                 StringBuilder @SelfResult = new StringBuilder();
                                                                                 @SelfResult.Append(@"");
                                                                                 TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "expand", null, "program.end", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonFUN_DECLARE_NESTEDModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonFUN_DECLARE_NESTEDModel @Model = new SkeleTonFUN_DECLARE_NESTEDModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "expand", null, "program.end", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                return @SelfActions;
+                                }
+
+                                public static List<TypeCobol.Codegen.Actions.Action> TypeCobol_Compiler_CodeModel_SourceProgram(TypeCobol.Compiler.Nodes.Node @Self, TypeCobol.Codegen.GeneratorActions @SelfContext)
+                                {
+                                                List<TypeCobol.Codegen.Actions.Action> @SelfActions = new List<TypeCobol.Codegen.Actions.Action>();
+                                                {
+                                                                if ((SkeleTonMAIN_DECLARE_NESTEDModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+        var items = "";
+        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        items += "01 PntTab-Pnt POINTER.\n";
+        }
+        int maxVarCount = 0;
+        foreach (var function in @Model.definitions.nestedFunctions.Public) {
+        if (function.Profile.Parameters.Count > maxVarCount) {
+        maxVarCount = function.Profile.Parameters.Count;
+        }
+        }
+        for (int i = 1; i <= maxVarCount; i++) {
+        items += "01 TC-A" + i + " PIC X.\n";
+        }
+        @SelfResult.Append(@"
+");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_LINKAGE", "program.data-division.linkage", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonMAIN_DECLARE_NESTEDModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+        var items = "";
+        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        items += "PA-ALL-ENTRIES.\n";
+        string usingVariables;
+
+        foreach (var functionNode in @Model.definitions.nestedFunctions.Public) {
+
+        TypeCobol.Compiler.Nodes.FunctionDeclaration function = (TypeCobol.Compiler.Nodes.FunctionDeclaration) functionNode;
+        usingVariables = string.Empty;
+
+        for (int i = 1; i <= function.Profile.Parameters.Count; i++) {
+        usingVariables += " TC-A" + i;
+        }
+
+        items += "    ENTRY '" + function.Hash + "' USING" + usingVariables + '\n';
+        items += "        CALL \"" + function.Hash + function.Name + "\" USING" + usingVariables + '\n';
+        items += "        GOBACK.\n\n";
+        }
+        }
+        @SelfResult.Append(@"
+");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ENTRYPOINT", "program.procedure-division.end", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonMAIN_DECLARE_NESTEDModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+        var items = "";
+        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        items += "01  TC-"+ @Model.programName8 + "-FctList-Loaded PIC X(02).\n";
+        items += "    88 TC-"+ @Model.programName8 + "-FctList-IsLoaded      VALUE 'OK'.\n";
+        }
+        @SelfResult.Append(@"
+");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_IS_LOADED", "program.data-division.working-storage", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonMAIN_DECLARE_NESTEDModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+        var items = "";
+        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        items += "01 TC-"+ @Model.programName8 + "-PntTab.\n";
+        items += "    05 TC-" + @Model.programName8 + "-PntNbr         PIC S9(04) COMP VALUE "+(@Model.definitions.nestedFunctions.Public.Count + @Model.definitions.functions.Public.Count) +".\n";
+        }
+        foreach (var f in @Model.definitions.nestedFunctions.Concat(@Model.definitions.functions.Public, true)) {
+        items += "*To call program " + f.Hash + f.Name + '\n';
+        items += "*Which is generated code for " + f.QualifiedName + '\n';
+        items += "*Declared in source file " + f.CodeElement.TokenSource.SourceName + '\n';
+        items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +"-Idt   PIC X(08) VALUE '" + f.Hash + "'.\n";
+        items += "    05 TC-"+@Model.programName8 + "-" + f.Hash +" PROCEDURE-POINTER.\n";
+        }
+        @SelfResult.Append(@"
+");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, null, @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_POINTER_ARRAY", "program.data-division.working-storage", null, false);
+                                                                                if (@SelfAction != null)
+                                                                                {
+                                                                                                @SelfActions.Add(@SelfAction);
+                                                                                }
+                                                                }
+                                                }
+                                                {
+                                                                if ((SkeleTonMAIN_DECLARE_NESTEDModel.Conditions_0(@Self)))
+                                                                {
+                                                                                SkeleTonMAIN_DECLARE_NESTEDModel @Model = new SkeleTonMAIN_DECLARE_NESTEDModel(@Self);
+                                                                                StringBuilder @SelfResult = new StringBuilder();
+                                                                                @SelfResult.Append(@"");
+        var items = "";
+        if (@Model.definitions.nestedFunctions.Public.Count > 0) {
+        items += "*\n";
+        items += "*    IF CallIsCopy\n";
+        items += "*      PERFORM Copy-Process-Mode\n";
+        items += "*    ELSE\n";
+        items += "    PERFORM FctList-Process-Mode\n";
+        items += "    perform INIT-LIBRARY\n";
+        items += "*    END-IF\n\n";
+
+        items += "    GOBACK.\n\n";
+
+        items += " FctList-Process-Mode.\n";
+        items += "     IF NOT TC-" + @Model.programName8 + "-FctList-IsLoaded\n";
+        foreach (var f in @Model.definitions.nestedFunctions.Concat(@Model.definitions.functions.Public, true))
+        items += "       SET TC-"+@Model.programName8 + "-" +f.Hash+"   TO ENTRY \'"+f.Hash+"\'\n";
+        
+        items += "       SET TC-" + @Model.programName8 + "-FctList-IsLoaded TO TRUE\n";
+        items += "     END-IF\n";
+        items += "        .\n\n";
+
+        items += "     set PntTab-Pnt TO ADDRESS OF TC-"+@Model.programName8+"-PntTab\n";
+        }
+        @SelfResult.Append(@"
+");@SelfResult.Append(@"        ");@SelfResult.Append($@"{@items}");@SelfResult.Append(@"");
+                                                                                TypeCobol.Codegen.Actions.Action @SelfAction = @SelfContext.CreateAction(@Self, "ProcedureDivisionCalleeWithoutExternal", @SelfResult.ToString(), "create", "TCRFUN_CODEGEN_ADAPTABLE_BEHAVIOUR", "program.procedure-division.sentence-([0-9]+).begin", null, true);
                                                                                 if (@SelfAction != null)
                                                                                 {
                                                                                                 @SelfActions.Add(@SelfAction);
