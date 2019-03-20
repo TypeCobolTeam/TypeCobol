@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Antlr4.Runtime;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -276,8 +276,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             }
 
                                // accepted format is "PIC [S]9(5..9) comp-5"
-                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.Length < 5 ||
-                                expected.Length > 9 || expected.Usage != DataUsage.NativeBinary)
+                            if (expected.PrimitiveDataType.Name != "Numeric" || expected.PhysicalLength != 4 || expected.Usage != DataUsage.NativeBinary)
                             {
                                 DiagnosticUtils.AddError(node, "LENGTH can only be used as PIC S9(5..9) comp-5",
                                     actualSpecialRegister.SpecialRegisterName);
@@ -555,7 +554,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 else
                 {
                     var m = string.Format("Function '{0}' is missing parameter '{1}' of type {2} and length {3}",
-                        call.FunctionName, expected.Name, expected.DataType, expected.Length);
+                        call.FunctionName, expected.Name, expected.DataType, expected.PhysicalLength);
                     DiagnosticUtils.AddError(node, m);
                 }
             }

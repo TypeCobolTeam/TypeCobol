@@ -28,6 +28,12 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
+        public override bool Visit(DataRedefines dataRedefinition)
+        {
+            RedefinitionReferencer(dataRedefinition);
+            return base.Visit(dataRedefinition);
+        }
+
         public override bool Visit(Paragraph paragraph)
         {
             return false;
@@ -146,6 +152,14 @@ namespace TypeCobol.Compiler.Diagnostics
                 TypeReferencer(dataDescTypeChild as DataDescription, symbolTable);
             }
         }
-      
+
+        private void RedefinitionReferencer(DataRedefines dataRedefinition)
+        {
+            SymbolReference redefined = dataRedefinition.CodeElement.RedefinesDataName;
+            var result = dataRedefinition.SymbolTable.GetRedefinedVariable(dataRedefinition, redefined);
+
+            result?.AddDataRedefinition(dataRedefinition);
+        }
+
     }
 }

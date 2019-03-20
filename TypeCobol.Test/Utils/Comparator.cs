@@ -10,6 +10,7 @@ using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Directives;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using String = System.String;
 
 namespace TypeCobol.Test.Utils
 {
@@ -504,81 +505,136 @@ namespace TypeCobol.Test.Utils
 	{
 	    public MemoryComparator(Paths path, bool debug = false, bool isEI = false) : base(path, debug, isEI) { }
 
-        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath) {
+        public override void Compare(CompilationUnit result, StreamReader reader, string expectedResultPath)
+        {
 			ProgramClassDocument pcd = result.ProgramClassDocumentSnapshot;
-            var symbolTables = new List<SymbolTable>();
-            symbolTables.Add(pcd.Root.SymbolTable);
-
-			Compare(symbolTables, reader, expectedResultPath);
+            var programs = new List<Program>();
+            foreach (var pgm in pcd.Root.Programs)
+            {
+                programs.Add(pgm);
+            }
+            
+			Compare(result, programs, reader, expectedResultPath);
 		}
 
-		internal void Compare(List<SymbolTable> tables, StreamReader expected, string expectedResultPath) {
-			string result = Dump(tables);
+		internal void Compare(CompilationUnit compUnit, List<Program> programs, StreamReader expected, string expectedResultPath)
+		{
+			string result = Dump(compUnit, programs);
 			if (debug) Console.WriteLine("\"" + paths.SamplePath + "\" result:\n" + result);
 			ParserUtils.CheckWithResultReader(paths.SamplePath, result, expected, expectedResultPath);
 		}
 
-		private string Dump(List<SymbolTable> tables) {
+		private string Dump(CompilationUnit compUnit, List<Program> programs)
+		{
 			var str = new StringBuilder();
-			str.AppendLine("--------- FIELD LEVEL/NAME ---------- START     END  LENGTH");
-            foreach (var table in tables)
+            List<DataDefinition> dataDefinitions = new List<DataDefinition>();
+            str.AppendLine("Diagnostics");
+            str.AppendLine("------------");
+            var diags = compUnit.AllDiagnostics();
+            if (diags.Count > 0)
             {
-                foreach (var line in table.DataEntries)
+                foreach (var diag in compUnit.AllDiagnostics())
                 {
-                    foreach (var data in line.Value)
-                    {
-                        //TODO#249 print memory representation
-                        //					if (data is DataDefinition && ((DataDefinition)data).CodeElement().LevelNumber.Value == 1)
-                        //					if (data.LevelNumber.Value == 1) Dump(str, data, 0);
-                    }
+                    str.AppendLine(diag.ToString());
+                }
+            } else
+            {
+                str.AppendLine("  None");
+            }
+
+            str.AppendLine("   ");
+            str.AppendLine("--------- FIELD LEVEL|NAME ---------- START     END  LENGTH");
+
+            foreach (var program in programs)
+            {
+                foreach (Node node in program.Children.First(c => c is DataDivision).Children.Where(c => c is DataSection))
+                {
+                    dataDefinitions.AddRange(GetDataDefinitions(node));
+                }
+
+                foreach (var dataDefinition in dataDefinitions)
+                {
+                    //TODO: Issue #1192 handle correctly a DataRenames
+                    if (dataDefinition is DataRenames == false && dataDefinition.CodeElement?.LevelNumber?.Value != 88)
+                        str.AppendLine(CreateLine(dataDefinition, dataDefinition.SlackBytes == 0));
                 }
             }
 			
 			return str.ToString();
 		}
-		private void Dump(StringBuilder str, object data, int indent, string indexes = "", int baseaddress = 1) {
-/*TODO#249
-			long level = data.LevelNumber.Value;
-			string name = (data.DataName != null?data.DataName.Name:"?");
-			if (data.MemoryArea is TableInMemory) {
-				var table = data.MemoryArea as TableInMemory;
-				foreach(var e in table) {
-					str.AppendLine(CreateLine(level, name, e.Offset, e.Length, e.Index, table.Count, indent));
-					string strindexes = CreateIndexes(indexes, e.Index);
-					foreach(var child in data.Subordinates) Dump(str, child, indent+1, strindexes);
-				}
-			} else {
-				str.AppendLine(CreateLine(level, name, data.MemoryArea.Offset, data.MemoryArea.Length, 0, 1, indent));
-				foreach(var child in data.Subordinates) Dump(str, child, indent+1, indexes);
-			}
-*/
-		}
-		private string CreateLine(long level, string name, int offset, int length, int index, int max, int indent, string strindexes = "") {
+
+        private List<DataDefinition> GetDataDefinitions(Node node)
+        {
+            List<DataDefinition> dataDefinitions = new List<DataDefinition>();
+            foreach (var child in node.Children)
+            {
+                if (child is DataDefinition)
+                {
+                    dataDefinitions.Add(child as DataDefinition);
+                    if (child.Children.Count > 0)
+                    {
+                        dataDefinitions.AddRange(GetDataDefinitions(child));
+                    }
+                }
+            }
+
+            return dataDefinitions;
+        }
+
+		private string CreateLine(DataDefinition data, bool slackByteIsHandled)
+		{
+		    Node parentData = data.Parent;
 			var res = new StringBuilder();
-			BeginFirstColumn(res, indent, level, name);
-			EndFirstColumn(res, strindexes, index, max);
-			EndLine(res, offset, length);
-			return res.ToString();
+		    int indent = 4;
+
+		    while (parentData is DataSection == false)
+		    {
+		        parentData = parentData.Parent;
+		        res.Append(new string(' ', indent));
+		    }
+
+		    if (!slackByteIsHandled)
+		    {
+		        res.Append("SlackByte");
+
+		        res.AppendLine(InsertValues(res.Length, (data.StartPosition - data.SlackBytes).ToString(), (data.StartPosition - 1).ToString(),
+		            data.SlackBytes.ToString()));
+
+		        res.Append(CreateLine(data, true));
+		    }
+		    else
+		    {
+		        var dataEntry = data.CodeElement as DataDefinitionEntry;
+
+		        if (dataEntry != null)
+		        {
+		            if (data.IsTableOccurence)
+		                res.Append($"{dataEntry.LevelNumber} {data.Name} ({data.MaxOccurencesCount})");
+		            else
+		                res.Append($"{dataEntry.LevelNumber} {data.Name}");
+
+		            res.Append(InsertValues(res.Length, data.StartPosition.ToString(), data.PhysicalPosition.ToString(),
+		                data.PhysicalLength.ToString()));
+		        }
+		    }
+
+            return res.ToString();
 		}
-		private void BeginFirstColumn(StringBuilder str, int indent, long level, string name) {
-			for(int i=0; i<indent; i++) str.Append("  ");
-			if (level > 1) str.Append(System.String.Format("{0,2} ", level));
-			str.Append(name);
-		}
-		private void EndFirstColumn(StringBuilder str, string strprefix, int index, int max) {
-			if (strprefix.Length > 0 || (index >= 0 && max > 1)) {
-				str.Append('(').Append(CreateIndexes(strprefix,index)).Append(')');
-			}
-			while(str.Length < 36) str.Append(' ');
-		}
-		private void EndLine(StringBuilder str, int offset, int size, int baseaddress = 1) {
-			str.Append(System.String.Format(" {0,6:0} ", baseaddress + offset));//start
-			str.Append(System.String.Format(" {0,6:0} ", offset + size));//end
-			str.Append(System.String.Format(" {0,6:0} ", size));//length
-		}
-		private string CreateIndexes(string prefix, int index) {
-			return prefix + (index >= 0?((prefix.Length > 0?",":"")+(index+1)):"");
-		}
+
+
+        private string InsertValues(int lineLength, string startPosition, string physicalPosition, string physicalLength)
+	    {
+            StringBuilder str = new StringBuilder();
+	        const int columnStartPosition = 60;
+	        const int offsetBetweenValue = 8;
+
+
+	        str.Append(new string(' ', Math.Max(columnStartPosition - lineLength - startPosition.Length,0)) + startPosition);
+	        str.Append(new string(' ', offsetBetweenValue - physicalPosition.Length) + physicalPosition);
+	        str.Append(new string(' ', offsetBetweenValue - physicalLength.Length) + physicalLength);
+	        
+            return str.ToString();
+	    }
 	}
 
     internal class AntlrComparator : FilesComparator

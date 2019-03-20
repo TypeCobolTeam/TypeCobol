@@ -1,0 +1,107 @@
+Diagnostics
+------------
+Line 1[1,27] <37, Warning, General> - Warning: "END PROGRAM" is missing.
+   
+--------- FIELD LEVEL|NAME ---------- START     END  LENGTH
+1 TEST1-GROUP1                                             1    3260    3260
+    5 TEST1-SGROUP1                                        1     354     354
+        10 TEST1-ELT1                                      1       4       4
+        10 TEST1-ELT2                                      5     354     350
+    5 TEST1-SGROUP2                                      355    2754    2400
+        10 TEST1-ELT3                                    355     554     200
+        10 TEST1-ELT4                                    555    1554    1000
+        10 TEST1-ELT5 (10)                              1555    2754    1200
+    5 TEST1-SGROUP3                                     2755    3054     300
+        10 TEST1-ELT6                                   2755    3054     300
+    5 TEST1-SGROUP4                                     2755    2964     210
+        10 TEST1-ELT7                                   2755    2764      10
+        10 TEST1-ELT8                                   2765    2964     200
+    5 TEST1-SGROUP5                                     3055    3260     206
+        10 TEST1-ELT9                                   3055    3154     100
+        10 TEST1-ELT10                                  3155    3256     102
+        10 TEST1-ELT11                                  3257    3260       4
+1 TEST2-GROUP1                                             1    3260    3260
+    5 TEST2-SGROUP1                                        1     354     354
+        10 TEST2-ELT1                                      1       4       4
+        10 TEST2-ELT2                                      5     354     350
+    5 TEST2-SGROUP2                                      355    2754    2400
+        10 TEST2-ELT3                                    355     554     200
+        10 TEST2-ELT4                                    555    1554    1000
+        10 TEST2-ELT5 (10)                              1555    2754    1200
+    5 TEST2-SGROUP3                                     2755    3054     300
+        10 TEST2-ELT6                                   2755    3054     300
+    5 TEST2-SGROUP4                                     2755    2964     210
+        10 TEST2-ELT7                                   2755    2764      10
+        10 TEST2-ELT8                                   2765    2964     200
+    5 TEST2-SGROUP5                                     3055    3260     206
+        10 TEST2-ELT9                                   3055    3154     100
+        10 TEST2-ELT10                                  3155    3256     102
+        10 TEST2-ELT11                                  3257    3260       4
+1 TEST3-GROUP1                                             1    3340    3340
+    5 TEST3-SGROUP1                                        1     354     354
+        10 TEST3-ELT1                                      1       4       4
+        10 TEST3-ELT2                                      5     354     350
+    5 TEST3-SGROUP1R                                       1     400     400
+        10 TEST3-ELT1R                                     1      50      50
+        10 TEST3-ELT2R                                    51     400     350
+    5 TEST3-SGROUP2                                      401    2800    2400
+        10 TEST3-ELT3                                    401     600     200
+        10 TEST3-ELT4                                    601    1600    1000
+        10 TEST3-ELT5 (10)                              1601    2800    1200
+    5 TEST3-SGROUP3                                     2801    3100     300
+        10 TEST3-ELT6                                   2801    3100     300
+    5 TEST3-SGROUP4                                     2801    3010     210
+        10 TEST3-ELT7                                   2801    2810      10
+        10 TEST3-ELT8                                   2811    3010     200
+    5 TEST3-SGROUP5                                     3101    3306     206
+        10 TEST3-ELT9                                   3101    3200     100
+        10 TEST3-ELT10                                  3201    3302     102
+        10 TEST3-ELT11                                  3303    3306       4
+    5 TEST3-SGROUP6                                     3307    3333      27
+        10 TEST3-SSGROUP1                               3307    3319      13
+            15 TEST3-ELT12                              3307    3319      13
+        10 TEST3-SSGROUP2                               3307    3320      14
+            15 TEST3-ELT13                              3307    3315       9
+            SlackByte                                   3316    3316       1
+            15 TEST3-ELT14                              3317    3320       4
+        10 TEST3-SSGROUP3                               3307    3324      18
+            15 TEST3-ELT15                              3307    3324      18
+        10 TEST3-SSGROUP4                               3307    3308       2
+            15 TEST3-ELT16                              3307    3308       2
+        10 TEST3-SSGROUP5                               3307    3329      23
+            15 TEST3-ELT17                              3307    3315       9
+            SlackByte                                   3316    3316       1
+            15 TEST3-ELT18                              3317    3320       4
+            15 TEST3-ELT19                              3321    3329       9
+        10 TEST3-ELT20                                  3330    3333       4
+    5 TEST3-SGROUP7                                     3334    3340       7
+        10 TEST3-ELT21                                  3334    3336       3
+        SlackByte                                       3334    3336       3
+        10 TEST3-ELT21R                                 3337    3340       4
+1 TEST4-GROUP1                                             1    3260    3260
+    5 TEST4-SGROUP1                                        1     354     354
+        10 TEST4-ELT1                                      1       4       4
+        10 TEST4-ELT2                                      5     354     350
+    5 TEST4-SGROUP1R                                       1     300     300
+        10 TEST4-ELT1R                                     1      50      50
+        10 TEST4-ELT2R                                    51     300     250
+    5 TEST4-SGROUP2                                      355    2754    2400
+        10 TEST4-ELT3                                    355     554     200
+        10 TEST4-ELT4                                    555    1554    1000
+        10 TEST4-ELT5 (10)                              1555    2754    1200
+    5 TEST4-SGROUP3                                     2755    3054     300
+        10 TEST4-ELT6                                   2755    3054     300
+    5 TEST4-SGROUP4                                     2755    2964     210
+        10 TEST4-ELT7                                   2755    2764      10
+        10 TEST4-ELT8                                   2765    2964     200
+    5 TEST4-SGROUP5                                     3055    3260     206
+        10 TEST4-ELT9                                   3055    3154     100
+        10 TEST4-ELT10                                  3155    3256     102
+        10 TEST4-ELT11                                  3257    3260       4
+1 TEST5-GROUP1                                             1     342     342
+    5 TEST5-SGROUP1 (3)                                    1     342     342
+        10 TEST5-ELT1                                      1       4       4
+        10 TEST5-SSGROUP1 (2)                              5     114     110
+            15 TEST5-ELT2                                  5      24      20
+            15 TEST5-ELT3                                 25      29       5
+            15 TEST5-ELT4 (10)                            30      59      30
