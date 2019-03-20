@@ -101,12 +101,12 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                     continue;
                 }
 
-                // Create and insert the OutlineNode if if there is less OutlineNode than Nodes
+                // Create and insert the OutlineNode if there is less OutlineNode than Nodes
                 if (i >= this.childNodes.Count)
                 {
-                        this.childNodes.Insert(i, new OutlineNode(interestingNodes.ElementAt(i), this));
-                        this.childNodes[i].isUpdated = true;
-                        continue;
+                    this.childNodes.Insert(i, new OutlineNode(interestingNodes.ElementAt(i), this));
+                    this.childNodes[i].isUpdated = true;
+                    continue;
                 }
 
                 var derivationNode = this.childNodes[i].IsDerivationNode(interestingNodes.ElementAt(i)) ? interestingNodes.ElementAt(i) : null;
@@ -143,6 +143,9 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                     this.childNodes.Insert(i, new OutlineNode(interestingNodes.ElementAt(i), this));
                     this.childNodes[i].isUpdated = true;
                     childrenCount++;
+
+                    if (interestingNodes.ElementAt(i).ChildrenCount > 0)
+                        continue;
                 }
 
                 i++;
@@ -159,66 +162,37 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
         /// <returns></returns>
         public bool IsDerivationNode(Node node)
         {
+            //Check the common properties
             if (this.name == node.Name && 
                 this.type == node.GetType().Name &&
                 this.parentName == node.Parent.Name)
             {
-                if (this.arguments == null)
-                    return true;
-
+                //Check the special properties of a function declaration
                 if (node is FunctionDeclaration fun)
                 {
-                    foreach (string substring in this.arguments.Split(';'))
-                    {
-                        string[] parameters = substring.Split(':');
-                        string[] s = parameters[1].Split(',');
-                        switch (parameters[0].Trim())
-                        {
-                            case "in":
-                                if (!CheckArguments(s, fun.Profile.InputParameters))
-                                {
-                                    return false;
-                                }
-                                break;
-                            case "inout":
-                                if (!CheckArguments(s, fun.Profile.InoutParameters))
-                                {
-                                    return false;
-                                }
-                                break;
-                            case "out":
-                                if (!CheckArguments(s, fun.Profile.OutputParameters))
-                                {
-                                    return false;
-                                }
-                                break;
-                        }
-                    }
-                    return true;
-                }
-            }
+                    //Get the strings for each passingType (in, inout, out)
+                    string[] passingTypes = new string[0];
 
-            return false;
-        }
+                    //Get the strings for each passingType (in, inout, out) written in the outline node
+                    if (!string.IsNullOrEmpty(this.arguments))
+                        passingTypes = this.arguments.Split(';');
 
-        /// <summary>
-        /// Check if the arguments of the OutlineNode are the same as the one in the Node
-        /// </summary>
-        /// <param name="parameters"></param>
-        /// <param name="nodeParameters"></param>
-        /// <returns></returns>
-        private bool CheckArguments(string[] parameters, IList<ParameterDescription> nodeParameters)
-        {
-            if (parameters.Length == nodeParameters.Count)
-            {
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    if (parameters[i].Trim() != nodeParameters[i].Name)
-                    {
+                    //Check if there the count of PassingType in the outline node matches the number of PassingType in the document
+                    if (passingTypes.Length != fun.Profile.Parameters.GroupBy(p => p.PassingType).Count())
                         return false;
-                    }
-                }
 
+                    //Check if number of parameters in outline node matches the number of parameters in the document
+                    if (passingTypes.Sum(pt => pt.Split(':')[1].Split(',').Length) != fun.Profile.Parameters.Count)
+                        return false;
+
+                    //Check if each parameter from the document is described in the outline node
+                    foreach (ParameterDescription parameter in fun.Profile.Parameters)
+                    {
+                        if (!passingTypes.Any(pt => pt.Split(':')[1].Split(',').Any(n => n.Trim() == parameter.Name)))
+                            return false;
+                    }
+
+                }
                 return true;
             }
 
