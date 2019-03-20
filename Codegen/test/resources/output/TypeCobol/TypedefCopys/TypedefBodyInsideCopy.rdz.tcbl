@@ -1,0 +1,123 @@
+﻿       identification division.
+       program-id. MyPGM.
+       environment division.
+       configuration section.
+       source-computer. ibm-370
+      *                 with debugging mode
+                        .
+       special-names. decimal-point is comma.
+       data division.
+       working-storage section.
+      
+      
+      *01 Type1 typedef strict.
+      *   COPY MyCopyA REPLACING ==:Foo:== BY ==Foo==.
+      
+      *01 Type2 typedef strict.
+      *   COPY MyCopyB.
+
+      *01 Type3 typedef strict.
+      *   COPY MyCopyA REPLACING
+      *     ==:Foo:== BY ==Foo==.
+
+      *01 Type4 typedef strict.
+      *  COPY MyCopyA
+      *   REPLACING
+      *    ==:Foo:==
+      *    BY
+      *     ==Too==.
+
+      *01 Type5 typedef strict.
+      *  COPY
+      *  MyCopyA
+      *  REPLACING
+      *    ==:Foo:==
+      *    BY
+      *         ==Too
+      *        ==
+      *    .
+
+      *01 Type6 typedef strict.
+      *   05 v PIC X(9).
+      *   COPY MyCopyA REPLACING ==:Foo:== BY ==Foo==.
+
+      *01 Type7 typedef strict.
+      *  02 v PIC X(9).
+      *  02 i.
+      *  COPY
+      *  MyCopyA
+      *  REPLACING
+      *    ==:Foo:==
+      *    BY
+      *         ==Too
+      *        ==
+      *    .
+
+      *01 Type8 typedef strict.
+      *  02 v PIC X(9).
+      *  02 i.
+      *  COPY
+      *  MyCopyA
+      *  REPLACING
+      *    ==:Foo:==
+      *    BY
+      *         ==Too
+      *        ==
+      *   .
+      *  02 n comp-5.
+
+      *01 var1 type Type1.
+       01 var1.
+           02 X PIC 9(4).
+           02 Foo PIC 9(5).
+                          
+      
+      *01 var2 type Type2.
+       01 var2.
+           02 X PIC 9(4).
+           02 Y PIC 9(5).
+                          
+       
+      *01 var3 type Type3.
+       01 var3.
+           02 X PIC 9(4).
+           02 Foo PIC 9(5).
+                          
+
+      *01 var4 type Type4.
+       01 var4.
+           02 X PIC 9(4).
+           02 Too PIC 9(5).
+                          
+
+      *01 var5 type Type5.
+       01 var5.
+           02 X PIC 9(4).
+           02 Too PIC 9(5).
+                          
+
+      *01 var6 type Type6.
+       01 var6.
+           02 v PIC X(9).
+           02 X PIC 9(4).
+           02 Foo PIC 9(5).
+                          
+
+      *01 var7 type Type7.
+       01 var7.
+           02 v PIC X(9).
+           02 i.
+             03 X PIC 9(4).
+             03 Too PIC 9(5).
+                          
+
+      *01 var8 type Type8.
+       01 var8.
+           02 v PIC X(9).
+           02 i.
+             03 X PIC 9(4).
+             03 Too PIC 9(5).
+           02 n comp-5.
+                          
+      
+       end program MyPGM.
