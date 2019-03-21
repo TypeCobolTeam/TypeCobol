@@ -152,7 +152,8 @@ namespace TypeCobol.Compiler.Nodes {
         {
             return astVisitor.Visit(this) && this.ContinueVisitToChildren(astVisitor, Profile.InputParameters)
                                           && this.ContinueVisitToChildren(astVisitor, Profile.InoutParameters)
-                                          && this.ContinueVisitToChildren(astVisitor, Profile.OutputParameters);
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.OutputParameters)
+                                          && this.ContinueVisitToChildren(astVisitor, Profile.ReturningParameter );
 
         }
 
