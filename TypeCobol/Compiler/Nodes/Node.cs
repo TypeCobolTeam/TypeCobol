@@ -88,7 +88,7 @@ namespace TypeCobol.Compiler.Nodes {
         /// Some interresting flags. Note each flag must be a power of 2
         /// for instance: 0x1 << 0; 0x01 << 1; 0x01 << 2 ... 0x01 << 32
         /// </summary>
-        public enum Flag : int
+        public enum Flag : uint
         {
             /// <summary>
             /// Flag that indicates that the node has been visited for Type Cobol Qualification style detection.
@@ -203,8 +203,14 @@ namespace TypeCobol.Compiler.Nodes {
             /// Mark a program that contains procedure declaration.
             /// </summary>
             ContainsProcedure = 0x01 << 26,
-
-
+            /// <summary>
+            /// Mark a node whose come from a Typedef Declared By a Copy.
+            /// </summary>
+            InsideTypedefFromCopy = 0x01 << 27,
+            /// <summary>
+            /// Indicate the node who is inserted by the codegen to indicate the COPY node.
+            /// </summary>
+            IsTypedefCopyNode = 0x01 << 28,
 
         };
         /// <summary>

@@ -705,64 +705,25 @@ namespace TypeCobol.Codegen.Generators
         {
             int lastLine = -1;
             bool periodSeparatorSeen = false;
-            foreach (var t in copyDirective.COPYToken.TokensLine.SourceTokens)
+            //Starting from the COPY Line and the COPY Token capture all to token till to encounter a PeriodSeparator.
+            var tl = Generator.CompilationResults.TokensLines[copyDirective.COPYToken.Line - 1];
+            bool copyTokenSeen = false;
+            foreach (var t in tl.SourceTokens)
             {
-                yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-            }
-
-            if (copyDirective.ReplaceOperations != null)
-            {
-                foreach (Compiler.Directives.ReplaceOperation ce in copyDirective.ReplaceOperations)
-                {
-                    if (ce.ComparisonToken != null)
-                    {
-                        foreach (var t in ce.ComparisonToken.TokensLine.SourceTokens)
-                        {
-                            yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-                        }
-                    }
-
-                    switch (ce.Type)
-                    {
-                        case ReplaceOperationType.SingleToken:
-                        {
-                            SingleTokenReplaceOperation stro = (SingleTokenReplaceOperation) ce;
-                            yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, stro.ReplacementToken);
-                        }
-                            break;
-                        case ReplaceOperationType.PartialWord:
-                        {
-                            PartialWordReplaceOperation pro = (PartialWordReplaceOperation) ce;
-                            yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, pro.PartialReplacementToken);
-                        }
-                            break;
-                        case ReplaceOperationType.SingleToMultipleTokens:
-                        {
-                            SingleToMultipleTokensReplaceOperation stmtro = (SingleToMultipleTokensReplaceOperation) ce;
-                            foreach (var t in stmtro.ReplacementTokens)
-                                yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-                        }
-                            break;
-                        case ReplaceOperationType.MultipleTokens:
-                        {
-                            MultipleTokensReplaceOperation mtro = (MultipleTokensReplaceOperation) ce;
-                            foreach (var t in mtro.FollowingComparisonTokens)
-                                yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-                            foreach (var t in mtro.ReplacementTokens)
-                                yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
-                            }
-                            break;
-                    }
-                }
+                if (t == copyDirective.COPYToken)
+                    copyTokenSeen = true;
+                if (copyTokenSeen)
+                    yield return CaptureEndCopyLine(ref lastLine, ref periodSeparatorSeen, t);
             }
 
             if (lastLine >= 0 && !periodSeparatorSeen)
             {
+                lastLine++;
                 int count = Generator.CompilationResults.TokensLines.Count;
                 for (int l = lastLine ; l < count && !periodSeparatorSeen; l++)
                 {
-                    var tl = Generator.CompilationResults.TokensLines[l];
-                    foreach (var t in tl.SourceTokens)
+                    var tl2 = Generator.CompilationResults.TokensLines[l];
+                    foreach (var t in tl2.SourceTokens)
                     {
                         if (periodSeparatorSeen)
                             yield break;
@@ -833,7 +794,7 @@ namespace TypeCobol.Codegen.Generators
                                     {
                                         int nextLine = t.Line - 1;
                                         if (lastLine >= 0)
-                                        {//We must take in acount gap between teen because for instance a BY token in a
+                                        {//We must take in account gap between lines because for instance a BY token in a
                                             //REPLACE is not captured.
                                             for (int i = lastLine + 1; i < nextLine; i++)
                                                 CommentedLines[i] = true;
@@ -846,11 +807,16 @@ namespace TypeCobol.Codegen.Generators
                                 });
                                 //Create node with the COPY Tokens
                                 LinearCopyNode copyNode = new LinearCopyNode(new Qualifier.TokenCodeElement(copyTokens.ToList()));
-                                //Only add to the node a non commented COPY.
-                                if (!bCopyCommented)
-                                {
-                                    //Just add it has children to the current node, if it is not a commented COPY.
-                                    node.Add(copyNode);                                    
+                                //Just add it has children to the current node.
+                                node.Add(copyNode);                                    
+                                if (bCopyCommented)
+                                {//This a commented COPYs
+                                    if (node.Parent != null)
+                                    {//Inform the parent that it has a COPY node here
+                                        this.Generator.ErasedNodes.Add(copyNode);
+                                        node.Parent.SetFlag(Node.Flag.InsideTypedefFromCopy, true, true);
+                                        copyNode.SetFlag(Node.Flag.IsTypedefCopyNode, true);
+                                    }
                                 }
                                 MappedCopyTokens[copyToken] = copyNode;
                             }

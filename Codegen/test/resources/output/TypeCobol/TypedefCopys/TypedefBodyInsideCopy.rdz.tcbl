@@ -66,58 +66,131 @@
       *   .
       *  02 n comp-5.
 
+      *01 Type9 typedef strict.
+      *  02 v PIC X(9).
+      *  02 i.
+      *  COPY
+      *  MyCopyA
+      *  REPLACING
+      *    ==:Foo:==
+      *    BY
+      *         ==Too
+      *        ==
+      *   .
+      *  02 n comp-5.
+      *   COPY MyCopyB.
+
+      *01 Type10 typedef strict.
+      *  COPY
+      *  MyCopyA
+      *  REPLACING
+      *    ==:Foo:==
+      *    BY
+      *         ==Too
+      *        ==
+      *   .
+      *   COPY MyCopyB.
+
+
       *01 var1 type Type1.
        01 var1.
-           02 X PIC 9(4).
-           02 Foo PIC 9(5).
+          COPY MyCopyA REPLACING ==:Foo:== BY ==Foo==.
                           
       
       *01 var2 type Type2.
        01 var2.
-           02 X PIC 9(4).
-           02 Y PIC 9(5).
+          COPY MyCopyB.
                           
        
       *01 var3 type Type3.
        01 var3.
-           02 X PIC 9(4).
-           02 Foo PIC 9(5).
+          COPY MyCopyA REPLACING
+            ==:Foo:== BY ==Foo==.
                           
 
       *01 var4 type Type4.
        01 var4.
-           02 X PIC 9(4).
-           02 Too PIC 9(5).
+         COPY MyCopyA
+          REPLACING
+           ==:Foo:==
+           BY
+            ==Too==.
                           
 
       *01 var5 type Type5.
        01 var5.
-           02 X PIC 9(4).
-           02 Too PIC 9(5).
+         COPY
+         MyCopyA
+         REPLACING
+           ==:Foo:==
+           BY
+                ==Too
+               ==
+           .
                           
 
       *01 var6 type Type6.
        01 var6.
            02 v PIC X(9).
-           02 X PIC 9(4).
-           02 Foo PIC 9(5).
+          COPY MyCopyA REPLACING ==:Foo:== BY ==Foo==.
                           
 
       *01 var7 type Type7.
        01 var7.
            02 v PIC X(9).
            02 i.
-             03 X PIC 9(4).
-             03 Too PIC 9(5).
+         COPY
+         MyCopyA
+         REPLACING
+           ==:Foo:==
+           BY
+                ==Too
+               ==
+           .
                           
 
       *01 var8 type Type8.
        01 var8.
            02 v PIC X(9).
            02 i.
-             03 X PIC 9(4).
-             03 Too PIC 9(5).
+         COPY
+         MyCopyA
+         REPLACING
+           ==:Foo:==
+           BY
+                ==Too
+               ==
+          .
            02 n comp-5.
                           
+
+      *01 var9 type Type9.
+       01 var9.
+           02 v PIC X(9).
+           02 i.
+         COPY
+         MyCopyA
+         REPLACING
+           ==:Foo:==
+           BY
+                ==Too
+               ==
+          .
+           02 n comp-5.
+          COPY MyCopyB.
+                          
+
+      *01 var10 type Type10.
+       01 var10.
+         COPY
+         MyCopyA
+         REPLACING
+           ==:Foo:==
+           BY
+                ==Too
+               ==
+          .
+          COPY MyCopyB.
+                            
       
        end program MyPGM.

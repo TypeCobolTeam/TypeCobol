@@ -66,6 +66,32 @@
           .
          02 n comp-5.
 
+       01 Type9 typedef strict.
+         02 v PIC X(9).
+         02 i.
+         COPY 
+         MyCopyA 
+         REPLACING 
+           ==:Foo:== 
+           BY 
+                ==Too
+               ==
+          .
+         02 n comp-5.
+          COPY MyCopyB.
+
+       01 Type10 typedef strict.
+         COPY 
+         MyCopyA 
+         REPLACING 
+           ==:Foo:== 
+           BY 
+                ==Too
+               ==
+          .
+          COPY MyCopyB.
+
+
        01 var1 type Type1.
       
        01 var2 type Type2.
@@ -81,5 +107,9 @@
        01 var7 type Type7.
 
        01 var8 type Type8.
+
+       01 var9 type Type9.
+
+       01 var10 type Type10.
       
        end program MyPGM.
