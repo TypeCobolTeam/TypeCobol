@@ -78,7 +78,7 @@ namespace TypeCobol.Tools.Options_Config
             { ReturnCode.EncodingError,          "Unexpected parameter given for encoding option. Accepted parameters are \"rdz\"(default), \"zos\", \"utf8\"." },
             { ReturnCode.IntrinsicError,         "Intrinsic files given are unreachable." },
             { ReturnCode.CopiesError,            "Copies files given are unreachable." },
-            { ReturnCode.DependenciesError,      "Dependencies files given are unreachable." },
+            { ReturnCode.DependenciesError,      "Dependencies files given are unreachable: " },
             { ReturnCode.MaxDiagnosticsError,    "Maximum diagnostics have to be an integer." },
             { ReturnCode.OutputFormatError,      "Unexpected parameter given for Output format option. Accepted parameters are Cobol85/0(default), PublicSignature/1." },
             { ReturnCode.ExpandingCopyError,     "Expanding copy path given is unreachable." },
@@ -257,8 +257,22 @@ namespace TypeCobol.Tools.Options_Config
             //CopiesError
             VerifFiles(config.CopyFolders, ReturnCode.CopiesError, ref errorStack, true);
 
-            //DependenciesError
-            VerifFiles(config.Dependencies, ReturnCode.DependenciesError, ref errorStack);
+            ////DependencyFolderMissing
+            if (config.ExecToStep == ExecutionStep.Generate && !errorStack.ContainsKey(ReturnCode.ExecToStepError))
+            {
+                foreach (string dependency in config.Dependencies)
+                {
+                    string directory = Path.GetDirectoryName(dependency);
+                    string file = Path.GetFileName(dependency);
+
+                    if (file?.Contains("*") == true)
+                        file = string.Empty;
+
+                    if ((!Directory.Exists(directory) || !file.IsNullOrEmpty() && !File.Exists(dependency)) && !errorStack.ContainsKey(ReturnCode.DependenciesError))
+                        errorStack.Add(ReturnCode.DependenciesError, TypeCobolConfiguration.ErrorMessages[ReturnCode.DependenciesError] + directory + Path.DirectorySeparatorChar + file);
+
+                }
+            }
 
             // MaxDiagnosticsError
             if (!config.RawMaximumDiagnostics.IsNullOrEmpty())
