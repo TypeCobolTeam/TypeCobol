@@ -9,7 +9,9 @@ using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using System.Text.RegularExpressions;
+using TypeCobol.Compiler.Domain;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Symbols;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -413,10 +415,91 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
+#if DOMAIN_CHECKER
+        /// <summary>
+        /// Get the top program.
+        /// </summary>
+        /// <param name="curPrg"></param>
+        /// <returns></returns>
+        static ProgramSymbol GetTopProgram(ProgramSymbol curPrg)
+        {
+            ProgramSymbol top = (ProgramSymbol)curPrg.TopParent(Symbol.Kinds.Program);
+            if (top == null || top == curPrg) return curPrg;
+            return GetTopProgram(top);
+        }
+
+        /// <summary>
+        /// Expand the top program.
+        /// </summary>
+        /// <param name="curPrg">The Current Program.</param>
+        /// <returns></returns>
+        static ProgramSymbol ExpandTopProgram(ProgramSymbol curPrg)
+        {
+            const ulong expandedFlag = 0x1 << 62;//I use this flag to mark an expanded program.
+            ProgramSymbol topPrg = GetTopProgram(curPrg);
+            if (!topPrg.HasFlag((Symbol.Flags)expandedFlag))
+            {
+                SymbolExpander se = new SymbolExpander(topPrg);
+                topPrg.Accept(se, topPrg);
+                //Marqué ce programme come ayant été expandé
+                topPrg.SetFlag((Symbol.Flags)expandedFlag, true);
+            }
+            return topPrg;
+        }
+
+        /// <summary>
+        /// This static method normalize path names by removing consecutive dots like ".."
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        static string NormalizePathNames(string name)
+        {
+            string[] paths = name.Split('.');
+            string sep = "";
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (var s in paths)
+            {
+                if (s.Length > 0)
+                {
+                    sb.Append(sep);
+                    sb.Append(s);
+                    sep = ".";
+                }
+            }
+            return sb.ToString();
+        }
+
+        static string NormalizePathNames(Symbol[] symbolPaths)
+        {
+            string sep = "";
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (var s in symbolPaths)
+            {
+                    sb.Append(sep);
+                    sb.Append(s.Name);
+                    sep = ".";
+            }
+            return sb.ToString();
+        }
+#endif
         public static DataDefinition CheckVariable(Node node, StorageArea storageArea, bool isReadStorageArea)
         {
             if (storageArea == null || !storageArea.NeedDeclaration)
                 return null;
+#if DOMAIN_CHECKER
+            //Do we have a Root Symbol Table build
+            if (SymbolTableBuilder._rootSymbolTable != null)
+            {
+                //Check that a semantic data has been associated to this node.
+                System.Diagnostics.Debug.Assert(node.SemanticData != null);
+                System.Diagnostics.Debug.Assert(node.SemanticData.SemanticKind == SemanticKinds.Symbol);
+                //The semantic data is a ProgramSymbol or a FunctionSymbol
+                System.Diagnostics.Debug.Assert(((Symbol)node.SemanticData).Kind == Symbol.Kinds.Program || 
+                                                ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Function || 
+                                                ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Variable ||
+                                                ((Symbol)node.SemanticData).Kind == Symbol.Kinds.Index);
+            }
+#endif
 
             var area = storageArea.GetStorageAreaThatNeedDeclaration;
             if (area.SymbolReference == null) return null;
@@ -432,6 +515,58 @@ namespace TypeCobol.Compiler.Diagnostics
             var found = foundQualified.Select(v => v.Value);
 
             var foundCount = found.Count();
+#if DOMAIN_CHECKER
+            Scopes.Scope<VariableSymbol>.MultiSymbols result = null;
+            List<Symbol[]> foundSymbolTypedPaths = null;
+            if (SymbolTableBuilder._rootSymbolTable != null)
+            {                                
+                switch (((Symbol)node.SemanticData).Kind)
+                {
+                    case Symbol.Kinds.Program:
+                    case Symbol.Kinds.Function:
+                    {
+                        ProgramSymbol prg = (ProgramSymbol) node.SemanticData;
+                        ProgramSymbol topPrg = ExpandTopProgram(prg);
+                        result = prg.ResolveReference(area.SymbolReference, true);
+                        System.Diagnostics.Debug.Assert(result != null);
+                        //Check that we found the same number of symbols
+                        System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                    }
+                        break;
+                    case Symbol.Kinds.Variable:
+                    case Symbol.Kinds.Index:
+                        //Humm....
+                        //This Storage area's SemanticData is a Variable.
+                        //Thus this situation can only appears if the variable is inside a
+                        //Typedef, or Inside a Program or a Function.
+                        //But any way we have found it.
+                        VariableSymbol @var = (VariableSymbol)node.SemanticData;
+                        if (@var.HasFlag(Symbol.Flags.InsideTypdef))
+                        {
+                            System.Diagnostics.Debug.Assert(@var.HasFlag(Symbol.Flags.InsideTypdef));
+                            System.Diagnostics.Debug.Assert(@var.TopParent(Symbol.Kinds.Typedef) != null);
+                            //We looking inside a TYPEDEF.
+                            TypedefSymbol tdSym = (TypedefSymbol)@var.TopParent(Symbol.Kinds.Typedef);
+                            foundSymbolTypedPaths = new List<Symbol[]>();
+                            result = tdSym.Get(AbstractScope.SymbolReferenceToPath(area.SymbolReference), null, foundSymbolTypedPaths);
+                            System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                        }
+                        else
+                        {
+                            FunctionSymbol fun = (FunctionSymbol)@var.TopParent(Symbol.Kinds.Function);
+                            ProgramSymbol prg = (ProgramSymbol)@var.TopParent(Symbol.Kinds.Program);
+                            System.Diagnostics.Debug.Assert(prg != null || fun != null);
+                            ProgramSymbol topPrg = ExpandTopProgram(prg);
+                            //Lookup itself in its program.
+                            result = (fun??prg).ResolveReference(area.SymbolReference, true);
+                            System.Diagnostics.Debug.Assert(result != null);
+                            System.Diagnostics.Debug.Assert(result.Count == foundCount);
+                        }
+                        break;
+                }
+            }
+#endif
+
 
             if (foundCount == 0)
             {
@@ -457,6 +592,13 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 var dataDefinitionFound = found.First();
                 string completeQualifiedName = foundQualified.First().Key;
+#if DOMAIN_CHECKER
+                //Check that the qualified name of the variable found is the same.
+                //I cannot do that because: Actually TypeCobol Path variable includes TYPEDEF.NAMES,
+                //New Domain doesn't include TYPEDEF.NAMES in paths. ==> cannot compare qualified path names.
+                string qname = foundSymbolTypedPaths != null ? NormalizePathNames(foundSymbolTypedPaths[0]) : result.Symbol.FullTypedDotName;
+                System.Diagnostics.Debug.Assert(NormalizePathNames(completeQualifiedName).ToLower().Equals(qname.ToLower()));
+#endif
 
                 if (foundQualified.Count == 1)
                 {
@@ -470,7 +612,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         node.StorageAreaReadsDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
                     }
-                    node.StorageAreaReadsDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,dataDefinitionFound));
+                    node.StorageAreaReadsDataDefinition.Add(storageArea, new Tuple<string, DataDefinition>(completeQualifiedName, dataDefinitionFound));
                 }
                 else
                 {
@@ -479,7 +621,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         node.StorageAreaWritesDataDefinition = new Dictionary<StorageArea, Tuple<string, DataDefinition>>();
                     }
-                    node.StorageAreaWritesDataDefinition.Add(storageArea,new Tuple<string, DataDefinition>(completeQualifiedName,dataDefinitionFound));
+                    node.StorageAreaWritesDataDefinition.Add(storageArea, new Tuple<string, DataDefinition>(completeQualifiedName, dataDefinitionFound));
                 }
 
                 return dataDefinitionFound;
@@ -493,6 +635,10 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             if (dataDefinition.IsIndex)
             {
+#if DOMAIN_CHECKER
+                //Ensure that domain SemanticData is also in index symbol
+                System.Diagnostics.Debug.Assert(((Symbol)dataDefinition.SemanticData).Kind == Symbol.Kinds.Index);
+#endif
                 var index = dataDefinition;
 
                 index.AddReferences(storageArea, node); //Add this node as a reference to the founded index
@@ -526,7 +672,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 //If it's an index but not use with qualified reference 
                 {
                     //If the index has already been flaged UsedWithQualifiedName, we need to flag the current node
-                    if(index.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
+                    if (index.IsFlagSet(Node.Flag.IndexUsedWithQualifiedName))
                     {
                         FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsIndex, node, storageArea,
                             completeQualifiedName);
@@ -541,20 +687,20 @@ namespace TypeCobol.Compiler.Diagnostics
                     index.SetFlag(Node.Flag.IndexUsedWithQualifiedName, true);
                 }
 
-                    if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
-                        DiagnosticUtils.AddError(node,
-                            "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
-                }
-                else if (dataDefinition.DataType == DataType.Boolean && 
-                         (dataDefinition.CodeElement)?.LevelNumber?.Value != 88)
+                if (area.SymbolReference.IsQualifiedReference && !area.SymbolReference.IsTypeCobolQualifiedReference)
+                    DiagnosticUtils.AddError(node,
+                        "Index can not be use with OF or IN qualifiers " + area, area.SymbolReference);
+            }
+            else if (dataDefinition.DataType == DataType.Boolean &&
+                     (dataDefinition.CodeElement)?.LevelNumber?.Value != 88)
+            {
+                if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
                 {
-                    if (!((node is Nodes.If && storageArea.Kind != StorageAreaKind.StorageAreaPropertySpecialRegister) || node is Nodes.Set || node is Nodes.Perform || node is Nodes.PerformProcedure || node is Nodes.WhenSearch || node is Nodes.When ) || storageArea.Kind == StorageAreaKind.StorageAreaPropertySpecialRegister)//Ignore If/Set/Perform/WhenSearch Statement
-                    {
-                        //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
-                        FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
-                            completeQualifiedName);
-                    }
+                    //Flag node has using a boolean variable + Add storage area into qualifiedStorageArea of the node. (Used in CodeGen)
+                    FlagNodeAndCreateQualifiedStorageAreas(Node.Flag.NodeContainsBoolean, node, storageArea,
+                        completeQualifiedName);
                 }
+            }
 
             var specialRegister = storageArea as StorageAreaPropertySpecialRegister;
             if (specialRegister != null

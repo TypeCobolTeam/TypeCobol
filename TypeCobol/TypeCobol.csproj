@@ -16,6 +16,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS,DOMAIN_CHECKER</DefineConstants>
+  </PropertyGroup>
   <!-- ITEM Group for .NET 4.5 Dependencies -->
   <ItemGroup Condition=" '$(Configuration)'=='Debug' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='EI_Debug' Or '$(Configuration)'=='EI_Release'">
     <Reference Include="Castle.Core, Version=4.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -84,7 +87,7 @@
     <Compile Include="$(TC_AntlrGeneratedFiles)\TypeCobolCodeElementsVisitor.cs">
       <Link>Compiler\Parser\Generated\TypeCobolCodeElementsVisitor.cs</Link>
     </Compile>
-  <Compile Include="**\*.cs" />
+    <Compile Include="**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <Antlr4 Include="AntlrGrammar\Cobol2002CodeElements.g4">
