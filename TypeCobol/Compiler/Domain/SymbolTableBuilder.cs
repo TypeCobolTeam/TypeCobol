@@ -59,7 +59,7 @@ namespace TypeCobol.Compiler.Domain
         /// <summary>
         /// The Root Symbol Table.
         /// </summary>
-        private static RootSymbolTable _rootSymbolTable;
+        internal static RootSymbolTable _rootSymbolTable;
 
         /// <summary>
         /// The Root Symbol Table
@@ -77,6 +77,7 @@ namespace TypeCobol.Compiler.Domain
                 }
                 return _rootSymbolTable;
             }
+            set { _rootSymbolTable = null; }
         }
 
         /// <summary>

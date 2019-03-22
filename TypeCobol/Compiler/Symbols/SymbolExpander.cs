@@ -81,19 +81,35 @@ namespace TypeCobol.Compiler.Symbols
 
         public override Symbol VisitProgramSymbol(ProgramSymbol s, Symbol owner)
         {
-            //We don't expand TypeSymbol.
-            //Check each storage sections
-            ExpandScope<VariableSymbol>(s.FileData, s);
-            ExpandScope<VariableSymbol>(s.GlobalStorageData, s);
-            ExpandScope<VariableSymbol>(s.WorkingStorageData, s);
-            ExpandScope<VariableSymbol>(s.LocalStorageData, s);
-            ExpandScope<VariableSymbol>(s.LinkageStorageData, s);
+            //Save the current expanding progrm.
+            ProgramSymbol saveProgram = Program;
+            //We are the new expanding program
+            Program = s;
+            //Change the current Program in the TypeExpander
+            this.TypExpander.Program = Program;
+            try
+            {
+                //We don't expand TypeSymbol.
+                //Check each storage sections
+                ExpandScope<VariableSymbol>(s.FileData, s);
+                ExpandScope<VariableSymbol>(s.GlobalStorageData, s);
+                ExpandScope<VariableSymbol>(s.WorkingStorageData, s);
+                ExpandScope<VariableSymbol>(s.LocalStorageData, s);
+                ExpandScope<VariableSymbol>(s.LinkageStorageData, s);
 
-            //Check each Nested Programs
-            ExpandScope<ProgramSymbol>(s.Programs, s);
+                //Check each Nested Programs
+                ExpandScope<ProgramSymbol>(s.Programs, s);
 
-            //Check each procedure
-            ExpandScope<FunctionSymbol>(s.Functions, s);
+                //Check each procedure
+                ExpandScope<FunctionSymbol>(s.Functions, s);
+            }
+            finally
+            {
+                //Restore the expanding program.
+                Program = saveProgram;
+                //Restore the current Program in the TypeExpander
+                this.TypExpander.Program = Program;
+            }
             return s;
         }
 

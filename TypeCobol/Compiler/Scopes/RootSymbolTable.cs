@@ -44,6 +44,13 @@ namespace TypeCobol.Compiler.Scopes
         /// </summary>
         public override String FullDotName => "";
 
+        /// <summary>
+        /// Full typed dotted qualified name
+        /// </summary>
+        public override String FullTypedDotName => "";
+
+        public override String TypedName => "";
+
 
         /// <summary>
         /// The Count of Variable Symbol created

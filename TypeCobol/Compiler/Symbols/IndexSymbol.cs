@@ -28,7 +28,11 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Indexed Variable.
         /// </summary>
-        public VariableSymbol Indexed { get; set; }
+        public VariableSymbol Indexed { get; set; }        
+
+        public override string IndexedName => Indexed != null && Indexed.Name .Length != 0 ? Indexed.Name + "::" + Name : Name;
+        public override string IndexedOFName => Indexed != null && Indexed.Name.Length != 0 ? Name +  " OF " + Indexed.Name  : Name;
+        public override string IndexedDotName => Indexed != null && Indexed.Name.Length != 0 ? Indexed.Name + '.' + Name : Name;
 
         public override Symbol LookupParentOfName(string name, bool nameLowered = false)
         {

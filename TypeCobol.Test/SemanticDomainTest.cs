@@ -239,14 +239,14 @@ namespace TypeCobol.Test.Domain
             Assert.IsTrue(check.Count == 1);
             Assert.IsNotNull(check.Symbol.Type);
             Assert.IsNotNull(check.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.AreEqual(check.Symbol.Type.TypeComponent, BuiltinTypes.BooleanType);
+            Assert.AreEqual(check.Symbol.Type, BuiltinTypes.BooleanType);
 
             //Finally check that variables "check" and "managed" are of the Builtin type Bool.
             var managed = currentProgram.ResolveReference(new string[] { "managed" }, false);
             Assert.IsTrue(managed.Count == 1);
             Assert.IsNotNull(managed.Symbol.Type);
             Assert.IsNotNull(managed.Symbol.Type.Tag == Type.Tags.Typedef);
-            Assert.AreEqual(managed.Symbol.Type.TypeComponent, BuiltinTypes.BooleanType);
+            Assert.AreEqual(managed.Symbol.Type, BuiltinTypes.BooleanType);
         }
 
         /// <summary>

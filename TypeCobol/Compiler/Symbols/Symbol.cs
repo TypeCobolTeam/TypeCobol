@@ -108,6 +108,19 @@ namespace TypeCobol.Compiler.Symbols
             internal set;
         }
 
+
+        /// <summary>
+        /// A Typed name is the name followed by a type, by default is the name..
+        /// </summary>
+        public virtual string TypedName => Name;
+
+        /// <summary>
+        /// Name used for an Indexed Name
+        /// </summary>
+        public virtual string IndexedName => Name;
+        public virtual string IndexedOFName => Name;
+        public virtual string IndexedDotName => Name;
+
         /// <summary>
         /// Full qualified name of this Symbol à la TypeCobol using "::"
         /// </summary>
@@ -116,7 +129,8 @@ namespace TypeCobol.Compiler.Symbols
             get
             {
                 string root = Owner?.FullName ?? "";
-                return root.Length > 0 ? root + "::" + Name : Name;
+                string name = IndexedName;
+                return root.Length > 0 ? root + (name.Length > 0 ? ("::" + name) : name) : name;
             }
         }
 
@@ -128,7 +142,8 @@ namespace TypeCobol.Compiler.Symbols
             get
             {
                 string root = Owner?.FullOfName ?? "";
-                return root.Length > 0 ? Name + " OF " + root  : Name;
+                string name = IndexedOFName;
+                return root.Length > 0 ? (name.Length > 0 ? (name + " OF ") : name) + root : name;
             }
         }
 
@@ -140,7 +155,32 @@ namespace TypeCobol.Compiler.Symbols
             get
             {
                 string root = Owner?.FullDotName ?? "";
-                return root.Length > 0 ? root + '.' + Name : Name;
+                string name = IndexedDotName;
+                return root.Length > 0 ? root + (name.Length > 0 ? ('.' + name) : name) : name;
+            }
+        }
+
+        /// <summary>
+        /// Full typed dotted qualified name
+        /// </summary>
+        public virtual String FullTypedDotName
+        {
+            get
+            {
+                Stack<string> paths = new Stack<string>();
+                paths.Push(IndexedDotName);
+                Symbol owner = Owner;
+                while (owner != null)
+                {
+                    string name = owner.TypedName;
+                    if (name?.Length != 0)
+                    {
+                        paths.Push(name);
+                    }
+                    owner = owner.Owner;
+                }
+
+                return string.Join(".", paths.ToArray());
             }
         }
 
@@ -211,7 +251,7 @@ namespace TypeCobol.Compiler.Symbols
         public Symbol Owner
         {
             get;
-            set;
+            internal set;
         }
 
         public SemanticKinds SemanticKind => SemanticKinds.Symbol;

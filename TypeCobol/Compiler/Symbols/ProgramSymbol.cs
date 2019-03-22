@@ -15,7 +15,7 @@ namespace TypeCobol.Compiler.Symbols
     /// <summary>
     /// Reprsents a Program Symbol
     /// </summary>
-    public class ProgramSymbol : AbstractScope
+    public class ProgramSymbol : AbstractScope, IDomain<VariableSymbol>
     {
         /// <summary>
         /// Named constructor.
@@ -130,10 +130,10 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// The Domain of this program.
         /// </summary>
-        public Dictionary<string, Scope<VariableSymbol>.MultiSymbols> Domain
+        internal Dictionary<string, Scope<VariableSymbol>.MultiSymbols> Domain
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -204,6 +204,26 @@ namespace TypeCobol.Compiler.Symbols
                 }
             }
             return varSym;
+        }
+
+        /// <summary>
+        /// Add the element to this Program's domain.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public VariableSymbol Add(VariableSymbol element)
+        {
+            return AddToDomain(element);
+        }
+
+        /// <summary>
+        /// Get the Scope of symbol associated to the given symbol name.
+        /// </summary>
+        /// <param name="path">The Symbol's path to get the Scope, the path is in reverse order à la COBOL.</param>
+        /// <returns>The Multi Symbol set of all symbol corresponding to the given path.</returns>
+        public Scope<VariableSymbol>.MultiSymbols Get(string[] path)
+        {
+            return ResolveReference(path, true);
         }
 
         /// <summary>

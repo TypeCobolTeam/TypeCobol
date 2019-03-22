@@ -70,7 +70,7 @@ namespace TypeCobol.Compiler.Domain.Validator
             return true;
         }
 
-        public override bool VisitRecordType(GroupType t, object arg)
+        public override bool VisitGroupType(GroupType t, object arg)
         {
             bool bResult = t.LeadingType?.Accept(this, arg) ?? true;
             foreach (var s in t.Scope)
@@ -87,7 +87,7 @@ namespace TypeCobol.Compiler.Domain.Validator
 
         public override bool VisitRenamesType(RenamesType t, object arg)
         {
-            bool bResult = VisitRecordType((GroupType) t, arg);
+            bool bResult = VisitGroupType((GroupType) t, arg);
             if (bResult && (t.DataName1 == null || t.DataName2 == null))
             {
                 Unvalidated.Add(t);

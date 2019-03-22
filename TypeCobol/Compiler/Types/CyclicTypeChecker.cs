@@ -44,7 +44,7 @@ namespace TypeCobol.Compiler.Types
 
         public override bool VisitArrayType(ArrayType t, object _) => t.MayExpand && t.ElementType.Accept(this, _);
         public override bool VisitPointerType(PointerType t, object _) => t.MayExpand && t.ElementType.Accept(this, _);
-        public override bool VisitRecordType(GroupType t, object _)
+        public override bool VisitGroupType(GroupType t, object _)
         {
             foreach (var field in t.Scope)
             {

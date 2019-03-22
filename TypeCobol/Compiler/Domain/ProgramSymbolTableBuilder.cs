@@ -448,7 +448,7 @@ namespace TypeCobol.Compiler.Domain
             FunctionDeclaration funDecl = (FunctionDeclaration) CurrentNode;
             FunctionDeclStack.Push(funDecl);
             //Create a function symbol
-            FunctionSymbol funSym = new FunctionSymbol(header.Name);
+            FunctionSymbol funSym = new FunctionSymbol(header.FunctionName.Name);
             funDecl.SemanticData = funSym;
             //Enter the function in the current scope
             this.CurrentScope.Functions.Enter(funSym);
@@ -483,7 +483,7 @@ namespace TypeCobol.Compiler.Domain
                 }
                 parameter.AddRange(toBeRemoved);
             }
-            VariableSymbol p = DataDefinition2Symbol(parameter, parentScope, false);
+            VariableSymbol p = DataDefinition2Symbol(parameter, parentScope, null);
             if (toBeRemoved != null)
             {
                 foreach (var r in toBeRemoved)
@@ -690,9 +690,9 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
         /// <param name="parentScope">The current parent scope</param>
-        /// <param name="bCalledForTypedef">true if this is for a TYPEDEF declaration.</param>
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        internal VariableSymbol CreateUsageSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, bool bCalledForTypedef)
+        internal VariableSymbol CreateUsageSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             System.Diagnostics.Debug.Assert(IsSingleUsageDefinition(dataDef));
             Type type = CreateUsageType(dataDef);
@@ -703,8 +703,10 @@ namespace TypeCobol.Compiler.Domain
             {                
                 sym.Type = type;
                 DecorateSymbol(dataDef, sym, parentScope);
-                if (!bCalledForTypedef)
+                if (typedef == null)
                     CurrentProgram.AddToDomain(sym);
+                else
+                    typedef.Add(sym);
             }
             return sym;
         }
@@ -729,9 +731,9 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
         /// <param name="parentScope">The current parent scope</param>
-        /// <param name="bCalledForTypedef">true if this is for a TYPEDEF declaration.</param>
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Symbol instance of usage type.</returns>
-        internal VariableSymbol CreatePictureSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, bool bCalledForTypedef)
+        internal VariableSymbol CreatePictureSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             System.Diagnostics.Debug.Assert(IsSinglePictureDefinition(dataDef));
             Type type = CreatePictureType(dataDef);
@@ -742,8 +744,10 @@ namespace TypeCobol.Compiler.Domain
             {                
                 sym.Type = type;
                 DecorateSymbol(dataDef, sym, parentScope);
-                if (!bCalledForTypedef)
-                    CurrentProgram.AddToDomain(sym);                
+                if (typedef == null)
+                    CurrentProgram.AddToDomain(sym);
+                else
+                    typedef.Add(sym);
             }
             return sym;
         }
@@ -753,9 +757,9 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
         /// <param name="parentScope">The current parent scope</param>
-        /// <param name="bCalledForTypedef">true if this is for a TYPEDEF declaration.</param>
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The untyped symbol</returns>
-        internal VariableSymbol CreateSymbolWithoutType(DataDefinition dataDef, Scope<VariableSymbol> parentScope, bool bCalledForTypedef)
+        internal VariableSymbol CreateSymbolWithoutType(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             Type type = BuiltinTypes.BuiltinUsageType(Type.UsageFormat.None);
             VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
@@ -765,8 +769,10 @@ namespace TypeCobol.Compiler.Domain
             {
                 sym.Type = type;
                 DecorateSymbol(dataDef, sym, parentScope);
-                if (!bCalledForTypedef)
+                if (typedef == null)
                     CurrentProgram.AddToDomain(sym);
+                else
+                    typedef.Add(sym);
             }
             return sym;
         }
@@ -776,9 +782,9 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The DataDefinition instance</param>
         /// <param name="parentScope">The current parent scope</param>
-        /// <param name="bCalledForTypedef">true if this is for a TYPEDEF declaration.</param>
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns></returns>
-        internal VariableSymbol CreateRecordSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, bool bCalledForTypedef)
+        internal VariableSymbol CreateRecordSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             //We create a record symbol having the record type
             VariableSymbol sym = IsRedefinedDataDefinition(dataDef)
@@ -805,13 +811,15 @@ namespace TypeCobol.Compiler.Domain
                 }
 
                 DecorateSymbol(dataDef, sym, parentScope);
-                if (!bCalledForTypedef)
+                if (typedef == null)
                     CurrentProgram.AddToDomain(sym);
+                else
+                    typedef.Add(sym);
                 //We build the RecordType fields
                 foreach (var child in dataDef.Children)
                 {
                     DataDefinition df = (DataDefinition)child;
-                    VariableSymbol df_sym = DataDefinition2Symbol(df, recType.Scope, bCalledForTypedef);
+                    VariableSymbol df_sym = DataDefinition2Symbol(df, recType.Scope, typedef);
                     //df_sym == null this may be an Index Definition or a bad symbol.
                     if (df_sym != null)
                     {
@@ -819,7 +827,7 @@ namespace TypeCobol.Compiler.Domain
                         //Important set the Owner before calling HandleIndexes
                         df_sym.Owner = sym;
                         //Handle indexes belonging to this Data Definition
-                        HandleIndexes(df, df_sym, recType.Scope);
+                        HandleIndexes(df, df_sym, recType.Scope, typedef);
                     }
                 }
             }
@@ -868,13 +876,13 @@ namespace TypeCobol.Compiler.Domain
                 return null;
             }
             //First lookup in the current scope if the typedef symbol exists.
-            var entry = this.CurrentScope.ReverseResolveType(CurrentScope, new string[] { dataDef.Name }, false);
+            var entry = this.CurrentScope.ReverseResolveType(Root, new string[] { dataDef.Name }, false);
             TypedefSymbol tdSym = null;
             if (entry != null)
             {
                 System.Diagnostics.Debug.Assert(entry.Count == 1);
                 tdSym = entry[0];
-                System.Diagnostics.Debug.Assert(tdSym.Type == null);
+                //System.Diagnostics.Debug.Assert(tdSym.Type == null);
             }
             //We create the type definition symbol
             if (tdSym == null)
@@ -890,11 +898,15 @@ namespace TypeCobol.Compiler.Domain
                     tdSym.SetFlag(Symbol.Flags.Strong, true);
                 }
                 SetSymbolAccessModifer(tdSym, dtde.Visibility);
-                //A Typedef goes in the Types scope of the Current Scope
+                //A Typedef goes in the Types scope of the Main program scope
                 //Enter it right now to allow recursive type definition to be possible here.
-                CurrentScope.Types.Enter(tdSym);
+                ProgramSymbol topProgram = (ProgramSymbol)CurrentScope.TopParent(Symbol.Kinds.Program);
+                System.Diagnostics.Debug.Assert(topProgram != null);
+                //The owner of the type is the top program.
+                tdSym.Owner = topProgram;
+                topProgram.Types.Enter(tdSym);
             }
-            VariableSymbol varSym = DataDefinition2Symbol(dataDef, parentScope, true);
+            VariableSymbol varSym = DataDefinition2Symbol(dataDef, parentScope, tdSym);
             //Ignore the variable symbol, but only take the underlying type.
             tdSym.Type = new TypedefType(tdSym, varSym.Type);
             tdSym.Type.Symbol = tdSym;
@@ -917,9 +929,9 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The Data Definition to convert</param>
         /// <param name="parentScope">The current parent scope</param>
-        /// <param name="bCalledForTypedef">true if this is for a TYPEDEF declaration.</param>
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Created Symbol</returns>
-        internal VariableSymbol CreateDataTypeSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, bool bCalledForTypedef)
+        internal VariableSymbol CreateDataTypeSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             if (dataDef.CodeElement.Type == CodeElementType.DataRedefinesEntry)
             {//Cannot redefine a TypeDef
@@ -983,8 +995,10 @@ namespace TypeCobol.Compiler.Domain
             TypedefSymbol tdSymbol = tdEntry[0];
             VariableTypeSymbol varTypeSym = new VariableTypeSymbol(dataDef.Name, tdSymbol);
             DecorateSymbol(dataDef, varTypeSym, parentScope);
-            if (!bCalledForTypedef)
-                CurrentProgram.AddToDomain(varTypeSym);            
+            if (typedef == null)
+                CurrentProgram.AddToDomain(varTypeSym);
+            else
+                typedef.Add(varTypeSym);
             return varTypeSym;
         }
 
@@ -995,14 +1009,16 @@ namespace TypeCobol.Compiler.Domain
         /// <param name="parentScope">The current parent scope</param>
         /// <param name="bCalledForTypedef">true if this is for a TYPEDEF declaration.</param>
         /// <returns>The Condition symbol</returns>
-        internal VariableSymbol CreateConditionSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, bool bCalledForTypedef)
+        internal VariableSymbol CreateConditionSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataConditionEntry);
             VariableSymbol sym = new VariableSymbol(dataDef.Name);
             sym.Type = BuiltinTypes.BooleanType;
             DecorateSymbol(dataDef, sym, parentScope);
-            if (!bCalledForTypedef)
-                CurrentProgram.AddToDomain(sym);            
+            if (typedef == null)
+                CurrentProgram.AddToDomain(sym);
+            else
+                typedef.Add(sym);
             return sym;
         }
 
@@ -1092,12 +1108,16 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef"></param>
         /// <param name="parentScope">The parent scope</param>
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The Index symbol</returns>
-        internal IndexSymbol CreateIndexSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope)
+        internal IndexSymbol CreateIndexSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             IndexSymbol sym = new IndexSymbol(dataDef.Name);
             DecorateSymbol(dataDef, sym, parentScope);
-            CurrentProgram.AddToDomain(sym);            
+            if (typedef == null)
+                CurrentProgram.AddToDomain(sym);
+            else
+                typedef.Add(sym);
             return sym;
         }
 
@@ -1297,9 +1317,9 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The Data Definition of the rename symbol</param>
         /// <param name="parentScope">The parent scope</param>
-        /// <param name="bCalledForTypedef">true if this is for a TYPEDEF declaration.</param>
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns>The rename symbol instance if one hase been created, null otherwise</returns>
-        internal RenamesSymbol CreateRenameSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, bool bCalledForTypedef)
+        internal RenamesSymbol CreateRenameSymbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             System.Diagnostics.Debug.Assert(dataDef.CodeElement.Type == CodeElementType.DataRenamesEntry);
             RenamesSymbol sym = new RenamesSymbol(dataDef.Name);
@@ -1311,8 +1331,10 @@ namespace TypeCobol.Compiler.Domain
             _renamesToValidate.Add(ctx);
 
             DecorateSymbol(dataDef, sym, parentScope);
-            if(!bCalledForTypedef)
+            if (typedef == null)
                 CurrentProgram.AddToDomain(sym);
+            else
+                typedef.Add(sym);
 
             return sym;
         }
@@ -1341,9 +1363,9 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The Data Definition to convert</param>
         /// <param name="parentScope">The Parent Scope which is used for instance to look for target REDEFINES or RENAMES symbols.</param>
-        /// <param name="bCalledForTypedef">True if we have been called by a TYPEDEF declaration, false otherwise</param>
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
         /// <returns></returns>
-        internal VariableSymbol DataDefinition2Symbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, bool bCalledForTypedef)
+        internal VariableSymbol DataDefinition2Symbol(DataDefinition dataDef, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             VariableSymbol sym = null;
             if (dataDef.CodeElement != null)
@@ -1355,17 +1377,17 @@ namespace TypeCobol.Compiler.Domain
                         {
                             DataDescriptionEntry entry = dataDef.CodeElement as DataDescriptionEntry;
                             //Special case Typedef
-                            if (IsTypedefDefinition(dataDef) && !bCalledForTypedef)
+                            if (IsTypedefDefinition(dataDef) && typedef == null)
                             {
                                 sym = CreateTypeDefinition(dataDef, parentScope);
                             }
                             else if (IsSingleUsageDefinition(dataDef))
                             {
-                                sym = CreateUsageSymbol(dataDef, parentScope, bCalledForTypedef);
+                                sym = CreateUsageSymbol(dataDef, parentScope, typedef);
                             }
                             else if (IsSinglePictureDefinition(dataDef))
                             {
-                                sym = CreatePictureSymbol(dataDef, parentScope, bCalledForTypedef);
+                                sym = CreatePictureSymbol(dataDef, parentScope, typedef);
                             }
                             else
                             {
@@ -1376,33 +1398,33 @@ namespace TypeCobol.Compiler.Domain
                                         //TypeCobol.Compiler.CodeElements.DataType dataType = dataDef.DataType;
                                         if (entry != null && entry.UserDefinedDataType != null)
                                         {
-                                            sym = CreateDataTypeSymbol(dataDef, parentScope, bCalledForTypedef);
+                                            sym = CreateDataTypeSymbol(dataDef, parentScope, typedef);
                                         }
                                         else
                                         {
-                                            sym = CreateSymbolWithoutType(dataDef, parentScope, bCalledForTypedef);
+                                            sym = CreateSymbolWithoutType(dataDef, parentScope, typedef);
                                         }
                                     }
                                     else
                                     {
-                                        sym = CreateSymbolWithoutType(dataDef, parentScope, bCalledForTypedef);
+                                        sym = CreateSymbolWithoutType(dataDef, parentScope, typedef);
                                     }
                                 }
                                 else
                                 {//This is a record Type
-                                    sym = CreateRecordSymbol(dataDef, parentScope, bCalledForTypedef);
+                                    sym = CreateRecordSymbol(dataDef, parentScope, typedef);
                                 }
                             }
                         }
                         break;
                     case CodeElements.CodeElementType.DataRenamesEntry:
                         {
-                            sym = CreateRenameSymbol(dataDef, parentScope, bCalledForTypedef);
+                            sym = CreateRenameSymbol(dataDef, parentScope, typedef);
                         }
                         break;
                     case CodeElements.CodeElementType.DataConditionEntry:
                         {
-                            sym = CreateConditionSymbol(dataDef, parentScope, bCalledForTypedef);
+                            sym = CreateConditionSymbol(dataDef, parentScope, typedef);
                         }
                         break;
                 }
@@ -1427,7 +1449,8 @@ namespace TypeCobol.Compiler.Domain
         /// </summary>
         /// <param name="dataDef">The Indexed Data Definition instance</param>
         /// <param name="indexedSym">The Indexed Symbol</param>
-        private void HandleIndexes(DataDefinition dataDef, VariableSymbol indexedSym, Scope<VariableSymbol> parentScope)
+        /// <param name="typedef">not null if  we have been called by a TYPEDEF declaration, null otherwise</param>
+        private void HandleIndexes(DataDefinition dataDef, VariableSymbol indexedSym, Scope<VariableSymbol> parentScope, TypedefSymbol typedef)
         {
             foreach (var child in dataDef.Children)
             {
@@ -1435,9 +1458,10 @@ namespace TypeCobol.Compiler.Domain
                 {
                     //An index definition symbol
                     IndexDefinition indexDef = (IndexDefinition) child;
-                    var indexSym = CreateIndexSymbol((DataDefinition)indexDef, parentScope);
+                    var indexSym = CreateIndexSymbol((DataDefinition)indexDef, parentScope, typedef);
                     //Attach the Indexed
                     indexSym.Owner = indexedSym.Owner;
+                    indexSym.Indexed = indexedSym;
                     //Add the index in the current Scope.
                     System.Diagnostics.Debug.Assert(parentScope != null);
                     parentScope.Enter(indexSym);
@@ -1585,7 +1609,8 @@ namespace TypeCobol.Compiler.Domain
             //We must be in ProgramScope
             System.Diagnostics.Debug.Assert(CurrentScope is ProgramSymbol);
 
-            dataDefSym.Owner = CurrentProgram;
+            if (dataDefSym.Owner == null) //Because Symbols as TYPEDEF already have their parent.
+                dataDefSym.Owner = CurrentProgram;
             if (dataDefSym.Kind == Symbol.Kinds.Typedef)
             {//Typedef are already entered at creation time.
                 ;
@@ -1638,7 +1663,7 @@ namespace TypeCobol.Compiler.Domain
             //Clear any pending RENAMES to validate.
             _renamesToValidate.Clear();
             var scope = GetCurrentDataDivisionSectionScope();
-            VariableSymbol dataDefSym = DataDefinition2Symbol((DataDefinition)level1Node, scope, false);
+            VariableSymbol dataDefSym = DataDefinition2Symbol((DataDefinition)level1Node, scope, null);
             this.LastDataDefinitionSymbol = dataDefSym;
             if (dataDefSym != null)
             {
@@ -1646,7 +1671,7 @@ namespace TypeCobol.Compiler.Domain
                 ValidateRenames();
                 StoreDataDivisionSymbol(dataDefSym);
                 //Handle indexes belonging to this Data Definition
-                HandleIndexes((DataDefinition) level1Node, dataDefSym, scope);
+                HandleIndexes((DataDefinition) level1Node, dataDefSym, scope, null);
             }
         }
     }

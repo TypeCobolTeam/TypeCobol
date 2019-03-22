@@ -54,6 +54,9 @@ namespace TypeCobol.Compiler.Symbols
             private set;
         }
 
+        //public override string TypedName => Typedef != null && Typedef.Type != null && !Typedef.Type.HasFlag(Flags.BuiltinType) ? (Name + Typedef.Name) : Name;
+        public override string TypedName => Typedef != null ? (Name + '.' + Typedef.Name) : Name;
+
         /// <summary>
         /// Dump this symbol in the given TextWriter instance
         /// </summary>

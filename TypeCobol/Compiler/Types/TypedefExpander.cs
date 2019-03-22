@@ -17,7 +17,7 @@ namespace TypeCobol.Compiler.Types
         public ProgramSymbol Program
         {
             get;
-            private set;
+            internal set;
         }
 
         public SymbolExpander SymExpander
@@ -82,7 +82,7 @@ namespace TypeCobol.Compiler.Types
         /// <param name="t"></param>
         /// <param name="owner"></param>
         /// <returns></returns>
-        public override Type VisitRecordType(GroupType t, Symbol owner)
+        public override Type VisitGroupType(GroupType t, Symbol owner)
         {
             GroupType newType = (GroupType) t.Clone();
             newType.Scope = new Scope<VariableSymbol>(owner);
@@ -182,7 +182,7 @@ namespace TypeCobol.Compiler.Types
 
                 return recType;
             }
-            return t.TypeComponent;
+            return t;
         }
     }
 }

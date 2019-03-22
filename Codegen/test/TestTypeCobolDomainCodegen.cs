@@ -18,11 +18,12 @@ namespace TypeCobol.Codegen.Domain
         public static TypeCobolConfiguration DefaultConfig = null;
         public static ProgramSymbolTableBuilder Builder = null;
         public static NodeListenerFactory BuilderNodeListenerFactory = null;
-        public static string DefaultIntrinsicPath = @"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
+        public static string DefaultIntrinsicPath = null;//@"C:\TypeCobol\Sources\##Latest_Release##\Intrinsic\Intrinsic.txt";
 
         [TestInitialize]
         public void TestInitialize()
         {
+            SymbolTableBuilder.Root = null;
             //Create a default configurations for options
             DefaultConfig = new TypeCobolConfiguration();
             if (File.Exists(DefaultIntrinsicPath))
@@ -56,7 +57,7 @@ namespace TypeCobol.Codegen.Domain
                     foreach (var prog in Builder.Programs)
                         SymbolTableBuilder.Root.RemoveProgram(prog);
                 }
-            }
+            }            
         }
 
 
@@ -259,7 +260,23 @@ namespace TypeCobol.Codegen.Domain
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPrivateProc") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void CallPublicProcFromPrivateProc3()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPrivateProc3") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void CallPublicProcFromPrivateProc4()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPrivateProc4") + ".rdz.tcbl", skeletons);
         }
 
@@ -270,7 +287,23 @@ namespace TypeCobol.Codegen.Domain
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPublicProc") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void CallPublicProcFromPublicProc2()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPublicProc-DeclarativesNoDebug") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void CallPublicProcFromPublicProc3()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "CallPublicProcFromPublicProc-DeclarativesWithDebug") + ".rdz.tcbl", skeletons);
         }
 
@@ -307,9 +340,19 @@ namespace TypeCobol.Codegen.Domain
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-Public") + ".rdz.tcbl", skeletons);
+        }
+        public void ParseProcedureCallPublic2()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-Public2") + ".rdz.tcbl", skeletons);
+        }
+
+        public void ParseProcedureCallPublic3()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-Public3") + ".rdz.tcbl", skeletons);
         }
+
 
         [TestMethod]
         [TestCategory("DomainCodegen")]
@@ -318,8 +361,32 @@ namespace TypeCobol.Codegen.Domain
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-PublicAndDeclaratives") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseProcedureCallPublicAndDeclaratives2()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-PublicAndDeclaratives2") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseProcedureCallPublicAndDeclaratives3()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-PublicAndDeclaratives3") + ".rdz.tcbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseProcedureCallPublicAndDeclaratives4()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "ProcedureCall-PublicAndDeclaratives4") + ".rdz.tcbl", skeletons);
         }
 
@@ -385,18 +452,50 @@ namespace TypeCobol.Codegen.Domain
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "LineExceed") + ".rdz.cbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseLineExceed2()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "LineExceed2") + ".rdz.cbl", skeletons);
         }
 
         [TestMethod]
         [TestCategory("DomainCodegen")]
         [TestProperty("Time", "fast")]
-        public void ParseLineExceedAutoSplit()
+        public void ParseLineExceedAutoSplit3()
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "LineExceed3") + ".rdz.cbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseLineExceedAutoSplit4()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "LineExceed4") + ".rdz.cbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseLineExceedAutoSplit5()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "LineExceed5") + ".rdz.cbl", skeletons);
+        }
+
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void ParseLineExceedAutoSplit6()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "LineExceed6") + ".rdz.cbl", skeletons);
         }
 
@@ -848,9 +947,16 @@ namespace TypeCobol.Codegen.Domain
         {
             var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
             CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MisPlaceCopyInstrWithProcMetaData") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
-            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MisPlaceCopyInstrWithProcMetaData2") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
         }
 
+        [TestMethod]
+        [TestCategory("DomainCodegen")]
+        [TestProperty("Time", "fast")]
+        public void MisPlaceCopyInstrWithProcMetaDataTest2()
+        {
+            var skeletons = UseSkeleton ? CodegenTestUtils.ParseConfig(Path.Combine("TypeCobol", "skeletons") + ".xml") : null;
+            CodegenTestUtils.ParseGenerateCompare(Path.Combine("TypeCobol", "MisPlaceCopyInstrWithProcMetaData2") + ".rdz.tcbl", skeletons, false, "TestTypeCobolVersion");
+        }
 
         [TestMethod]
         [TestCategory("DomainCodegen")]

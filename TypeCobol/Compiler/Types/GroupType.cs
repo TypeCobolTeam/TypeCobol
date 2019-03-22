@@ -90,6 +90,6 @@ namespace TypeCobol.Compiler.Types
             --indentLevel;
         }
 
-        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitRecordType(this, s); }
+        public override TR Accept<TR, TS>(IVisitor<TR, TS> v, TS s) { return v.VisitGroupType(this, s); }
     }
 }
